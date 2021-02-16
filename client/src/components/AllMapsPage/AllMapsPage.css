@@ -1,0 +1,9 @@
+.AllMapsPage {
+display: block;
+    width: 450px;
+}
+
+.maplink {
+  color: #f6ae2d;
+  font-size: 12px;
+}

@@ -1,12 +1,35 @@
 #navigation-bar {
-    font-family: 'EB Garamond',serif;
-    margin-bottom: 0;
-    border-radius: 0px;
-    background-color: white;
-    border-color: green;
+    font-family: 'Montserrat',sans-serif;
+    background-color: #FEFFFE;
+    border: none;
+}
 
+#navigation-bar .scrim {
+    color: #1A8FE3;
+}
+
+#navigation-bar .sight {
+    color: #D11149;
 }
 
 #navigation-bar li a:hover, #navigation-bar li a:visited , #navigation-bar li a:focus {
-    color:black;
+    color:#14213D;
+}
+
+.navbar-toggle {
+    background-color: #14213D;
+    color: #f6ae2d;
+}
+
+.navbar-toggle.collapsed {
+    color: white;
+}
+
+.navbar-inverse .navbar-collapse {
+    border: none;
+    border-bottom: 2px solid #D11149;
+}
+
+.navbar-header {
+    /* border-bottom: 5px solid #D11149; */
 }

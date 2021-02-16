@@ -75,3 +75,5 @@ $ heroku run python
 1. [Setting up flask app in heroku with a database](https://gist.github.com/mayukh18/2223bc8fc152631205abd7cbf1efdd41/)
 
 1. [Testeimonials Carousel](https://codepen.io/jamy/pen/gbdWGJ)
+
+1. https://medium.com/@orels1/using-discord-oauth2-a-simple-guide-and-an-example-nodejs-app-71a9e032770

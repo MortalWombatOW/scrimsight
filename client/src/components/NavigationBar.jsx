@@ -16,26 +16,21 @@ export default (props) => {
     return <Navbar id={id} inverse collapseOnSelect className="navbar-fixed-top">
     <Navbar.Header>
         <Navbar.Brand>
-            {brand}
-    </Navbar.Brand>
+            <span className="scrim">scrim</span>
+            <span className="sight">sight</span>
+        </Navbar.Brand>
         <Navbar.Toggle />
     </Navbar.Header>
     <Navbar.Collapse>
         <Nav pullRight>
-            <NavItem eventKey={1} href="#home-scroll">
+            <NavItem eventKey={1} href="/">
                 Home
       </NavItem>
-        <NavItem eventKey={2} href="#ceremony-scroll">
-                About
+      <NavItem eventKey={2} href="/map">
+                Maps
       </NavItem>
-      <NavItem eventKey={3} href="#greetings-scroll">
-                Greetings
-      </NavItem>
-            <NavItem eventKey={4} href="#location">
-                Location
-      </NavItem>
-      <NavItem eventKey={5} href="#rsvp-scroll">
-                RSVP
+        <NavItem eventKey={23} href="/upload">
+                Upload Map
       </NavItem>
         </Nav>
     </Navbar.Collapse>

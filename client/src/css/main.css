@@ -31,3 +31,18 @@ div.line:after {
 div.line-bottom {
     top: 97%;
 }
+
+.wrapper {
+    margin-top: 50px;
+    padding-left: 15%;
+    padding-right: 15%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+html, body {
+    height: 100%;
+    background-color: #14213D;
+    color: #14213D;
+    font-family: Montserrat, sans-serif;
+  }

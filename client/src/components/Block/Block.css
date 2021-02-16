@@ -1,0 +1,15 @@
+.Block {
+    background: #FEFFFE;
+    border-radius: 5px;
+    color: #14213D;
+    padding: 10px;
+}
+
+.BlockTitle {
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+    /* opacity: 0.50; */
+}

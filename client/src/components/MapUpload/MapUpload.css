@@ -1,0 +1,34 @@
+.MapUpload {}
+
+.input-bar {
+    display: table;
+    width: 100%;
+}
+
+.input-bar-item {
+    display: table-cell;
+    border: 1px solid #14213D;
+    border-radius: 10px;
+}
+
+.btn-info {
+    margin-right: -2px;
+    border-radius: 10px;
+    background-color:  #14213D;
+    border-color: #14213D;
+    box-sizing: border-box;
+}
+
+.btn-info:hover {
+    border-color: #f6ae2d;
+    background-color: #f6ae2d;
+    border-right: #14213D;
+}
+    
+.width100 {
+  width: 100%;
+}
+
+.form-control {
+    border-radius: 10px;
+}

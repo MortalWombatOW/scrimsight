@@ -1,2 +1,2 @@
-export REACT_APP_USERS_SERVICE_URL=http://localhost:8000
+export REACT_APP_USERS_SERVICE_URL=http://localhost:5000
 npm start
