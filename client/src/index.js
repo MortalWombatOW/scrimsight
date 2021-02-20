@@ -12,12 +12,13 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
   } from "react-router-dom";
 import MapPage from './components/MapPage/MapPage';
-ReactDOM.render((<Router>
-    <NavigationBar id={'navigation-bar'} brand={"Gili & Matan - The Wedding"} />
-    <div className="wrapper"><Switch>
+ReactDOM.render((
+<Router>
+    <NavigationBar id={'navigation-bar'} brand={"scrimsight"} />
+    <div className="wrapper">
+    <Switch>
     <Route path="/map/:id" component={MapPage}></Route>
     <Route path="/map">
         <AllMapsPage />
@@ -28,5 +29,7 @@ ReactDOM.render((<Router>
     <Route path="/">
         <LandingPage />
     </Route>
-  </Switch></div></Router>), document.getElementById('root'));
+  </Switch>
+  </div>
+  </Router>), document.getElementById('root'));
 registerServiceWorker();

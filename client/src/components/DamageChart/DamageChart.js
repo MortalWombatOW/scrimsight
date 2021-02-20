@@ -8,6 +8,7 @@ import axios from 'axios';
 // import * as allCurves from '@visx/curve';
 import { extent, max, min } from 'd3-array';
 import { Axis, Orientation, SharedAxisProps, AxisScale } from '@visx/axis';
+import Block from '../Block/Block';
 
 
 function csvJSON(csv){
@@ -96,12 +97,11 @@ const DamageChart = (props) => {
   const x = d => d.time;
   const y = d => d['damage\r'];
   const data2 = data['MortalWombat'];
-  console.log(data2.map(y));
   // And then scale the graph by our data
   const xScale = scaleTime({
     range: [50, xMax],
     // round: true,
-    domain: extent(data2, x),
+    domain: [min(data2, x), max(data2, x) + 25],
     padding: 0.4,
   });
   const yScale = scaleLinear({
@@ -121,16 +121,18 @@ const DamageChart = (props) => {
   // yScale.range([height - 2, 0]);
   return (
   <div className="DamageChart">
+    <Block>
     <svg width={width} height={height}>
-    <rect x={0} y={0} width={width} height={height} fill="#FEFFFE" rx={14} />
+    {/* <rect x={0} y={0} width={width} height={height} fill="#444444bb"  /> */}
     {Object.keys(data).map(player => <LinePath
       data={data[player]}
       x={xPoint}
       y={yPoint}
       strokeWidth={2}
-      stroke="#14213D"
+      stroke="white"
     />)}
     </svg>
+    </Block>
   </div>
 );
 };

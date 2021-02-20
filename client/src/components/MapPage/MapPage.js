@@ -3,23 +3,37 @@ import PropTypes from 'prop-types';
 import './MapPage.css';
 import DamageChart from '../DamageChart/DamageChart';
 import PlayersInMap from '../PlayersInMap/PlayersInMap';
-import { Responsive as ResponsiveGridLayout } from 'react-grid-layout';
+import MapPlayer from '../MapPlayer/MapPlayer';
+import { Col, Row, Container, Card, Button, Badge} from 'react-bootstrap';
 
-const layout = [
-  {i: 'players', x: 0, y: 0, w: 1, h: 2, static: true},
-  {i: 'dmg', x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4},
-];
+const players = [
+  {hero: 'Ana', x: 4300, y:3000, team: 1},
+  {hero: 'Zenyatta', x: 4400, y:3120, team: 1},
+  {hero: 'Genji', x: 4100, y:3800, team: 1},
+  {hero: 'Tracer', x: 4200, y:3600, team: 1},
+  {hero: 'D.va', x: 4200, y:3100, team: 1},
+  {hero: 'Winston', x: 3800, y:3800, team: 1},
+  {hero: 'Moira', x: 3900, y:3500, team: 2},
+  {hero: 'Lucio', x: 3900, y:3400, team: 2},
+  {hero: 'Reaper', x: 3850, y:3300, team: 2},
+  {hero: 'Mei', x: 3830, y:3500, team: 2},
+  {hero: 'Zarya', x: 3900, y:3250, team: 2},
+  {hero: 'Reinhardt', x: 3890, y:3200, team: 2},
+ ];
 
 const MapPage = (params) => (
   <div className="MapPage">
+  <Container>
+     <Row>
+				<Col md={12}><MapPlayer players={players} /></Col>
+			</Row>
+			<Row>
+				<Col md={4}><PlayersInMap key='players' id={params.match.params.id}></PlayersInMap></Col>
+				<Col md={8}><DamageChart key='dmg' id={params.match.params.id}></DamageChart></Col>
+			</Row>
+		</Container>
     
-    
-    <ResponsiveGridLayout className="layout" layouts={layouts}
-        breakpoints={{lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0}}
-        cols={{lg: 12, md: 10, sm: 6, xs: 4, xxs: 2}}>
-        <PlayersInMap key='players' id={params.match.params.id}></PlayersInMap>
-        <DamageChart key='dmg' id={params.match.params.id}></DamageChart>
-    </ResponsiveGridLayout>
+        
   </div>
 );
 

@@ -1,9 +1,14 @@
 .AllMapsPage {
 display: block;
-    width: 450px;
 }
 
 .maplink {
   color: #f6ae2d;
   font-size: 12px;
+}
+
+.list-group-item {
+    background-color: transparent;
+    border-radius: 0 !important;
+    border-color: #aaa;
 }

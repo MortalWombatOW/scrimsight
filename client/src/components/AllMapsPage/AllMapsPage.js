@@ -4,6 +4,7 @@ import './AllMapsPage.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Block from '../Block/Block';
+import { Col, Row, Container, Card, Button, Badge, ListGroup} from 'react-bootstrap';
 
 const AllMapsPage = () => {
   const [data, setData] = useState(null);
@@ -11,7 +12,7 @@ const AllMapsPage = () => {
   if (data == null) {
     axios.get(`${process.env.REACT_APP_USERS_SERVICE_URL}/logfile`)
     .then((res) => {             
-      setData(res.data.data[0]);
+      setData(res.data.data);
     })
     .catch((err) => {
       console.log(err);
@@ -24,9 +25,14 @@ const AllMapsPage = () => {
     );
   }
   return (
-    <Block title="Maps"><div className="AllMapsPage">
-    {data.map(id => <Link className="maplink" key={id} to={"/map/"+ id}>Map {id}</Link>)}
-    </div></Block>
+    <Container>
+			<Block title="Maps">
+      <div className="AllMapsPage">
+      <ListGroup>
+      {data.map(id => <ListGroup.Item  key={id}><Link className="maplink" to={"/map/"+ id}>Map {id}</Link></ListGroup.Item>)}
+    </ListGroup></div></Block>
+		</Container>
+   
   )
   ;
 };
