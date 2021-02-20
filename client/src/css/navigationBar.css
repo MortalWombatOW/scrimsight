@@ -1,15 +1,39 @@
-#navigation-bar {
+.NavigationBar {
     font-family: 'Montserrat',sans-serif;
-    background-color: #FEFFFE;
+    background-color: #ffffffdd;
     border: none;
+    width: 100%;
+    font-size: 2vh;
+    position:fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    box-shadow: 0 0 40px #777;
+    width: 100%;
 }
-
-#navigation-bar .scrim {
+ .scrim {
     color: #1A8FE3;
 }
-
-#navigation-bar .sight {
+.sight {
     color: #D11149;
+}
+
+.navlink {
+    color: #f6ae2d;
+    padding: 20px;
+}
+.avatar {
+    height: 2vh;
+    width: 2vh;
+    background-color: #777;
+    border-radius: 1vh;
+    display: inline-block;
+    /* padding-top: 0.5vh; */
+}
+
+.right {
+    float: right;
+    text-align: right;
 }
 
 #navigation-bar li a:hover, #navigation-bar li a:visited , #navigation-bar li a:focus {
