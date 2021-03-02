@@ -5,19 +5,23 @@
     height: 100%;
     z-index: 0;
     /* background-color: teal; */
+    color: #283044;
+    font-family: Varela Round, sans-serif;
 }
 
 
 .wrapper::before {
-    background-image: url(../img/fullpage/dva.jfif);
+    /* background-image: url(../img/fullpage/dva.jfif); */
     content: "";
     position: fixed;
     top: 0px;
     right: 0px;
     bottom: 0;
     left: 0px;
-    opacity: 0.4;
+    /* opacity: 0.4; */
     z-index: -1;
+    /* background-color: #CEBACF; */
+    background-color: #E5DBE6;
 }
 
 html, body, #root {
@@ -25,5 +29,5 @@ html, body, #root {
 }
 
 span.scrim {
-    color: #1A8FE3;
+    color: #278CBA;
 }

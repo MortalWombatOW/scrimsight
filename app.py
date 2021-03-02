@@ -4,7 +4,22 @@ from flask_sqlalchemy import SQLAlchemy
 from random import randint 
 from sqlalchemy.orm import sessionmaker
 import hashlib
-from logfile import dmg_cumsum, teams
+from logfile import dmg_cumsum, teams, get_summary, get_players
+import json
+import numpy as np
+from flask_caching import Cache
+
+config = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "simple", # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 # set the project root directory as the static folder, you can set others.
 app = Flask(__name__,
@@ -17,6 +32,11 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/scrimsight'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+app.config.from_mapping(config)
+cache = Cache(app)
+
+app.json_encoder = NumpyEncoder
 
 def hash_logfile(file):
     hash_ = hashlib.sha256(file).hexdigest()
@@ -67,7 +87,7 @@ class Logfile(db.Model):
 
     def __init__(self, log):
         self.log = log
-        self.id = hashlib.sha256(log).hexdigest()
+        self.id = hashlib.sha256(log).hexdigest()[0:10]
 
     def to_json(self):
         return {
@@ -130,14 +150,36 @@ def get_logfile(id):
     
     return jsonify(response_object), 404
 
-@app.route('/map/<id>/teams', methods=['GET'])
+@app.route('/map/<id>/summary', methods=['GET'])
+@cache.cached(timeout=50)
+def get_map_summary(id):
+    log = db.session.query(Logfile).filter(Logfile.id == id).first()
+
+    # print(log.log[0:500])  
+    
+    if log:
+        response_object = {
+            'status': 'Success',
+            'data': get_summary(log.log)
+        }
+        
+        return jsonify(response_object), 200
+    response_object = {
+        'status': 'Not found'
+    }
+    
+    return jsonify(response_object), 404
+
+
+@app.route('/map/<id>/players', methods=['GET'])
+@cache.cached(timeout=50)
 def get_teams(id):
     log = db.session.query(Logfile).filter(Logfile.id == id).first()  
     
     if log:
         response_object = {
             'status': 'Success',
-            'data': teams(log.log)
+            'data': get_players(log.log)
         }
         
         return jsonify(response_object), 200
@@ -166,26 +208,14 @@ def upload():
         'message': 'Invalid payload.'
     }
     
-
-    # if not db.session.query(Rsvp).filter(Rsvp.email == email).count():
-    #         rsvp = Rsvp(full_name, email, additional_information, greeting, events, guests)
-    #         db.session.add(rsvp)
-    #         db.session.commit()
-            
-    #         response_object = {
-    #             'status': 'success',
-    #             'message': 'RSVP has been added'
-    #         }
-
-    #         return jsonify(response_object), 201
-    hash_ = hashlib.sha256(post_data).hexdigest()
+    hash_ = hashlib.sha256(post_data).hexdigest()[0:10]
     if not db.session.query(Logfile).filter(Logfile.id == hash_).count():
         logfile = Logfile(post_data)
         db.session.add(logfile)
         db.session.commit()
         response_object = {
             'status': 'success',
-            'message': 'Logfile has been added'
+            'message': hash_
         }
 
         return jsonify(response_object), 201

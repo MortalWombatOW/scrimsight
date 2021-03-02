@@ -35,8 +35,8 @@
 .logo-top {
     font-size: 8vw;
     /* font-weight: bold; */
-    color: #d11149;
-    text-shadow: 0 0 5px #ede6dc;
+    color: #9C0D21;
+    /* text-shadow: 0 0 5px #ede6dc; */
     display: block;
     font-weight: bold;
 }
@@ -46,14 +46,13 @@
     font-size: 18px;
     width: 100%;
     text-align: right;
-    text-shadow: 0 0 3px #fcf3e1;
+    /* text-shadow: 0 0 3px #fcf3e1; */
 }
 
 .status-badge {
     margin-left: 20px;
     border-radius: 3px;
-    color: white;
-    background-color: #f18f01;
+    background-color: #CEBACF;
     font-size: 14px;
     text-shadow: none;
 }

@@ -11,4 +11,6 @@ display: block;
     background-color: transparent;
     border-radius: 0 !important;
     border-color: #aaa;
+    padding-top: 0;
+    padding-bottom: 0;
 }

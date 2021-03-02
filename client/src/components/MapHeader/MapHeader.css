@@ -1,0 +1,26 @@
+.MapHeader {}
+
+.teamName {
+    font-size: 35px;
+    margin-top: 5px;
+}
+
+.team1 {
+    color: #278CBA;
+    height: 100px;
+}
+
+.team2 {
+    color: #9C0D21;
+    height: 100px;
+}
+
+.wrap {
+    overflow-wrap: anywhere;
+    height: 100px;
+    padding-top: 3px;
+}
+
+.player {
+    line-height: 120%;
+}

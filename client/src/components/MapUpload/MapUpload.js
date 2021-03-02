@@ -3,13 +3,16 @@ import './MapUpload.css';
 import axios from 'axios';
 import React,{Component} from 'react';
 import Block from '../Block/Block';
- 
+import MapSummary from '../MapSummary/MapSummary';
+
+
 class MapUpload extends Component {
   
     state = {
  
       // Initially, no file is selected
-      selectedFile: null
+      selectedFile: null,
+      id: null
     };
     
     // On file select (from the pop up)
@@ -46,8 +49,9 @@ class MapUpload extends Component {
           'Content-Type': 'multipart/form-data'
         }
       })    
-      .then((res) => {             
-        this.setState({selectedFile: null});
+      .then((res) => {
+        console.log(res.data.message);
+        this.setState({selectedFile: null, id: res.data.message});
       })
       .catch((err) => {
         console.log(err);
@@ -76,6 +80,10 @@ class MapUpload extends Component {
             </p>
  
           </div>
+        );
+      } else if (this.state.id){
+        return (
+          <MapSummary id={this.state.id}></MapSummary>
         );
       } else {
         return (

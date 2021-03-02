@@ -5,6 +5,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Block from '../Block/Block';
 import { Col, Row, Container, Card, Button, Badge, ListGroup} from 'react-bootstrap';
+import MapSummary from '../MapSummary/MapSummary';
+import MapLink from '../MapLink/MapLink';
 
 const AllMapsPage = () => {
   const [data, setData] = useState(null);
@@ -29,7 +31,7 @@ const AllMapsPage = () => {
 			<Block title="Maps">
       <div className="AllMapsPage">
       <ListGroup>
-      {data.map(id => <ListGroup.Item  key={id}><Link className="maplink" to={"/map/"+ id}>Map {id}</Link></ListGroup.Item>)}
+      {data.map(id => <ListGroup.Item  key={id}><Link className="maplink" to={"/map/"+ id}><MapLink id={id}></MapLink></Link></ListGroup.Item>)}
     </ListGroup></div></Block>
 		</Container>
    

@@ -5,6 +5,8 @@ import DamageChart from '../DamageChart/DamageChart';
 import PlayersInMap from '../PlayersInMap/PlayersInMap';
 import MapPlayer from '../MapPlayer/MapPlayer';
 import { Col, Row, Container, Card, Button, Badge} from 'react-bootstrap';
+import MapSummary from '../MapSummary/MapSummary';
+import MapHeader from '../MapHeader/MapHeader';
 
 const players = [
   {hero: 'Ana', x: 4300, y:3000, team: 1},
@@ -24,12 +26,18 @@ const players = [
 const MapPage = (params) => (
   <div className="MapPage">
   <Container>
-     <Row>
+     {/* <Row>
 				<Col md={12}><MapPlayer players={players} /></Col>
-			</Row>
+			</Row> */}
+      <Row>
+        <Col md={12}><MapHeader id={params.match.params.id}></MapHeader></Col>
+      </Row>
+      <Row>
+        <Col md={12}><MapSummary id={params.match.params.id}></MapSummary></Col>
+      </Row>
 			<Row>
-				<Col md={4}><PlayersInMap key='players' id={params.match.params.id}></PlayersInMap></Col>
-				<Col md={8}><DamageChart key='dmg' id={params.match.params.id}></DamageChart></Col>
+				{/* <Col md={4}><PlayersInMap key='players' id={params.match.params.id}></PlayersInMap></Col> */}
+				{/* <Col md={8}><DamageChart key='dmg' id={params.match.params.id}></DamageChart></Col> */}
 			</Row>
 		</Container>
     

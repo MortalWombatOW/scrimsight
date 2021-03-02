@@ -1,7 +1,8 @@
 .Block {
-    background: #444444bb;
+    /* background: #444444bb; */
     /* border-radius: 5px; */
-    color: rgb(236, 236, 236);
+    border: 1px solid #ccc;
+    /* color: rgb(236, 236, 236); */
     padding: 10px;
     min-height: 300px;
     margin: 10px;
@@ -14,5 +15,5 @@
     margin-bottom: 15px;
     font-weight: bold;
     font-family: Montserrat, sans-serif;
-    opacity: 0.80;
+    /* opacity: 0.80; */
 }

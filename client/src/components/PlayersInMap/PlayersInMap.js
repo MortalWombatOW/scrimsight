@@ -28,7 +28,7 @@ const PlayersInMap = (props) => {
   <div className="DamageChart">
     <Block title="Players">
       <ul>
-       {Object.keys(data).map((player, i) => <li key={i}>{player}: {data[player]}</li>)}
+       {Object.keys(data).map((player, i) => <li key={i}>{player}: {data.data[player]}</li>)}
       </ul>
     </Block>
   </div>
