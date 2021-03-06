@@ -1,39 +1,55 @@
 .splash {
-    height: 40%;
-    width: 70%;
-    margin-top: 15%;
-    margin-bottom: 50px;
-    margin-left: 15%;;
+    height: 300px;
+    width: 100%;
+    margin-top: 0px;
+    /* margin-left: 15%; */
+    
 }
 
 .splash::before {
+    background-color: white;
+    content: "";
+    height: 350px;
+    width: 100%;
+    position: absolute;
+    
+    top: 0px;
+    left: 0px;
+    /* width: 100%; */
+    
+    position: absolute;
+    z-index: -2;
+    
+    /* border-bottom-right-radius:20%; */
+    
+}
+.splash::after {
+    
+    height: 350px;
+    width: 100%;
+    z-index: -2;
+    content: "";
+    position: absolute;
+    top: 0;
+    
     background-image: url(../img/fullpage/eqo.jfif);
     background-size: cover;
-    
-    content: "";
-    width: 70%;
-    height: 100%;
-    position: absolute;
-    background-position: calc(50%) calc(50%);
-    max-height: 500px;
-    max-width: 100%;
-    /* width: 100%; */
-    box-shadow:  0px 5px 50px #333;
-    position: absolute;
-    z-index: -1;
-    opacity: 0;
+    background-position:  calc(50% - 15px) calc(50%);
+    opacity: 0.4;
+    background-size: 110%;
 }
 
 .logo {
-    text-align: right;
-    margin-left: auto; 
-    margin-right: 20%;
-    padding-top: calc(15%+150px);
-    padding-left: 75px;
+    text-align: center;
+    /* margin-left: auto; 
+    margin-right: 20%; */
+    padding-top: 50px;
+    /* padding-left: 75px; */
+    z-index: 0;
 }
 
 .logo-top {
-    font-size: 8vw;
+    font-size: 90px;
     /* font-weight: bold; */
     color: #9C0D21;
     /* text-shadow: 0 0 5px #ede6dc; */
@@ -42,17 +58,127 @@
 }
 
 .logo-bottom {
-    margin-top:  0px;
+    margin-top:  -30px;
+    margin-left: -105px;
     font-size: 18px;
     width: 100%;
-    text-align: right;
+    text-align: center;
     /* text-shadow: 0 0 3px #fcf3e1; */
+    font-size: 17px;
+    font-weight: bold;
+    color: #283044;
 }
 
 .status-badge {
     margin-left: 20px;
     border-radius: 3px;
-    background-color: #CEBACF;
+    background-color: #e5dbe6;
     font-size: 14px;
     text-shadow: none;
+    color: #283044;
+}
+
+.number {
+    font-size: 50px;
+    /* border: 1px solid #283044; */
+    margin-top: 50px;
+    padding-right: 50px;
+    border-right: 1px solid #8e98b1;
+    margin-right: 50px;
+    padding-top: 23px;
+    padding-bottom: 23px;
+    margin-bottom: 10px;
+}
+
+.item {
+    font-size: 50px;
+    margin-top: 50px;
+}
+
+.desc {
+}
+
+.nudge1 {
+    /* margin-left: 25%;
+    margin-right: 25%; */
+    border-top-left-radius:100px;
+    border-top-right-radius:100px;
+    z-index: 1;
+}
+
+.nudge1::before {
+    background-color: white;
+    
+    
+    position: fixed;
+    top: 250px;
+    right: 0px;
+    bottom: 0;
+    left: 0px;
+    opacity: 1;
+    z-index: -1;
+    content: "";
+    display: block;
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+    /* background-color: #CEBACF; */
+    /* background-color: #E5DBE6; */
+    box-shadow:  0px 0px 100px rgba(80, 67, 85, 0.6);
+}
+
+.nudge1::after {
+    background-image: url(../img/bg.png);
+    background-size: cover;
+    
+    position: fixed;
+    top: 250px;
+    right: 0px;
+    bottom: 0;
+    left: 0px;
+    opacity: 0.4;
+    z-index: -1;
+    content: "";
+    display: block;
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+    /* background-color: #CEBACF; */
+    /* background-color: #E5DBE6; */
+    box-shadow:  0px 0px 50px rgba(80, 67, 85, 0.6);
+}
+
+.header {
+    margin-top: 50px;
+    padding-right: 50px;
+    border-right: 1px solid #8e98b1;
+    margin-right: 50px;
+    padding-top: 23px;
+    padding-bottom: 23px;
+    margin-bottom: 10px;
+}
+
+.cta {
+    margin-top: 0px;
+    text-align: center;
+}
+
+.img1 {
+    position: absolute;
+    top: 450px;
+    right: 150px;
+    width: 350px;
+    height: 450px;
+    object-fit: cover;
+    box-shadow: 0px 0px 30px rgba(80, 67, 85, 0.6);
+    border-radius: 15px;
+    z-index: 1;
+}
+.img2 {
+    position: absolute;
+    top: 400px;
+    right: 200px;
+    width: 350px;
+    height: 450px;
+    object-fit: cover;
+    box-shadow: 0px 0px 30px rgba(80, 67, 85, 0.6);
+    border-radius: 15px;
 }

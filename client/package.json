@@ -25,6 +25,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "1.1.4",
     "react-scrollable-anchor": "^0.6.1",
+    "react-select": "^4.1.0",
     "recharts": "^2.0.6"
   },
   "scripts": {

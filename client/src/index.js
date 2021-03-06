@@ -6,58 +6,43 @@ import LandingPage from './LandingPage';
 import UploadPage from './components/UploadPage/UploadPage';
 import NavigationBar from './components/NavigationBar';
 import AllMapsPage from './components/AllMapsPage/AllMapsPage';
-import DiscordOauth2 from 'discord-oauth2';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
 import MapPage from './components/MapPage/MapPage';
-
-const oauth = new DiscordOauth2({
-  clientId: "815622008402477116",
-  clientSecret: "S3w3_pmg1rkK3K9-huEso-oHx23ly_Yo",
-  redirectUri: "http://localhost:3000/callback",
-});
-
-const state = new Uint16Array(1);
-window.crypto.getRandomValues(state);
-console.log(state);
-console.log(state[0].toString(16));
-const url = oauth.generateAuthUrl({
-  scope: ["identify", "guilds"],
-  state: state[0].toString(16), // Be aware that randomBytes is sync if no callback is provided
-});
-
-console.log(url);
-
-// oauth.tokenRequest({
+import TeamNavbar from './components/TeamNavbar/TeamNavbar';
+import ScrimNavbar from './components/ScrimNavbar/ScrimNavbar';
+import MapNavbar from './components/MapNavbar/MapNavbar';
+import OAuthCallbackHandler from './components/OAuthCallbackHandler/OAuthCallbackHandler'
 
 
-//   code: "fff",
-//   scope: "identify",
-//   grantType: "authorization_code",
-  
-  
-// }).then(console.log);
 
-// ReactDOM.render(<App />, document.getElementById('root'));
-
-ReactDOM.render((
-<Router>
-    <div className="wrapper">
-    <Switch>
-    <Route path="/map/:id" component={MapPage}></Route>
-    <Route path="/map">
-        <AllMapsPage />
-    </Route>
-    <Route path="/upload">
-      <UploadPage />
-    </Route>
-    <Route path="/">
-        <LandingPage />
-    </Route>
-  </Switch>
-  </div>
-  </Router>), document.getElementById('root'));
+ReactDOM.render((<div className="wrapper">
+  <Router>
+      <Switch>
+        {/* <Route path="/map/:id" component={MapPage}></Route> */}
+        <Route path="/teams">
+            <TeamNavbar></TeamNavbar>
+        </Route>
+        <Route path="/team/:teamid">
+          <ScrimNavbar></ScrimNavbar>
+        </Route>
+        <Route path="/team/:teamid/scrim/:scrimid">
+            <MapNavbar></MapNavbar>
+        </Route>
+        <Route path="/team/:teamid/scrim/:scrimid/map/:mapid">
+            <NavigationBar></NavigationBar>
+        </Route>
+        <Route path="/upload">
+          <UploadPage />
+        </Route>
+        <Route path="/callback"><OAuthCallbackHandler/></Route>
+        <Route path="/">
+            <LandingPage />
+        </Route>
+      </Switch>
+    </Router>
+</div>), document.getElementById('root'));
 registerServiceWorker();

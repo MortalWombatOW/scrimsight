@@ -8,6 +8,7 @@ from logfile import dmg_cumsum, teams, get_summary, get_players
 import json
 import numpy as np
 from flask_caching import Cache
+import os,binascii
 
 config = {
     "DEBUG": True,          # some Flask specific configs
@@ -80,19 +81,73 @@ def hash_logfile(file):
 #             'guests': self.guests,
 #         }
 
-class Logfile(db.Model):
-    __tablename__ = 'logfile'
+class User(db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.String(120), primary_key=True)
+
+    def __init__(self, id):
+        self.id = id
+
+    def to_json(self):
+        return {
+            'id': self.id,
+        }
+
+class Team(db.Model):
+    __tablename__ = 'team'
+    id = db.Column(db.String(120), primary_key=True)
+    name = db.Column(db.String(120))
+
+    def __init__(self, name, id):
+        self.id = id
+        self.name = name
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
+class Scrim(db.Model):
+    __tablename__ = 'scrim'
+    id = db.Column(db.String(120), primary_key=True)
+    team1_id = db.Column(db.String(120))
+    team2_id = db.Column(db.String(120))
+    timestamp = db.Column(db.DateTime)
+
+    def __init__(self):
+        self.id = binascii.b2a_hex(os.urandom(15))
+
+    def to_json(self):
+        return {
+            'id': self.id,
+        }
+
+class Map(db.Model):
+    __tablename__ = 'map'
+    id = db.Column(db.String(120), primary_key=True)
+    scrim_id = db.Column(db.String(120))
     log = db.Column(db.Text)
 
-    def __init__(self, log):
+    def __init__(self, scrim_id, log):
         self.log = log
+        self.scrim_id = scrim_id
         self.id = hashlib.sha256(log).hexdigest()[0:10]
 
     def to_json(self):
         return {
             'id': self.id,
         }
+
+class Membership(db.Model):
+    __tablename__ = "membership"
+    user_id = db.Column(db.String(120), primary_key=True)
+    team_id = db.Column(db.String(120))
+    membership_type = db.Column(db.String(120))
+    def __init__(self, user_id, team_id, membership_type):
+        self.user_id = user_id
+        self.team_id = team_id
+        self.membership_type = membership_type
 
 # class Map(db.Model):
 #     __tablename__ = 'map'
@@ -126,21 +181,18 @@ class Logfile(db.Model):
 def root():
     return app.send_static_file('index.html')
 
-@app.route('/users/ping')
-def ping_pong():
-    return jsonify({
-        'status': 'success',
-        'message': 'pong!'
-    })
+@app.route('/user/create', methods=['post'])
+def create_user(id):
+    return jsonify(id), 404
 
-@app.route('/logfile/<id>', methods=['GET'])
-def get_logfile(id):
-    log = db.session.query(Logfile).filter(Logfile.id == id).first()  
+@app.route('/map/<id>', methods=['GET'])
+def get_map(id):
+    map_ = db.session.query(Map).filter(Map.id == id).first()  
     
-    if log:
+    if map_:
         response_object = {
             'status': 'Success',
-            'data': dmg_cumsum(log.log).to_csv()
+            'data': dmg_cumsum(map_.log).to_csv()
         }
         
         return jsonify(response_object), 200
@@ -153,14 +205,14 @@ def get_logfile(id):
 @app.route('/map/<id>/summary', methods=['GET'])
 @cache.cached(timeout=50)
 def get_map_summary(id):
-    log = db.session.query(Logfile).filter(Logfile.id == id).first()
+    map_ = db.session.query(Map).filter(Map.id == id).first()
 
     # print(log.log[0:500])  
     
-    if log:
+    if map_:
         response_object = {
             'status': 'Success',
-            'data': get_summary(log.log)
+            'data': get_summary(map_.log)
         }
         
         return jsonify(response_object), 200
@@ -174,7 +226,7 @@ def get_map_summary(id):
 @app.route('/map/<id>/players', methods=['GET'])
 @cache.cached(timeout=50)
 def get_teams(id):
-    log = db.session.query(Logfile).filter(Logfile.id == id).first()  
+    log = db.session.query(Map).filter(Map.id == id).first()  
     
     if log:
         response_object = {
@@ -189,9 +241,9 @@ def get_teams(id):
     
     return jsonify(response_object), 404
 
-@app.route('/logfile', methods=['GET'])
+@app.route('/explore', methods=['GET'])
 def get_logfiles():
-    ids = db.session.query(Logfile.id).all()
+    ids = db.session.query(Map.id).all()
 
     response_object = {
         'status': 'Success',
@@ -209,8 +261,8 @@ def upload():
     }
     
     hash_ = hashlib.sha256(post_data).hexdigest()[0:10]
-    if not db.session.query(Logfile).filter(Logfile.id == hash_).count():
-        logfile = Logfile(post_data)
+    if not db.session.query(Map).filter(Map.id == hash_).count():
+        logfile = Map(post_data)
         db.session.add(logfile)
         db.session.commit()
         response_object = {
