@@ -1,0 +1,40 @@
+.SignupFlow {
+    /* background-image: url('../../img/fullpage/cree.jfif'); */
+    height: 100%;
+    width: 100%;
+    /* padding-top: 25%; */
+}
+
+.inputwrapper {
+    width: 100%;
+    /* text-align: center; */
+    /* background-color: #0c176b; */
+    padding-left: 50px;
+}
+
+.inputwrapper>button {
+    background-color: white;
+    color: #0c176b;
+    border: 3px solid #0c176b;
+    font-weight: bold;
+    height: 50px;
+    margin: 5px 25px;
+    border-radius: 15px;
+    font-size: 16px;
+}
+
+.inputwrapper>button:hover {
+    background-color: #0c176b10;
+}
+
+.inputwrapper>input {
+    background-color: white;
+    color: #0c176b;
+    border: 3px solid #0c176b;
+    font-weight: bold;
+    height: 50px;
+    margin: 5px 25px;
+    border-radius: 15px;
+    font-size: 16px;
+    padding-left: 15px;
+}

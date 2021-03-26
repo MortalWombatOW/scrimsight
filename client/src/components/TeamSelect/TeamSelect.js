@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './TeamSelect.css';
-import Select from 'react-select';
+import NavSelect from '../NavSelect/NavSelect';
 
-const options = [
-  { value: 'g9lul', label: 'Google G9Lul' },
-]
 
-const TeamSelect = () => (
-  <div className="TeamSelect">
-    <Select options={options} placeholder="Team" defaultInputValue="Google G9Lul"></Select>
-  </div>
-);
+const dropdown = (setTeam) => (() => (
+  <span onClick={()=>setTeam('g9lul')}>teams</span>
+));
+
+const TeamSelect = (props) => {
+  return (
+    <NavSelect dropdown={dropdown(props.setTeam)}>{props.team == null ? 'Select Team' : props.team}</NavSelect>
+  );
+};
 
 TeamSelect.propTypes = {};
 

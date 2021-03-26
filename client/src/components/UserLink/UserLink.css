@@ -9,28 +9,66 @@
     /* padding-top: 0.5vh; */
     color: white;
     padding-right: 10px;
-    transition: transform .1s; /* Animation */
+    /* transition: transform .1sAnimation */
     font-size: 13px;
-    will-change: transform;
-    box-shadow: 0 0 3px rgb(111, 109, 112);
+    /* will-change: transform; */
+    height: 50px;
+    /* padding-top: 2px; */
+    white-space: nowrap;
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    width: 50px;
+    overflow: hidden;
+    transition: width 0.3s;
+    /* border: 2px solid #900401; */
 }
 
-.UserLink:hover {
-    /* border: 2px solid gold; */
-    /* border-radius: 19px; */
+@keyframes expand {
+    0% {
+        width: 50px;
+    }
+    100% {
+        width: 180px;
+    }
+}
+
+.name {
+    margin-top: 5px;
+    display: inline-block;
+}
+
+/* .UserLink:hover {
     transform: scale(1.1);
     color: white;
     text-decoration: none;
+} */
+
+.UserLink:hover {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    width: 180px;
+    transition: width 0.3s;
 }
 
 .UserLink > img {
     border-radius: 50%;
+    margin: 2px;
 }
 
 .loggedin {
-    background-color: #ee964b;
-    padding: 5px;
+    background-color: #0c176b;
+    /* padding: 2px; */
     padding-right: 20px;
+}
+
+.loggedin:hover {
+    color: white;
+    width: 185px;
+    transition: width 0.3s;
+    text-overflow: ellipsis;
 }
 
 .loggedin > img {

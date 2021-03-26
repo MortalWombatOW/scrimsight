@@ -30,14 +30,14 @@ const UserLink = (props) => {
     const content = props.children ? props.children : "Log in with Discord";
     return (
       <a className="UserLink" href={url}>
-        <img src={discord} width={38} height={38}></img>
-        {content}
+        <img src={discord} width={46} height={46}></img>
+        <span className="name" >{content}</span>
       </a>
     );
   }
 
   return (<a className="UserLink loggedin" href={'/teams'}>
-    <img src={avatarUrl} width={38} height={38}></img>
+    <img src={avatarUrl} width={46} height={46}></img>
     {props.children ? props.children : username}
   </a>);
 };

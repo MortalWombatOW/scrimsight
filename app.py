@@ -9,6 +9,7 @@ import json
 import numpy as np
 from flask_caching import Cache
 import os,binascii
+import uuid
 
 config = {
     "DEBUG": True,          # some Flask specific configs
@@ -83,7 +84,8 @@ def hash_logfile(file):
 
 class User(db.Model):
     __tablename__ = 'user'
-    id = db.Column(db.String(120), primary_key=True)
+    # discord id
+    id = db.Column(db.String(120), primary_key=True, unique=True)
 
     def __init__(self, id):
         self.id = id
@@ -95,17 +97,20 @@ class User(db.Model):
 
 class Team(db.Model):
     __tablename__ = 'team'
-    id = db.Column(db.String(120), primary_key=True)
+    id = db.Column(db.String(120), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
     name = db.Column(db.String(120))
+    code = db.Column(db.String(5))
 
-    def __init__(self, name, id):
-        self.id = id
+    def __init__(self, name, code):
+        self.id = str(uuid.uuid4())
         self.name = name
+        self.code = code
 
     def to_json(self):
         return {
             'id': self.id,
-            'name': self.name
+            'name': self.name,
+            'code': self.code
         }
 
 class Scrim(db.Model):
@@ -148,42 +153,107 @@ class Membership(db.Model):
         self.user_id = user_id
         self.team_id = team_id
         self.membership_type = membership_type
-
-# class Map(db.Model):
-#     __tablename__ = 'map'
-#     id = db.Column(db.String(120), primary_key=True)
-#     log = db.Column(db.Text)
-
-#     def __init__(self, log):
-#         self.log = log
-#         self.id = hashlib.sha256(log).hexdigest()
-
-#     def to_json(self):
-#         return {
-#             'id': self.uuid,
-#         }
-
-# class Logfile(db.Model):
-#     __tablename__ = 'logfile'
-#     id = db.Column(db.String(120), primary_key=True)
-#     log = db.Column(db.Text)
-
-#     def __init__(self, log):
-#         self.log = log
-#         self.id = hashlib.sha256(log).hexdigest()
-
-#     def to_json(self):
-#         return {
-#             'id': self.uuid,
-#         }
+    
+    def to_json(self):
+        return {
+            'user': self.user_id,
+            'team': self.team_id,
+            'type': self.membership_type,
+        }
 
 @app.route('/')
 def root():
     return app.send_static_file('index.html')
 
-@app.route('/user/create', methods=['post'])
-def create_user(id):
-    return jsonify(id), 404
+@app.route('/user', methods=['post'])
+def create_user():
+    id = request.json.get('id')
+    response_object = {
+        'status': 'fail',
+        'message': 'Invalid payload.'
+    }
+    
+    if not db.session.query(User).filter(User.id == id).count():
+        user = User(id)
+        db.session.add(user)
+        db.session.commit()
+        response_object = {
+            'status': 'success'
+        }
+
+        return jsonify(response_object), 201
+
+    return jsonify(response_object), 201
+
+@app.route('/user/<id>', methods=['get'])
+def get_user_info(id):
+
+    # id = request.json.get('id')
+
+    response_object = {
+        'status': 'fail',
+        'message': 'User not found.'
+    }
+    
+    user = db.session.query(User).get(id)
+
+    if user:
+        teams = db.session.query(Membership, Team).filter(Membership.user_id == id and Membership.team_id == Team.id).all()
+
+        response_object = {
+            'status': 'success',
+            'user': user.to_json(),
+            'teams': [team.to_json() for team in teams]
+        }
+
+        return jsonify(response_object), 201
+
+    return jsonify(response_object), 404
+
+
+@app.route('/team', methods=['post'])
+def create_team():
+    name = request.json.get('name')
+    code = request.json.get('code')
+    creator = request.json.get('user')
+    response_object = {
+        'status': 'fail',
+        'message': 'Invalid payload.'
+    }
+    
+    if not db.session.query(Team).filter(Team.code == code).count():
+        team = Team(name, code)
+        db.session.add(team)
+        rel = Membership(team.id, creator, 'admin')
+        db.session.add(rel)
+        db.session.commit()
+        response_object = {
+            'status': 'success',
+            'team': team.to_json(),
+            'members': [rel.to_json()]
+        }
+
+        return jsonify(response_object), 201
+
+    return jsonify(response_object), 400
+
+@app.route('/team/<code>', methods=['GET'])
+def get_team(code):
+    team = db.session.query(Team).filter(Team.code == code).first()  
+    
+    if team:
+        members = db.session.query(Membership).filter(Membership.team_id == team.id).all()
+        response_object = {
+            'status': 'Success',
+            'members': [member.to_json() for member in members]
+        }
+        
+        return jsonify(response_object), 200
+    response_object = {
+        'status': 'Not found'
+    }
+    
+    return jsonify(response_object), 404
 
 @app.route('/map/<id>', methods=['GET'])
 def get_map(id):

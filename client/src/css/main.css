@@ -11,7 +11,3 @@
 html, body, #root {
     height: 100%;
 }
-
-span.scrim {
-    color: #278CBA;
-}

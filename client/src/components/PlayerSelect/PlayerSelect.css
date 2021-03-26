@@ -1,1 +1,5 @@
-.PlayerSelect {}
+.PlayerSelect {
+    display: inline-block;
+    border-bottom-right-radius: 25px;
+    border-top-right-radius: 25px;
+}

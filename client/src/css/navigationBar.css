@@ -1,51 +1,7 @@
+
 .NavigationBar {
-    font-family: Varela Round, sans-serif;
-    /* background-color: #ffffffdd;
-    border: none;
-    width: 100%;
-    font-size: 2vh;
-    position:fixed;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    box-shadow: 0 0 40px #777;
-    width: 100%; */
-}
- .scrim {
-    color: #1A8FE3;
-}
-.sight {
-    color: #D11149;
-}
-
-.navlink {
-    color: #f6ae2d;
-    padding: 20px;
-}
-
-
-.right {
-    float: right;
-    text-align: right;
-}
-
-#navigation-bar li a:hover, #navigation-bar li a:visited , #navigation-bar li a:focus {
-    color:#393e41;
-}
-
-.navbar-toggle {
-    background-color: #14213D;
-    color: #f6ae2d;
-}
-
-.navbar-toggle.collapsed {
-    color: white;
-}
-
-.navbar-inverse .navbar-collapse {
-    border: none;
-}
-
-.navbar-header {
-    /* border-bottom: 5px solid #D11149; */
+    font-size: 30px;
+    padding-top: 10px;
+    margin-left: 10px;
+    margin-bottom: 50px;
 }

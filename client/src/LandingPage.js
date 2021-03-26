@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './css/main.css'
 import { Jumbotron } from 'react-bootstrap'
 import DemoPage from './components/DemoPage'
-import NavigationBar from './components/NavigationBar'
 import axios from 'axios'
 
 export default class Page extends Component {

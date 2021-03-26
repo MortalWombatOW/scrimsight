@@ -1,0 +1,11 @@
+
+
+.Dashboard {}
+
+.dashelement {
+    background-color: #e4ddff42;
+}
+
+.dashelement.react-draggable-dragging {
+    background-color: #e4ddff42;
+}
