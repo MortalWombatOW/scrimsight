@@ -24,6 +24,7 @@
     "react-dom": "^16.14.0",
     "react-full-page": "^0.1.4",
     "react-grid-layout": "^1.2.3",
+    "react-icons": "^4.2.0",
     "react-map-interaction": "^2.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "1.1.4",

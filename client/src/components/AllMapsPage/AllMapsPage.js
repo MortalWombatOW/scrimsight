@@ -7,12 +7,13 @@ import Block from '../Block/Block';
 import { Col, Row, Container, Card, Button, Badge, ListGroup} from 'react-bootstrap';
 import MapSummary from '../MapSummary/MapSummary';
 import MapLink from '../MapLink/MapLink';
+import Navbar from '../Navbar/Navbar';
 
 const AllMapsPage = () => {
   const [data, setData] = useState(null);
-  
+  let maps = null;
   if (data == null) {
-    axios.get(`${process.env.REACT_APP_USERS_SERVICE_URL}/logfile`)
+    axios.get(`${process.env.REACT_APP_USERS_SERVICE_URL}/memberships`)
     .then((res) => {             
       setData(res.data.data);
     })
@@ -20,20 +21,25 @@ const AllMapsPage = () => {
       console.log(err);
     });
   
-    return (
-      <div className="AllMapsPage">
-        dd
+    maps = (
+      <div className="loading">
       </div>
     );
+  } else {
+    maps = data.map((map, i) => <MapLink id={map.id} key={i} />)
   }
   return (
-    <Container>
-			<Block title="Maps">
-      <div className="AllMapsPage">
-      <ListGroup>
-      {data.map(id => <ListGroup.Item  key={id}><Link className="maplink" to={"/map/"+ id}><MapLink id={id}></MapLink></Link></ListGroup.Item>)}
-    </ListGroup></div></Block>
-		</Container>
+    <div className="AllMapsPage">
+      <div className="filters">
+        <Navbar/>
+      </div>
+      <div className="rightwrapper">
+      <button className="uploadbutton draw meet">+</button>
+      <div className="mapswrapper">
+        {maps}
+      </div>
+      </div>
+    </div>
    
   )
   ;

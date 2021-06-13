@@ -3,39 +3,35 @@
     width: 2vh; */
     /* height: 38px;
     width: 38px; */
-    background-color: #8c9eff;
-    border-radius: 24px;
-    display: inline-block;
-    /* padding-top: 0.5vh; */
-    color: white;
-    padding-right: 10px;
     /* transition: transform .1sAnimation */
     font-size: 13px;
     /* will-change: transform; */
-    height: 50px;
+    height: 25px;
     /* padding-top: 2px; */
     white-space: nowrap;
-    position: absolute;
-    top: 50px;
-    right: 50px;
-    width: 50px;
-    overflow: hidden;
-    transition: width 0.3s;
     /* border: 2px solid #900401; */
+    color: white;
+    text-decoration: unset;
 }
 
-@keyframes expand {
+/* @keyframes expand {
     0% {
         width: 50px;
     }
     100% {
         width: 180px;
     }
-}
+} */
 
 .name {
     margin-top: 5px;
     display: inline-block;
+    text-decoration: unset;
+    color: white;
+}
+
+.name:hover {
+    text-decoration: underline;
 }
 
 /* .UserLink:hover {
@@ -44,33 +40,19 @@
     text-decoration: none;
 } */
 
-.UserLink:hover {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    display: inline-block;
-    width: 180px;
-    transition: width 0.3s;
-}
-
-.UserLink > img {
+/* .UserLink > img {
     border-radius: 50%;
     margin: 2px;
-}
+} */
 
-.loggedin {
-    background-color: #0c176b;
-    /* padding: 2px; */
-    padding-right: 20px;
+/* .loggedin {
+
 }
 
 .loggedin:hover {
-    color: white;
-    width: 185px;
-    transition: width 0.3s;
-    text-overflow: ellipsis;
-}
 
+} */
+/* 
 .loggedin > img {
     margin-right: 10px;
-}
+} */

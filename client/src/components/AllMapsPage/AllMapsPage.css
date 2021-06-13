@@ -1,16 +1,30 @@
 .AllMapsPage {
-display: block;
+margin-left: min(20%, 400px);
+margin-right: min(20%, 400px);
 }
 
-.maplink {
-  color: #f6ae2d;
-  font-size: 12px;
+.filters {
+  margin-top: 100px;
+  margin-bottom: 20px;
+  display: inline-block;
+  height: 70%;
 }
 
-.list-group-item {
-    background-color: transparent;
-    border-radius: 0 !important;
-    border-color: #aaa;
-    padding-top: 0;
-    padding-bottom: 0;
+.filters button {
+  margin-right: 20px;
+}
+
+.uploadbutton {
+  width: 100%;
+  font-size: 50px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 25px;
+  color: grey;
+  border-color: grey;
+}
+
+.rightwrapper {
+  display: inline-block;
+  height: 70%;
 }

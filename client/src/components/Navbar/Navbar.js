@@ -8,7 +8,7 @@ import TeamSelect from '../TeamSelect/TeamSelect';
 import ScrimSelect from '../ScrimSelect/ScrimSelect';
 import PlayerSelect from '../PlayerSelect/PlayerSelect';
 import { useQueryParam, NumberParam, StringParam } from 'use-query-params';
-import NavSelect from '../NavSelect/NavSelect';
+import DateSelect from '../DateSelect/DateSelect';
 import MapUpload from '../MapUpload/MapUpload';
 
 
@@ -20,16 +20,12 @@ const options = [
 
 const Navbar = () => {
   const [team, setTeam] = useQueryParam('team', StringParam);
-  const [opponent, setOpponent] = useQueryParam('opponent', StringParam);
-  const [date, setDate] = useQueryParam('date', StringParam);
-  const [player, setPlayer] = useQueryParam('player', StringParam);
+  const [start, setStart] = useQueryParam('start', StringParam);
+  const [end, setEnd] = useQueryParam('end', StringParam);
   return (
       <div className="Navbar">
           <TeamSelect team={team} setTeam={setTeam}/>
-          {team != undefined ? <ScrimSelect/> : null}
-          {team != undefined ? <PlayerSelect/> : null}
-          <NavSelect dropdown={() => <MapUpload></MapUpload> }>Upload Map</NavSelect>
-          <UserLink></UserLink>
+          <DateSelect start={start} setStart={setStart} end={end} setEnd={setEnd}></DateSelect>
       </div>
   );
 };

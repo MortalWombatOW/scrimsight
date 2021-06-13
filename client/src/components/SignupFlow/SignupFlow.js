@@ -49,7 +49,6 @@ const SignupFlow = () => {
             
   return  (
     <div className="SignupFlow">
-      <Logo></Logo>
         {input}
     </div>
   );

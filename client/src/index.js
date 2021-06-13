@@ -14,14 +14,24 @@ import DemoPage from './components/DemoPage';
 import SignupFlow from './components/SignupFlow/SignupFlow';
 import { QueryParamProvider } from 'use-query-params';
 import Dashboard from './components/Dashboard/Dashboard';
+import NavigationBar from './components/NavigationBar/NavigationBar'
 
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
+import AllMapsPage from './components/AllMapsPage/AllMapsPage';
+import AdminDashboard from './components/AdminDashboard/AdminDashboard';
 
 ReactDOM.render((<div className="wrapper">
   <Router>
+  <NavigationBar />
   <QueryParamProvider ReactRouterRoute={Route}>
       <Switch>
+        <Route path="/admin">
+          <AdminDashboard></AdminDashboard>
+        </Route>
+      <Route path="/home">
+          <AllMapsPage/>
+      </Route>
         <Route path="/explore">
           <Dashboard>
             <span>a</span>

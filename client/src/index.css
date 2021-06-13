@@ -1,10 +1,124 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 @import url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
 
 body {
   margin: 0;
   padding: 0;
-  font-family: Varela Round, sans-serif;
-  background-color: white;
+}
+
+.wrapper {
+  color: white;
+  font-family: 'Montserrat', sans-serif
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url(img/fullpage/eqo-bg.png);
+    background-size: cover;
+    z-index: -1;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+button {
+  background: #278CBA77;
+  border-radius: 5px;
+  border: 1px solid gray;
+  /* border: none; */
+  box-shadow: 0 0 25px rgba(129, 108, 116, 0.884);
+  box-sizing: border-box;
+  margin: 1em;
+  padding: 1em 2em;
+  box-shadow: inset 0 0 0 10px none;
+  color: white;
+  font-size: inherit;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+  overflow: hidden !important;
+}
+
+/* button::before, button::after {
+box-sizing: inherit;
+content: "";
+position: absolute;
+width: 100%;
+height: 100%;
+}
+
+.draw {
+transition: color 0.25s;
+}
+.draw::before, .draw::after {
+border: 3px solid transparent;
+width: 0;
+height: 0;
+}
+.draw::before {
+top: 0;
+left: 0;
+}
+.draw::after {
+bottom: 0;
+right: 0;
+}
+.draw:hover {
+color: #60daaa;
+}
+.draw:hover::before, .draw:hover::after {
+width: 100%;
+height: 100%;
+}
+.draw:hover::before {
+border-top-color: #60daaa;
+border-right-color: #60daaa;
+transition: width 0.25s ease-out, height 0.25s ease-out 0.25s;
+}
+.draw:hover::after {
+border-bottom-color: #60daaa;
+border-left-color: #60daaa;
+transition: border-color 0s ease-out 0.5s, width 0.25s ease-out 0.5s, height 0.25s ease-out 0.75s;
+}
+
+.meet:hover {
+color: #278CBA;
+}
+.meet::after {
+top: 0;
+left: 0;
+}
+.meet:hover::before {
+border-top-color: #278CBA;
+border-right-color: #278CBA;
+}
+.meet:hover::after {
+border-bottom-color: #278CBA;
+border-left-color: #278CBA;
+transition: height 0.25s ease-out, width 0.25s ease-out 0.25s;
+} */
+
+button:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -200%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 10%,
+    #278CBA 50%,
+    transparent 90%
+  );
+  transition: all 500ms;
+  z-index: -1;
+}
+
+button:hover:before {
+  left: 100%;
 }

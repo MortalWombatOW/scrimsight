@@ -2,6 +2,7 @@
     /* background-image: url('../../img/fullpage/cree.jfif'); */
     height: 100%;
     width: 100%;
+    
     /* padding-top: 25%; */
 }
 
@@ -9,32 +10,21 @@
     width: 100%;
     /* text-align: center; */
     /* background-color: #0c176b; */
-    padding-left: 50px;
+    display: flex;
+    justify-content: center;
+    margin-top: 40vh;
 }
 
-.inputwrapper>button {
-    background-color: white;
-    color: #0c176b;
-    border: 3px solid #0c176b;
+.inputwrapper button {
+    padding-left: 25px;
+    padding-right: 25px;
     font-weight: bold;
-    height: 50px;
-    margin: 5px 25px;
-    border-radius: 15px;
-    font-size: 16px;
+    margin: 30px;
 }
 
-.inputwrapper>button:hover {
-    background-color: #0c176b10;
-}
-
-.inputwrapper>input {
-    background-color: white;
-    color: #0c176b;
-    border: 3px solid #0c176b;
-    font-weight: bold;
-    height: 50px;
-    margin: 5px 25px;
-    border-radius: 15px;
-    font-size: 16px;
-    padding-left: 15px;
+.inputwrapper input {
+    color: black;
+    font-size: 15px;
+    margin-left: 30px;
+    margin-right: 30px;
 }

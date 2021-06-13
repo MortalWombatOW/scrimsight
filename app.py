@@ -113,31 +113,20 @@ class Team(db.Model):
             'code': self.code
         }
 
-class Scrim(db.Model):
-    __tablename__ = 'scrim'
+class Map(db.Model):
+    __tablename__ = 'map'
     id = db.Column(db.String(120), primary_key=True)
     team1_id = db.Column(db.String(120))
     team2_id = db.Column(db.String(120))
     timestamp = db.Column(db.DateTime)
-
-    def __init__(self):
-        self.id = binascii.b2a_hex(os.urandom(15))
-
-    def to_json(self):
-        return {
-            'id': self.id,
-        }
-
-class Map(db.Model):
-    __tablename__ = 'map'
-    id = db.Column(db.String(120), primary_key=True)
-    scrim_id = db.Column(db.String(120))
     log = db.Column(db.Text)
 
-    def __init__(self, scrim_id, log):
+    def __init__(self, team1_id, team2_id, timestamp, log):
         self.log = log
-        self.scrim_id = scrim_id
+        self.team1_id = team1_id
+        self.team2_id = team2_id
         self.id = hashlib.sha256(log).hexdigest()[0:10]
+        self.timestamp = timestamp
 
     def to_json(self):
         return {
@@ -255,6 +244,40 @@ def get_team(code):
     
     return jsonify(response_object), 404
 
+@app.route('/teams/<userid>', methods=['GET'])
+def get_teams(userid):
+    teams = db.session.query(Membership).filter(Membership.user_id == userid).all()  
+    print(teams)
+    if teams:
+        response_object = {
+            'status': 'Success',
+            'members': [team.to_json() for team in teams]
+        }
+        
+        return jsonify(response_object), 200
+    response_object = {
+        'status': 'Not found'
+    }
+    
+    return jsonify(response_object), 404
+
+@app.route('/memberships', methods=['GET'])
+def get_all_memberships():
+    teams = db.session.query(Membership).all()  
+    
+    if teams:
+        response_object = {
+            'status': 'Success',
+            'members': [team.to_json() for team in teams]
+        }
+        
+        return jsonify(response_object), 200
+    response_object = {
+        'status': 'Not found'
+    }
+    
+    return jsonify(response_object), 404
+
 @app.route('/map/<id>', methods=['GET'])
 def get_map(id):
     map_ = db.session.query(Map).filter(Map.id == id).first()  
@@ -295,7 +318,7 @@ def get_map_summary(id):
 
 @app.route('/map/<id>/players', methods=['GET'])
 @cache.cached(timeout=50)
-def get_teams(id):
+def get_players(id):
     log = db.session.query(Map).filter(Map.id == id).first()  
     
     if log:

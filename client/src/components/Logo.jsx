@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 // import {
 //     Nav,
 // } from 'react-bootstrap';
-import '../css/navigationBar.css'
 import TeamSelect from './TeamSelect/TeamSelect';
 import ScrimSelect from './ScrimSelect/ScrimSelect';
 // import MapSelect from '../components/MapSelect/MapSelect';

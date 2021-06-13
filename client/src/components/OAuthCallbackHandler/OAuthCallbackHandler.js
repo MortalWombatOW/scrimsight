@@ -25,7 +25,7 @@ const OAuthCallbackHandler =  () => {
       let headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
       }
-      const e = await axios.post("https://discord.com/api/oauth2/token", data, {
+      const e = await axios.post("https://discord.com/api/v8/oauth2/token", data, {
         headers: headers
       });
 
@@ -37,7 +37,14 @@ const OAuthCallbackHandler =  () => {
     
       console.log(e);
     
-      const discordUser = await oauth.getUser(e.data.access_token);
+      headers = {
+        'Authorization': "Bearer " + e.data.access_token,
+        'Content-Type': "application/json",
+      };
+      const response = await axios.get("https://discord.com/api/v8/users/@me", { headers: headers } );
+      
+      const discordUser = response.data;
+      // oauth.getUser(e.data.access_token);
     
       console.log(discordUser);
     
@@ -47,6 +54,8 @@ const OAuthCallbackHandler =  () => {
     
     
       let user = await axios.get(`${process.env.REACT_APP_USERS_SERVICE_URL}/user/${discordUser.id}`).catch(e => null);
+      console.log(user);
+
       if (!user){
         user = await axios.post(`${process.env.REACT_APP_USERS_SERVICE_URL}/user`, {id: discordUser.id});
         setRedirect('signup');

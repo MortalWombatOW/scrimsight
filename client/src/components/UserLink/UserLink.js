@@ -27,17 +27,17 @@ const UserLink = (props) => {
       state: state[0].toString(16), // Be aware that randomBytes is sync if no callback is provided
     });
     
-    const content = props.children ? props.children : "Log in with Discord";
+    const content = props.children ? props.children : "Sign in with Discord";
     return (
       <a className="UserLink" href={url}>
-        <img src={discord} width={46} height={46}></img>
+        {/* <img src={discord} width={25} height={25}></img> */}
         <span className="name" >{content}</span>
       </a>
     );
   }
 
   return (<a className="UserLink loggedin" href={'/teams'}>
-    <img src={avatarUrl} width={46} height={46}></img>
+    {/* <img src={avatarUrl} width={25} height={25}></img> */}
     {props.children ? props.children : username}
   </a>);
 };
