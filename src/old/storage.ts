@@ -1,11 +1,10 @@
 import { MapInfo } from "./data/data";
+import log from "./logger";
 import { cyrb53 } from "./util";
 
 const isWorker = typeof window === "undefined";
 
 const indexedDB = isWorker ? self.indexedDB : window.indexedDB;
-
-const logprefix = isWorker ? "[worker] " : "[main] ";
 
 
 
@@ -24,10 +23,6 @@ export interface StorageCrate {
   content: any;
   timestamp: number;
   writer: string;
-}
-
-function log(blob: any) {
-  console.log(logprefix + blob);
 }
 
 export class Storage {
@@ -112,7 +107,7 @@ export class Storage {
     return crate.type + "-" + crate.hash;
   }
 
-  private _set(info: MapInfo) {
+  public set(info: MapInfo) {
     const req = this.db
       .transaction(["map"], "readwrite")
       .objectStore("map")
@@ -159,7 +154,7 @@ export class Storage {
       hash: {value: cyrb53(log)},
     };
     // console.log(info);
-    this._set(info);
+    this.set(info);
     return info.hash.value;
   }
 

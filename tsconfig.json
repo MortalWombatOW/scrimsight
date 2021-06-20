@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-      "lib": ["es2017", "dom"],
+      "lib": ["esnext", "dom"],
       "outDir": "./dist/",
       "noImplicitAny": true,
       "module": "es6",
@@ -8,5 +8,6 @@
       "allowJs": true,
       "checkJs": true,
       "sourceMap": true,
+      "moduleResolution": "node"
     },
   }

@@ -2,6 +2,7 @@ import { Storage, CrateType, StorageCrate } from "./storage";
 import template from "./mapnav.html";
 import { StateProvider } from "./statemanager";
 import { MapInfo } from "./data/data";
+import hydrate from './ui/addcontent';
 
 function mapclick(i: number) {
   function mapclick_(e: any) {
@@ -17,8 +18,7 @@ export function mapnav() {
   Storage.withDb().then((s) =>
     s.getAllMaps((maps: Array<MapInfo>) => {
 
-      const inner: Element =
-        document.getElementsByClassName("maphistoryinner")[0];
+      const el: Element = document.createElement('div');
       const mapnames = ["busan", "lijiang", "blizz"];
 
       maps
@@ -29,12 +29,14 @@ export function mapnav() {
             .replace("{mapkey}", "" + info.hash.value)
         )
         .forEach((rawHtml, i) => {
-          inner.innerHTML += rawHtml;
+          el.innerHTML += rawHtml;
         });
 
 
-      Array.from(inner.children).map((el: Element, i: number) => el.addEventListener("click", mapclick(i)));
-      inner.setAttribute("style", "width: " + 350 * maps.length + "px");
+      Array.from(el.children).map((el: Element, i: number) => el.addEventListener("click", mapclick(i)));
+      el.setAttribute("style", "width: " + 350 * maps.length + "px");
+
+      hydrate("maphistoryinner", el);
     })
   );
 

@@ -109,13 +109,21 @@ export interface MapInfo {
 
 const dataNodes: Array<DataNode> = [
   new DataNode('events', ['log'], info => {
-    log(info);
+    // log(info);
     return {value: info.log.value.length};
   }),
   new DataNode('ffff', ['log'], info => {value: info.log.value.split('\n').length}),
 ];
 
-export function loadData(info: MapInfo): void {
+export function canLoadNode(info: MapInfo, path: string) {
+  return dataNodes.filter(node => node.getPath() == path && node.canLoad(info)).length > 0;
+}
+
+export function loadNode(info: MapInfo, path: string) {
+  return dataNodes.filter(node => node.getPath() == path && node.canLoad(info)).map(node => node.load(info));
+}
+
+export function loadAllNodes(info: MapInfo): void {
   for (let node of dataNodes) {
     if (node.canLoad(info) && !node.isLoaded(info)) {
       log(node.getPath())

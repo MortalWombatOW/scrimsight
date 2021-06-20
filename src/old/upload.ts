@@ -1,16 +1,16 @@
 import { StateProvider } from "./statemanager";
 import { Storage, CrateType } from "./storage";
 import { TaskType } from "./task";
-import { setContentHtml } from "./util";
-
+import setContent from "./ui/addcontent";
+import template from './upload.html'
 import {WorkerManager} from './workermanager';
 
 
-const template = `
-<div class="uploadmodal" onclick= "event.stopPropagation();">
-    <input type="file" accept=".txt" class="fileinput" />
-</div>
-`;
+// const template = `
+// <div class="uploadmodal" onclick= "event.stopPropagation();">
+//     <input type="file" accept=".txt" class="fileinput" />
+// </div>
+// `;
 
 
 export function setupFileUpload() {
@@ -20,14 +20,12 @@ export function setupFileUpload() {
 }
 
 function insertUploadModal() {
-  setContentHtml(template);
+  const el = document.createElement('div');
+  el.innerHTML = template;
+  setContent("content", el);
   document
     .getElementsByClassName("fileinput")[0]
     .addEventListener("change", readFile);
-}
-
-function removeUploadModal() {
-  setContentHtml("");
 }
 
 function readFile(evt: any) {
@@ -39,7 +37,6 @@ function readFile(evt: any) {
     console.log(event.target.result);
     const hash: number = Storage.singleton().newMap(event.target.result as string, file);
     StateProvider.maphash = hash;
-    WorkerManager.runTask(TaskType.ParseLog);
   };
   reader.readAsText(file);
 }

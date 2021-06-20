@@ -43,7 +43,7 @@ body {
   width: $leftcolwidth;
   color: $dark;
   padding: $cellpadding;
-  display: inline-block;
+  float:left;
 }
 
 .rightcol {
@@ -75,27 +75,42 @@ body {
 }
 
 button {
-  // border: 1px solid $dark;
-  border-radius: 25px;
+  border: 1px solid $dark;
+  border-radius: 10px;
   background-color: $neutral;
   color: $dark;
-  box-shadow: 0 0 10px rgb(155, 136, 107);
-  font-size: 25px;
+  // box-shadow: 0 0 10px rgb(155, 136, 107);
+  // font-size: 25px;
   font-weight: bold;
-  width: 50px;
-  height: 50px;
-
+  padding: 4px;
+  background-color: $dark;
+  color: $neutral;
   &:hover {
-    box-shadow: 0 0 15px rgb(150, 138, 118);
+    animation-name: test;
+    animation-duration: 250ms;
+    background-color: $althighlight;
+    color: $dark;
   }
 }
 
-.uploadbutton {
-  // position: relative;
+
+button.uploadbutton {
+  font-size: 25px;
+  line-height: 50px;
+  position: relative;
   margin: 0 auto;
-  width: 50px;
+  width: 62px;
+  padding: 5px;
   margin-bottom: 15px;
-  // margin-top: 40px;
+  display:inherit;
+  
+
+  
+}
+
+@keyframes test {
+  0% { background-color: $dark; color: $neutral; }
+  100% { background-color: $althighlight; color: $dark; }
 }
 
 .uploadbuttoncontainer {
@@ -109,6 +124,7 @@ button {
   background-color: $neutral;
   padding-top: $toppadding;
   position: absolute;
+  
 }
 
 .uploadlabel {

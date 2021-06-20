@@ -1,16 +1,15 @@
-import { loadData, MapInfo } from "./data/data";
+import { canLoadNode, loadNode, MapInfo } from "./data/data";
 import log from "./logger";
 import { Storage, StorageCrate } from "./storage";
 import {getTask, Task, TaskType,} from './task';
+import { WorkerDirective } from "./util";
 
 const ctx: Worker = self as any;
 
-log("setting up");
 
 // main
 ctx.addEventListener("message", (event) => {
-  const data = event.data;
-  log(data);
+  const data: WorkerDirective = event.data;
 
   // if (data.type == "task") {
   //     // const task = getTask(data.content as TaskType);
@@ -19,14 +18,11 @@ ctx.addEventListener("message", (event) => {
   // }
 
   Storage.withDb().then((s) =>
-    s.getAllMaps((request) => {
-      const maps: Array<MapInfo> = request.target.result;
-      // log(maps);
-      for (const map of maps) {
-        log('++++++++++++++++')
-        log(Object.keys(map));
-        loadData(map);
-        log(Object.keys(map));
+    s.getMap(data.maphash, (map: MapInfo) => {
+      if(canLoadNode(map, data.path)) {
+        loadNode(map, data.path);
+        console.log(map)
+        s.set(map);
       }
     })
   );
