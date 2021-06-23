@@ -3,7 +3,7 @@ import "./main.scss";
 import {Engine} from '@trixt0r/ecs';
 import { ScrimsightEntity } from "./entity";
 import { UIComponent } from "./components/ui";
-import { UISystem } from "./systems/ui";
+import { StoredDataUISystem, UISystem } from "./systems/ui";
 import { ClickableComponent } from "./components/clickable";
 import { ClickableSystem } from "./systems/clickable";
 import uploadTemplate from './templates/upload.html';
@@ -11,7 +11,8 @@ import { UploadSystem } from "./systems/upload";
 import { UploadComponent } from "./components/upload";
 import { LogSystem } from "./systems/log";
 import { StorageSystem } from "./systems/storage";
-import { SumSystem } from "./systems/sum";
+import { PlayerOverviewSystem } from "./systems/playeroverview";
+import { MetadataSystem } from "./systems/metadata";
 
 
 
@@ -22,11 +23,15 @@ engine.systems.add(new ClickableSystem());
 engine.systems.add(new UploadSystem());
 engine.systems.add(new LogSystem());
 engine.systems.add(new StorageSystem());
-engine.systems.add(new SumSystem());
+engine.systems.add(new PlayerOverviewSystem());
+engine.systems.add(new StoredDataUISystem());
+engine.systems.add(new MetadataSystem());
+engine.systems.add(new PlayerOverviewSystem());
+
 
 
 const uploadContent = new ScrimsightEntity();
-uploadContent.components.add(new UIComponent(document.getElementsByClassName('content')[0], uploadTemplate, new Map([["{injection}", "test"]])));
+uploadContent.components.add(new UIComponent(document.getElementsByClassName('content')[0], uploadTemplate, new Map([["{injection}", ""]])));
 uploadContent.components.add(new UploadComponent());
 
 const uploadButton = new ScrimsightEntity();

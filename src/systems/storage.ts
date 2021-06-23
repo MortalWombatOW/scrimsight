@@ -44,32 +44,33 @@ export class StorageSystem extends System {
                 }
               });
         }
-
-
-        if (this.writers.entities.length + this.readers.entities.length == 0) {
+        // console.log(this.readers.entities.filter(entity=>entity.components.get(ReadStorageComponent).value == undefined).length);
+        
+        if (this.writers.entities.length + this.readers.entities.filter(entity=>entity.components.get(ReadStorageComponent).value == undefined).length == 0) {
             return;
         }
 
-        let tx = this.db.transaction('map', 'readwrite')
-        let store = tx.objectStore('map')
-        console.log('loaded db');
-
+        
+        // debugger;
 
 
         for (const entity of this.writers.entities) {
             const write = entity.components.get(WriteStorageComponent);
             entity.components.remove(write);
+            let tx = this.db.transaction('map', 'readwrite')
+            let store = tx.objectStore('map');
             await store.put(write.value, write.key);
+            await tx.done
             console.log("writing ", write);
             
         }
 
-        for (const entity of this.readers.entities) {
-            const read = entity.components.get(ReadStorageComponent);
-            entity.components.remove(read);
-            read.value = store.get(read.key);
-            console.log("reading ", read);
-            
+        for (const read of this.readers.entities.map(entity => entity.components.get(ReadStorageComponent)).filter(read => read.value === undefined)) {
+            let tx = this.db.transaction('map', 'readwrite')
+            let store = tx.objectStore('map');
+            console.log(read.key);
+            read.value = await store.get(read.key);
+            await tx.done
         }
     }
 }

@@ -1,7 +1,8 @@
 import { Component } from "@trixt0r/ecs";
 
 export class ReadStorageComponent implements Component {
-    constructor(public key: string, public value: any) {
+    public value: any;
+    constructor(public key: string) {
     }
 }
 
