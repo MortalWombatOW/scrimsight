@@ -13,6 +13,7 @@ import { LogSystem } from "./systems/log";
 import { StorageSystem } from "./systems/storage";
 import { PlayerOverviewSystem } from "./systems/playeroverview";
 import { MetadataSystem } from "./systems/metadata";
+import { DebugSystem } from "./systems/debug";
 
 
 
@@ -27,6 +28,7 @@ engine.systems.add(new PlayerOverviewSystem());
 engine.systems.add(new StoredDataUISystem());
 engine.systems.add(new MetadataSystem());
 engine.systems.add(new PlayerOverviewSystem());
+engine.systems.add(new DebugSystem());
 
 
 
