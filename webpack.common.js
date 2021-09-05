@@ -1,9 +1,12 @@
+/* eslint-disable quotes */
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
+// const {ContextReplacementPlugin} = require('webpack');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.ts',
@@ -62,6 +65,19 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    fallback: {
+      util: false,
+      crypto: false,
+      http: false,
+      zlib: false,
+      fs: false,
+      child_process: false,
+      worker_threads: false,
+      vm: false,
+      https: false,
+      process: false,
+      tty: false,
+    },
   },
   plugins: [
     new MiniCssExtractPlugin({
@@ -78,5 +94,9 @@ module.exports = {
     new CopyPlugin({
       patterns: [{from: 'src/assets', to: 'assets'}],
     }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+    // new ContextReplacementPlugin(/require_optional/),
   ],
 };
