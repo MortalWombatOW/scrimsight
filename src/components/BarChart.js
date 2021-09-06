@@ -1,8 +1,12 @@
+// @flow
+
 import React, { useEffect, useRef } from 'react'
+import type {StatelessFunctionalComponent} from 'react';
 import { select } from 'd3-selection'
 import { max } from 'd3-array'
 import { scaleLinear, scaleBand } from 'd3-scale'
 import { axisLeft, axisBottom } from 'd3-axis'
+import type { CategoricalAggregationResult } from "../types";
 
 // margin convention often used with D3
 const margin = { top: 80, right: 60, bottom: 80, left: 60 }
@@ -12,7 +16,7 @@ const height = 600 - margin.top - margin.bottom
 const color = ['#f05440', '#d5433d', '#b33535', '#283250']
 
 
-const BarChart = ({ data }) => {
+const BarChart = ({ data })=> {
   const d3svg = useRef(null)
 
   useEffect(() => {
@@ -27,7 +31,7 @@ const BarChart = ({ data }) => {
         .range([0, width])
 
       const yScale = scaleBand()
-        .domain(data.map(d => d.genre))
+        .domain(data.map(d => d.category))
         .rangeRound([0, height])
         .paddingInner(0.25)
 
@@ -50,8 +54,8 @@ const BarChart = ({ data }) => {
         .enter()
         .append('rect')
         .attr('class', 'bar')
-        .attr('y', d => yScale(d.genre))
-        .attr('width', d => xScale(d.revenue))
+        .attr('y', d => yScale(d.category))
+        .attr('width', d => xScale(d.value))
         .attr('height', yScale.bandwidth())
         .style('fill', function(d, i) {
           return color[i % 4] // use colors in sequence
@@ -85,6 +89,10 @@ const BarChart = ({ data }) => {
   )
 }
 
-export default BarChart
+type BarChartProps = {
+  data: Array<CategoricalAggregationResult>
+};
+
+export default (BarChart: StatelessFunctionalComponent<BarChartProps>);
 
 // style={{ pointerEvents: 'all', width: '100%', height: '100%' }}
