@@ -12,7 +12,7 @@ export interface RawEvent {
   value1: string;
   value2: string;
   value3: string;
-
+fileHash: any; lastModified: any;
 }
 
 export type TeamMapping = {
@@ -89,4 +89,21 @@ export type CategoricalAggregationResult = {
 
 export interface StrIndexable {
   [key: string]: any;
+}
+
+export enum ViewType {
+  Timeline,
+  Table,
+  Map,
+}
+
+export const ViewTypeLabels = {
+  [ViewType.Timeline]: 'Timeline',
+  [ViewType.Table]: 'Table',
+  [ViewType.Map]: 'Map',
+};
+
+export interface EventFilter {
+  constraint: string;
+  eval: (event: RawEvent) => boolean;
 }

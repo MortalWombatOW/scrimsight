@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { ChangeEvent, useState } from 'react';
 import sha256 from 'crypto-js/sha256';
 import { dsvFormat } from 'd3-dsv';
+import { Button } from '@mui/material';
 import type { RawEvent } from '../types';
 
 function parseTimestamp(str: string) {
@@ -51,9 +53,11 @@ function Uploader(props: UploaderProps) {
   };
 
   return (
-    <div>
-      <input type="file" onChange={onInputChange} />
-    </div>
+    <Button color="inherit" variant="outlined" component="label">
+      Upload Events
+      {' '}
+      <input id="fileinput" type="file" onChange={onInputChange} hidden />
+    </Button>
   );
 }
 

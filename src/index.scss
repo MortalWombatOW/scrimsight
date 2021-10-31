@@ -1,0 +1,196 @@
+$dark: #3f51b5;
+$mid: #859ec0;
+$neutral: #e7ecf3;
+$light: #f9fcff;
+$highlight: #ee6c4d;
+
+$min_width: 500px;
+$col_width: 60%;
+$hpadding: calc((100% - #{$col_width}) / 2);
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: $neutral;
+
+  padding-top: 0px;
+  padding-left: $hpadding;
+  padding-right: $hpadding;
+  min-width: $min_width;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+input[type="button"] {
+  border: 1px solid $dark;
+  color: $dark;
+  border-radius: 15px;
+  // line-height: $;
+  height: 30px;
+  padding-left: 7px;
+  padding-right: 7px;
+  margin: 5px;
+  background-color: $light;
+  &:hover {
+    color: $highlight;
+    border-color: $highlight;
+  }
+}
+
+.summary {
+  font-size: 10px;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+div > label.MuiButtonBase-root {
+  // border: 1px solid $mid;
+  // background-color: $neutral;
+  // padding: 10px;
+  margin-right: 10px;
+}
+
+.App > div {
+  margin-bottom: 10px;
+  margin-top: 20px;
+  background-color: $light;
+  padding: 5px;
+}
+
+.filters {
+  display: inline-block;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid $mid;
+  padding: 5px;
+}
+
+.logoicon {
+  height: 50px;
+}
+
+.logo {
+  font-size: 17px;
+  font-weight: bold;
+  margin-left: 25px;
+}
+
+.navbuttons {
+  margin-left: auto;
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.eventscope {
+  padding: 10px;
+
+  // > * {
+  //   margin: 5px;
+  // }
+}
+
+table {
+  margin: 10px 0px;
+}
+
+.pageSizeSelect {
+  width: 100px;
+  > div {
+    font-size: 13px;
+    color: $dark;
+  }
+  height: 36.5px;
+  // font-size: 10px;
+  color: $dark;
+}
+
+#demo-simple-select-label {
+  display: none;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: #9da7da !important;
+
+  // border: 5px solid $dark;
+}
+
+.fields {
+  > * {
+    margin-right: 10px;
+  }
+}
+
+div.tablecontrols > * {
+  margin-right: 10px;
+}
+
+.viewselector {
+  // float: inline-end;
+  background-color: $light;
+  float: right;
+}
+
+.viewselectorwrapper {
+  overflow: hidden;
+}
+
+.addview {
+  text-align: center;
+}
+
+.histogram .datapoint {
+  fill: $mid;
+  &:hover {
+    fill: $highlight;
+  }
+}
+
+.appbar {
+  background-color: $dark !important;
+}
+
+.MuiButton-root {
+  background-color: $dark !important;
+}
+
+.popover-content {
+  padding: 10px;
+}
+
+.axis {
+  stroke: $mid;
+}
+
+.axis-label {
+  fill: $mid;
+  font-size: 12px;
+}
+
+.selection {
+  opacity: 0.3;
+  fill: $highlight;
+  stroke: 2px solid $dark;
+  pointer-events: none;
+}
+
+.dataplot {
+  padding: 10px;
+  .datapoint {
+    // fill: $mid;
+    &:hover {
+      fill: $highlight;
+    }
+  }
+}
