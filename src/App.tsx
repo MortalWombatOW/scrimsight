@@ -7,7 +7,6 @@ import { RawEvent } from './types';
 import Uploader from './components/Uploader';
 import EventScope from './components/EventScope';
 import ViewSelector from './components/ViewSelector';
-import logo from './assets/owlogo.svg';
 import ZeroStateView from './components/ZeroStateView/ZeroStateView';
 
 interface EventSummaryProps {
@@ -38,27 +37,27 @@ const AddViewButton = (props: AddViewButtonProps) => {
 
 function App() {
   const [events, setEvents] = useState<Array<RawEvent>>([]);
-  const [views, setViews] = useState <number>(0);
-  const addView = () => setViews(views + 1);
+  const [reports, setReports] = useState <number>(0);
+  const addReport = () => setReports(reports + 1);
   const addEvents = (newEvents: Array<RawEvent>) => setEvents(events.concat(newEvents));
   return (
     <div>
       <AppBar position="static" className="appbar">
         <Toolbar>
-          <img className="logoicon" src={logo} alt="logo" />
+          <img className="logoicon" src="/assets/owlogo.svg" alt="logo" />
           <span className="logo">
             scrimsight
           </span>
           <div className="navbuttons">
             <Uploader addEvents={addEvents} />
-            <AddViewButton addView={addView} />
+            <AddViewButton addView={addReport} />
             <EventSummary events={events} />
           </div>
         </Toolbar>
       </AppBar>
       <Box className="App">
-        {views === 0 ? <ZeroStateView />
-          : Array(views).fill(0).map((_, i) => (
+        {reports === 0 ? <ZeroStateView />
+          : Array(reports).fill(0).map((_, i) => (
             <EventScope
               events={events}
               render={

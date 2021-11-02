@@ -9,6 +9,7 @@ import { RawEvent, StrIndexable, ViewType } from '../types';
 import DataTable from './DataTable/DataTable';
 import DataPlot from './DataPlot/DataPlot';
 import { stringHash } from '../shared';
+import MapOverlay from './MapOverlay/MapOverlay';
 
 const ViewSelector = (props: ViewSelectorProps) => {
   const [view, setView] = useState<ViewType>(0);
@@ -47,6 +48,15 @@ const ViewSelector = (props: ViewSelectorProps) => {
             width={800}
             height={600}
             legend={getUniqueValues(props.events, 'value1')}
+          />
+        )}
+
+        {(!(view === 2)) ? '' : (
+          <MapOverlay
+            data={[[0, 1, 2], [1, 2, 3], [2, 3, 4]]}
+            width={800}
+            height={600}
+            map="busan"
           />
         )}
       </div>

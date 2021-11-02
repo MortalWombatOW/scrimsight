@@ -194,3 +194,24 @@ div.tablecontrols > * {
     }
   }
 }
+
+.mapoverlaycontainer {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  & img {
+    // display: block;
+    // max-width: 100%;
+    // height: auto;
+  }
+
+  & svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  & * {
+    // transition: transform 330ms ease-in-out;
+  }
+}
