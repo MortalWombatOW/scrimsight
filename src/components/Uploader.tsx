@@ -1,9 +1,10 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { ChangeEvent, useState } from 'react';
 import sha256 from 'crypto-js/sha256';
 import { dsvFormat } from 'd3-dsv';
 import { Button } from '@mui/material';
-import type { RawEvent } from '../types';
+import { createRawEventDataset, Dataset } from '../data';
 
 function parseTimestamp(str: string) {
   return str
@@ -14,23 +15,19 @@ function parseTimestamp(str: string) {
     .reduce((a: number, b: number) => a + b);
 }
 
-function parseRow(row: any[], fileInfo: { fileHash: any; lastModified: any; }) {
-  return {
-    timestamp: parseTimestamp(row[0]),
-    eventType: row[1],
-    value1: row[2],
-    value2: row[3],
-    value3: row[4],
-    ...fileInfo,
-  };
+function parseRow(row: any[], fileInfo: { fileHash: any; lastModified: any; }): any[] {
+  return [
+    parseTimestamp(row[0]),
+    ...row.slice(1),
+  ];
 }
 
-function parseFile(file: string, lastModified: number) {
+function parseFile(file: string, lastModified: number): Dataset {
   // eslint-disable-next-line new-cap
   const fileHash = sha256(file).toString().slice(0, 10);
   const rawEvents = dsvFormat(';')
     .parseRows(file, (row) => parseRow(row, { fileHash, lastModified }));
-  return rawEvents;
+  return createRawEventDataset(rawEvents);
 }
 
 function Uploader(props: UploaderProps) {
@@ -41,7 +38,7 @@ function Uploader(props: UploaderProps) {
 
   reader.onload = (e: ProgressEvent<FileReader>) => {
     if (!e.target) return;
-    props.addEvents(parseFile(e.target.result as string, lastModified));
+    props.addData(parseFile(e.target.result as string, lastModified));
   };
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +59,7 @@ function Uploader(props: UploaderProps) {
 }
 
 export interface UploaderProps {
-    addEvents(events: Array<RawEvent>): void;
+    addData(dataset: Dataset): void;
 }
 
 export default Uploader;

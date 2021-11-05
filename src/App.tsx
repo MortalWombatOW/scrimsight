@@ -1,22 +1,26 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useState } from 'react';
 import {
-  AppBar, Box, Button, Toolbar,
+  AppBar, Box, Toolbar,
 } from '@mui/material';
-import { RawEvent } from './types';
 import Uploader from './components/Uploader';
-import EventScope from './components/EventScope';
-import ViewSelector from './components/ViewSelector';
 import ZeroStateView from './components/ZeroStateView/ZeroStateView';
+import {
+  applyTransforms, createRawEventDataset, Dataset, fieldTransforms,
+} from './data';
+import Report from './components/Report/Report';
 
 interface EventSummaryProps {
-  events: Array<RawEvent>,
+  dataset: Dataset,
 }
 
-const EventSummary = (props: EventSummaryProps) => {
-  const { events } = props;
-  const maps = new Set<string>(events.map((e) => e.fileHash));
-  const content = `Maps: ${maps.size.toLocaleString()}  Events: ${events.length.toLocaleString()}`;
+const DataSummary = (props: EventSummaryProps) => {
+  const { dataset } = props;
+
+  console.log(applyTransforms(dataset, fieldTransforms.get('raw_event')!.get('map')!.slice(0, 1)));
+
+  const maps = applyTransforms(dataset, fieldTransforms.get('raw_event')!.get('map')!).selectDistinct('map');
+  const content = `Maps: ${maps.numRows().toLocaleString()}  Events: ${dataset.numRows().toLocaleString()}`;
   return (
     <div className="summary">
       {content}
@@ -24,22 +28,11 @@ const EventSummary = (props: EventSummaryProps) => {
   );
 };
 
-interface AddViewButtonProps {
-  addView: () => void;
-}
-// button to add a new view that drops down a list of view types
-const AddViewButton = (props: AddViewButtonProps) => {
-  const { addView } = props;
-  return (
-    <Button color="inherit" variant="outlined" onClick={addView}>Add Panel</Button>
-  );
-};
-
 function App() {
-  const [events, setEvents] = useState<Array<RawEvent>>([]);
-  const [reports, setReports] = useState <number>(0);
-  const addReport = () => setReports(reports + 1);
-  const addEvents = (newEvents: Array<RawEvent>) => setEvents(events.concat(newEvents));
+  const [dataset, setDataset] = useState<Dataset>(createRawEventDataset([]));
+  const mergeNewData = (newData: Dataset) => {
+    setDataset(dataset.merge(newData));
+  };
   return (
     <div>
       <AppBar position="static" className="appbar">
@@ -49,22 +42,14 @@ function App() {
             scrimsight
           </span>
           <div className="navbuttons">
-            <Uploader addEvents={addEvents} />
-            <AddViewButton addView={addReport} />
-            <EventSummary events={events} />
+            <Uploader addData={mergeNewData} />
+            <DataSummary dataset={dataset} />
           </div>
         </Toolbar>
       </AppBar>
       <Box className="App">
-        {reports === 0 ? <ZeroStateView />
-          : Array(reports).fill(0).map((_, i) => (
-            <EventScope
-              events={events}
-              render={
-            (filteredEvents) => <ViewSelector events={filteredEvents} />
-          }
-            />
-          ))}
+        {dataset.numRows() === 0 ? <ZeroStateView />
+          : <Report dataset={dataset} />}
       </Box>
     </div>
   );
