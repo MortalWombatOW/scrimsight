@@ -26,21 +26,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-input[type="button"] {
-  border: 1px solid $dark;
-  color: $dark;
-  border-radius: 15px;
-  // line-height: $;
-  height: 30px;
-  padding-left: 7px;
-  padding-right: 7px;
-  margin: 5px;
-  background-color: $light;
-  &:hover {
-    color: $highlight;
-    border-color: $highlight;
-  }
-}
+// input[type="button"] {
+//   border: 1px solid $dark;
+//   color: $dark;
+//   border-radius: 15px;
+//   // line-height: $;
+//   height: 30px;
+//   padding-left: 7px;
+//   padding-right: 7px;
+//   margin: 5px;
+//   background-color: $light;
+//   &:hover {
+//     color: $highlight;
+//     border-color: $highlight;
+//   }
+// }
 
 .summary {
   font-size: 10px;
@@ -162,7 +162,20 @@ div.tablecontrols > * {
 }
 
 .MuiButton-root {
-  background-color: $dark !important;
+  &.dark {
+    background-color: $dark !important;
+  }
+
+  &.filterButton {
+    // background-color: $neutral !important;
+    margin: 3px;
+    padding: 5px;
+  }
+
+  &.filterButton.selected {
+    background-color: $dark !important;
+    color: white !important;
+  }
 }
 
 .popover-content {
@@ -210,8 +223,33 @@ div.tablecontrols > * {
     top: 0;
     left: 0;
   }
+}
 
-  & * {
-    // transition: transform 330ms ease-in-out;
-  }
+.filterButtonGroup {
+  max-width: 500px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.MuiOutlinedInput-root {
+  height: 36.6px;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.DataTable-controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.FieldPopover-root {
+  margin: 5px;
+}
+
+.FieldPopover-description {
+  font-size: 12px;
+  text-align: center;
+  width: 100%;
+  margin: 5px;
 }

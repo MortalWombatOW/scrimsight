@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+/* eslint-disable import/no-self-import */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 
@@ -48,25 +50,25 @@ export const eventFields: Map<string, Array<FieldDescription>> = new Map([
     { name: 'timestamp', type: 'number', description: 'Seconds since start of the map' },
     { name: 'player', type: 'string', description: 'The name of a player' },
     { name: 'damage', type: 'number', description: 'The amount of damage dealt' },
-    { name: 'targetPlayer', type: 'string', description: 'The name of the player that was damaged' },
+    { name: 'target', type: 'string', description: 'The name of the player that was damaged' },
   ]],
   ['did_healing', [
     { name: 'timestamp', type: 'number', description: 'Seconds since start of the map' },
     { name: 'player', type: 'string', description: 'The name of a player' },
-    { name: 'targetPlayer', type: 'string', description: 'The name of the player that was healed' },
+    { name: 'target', type: 'string', description: 'The name of the player that was healed' },
     { name: 'healing', type: 'number', description: 'The amount of healing done' },
   ]],
   ['did_elim', [
     { name: 'timestamp', type: 'number', description: 'Seconds since start of the map' },
     { name: 'player', type: 'string', description: 'The name of a player' },
     { name: 'damage', type: 'number', description: 'The amount of damage dealt' },
-    { name: 'targetPlayer', type: 'string', description: 'The name of the player that was killed' },
+    { name: 'target', type: 'string', description: 'The name of the player that was killed' },
   ]],
   ['did_final_blow', [
     { name: 'timestamp', type: 'number', description: 'Seconds since start of the map' },
     { name: 'player', type: 'string', description: 'The name of a player' },
     { name: 'damage', type: 'number', description: 'The amount of damage dealt' },
-    { name: 'targetPlayer', type: 'string', description: 'The name of the player that was killed' },
+    { name: 'target', type: 'string', description: 'The name of the player that was killed' },
   ]],
   ['player_team', [
     { name: 'timestamp', type: 'number', description: 'Seconds since start of the map' },
@@ -84,6 +86,37 @@ export const eventFields: Map<string, Array<FieldDescription>> = new Map([
   ]],
 ]);
 
+export class DataRow {
+  private fields: FieldDescription[];
+
+  private data: any[];
+
+  constructor(fields: FieldDescription[], data: any[]) {
+    this.fields = fields;
+    this.data = data;
+  }
+
+  public setData(data: any[]): void {
+    this.data = data;
+  }
+
+  public getData(): any[] {
+    return this.data;
+  }
+
+  public get(fieldName: string): any {
+    const fieldIndex = this.fields.findIndex((field) => field.name === fieldName);
+    if (fieldIndex === -1) {
+      throw new Error(`Field ${fieldName} not found`);
+    }
+    return this.data[fieldIndex];
+  }
+
+  public map(fn: (field: FieldDescription, value: any) => any): any[] {
+    return this.data.map((value, index) => fn(this.fields[index], value));
+  }
+}
+
 export class Dataset {
   private fields: FieldDescription[];
 
@@ -96,7 +129,6 @@ export class Dataset {
 
   public getField(name: string): any[] | undefined {
     const index = this.fields.findIndex((f) => f.name === name);
-    // eslint-disable-next-line no-debugger
     if (index === -1) {
       return undefined;
     }
@@ -118,21 +150,26 @@ export class Dataset {
     return new Dataset(this.fields, newData);
   }
 
-  public getRow(index: number): Dataset {
+  public addRow(row: DataRow) {
+    // assume types of all fields are the same
+    this.data.push(row.getData());
+  }
+
+  public getRow(index: number): DataRow {
     if (index >= this.data.length) {
       throw new Error('Index out of bounds');
     }
-    const row = this.data[index];
-    const newData = [row];
-    return new Dataset(this.fields, newData);
+    return new DataRow(this.fields, this.data[index]);
   }
 
   public slice(start: number, end: number): Dataset {
-    if (start >= this.data.length || end >= this.data.length
+    if (start > this.data.length
       || start > end || start < 0 || end < 0) {
       throw new Error('Index out of bounds');
     }
-    const newData = this.data.slice(start, end);
+    const adjEnd = end > this.data.length ? this.data.length : end;
+
+    const newData = this.data.slice(start, adjEnd);
     return new Dataset(this.fields, newData);
   }
 
@@ -156,23 +193,15 @@ export class Dataset {
     return new Dataset(newFields, uniqueData.map((_, index) => [uniqueData[index]]));
   }
 
-  // eslint-disable-next-line generator-star-spacing
-  public * getRows(): IterableIterator<Dataset> {
-    const dataset = new Dataset(this.fields);
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < this.data.length; i++) {
-      dataset.data = [this.data[i]];
-      yield dataset;
-    }
-  }
-
-  public filter(predicate: (row: Dataset) => boolean): Dataset {
+  public filter(predicate: (row: DataRow) => boolean): Dataset {
     const newDataset = new Dataset(this.fields);
-    for (const row of this.getRows()) {
-      if (predicate(row)) {
-        newDataset.data.push(row.data);
+    this.data.map((row) => {
+      const newRow = new DataRow(this.fields, row);
+      if (predicate(newRow)) {
+        newDataset.addRow(newRow);
       }
-    }
+      return newRow;
+    });
     return newDataset;
   }
 
@@ -182,6 +211,14 @@ export class Dataset {
 
   public numFields(): number {
     return this.fields.length;
+  }
+
+  public map(fn: (row: DataRow, i: number) => any): any[] {
+    const rowData = new DataRow(this.fields, []);
+    return this.data.map((row, i) => {
+      rowData.setData(row);
+      return fn(rowData, i);
+    });
   }
 }
 
@@ -205,7 +242,7 @@ export function renameFieldsTransform(
   renameMap: { [oldName: string]: string },
 ): DatasetTransform {
   return {
-    name: 'rename_fields',
+    name: `Rename fields ${JSON.stringify(renameMap)}`,
     transform: (dataset) => {
       const newFields = dataset.getFields().map((field) => {
         if (renameMap[field.name]) {
@@ -229,7 +266,7 @@ export function renameFieldsTransform(
 
 export function selectFieldsTransform(fields: string[]): DatasetTransform {
   return {
-    name: 'select_fields',
+    name: `Select fields ${JSON.stringify(fields)}`,
     transform: (dataset) => dataset.select(fields),
   };
 }
@@ -239,7 +276,7 @@ export function addFieldTransform(
   data: any[],
 ): DatasetTransform {
   return {
-    name: 'add_field',
+    name: `Add field ${field.name}`,
     transform: (dataset) => {
       const newFields = dataset.getFields().concat(field);
       const newData = dataset.rawData().map((row) => row.concat(data));
@@ -250,42 +287,45 @@ export function addFieldTransform(
 
 export function addDerivedFieldTransform(
   field: FieldDescription,
-  transform: (row: Dataset) => any,
+  transform: (row: DataRow) => any,
 ): DatasetTransform {
   return {
-    name: 'add_derived_field',
-    transform: (dataset) => {
-      const newFieldData: any[] = [];
-      for (const row of dataset.getRows()) {
-        newFieldData.push(transform(row));
-      }
-      return addFieldTransform(field, newFieldData).transform(dataset);
-    },
+    name: `Add derived field ${field.name}`,
+    transform: (dataset) => addFieldTransform(
+      field, dataset.map((row) => transform(row)),
+    ).transform(dataset),
   };
 }
 
 export function addCumSumFieldTransform(
   field: FieldDescription,
 ): DatasetTransform {
+  const newField = {
+    name: `${field.name}_cum_sum`,
+    type: field.type,
+    description: `${field.description} (cumulative sum)`,
+  };
+
   return {
-    name: 'add_cum_sum_field',
+    name: `Add cumulative sum of ${field.name}`,
     transform: (dataset) => {
-      const newFieldData: any[] = [];
       let sum = 0;
-      for (const row of dataset.getRows()) {
-        sum += row.getField(field.name)![0];
-        newFieldData.push(sum);
-      }
-      return addFieldTransform(field, newFieldData).transform(dataset);
+      return addFieldTransform(newField,
+        dataset.map((row) => {
+          sum += row.get(field.name);
+          return sum;
+        })).transform(dataset);
     },
   };
 }
 
 export function filterTransform(
-  predicate: (row: Dataset) => boolean,
+  predicate: (row: DataRow) => boolean,
+  field: string,
+  constraint: string,
 ): DatasetTransform {
   return {
-    name: 'filter',
+    name: `Filter ${field} in ${constraint}`,
     transform: (dataset) => dataset.filter(predicate),
   };
 }
@@ -304,7 +344,64 @@ export function applyTransforms(
 export const fieldTransforms: Map<string, Map<string, DatasetTransform[]>> = new Map([
   ['raw_event', new Map([
     ['map', [
-      filterTransform((row) => row.getField('eventType')![0] === 'map'),
+      filterTransform((row) => row.get('eventType') === 'map', 'eventType', 'map'),
       selectFieldsTransform(['value1']),
       renameFieldsTransform({ value1: 'map' }),
-    ]]])]]);
+    ]],
+    ['player_status', [
+      filterTransform((row) => row.get('eventType') === 'player_status', 'eventType', 'player_status'),
+      renameFieldsTransform({ value1: 'player', value2: 'hero', value3: 'position' }),
+      selectFieldsTransform(['timestamp', 'player', 'hero', 'position']),
+    ]],
+    ['player_team', [
+      filterTransform((row) => row.get('eventType') === 'player_team', 'eventType', 'player_team'),
+      renameFieldsTransform({ value1: 'player', value2: 'team' }),
+      selectFieldsTransform(['player', 'team']),
+    ]],
+    ['player_health', [
+      filterTransform((row) => row.get('eventType') === 'player_health', 'eventType', 'player_health'),
+      renameFieldsTransform({ value1: 'player', value2: 'health', value3: 'maxHealth' }),
+      selectFieldsTransform(['timestamp', 'player', 'health', 'maxHealth']),
+    ]],
+    ['player_ult', [
+      filterTransform((row) => row.get('eventType') === 'player_ult', 'eventType', 'player_ult'),
+      renameFieldsTransform({ value1: 'player', value2: 'ultPercent' }),
+      selectFieldsTransform(['timestamp', 'player', 'ultPercent']),
+    ]],
+    ['did_healing', [
+      filterTransform((row) => row.get('eventType') === 'did_healing', 'eventType', 'did_healing'),
+      renameFieldsTransform({ value1: 'player', value2: 'healing', value3: 'target' }),
+      selectFieldsTransform(['timestamp', 'player', 'healing', 'target']),
+    ]],
+    ['damage_dealt', [
+      filterTransform((row) => row.get('eventType') === 'damage_dealt', 'eventType', 'damage_dealt'),
+      renameFieldsTransform({ value1: 'player', value2: 'damage', value3: 'target' }),
+      selectFieldsTransform(['timestamp', 'player', 'damage', 'target']),
+    ]],
+    ['used_ability_1', [
+      filterTransform((row) => row.get('eventType') === 'used_ability_1', 'eventType', 'used_ability_1'),
+      renameFieldsTransform({ value1: 'player', value2: 'hero' }),
+      selectFieldsTransform(['timestamp', 'player', 'hero']),
+    ]],
+    ['used_ability_2', [
+      filterTransform((row) => row.get('eventType') === 'used_ability_2', 'eventType', 'used_ability_2'),
+      renameFieldsTransform({ value1: 'player', value2: 'hero' }),
+      selectFieldsTransform(['timestamp', 'player', 'hero']),
+    ]],
+    ['did_elim', [
+      filterTransform((row) => row.get('eventType') === 'did_elim', 'eventType', 'did_elim'),
+      renameFieldsTransform({ value1: 'player', value2: 'damage', value3: 'target' }),
+      selectFieldsTransform(['timestamp', 'player', 'damage', 'target']),
+    ]],
+    ['did_final_blow', [
+      filterTransform((row) => row.get('eventType') === 'did_final_blow', 'eventType', 'did_final_blow'),
+      renameFieldsTransform({ value1: 'player', value2: 'damage', value3: 'target' }),
+      selectFieldsTransform(['timestamp', 'player', 'damage', 'target']),
+    ]],
+    ['used_ultimate', [
+      filterTransform((row) => row.get('eventType') === 'used_ultimate', 'eventType', 'used_ultimate'),
+      renameFieldsTransform({ value1: 'player', value2: 'hero' }),
+      selectFieldsTransform(['timestamp', 'player', 'hero']),
+    ]],
+  ])],
+]);

@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-use-before-define
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar, Box, Toolbar,
 } from '@mui/material';
@@ -16,11 +16,13 @@ interface EventSummaryProps {
 
 const DataSummary = (props: EventSummaryProps) => {
   const { dataset } = props;
+  const [maps, setMaps] = useState<string>('0');
+  const [events, setEvents] = useState<string>('0');
 
-  console.log(applyTransforms(dataset, fieldTransforms.get('raw_event')!.get('map')!.slice(0, 1)));
+  useEffect(() => setMaps(applyTransforms(dataset, fieldTransforms.get('raw_event')!.get('map')!).selectDistinct('map').numRows().toLocaleString()));
+  useEffect(() => setEvents(dataset.numRows().toLocaleString()));
 
-  const maps = applyTransforms(dataset, fieldTransforms.get('raw_event')!.get('map')!).selectDistinct('map');
-  const content = `Maps: ${maps.numRows().toLocaleString()}  Events: ${dataset.numRows().toLocaleString()}`;
+  const content = `Maps: ${maps}  Events: ${events}`;
   return (
     <div className="summary">
       {content}
