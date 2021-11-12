@@ -4,7 +4,8 @@ import React, { ChangeEvent, useState } from 'react';
 import sha256 from 'crypto-js/sha256';
 import { dsvFormat } from 'd3-dsv';
 import { Button } from '@mui/material';
-import { createRawEventDataset, Dataset } from '../data';
+import { createRawEventDataset } from '../../lib/data/data';
+import Dataset from '../services/Dataset';
 
 function parseTimestamp(str: string) {
   return str

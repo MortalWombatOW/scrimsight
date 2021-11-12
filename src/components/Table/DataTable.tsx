@@ -6,8 +6,9 @@ import {
   Button, MenuItem, Select, ButtonGroup,
 } from '@mui/material';
 import React, { useMemo, useState } from 'react';
-import { Dataset, DatasetTransform } from '../../data';
-import FieldPopover from '../FieldPopover/FieldPopover';
+import { DatasetTransform } from '../../lib/data/data';
+import Dataset from '../services/Dataset';
+import FieldPopover from './FieldPopover';
 
 interface DataTableProps {
     dataset: Dataset;

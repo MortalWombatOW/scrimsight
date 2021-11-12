@@ -1,12 +1,13 @@
 import React from 'react';
-import { DatasetTransform } from '../../data';
+import { Button } from '@mui/material';
+import { DatasetTransform } from '../../lib/data/data';
 
-interface DatasetTransformStackProps {
+interface TransformsProps {
   transforms: Array<DatasetTransform>;
   setTransforms: (transforms: Array<DatasetTransform>) => void;
 }
 
-const DatasetTransformStack = (props: DatasetTransformStackProps) => {
+const Transforms = (props: TransformsProps) => {
   const { transforms, setTransforms } = props;
 
   const deleteTransformsAfter = (index: number) => {
@@ -19,18 +20,19 @@ const DatasetTransformStack = (props: DatasetTransformStackProps) => {
         // eslint-disable-next-line react/no-array-index-key
         <div key={i}>
           {transform.name}
-          <button
-            type="button"
+          <Button
             onClick={() => {
               deleteTransformsAfter(i);
             }}
+            variant="outlined"
+            style={{ width: '50px' }}
           >
             X
-          </button>
+          </Button>
         </div>
       ))}
     </div>
   );
 };
 
-export default DatasetTransformStack;
+export default Transforms;

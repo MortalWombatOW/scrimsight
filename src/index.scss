@@ -3,9 +3,10 @@ $mid: #859ec0;
 $neutral: #e7ecf3;
 $light: #f9fcff;
 $highlight: #ee6c4d;
+$text: #333;
 
 $min_width: 500px;
-$col_width: 60%;
+$col_width: 100%;
 $hpadding: calc((100% - #{$col_width}) / 2);
 
 body {
@@ -55,11 +56,15 @@ div > label.MuiButtonBase-root {
   margin-right: 10px;
 }
 
-.App > div {
-  margin-bottom: 10px;
-  margin-top: 20px;
-  background-color: $light;
-  padding: 5px;
+.App {
+  color: $text;
+
+  &.div {
+    margin-bottom: 10px;
+    margin-top: 20px;
+    background-color: $light;
+    padding: 5px;
+  }
 }
 
 .filters {
@@ -157,10 +162,6 @@ div.tablecontrols > * {
   }
 }
 
-.appbar {
-  background-color: $dark !important;
-}
-
 .MuiButton-root {
   &.dark {
     background-color: $dark !important;
@@ -252,4 +253,44 @@ div.tablecontrols > * {
   text-align: center;
   width: 100%;
   margin: 5px;
+}
+
+.RangeSelector-root {
+  margin: 5px;
+  margin-top: 20px;
+}
+.RangeSelector-axis {
+  stroke: $mid;
+}
+
+.RangeSelector-selected {
+  stroke: $dark;
+}
+
+.RangeSelector-edge {
+  stroke: $highlight;
+  fill: $highlight;
+}
+
+.RangeSelector-label {
+  stroke: $dark;
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+}
+.zero-state-view {
+  padding: 10% 30%;
+  text-align: center;
+  animation: fadein 1s;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

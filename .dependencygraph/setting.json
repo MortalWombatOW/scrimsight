@@ -4,5 +4,5 @@
     ".tsx",
     ".scss"
   ],
-  "entryFilePath": "/src/index.tsx"
+  "entryFilePath": "/src/App.tsx"
 }
