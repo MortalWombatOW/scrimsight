@@ -6,32 +6,24 @@ interface MapOverlayProps {
   data: number[][];
   width: number;
   height: number;
-
 }
 
 const MapOverlay = (props: MapOverlayProps) => {
-  const {
-    map, data, width, height,
-  } = props;
+  const {map, data, width, height} = props;
 
   // const centerX = width / 2;
   // const centerY = height / 2;
 
-  const [transformMatrix, setTransformMatrix] = React.useState<number[]>([1, 0, 0, 1, 0, 0]);
+  const [transformMatrix, setTransformMatrix] = React.useState<number[]>([
+    1, 0, 0, 1, 0, 0,
+  ]);
   const [isDragging, setIsDragging] = React.useState<boolean>(false);
   const imgRef = React.useRef<HTMLImageElement>(null);
 
   const addPan = (dx: number, dy: number) => {
     const [x, y] = transformMatrix.slice(4, 6);
     const zoom = transformMatrix[0];
-    setTransformMatrix([
-      zoom,
-      0,
-      0,
-      zoom,
-      x + dx,
-      y + dy,
-    ]);
+    setTransformMatrix([zoom, 0, 0, zoom, x + dx, y + dy]);
   };
 
   // const setZoom = (zoom: number) => {
@@ -45,11 +37,11 @@ const MapOverlay = (props: MapOverlayProps) => {
   //   ]);
   // };
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseDown = () => {
     setIsDragging(true);
   };
 
-  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseUp = () => {
     setIsDragging(false);
   };
 
@@ -57,14 +49,17 @@ const MapOverlay = (props: MapOverlayProps) => {
     if (isDragging) {
       addPan(e.movementX, e.movementY);
     }
+    ``;
   };
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     if (imgRef.current === null) {
       return;
     }
-    const [x, y] = [e.clientX - e.currentTarget.offsetLeft,
-      e.clientY - e.currentTarget.offsetTop];
+    const [x, y] = [
+      e.clientX - e.currentTarget.offsetLeft,
+      e.clientY - e.currentTarget.offsetTop,
+    ];
     console.log(transformMatrix.slice(4, 6));
 
     const zoom = e.deltaY < 0 ? 1.1 : 0.9;
@@ -98,37 +93,28 @@ const MapOverlay = (props: MapOverlayProps) => {
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onWheel={handleWheel}
-      role="presentation"
-    >
+      role="presentation">
       <img
         src={`/assets/topdown/${map}_anno.png`}
         alt={map}
         width={width}
         height={height}
-        style={
-          {
-            position: 'absolute',
-            // paddingLeft: `${transformMatrix[4]}px`,
-            // paddingTop: `${transformMatrix[5]}px`,
-            width: `${width * transformMatrix[0]}px`,
-            height: `${height * transformMatrix[0]}px`,
-            left: `${transformMatrix[4]}px`,
-            top: `${transformMatrix[5]}px`,
-            // transform: `matrix(${transformMatrix.join(',')})`,
-          }
-        }
+        style={{
+          position: 'absolute',
+          // paddingLeft: `${transformMatrix[4]}px`,
+          // paddingTop: `${transformMatrix[5]}px`,
+          width: `${width * transformMatrix[0]}px`,
+          height: `${height * transformMatrix[0]}px`,
+          left: `${transformMatrix[4]}px`,
+          top: `${transformMatrix[5]}px`,
+          // transform: `matrix(${transformMatrix.join(',')})`,
+        }}
         ref={imgRef}
       />
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
         <g transform={`matrix(${transformMatrix.join(' ')})`}>
           {data.map(([time, x, y]) => (
-            <circle
-              key={`${time}-${x}-${y}`}
-              cx={x}
-              cy={y}
-              r={5}
-              fill="red"
-            />
+            <circle key={`${time}-${x}-${y}`} cx={x} cy={y} r={5} fill="red" />
           ))}
         </g>
       </svg>

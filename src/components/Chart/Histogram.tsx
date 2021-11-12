@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-console */
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 const computeHistogram = (data: number[], bins: number): number[] => {
   const histogram = new Array(bins).fill(0);
@@ -18,7 +18,12 @@ const computeHistogram = (data: number[], bins: number): number[] => {
   return histogram;
 };
 
-const binToValue = (bin: number, min: number, max: number, bins: number): number => {
+const binToValue = (
+  bin: number,
+  min: number,
+  max: number,
+  bins: number,
+): number => {
   const range = max - min;
   const binSize = range / bins;
   return min + bin * binSize;
@@ -33,10 +38,10 @@ interface HistogramProps {
 }
 
 const Histogram = (props: HistogramProps) => {
-  const rectRefs = useRef<Map<number, React.RefObject<SVGRectElement>>>(new Map());
-  const {
-    data, onSelectionChange, width, height, bins,
-  } = props;
+  const rectRefs = useRef<Map<number, React.RefObject<SVGRectElement>>>(
+    new Map(),
+  );
+  const {data, onSelectionChange, width, height, bins} = props;
   const [selectStart, setSelectStart] = useState<number | null>(null);
   const [selectEnd, setSelectEnd] = useState<number | null>(null);
   const [histogram, setHistogram] = useState<number[]>([]);
@@ -45,22 +50,19 @@ const Histogram = (props: HistogramProps) => {
   // const maxValue = Math.max(...data);
 
   useEffect(() => {
-    histogram.forEach((count, key) => rectRefs.current.set(key, React.createRef<SVGRectElement>()));
+    histogram.forEach((count, key) =>
+      rectRefs.current.set(key, React.createRef<SVGRectElement>()),
+    );
   }, [histogram]);
 
   const getSelected = () => {
     const min = Math.min(...data);
     const max = Math.max(...data);
     if (selectStart === null || selectEnd === null) {
-      return [binToValue(0, min, max, bins),
-        binToValue(bins, min, max, bins)];
+      return [binToValue(0, min, max, bins), binToValue(bins, min, max, bins)];
     }
-    const start = binToValue(
-      Math.min(selectStart, selectEnd), min, max, bins,
-    );
-    const end = binToValue(
-      Math.max(selectStart, selectEnd), min, max, bins,
-    );
+    const start = binToValue(Math.min(selectStart, selectEnd), min, max, bins);
+    const end = binToValue(Math.max(selectStart, selectEnd), min, max, bins);
     return [start, end];
   };
 
@@ -104,7 +106,12 @@ const Histogram = (props: HistogramProps) => {
       const y = e.clientY - rect.top;
       const tooltip = document.getElementById('tooltip');
       if (tooltip) {
-        tooltip.innerHTML = `${binToValue(Number(value), Math.min(...data), Math.max(...data), bins).toFixed(2)}: ${histogram[Number(value)]} events`;
+        tooltip.innerHTML = `${binToValue(
+          Number(value),
+          Math.min(...data),
+          Math.max(...data),
+          bins,
+        ).toFixed(2)}: ${histogram[Number(value)]} events`;
         tooltip.style.left = `${x}px`;
         tooltip.style.top = `${y}px`;
         tooltip.style.display = 'block';
@@ -130,7 +137,7 @@ const Histogram = (props: HistogramProps) => {
     setSelectStart(parseInt(target.getAttribute('data-value') || '0', 10));
   };
 
-  const mouseUp = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+  const mouseUp = () => {
     const range = getSelected();
     onSelectionChange(range[0], range[1]);
     setSelectStart(null);
@@ -138,12 +145,17 @@ const Histogram = (props: HistogramProps) => {
   };
 
   // const xScale = (value: number) => ((value - minValue) / (maxValue - minValue)) * width;
-  const yScale = (value: number) => (height * (1 - (value / Math.max(...histogram))));
-  const yScaleInverse = (value: number) => (Math.max(...histogram) * (1 - (value / height)));
+  const yScale = (value: number) =>
+    height * (1 - value / Math.max(...histogram));
+  const yScaleInverse = (value: number) =>
+    Math.max(...histogram) * (1 - value / height);
 
   return (
     <div className="histogram">
-      <svg width={`${width + 100}px`} height={`${height + 40}px`} viewBox={`-60 -10 ${width + 100} ${height + 40}`}>
+      <svg
+        width={`${width + 100}px`}
+        height={`${height + 40}px`}
+        viewBox={`-60 -10 ${width + 100} ${height + 40}`}>
         <g transform="translate(0,0)">
           {histogram.map((frequency, bin) => (
             <rect
@@ -181,13 +193,17 @@ const Histogram = (props: HistogramProps) => {
           {[0, 0.25, 0.5, 0.75, 1].map((x) => (
             <text
               key={x}
-              x={(x * width)}
+              x={x * width}
               y={height + 20}
               className="axis-label"
-              textAnchor="middle"
-            >
+              textAnchor="middle">
               {/* two decimal */}
-              {binToValue(x * bins, Math.min(...data), Math.max(...data), bins).toFixed(2)}
+              {binToValue(
+                x * bins,
+                Math.min(...data),
+                Math.max(...data),
+                bins,
+              ).toFixed(2)}
             </text>
           ))}
           {/* y axis labels */}
@@ -195,17 +211,16 @@ const Histogram = (props: HistogramProps) => {
             <text
               key={y}
               x={-10}
-              y={(y * height) + 10}
+              y={y * height + 10}
               className="axis-label"
-              textAnchor="end"
-            >
+              textAnchor="end">
               {/* two decimal */}
-              {(yScaleInverse(y * height)).toFixed(2)}
+              {yScaleInverse(y * height).toFixed(2)}
             </text>
           ))}
         </g>
       </svg>
-      <div id="tooltip" style={{ display: 'none' }} />
+      <div id="tooltip" style={{display: 'none'}} />
     </div>
   );
 };
