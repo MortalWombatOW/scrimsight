@@ -9,3 +9,7 @@ export function stringHash(str: string): number {
   }
   return Math.abs(hash);
 }
+
+export function isNumeric(str: string): boolean {
+  return !isNaN(parseFloat(str)) && isFinite(parseFloat(str));
+}
