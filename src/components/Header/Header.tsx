@@ -1,13 +1,15 @@
 import React from 'react';
 import {Toolbar} from '@mui/material';
-// import DataSummary from './DataSummary';
 import Uploader from '../Uploader/Uploader';
+import {useNavigate} from 'react-router-dom';
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <Toolbar className="header">
-      <img className="logoicon" src="/assets/owlogo.svg" alt="logo" />
-      <span className="logo">scrimsight</span>
+      <span className="logo" onClick={() => navigate('/')}>
+        scrimsight
+      </span>
       <div className="navbuttons">
         <Uploader />
         {/* <DataSummary dataset={dataset} /> */}

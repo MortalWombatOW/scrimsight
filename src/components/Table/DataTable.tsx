@@ -4,14 +4,8 @@
 // /* eslint-disable no-restricted-syntax */
 // import {Button, MenuItem, Select, ButtonGroup} from '@mui/material';
 // import React, {useMemo, useState} from 'react';
-// import {DatasetTransform} from '../../lib/data/data';
-// import Dataset from '../services/Dataset';
-// import FieldPopover from './FieldPopover';
 
-// interface DataTableProps {
-//   dataset: Dataset;
-//   addTransform: (transform: DatasetTransform) => void;
-// }
+// interface DataTableProps {}
 
 // const DataTable = (props: DataTableProps) => {
 //   const {dataset, addTransform} = props;

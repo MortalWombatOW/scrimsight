@@ -12,3 +12,5 @@ const useData = <T extends TableDefinition>(table: string) => {
 
   return data;
 };
+
+export default useData;

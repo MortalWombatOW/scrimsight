@@ -154,7 +154,7 @@ const parseRow = (row: string) => {
   return [timestamp, ...convertedData];
 };
 
-const parseFile = (file: string, lastModified: number): Data => {
+const parseFile = (file: string): Data => {
   const rows = file.split('\n');
 
   const data = rows.map(parseRow);
@@ -189,16 +189,80 @@ const groupByIndex = (data: Data, index: number): GroupedData => {
   return groupedData;
 };
 
-const addMapEvents = (data: Data, addToMapTable: (map: OWMap) => void) => {
+const getRolesFromPlayerStatusData = (data: Data): {[key: string]: string} => {
+  const roles: {[key: string]: string} = {};
+
+  const heroToRole = {
+    'D.Va': 'tank',
+    Orisa: 'tank',
+    Reinhardt: 'tank',
+    Roadhog: 'tank',
+    Winston: 'tank',
+    Sigma: 'tank',
+    'Wrecking Ball': 'tank',
+    Zarya: 'tank',
+    Ashe: 'damage',
+    Bastion: 'damage',
+    Cassidy: 'damage',
+    McCree: 'damage',
+    Doomfist: 'damage',
+    Echo: 'damage',
+    Genji: 'damage',
+    Hanzo: 'damage',
+    Junkrat: 'damage',
+    Mei: 'damage',
+    Pharah: 'damage',
+    Reaper: 'damage',
+    'Soldier: 76': 'damage',
+    Sombra: 'damage',
+    Symmetra: 'damage',
+    Torbjörn: 'damage',
+    Tracer: 'damage',
+    Widowmaker: 'damage',
+    Ana: 'support',
+    Baptiste: 'support',
+    Brigitte: 'support',
+    Lúcio: 'support',
+    Mercy: 'support',
+    Moira: 'support',
+    Zenyatta: 'support',
+  };
+  data.forEach((row: Row) => {
+    const [timestamp, event_type, player, hero, position] = row;
+    if (roles[player] === undefined) {
+      roles[player] = heroToRole[hero];
+    }
+  });
+
+  return roles;
+};
+
+const addMapEvents = (
+  mapId: number,
+  fileName: string,
+  timestamp: number,
+  mapData: Data,
+  playerStatusData: Data,
+  addToMapTable: (map: OWMap) => Promise<number>,
+): Promise<number[]> => {
   const map: Partial<OWMap> = {
+    mapId,
+    fileName,
+    timestamp,
     team1: [],
     team2: [],
+    roles: getRolesFromPlayerStatusData(
+      playerStatusData.filter((row) => row[1] === 'player_status'),
+    ),
   };
   const teamAssignment = {};
-  data.forEach((row: Row) => {
+  if (mapData === undefined) {
+    debugger;
+  }
+  mapData.forEach((row: Row) => {
     const [timestamp, eventType, ...rest] = row;
     if (eventType === 'map') {
-      map.name = rest[0] as string;
+      map.mapName = rest[0] as string;
     }
     if (eventType === 'player_team') {
       const [player, team] = rest;
@@ -212,14 +276,16 @@ const addMapEvents = (data: Data, addToMapTable: (map: OWMap) => void) => {
       map[teamAssignment[team as string]].push(player as string);
     }
   });
-  addToMapTable(map as OWMap);
+
+  return Promise.all([addToMapTable(map as OWMap)]);
 };
 
 const addPlayerStatusEvents = (
   mapId: number,
   data: Data,
-  addToPlayerStatusTable: (status: PlayerStatus) => void,
-) => {
+  addToPlayerStatusTable: (status: PlayerStatus) => Promise<number>,
+): Promise<number[]> => {
+  const promises = [];
   const groupByPlayer = groupByIndex(data, 2);
   Object.keys(groupByPlayer).forEach((player: string) => {
     const groupByTimestamp = groupByIndex(groupByPlayer[player], 0);
@@ -234,6 +300,10 @@ const addPlayerStatusEvents = (
         const [, eventType, , ...rest] = event;
         if (eventType === 'player_status') {
           status.hero = rest[0] as string;
+          if (rest[1] === 0) {
+            // sometimes happens at end of games, players don't have a position
+            return;
+          }
           const [x, y, z] = (rest[1] as string)
             .slice(1, -1)
             .split(',')
@@ -249,16 +319,19 @@ const addPlayerStatusEvents = (
           status.ultCharge = rest[0] as number;
         }
       });
-      addToPlayerStatusTable(status as PlayerStatus);
+      promises.push(addToPlayerStatusTable(status as PlayerStatus));
     });
   });
+
+  return Promise.all(promises);
 };
 
 const addPlayerAbilityEvents = (
   mapId: number,
   data: Data,
-  addToPlayerAbilityTable: (ability: PlayerAbility) => void,
-) => {
+  addToPlayerAbilityTable: (ability: PlayerAbility) => Promise<number>,
+): Promise<number[]> => {
+  const promises = [];
   const abilityMap = {
     used_ultimate: 'ultimate',
     used_ability_1: 'primary',
@@ -266,20 +339,27 @@ const addPlayerAbilityEvents = (
   };
   data.forEach((row: Row) => {
     const [timestamp, eventType, player, ...rest] = row;
-    addToPlayerAbilityTable({
-      mapId,
-      timestamp: timestamp as number,
-      player: player as string,
-      type: abilityMap[eventType],
-    });
+    promises.push(
+      addToPlayerAbilityTable({
+        mapId,
+        timestamp: timestamp as number,
+        player: player as string,
+        type: abilityMap[eventType],
+      }),
+    );
   });
+
+  return Promise.all(promises);
 };
 
 const addPlayerInteractionEvents = (
   mapId: number,
   data: Data,
-  addToPlayerInteractionTable: (interaction: PlayerInteraction) => void,
-) => {
+  addToPlayerInteractionTable: (
+    interaction: PlayerInteraction,
+  ) => Promise<number>,
+): Promise<number[]> => {
+  const promises = [];
   const interactionMap = {
     damage_dealt: 'damage',
     did_healing: 'healing',
@@ -288,45 +368,106 @@ const addPlayerInteractionEvents = (
   };
   data.forEach((row: Row) => {
     const [timestamp, eventType, player, amount, target] = row;
-    addToPlayerInteractionTable({
-      mapId,
-      timestamp: timestamp as number,
-      player: player as string,
-      type: interactionMap[eventType],
-      amount: amount as number,
-      target: target as string,
-    });
+    promises.push(
+      addToPlayerInteractionTable({
+        mapId,
+        timestamp: timestamp as number,
+        player: player as string,
+        type: interactionMap[eventType],
+        amount: amount as number,
+        target: target as string,
+      }),
+    );
   });
+
+  return Promise.all(promises);
 };
 
-const uploadFile = (
+const validateEventsByTable = (data: GroupedData): boolean => {
+  const tables = Object.keys(data);
+  if (!tables.includes('map')) {
+    console.log('missing map table');
+    return false;
+  }
+  if (!tables.includes('player_status')) {
+    console.log('missing player_status table');
+    return false;
+  }
+  if (!tables.includes('player_ability')) {
+    console.log('missing player_ability table');
+    return false;
+  }
+  if (!tables.includes('player_interaction')) {
+    console.log('missing player_interaction table');
+    return false;
+  }
+  return true;
+};
+
+const uploadedMaps = [];
+
+const uploadFile = async (
   file: string,
+  fileName: string,
   lastModified: number,
-  addToMapTable: (map: OWMap) => void,
-  addToPlayerStatusTable: (status: PlayerStatus) => void,
-  addToPlayerAbilityTable: (status: PlayerAbility) => void,
-  addToPlayerInteractionTable: (status: PlayerInteraction) => void,
+  addToMapTable: (map: OWMap) => Promise<number>,
+  addToPlayerStatusTable: (status: PlayerStatus) => Promise<number>,
+  addToPlayerAbilityTable: (status: PlayerAbility) => Promise<number>,
+  addToPlayerInteractionTable: (status: PlayerInteraction) => Promise<number>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getMapByIndex: (index: string, key: any) => Promise<OWMap>,
+  updateFileProgress: (progress: number) => void,
 ) => {
   const mapId = stringHash(file);
-  const data = parseFile(file, lastModified);
+  if (uploadedMaps.includes(mapId)) {
+    console.log(`skipping ${fileName}`);
+    return;
+  }
+  uploadedMaps.push(mapId);
+
+  updateFileProgress(0);
+  const existingMap = await getMapByIndex('mapId', mapId);
+  if (existingMap !== undefined) {
+    updateFileProgress(-1);
+    console.log(`Map ${mapId} already exists`);
+    return;
+  }
+
+  const data = parseFile(file);
   const eventsByTable = groupByTable(data);
 
-  addMapEvents(eventsByTable.map, addToMapTable);
-  addPlayerStatusEvents(
+  if (!validateEventsByTable(eventsByTable)) {
+    updateFileProgress(-1);
+    return;
+  }
+
+  await addMapEvents(
+    mapId,
+    fileName,
+    lastModified,
+    eventsByTable.map,
+    eventsByTable.player_status,
+    addToMapTable,
+  );
+  updateFileProgress(25);
+  await addPlayerStatusEvents(
     mapId,
     eventsByTable.player_status,
     addToPlayerStatusTable,
   );
-  addPlayerAbilityEvents(
+  updateFileProgress(50);
+  await addPlayerAbilityEvents(
     mapId,
     eventsByTable.player_ability,
     addToPlayerAbilityTable,
   );
-  addPlayerInteractionEvents(
+  updateFileProgress(75);
+  await addPlayerInteractionEvents(
     mapId,
     eventsByTable.player_interaction,
     addToPlayerInteractionTable,
   );
+  updateFileProgress(100);
 };
 
 export default uploadFile;

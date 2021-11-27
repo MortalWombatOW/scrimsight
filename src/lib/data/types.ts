@@ -3,11 +3,15 @@ import {ObjectStoreMeta} from 'react-indexed-db';
 
 // identifies each map
 type OWMap = {
-  name: string;
+  mapId: number;
+  fileName: string;
+  mapName: string;
+  timestamp: number;
   team1Name: string;
   team2Name: string;
   team1: string[];
   team2: string[];
+  roles: {[key: string]: string};
 };
 
 type GameEvent = {
@@ -37,12 +41,9 @@ type PlayerInteraction = GameEvent & {
   amount: number;
 };
 
-type TableDefinition = (
-  | OWMap
-  | PlayerStatus
-  | PlayerAbility
-  | PlayerInteraction
-) & {id: number};
+type TableDefinition = OWMap | PlayerStatus | PlayerAbility | PlayerInteraction;
+
+type WithId<T> = T & {id: number};
 
 const types = {
   map: keys<OWMap>(),
@@ -79,4 +80,5 @@ export {
   PlayerInteraction,
   types,
   TableDefinition,
+  WithId,
 };

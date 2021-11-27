@@ -1,12 +1,12 @@
-$dark: #3f51b5;
-$mid: #859ec0;
-$neutral: #e7ecf3;
-$light: #f9fcff;
-$highlight: #ee6c4d;
-$text: #333;
+$dark: #000000;
+$mid: #363636;
+$neutral: #5e5e5e;
+$light: #b4b4b4;
+$highlight: #3c006d;
+$background: #f3f3f3;
 
 $min_width: 500px;
-$col_width: 100%;
+$col_width: 80%;
 $hpadding: calc((100% - #{$col_width}) / 2);
 
 body {
@@ -15,12 +15,9 @@ body {
     "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: $neutral;
-
+  background-color: $background;
+  color: $mid;
   padding-top: 0px;
-  padding-left: $hpadding;
-  padding-right: $hpadding;
-  min-width: $min_width;
 }
 
 code {
@@ -57,8 +54,6 @@ div > label.MuiButtonBase-root {
 }
 
 .App {
-  color: $text;
-
   &.div {
     margin-bottom: 10px;
     margin-top: 20px;
@@ -82,28 +77,21 @@ th {
   padding: 5px;
 }
 
-.logoicon {
-  height: 50px;
-}
 
 .logo {
   font-size: 17px;
   font-weight: bold;
   margin-left: 25px;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .navbuttons {
   margin-left: auto;
   margin-top: 10px;
   margin-bottom: 8px;
-}
-
-.eventscope {
-  padding: 10px;
-
-  // > * {
-  //   margin: 5px;
-  // }
 }
 
 table {
@@ -119,10 +107,6 @@ table {
   height: 36.5px;
   // font-size: 10px;
   color: $dark;
-}
-
-#demo-simple-select-label {
-  display: none;
 }
 
 .MuiOutlinedInput-notchedOutline {
@@ -280,17 +264,129 @@ div.tablecontrols > * {
 .header {
   display: flex;
 }
-.zero-state-view {
-  padding: 10% 30%;
-  text-align: center;
-  animation: fadein 1s;
+
+
+.Uploader-progresscontainer {
+  width: 500px;
+  // height: 300px;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px;
 }
 
-@keyframes fadein {
-  from {
-    opacity: 0;
+.Home-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.NavCard {
+  flex: 0 0 200px;
+  // height: 300px;
+  border-radius: 5px;
+  border: 1px solid $light;
+  margin: 10px;
+  padding: 10px;
+  transition: all 0.1s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+    box-shadow: 1px 1px 5px $light;
   }
-  to {
-    opacity: 1;
+
+  & .NavCard-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: $dark;
+  }
+
+  & .NavCard-img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.Maps {
+  & .Maps-teamName {
+    color: $dark;
+    font-size: 20px;
+  }
+
+  & .Maps-container {
+    display: flex;
+    flex-direction: column;
+    padding-left: $hpadding;
+    padding-right: $hpadding;
+    min-width: $min_width;
+  }
+
+  & .Maps-datedivider {
+    color: $neutral;
+    font-variant: small-caps;
+    margin: 10px 0px;
+  }
+}
+
+.MapRow {
+  border-radius: 5px;
+  border: 1px solid $light;
+  $maprow-height: 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  transition: all 0.1s ease-in-out;
+  margin-bottom: 10px;
+  box-shadow: 1px 1px 5px $light;
+
+  &:hover {
+    transform: scale(1.02);
+    cursor: pointer;
+    box-shadow: 1px 1px 10px $light;
+    border: 1px solid $highlight;
+  }
+
+  & .MapRow-image {
+    height: $maprow-height;
+    & img {
+      width: auto;
+      height: 100%;
+    }
+    // padding-right: 10px;
+  }
+
+  & .MapRow-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: $dark;
+    width: 200px;
+    line-height: $maprow-height;
+}
+
+  & .MapRow-teams-col {
+    height: $maprow-height;
+    line-height: $maprow-height / 2;
+    width: 200px;
+  }
+
+  & .MapRow-player {
+    line-height: $maprow-height / 5;
+  }
+
+  & .MapRow-topmargin {
+    margin-top: 14px;
+  }
+
+  & .role-icon {
+    height: 14px;
+    position: relative;
+    top: 1px;
+    fill: $neutral;
+    stroke: $neutral;
   }
 }
