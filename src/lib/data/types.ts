@@ -1,5 +1,4 @@
 import {keys} from 'ts-transformer-keys';
-import {ObjectStoreMeta} from 'react-indexed-db';
 
 // identifies each map
 type OWMap = {
@@ -52,28 +51,27 @@ const types = {
   player_interaction: keys<PlayerInteraction>(),
 };
 
-const generateDbSchema = (name: string): ObjectStoreMeta => {
-  const fields = types[name];
-  return {
-    store: name,
-    storeConfig: {keyPath: 'id', autoIncrement: true},
-    storeSchema: [
-      {name: 'id', keypath: 'id', options: {unique: true}},
-      ...fields.map((field) => ({
-        name: field,
-        keypath: field,
-        options: {unique: false},
-      })),
-    ],
-  };
-};
+// const generateDbSchema = (name: string): ObjectStoreMeta => {
+//   const fields = types[name];
+//   return {
+//     store: name,
+//     storeConfig: {keyPath: 'id', autoIncrement: true},
+//     storeSchema: [
+//       {name: 'id', keypath: 'id', options: {unique: true}},
+//       ...fields.map((field) => ({
+//         name: field,
+//         keypath: field,
+//         options: {unique: false},
+//       })),
+//     ],
+//   };
+// };
 
-const generateAllDbSchemas = (): ObjectStoreMeta[] => {
-  return Object.keys(types).map((name) => generateDbSchema(name));
-};
+// const generateAllDbSchemas = (): ObjectStoreMeta[] => {
+//   return Object.keys(types).map((name) => generateDbSchema(name));
+// };
 
 export {
-  generateAllDbSchemas,
   OWMap,
   PlayerStatus,
   PlayerAbility,

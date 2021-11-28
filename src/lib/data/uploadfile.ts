@@ -404,27 +404,17 @@ const validateEventsByTable = (data: GroupedData): boolean => {
   return true;
 };
 
-const uploadedMaps = [];
-
 const uploadFile = async (
   file: string,
   fileName: string,
   lastModified: number,
-  addToMapTable: (map: OWMap) => Promise<number>,
-  addToPlayerStatusTable: (status: PlayerStatus) => Promise<number>,
-  addToPlayerAbilityTable: (status: PlayerAbility) => Promise<number>,
-  addToPlayerInteractionTable: (status: PlayerInteraction) => Promise<number>,
+  // addToMapTable: (map: OWMap) => Promise<number>,
+  // addToPlayerStatusTable: (status: PlayerStatus) => Promise<number>,
+  // addToPlayerAbilityTable: (status: PlayerAbility) => Promise<number>,
+  // addToPlayerInteractionTable: (status: PlayerInteraction) => Promise<number>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getMapByIndex: (index: string, key: any) => Promise<OWMap>,
-  updateFileProgress: (progress: number) => void,
+  // getMapByIndex: (index: string, key: any) => Promise<OWMap>,
 ) => {
-  const mapId = stringHash(file);
-  if (uploadedMaps.includes(mapId)) {
-    console.log(`skipping ${fileName}`);
-    return;
-  }
-  uploadedMaps.push(mapId);
-
   updateFileProgress(0);
   const existingMap = await getMapByIndex('mapId', mapId);
   if (existingMap !== undefined) {

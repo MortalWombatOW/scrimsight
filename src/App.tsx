@@ -1,11 +1,10 @@
 import Home from './pages/Home/Home';
 import React from 'react';
-import {initDB} from 'react-indexed-db';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import DBConfig from './lib/data/dbconfig';
+import {setupDB} from './lib/data/database';
 import Maps from './pages/Maps/Maps';
 
-initDB(DBConfig);
+setupDB();
 
 const App = () => (
   <BrowserRouter>

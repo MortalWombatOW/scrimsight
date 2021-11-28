@@ -2,9 +2,10 @@
 import React, {ChangeEvent, forwardRef, useState} from 'react';
 import {Button, Modal, LinearProgress} from '@mui/material';
 import uploadFile from './../../lib/data/uploadfile';
-import {useIndexedDB} from 'react-indexed-db';
 import {useEffect} from 'react';
 import ErrorIcon from '@mui/icons-material/Error';
+import {useFileUploadStatus} from './../../hooks/useFileUploadStatus';
+import {useCallback} from 'react';
 
 type StrToNum = {[key: string]: number};
 
@@ -31,14 +32,9 @@ const LoadProgress = forwardRef((props: {fileProgress: StrToNum}, ref: any) => {
 LoadProgress.displayName = 'LoadProgress';
 
 const Uploader = () => {
-  const {add: addToMapTable, getByIndex: getMapByIndex} = useIndexedDB('map');
-  const {add: addToPlayerStatusTable} = useIndexedDB('player_status');
-  const {add: addToPlayerAbilityTable} = useIndexedDB('player_ability');
-  const {add: addToPlayerInteractionTable} = useIndexedDB('player_interaction');
-
   const [files, setFiles] = useState<File[]>([]);
-  const [fileProgress, setFileProgress] = useState<StrToNum>({});
-  const isActive = Object.keys(fileProgress).length > 0;
+  const [fileUploadStatus] = useFileUploadStatus();
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     files.forEach((file) => {
@@ -57,35 +53,18 @@ const Uploader = () => {
           e.target.result as string,
           file.name,
           file.lastModified,
-          addToMapTable,
-          addToPlayerStatusTable,
-          addToPlayerAbilityTable,
-          addToPlayerInteractionTable,
-          getMapByIndex,
           (progress: number) => updateFileProgress(file.name, progress),
         );
       };
       reader.readAsText(file);
     });
-  }, [
-    addToMapTable,
-    addToPlayerAbilityTable,
-    addToPlayerInteractionTable,
-    addToPlayerStatusTable,
-    fileProgress,
-    files,
-    getMapByIndex,
-  ]);
+  }, [fileProgress, files]);
 
-  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target || !e.target.files) return;
     setFiles(Array.from(e.target.files));
-  };
+  });
 
-  const resetState = () => {
-    setFileProgress({});
-    setFiles([]);
-  };
   return (
     <div>
       <Button color="inherit" variant="outlined" component="label">
@@ -98,8 +77,8 @@ const Uploader = () => {
           multiple
         />
       </Button>
-      <Modal open={isActive} onClose={resetState}>
-        <LoadProgress fileProgress={fileProgress} />
+      <Modal open={isActive} onClose={() => setIsActive(false)}>
+        <LoadProgress fileProgress={fileUploadStatus} />
       </Modal>
     </div>
   );
