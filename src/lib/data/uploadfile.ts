@@ -105,6 +105,44 @@ const eventFields = {
   map_event: keys<MapEvent>(),
 };
 
+type FileUploadMessage = {
+  file: File;
+};
+
+type LoadedFileMessage = {
+  fileName: string;
+  lastModified: number;
+  data: string;
+};
+
+type ParsedFileMessage = {
+  fileName: string;
+  timestamp: number;
+  mapId: number;
+  mapData?: OWMap;
+  playerStatusData?: PlayerStatus[];
+  playerAbilityData?: PlayerAbility[];
+  playerInteractionData?: PlayerInteraction[];
+};
+
+type SuccessMessage = {
+  fileName: string;
+};
+
+type ErrorMessage = {
+  fileName: string;
+  error: string;
+};
+
+type FileProgress = {
+  fileName: string;
+  isLoaded: boolean;
+  isParsed: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  error?: string;
+};
+
 // const tableTypes: {
 //   [key: string]: string[];
 // } = {
@@ -243,8 +281,7 @@ const addMapEvents = (
   timestamp: number,
   mapData: Data,
   playerStatusData: Data,
-  addToMapTable: (map: OWMap) => Promise<number>,
-): Promise<number[]> => {
+): OWMap => {
   const map: Partial<OWMap> = {
     mapId,
     fileName,
@@ -277,15 +314,11 @@ const addMapEvents = (
     }
   });
 
-  return Promise.all([addToMapTable(map as OWMap)]);
+  return map as OWMap;
 };
 
-const addPlayerStatusEvents = (
-  mapId: number,
-  data: Data,
-  addToPlayerStatusTable: (status: PlayerStatus) => Promise<number>,
-): Promise<number[]> => {
-  const promises = [];
+const addPlayerStatusEvents = (mapId: number, data: Data): PlayerStatus[] => {
+  const playerStatus: PlayerStatus[] = [];
   const groupByPlayer = groupByIndex(data, 2);
   Object.keys(groupByPlayer).forEach((player: string) => {
     const groupByTimestamp = groupByIndex(groupByPlayer[player], 0);
@@ -319,19 +352,15 @@ const addPlayerStatusEvents = (
           status.ultCharge = rest[0] as number;
         }
       });
-      promises.push(addToPlayerStatusTable(status as PlayerStatus));
+      playerStatus.push(status as PlayerStatus);
     });
   });
 
-  return Promise.all(promises);
+  return playerStatus;
 };
 
-const addPlayerAbilityEvents = (
-  mapId: number,
-  data: Data,
-  addToPlayerAbilityTable: (ability: PlayerAbility) => Promise<number>,
-): Promise<number[]> => {
-  const promises = [];
+const addPlayerAbilityEvents = (mapId: number, data: Data): PlayerAbility[] => {
+  const playerAbility = [];
   const abilityMap = {
     used_ultimate: 'ultimate',
     used_ability_1: 'primary',
@@ -339,27 +368,22 @@ const addPlayerAbilityEvents = (
   };
   data.forEach((row: Row) => {
     const [timestamp, eventType, player, ...rest] = row;
-    promises.push(
-      addToPlayerAbilityTable({
-        mapId,
-        timestamp: timestamp as number,
-        player: player as string,
-        type: abilityMap[eventType],
-      }),
-    );
+    playerAbility.push({
+      mapId,
+      timestamp: timestamp as number,
+      player: player as string,
+      type: abilityMap[eventType],
+    });
   });
 
-  return Promise.all(promises);
+  return playerAbility;
 };
 
 const addPlayerInteractionEvents = (
   mapId: number,
   data: Data,
-  addToPlayerInteractionTable: (
-    interaction: PlayerInteraction,
-  ) => Promise<number>,
-): Promise<number[]> => {
-  const promises = [];
+): PlayerInteraction[] => {
+  const playerInteraction = [];
   const interactionMap = {
     damage_dealt: 'damage',
     did_healing: 'healing',
@@ -368,19 +392,17 @@ const addPlayerInteractionEvents = (
   };
   data.forEach((row: Row) => {
     const [timestamp, eventType, player, amount, target] = row;
-    promises.push(
-      addToPlayerInteractionTable({
-        mapId,
-        timestamp: timestamp as number,
-        player: player as string,
-        type: interactionMap[eventType],
-        amount: amount as number,
-        target: target as string,
-      }),
-    );
+    playerInteraction.push({
+      mapId,
+      timestamp: timestamp as number,
+      player: player as string,
+      type: interactionMap[eventType],
+      amount: amount as number,
+      target: target as string,
+    });
   });
 
-  return Promise.all(promises);
+  return playerInteraction;
 };
 
 const validateEventsByTable = (data: GroupedData): boolean => {
@@ -405,59 +427,58 @@ const validateEventsByTable = (data: GroupedData): boolean => {
 };
 
 const uploadFile = async (
-  file: string,
-  fileName: string,
-  lastModified: number,
-  // addToMapTable: (map: OWMap) => Promise<number>,
-  // addToPlayerStatusTable: (status: PlayerStatus) => Promise<number>,
-  // addToPlayerAbilityTable: (status: PlayerAbility) => Promise<number>,
-  // addToPlayerInteractionTable: (status: PlayerInteraction) => Promise<number>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // getMapByIndex: (index: string, key: any) => Promise<OWMap>,
-) => {
-  updateFileProgress(0);
-  const existingMap = await getMapByIndex('mapId', mapId);
-  if (existingMap !== undefined) {
-    updateFileProgress(-1);
-    console.log(`Map ${mapId} already exists`);
-    return;
-  }
+  fileUpload: LoadedFileMessage,
+): Promise<ParsedFileMessage | ErrorMessage> => {
+  const mapId = stringHash(fileUpload.data);
+  // const existingMap = await getMapByIndex('mapId', mapId);
+  // if (existingMap !== undefined) {
+  //   return {
+  //     fileName: fileUpload.fileName,
+  //     error: `map with id ${mapId} already exists`,
+  //   };
+  // }
 
-  const data = parseFile(file);
+  const data = parseFile(fileUpload.data);
   const eventsByTable = groupByTable(data);
 
   if (!validateEventsByTable(eventsByTable)) {
-    updateFileProgress(-1);
-    return;
+    return {
+      fileName: fileUpload.fileName,
+      error: 'Error while parsing file',
+    };
   }
 
-  await addMapEvents(
+  const parsedFile: ParsedFileMessage = {
+    fileName: fileUpload.fileName,
     mapId,
-    fileName,
-    lastModified,
-    eventsByTable.map,
-    eventsByTable.player_status,
-    addToMapTable,
-  );
-  updateFileProgress(25);
-  await addPlayerStatusEvents(
-    mapId,
-    eventsByTable.player_status,
-    addToPlayerStatusTable,
-  );
-  updateFileProgress(50);
-  await addPlayerAbilityEvents(
-    mapId,
-    eventsByTable.player_ability,
-    addToPlayerAbilityTable,
-  );
-  updateFileProgress(75);
-  await addPlayerInteractionEvents(
-    mapId,
-    eventsByTable.player_interaction,
-    addToPlayerInteractionTable,
-  );
-  updateFileProgress(100);
+    timestamp: fileUpload.lastModified,
+    mapData: addMapEvents(
+      mapId,
+      fileUpload.fileName,
+      fileUpload.lastModified,
+      eventsByTable.map,
+      eventsByTable.player_status,
+    ),
+    playerStatusData: addPlayerStatusEvents(mapId, eventsByTable.player_status),
+    playerAbilityData: addPlayerAbilityEvents(
+      mapId,
+      eventsByTable.player_ability,
+    ),
+    playerInteractionData: addPlayerInteractionEvents(
+      mapId,
+      eventsByTable.player_interaction,
+    ),
+  };
+
+  return parsedFile;
 };
 
-export default uploadFile;
+export {
+  uploadFile,
+  FileUploadMessage,
+  LoadedFileMessage,
+  ParsedFileMessage,
+  SuccessMessage,
+  ErrorMessage,
+  FileProgress,
+};

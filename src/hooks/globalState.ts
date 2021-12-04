@@ -2,16 +2,16 @@ import {useState, useEffect} from 'react';
 
 // https://dev.to/yezyilomo/global-state-management-in-react-with-global-variables-and-hooks-state-management-doesn-t-have-to-be-so-hard-2n2c
 
-export function GlobalState(initialValue) {
+export function GlobalState<T>(initialValue) {
   this.value = initialValue; // Actual value of a global state
   this.subscribers = []; // List of subscribers
 
-  this.getValue = function () {
+  this.getValue = function (): T {
     // Get the actual value of a global state
     return this.value;
   };
 
-  this.setValue = function (newState) {
+  this.setValue = function (newState: T) {
     // This is a method for updating a global state
 
     if (this.getValue() === newState) {
@@ -44,8 +44,8 @@ export function GlobalState(initialValue) {
   };
 }
 
-export function useGlobalState(globalState) {
-  const [, setInnerState] = useState();
+export function useGlobalState<T>(globalState) {
+  const [, setInnerState] = useState<Object>();
   const state = globalState.getValue();
 
   function reRender(newState) {
@@ -61,7 +61,7 @@ export function useGlobalState(globalState) {
       // Unsubscribe from a global state when a component unmounts
       globalState.unsubscribe(reRender);
     };
-  });
+  }, [JSON.stringify(globalState)]);
 
   function setState(newState) {
     // Send update request to the global state and let it
