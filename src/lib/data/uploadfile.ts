@@ -1,6 +1,14 @@
 import {isNumeric} from '../string';
-import {keys} from 'ts-transformer-keys';
-import {OWMap, PlayerStatus, PlayerAbility, PlayerInteraction} from './types';
+// import {keys} from 'ts-transformer-keys';
+import {
+  OWMap,
+  PlayerStatus,
+  PlayerAbility,
+  PlayerInteraction,
+  ErrorMessage,
+  LoadedFileMessage,
+  ParsedFileMessage,
+} from './types';
 import {stringHash} from './../string';
 
 type Value = number | string;
@@ -13,135 +21,106 @@ type GroupedData = {
   [key: string]: Data;
 };
 
-type PlayerStatusEvent = {
-  timestamp: number;
-  player: string;
-  hero: string;
-  position: string;
-};
+// type PlayerStatusEvent = {
+//   timestamp: number;
+//   player: string;
+//   hero: string;
+//   position: string;
+// };
 
-type PlayerHealth = {
-  timestamp: number;
-  player: string;
-  health: number;
-  maxHealth: number;
-};
+// type PlayerHealth = {
+//   timestamp: number;
+//   player: string;
+//   health: number;
+//   maxHealth: number;
+// };
 
-type PlayerUlt = {
-  timestamp: number;
-  player: string;
-  ultPercent: number;
-};
+// type PlayerUlt = {
+//   timestamp: number;
+//   player: string;
+//   ultPercent: number;
+// };
 
-type UsedAbility = {
-  timestamp: number;
-  ability: string;
-  player: string;
-  hero: string;
-};
+// type UsedAbility = {
+//   timestamp: number;
+//   ability: string;
+//   player: string;
+//   hero: string;
+// };
 
-type DamageDealt = {
-  timestamp: number;
-  player: string;
-  damage: number;
-  target: string;
-};
+// type DamageDealt = {
+//   timestamp: number;
+//   player: string;
+//   damage: number;
+//   target: string;
+// };
 
-type DidHealing = {
-  timestamp: number;
-  player: string;
-  target: string;
-  healing: number;
-};
+// type DidHealing = {
+//   timestamp: number;
+//   player: string;
+//   target: string;
+//   healing: number;
+// };
 
-type DidElim = {
-  timestamp: number;
-  player: string;
-  damage: number;
-  target: string;
-};
+// type DidElim = {
+//   timestamp: number;
+//   player: string;
+//   damage: number;
+//   target: string;
+// };
 
-type DidFinalBlow = {
-  timestamp: number;
-  player: string;
-  damage: number;
-  target: string;
-};
+// type DidFinalBlow = {
+//   timestamp: number;
+//   player: string;
+//   damage: number;
+//   target: string;
+// };
 
-type PlayerTeam = {
-  timestamp: number;
-  player: string;
-  team: string;
-};
+// type PlayerTeam = {
+//   timestamp: number;
+//   player: string;
+//   team: string;
+// };
 
-type MapEvent = {
-  timestamp: number;
-  map: string;
-};
+// type MapEvent = {
+//   timestamp: number;
+//   map: string;
+// };
 
-type RawEvent =
-  | PlayerStatusEvent
-  | PlayerHealth
-  | PlayerUlt
-  | UsedAbility
-  | DamageDealt
-  | DidHealing
-  | DidElim
-  | DidFinalBlow
-  | PlayerTeam
-  | MapEvent;
+// type RawEvent =
+//   | PlayerStatusEvent
+//   | PlayerHealth
+//   | PlayerUlt
+//   | UsedAbility
+//   | DamageDealt
+//   | DidHealing
+//   | DidElim
+//   | DidFinalBlow
+//   | PlayerTeam
+//   | MapEvent;
 
-const eventFields = {
-  player_status: keys<PlayerStatusEvent>(),
-  player_health: keys<PlayerHealth>(),
-  player_ult: keys<PlayerUlt>(),
-  used_ability_1: keys<UsedAbility>(),
-  used_ability_2: keys<UsedAbility>(),
-  damage_dealt: keys<DamageDealt>(),
-  did_healing: keys<DidHealing>(),
-  did_elim: keys<DidElim>(),
-  did_final_blow: keys<DidFinalBlow>(),
-  player_team: keys<PlayerTeam>(),
-  map_event: keys<MapEvent>(),
-};
+// const eventFields = {
+//   player_status: keys<PlayerStatusEvent>(),
+//   player_health: keys<PlayerHealth>(),
+//   player_ult: keys<PlayerUlt>(),
+//   used_ability_1: keys<UsedAbility>(),
+//   used_ability_2: keys<UsedAbility>(),
+//   damage_dealt: keys<DamageDealt>(),
+//   did_healing: keys<DidHealing>(),
+//   did_elim: keys<DidElim>(),
+//   did_final_blow: keys<DidFinalBlow>(),
+//   player_team: keys<PlayerTeam>(),
+//   map_event: keys<MapEvent>(),
+// };
 
-type FileUploadMessage = {
-  file: File;
-};
-
-type LoadedFileMessage = {
-  fileName: string;
-  lastModified: number;
-  data: string;
-};
-
-type ParsedFileMessage = {
-  fileName: string;
-  timestamp: number;
-  mapId: number;
-  mapData?: OWMap;
-  playerStatusData?: PlayerStatus[];
-  playerAbilityData?: PlayerAbility[];
-  playerInteractionData?: PlayerInteraction[];
-};
-
-type SuccessMessage = {
-  fileName: string;
-};
-
-type ErrorMessage = {
-  fileName: string;
-  error: string;
-};
-
-type FileProgress = {
-  fileName: string;
-  isLoaded: boolean;
-  isParsed: boolean;
-  isSuccess: boolean;
-  isError: boolean;
-  error?: string;
-};
+// type FileProgress = {
+//   fileName: string;
+//   isLoaded: boolean;
+//   isParsed: boolean;
+//   isSuccess: boolean;
+//   isError: boolean;
+//   error?: string;
+// };
 
 // const tableTypes: {
 //   [key: string]: string[];
@@ -203,7 +182,7 @@ const parseFile = (file: string): Data => {
 const groupByTable = (data: Data): GroupedData => {
   const groupedData: GroupedData = {};
   data.forEach((row: Row) => {
-    const [timestamp, eventType] = row;
+    const [, eventType] = row;
     const table: string = tableForEvent[eventType];
     if (groupedData[table] === undefined) {
       groupedData[table] = [];
@@ -266,7 +245,7 @@ const getRolesFromPlayerStatusData = (data: Data): {[key: string]: string} => {
     Zenyatta: 'support',
   };
   data.forEach((row: Row) => {
-    const [timestamp, event_type, player, hero, position] = row;
+    const [, , player, hero] = row;
     if (roles[player] === undefined) {
       roles[player] = heroToRole[hero];
     }
@@ -297,7 +276,7 @@ const addMapEvents = (
     debugger;
   }
   mapData.forEach((row: Row) => {
-    const [timestamp, eventType, ...rest] = row;
+    const [, eventType, ...rest] = row;
     if (eventType === 'map') {
       map.mapName = rest[0] as string;
     }
@@ -367,7 +346,7 @@ const addPlayerAbilityEvents = (mapId: number, data: Data): PlayerAbility[] => {
     used_ability_2: 'secondary',
   };
   data.forEach((row: Row) => {
-    const [timestamp, eventType, player, ...rest] = row;
+    const [timestamp, eventType, player] = row;
     playerAbility.push({
       mapId,
       timestamp: timestamp as number,
@@ -452,19 +431,19 @@ const uploadFile = async (
     fileName: fileUpload.fileName,
     mapId,
     timestamp: fileUpload.lastModified,
-    mapData: addMapEvents(
+    map: addMapEvents(
       mapId,
       fileUpload.fileName,
       fileUpload.lastModified,
       eventsByTable.map,
       eventsByTable.player_status,
     ),
-    playerStatusData: addPlayerStatusEvents(mapId, eventsByTable.player_status),
-    playerAbilityData: addPlayerAbilityEvents(
+    playerStatus: addPlayerStatusEvents(mapId, eventsByTable.player_status),
+    playerAbilities: addPlayerAbilityEvents(
       mapId,
       eventsByTable.player_ability,
     ),
-    playerInteractionData: addPlayerInteractionEvents(
+    playerInteractions: addPlayerInteractionEvents(
       mapId,
       eventsByTable.player_interaction,
     ),
@@ -473,12 +452,4 @@ const uploadFile = async (
   return parsedFile;
 };
 
-export {
-  uploadFile,
-  FileUploadMessage,
-  LoadedFileMessage,
-  ParsedFileMessage,
-  SuccessMessage,
-  ErrorMessage,
-  FileProgress,
-};
+export {uploadFile};

@@ -1,3 +1,5 @@
+
+
 $dark: #000000;
 $mid: #363636;
 $neutral: #5e5e5e;
@@ -68,7 +70,6 @@ div > label.MuiButtonBase-root {
 
 table {
   border-collapse: collapse;
-  width: 100%;
 }
 
 td,
@@ -277,6 +278,14 @@ div.tablecontrols > * {
   padding: 10px;
 }
 
+label.Uploader-button.MuiButton-root {
+  margin-right: 0;
+}
+
+.Uploader-progressforfile {
+  
+}
+
 .Home-container {
   display: flex;
   flex-wrap: wrap;
@@ -343,6 +352,8 @@ div.tablecontrols > * {
   transition: all 0.1s ease-in-out;
   margin-bottom: 10px;
   box-shadow: 1px 1px 5px $light;
+  background-color: $background;
+  padding:  0px;
 
   &:hover {
     transform: scale(1.02);
@@ -361,11 +372,13 @@ div.tablecontrols > * {
   }
 
   & .MapRow-name {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
-    color: $dark;
+    color: $mid;
     width: 200px;
     line-height: $maprow-height;
+    text-align: left;
+    padding-left: 10px;
 }
 
   & .MapRow-teams-col {
@@ -376,6 +389,7 @@ div.tablecontrols > * {
 
   & .MapRow-player {
     line-height: $maprow-height / 5;
+    text-align: left;
   }
 
   & .MapRow-topmargin {
@@ -389,4 +403,50 @@ div.tablecontrols > * {
     fill: $neutral;
     stroke: $neutral;
   }
+
+  & .MapRow-timestamp {
+    line-height: $maprow-height;
+  }
+}
+
+.Map {
+  & .Map-container {
+    display: flex;
+    flex-direction: column;
+    padding-left: $hpadding;
+    padding-right: $hpadding;
+    min-width: $min_width;
+  }
+  & .Map-toprow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border: 1px solid blue;
+  }
+  & .Map-info {
+    padding: 10px;
+    margin-right: 10px;
+    // width: 100%;
+  }
+  & .Map-display {
+    width: 100%;
+    // height: 500px;
+    border: 1px solid red;
+  }
+
+  & .Map-timeline {
+    margin-top: 10px;
+    border: 1px solid purple;
+    width: 100%;
+  }
+  
+  & .Map-info td {
+    border: none;
+    padding: 0;
+    &.right {
+      text-align: right;
+    }
+  }
+
 }

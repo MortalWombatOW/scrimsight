@@ -1,64 +1,41 @@
 /* eslint-disable no-restricted-syntax */
-import React, {ChangeEvent, forwardRef, useState} from 'react';
-import {Button, Modal, LinearProgress} from '@mui/material';
-import {useEffect} from 'react';
-import ErrorIcon from '@mui/icons-material/Error';
+import React, {ChangeEvent, useState} from 'react';
+import {Button, ButtonGroup} from '@mui/material';
+import ManageSearchIcon from '@mui/icons-material/ManageSearch';
 import {useFileUploadStatus} from './../../hooks/useFileUploadStatus';
-import {useCallback} from 'react';
-
-// const LoadProgress = forwardRef((props: {fileProgress: StrToNum}, ref: any) => {
-//   const {fileProgress} = props;
-//   return (
-//     <div className="Uploader-progresscontainer" ref={ref}>
-//       {Object.keys(fileProgress).map((fileName) => (
-//         <div key={fileName}>
-//           {fileName}
-//           {fileProgress[fileName] >= 0 ? (
-//             <LinearProgress
-//               variant="determinate"
-//               value={fileProgress[fileName]}
-//             />
-//           ) : (
-//             <ErrorIcon />
-//           )}
-//         </div>
-//       ))}
-//     </div>
-//   );
-// });
-// LoadProgress.displayName = 'LoadProgress';
+import UploadProgressModal from './UploadProgressModal';
 
 const Uploader = () => {
-  const [
-    fileUploadMessages,
-    loadedFileMessages,
-    parsedFileMessages,
-    successMessages,
-    errorMessages,
-    startFileUpload,
-    getStateOfFile,
-  ] = useFileUploadStatus();
-  const [isActive, setIsActive] = useState(false);
+  const {startFileUpload} = useFileUploadStatus();
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const onInputChange = (e: ChangeEvent<HTMLInputElement>) =>
-    Array.from(e.target.files).forEach(startFileUpload);
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files);
+    startFileUpload(files);
+    setModalOpen(true);
+  };
 
   return (
     <div>
-      <Button color="inherit" variant="outlined" component="label">
-        Load Files
-        <input
-          id="fileinput"
-          type="file"
-          onChange={onInputChange}
-          hidden
-          multiple
-        />
-      </Button>
-      <Modal open={isActive} onClose={() => setIsActive(false)}>
-        {/* <LoadProgress fileProgress={fileUploadStatus} /> */}
-        <div>test</div>
-      </Modal>
+      <ButtonGroup variant="outlined" color="inherit">
+        <Button component="label" className="Uploader-button">
+          Load Files
+          <input
+            id="fileinput"
+            type="file"
+            onChange={onInputChange}
+            hidden
+            multiple
+          />
+        </Button>
+        <Button
+          component="label"
+          className="Uploader-button"
+          onClick={() => setModalOpen(true)}>
+          <ManageSearchIcon />
+        </Button>
+      </ButtonGroup>
+      <UploadProgressModal isOpen={modalOpen} setIsOpen={setModalOpen} />
     </div>
   );
 };

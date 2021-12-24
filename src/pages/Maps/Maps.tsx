@@ -6,16 +6,18 @@ import MapRow from './../../components/MapRow/MapRow';
 import {groupMapsByDate} from '../../lib/data/data';
 
 const Maps = () => {
-  const data = useData<OWMap>('map');
+  const [data, filteredData, updates] = useData<OWMap>('map');
 
   const groupedByTime = useMemo(() => {
-    if (!data) {
+    if (!filteredData) {
       return {};
     }
-    return groupMapsByDate(data);
-  }, [data]);
+    return groupMapsByDate(filteredData);
+  }, [updates]);
 
-  if (!data) {
+  console.log(groupedByTime);
+
+  if (!filteredData) {
     return <div>Loading...</div>;
   }
 

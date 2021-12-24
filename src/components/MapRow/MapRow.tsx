@@ -2,14 +2,15 @@ import {DamageIcon, TankIcon} from '../../components/Icon/Icon';
 import React from 'react';
 import {OWMap} from '../../lib/data/types';
 import {SupportIcon} from './../Icon/Icon';
-
+import {useNavigate} from 'react-router-dom';
 interface MapRowProps {
   map: OWMap;
 }
 
 const MapRow = (props: MapRowProps) => {
+  const navigate = useNavigate();
   const {map} = props;
-  const {mapName: name, team1, team2, team1Name, team2Name, roles} = map;
+  const {team1, team2, team1Name, team2Name, roles, timestamp} = map;
   const imageSrc = `/public/assets/maps/${map.mapName
     .toLowerCase()
     .replaceAll(' ', '-')
@@ -33,13 +34,17 @@ const MapRow = (props: MapRowProps) => {
   const team2Dps = dps.filter((dps) => team2.includes(dps));
   const team1Supports = supports.filter((support) => team1.includes(support));
   const team2Supports = supports.filter((support) => team2.includes(support));
+  const timestampString = new Date(timestamp).toLocaleString();
 
   return (
-    <div className="MapRow">
+    <button className="MapRow" onClick={() => navigate(`/map/${map.mapId}`)}>
       <div className="MapRow-image">
         <img src={imageSrc} alt={map.mapName} />
       </div>
       <div className="MapRow-name">{map.mapName}</div>
+      <div className="MapRow-teams-col">
+        <div className="MapRow-timestamp">{timestampString}</div>
+      </div>
       <div className="MapRow-teams-col">
         <div className="MapRow-teams-row">{team1Name}</div>
         <div className="MapRow-teams-row">{team2Name}</div>
@@ -110,7 +115,7 @@ const MapRow = (props: MapRowProps) => {
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 };
 

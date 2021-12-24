@@ -1,4 +1,5 @@
 import React from 'react';
+import {mapNameToFileName} from '../../lib/string';
 
 interface MapOverlayProps {
   map: string;
@@ -95,7 +96,7 @@ const MapOverlay = (props: MapOverlayProps) => {
       onWheel={handleWheel}
       role="presentation">
       <img
-        src={`/assets/topdown/${map}_anno.png`}
+        src={mapNameToFileName(map, true)}
         alt={map}
         width={width}
         height={height}

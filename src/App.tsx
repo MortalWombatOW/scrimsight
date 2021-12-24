@@ -1,20 +1,23 @@
 import Home from './pages/Home/Home';
 import React from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import {setupDB} from './lib/data/database';
 import Maps from './pages/Maps/Maps';
+import Map from './pages/Map/Map';
 
-setupDB();
+import {GlobalStateProvider} from './lib/globalstate';
 
 const App = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/maps" element={<Maps />} />
-      {/* <Route path="report" element={<Reports />} />
+  <GlobalStateProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/maps" element={<Maps />} />
+        <Route path="/map/:mapId" element={<Map />} />
+        {/* <Route path="report" element={<Reports />} />
       <Route path="report/:id" element={<Report />} /> */}
-    </Routes>
-  </BrowserRouter>
+      </Routes>
+    </BrowserRouter>
+  </GlobalStateProvider>
 );
 
 export default App;
