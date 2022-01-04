@@ -13,11 +13,12 @@ const schema = new Schema()
   .addStore('player_ability', {key: 'id', increment: true})
   .addStore('player_interaction', {key: 'id', increment: true});
 
-export const setupDB = async () => {
+export const setupDB = async (callback) => {
   console.log('setupDB');
   open('scrimsight', schema.version(), schema.callback()).then((db) => {
     globalDB = db;
     console.log('setupDB done');
+    callback();
   });
 };
 

@@ -17,8 +17,14 @@ const DataTable = (props: DataTableProps) => {
   const [numRows, setNumRows] = useState(20);
 
   const visibleRows = useMemo(
-    () => sliceDataset(dataset, start, start + numRows),
-    [start, numRows, dataset.rows.length, dataset.columns.length],
+    () =>
+      !dataset
+        ? {
+            rows: [],
+            columns: [],
+          }
+        : sliceDataset(dataset, start, start + numRows),
+    [start, numRows, dataset?.rows.length, dataset?.columns.length],
   );
 
   const headerHTML = useMemo(() => {
@@ -38,7 +44,7 @@ const DataTable = (props: DataTableProps) => {
           ))}
         </tr>
       )),
-    [visibleRows, dataset.rows.length, dataset.columns.length],
+    [visibleRows, dataset?.rows.length, dataset?.columns.length],
   );
 
   return (

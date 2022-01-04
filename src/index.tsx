@@ -5,12 +5,12 @@ import App from './App';
 import {setupDB} from './lib/data/database';
 import {setupGlobalState} from './lib/globalstate';
 
-setupDB();
 setupGlobalState();
-
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root'),
-);
+setupDB(() => {
+  ReactDOM.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+    document.getElementById('root'),
+  );
+});

@@ -1,13 +1,4 @@
-import {
-  Dataset,
-  Extractor,
-  Metric,
-  OWMap,
-  PlayerAbility,
-  PlayerInteraction,
-  PlayerStatus,
-  Transform,
-} from './types';
+import {Dataset, Column, OWMap, Transform, Aggregation} from './types';
 
 const dayMillis = 1000 * 60 * 60 * 24;
 
@@ -37,6 +28,37 @@ export const groupMapsByDate = (maps: OWMap[]): {[date: string]: OWMap[]} => {
   return groupedMaps;
 };
 
+export const join = (datasets: Dataset[], joinColumns: string[]): Dataset => {
+  const joinedDataset: Dataset = {
+    columns: [],
+    rows: [],
+  };
+  datasets.forEach((dataset: Dataset) => {
+    dataset.columns.forEach((column: Column) => {
+      if (!joinedDataset.columns.find((c) => c.name === column.name)) {
+        joinedDataset.columns.push(column);
+      }
+    });
+  });
+  datasets.forEach((dataset: Dataset) => {
+    dataset.rows.forEach((row: any[]) => {
+      const joinedRow: any[] = [];
+      joinedDataset.columns.forEach((column: Column) => {
+        const columnIdx = dataset.columns.findIndex(
+          (c: Column) => c.name === column.name,
+        );
+        if (columnIdx >= 0) {
+          joinedRow.push(row[columnIdx]);
+        } else {
+          joinedRow.push(null);
+        }
+      });
+      joinedDataset.rows.push(joinedRow);
+    });
+  });
+  return joinedDataset;
+};
+
 export const getPlayer = (
   map: OWMap,
   team: 'team1' | 'team2',
@@ -48,58 +70,12 @@ export const getPlayer = (
   ];
 };
 
-export const extractDamage: Extractor = (
-  maps: OWMap[],
-  status: PlayerStatus[],
-  abilities: PlayerAbility[],
-  interactions: PlayerInteraction[],
-) => {
-  // console.log(maps, status, abilities, interactions);
-  return {
-    columns: [
-      {
-        name: 'mapId',
-        type: 'number',
-      },
-      {
-        name: 'timestamp',
-        type: 'number',
-      },
-      {
-        name: 'player',
-        type: 'string',
-      },
-      {
-        name: 'target',
-        type: 'string',
-      },
-      {
-        name: 'amount',
-        type: 'number',
-      },
-    ],
-    rows: interactions
-      .filter((interaction: PlayerInteraction) => interaction.type === 'damage')
-      .map((interaction: PlayerInteraction) => [
-        interaction.mapId,
-        interaction.timestamp,
-        interaction.player,
-        interaction.target,
-        interaction.amount,
-      ]),
-  };
-};
-
-export const makeAggregation = (
-  by: string[],
-  col: string,
-  method: string,
-  newName?: string,
-): Transform => {
+export const makeAggregation = (agg: Aggregation): Transform => {
+  const {col, newName, method, by} = agg;
   return (dataset: Dataset): Dataset => {
-    const colIdx = dataset.columns.findIndex((c: Metric) => c.name === col);
+    const colIdx = dataset.columns.findIndex((c: Column) => c.name === col);
     const groupIdx = by.map((col: string) =>
-      dataset.columns.findIndex((c: Metric) => c.name === col),
+      dataset.columns.findIndex((c: Column) => c.name === col),
     );
     // console.log(groupIdx);
     const newDataset: Dataset = {

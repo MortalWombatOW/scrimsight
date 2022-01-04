@@ -11,12 +11,20 @@ const DisplayControl = (props: DisplayControlProps) => {
   const {dataset, setMode} = props;
   const modes = [['Table', 'table']];
 
+  if (!dataset) {
+    return null;
+  }
+
   if (dataset.columns.filter((col) => col.type === 'number').length >= 2) {
     modes.push(['Chart', 'chart']);
   }
 
   if (dataset.columns.map((col) => col.name).includes('position')) {
     modes.push(['Map', 'map']);
+  }
+
+  if (dataset.columns.map((col) => col.name).includes('player')) {
+    modes.push(['Card', 'card']);
   }
 
   return (

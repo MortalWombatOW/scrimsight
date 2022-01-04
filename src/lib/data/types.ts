@@ -115,18 +115,20 @@ type FileStatus = {
   failedStage?: UploadStage;
 };
 
-type Metric = {
+type Column = {
   name: string;
   type: string;
 };
 
-type GroupBy = {
-  groups: Metric[];
-  type: 'sum' | 'avg' | 'count';
+type Aggregation = {
+  by: string[];
+  col: string;
+  method: string; //'sum' | 'avg' | 'count';
+  newName?: string;
 };
 
 type Dataset = {
-  columns: Metric[];
+  columns: Column[];
   rows: any[];
 };
 
@@ -138,6 +140,15 @@ type Extractor = (
 ) => Dataset;
 
 type Transform = (dataset: Dataset) => Dataset;
+
+interface SimpleMetric {
+  displayName: string;
+  extractor: Extractor;
+  transforms: Transform[];
+  columns: Column[];
+}
+
+type Metric = SimpleMetric;
 
 export {
   OWMap,
@@ -155,8 +166,11 @@ export {
   ErrorMessage,
   FileStatus,
   UploadStage,
-  Metric,
+  Column,
   Dataset,
   Extractor,
   Transform,
+  SimpleMetric,
+  Metric,
+  Aggregation,
 };

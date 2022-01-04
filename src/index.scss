@@ -450,3 +450,58 @@ label.Uploader-button.MuiButton-root {
   }
 
 }
+
+.ReportBuilder {
+  margin: 10px 0px;
+}
+
+.StatCard {
+  flex: 0 0 200px;
+  border: 1px solid $light;
+  
+  & .StatCard-avatar {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+  }
+
+  & .StatCard-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+
+  & .StatCard-name {
+    font-size: 16px;
+    // font-weight: bold;
+    color: $mid;
+  }
+
+  & .StatCard-highlighthalfrow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: $highlight;
+    width: 50%;
+  }
+
+  & .StatCard-highlight {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: $highlight;
+  }
+
+  & .StatCard-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    box-shadow: 1px 1px 5px $light;
+  }
+}

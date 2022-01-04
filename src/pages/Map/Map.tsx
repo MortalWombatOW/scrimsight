@@ -20,6 +20,7 @@ import DataTable from '../../components/Table/DataTable';
 import DisplayControl from './../../components/Display/DisplayControl';
 import DataPlot from '../../components/Chart/DataPlot';
 import {Button} from '@mui/material';
+import StatCard from '../../components/StatCard/StatCard';
 const Map = () => {
   const {mapId} = useParams();
   const [mapList, mapUpdates] = useData<OWMap>(
@@ -99,7 +100,10 @@ const Map = () => {
 
   const [displayMode, setDisplayMode] = useState<string>('table');
 
-  if (!mapList || !statuses || !abilities || !interactions || !dataset) {
+  if (!mapList || !statuses || !abilities || !interactions) {
+    console.log(
+      `Loading - ${!mapList} ${!statuses} ${!abilities} ${!interactions} ${!dataset}`,
+    );
     return (
       <div className="Map">
         <Header />
@@ -216,6 +220,13 @@ const Map = () => {
             )}
             {displayMode === 'chart' && (
               <DataPlot dataset={dataset} width={1000} height={800} />
+            )}
+            {displayMode === 'card' && (
+              <StatCard
+                dataset={dataset}
+                type={'player'}
+                playerName={statuses[0].player}
+              />
             )}
           </div>
         </div>

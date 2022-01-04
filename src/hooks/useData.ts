@@ -21,9 +21,16 @@ const useData = <T extends TableDefinition>(
       const store = tx.objectStore(table);
       const req = store.getAll();
       req.onsuccess = () => {
-        console.log(`loaded ${table}`);
-        setData(req.result.filter((row) => row.mapId === mapId));
-
+        // console.log(`loaded ${table}`);
+        if (mapId !== undefined) {
+          const filtered = req.result.filter((row) => {
+            return row.mapId === mapId;
+          });
+          setData(filtered);
+        } else {
+          setData(req.result);
+        }
+        console.log(`loaded ${table} with ${req.result.length} rows`);
         // setUpdates((updates) => updates + 1);
       };
       req.onerror = () => {
@@ -34,12 +41,15 @@ const useData = <T extends TableDefinition>(
 
   const filteredData: T[] | undefined = useMemo(() => {
     if (data === undefined) {
+      console.log(`data is undefined, cannot filter ${table}`);
       return undefined;
     }
     setUpdates((updates) => updates + 1);
     console.log(`filtering ${table}`);
 
     if (!filter) {
+      console.log(`no filter for ${table}`);
+      console.log(data);
       return data;
     }
     return data.filter(filter);
