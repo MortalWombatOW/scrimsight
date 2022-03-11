@@ -27,7 +27,6 @@ import {
 } from '../../lib/data/types';
 import {join, makeAggregation} from '../../lib/data/data';
 import {metricsMap, computeSimpleMetric} from '../../lib/data/metrics';
-import {open} from 'idb-factory';
 interface ReportBuilderProps {
   maps: OWMap[];
   status: PlayerStatus[];
@@ -47,7 +46,7 @@ const ReportBuilder = (props: ReportBuilderProps) => {
   const {maps, status, abilities, interactions, dataCallback, updateInd} =
     props;
   // console.log(maps, status, abilities, interactions);
-  const [metricKeys, setMetricKeys] = useState<string[]>([]);
+  const [metricKeys, setMetricKeys] = useState<string[]>(['player.damage']);
 
   const [sharedColumnState, setSharedColumnState] = useState<{
     [key: string]: boolean;

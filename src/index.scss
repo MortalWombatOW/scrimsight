@@ -422,7 +422,9 @@ label.Uploader-button.MuiButton-root {
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 10px;
-    border: 1px solid blue;
+    border: 1px solid $light;
+    border-radius: 5px;
+    padding: 0;
   }
   & .Map-info {
     padding: 10px;
@@ -431,13 +433,14 @@ label.Uploader-button.MuiButton-root {
   }
   & .Map-display {
     width: 100%;
+    padding: 10px;
     // height: 500px;
-    border: 1px solid red;
+    // border: 1px solid red;
   }
 
   & .Map-timeline {
     margin-top: 10px;
-    border: 1px solid purple;
+    // border: 1px solid purple;
     width: 100%;
   }
   
