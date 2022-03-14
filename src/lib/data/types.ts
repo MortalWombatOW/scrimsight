@@ -150,6 +150,24 @@ interface SimpleMetric {
 
 type Metric = SimpleMetric;
 
+interface TeamInfo {
+  name: string;
+  tanks: string[];
+  dps: string[];
+  supports: string[];
+}
+
+interface Statistic {
+  [key: string]: number;
+}
+
+interface ColorInternal {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+}
+
 export {
   OWMap,
   PlayerStatus,
@@ -173,4 +191,7 @@ export {
   SimpleMetric,
   Metric,
   Aggregation,
+  TeamInfo,
+  Statistic,
+  ColorInternal,
 };

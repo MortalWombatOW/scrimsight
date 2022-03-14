@@ -12,7 +12,6 @@ const Header = () => {
       </span>
       <div className="navbuttons">
         <Uploader />
-        {/* <DataSummary dataset={dataset} /> */}
       </div>
     </Toolbar>
   );

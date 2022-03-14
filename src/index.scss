@@ -1,15 +1,4 @@
-
-
-$dark: #000000;
-$mid: #363636;
-$neutral: #5e5e5e;
-$light: #b4b4b4;
-$highlight: #3c006d;
-$background: #f3f3f3;
-
-$min_width: 500px;
-$col_width: 80%;
-$hpadding: calc((100% - #{$col_width}) / 2);
+@import './constants.scss';
 
 body {
   margin: 0;
@@ -333,12 +322,6 @@ label.Uploader-button.MuiButton-root {
     padding-left: $hpadding;
     padding-right: $hpadding;
     min-width: $min_width;
-  }
-
-  & .Maps-datedivider {
-    color: $neutral;
-    font-variant: small-caps;
-    margin: 10px 0px;
   }
 }
 

@@ -7,13 +7,13 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "allowJs": true,
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "downlevelIteration": true,
     "paths": {
-      "*": [
-        "src/*"
+      "~/*": [
+        "*"
       ]
     },
     "lib": [

@@ -1,0 +1,10 @@
+.StackedBarChart {
+  & rect.bar:hover {
+    // border: 4px solid salmon;
+    // fill: red;
+    stroke: salmon;
+  }
+
+  & .tooltip {
+  }
+}
