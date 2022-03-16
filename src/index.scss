@@ -1,9 +1,98 @@
 @import './constants.scss';
 
+.ana {
+  background-color: $ana;
+}
+.bastion {
+  background-color: $bastion;
+}
+.brigitte {
+  background-color: $brigitte;
+}
+.baptiste {
+  background-color: $baptiste;
+}
+.dva {
+  background-color: $dva;
+}
+.doomfist {
+  background-color: $doomfist;
+}
+.echo {
+  background-color: $echo;
+}
+.genji {
+  background-color: $genji;
+}
+.hanzo {
+  background-color: $hanzo;
+}
+.junkrat {
+  background-color: $junkrat;
+}
+.lucio {
+  background-color: $lucio;
+}
+.cassidy {
+  background-color: $cassidy;
+}
+.mei {
+  background-color: $mei;
+}
+.mercy {
+  background-color: $mercy;
+}
+.moira {
+  background-color: $moira;
+}
+.orisa {
+  background-color: $orisa;
+}
+.pharah {
+  background-color: $pharah;
+}
+.reaper {
+  background-color: $reaper;
+}
+.reinhardt {
+  background-color: $reinhardt;
+}
+.roadhog {
+  background-color: $roadhog;
+}
+.soldier76 {
+  background-color: $soldier76;
+}
+.sombra {
+  background-color: $sombra;
+}
+.symmetra {
+  background-color: $symmetra;
+}
+.torbjorn {
+  background-color: $torbjorn;
+}
+.tracer {
+  background-color: $tracer;
+}
+.widowmaker {
+  background-color: $widowmaker;
+}
+.winston {
+  background-color: $winston;
+}
+.zarya {
+  background-color: $zarya;
+}
+.zenyatta {
+  background-color: $zenyatta;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: $background;
@@ -12,7 +101,8 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
 
 // input[type="button"] {
@@ -66,7 +156,6 @@ th {
   border: 1px solid $mid;
   padding: 5px;
 }
-
 
 .logo {
   font-size: 17px;
@@ -255,7 +344,6 @@ div.tablecontrols > * {
   display: flex;
 }
 
-
 .Uploader-progresscontainer {
   width: 500px;
   // height: 300px;
@@ -272,7 +360,6 @@ label.Uploader-button.MuiButton-root {
 }
 
 .Uploader-progressforfile {
-  
 }
 
 .Home-container {
@@ -336,7 +423,7 @@ label.Uploader-button.MuiButton-root {
   margin-bottom: 10px;
   box-shadow: 1px 1px 5px $light;
   background-color: $background;
-  padding:  0px;
+  padding: 0px;
 
   &:hover {
     transform: scale(1.02);
@@ -362,7 +449,7 @@ label.Uploader-button.MuiButton-root {
     line-height: $maprow-height;
     text-align: left;
     padding-left: 10px;
-}
+  }
 
   & .MapRow-teams-col {
     height: $maprow-height;
@@ -426,7 +513,7 @@ label.Uploader-button.MuiButton-root {
     // border: 1px solid purple;
     width: 100%;
   }
-  
+
   & .Map-info td {
     border: none;
     padding: 0;
@@ -434,60 +521,8 @@ label.Uploader-button.MuiButton-root {
       text-align: right;
     }
   }
-
 }
 
 .ReportBuilder {
   margin: 10px 0px;
-}
-
-.StatCard {
-  flex: 0 0 200px;
-  border: 1px solid $light;
-  
-  & .StatCard-avatar {
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-  }
-
-  & .StatCard-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-  }
-
-  & .StatCard-name {
-    font-size: 16px;
-    // font-weight: bold;
-    color: $mid;
-  }
-
-  & .StatCard-highlighthalfrow {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    color: $highlight;
-    width: 50%;
-  }
-
-  & .StatCard-highlight {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    color: $highlight;
-  }
-
-  & .StatCard-image {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 10px;
-    box-shadow: 1px 1px 5px $light;
-  }
 }

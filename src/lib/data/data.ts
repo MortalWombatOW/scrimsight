@@ -1,4 +1,11 @@
-import {OWMap, PlayerInteraction, Statistic, TeamInfo} from 'lib/data/types';
+import {
+  OWMap,
+  PlayerInteraction,
+  PlayerStatus,
+  Statistic,
+  TeamInfo,
+} from 'lib/data/types';
+import {heroNameToNormalized} from 'lib/string';
 
 const dayMillis = 1000 * 60 * 60 * 24;
 
@@ -50,6 +57,9 @@ export const getMapImage = (mapName: string): string =>
     .toLowerCase()
     .replaceAll(' ', '-')
     .replaceAll(`'`, '')}.jpg`;
+
+export const getHeroImage = (heroName: string): string =>
+  `/public/assets/heroes/${heroNameToNormalized(heroName)}.png`;
 
 export const getTeamInfoForMap = (
   map: OWMap,
@@ -106,38 +116,68 @@ export const getTeamInfoForMap = (
   };
 };
 
-export const getTotalDamage = (
-  interactions: PlayerInteraction[],
-): Statistic => {
-  const totalDamageByPlayer = interactions.reduce((acc, interaction) => {
-    const {player, type, amount} = interaction;
-    if (type !== 'damage') {
-      return acc;
-    }
-    if (!acc[player]) {
-      acc[player] = 0;
-    }
-    acc[player] += amount;
-    return acc;
-  }, {});
-  return totalDamageByPlayer;
+export const getPlayersToTeam = (map: OWMap): {[player: string]: string} => {
+  const {team1, team2} = map;
+  const playersToTeam: {[player: string]: string} = {};
+  team1.forEach((player) => {
+    playersToTeam[player] = map.team1Name;
+  });
+  team2.forEach((player) => {
+    playersToTeam[player] = map.team2Name;
+  });
+  return playersToTeam;
 };
 
-// export const get
-
-export const getTotalHealing = (
+export const getInteractionStat = (
   interactions: PlayerInteraction[],
-): Statistic => {
-  const totalHealingByPlayer = interactions.reduce((acc, interaction) => {
-    const {player, type, amount} = interaction;
-    if (type !== 'healing') {
+  method: 'sum' | 'count',
+  statType: 'damage' | 'healing' | 'final blow',
+  by: 'player' | 'timestamp' | 'target',
+): Statistic =>
+  interactions.reduce((acc, interaction) => {
+    const {type, amount} = interaction;
+    if (type !== statType) {
       return acc;
     }
-    if (!acc[player]) {
-      acc[player] = 0;
+    const group = interaction[by];
+    if (!acc[group]) {
+      acc[group] = 0;
     }
-    acc[player] += amount;
+    if (method === 'sum') {
+      acc[group] += amount;
+    } else if (method === 'count') {
+      acc[group] += 1;
+    }
     return acc;
   }, {});
-  return totalHealingByPlayer;
+
+export const getHeroesByPlayer = (
+  statuses: PlayerStatus[],
+): {[player: string]: {[hero: string]: number}} => {
+  const heroesByPlayer: {[player: string]: {[hero: string]: number}} = {};
+  statuses.forEach((status) => {
+    const {player, hero} = status;
+    if (hero == '') {
+      return;
+    }
+    if (!heroesByPlayer[player]) {
+      heroesByPlayer[player] = {};
+    }
+    if (!heroesByPlayer[player][hero]) {
+      heroesByPlayer[player][hero] = 0;
+    }
+    heroesByPlayer[player][hero] += 1;
+  });
+  return heroesByPlayer;
+};
+
+export const getMostCommonHeroes = (heroesByPlayer: {
+  [player: string]: {[hero: string]: number};
+}): {[player: string]: string} => {
+  const mostCommonHeroes: {[player: string]: string} = {};
+  Object.entries(heroesByPlayer).forEach(([player, heroes]) => {
+    const sortedHeroes = Object.entries(heroes).sort((a, b) => b[1] - a[1]);
+    mostCommonHeroes[player] = sortedHeroes[0][0];
+  });
+  return mostCommonHeroes;
 };

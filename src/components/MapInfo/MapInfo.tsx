@@ -1,16 +1,36 @@
 import useData from 'hooks/useData';
-import {OWMap} from 'lib/data/types';
-import {getTeamInfoForMap} from 'lib/data/data';
+import {OWMap, PlayerStatus} from 'lib/data/types';
+import {
+  getHeroesByPlayer,
+  getHeroImage,
+  getMostCommonHeroes,
+  getTeamInfoForMap,
+} from 'lib/data/data';
 import React from 'react';
 import {DamageIcon, SupportIcon, TankIcon} from 'components/Icon/Icon';
 import 'components/MapInfo/MapInfo.scss';
+import {heroNameToNormalized} from 'lib/string';
+
+const PlayerAndHero = ({player, hero}: {player: string; hero: string}) => {
+  return (
+    <div className={`player ${heroNameToNormalized(hero)}`}>
+      <img src={getHeroImage(hero)} alt={hero} />
+      <div className="name">{player}</div>
+    </div>
+  );
+};
 
 const MapInfo = ({mapId}: {mapId: number}) => {
-  const [mapList, mapUpdates] = useData<OWMap>('map', mapId);
+  const [mapList] = useData<OWMap>('map', mapId);
 
-  if (!mapList) {
+  const [statuses] = useData<PlayerStatus>('player_status', mapId);
+
+  if (!mapList || !statuses) {
     return <div>Loading...</div>;
   }
+
+  const playerHeroes = getHeroesByPlayer(statuses);
+  const mostCommonHeroes = getMostCommonHeroes(playerHeroes);
 
   const map: OWMap = mapList[0];
 
@@ -22,16 +42,52 @@ const MapInfo = ({mapId}: {mapId: number}) => {
         File: {map.fileName} Map Name: {map.mapName} Uploaded:{' '}
         {new Date(map.timestamp).toLocaleString()}
       </p>
-      <p className="team">
-        {top.name}: <TankIcon /> {top.tanks.join(', ')} <DamageIcon />{' '}
-        {top.dps.join(', ')}
-        <SupportIcon /> {top.supports.join(', ')}
-      </p>
-      <p className="team">
-        {bottom.name}: <TankIcon /> {bottom.tanks.join(', ')} <DamageIcon />{' '}
-        {bottom.dps.join(', ')}
-        <SupportIcon /> {bottom.supports.join(', ')}
-      </p>
+      <div className="team">
+        {top.tanks.map((player, index) => (
+          <PlayerAndHero
+            key={index}
+            player={player}
+            hero={mostCommonHeroes[player]}
+          />
+        ))}
+        {top.dps.map((player, index) => (
+          <PlayerAndHero
+            key={index}
+            player={player}
+            hero={mostCommonHeroes[player]}
+          />
+        ))}
+        {top.supports.map((player, index) => (
+          <PlayerAndHero
+            key={index}
+            player={player}
+            hero={mostCommonHeroes[player]}
+          />
+        ))}
+      </div>
+      <div className="team">
+        {bottom.tanks.map((player, index) => (
+          <PlayerAndHero
+            key={index}
+            player={player}
+            hero={mostCommonHeroes[player]}
+          />
+        ))}
+        {bottom.dps.map((player, index) => (
+          <PlayerAndHero
+            key={index}
+            player={player}
+            hero={mostCommonHeroes[player]}
+          />
+        ))}
+        {bottom.supports.map((player, index) => (
+          <PlayerAndHero
+            key={index}
+            player={player}
+            hero={mostCommonHeroes[player]}
+          />
+        ))}
+      </div>
     </div>
   );
 };

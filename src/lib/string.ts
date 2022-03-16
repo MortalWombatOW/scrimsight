@@ -21,3 +21,18 @@ export function mapNameToFileName(name: string, overhead: boolean): string {
   }
   return `/public/assets/maps/${lower}_overhead.jpg`;
 }
+
+function normalizeString(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replaceAll('.', '')
+    .toLowerCase();
+}
+
+export function heroNameToNormalized(name: string): string {
+  if (name === 'McCree') {
+    return 'cassidy';
+  }
+  return normalizeString(name);
+}

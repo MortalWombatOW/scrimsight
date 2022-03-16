@@ -1,8 +1,13 @@
 import React from 'react';
-import {PlayerInteraction, OWMap} from 'lib/data/types';
+import {PlayerInteraction, OWMap, PlayerStatus} from 'lib/data/types';
 import './MapTotals.scss';
 import useData from 'hooks/useData';
-import {getTotalDamage, getTotalHealing} from 'lib/data/data';
+import {
+  getHeroesByPlayer,
+  getInteractionStat,
+  getMostCommonHeroes,
+  getPlayersToTeam,
+} from 'lib/data/data';
 import StackedBarChart from 'components/Chart/StackedBarChart';
 
 const MapTotals = ({mapId}) => {
@@ -11,28 +16,32 @@ const MapTotals = ({mapId}) => {
     'player_interaction',
     mapId,
   );
+  const [statuses, statusUpdates] = useData<PlayerStatus>(
+    'player_status',
+    mapId,
+  );
 
-  if (!interactions || !mapList) {
+  if (!interactions || !mapList || !statuses) {
     return <div>Loading...</div>;
   }
 
   const map = mapList[0];
 
-  const totalDamage = getTotalDamage(interactions);
-  const totalHealing = getTotalHealing(interactions);
+  const totalDamage = getInteractionStat(
+    interactions,
+    'sum',
+    'damage',
+    'player',
+  );
+  const totalHealing = getInteractionStat(
+    interactions,
+    'sum',
+    'healing',
+    'player',
+  );
+  const playersToTeam = getPlayersToTeam(map);
 
-  console.log(totalHealing);
-
-  const players = Object.keys(totalDamage);
-  // sort players by highest damage
-  //   players.sort((a, b) => totalDamage.values[b] - totalDamage.values[a]);
-  const playersToTeam = players.reduce((acc, player) => {
-    const team = map.team1.includes(player) ? map.team1Name : map.team2Name;
-    acc[player] = team;
-    return acc;
-  }, {});
-
-  //   console.log(playersToTeam);
+  const players = Object.keys(playersToTeam);
 
   const damageData = players.map((player) => {
     return {
