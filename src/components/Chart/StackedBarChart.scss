@@ -1,8 +1,21 @@
 .StackedBarChart {
-  & rect.bar:hover {
-    // border: 4px solid salmon;
-    // fill: red;
-    stroke: salmon;
+  & .grouplabel {
+    display: inline-block;
+    vertical-align: top;
+  }
+  & .grouptotal {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 10px;
+  }
+  & .bar {
+    // filter: opacity(75%);
+    display: inline-block;
+    transition: 0.2s;
+    &:hover {
+      filter: drop-shadow(0px 0px 2px);
+      z-index: 1;
+    }
   }
 
   & .tooltip {

@@ -168,6 +168,18 @@ interface ColorInternal {
   a: number;
 }
 
+interface MapEntity {
+  id: string;
+  label: string;
+  clazz?: string;
+  image?: string;
+  states: RenderState[];
+}
+
+type RenderState = {
+  [key: string]: number;
+};
+
 export {
   OWMap,
   PlayerStatus,
@@ -194,4 +206,6 @@ export {
   TeamInfo,
   Statistic,
   ColorInternal,
+  MapEntity,
+  RenderState,
 };

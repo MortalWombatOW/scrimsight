@@ -10,6 +10,9 @@ const Uploader = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      return;
+    }
     const files = Array.from(e.target.files);
     startFileUpload(files);
     setModalOpen(true);

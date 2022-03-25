@@ -52,12 +52,6 @@ export const getPlayer = (
   ];
 };
 
-export const getMapImage = (mapName: string): string =>
-  `/public/assets/maps/${mapName
-    .toLowerCase()
-    .replaceAll(' ', '-')
-    .replaceAll(`'`, '')}.jpg`;
-
 export const getHeroImage = (heroName: string): string =>
   `/public/assets/heroes/${heroNameToNormalized(heroName)}.png`;
 

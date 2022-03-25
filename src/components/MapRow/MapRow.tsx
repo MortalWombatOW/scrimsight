@@ -2,7 +2,8 @@ import {DamageIcon, TankIcon, SupportIcon} from 'components/Icon/Icon';
 import React from 'react';
 import {OWMap} from 'lib/data/types';
 import {useNavigate} from 'react-router-dom';
-import {getTeamInfoForMap, getMapImage} from 'lib/data/data';
+import {getTeamInfoForMap} from 'lib/data/data';
+import {mapNameToFileName} from './../../lib/string';
 interface MapRowProps {
   map: OWMap;
 }
@@ -13,7 +14,7 @@ const MapRow = (props: MapRowProps) => {
 
   const timestampString = new Date(map.timestamp).toLocaleString();
   const {top, bottom} = getTeamInfoForMap(map);
-  const imageSrc = getMapImage(map.mapName);
+  const imageSrc = mapNameToFileName(map.mapName, false);
   return (
     <button className="MapRow" onClick={() => navigate(`/map/${map.mapId}`)}>
       <div className="MapRow-image">

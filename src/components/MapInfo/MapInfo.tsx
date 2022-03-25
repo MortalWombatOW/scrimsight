@@ -7,9 +7,11 @@ import {
   getTeamInfoForMap,
 } from 'lib/data/data';
 import React from 'react';
-import {DamageIcon, SupportIcon, TankIcon} from 'components/Icon/Icon';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import 'components/MapInfo/MapInfo.scss';
-import {heroNameToNormalized} from 'lib/string';
+import {heroNameToNormalized, mapNameToFileName} from 'lib/string';
+import Grid from '@mui/material/Grid';
 
 const PlayerAndHero = ({player, hero}: {player: string; hero: string}) => {
   return (
@@ -38,11 +40,24 @@ const MapInfo = ({mapId}: {mapId: number}) => {
 
   return (
     <div className="MapInfo">
-      <p>
-        File: {map.fileName} Map Name: {map.mapName} Uploaded:{' '}
+      <div
+        className="mapname"
+        style={{
+          backgroundImage: `url(${mapNameToFileName(map.mapName, false)})`,
+        }}>
+        <div className="txt">{map.mapName}</div>
+      </div>
+      <Grid container direction="row" alignItems="center">
+        <InsertDriveFileIcon /> {map.fileName}
+        <AccessTimeIcon
+          style={{
+            marginLeft: '1rem',
+          }}
+        />{' '}
         {new Date(map.timestamp).toLocaleString()}
-      </p>
+      </Grid>
       <div className="team">
+        <div className="team-name">{top.name}</div>
         {top.tanks.map((player, index) => (
           <PlayerAndHero
             key={index}
@@ -65,7 +80,9 @@ const MapInfo = ({mapId}: {mapId: number}) => {
           />
         ))}
       </div>
+      <div className="versus">vs.</div>
       <div className="team">
+        <div className="team-name">{bottom.name}</div>
         {bottom.tanks.map((player, index) => (
           <PlayerAndHero
             key={index}

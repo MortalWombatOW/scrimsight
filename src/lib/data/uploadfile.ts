@@ -8,7 +8,7 @@ import {
   ErrorMessage,
   LoadedFileMessage,
   ParsedFileMessage,
-} from './types';
+} from 'lib/data/types';
 import {stringHash} from './../string';
 
 type Value = number | string;
@@ -339,7 +339,7 @@ const addPlayerStatusEvents = (mapId: number, data: Data): PlayerStatus[] => {
 };
 
 const addPlayerAbilityEvents = (mapId: number, data: Data): PlayerAbility[] => {
-  const playerAbility = [];
+  const playerAbility: PlayerAbility[] = [];
   const abilityMap = {
     used_ultimate: 'ultimate',
     used_ability_1: 'primary',
@@ -362,7 +362,7 @@ const addPlayerInteractionEvents = (
   mapId: number,
   data: Data,
 ): PlayerInteraction[] => {
-  const playerInteraction = [];
+  const playerInteraction: PlayerInteraction[] = [];
   const interactionMap = {
     damage_dealt: 'damage',
     did_healing: 'healing',

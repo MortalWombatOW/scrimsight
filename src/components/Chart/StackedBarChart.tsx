@@ -4,8 +4,9 @@ import './StackedBarChart.scss';
 
 interface StackedBarChartDatum {
   value: number;
-  primaryGroup: string;
-  secondaryGroup: string;
+  barGroup: string;
+  withinBarGroup: string;
+  clazz: string;
 }
 
 interface StackedBarChartProps {
@@ -17,9 +18,11 @@ interface StackedBarChartProps {
 const StackedBarChart = (props: StackedBarChartProps) => {
   const {data, width, barHeight} = props;
 
-  const [tooltipDatum, setTooltipDatum] = useState(null);
+  const [tooltipDatum, setTooltipDatum] = useState<null | StackedBarChartDatum>(
+    null,
+  );
 
-  const primaryGroups = Array.from(new Set(data.map((d) => d.primaryGroup)));
+  const primaryGroups = Array.from(new Set(data.map((d) => d.barGroup)));
   primaryGroups.sort();
 
   // get width of longest primary group in px
@@ -29,17 +32,16 @@ const StackedBarChart = (props: StackedBarChartProps) => {
   }, 0);
 
   const leftPadding = primaryGroupWidth + 10;
-  const rightPadding = 150;
 
   // need to calculate the start x for each data point
   const cumSumByPrimaryGroup: {
     [primaryGroup: string]: number[];
   } = data.reduce((acc, d) => {
-    if (!acc[d.primaryGroup]) {
-      acc[d.primaryGroup] = [0, d.value];
+    if (!acc[d.barGroup]) {
+      acc[d.barGroup] = [0, d.value];
     } else {
-      acc[d.primaryGroup].push(
-        acc[d.primaryGroup][acc[d.primaryGroup].length - 1] + d.value,
+      acc[d.barGroup].push(
+        acc[d.barGroup][acc[d.barGroup].length - 1] + d.value,
       );
     }
     return acc;
@@ -49,69 +51,62 @@ const StackedBarChart = (props: StackedBarChartProps) => {
     ...Object.values(cumSumByPrimaryGroup).map((arr) => arr[arr.length - 1]),
   );
 
-  const height = barHeight * primaryGroups.length;
-
-  const svgWidth = width;
-  const svgHeight = height;
-
   const xScale = (value: number) => {
-    return (value / maxPrimaryGroupSum) * (width - leftPadding - rightPadding);
+    return (value / maxPrimaryGroupSum) * (width - leftPadding);
   };
 
-  const yScale = (d: StackedBarChartDatum) => {
-    return primaryGroups.indexOf(d.primaryGroup) * barHeight;
-  };
+  const bars = primaryGroups.map((group, i) => {
+    const dataForGroup = data.filter((d) => d.barGroup === group);
+    const total = dataForGroup
+      .reduce((acc, d) => acc + d.value, 0)
+      .toLocaleString();
 
-  const xAxis = (
-    <g className="x-axis">
-      <line x1={0} y1={height} x2={width} y2={height} />
-    </g>
-  );
-
-  const yAxis = (
-    <g className="y-axis">
-      {primaryGroups.map((group, i) => (
-        <text key={group} x={0} y={i * barHeight + barHeight / 2}>
-          {group}
-        </text>
-      ))}
-    </g>
-  );
-
-  const startColor = '#cccccc';
-  const endColor = '#3c006d';
-
-  const bars = primaryGroups.flatMap((group, i) => {
-    const dataForGroup = data.filter((d) => d.primaryGroup === group);
-    const colors = interpolateColors(startColor, endColor, dataForGroup.length);
-    return dataForGroup.map((d, j) => {
-      const x = xScale(cumSumByPrimaryGroup[group][j]) + leftPadding;
-      const y = yScale(d);
+    const inner = dataForGroup.map((d, j) => {
       const width = xScale(d.value);
-      const height = barHeight - 5;
+      const height = barHeight;
 
       return (
-        <rect
+        <div
           key={`${group}-${j}`}
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          fill={colors[j]}
+          style={{
+            width,
+            height,
+          }}
           onMouseEnter={(e) => {
             setTooltipDatum(d);
           }}
           onMouseLeave={() => {
             setTooltipDatum(null);
           }}
-          className="bar"
+          className={`bar ${d.clazz}`}
         />
       );
     });
+
+    return (
+      <div key={group}>
+        <div
+          className="grouplabel"
+          style={{
+            width: leftPadding,
+            lineHeight: `${barHeight}px`,
+          }}>
+          {group}
+        </div>
+        {inner}
+        <div
+          className="grouptotal"
+          style={{
+            lineHeight: `${barHeight}px`,
+          }}>
+          {total}
+        </div>
+      </div>
+    );
   });
 
   const endLabels = primaryGroups.map((group, i) => {
-    const dataForGroup = data.filter((d) => d.primaryGroup === group);
+    const dataForGroup = data.filter((d) => d.barGroup === group);
     const total = dataForGroup.reduce((acc, d) => acc + d.value, 0);
     const x = xScale(total) + leftPadding;
     const prettyTotal = total.toLocaleString();
@@ -128,12 +123,6 @@ const StackedBarChart = (props: StackedBarChartProps) => {
   });
 
   const hasTooltip = tooltipDatum !== null;
-
-  const tooltip = hasTooltip ? (
-    <div className="tooltip">
-      {tooltipDatum?.secondaryGroup}: {tooltipDatum?.value.toLocaleString()}
-    </div>
-  ) : null;
 
   //   const dividingLines = data.map((d) => {
   //     const x = xScale(d);
@@ -154,13 +143,8 @@ const StackedBarChart = (props: StackedBarChartProps) => {
 
   return (
     <div className="StackedBarChart">
-      <svg width={svgWidth} height={svgHeight}>
-        {bars}
-        {xAxis}
-        {yAxis}
-        {endLabels}
-      </svg>
-      {tooltip}
+      {bars}
+      {/* {tooltip} */}
     </div>
   );
 };

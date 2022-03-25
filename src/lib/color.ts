@@ -11,7 +11,7 @@ const parseHex = (hex: string): ColorInternal => {
   return {r, g, b, a};
 };
 
-const colorToHex = (color: ColorInternal): string => {
+export const colorToHex = (color: ColorInternal): string => {
   const r = color.r.toString(16);
   const g = color.g.toString(16);
   const b = color.b.toString(16);
@@ -32,7 +32,7 @@ export const interpolateColors = (
     b: (end.b - start.b) / steps,
     a: (end.a - start.a) / steps,
   };
-  const colors = [];
+  const colors: string[] = [];
   for (let i = 0; i < steps; i++) {
     const r = Math.round(start.r + step.r * i);
     const g = Math.round(start.g + step.g * i);

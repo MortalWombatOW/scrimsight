@@ -23,6 +23,7 @@
     ],
     "sourceMap": true,
     "noImplicitAny": false,
+    "strictNullChecks": true
   },
   "exclude": [
     "node_modules",

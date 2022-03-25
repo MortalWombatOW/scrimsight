@@ -19,7 +19,7 @@ export function mapNameToFileName(name: string, overhead: boolean): string {
   if (overhead) {
     return `/public/assets/topdown/${lower}_anno.png`;
   }
-  return `/public/assets/maps/${lower}_overhead.jpg`;
+  return `/public/assets/maps/${lower}.jpg`;
 }
 
 function normalizeString(str: string): string {

@@ -5,7 +5,7 @@ import {getDB} from '../lib/data/database';
 const useData = <T extends TableDefinition>(
   table: string,
   mapId?: number,
-): [T[], number] => {
+): [T[] | undefined, number] => {
   const [data, setData] = useState<T[] | undefined>(undefined);
   const [updates, setUpdates] = useState<number>(0);
   console.log('useData', table, mapId);
