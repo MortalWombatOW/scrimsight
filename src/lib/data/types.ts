@@ -170,14 +170,23 @@ interface ColorInternal {
 
 interface MapEntity {
   id: string;
-  label: string;
+  // label?: string;
   clazz?: string;
   image?: string;
-  states: RenderState[];
+  states: RenderState;
+  entityType:
+    | 'player'
+    | 'damage'
+    | 'healing'
+    | 'final blow'
+    | 'elimination'
+    | 'ability';
 }
 
 type RenderState = {
-  [key: string]: number;
+  [timestamp: string]: {
+    [key: string]: string | number;
+  };
 };
 
 export {

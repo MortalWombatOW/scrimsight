@@ -1,5 +1,7 @@
 import {
+  MapEntity,
   OWMap,
+  PlayerAbility,
   PlayerInteraction,
   PlayerStatus,
   Statistic,
@@ -174,4 +176,147 @@ export const getMostCommonHeroes = (heroesByPlayer: {
     mostCommonHeroes[player] = sortedHeroes[0][0];
   });
   return mostCommonHeroes;
+};
+
+export const getMapEntitiesForTime = (
+  entities: MapEntity[],
+  time: number,
+): MapEntity[] => {
+  return entities.filter(
+    (entity) => entity.states[time.toString()] != undefined,
+  );
+};
+
+export const buildMapEntitiesFromData = (
+  statuses: PlayerStatus[],
+  interactions: PlayerInteraction[],
+  abilities: PlayerAbility[],
+): MapEntity[] => {
+  const coordScale = 50;
+
+  const entities: MapEntity[] = [];
+  const getEntity = (
+    id: string,
+    type:
+      | 'player'
+      | 'damage'
+      | 'healing'
+      | 'final blow'
+      | 'elimination'
+      | 'ability',
+  ): MapEntity => {
+    const entity = entities.find(
+      (entity) => entity.id === id && entity.entityType === type,
+    );
+    if (entity) {
+      return entity;
+    }
+    const newEntity: MapEntity = {id, states: {}, entityType: type};
+    entities.push(newEntity);
+    return newEntity;
+  };
+
+  const heroMaxHealth: {[hero: string]: number} = {};
+
+  statuses.forEach((status) => {
+    const {player, timestamp, hero, x, y, z, health, ultCharge} = status;
+
+    const scaledX = x * coordScale;
+    const scaledY = y * coordScale;
+    const scaledZ = z * coordScale;
+
+    if (!heroMaxHealth[hero]) {
+      heroMaxHealth[hero] = health;
+    } else {
+      if (timestamp < 120) {
+        heroMaxHealth[hero] = Math.max(heroMaxHealth[hero], health);
+      }
+    }
+
+    const entity = getEntity(player, 'player');
+    // entity.label = player;
+    // entity.clazz = hero;
+    // entity.image = getHeroImage(hero);
+    if (!entity.states[timestamp]) {
+      entity.states[timestamp] = {
+        class: heroNameToNormalized(hero),
+        x: scaledX,
+        y: scaledZ,
+        z: scaledY,
+        health,
+        maxHealth: heroMaxHealth[hero],
+        ultCharge,
+      };
+    }
+  });
+  console.log(heroMaxHealth);
+
+  interactions.forEach((interaction) => {
+    const {player, timestamp, target, type, amount} = interaction;
+    const fromPlayer = getEntity(player, 'player');
+    const toPlayer = getEntity(target, 'player');
+    const fromState = fromPlayer.states[timestamp];
+    const toState = toPlayer.states[timestamp];
+    if (fromState && toState) {
+      // const fromX = fromState.x;
+      // const fromY = fromState.y;
+      // const toX = toState.x;
+      // const toY = toState.y;
+      // const fromZ = fromState.z;
+      // const toZ = toState.z;
+      const edge = getEntity(
+        `${player}-${target}-${type}`,
+        type as 'damage' | 'healing' | 'final blow' | 'elimination',
+      );
+      if (!edge.states[timestamp]) {
+        edge.states[timestamp] = {
+          player,
+          target,
+          type,
+          amount,
+        };
+      }
+    }
+  });
+  abilities.forEach((ability) => {
+    const {player, timestamp, type} = ability;
+    const abilityEntity = getEntity(`${player}-${type}-ability`, 'ability');
+    if (!abilityEntity.states[timestamp]) {
+      abilityEntity.states[timestamp] = {
+        player,
+        type,
+      };
+    }
+  });
+  console.log(entities);
+  return entities;
+};
+
+export const getCameraTransformFromMapEntities = (
+  entities: MapEntity[],
+  time: number,
+): number[] => {
+  // average all the player positions
+  const playerPositions = entities
+    .filter((entity) => entity.entityType === 'player')
+    .map((entity) => entity.states[time.toString()]);
+  const avgX =
+    playerPositions.reduce((acc, pos) => acc + (pos['x'] as number), 0) /
+    playerPositions.length;
+  const avgY =
+    playerPositions.reduce((acc, pos) => acc + (pos['y'] as number), 0) /
+    playerPositions.length;
+
+  return [avgX, avgY];
+  // return `translate(${-avgX * currentScale + width / 2},${
+  //   -avgY * currentScale + height / 2
+  // }) scale(${currentScale})`;
+};
+
+export const getMapTransform = (mapName: string): string | undefined => {
+  if (mapName === "King's Row") {
+    // return 'scale(1.8) translate(-4550px,2200px) rotate(280deg)';
+    return 'scale(1.8) translate(-4950px,1700px) rotate(285deg)';
+  }
+  return undefined;
 };

@@ -37,4 +37,42 @@
       background-color: unset;
     }
   }
+
+  & .damageedge {
+    stroke-dasharray: 15 15;
+    animation: dash 3s linear infinite;
+  }
+
+  & .healingedge {
+    stroke-dasharray: 10 20;
+    stroke-width: 8;
+    animation: dash 3s linear infinite;
+    stroke-linecap: round;
+    stroke: gold;
+  }
+
+  & .rise {
+    animation: risingtext 1s ease-in-out infinite;
+  }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 30;
+  }
+}
+
+@keyframes risingtext {
+  0% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  //   80% {
+  //     opacity: 0;
+  //     transform: translateY(-15px);
+  //   }
+  100% {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
 }
