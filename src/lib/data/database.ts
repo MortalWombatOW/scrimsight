@@ -28,3 +28,21 @@ export const getDB = () => {
   }
   return globalDB;
 };
+
+export const mapExists = async (mapId) => {
+  return new Promise((resolve, reject) => {
+    const db = getDB();
+    if (!db) {
+      return false;
+    }
+    const tx = db.transaction('map', 'readonly');
+    const store = tx.objectStore('map');
+    const req = store.get(mapId);
+    req.onsuccess = () => {
+      resolve(req.result !== undefined);
+    };
+    req.onerror = () => {
+      reject(req.error);
+    };
+  });
+};

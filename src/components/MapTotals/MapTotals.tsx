@@ -12,7 +12,7 @@ import StackedBarChart from 'components/Chart/StackedBarChart';
 import {heroNameToNormalized} from '../../lib/string';
 
 const MapTotals = ({mapId}) => {
-  const [mapList, mapListUpdates] = useData<OWMap>('map');
+  const [mapList, mapListUpdates] = useData<OWMap>('map', mapId);
   const [interactions, updates] = useData<PlayerInteraction>(
     'player_interaction',
     mapId,
@@ -24,6 +24,10 @@ const MapTotals = ({mapId}) => {
 
   if (!interactions || !mapList || !statuses) {
     return <div>Loading...</div>;
+  }
+
+  if (mapList.length === 0) {
+    return <div>No maps found</div>;
   }
 
   const map = mapList[0];

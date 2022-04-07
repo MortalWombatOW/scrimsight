@@ -2,19 +2,55 @@
 import React, {ChangeEvent, useState} from 'react';
 import {Button, ButtonGroup} from '@mui/material';
 import ManageSearchIcon from '@mui/icons-material/ManageSearch';
-import {useFileUploadStatus} from './../../hooks/useFileUploadStatus';
+// import {useFileUploadStatus} from './../../hooks/useFileUploadStatus';
 import UploadProgressModal from './UploadProgressModal';
+import {FileUpload} from 'lib/data/types';
+import {uploadFile} from 'lib/data/uploadfile';
 
-const Uploader = () => {
-  const {startFileUpload} = useFileUploadStatus();
+const Uploader = ({
+  refreshCallback,
+}: {
+  refreshCallback: (() => void) | undefined;
+}) => {
+  // const {startFileUpload} = useFileUploadStatus();
   const [modalOpen, setModalOpen] = useState(false);
+  const [files, setFiles] = useState<FileUpload[]>([]);
+  const [filePercents, setFilePercents] = useState<{
+    [fileName: string]: number;
+  }>({});
+
+  const handleFilePerChange = (fileName: string) => {
+    return (percent: number) => {
+      setFilePercents((prev) => ({
+        ...prev,
+        [fileName]: percent,
+      }));
+      if (percent === 100) {
+        refreshCallback && refreshCallback();
+      }
+    };
+  };
+
+  const startFileUploads = async (fileUploads: FileUpload[]) => {
+    setFiles((files) => [...files, ...fileUploads]);
+    for (const fileUpload of fileUploads) {
+      await uploadFile(fileUpload, handleFilePerChange(fileUpload.fileName));
+    }
+  };
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       return;
     }
-    const files = Array.from(e.target.files);
-    startFileUpload(files);
+    const filesToUpload: FileUpload[] = Array.from(e.target.files).map(
+      (file) => ({
+        file,
+        fileName: file.name,
+      }),
+    );
+
+    console.log(filesToUpload);
+    startFileUploads(filesToUpload);
     setModalOpen(true);
   };
 
@@ -38,7 +74,12 @@ const Uploader = () => {
           <ManageSearchIcon />
         </Button>
       </ButtonGroup>
-      <UploadProgressModal isOpen={modalOpen} setIsOpen={setModalOpen} />
+      <UploadProgressModal
+        isOpen={modalOpen}
+        setIsOpen={setModalOpen}
+        files={files}
+        filePercents={filePercents}
+      />
     </div>
   );
 };

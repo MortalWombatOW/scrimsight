@@ -23,6 +23,10 @@ const PlayByPlay = ({mapId}: {mapId: number}) => {
     return <div>Loading...</div>;
   }
 
+  if (mapList.length === 0) {
+    return <div>No maps found</div>;
+  }
+
   const map = mapList[0].mapName;
   const entities = buildMapEntitiesFromData(statuses, interactions, abilities);
   //     {

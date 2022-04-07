@@ -14,7 +14,7 @@ const Map = () => {
 
   return (
     <div className="MapPage">
-      <Header />
+      <Header refreshCallback={undefined} />
       <div className="container">
         <div className="section">
           {/* <div className="header">Map Info</div> */}

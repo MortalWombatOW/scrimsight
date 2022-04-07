@@ -51,68 +51,16 @@ const types = {
   player_interaction: keys<PlayerInteraction>(),
 };
 
-// const generateDbSchema = (name: string): ObjectStoreMeta => {
-//   const fields = types[name];
-//   return {
-//     store: name,
-//     storeConfig: {keyPath: 'id', autoIncrement: true},
-//     storeSchema: [
-//       {name: 'id', keypath: 'id', options: {unique: true}},
-//       ...fields.map((field) => ({
-//         name: field,
-//         keypath: field,
-//         options: {unique: false},
-//       })),
-//     ],
-//   };
-// };
-
-// const generateAllDbSchemas = (): ObjectStoreMeta[] => {
-//   return Object.keys(types).map((name) => generateDbSchema(name));
-// };
-
-type FileUploadMessage = {
-  file: File;
-};
-
-type LoadedFileMessage = {
+type FileUpload = {
   fileName: string;
-  lastModified: number;
-  data: string;
-};
-
-type ParsedFileMessage = {
-  fileName: string;
-  timestamp: number;
-  mapId: number;
+  file?: File;
+  data?: string;
   map?: OWMap;
   playerStatus?: PlayerStatus[];
   playerAbilities?: PlayerAbility[];
   playerInteractions?: PlayerInteraction[];
-};
-
-type SuccessMessage = {
-  fileName: string;
-};
-
-type ErrorMessage = {
-  fileName: string;
-  error: string;
-};
-
-type GlobalState = {
-  filesToUpload: FileUploadMessage[];
-  loadedFiles: LoadedFileMessage[];
-  parsedFiles: ParsedFileMessage[];
-  uploadSuccesses: SuccessMessage[];
-  uploadErrors: ErrorMessage[];
-};
-
-type UploadStage = 'loading' | 'parsing' | 'saving' | 'success' | 'error';
-type FileStatus = {
-  fileName: string;
-  stage: UploadStage;
-  failedStage?: UploadStage;
+  error?: string;
+  done?: boolean;
 };
 
 type Column = {
@@ -197,14 +145,7 @@ export {
   types,
   TableDefinition,
   WithId,
-  GlobalState,
-  FileUploadMessage,
-  LoadedFileMessage,
-  ParsedFileMessage,
-  SuccessMessage,
-  ErrorMessage,
-  FileStatus,
-  UploadStage,
+  FileUpload,
   Column,
   Dataset,
   Extractor,

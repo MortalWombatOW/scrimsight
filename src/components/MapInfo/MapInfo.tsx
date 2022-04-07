@@ -31,6 +31,10 @@ const MapInfo = ({mapId}: {mapId: number}) => {
     return <div>Loading...</div>;
   }
 
+  if (mapList.length === 0) {
+    return <div>No maps found</div>;
+  }
+
   const playerHeroes = getHeroesByPlayer(statuses);
   const mostCommonHeroes = getMostCommonHeroes(playerHeroes);
 

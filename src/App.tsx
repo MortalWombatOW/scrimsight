@@ -4,20 +4,15 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Maps from './components/MapsList/MapsList';
 import Map from './pages/Map/Map';
 
-import {GlobalStateProvider} from './lib/globalstate';
-
 const App = () => (
-  <GlobalStateProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/maps" element={<Maps />} />
-        <Route path="/map/:mapId" element={<Map />} />
-        {/* <Route path="report" element={<Reports />} />
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/map/:mapId" element={<Map />} />
+      {/* <Route path="report" element={<Reports />} />
       <Route path="report/:id" element={<Report />} /> */}
-      </Routes>
-    </BrowserRouter>
-  </GlobalStateProvider>
+    </Routes>
+  </BrowserRouter>
 );
 
 export default App;

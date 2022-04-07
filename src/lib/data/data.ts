@@ -239,10 +239,11 @@ export const buildMapEntitiesFromData = (
     // entity.image = getHeroImage(hero);
     if (!entity.states[timestamp]) {
       entity.states[timestamp] = {
-        class: heroNameToNormalized(hero),
+        name: player,
+        hero: heroNameToNormalized(hero),
         x: scaledX,
-        y: scaledZ,
-        z: scaledY,
+        y: scaledY,
+        z: scaledZ,
         health,
         maxHealth: heroMaxHealth[hero],
         ultCharge,
@@ -319,4 +320,44 @@ export const getMapTransform = (mapName: string): string | undefined => {
     return 'scale(1.8) translate(-4950px,1700px) rotate(285deg)';
   }
   return undefined;
+};
+
+const heroToRole = {
+  'D.Va': 'tank',
+  Orisa: 'tank',
+  Reinhardt: 'tank',
+  Roadhog: 'tank',
+  Winston: 'tank',
+  Sigma: 'tank',
+  'Wrecking Ball': 'tank',
+  Zarya: 'tank',
+  Ashe: 'damage',
+  Bastion: 'damage',
+  Cassidy: 'damage',
+  McCree: 'damage',
+  Doomfist: 'damage',
+  Echo: 'damage',
+  Genji: 'damage',
+  Hanzo: 'damage',
+  Junkrat: 'damage',
+  Mei: 'damage',
+  Pharah: 'damage',
+  Reaper: 'damage',
+  'Soldier: 76': 'damage',
+  Sombra: 'damage',
+  Symmetra: 'damage',
+  Torbjörn: 'damage',
+  Tracer: 'damage',
+  Widowmaker: 'damage',
+  Ana: 'support',
+  Baptiste: 'support',
+  Brigitte: 'support',
+  Lúcio: 'support',
+  Mercy: 'support',
+  Moira: 'support',
+  Zenyatta: 'support',
+};
+
+export const getRoleFromHero = (hero: string): string => {
+  return heroToRole[hero] || 'new hero alert??';
 };

@@ -3,7 +3,11 @@ import {Toolbar} from '@mui/material';
 import Uploader from '../Uploader/Uploader';
 import {useNavigate} from 'react-router-dom';
 
-const Header = () => {
+const Header = ({
+  refreshCallback,
+}: {
+  refreshCallback: (() => void) | undefined;
+}) => {
   const navigate = useNavigate();
   return (
     <Toolbar className="header">
@@ -11,7 +15,7 @@ const Header = () => {
         scrimsight
       </span>
       <div className="navbuttons">
-        <Uploader />
+        <Uploader refreshCallback={refreshCallback} />
       </div>
     </Toolbar>
   );

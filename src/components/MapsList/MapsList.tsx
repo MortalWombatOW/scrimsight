@@ -5,8 +5,10 @@ import MapRow from '../MapRow/MapRow';
 import {groupMapsByDate} from '../../lib/data/data';
 import './MapsList.scss';
 
-const MapsList = () => {
-  const [data, updates] = useData<OWMap>('map');
+const MapsList = ({updateCount}: {updateCount: number}) => {
+  const [data, updates] = useData<OWMap>('map', undefined, updateCount);
+
+  console.log(updateCount);
 
   const groupedByTime = useMemo(() => {
     return groupMapsByDate(data);

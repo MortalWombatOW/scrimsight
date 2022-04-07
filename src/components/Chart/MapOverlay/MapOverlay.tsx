@@ -4,15 +4,14 @@ import {mapNameToFileName} from '../../../lib/string';
 import {useScrollBlock} from '../../../hooks/useScrollBlock';
 import {useSpring, animated, useSprings, to} from 'react-spring';
 import './MapOverlay.scss';
-import {useDrag, useGesture} from '@use-gesture/react';
+import {useGesture} from '@use-gesture/react';
 import {
   getCameraTransformFromMapEntities,
   getMapEntitiesForTime,
   getHeroImage,
   getMapTransform,
 } from '../../../lib/data/data';
-import {Box, Slider} from '@mui/material';
-import {interpolateColors} from '../../../lib/color';
+import PlayerEntity from './PlayerEntity';
 
 interface MapOverlayProps {
   map: string;
@@ -434,95 +433,21 @@ const MapOverlay = (props: MapOverlayProps) => {
             })}
           {getMapEntitiesForTime(entities, time)
             .filter((entity) => entity.entityType === 'player')
-            .map((entity, i) => {
-              const playerState = getSmoothStateOfPlayer(entity.id);
-              const size =
-                Math.sqrt(entity.states[time]['health'] as number) + 10;
-
-              return (
-                <animated.g
-                  key={entity.id}
-                  {...{
-                    transform: to(
-                      [
-                        getSmoothStateOfPlayer(entity.id)['x'],
-                        getSmoothStateOfPlayer(entity.id)['y'],
-                      ],
-                      (x, y) => `translate(${x},${y})`,
-                    ),
-                  }}>
-                  <foreignObject
-                    x={-size / 2}
-                    y={-size / 2}
-                    width={size}
-                    height={size}
-                    style={{
-                      filter: `drop-shadow(0px 0px ${size / 2}px grey)`,
-                    }}>
-                    <img
-                      src={getHeroImage(entity.states[time]['class'] as string)}
-                      style={{
-                        borderRadius: '50%',
-                        width: `${size}px`,
-                        height: `${size}px`,
-                        pointerEvents: 'none',
-                      }}
-                    />
-                  </foreignObject>
-                  {/* healthbar */}
-                  <rect
-                    x={-25}
-                    y={35}
-                    width={50}
-                    height={10}
-                    fill={'transparent'}
-                    stroke={'black'}
-                    strokeWidth={1}
-                  />
-                  <rect
-                    x={-25}
-                    y={35}
-                    width={
-                      ((entity.states[time]['health'] as number) /
-                        (entity.states[time]['maxHealth'] as number)) *
-                      50
-                    }
-                    height={10}
-                    fill={'red'}
-                    fillOpacity={0.5}
-                  />
-                  {/* ult charge bar */}
-                  <rect
-                    x={-25}
-                    y={50}
-                    width={50}
-                    height={10}
-                    fill={'transparent'}
-                    stroke={'black'}
-                    strokeWidth={1}
-                  />
-                  <rect
-                    x={-25}
-                    y={50}
-                    width={
-                      ((entity.states[time]['ultCharge'] as number) / 100) * 50
-                    }
-                    height={10}
-                    fill={'yellow'}
-                    fillOpacity={0.5}
-                  />
-                  <text
-                    x={0}
-                    y={80}
-                    textAnchor="middle"
-                    alignmentBaseline="middle"
-                    fontSize="20"
-                    fill="white">
-                    {entity.id}
-                  </text>
-                </animated.g>
-              );
-            })}
+            .map((entity, i) => (
+              <PlayerEntity
+                key={entity.id}
+                x={entity.states[time]['x'] as number}
+                y={entity.states[time]['y'] as number}
+                z={entity.states[time]['z'] as number}
+                name={entity.id}
+                health={entity.states[time]['health'] as number}
+                maxHealth={entity.states[time]['maxHealth'] as number}
+                ultCharge={entity.states[time]['ultCharge'] as number}
+                hero={entity.states[time]['hero'] as string}
+                incomingDamage={[]}
+                incomingHealing={[]}
+              />
+            ))}
         </animated.g>
       </svg>
       <div className="controls">
