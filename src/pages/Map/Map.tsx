@@ -5,6 +5,7 @@ import {useParams} from 'react-router-dom';
 import './Map.scss';
 import MapTotals from 'components/MapTotals/MapTotals';
 import PlayByPlay from 'components/PlayByPlay/PlayByPlay';
+import MetricExplorer from '../../components/MetricExplorer/MetricExplorer';
 const Map = () => {
   const {mapId: mapIdStr} = useParams();
   if (!mapIdStr) {
@@ -22,10 +23,17 @@ const Map = () => {
             <MapInfo mapId={mapId} />
           </div>
         </div>
-        <div className="section">
+        {/* <div className="section">
           <div className="header">Statistics</div>
           <div className="content">
             <MapTotals mapId={mapId} />
+          </div>
+        </div> */}
+
+        <div className="section">
+          <div className="header">Statistics</div>
+          <div className="content">
+            <MetricExplorer mapId={mapId} />
           </div>
         </div>
         <div className="section">

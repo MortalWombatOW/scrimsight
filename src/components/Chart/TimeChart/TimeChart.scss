@@ -1,0 +1,13 @@
+.TimeChart {
+  & .controls {
+  }
+  & .line {
+    stroke-width: 4px;
+    fill: none;
+  }
+
+  & .axis {
+    stroke: #000;
+    stroke-width: 1px;
+  }
+}

@@ -32,7 +32,10 @@ function normalizeString(str: string): string {
     .toLowerCase();
 }
 
-export function heroNameToNormalized(name: string): string {
+export function heroNameToNormalized(name: string | undefined): string {
+  if (name === undefined) {
+    return '';
+  }
   if (name === 'McCree') {
     return 'cassidy';
   }

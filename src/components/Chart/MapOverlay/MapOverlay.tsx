@@ -178,7 +178,7 @@ const MapOverlay = (props: MapOverlayProps) => {
     setTime(newTime);
   };
 
-  console.log(getMapEntitiesForTime(entities, time));
+  // console.log(getMapEntitiesForTime(entities, time));
 
   // background ticks for scale
   const xGridLines: JSX.Element[] = [];
@@ -352,7 +352,7 @@ const MapOverlay = (props: MapOverlayProps) => {
                 <animated.text
                   key={`dmg-${i}`}
                   x={targetState['x'].to((x) => (x as number) + randomOffsetX)}
-                  y={targetState['y'].to(
+                  y={targetState['z'].to(
                     (y) => (y as number) - 15 + randomOffsetY,
                   )}
                   textAnchor="middle"
@@ -402,7 +402,7 @@ const MapOverlay = (props: MapOverlayProps) => {
                 <animated.text
                   key={`ability-${i}`}
                   x={playerState['x'].to((x) => (x as number) + randomOffsetX)}
-                  y={playerState['y'].to(
+                  y={playerState['z'].to(
                     (y) => (y as number) - 15 + randomOffsetY,
                   )}
                   textAnchor="middle"

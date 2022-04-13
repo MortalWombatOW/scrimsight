@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {interpolateColors} from './../../lib/color';
 import './StackedBarChart.scss';
 
-interface StackedBarChartDatum {
+export interface StackedBarChartDatum {
   value: number;
   barGroup: string;
   withinBarGroup: string;
@@ -63,7 +63,7 @@ const StackedBarChart = (props: StackedBarChartProps) => {
 
     const inner = dataForGroup.map((d, j) => {
       const width = xScale(d.value);
-      const height = barHeight;
+      const height = barHeight - 5;
 
       return (
         <div
@@ -71,6 +71,7 @@ const StackedBarChart = (props: StackedBarChartProps) => {
           style={{
             width,
             height,
+            lineHeight: barHeight - 5 + 'px',
           }}
           onMouseEnter={(e) => {
             setTooltipDatum(d);
@@ -78,8 +79,14 @@ const StackedBarChart = (props: StackedBarChartProps) => {
           onMouseLeave={() => {
             setTooltipDatum(null);
           }}
-          className={`bar ${d.clazz}`}
-        />
+          className={`bar ${d.clazz}`}>
+          {width > 75
+            ? d.withinBarGroup
+            : d.withinBarGroup
+                .split(' ')
+                .map((w) => w[0])
+                .join('')}
+        </div>
       );
     });
 
@@ -89,7 +96,7 @@ const StackedBarChart = (props: StackedBarChartProps) => {
           className="grouplabel"
           style={{
             width: leftPadding,
-            lineHeight: `${barHeight}px`,
+            lineHeight: `${barHeight - 5}px`,
           }}>
           {group}
         </div>

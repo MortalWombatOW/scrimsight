@@ -89,14 +89,14 @@ type Extractor = (
 
 type Transform = (dataset: Dataset) => Dataset;
 
-interface SimpleMetric {
-  displayName: string;
-  extractor: Extractor;
-  transforms: Transform[];
-  columns: Column[];
-}
+// interface SimpleMetric {
+//   displayName: string;
+//   extractor: Extractor;
+//   transforms: Transform[];
+//   columns: Column[];
+// }
 
-type Metric = SimpleMetric;
+// type Metric = SimpleMetric;
 
 interface TeamInfo {
   name: string;
@@ -137,6 +137,43 @@ type RenderState = {
   };
 };
 
+type MetricType = 'sum' | 'count' | 'average';
+type MetricValue =
+  | 'health'
+  | 'ult charge'
+  | 'damage'
+  | 'damage taken'
+  | 'healing'
+  | 'healing taken'
+  | 'final blows'
+  | 'deaths'
+  | 'elimination'
+  | 'damage/healing';
+type MetricGroup = 'player' | 'team' | 'time';
+type Metric = {
+  type: MetricType;
+  value: MetricValue;
+  groups: MetricGroup[];
+};
+type ComplexMetricType = 'ratio' | 'stack';
+type ComplexMetric = {
+  type: ComplexMetricType;
+  value1: MetricValue;
+  value2: MetricValue;
+};
+
+type MetricRow = {
+  value: number;
+  groups: {
+    [key: string]: string;
+  };
+};
+type MetricData =
+  | Statistic
+  | {
+      [key: string]: MetricData;
+    };
+
 export {
   OWMap,
   PlayerStatus,
@@ -150,7 +187,6 @@ export {
   Dataset,
   Extractor,
   Transform,
-  SimpleMetric,
   Metric,
   Aggregation,
   TeamInfo,
@@ -158,4 +194,9 @@ export {
   ColorInternal,
   MapEntity,
   RenderState,
+  MetricType,
+  MetricValue,
+  MetricGroup,
+  MetricData,
+  MetricRow,
 };

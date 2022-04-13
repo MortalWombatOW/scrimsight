@@ -8,6 +8,7 @@ import {
   TeamInfo,
 } from 'lib/data/types';
 import {heroNameToNormalized} from 'lib/string';
+import {Key} from 'react';
 
 const dayMillis = 1000 * 60 * 60 * 24;
 
@@ -250,7 +251,7 @@ export const buildMapEntitiesFromData = (
       };
     }
   });
-  console.log(heroMaxHealth);
+  // console.log(heroMaxHealth);
 
   interactions.forEach((interaction) => {
     const {player, timestamp, target, type, amount} = interaction;
@@ -289,7 +290,7 @@ export const buildMapEntitiesFromData = (
       };
     }
   });
-  console.log(entities);
+  // console.log(entities);
   return entities;
 };
 
@@ -360,4 +361,156 @@ const heroToRole = {
 
 export const getRoleFromHero = (hero: string): string => {
   return heroToRole[hero] || 'new hero alert??';
+};
+
+export const timeWindowRollingAverage = (
+  data: {
+    time: number;
+    val: number;
+  }[],
+  windowSize: number,
+): {
+  time: number;
+  val: number;
+}[] => {
+  const rollingAverage: {
+    time: number;
+    val: number;
+  }[] = [];
+
+  const maxTime = Math.max(...data.map((d) => d.time));
+  const minTime = Math.min(...data.map((d) => d.time));
+  const maxVal = Math.max(...data.map((d) => d.val));
+  const minVal = Math.min(...data.map((d) => d.val));
+
+  for (let i = 0; i < data.length; i++) {
+    const {time, val} = data[i];
+    const windowStart = Math.max(minTime, time - windowSize);
+    const windowEnd = Math.min(maxTime, time + windowSize);
+    const windowData = data.filter(
+      (d) => d.time >= windowStart && d.time <= windowEnd,
+    );
+    const windowSum = windowData.reduce((acc, d) => acc + (d.val as number), 0);
+    const windowAvg = windowSum / (windowEnd - windowStart + 1);
+    rollingAverage.push({
+      time,
+      val: windowAvg,
+    });
+  }
+  return rollingAverage;
+};
+
+export const kernelSmoothing = (
+  data: {
+    time: number;
+    val: number;
+  }[],
+  distWeightFn: (dist: number) => number,
+): {
+  time: number;
+  val: number;
+}[] => {
+  const smoothedData: {
+    time: number;
+    val: number;
+  }[] = [];
+
+  const maxTime = Math.max(...data.map((d) => d.time));
+  const minTime = Math.min(...data.map((d) => d.time));
+  const maxVal = Math.max(...data.map((d) => d.val));
+  const minVal = Math.min(...data.map((d) => d.val));
+
+  for (let i = 0; i < data.length; i++) {
+    const {time, val} = data[i];
+    const windowStart = Math.max(minTime, time - 5);
+    const windowEnd = Math.min(maxTime, time + 5);
+    const windowData = data.filter(
+      (d) => d.time >= windowStart && d.time <= windowEnd,
+    );
+    const windowWeightedSum = {
+      time,
+      val: windowData.reduce((acc, d) => {
+        const dist = Math.abs(d.time - time);
+        return acc + (d.val as number) * distWeightFn(dist);
+      }, 0),
+    };
+
+    smoothedData.push(windowWeightedSum);
+  }
+  return smoothedData;
+};
+
+export const exponentialSmoothing = (
+  data: {
+    time: number;
+    val: number;
+  }[],
+  alpha: number,
+): {
+  time: number;
+  val: number;
+}[] => {
+  const fn = (dist: number) =>
+    Math.pow(Math.E, -Math.pow(dist, 2) / (alpha + 1));
+  return kernelSmoothing(data, fn);
+};
+
+export const cumulativeSum = (
+  data: {
+    time: number;
+    val: number;
+  }[],
+): {
+  time: number;
+  val: number;
+}[] => {
+  const cumulativeData: {
+    time: number;
+    val: number;
+  }[] = [];
+  let sum = 0;
+  for (let i = 0; i < data.length; i++) {
+    const {time, val} = data[i];
+    sum += val;
+    cumulativeData.push({
+      time,
+      val: sum,
+    });
+  }
+  return cumulativeData;
+};
+
+export const timeBound = (
+  data: {
+    time: number;
+    val: number;
+  }[],
+  bounds: [number, number],
+): {
+  time: number;
+  val: number;
+}[] => {
+  const boundedData: {
+    time: number;
+    val: number;
+  }[] = [];
+  for (let i = 0; i < data.length; i++) {
+    const {time, val} = data[i];
+    if (time >= bounds[0] && time <= bounds[1]) {
+      boundedData.push({
+        time,
+        val,
+      });
+    }
+  }
+  return boundedData;
+};
+
+export const sortBy = (
+  data: Record<string, any>[],
+  fn: (d: Record<string, any>) => number,
+): Record<string, any>[] => {
+  const sortedData = [...data];
+  sortedData.sort((a, b) => fn(a) - fn(b));
+  return sortedData;
 };

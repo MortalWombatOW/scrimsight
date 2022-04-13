@@ -16,17 +16,18 @@ interface PlayerEntityProps {
 }
 
 const PlayerEntity = (props: PlayerEntityProps) => {
-  const [{x, y, z, health, ultCharge}, api] = useSpring(() => ({
-    x: props.x,
-    y: props.y,
-    z: props.z,
-    health: props.health,
-    ultCharge: props.ultCharge,
-  }));
+  const [{x, y, z, health, ultCharge}, api] = useSpring(
+    () => ({
+      x: props.x,
+      y: props.y,
+      z: props.z,
+      health: props.health,
+      ultCharge: props.ultCharge,
+    }),
+    [props.x, props.y, props.z, props.health, props.ultCharge],
+  );
 
   const size = 50;
-
-  console.log('PlayerEntity', props);
 
   return (
     <animated.g transform={to([x, y, z], (x, y, z) => `translate(${x}, ${z})`)}>
@@ -97,6 +98,4 @@ const PlayerEntity = (props: PlayerEntityProps) => {
   );
 };
 
-const AnimatedPlayerEntity = animated(PlayerEntity);
-
-export default AnimatedPlayerEntity;
+export default PlayerEntity;
