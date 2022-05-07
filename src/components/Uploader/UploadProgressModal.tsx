@@ -1,5 +1,5 @@
-import {CircularProgress, Modal, Box, LinearProgress, Fab} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+import {CircularProgress, Modal, Box} from '@mui/material';
+import React from 'react';
 import {FileUpload} from '../../lib/data/types';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';

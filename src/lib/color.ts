@@ -44,9 +44,5 @@ export const interpolateColors = (
 };
 
 export const groupColorClass = (group: string): string | undefined => {
-  const map = {
-    'Team 1': 'team-1',
-    'Team 2': 'team-2',
-  };
-  return map[group] || undefined;
+  return group.toLowerCase().replaceAll(' ', '-');
 };

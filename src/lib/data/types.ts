@@ -77,6 +77,7 @@ type Aggregation = {
 
 type Dataset = {
   columns: Column[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rows: any[];
 };
 
@@ -140,7 +141,8 @@ type RenderState = {
 type MetricType = 'sum' | 'count' | 'average';
 type MetricValue =
   | 'health'
-  | 'ult charge'
+  | 'time to ult'
+  | 'time with ult'
   | 'damage'
   | 'damage taken'
   | 'healing'
@@ -148,18 +150,23 @@ type MetricValue =
   | 'final blows'
   | 'deaths'
   | 'elimination'
-  | 'damage/healing';
-type MetricGroup = 'player' | 'team' | 'time';
+  | 'kill participation'
+  | 'damage efficiency'
+  | 'ult cycle efficiency'
+  | 'ults used'
+  | 'feeds';
+type MetricGroup = 'player' | 'team' | 'time' | 'teamfight';
+type MetricFilter = (row: MetricRow) => boolean;
+
 type Metric = {
-  type: MetricType;
-  value: MetricValue;
+  values: MetricValue[];
   groups: MetricGroup[];
+  filters?: MetricFilter[];
 };
-type ComplexMetricType = 'ratio' | 'stack';
+
 type ComplexMetric = {
-  type: ComplexMetricType;
-  value1: MetricValue;
-  value2: MetricValue;
+  displayName: string;
+  metricValues: MetricValue[];
 };
 
 type MetricRow = {
@@ -173,6 +180,20 @@ type MetricData =
   | {
       [key: string]: MetricData;
     };
+
+type Report = {
+  metrics: Metric[];
+  id: string;
+  name: string;
+  description?: string;
+  tags: string[];
+  renderInfo?: {
+    xScale: number;
+    yScale: number;
+    x: number;
+    y: number;
+  }[];
+};
 
 export {
   OWMap,
@@ -199,4 +220,7 @@ export {
   MetricGroup,
   MetricData,
   MetricRow,
+  Report,
+  ComplexMetric,
+  MetricFilter,
 };

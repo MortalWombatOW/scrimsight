@@ -1,175 +1,190 @@
 @import './constants.scss';
 
-.ana {
-  background-color: $ana;
-  fill: $ana;
-  stroke: $ana;
+@each $key, $value in $colors {
+  .#{$key} {
+    background-color: $value;
+    overflow-x: hidden;
+    // text-shadow: 0px 0px 2px $dark;
+    color: fade-out(black, 0.3);
+  }
+  circle.#{$key} {
+    fill: $value;
+  }
+  line.#{$key} {
+    stroke: $value;
+  }
 }
-.ashe {
-  background-color: $ashe;
-  fill: $ashe;
-  stroke: $ashe;
-}
-.bastion {
-  background-color: $bastion;
-  fill: $bastion;
-  stroke: $bastion;
-}
-.brigitte {
-  background-color: $brigitte;
-  fill: $brigitte;
-  stroke: $brigitte;
-}
-.baptiste {
-  background-color: $baptiste;
-  fill: $baptiste;
-  stroke: $baptiste;
-}
-.dva {
-  background-color: $dva;
-  fill: $dva;
-  stroke: $dva;
-}
-.doomfist {
-  background-color: $doomfist;
-  fill: $doomfist;
-  stroke: $doomfist;
-}
-.echo {
-  background-color: $echo;
-  fill: $echo;
-  stroke: $echo;
-}
-.genji {
-  background-color: $genji;
-  fill: $genji;
-  stroke: $genji;
-}
-.hanzo {
-  background-color: $hanzo;
-  fill: $hanzo;
-  stroke: $hanzo;
-}
-.junkrat {
-  background-color: $junkrat;
-  fill: $junkrat;
-  stroke: $junkrat;
-}
-.lucio {
-  background-color: $lucio;
-  fill: $lucio;
-  stroke: $lucio;
-}
-.cassidy {
-  background-color: $cassidy;
-  fill: $cassidy;
-  stroke: $cassidy;
-}
-.mei {
-  background-color: $mei;
-  fill: $mei;
-  stroke: $mei;
-}
-.mercy {
-  background-color: $mercy;
-  fill: $mercy;
-  stroke: $mercy;
-}
-.moira {
-  background-color: $moira;
-  fill: $moira;
-  stroke: $moira;
-}
-.orisa {
-  background-color: $orisa;
-  fill: $orisa;
-  stroke: $orisa;
-}
-.pharah {
-  background-color: $pharah;
-  fill: $pharah;
-  stroke: $pharah;
-}
-.reaper {
-  background-color: $reaper;
-  fill: $reaper;
-  stroke: $reaper;
-}
-.reinhardt {
-  background-color: $reinhardt;
-  fill: $reinhardt;
-  stroke: $reinhardt;
-}
-.roadhog {
-  background-color: $roadhog;
-  fill: $roadhog;
-  stroke: $roadhog;
-}
-.soldier76 {
-  background-color: $soldier76;
-  fill: $soldier76;
-  stroke: $soldier76;
-}
-.sombra {
-  background-color: $sombra;
-  fill: $sombra;
-  stroke: $sombra;
-}
-.symmetra {
-  background-color: $symmetra;
-  fill: $symmetra;
-  stroke: $symmetra;
-}
-.sigma {
-  background-color: $sigma;
-  fill: $sigma;
-  stroke: $sigma;
-}
-.torbjorn {
-  background-color: $torbjorn;
-  fill: $torbjorn;
-  stroke: $torbjorn;
-}
-.tracer {
-  background-color: $tracer;
-  fill: $tracer;
-  stroke: $tracer;
-}
-.widowmaker {
-  background-color: $widowmaker;
-  fill: $widowmaker;
-  stroke: $widowmaker;
-}
-.wreckingball {
-  background-color: $wreckingball;
-  fill: $wreckingball;
-  stroke: $wreckingball;
-}
-.winston {
-  background-color: $winston;
-  fill: $winston;
-  stroke: $winston;
-}
-.zarya {
-  background-color: $zarya;
-  fill: $zarya;
-  stroke: $zarya;
-}
-.zenyatta {
-  background-color: $zenyatta;
-  fill: $zenyatta;
-  stroke: $zenyatta;
-}
-.team-1 {
-  background-color: #368ff4;
-  stroke: #368ff4;
-  fill: #368ff4;
-}
-.team-2 {
-  background-color: #ff736e;
-  stroke: #ff736e;
-  fill: #ff736e;
-}
+
+// .ana {
+//   background-color: $ana;
+//   fill: $ana;
+//   stroke: $ana;
+// }
+// .ashe {
+//   background-color: $ashe;
+//   fill: $ashe;
+//   stroke: $ashe;
+// }
+// .bastion {
+//   background-color: $bastion;
+//   fill: $bastion;
+//   stroke: $bastion;
+// }
+// .brigitte {
+//   background-color: $brigitte;
+//   fill: $brigitte;
+//   stroke: $brigitte;
+// }
+// .baptiste {
+//   background-color: $baptiste;
+//   fill: $baptiste;
+//   stroke: $baptiste;
+// }
+// .dva {
+//   background-color: $dva;
+//   fill: $dva;
+//   stroke: $dva;
+// }
+// .doomfist {
+//   background-color: $doomfist;
+//   fill: $doomfist;
+//   stroke: $doomfist;
+// }
+// .echo {
+//   background-color: $echo;
+//   fill: $echo;
+//   stroke: $echo;
+// }
+// .genji {
+//   background-color: $genji;
+//   fill: $genji;
+//   stroke: $genji;
+// }
+// .hanzo {
+//   background-color: $hanzo;
+//   fill: $hanzo;
+//   stroke: $hanzo;
+// }
+// .junkrat {
+//   background-color: $junkrat;
+//   fill: $junkrat;
+//   stroke: $junkrat;
+// }
+// .lucio {
+//   background-color: $lucio;
+//   fill: $lucio;
+//   stroke: $lucio;
+// }
+// .cassidy {
+//   background-color: $cassidy;
+//   fill: $cassidy;
+//   stroke: $cassidy;
+// }
+// .mei {
+//   background-color: $mei;
+//   fill: $mei;
+//   stroke: $mei;
+// }
+// .mercy {
+//   background-color: $mercy;
+//   fill: $mercy;
+//   stroke: $mercy;
+// }
+// .moira {
+//   background-color: $moira;
+//   fill: $moira;
+//   stroke: $moira;
+// }
+// .orisa {
+//   background-color: $orisa;
+//   fill: $orisa;
+//   stroke: $orisa;
+// }
+// .pharah {
+//   background-color: $pharah;
+//   fill: $pharah;
+//   stroke: $pharah;
+// }
+// .reaper {
+//   background-color: $reaper;
+//   fill: $reaper;
+//   stroke: $reaper;
+// }
+// .reinhardt {
+//   background-color: $reinhardt;
+//   fill: $reinhardt;
+//   stroke: $reinhardt;
+// }
+// .roadhog {
+//   background-color: $roadhog;
+//   fill: $roadhog;
+//   stroke: $roadhog;
+// }
+// .soldier76 {
+//   background-color: $soldier76;
+//   fill: $soldier76;
+//   stroke: $soldier76;
+// }
+// .sombra {
+//   background-color: $sombra;
+//   fill: $sombra;
+//   stroke: $sombra;
+// }
+// .symmetra {
+//   background-color: $symmetra;
+//   fill: $symmetra;
+//   stroke: $symmetra;
+// }
+// .sigma {
+//   background-color: $sigma;
+//   fill: $sigma;
+//   stroke: $sigma;
+// }
+// .torbjorn {
+//   background-color: $torbjorn;
+//   fill: $torbjorn;
+//   stroke: $torbjorn;
+// }
+// .tracer {
+//   background-color: $tracer;
+//   fill: $tracer;
+//   stroke: $tracer;
+// }
+// .widowmaker {
+//   background-color: $widowmaker;
+//   fill: $widowmaker;
+//   stroke: $widowmaker;
+// }
+// .wreckingball {
+//   background-color: $wreckingball;
+//   fill: $wreckingball;
+//   stroke: $wreckingball;
+// }
+// .winston {
+//   background-color: $winston;
+//   fill: $winston;
+//   stroke: $winston;
+// }
+// .zarya {
+//   background-color: $zarya;
+//   fill: $zarya;
+//   stroke: $zarya;
+// }
+// .zenyatta {
+//   background-color: $zenyatta;
+//   fill: $zenyatta;
+//   stroke: $zenyatta;
+// }
+// .team-1 {
+//   background-color: #368ff4;
+//   stroke: #368ff4;
+//   fill: #368ff4;
+// }
+// .team-2 {
+//   background-color: #ff736e;
+//   stroke: #ff736e;
+//   fill: #ff736e;
+// }
 
 body {
   margin: 0;
@@ -359,11 +374,6 @@ div.tablecontrols > * {
   position: relative;
   display: inline-block;
   overflow: hidden;
-  & img {
-    // display: block;
-    // max-width: 100%;
-    // height: auto;
-  }
 
   & svg {
     position: absolute;

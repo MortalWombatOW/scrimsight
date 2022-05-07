@@ -1,5 +1,5 @@
 import React, {ReactElement} from 'react';
-import {MapEntity, RenderState} from '../../../lib/data/types';
+import {MapEntity} from '../../../lib/data/types';
 import {mapNameToFileName} from '../../../lib/string';
 import {useScrollBlock} from '../../../hooks/useScrollBlock';
 import {useSpring, animated, useSprings, to} from 'react-spring';
@@ -8,7 +8,6 @@ import {useGesture} from '@use-gesture/react';
 import {
   getCameraTransformFromMapEntities,
   getMapEntitiesForTime,
-  getHeroImage,
   getMapTransform,
 } from '../../../lib/data/data';
 import PlayerEntity from './PlayerEntity';
@@ -278,8 +277,7 @@ const MapOverlay = (props: MapOverlayProps) => {
             .filter((entity) => entity.entityType === 'healing')
             .map((entity, i) => {
               const entityState = entity.states[time];
-              const {player, target, amount} = entityState;
-              const playerState = getSmoothStateOfPlayer(player as string);
+              const {target, amount} = entityState;
               const targetState = getSmoothStateOfPlayer(target as string);
 
               const randomOffsetX = Math.random() * 20 - 10;
@@ -337,10 +335,8 @@ const MapOverlay = (props: MapOverlayProps) => {
             )
             .map((entity, i) => {
               const entityState = entity.states[time];
-              const {player, target, amount} = entityState;
-              const playerState = getSmoothStateOfPlayer(player as string);
+              const {target, amount} = entityState;
               const targetState = getSmoothStateOfPlayer(target as string);
-              const edgeWidth = Math.log10(amount as number) * 10;
 
               const randomOffsetX = Math.random() * 20 - 10;
               const randomOffsetY = Math.random() * 20 - 20;
@@ -433,7 +429,7 @@ const MapOverlay = (props: MapOverlayProps) => {
             })}
           {getMapEntitiesForTime(entities, time)
             .filter((entity) => entity.entityType === 'player')
-            .map((entity, i) => (
+            .map((entity) => (
               <PlayerEntity
                 key={entity.id}
                 x={entity.states[time]['x'] as number}

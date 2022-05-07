@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import {PlayerInteraction, OWMap, PlayerStatus} from 'lib/data/types';
 import './MapTotals.scss';
@@ -50,28 +51,28 @@ const MapTotals = ({mapId}) => {
 
   const players = Object.keys(playersToTeam);
 
-  const damageData = players.map((player) => {
-    return {
-      value: totalDamage[player],
-      barGroup: playersToTeam[player],
-      withinBarGroup: player,
-      clazz: heroNameToNormalized(mostCommonHeroes[player]),
-    };
-  });
+  // const damageData = players.map((player) => {
+  //   return {
+  //     value: totalDamage[player],
+  //     barGroup: playersToTeam[player],
+  //     withinBarGroup: player,
+  //     clazz: heroNameToNormalized(mostCommonHeroes[player]),
+  //   };
+  // });
 
-  const healingData = players.flatMap((player) => {
-    if (!totalHealing[player]) {
-      return [];
-    }
-    return [
-      {
-        value: totalHealing[player],
-        barGroup: playersToTeam[player],
-        withinBarGroup: player,
-        clazz: heroNameToNormalized(mostCommonHeroes[player]),
-      },
-    ];
-  });
+  // const healingData = players.flatMap((player) => {
+  //   if (!totalHealing[player]) {
+  //     return [];
+  //   }
+  //   return [
+  //     {
+  //       value: totalHealing[player],
+  //       barGroup: playersToTeam[player],
+  //       withinBarGroup: player,
+  //       clazz: heroNameToNormalized(mostCommonHeroes[player]),
+  //     },
+  //   ];
+  // });
 
   // //sort data by primary group then highest value
   // damageData.sort((a, b) => {
@@ -91,11 +92,11 @@ const MapTotals = ({mapId}) => {
     <div className="MapTotals">
       <div className="statistic">
         <div className="label">Total Damage</div>
-        <StackedBarChart data={damageData} width={700} barHeight={30} />
+        {/* <StackedBarChart data={damageData} width={700} barHeight={30} /> */}
       </div>
       <div className="statistic">
         <div className="label">Total Healing</div>
-        <StackedBarChart data={healingData} width={700} barHeight={30} />
+        {/* <StackedBarChart data={healingData} width={700} barHeight={30} /> */}
       </div>
     </div>
   );

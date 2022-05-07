@@ -1,6 +1,9 @@
 @import '../../constants.scss';
 
 .MapPage {
+  & .sidebar {
+    position: relative;
+  }
   & .container {
     padding: 0 $hpadding;
 

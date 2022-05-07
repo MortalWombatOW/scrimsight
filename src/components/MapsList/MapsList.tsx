@@ -12,6 +12,7 @@ const MapsList = ({updateCount}: {updateCount: number}) => {
 
   const groupedByTime = useMemo(() => {
     return groupMapsByDate(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updates]);
 
   if (!data) {

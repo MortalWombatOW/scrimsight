@@ -16,7 +16,7 @@ interface PlayerEntityProps {
 }
 
 const PlayerEntity = (props: PlayerEntityProps) => {
-  const [{x, y, z, health, ultCharge}, api] = useSpring(
+  const [{x, y, z, health, ultCharge}] = useSpring(
     () => ({
       x: props.x,
       y: props.y,

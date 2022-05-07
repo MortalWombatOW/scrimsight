@@ -103,7 +103,9 @@ export default (): IQueue => {
         setIsExecutingTask(true);
         const job = jobs[0] as Job;
 
-        await job.task!();
+        if (job.task) {
+          await job.task();
+        }
         dispatch({type: ActionType.SHIFT});
 
         if (jobs.length === 0) {
@@ -115,7 +117,7 @@ export default (): IQueue => {
     };
 
     func();
-  }, [jobs, isExecutingTask]);
+  }, [jobs, isExecutingTask, doneCallback]);
 
   const addJob = async (job: Job) => {
     dispatch({type: ActionType.ADD, job});

@@ -8,7 +8,6 @@ import {
   TeamInfo,
 } from 'lib/data/types';
 import {heroNameToNormalized} from 'lib/string';
-import {Key} from 'react';
 
 const dayMillis = 1000 * 60 * 60 * 24;
 
@@ -19,7 +18,7 @@ const timeFilters: {[key: string]: (map: OWMap) => boolean} = {
   'Last Month': (map: OWMap) => map.timestamp >= Date.now() - 30 * dayMillis,
   'Last Year': (map: OWMap) => map.timestamp >= Date.now() - 365 * dayMillis,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  'All Time': (map: OWMap) => true,
+  'All Time': () => true,
 };
 
 export const groupMapsByDate = (
@@ -61,7 +60,7 @@ export const getHeroImage = (heroName: string): string =>
 export const getTeamInfoForMap = (
   map: OWMap,
 ): {top: TeamInfo; bottom: TeamInfo} => {
-  const {team1, team2, team1Name, team2Name, roles, timestamp} = map;
+  const {team1, team2, team1Name, team2Name, roles} = map;
 
   let topName = team1Name;
   let bottomName = team2Name;
@@ -77,16 +76,16 @@ export const getTeamInfoForMap = (
   }
 
   const tanks = Object.entries(roles)
-    .filter(([player, role]) => role === 'tank')
-    .map(([player, role]) => player);
+    .filter(([, role]) => role === 'tank')
+    .map(([player]) => player);
 
   const dps = Object.entries(map.roles)
-    .filter(([player, role]) => role === 'damage')
-    .map(([player, role]) => player);
+    .filter(([, role]) => role === 'damage')
+    .map(([player]) => player);
 
   const supports = Object.entries(map.roles)
-    .filter(([player, role]) => role === 'support')
-    .map(([player, role]) => player);
+    .filter(([, role]) => role === 'support')
+    .map(([player]) => player);
 
   const topTanks = tanks.filter((tank) => topTeam.includes(tank));
   const bottomTanks = tanks.filter((tank) => bottomTeam.includes(tank));
@@ -380,11 +379,9 @@ export const timeWindowRollingAverage = (
 
   const maxTime = Math.max(...data.map((d) => d.time));
   const minTime = Math.min(...data.map((d) => d.time));
-  const maxVal = Math.max(...data.map((d) => d.val));
-  const minVal = Math.min(...data.map((d) => d.val));
 
   for (let i = 0; i < data.length; i++) {
-    const {time, val} = data[i];
+    const {time} = data[i];
     const windowStart = Math.max(minTime, time - windowSize);
     const windowEnd = Math.min(maxTime, time + windowSize);
     const windowData = data.filter(
@@ -417,11 +414,9 @@ export const kernelSmoothing = (
 
   const maxTime = Math.max(...data.map((d) => d.time));
   const minTime = Math.min(...data.map((d) => d.time));
-  const maxVal = Math.max(...data.map((d) => d.val));
-  const minVal = Math.min(...data.map((d) => d.val));
 
   for (let i = 0; i < data.length; i++) {
-    const {time, val} = data[i];
+    const {time} = data[i];
     const windowStart = Math.max(minTime, time - 5);
     const windowEnd = Math.min(maxTime, time + 5);
     const windowData = data.filter(
@@ -506,11 +501,8 @@ export const timeBound = (
   return boundedData;
 };
 
-export const sortBy = (
-  data: Record<string, any>[],
-  fn: (d: Record<string, any>) => number,
-): Record<string, any>[] => {
+export function sortBy<T>(data: T[], fn: (d: T) => number): T[] {
   const sortedData = [...data];
   sortedData.sort((a, b) => fn(a) - fn(b));
   return sortedData;
-};
+}

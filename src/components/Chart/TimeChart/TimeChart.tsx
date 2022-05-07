@@ -1,16 +1,9 @@
 import {Slider} from '@mui/material';
 import {useHover} from '@use-gesture/react';
 import React, {ReactElement, useMemo, useRef, useState} from 'react';
-import {
-  cumulativeSum,
-  exponentialSmoothing,
-  sortBy,
-  timeBound,
-  timeWindowRollingAverage,
-} from '../../../lib/data/data';
+import {cumulativeSum, sortBy, timeBound} from '../../../lib/data/data';
 import './TimeChart.scss';
 import {groupColorClass} from './../../../lib/color';
-import {animated, to, useSpring} from 'react-spring';
 
 export type TimeChartSeries = {
   label: string;
@@ -30,6 +23,8 @@ export type TimeChartProps = {
 
 const TimeChart = (props: TimeChartProps) => {
   const {series, yLabel, width, height} = props;
+
+  console.log(series);
 
   const [tooltipDatum, setTooltipDatum] = useState<null | {
     x: number;
@@ -90,10 +85,10 @@ const TimeChart = (props: TimeChartProps) => {
 
   const ref = useRef<SVGSVGElement>(null);
   const bind = useHover(({xy}) => {
-    if (processedSeries.length === 0) {
+    if (processedSeries.length === 0 || ref.current === null) {
       return;
     }
-    const parentPos = ref.current!.getBoundingClientRect();
+    const parentPos = ref.current.getBoundingClientRect();
     const x = xy[0] - parentPos.left;
     const y = xy[1] - parentPos.top;
     // console.log(x);
@@ -277,9 +272,9 @@ const TimeChart = (props: TimeChartProps) => {
     </g>
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let tooltip: ReactElement<any, any> | null = null;
   if (tooltipDatum !== null) {
-    const labelWidth = tooltipDatum.label.length * 10;
     const yOffset = -20;
     tooltip = (
       <g

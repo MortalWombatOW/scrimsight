@@ -12,17 +12,37 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import 'components/MapInfo/MapInfo.scss';
 import {heroNameToNormalized, mapNameToFileName} from 'lib/string';
 import Grid from '@mui/material/Grid';
+import {groupColorClass} from '../../lib/color';
 
-const PlayerAndHero = ({player, hero}: {player: string; hero: string}) => {
+const PlayerAndHero = ({
+  player,
+  hero,
+  selected,
+}: {
+  player: string;
+  hero: string;
+  selected: boolean;
+}) => {
   return (
-    <div className={`player ${heroNameToNormalized(hero)}`}>
+    <div
+      className={`player ${heroNameToNormalized(hero)} ${
+        selected ? 'selected' : 'unselected'
+      }`}>
       <img src={getHeroImage(hero)} alt={hero} />
       <div className="name">{player}</div>
     </div>
   );
 };
 
-const MapInfo = ({mapId}: {mapId: number}) => {
+const MapInfo = ({
+  mapId,
+  selectedPlayerNames,
+  setSelectedPlayerNames,
+}: {
+  mapId: number;
+  selectedPlayerNames: string[];
+  setSelectedPlayerNames: (names: string[]) => void;
+}) => {
   const [mapList] = useData<OWMap>('map', mapId);
 
   const [statuses] = useData<PlayerStatus>('player_status', mapId);
@@ -42,73 +62,162 @@ const MapInfo = ({mapId}: {mapId: number}) => {
 
   const {top, bottom} = getTeamInfoForMap(map);
 
+  const selectPlayer = (name: string) => {
+    selectedPlayerNames.push(name);
+    setSelectedPlayerNames(Array.from(new Set(selectedPlayerNames)));
+  };
+
+  const unselectPlayer = (name: string) =>
+    setSelectedPlayerNames(selectedPlayerNames.filter((n) => n != name));
+  const isSelected = (name: string) => selectedPlayerNames.includes(name);
+
+  const tileCols = top.tanks.length == 2 ? 6 / 6 : 6 / 5;
+
+  console.log(selectedPlayerNames);
+
   return (
     <div className="MapInfo">
       <div
         className="mapname"
         style={{
-          backgroundImage: `url(${mapNameToFileName(map.mapName, false)})`,
+          backgroundImage: ` linear-gradient(to right, grey 0%, grey 30%, transparent 35%, transparent 100%), url(${mapNameToFileName(
+            map.mapName,
+            false,
+          )})`,
         }}>
         <div className="txt">{map.mapName}</div>
+        <Grid
+          container
+          direction="row"
+          alignItems="center"
+          className="bottomtext">
+          <InsertDriveFileIcon /> {map.fileName}
+          <AccessTimeIcon
+            style={{
+              marginLeft: '1rem',
+            }}
+          />{' '}
+          {new Date(map.timestamp).toLocaleString()}
+        </Grid>
       </div>
-      <Grid container direction="row" alignItems="center">
-        <InsertDriveFileIcon /> {map.fileName}
-        <AccessTimeIcon
-          style={{
-            marginLeft: '1rem',
-          }}
-        />{' '}
-        {new Date(map.timestamp).toLocaleString()}
+
+      <Grid container spacing={0} direction="row">
+        <Grid item xs={6}>
+          <div className={`team-name ${groupColorClass(top.name)}`}>
+            {top.name}
+          </div>
+        </Grid>
+        <Grid item xs={6}>
+          <div className={`team-name ${groupColorClass(bottom.name)}`}>
+            {bottom.name}
+          </div>
+        </Grid>
       </Grid>
-      <div className="team">
-        <div className="team-name">{top.name}</div>
+      <Grid container spacing={0} direction="row">
         {top.tanks.map((player, index) => (
-          <PlayerAndHero
-            key={index}
-            player={player}
-            hero={mostCommonHeroes[player]}
-          />
+          <Grid key={index} item xs={tileCols}>
+            <div
+              className="player-container"
+              onClick={() =>
+                isSelected(player)
+                  ? unselectPlayer(player)
+                  : selectPlayer(player)
+              }>
+              <PlayerAndHero
+                player={player}
+                hero={mostCommonHeroes[player]}
+                selected={isSelected(player)}
+              />
+            </div>
+          </Grid>
         ))}
         {top.dps.map((player, index) => (
-          <PlayerAndHero
-            key={index}
-            player={player}
-            hero={mostCommonHeroes[player]}
-          />
+          <Grid key={index} item xs={tileCols}>
+            <div
+              className="player-container"
+              onClick={() =>
+                isSelected(player)
+                  ? unselectPlayer(player)
+                  : selectPlayer(player)
+              }>
+              <PlayerAndHero
+                player={player}
+                hero={mostCommonHeroes[player]}
+                selected={isSelected(player)}
+              />
+            </div>
+          </Grid>
         ))}
         {top.supports.map((player, index) => (
-          <PlayerAndHero
-            key={index}
-            player={player}
-            hero={mostCommonHeroes[player]}
-          />
+          <Grid key={index} item xs={tileCols}>
+            <div
+              className="player-container"
+              onClick={() =>
+                isSelected(player)
+                  ? unselectPlayer(player)
+                  : selectPlayer(player)
+              }>
+              <PlayerAndHero
+                player={player}
+                hero={mostCommonHeroes[player]}
+                selected={isSelected(player)}
+              />
+            </div>
+          </Grid>
         ))}
-      </div>
-      <div className="versus">vs.</div>
-      <div className="team">
-        <div className="team-name">{bottom.name}</div>
+
         {bottom.tanks.map((player, index) => (
-          <PlayerAndHero
-            key={index}
-            player={player}
-            hero={mostCommonHeroes[player]}
-          />
+          <Grid key={index} item xs={tileCols}>
+            <div
+              className="player-container"
+              onClick={() =>
+                isSelected(player)
+                  ? unselectPlayer(player)
+                  : selectPlayer(player)
+              }>
+              <PlayerAndHero
+                player={player}
+                hero={mostCommonHeroes[player]}
+                selected={isSelected(player)}
+              />
+            </div>
+          </Grid>
         ))}
         {bottom.dps.map((player, index) => (
-          <PlayerAndHero
-            key={index}
-            player={player}
-            hero={mostCommonHeroes[player]}
-          />
+          <Grid key={index} item xs={tileCols}>
+            <div
+              className="player-container"
+              onClick={() =>
+                isSelected(player)
+                  ? unselectPlayer(player)
+                  : selectPlayer(player)
+              }>
+              <PlayerAndHero
+                player={player}
+                hero={mostCommonHeroes[player]}
+                selected={isSelected(player)}
+              />
+            </div>
+          </Grid>
         ))}
         {bottom.supports.map((player, index) => (
-          <PlayerAndHero
-            key={index}
-            player={player}
-            hero={mostCommonHeroes[player]}
-          />
+          <Grid key={index} item xs={tileCols}>
+            <div
+              className="player-container"
+              onClick={() =>
+                isSelected(player)
+                  ? unselectPlayer(player)
+                  : selectPlayer(player)
+              }>
+              <PlayerAndHero
+                player={player}
+                hero={mostCommonHeroes[player]}
+                selected={isSelected(player)}
+              />
+            </div>
+          </Grid>
         ))}
-      </div>
+      </Grid>
     </div>
   );
 };

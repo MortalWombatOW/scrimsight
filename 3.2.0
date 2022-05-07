@@ -1,0 +1,8 @@
++ chart.js@2.9.4
+updated 1 package and audited 1057 packages in 3.615s
+
+109 packages are looking for funding
+  run `npm fund` for details
+
+found 34 vulnerabilities (2 low, 22 moderate, 6 high, 4 critical)
+  run `npm audit fix` to fix them, or `npm audit` for details

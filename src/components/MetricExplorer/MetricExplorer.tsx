@@ -1,36 +1,27 @@
-import {Avatar, Chip, Grid} from '@mui/material';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import useData from '../../hooks/useData';
 import {groupColorClass} from '../../lib/color';
-import {
-  getHeroesByPlayer,
-  getInteractionStat,
-  getMostCommonHeroes,
-} from '../../lib/data/data';
+import {getHeroesByPlayer, getMostCommonHeroes} from '../../lib/data/data';
 import {
   calculateMetric,
-  getMetricGroups,
-  getTypeForMetric,
-  getMetricValues,
+  formatDataForChart,
+  getTimeSeriesLabels,
 } from '../../lib/data/metrics';
 import {
   Metric,
-  MetricData,
-  MetricGroup,
-  MetricType,
-  MetricValue,
   OWMap,
   PlayerInteraction,
   PlayerStatus,
 } from '../../lib/data/types';
 import {heroNameToNormalized, isNumeric} from '../../lib/string';
 import StackedBarChart, {StackedBarChartDatum} from '../Chart/StackedBarChart';
-import TimeChart, {
-  TimeChartProps,
-  TimeChartSeries,
-} from '../Chart/TimeChart/TimeChart';
+import TimeChart, {TimeChartSeries} from '../Chart/TimeChart/TimeChart';
 import './MetricExplorer.scss';
 import MetricSelect from './MetricSelect';
+import Chart from '../Chart/Chart';
+import {ChartDataset} from 'chart.js';
+import {formatTimeSeriesHeatmap} from './../../lib/data/metrics';
+import MetricDisplay from '../MetricDisplay/MetricDisplay';
 
 const MetricExplorer = ({mapId}: {mapId: number}) => {
   const [mapList, mapListUpdates] = useData<OWMap>('map', mapId);
@@ -56,13 +47,35 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
     }
 
     return calculateMetric(metric, mapList[0], statuses, interactions);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metric, mapListUpdates, statusUpdates, updates]);
 
+  const chartData: ChartDataset[] = useMemo(() => {
+    if (
+      !interactions ||
+      !mapList ||
+      !statuses ||
+      mapList.length === 0 ||
+      !metric
+    ) {
+      return [];
+    }
+    console.log('yay');
+    console.log(metric);
+    if (metric.groups.length === 2 && metric.groups[1] === 'time') {
+      console.log('formatting time series');
+      return formatTimeSeriesHeatmap(metricData);
+    }
+
+    return formatDataForChart(metricData);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metric, mapListUpdates, statusUpdates, updates]);
+
+  console.log(metricData);
   if (!interactions || !mapList || mapList.length === 0 || !statuses) {
     return <div>Loading...</div>;
   }
-
-  console.log(metricData);
 
   let display = <div>No data</div>;
 
@@ -71,42 +84,35 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
   const playerHeroes = getHeroesByPlayer(statuses);
   const mostCommonHeroes = getMostCommonHeroes(playerHeroes);
 
-  if (dataDimensions === 1) {
-    const barChartData: StackedBarChartDatum[] = Object.keys(metricData).map(
-      (key) => {
-        return {
-          value: metricData[key] as number,
-          barGroup: key,
-          withinBarGroup: '',
-          clazz: heroNameToNormalized(mostCommonHeroes[key]) || 'ana',
-        };
-      },
-    );
-
-    display = (
-      <StackedBarChart data={barChartData} width={800} barHeight={30} />
-    );
-  }
+  // if (dataDimensions === 1) {
+  //   // display = <StackedBarChart data={metricData} width={800} barHeight={30} />;
+  //   // display = (
+  //   //   <Chart
+  //   //     data={{
+  //   //       labels: Object.keys(metricData),
+  //   //       datasets: chartData,
+  //   //     }}
+  //   //   />
+  //   // );
+  // }
 
   if (dataDimensions === 2 && !metric?.groups.includes('time')) {
-    const barChartData: StackedBarChartDatum[] = Object.keys(
-      metricData,
-    ).flatMap((group1) =>
-      Object.keys(metricData[group1]).map((group2) => {
-        return {
-          value: metricData[group1][group2] as number,
-          barGroup: group1,
-          withinBarGroup: group2,
-          clazz:
-            groupColorClass(group2) ||
-            heroNameToNormalized(mostCommonHeroes[group2]),
-        };
-      }),
-    );
+    // const barChartData: StackedBarChartDatum[] = Object.keys(
+    //   metricData,
+    // ).flatMap((group1) =>
+    //   Object.keys(metricData[group1]).map((group2) => {
+    //     return {
+    //       value: metricData[group1][group2] as number,
+    //       barGroup: group1,
+    //       withinBarGroup: group2,
+    //       clazz:
+    //         groupColorClass(group2) ||
+    //         heroNameToNormalized(mostCommonHeroes[group2]),
+    //     };
+    //   }),
+    // );
 
-    display = (
-      <StackedBarChart data={barChartData} width={800} barHeight={30} />
-    );
+    display = <StackedBarChart data={metricData} width={800} barHeight={30} />;
   }
 
   if (
@@ -125,12 +131,15 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
           data: Object.keys(metricData[group1]).map((time) => {
             return {
               time: parseInt(time),
-              val: metricData[group1][time] as number,
+              val: Object.keys(metricData[group1][time]).reduce(
+                (acc, group2) =>
+                  acc + (metricData[group1][time][group2] as number),
+                0,
+              ),
             };
           }),
-          clazz:
-            groupColorClass(group1) ||
-            heroNameToNormalized(mostCommonHeroes[group1]),
+
+          clazz: '',
         };
       },
     );
@@ -139,17 +148,21 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
         series={timeData}
         width={1800}
         height={700}
-        yLabel={metric?.value}
+        yLabel={metric?.values.join(' / ')}
       />
     );
   }
+
+  // console.log(metricData);
 
   return (
     <div className="MetricExplorer">
       <div className="controls">
         <MetricSelect onSelect={setMetric} />
       </div>
-      <div className="display">{display}</div>
+      <div className="display">
+        {!!metric && <MetricDisplay metric={metric} />}
+      </div>
     </div>
   );
 };
