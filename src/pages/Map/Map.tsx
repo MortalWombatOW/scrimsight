@@ -50,7 +50,7 @@ const Map = () => {
         </div>
         {view === 'stats' && (
           <div className="section">
-            <div className="header">Statistics</div>
+            {/* <div className="header">Statistics</div> */}
             <div className="content">
               <MetricExplorer mapId={mapId} />
             </div>
@@ -58,7 +58,7 @@ const Map = () => {
         )}
         {view === 'play-by-play' && (
           <div className="section">
-            <div className="header">Play-by-play</div>
+            {/* <div className="header">Play-by-play</div> */}
             <div className="content">
               <PlayByPlay mapId={mapId} />
             </div>

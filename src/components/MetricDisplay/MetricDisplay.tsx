@@ -31,7 +31,7 @@ const MetricDisplay = ({metric}: {metric: Metric}) => {
       return {};
     }
 
-    return calculateMetric(metric, mapList[0], statuses, interactions);
+    return calculateMetric(metric, mapList, statuses, interactions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metric, mapListUpdates, statusUpdates, updates, abilityUpdates]);
 

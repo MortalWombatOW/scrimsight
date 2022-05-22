@@ -1,25 +1,15 @@
 import {Autocomplete, Grid, TextField} from '@mui/material';
 import React, {useEffect, useMemo, useState} from 'react';
 import {getGroupsForMetric, getMetricValues} from '../../lib/data/metrics';
-import {
-  Metric,
-  MetricFilter,
-  MetricGroup,
-  MetricValue,
-} from '../../lib/data/types';
+import {Metric, MetricGroup, MetricValue} from '../../lib/data/types';
 
 type MetricSelectProps = {
   onSelect: (metric: Metric) => void;
 };
 
-const buildMetric = (
-  values: MetricValue[],
-  groups: MetricGroup[],
-  filters: MetricFilter[],
-): Metric => ({
+const buildMetric = (values: MetricValue[], groups: MetricGroup[]): Metric => ({
   values,
   groups,
-  filters,
 });
 
 const MetricSelect = (props: MetricSelectProps) => {
@@ -28,7 +18,6 @@ const MetricSelect = (props: MetricSelectProps) => {
 
   const [values, setValues] = useState<MetricValue[]>([]);
   const [groups, setGroups] = useState<MetricGroup[]>([]);
-  const [filters, setFilters] = useState<MetricFilter[]>([]);
 
   const commonGroups = useMemo(() => {
     if (values.length === 0) {
@@ -46,7 +35,7 @@ const MetricSelect = (props: MetricSelectProps) => {
 
   useEffect(() => {
     if (values.length > 0 && groups.length > 0) {
-      const metric = buildMetric(values, groups, filters);
+      const metric = buildMetric(values, groups);
       console.log(metric);
       onSelect(metric);
     }

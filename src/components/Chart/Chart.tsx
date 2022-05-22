@@ -30,7 +30,7 @@ interface ChartProps {
 const Chart = ({data, groups}: ChartProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const isTimeSeries = groups.length > 1 && groups[1] === 'time';
+  const isTimeSeries = groups.length > 1 && groups[1] === MetricGroup.time;
 
   const indexAxis = 'y';
   const chartType = isTimeSeries ? 'matrix' : 'bar';

@@ -1,4 +1,5 @@
 import {keys} from 'ts-transformer-keys';
+import {debug} from 'webpack';
 
 // identifies each map
 type OWMap = {
@@ -138,35 +139,40 @@ type RenderState = {
   };
 };
 
-type MetricType = 'sum' | 'count' | 'average';
-type MetricValue =
-  | 'health'
-  | 'time to ult'
-  | 'time with ult'
-  | 'damage'
-  | 'damage taken'
-  | 'healing'
-  | 'healing taken'
-  | 'final blows'
-  | 'deaths'
-  | 'elimination'
-  | 'kill participation'
-  | 'damage efficiency'
-  | 'ult cycle efficiency'
-  | 'ults used'
-  | 'feeds';
-type MetricGroup = 'player' | 'team' | 'time' | 'teamfight';
-type MetricFilter = (row: MetricRow) => boolean;
+enum MetricType {
+  sum,
+  count,
+  average,
+}
+
+enum MetricValue {
+  health,
+  timeToUlt,
+  timeWithUlt,
+  damage,
+  damageTaken,
+  healing,
+  healingTaken,
+  finalBlows,
+  deaths,
+  eliminations,
+  killParticipation,
+  damageEfficiency,
+  ultCycleEfficiency,
+  ultsUsed,
+  feeds,
+}
+
+enum MetricGroup {
+  player,
+  team,
+  time,
+  teamfight,
+}
 
 type Metric = {
   values: MetricValue[];
   groups: MetricGroup[];
-  filters?: MetricFilter[];
-};
-
-type ComplexMetric = {
-  displayName: string;
-  metricValues: MetricValue[];
 };
 
 type MetricRow = {
@@ -175,25 +181,56 @@ type MetricRow = {
     [key: string]: string;
   };
 };
+
 type MetricData =
   | Statistic
   | {
       [key: string]: MetricData;
     };
 
-type Report = {
-  metrics: Metric[];
-  id: string;
-  name: string;
-  description?: string;
-  tags: string[];
-  renderInfo?: {
-    xScale: number;
-    yScale: number;
-    x: number;
-    y: number;
-  }[];
+enum ReportComponentType {
+  debug,
+  table,
+  map,
+  chart,
+}
+
+type ReportComponent = {
+  type: ReportComponentType;
+  metric: Metric;
 };
+
+type ReportControl = {
+  type: ReportControlType;
+};
+
+enum ReportControlType {
+  metric,
+  map,
+  player,
+}
+
+type ReportMetricGroup = {
+  metric: Metric;
+  components: ReportComponent[];
+};
+
+type Report = {
+  title: string;
+  controls: ReportControl[];
+  metricGroups: ReportMetricGroup[];
+};
+
+type PackedReport = (string | number)[];
+
+type BaseData = {
+  maps: OWMap[];
+  statuses: PlayerStatus[];
+  abilities: PlayerAbility[];
+  interactions: PlayerInteraction[];
+};
+
+type MetricComponent = ({data}: {data: MetricData}) => JSX.Element;
 
 export {
   OWMap,
@@ -221,6 +258,12 @@ export {
   MetricData,
   MetricRow,
   Report,
-  ComplexMetric,
-  MetricFilter,
+  BaseData,
+  ReportComponent,
+  ReportControl,
+  ReportComponentType,
+  PackedReport,
+  MetricComponent,
+  ReportMetricGroup,
+  ReportControlType,
 };

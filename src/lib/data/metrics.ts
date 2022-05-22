@@ -1,6 +1,8 @@
 import {ChartDataset} from 'chart.js';
+import {enumKeys} from '../enum';
 import {getPlayersToTeam} from './data';
 import {
+  BaseData,
   Metric,
   MetricData,
   MetricGroup,
@@ -12,25 +14,10 @@ import {
   PlayerStatus,
 } from './types';
 
-// export const getMetricTypes: () => MetricType[] = () => ['sum', 'count'];
-export const getMetricValues: () => MetricValue[] = () => [
-  'damage',
-  'damage taken',
-  'healing',
-  'healing taken',
-  'final blows',
-  'elimination',
-  'deaths',
-  'health',
-  'time to ult',
-  'time with ult',
-];
+// export const getMetricTypes: () => MetricType[] = () => ['sum', 'count'];w w
+export const getMetricValues: () => MetricValue[] = () => enumKeys(MetricValue);
 
-export const getMetricGroups: () => MetricGroup[] = () => [
-  'player',
-  'team',
-  'time',
-];
+export const getMetricGroups: () => MetricGroup[] = () => enumKeys(MetricGroup);
 
 export const getGroupsForMetric: (metric: MetricValue) => MetricGroup[] = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -43,72 +30,72 @@ export const getGroupsForMetric: (metric: MetricValue) => MetricGroup[] = (
 
 export const getTypeForMetric = (metric: MetricValue): MetricType => {
   switch (metric) {
-    case 'damage':
-    case 'damage taken':
-    case 'healing':
-    case 'healing taken':
-      return 'sum';
-    case 'final blows':
-    case 'elimination':
-    case 'deaths':
-      return 'count';
-    case 'health':
-    case 'time to ult':
-    case 'time with ult':
-      return 'sum';
+    case MetricValue.damage:
+    case MetricValue.damageTaken:
+    case MetricValue.healing:
+    case MetricValue.healingTaken:
+      return MetricType.sum;
+    case MetricValue.finalBlows:
+    case MetricValue.eliminations:
+    case MetricValue.deaths:
+      return MetricType.count;
+    case MetricValue.health:
+    case MetricValue.timeToUlt:
+    case MetricValue.timeWithUlt:
+      return MetricType.sum;
     default:
       console.error(`unknown metric ${metric}`);
-      return 'sum';
+      return MetricType.sum;
   }
 };
 
 const getRowsForValue = (
   value: MetricValue,
   groups: MetricGroup[],
-  map: OWMap,
+  maps: OWMap[],
   statuses: PlayerStatus[],
   interactions: PlayerInteraction[],
 ): MetricRow[] => {
   const rows: MetricRow[] = [];
-  const playersToTeam = getPlayersToTeam(map);
+  const playersToTeam = maps.length == 1 ? getPlayersToTeam(maps[0]) : {};
 
-  if (value === 'health') {
+  if (value === MetricValue.health) {
     statuses.forEach((status) => {
       const {player, health, timestamp} = status;
       const row: MetricRow = {
         value: health,
         groups: {},
       };
-      if (groups.includes('player')) {
+      if (groups.includes(MetricGroup.player)) {
         row.groups.player = player;
       }
-      if (groups.includes('team')) {
+      if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
         row.groups.team = playersToTeam[player];
       }
-      if (groups.includes('time')) {
+      if (groups.includes(MetricGroup.time)) {
         row.groups.time = timestamp.toString();
       }
       rows.push(row);
     });
-  } else if (value === 'time to ult') {
+  } else if (value === MetricValue.timeToUlt) {
     statuses.forEach((status) => {
       const {player, ultCharge, timestamp} = status;
       const row: MetricRow = {
         value: ultCharge,
         groups: {},
       };
-      if (groups.includes('player')) {
+      if (groups.includes(MetricGroup.player)) {
         row.groups.player = player;
       }
-      if (groups.includes('team')) {
+      if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
         row.groups.team = playersToTeam[player];
       }
-      if (groups.includes('time')) {
+      if (groups.includes(MetricGroup.time)) {
         row.groups.time = timestamp.toString();
       }
       rows.push(row);
     });
-  } else if (value === 'damage') {
+  } else if (value === MetricValue.damage) {
     interactions.forEach((interaction) => {
       const {player, amount, timestamp, type} = interaction;
       if (type !== 'damage') {
@@ -118,18 +105,18 @@ const getRowsForValue = (
         value: amount,
         groups: {},
       };
-      if (groups.includes('player')) {
+      if (groups.includes(MetricGroup.player)) {
         row.groups.player = player;
       }
-      if (groups.includes('team')) {
+      if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
         row.groups.team = playersToTeam[player];
       }
-      if (groups.includes('time')) {
+      if (groups.includes(MetricGroup.time)) {
         row.groups.time = timestamp.toString();
       }
       rows.push(row);
     });
-  } else if (value === 'damage taken') {
+  } else if (value === MetricValue.damageTaken) {
     interactions.forEach((interaction) => {
       const {target, amount, timestamp, type} = interaction;
       if (type !== 'damage') {
@@ -139,18 +126,18 @@ const getRowsForValue = (
         value: amount,
         groups: {},
       };
-      if (groups.includes('player')) {
+      if (groups.includes(MetricGroup.player)) {
         row.groups.player = target;
       }
-      if (groups.includes('team')) {
+      if (groups.includes(MetricGroup.team) && playersToTeam[target]) {
         row.groups.team = playersToTeam[target];
       }
-      if (groups.includes('time')) {
+      if (groups.includes(MetricGroup.time)) {
         row.groups.time = timestamp.toString();
       }
       rows.push(row);
     });
-  } else if (value === 'healing') {
+  } else if (value === MetricValue.healing) {
     interactions.forEach((interaction) => {
       const {player, amount, timestamp, type} = interaction;
       if (type !== 'healing') {
@@ -160,18 +147,18 @@ const getRowsForValue = (
         value: amount,
         groups: {},
       };
-      if (groups.includes('player')) {
+      if (groups.includes(MetricGroup.player)) {
         row.groups.player = player;
       }
-      if (groups.includes('team')) {
+      if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
         row.groups.team = playersToTeam[player];
       }
-      if (groups.includes('time')) {
+      if (groups.includes(MetricGroup.time)) {
         row.groups.time = timestamp.toString();
       }
       rows.push(row);
     });
-  } else if (value === 'healing taken') {
+  } else if (value === MetricValue.healingTaken) {
     interactions.forEach((interaction) => {
       const {target, amount, timestamp, type} = interaction;
       if (type !== 'healing') {
@@ -181,18 +168,18 @@ const getRowsForValue = (
         value: amount,
         groups: {},
       };
-      if (groups.includes('player')) {
+      if (groups.includes(MetricGroup.player)) {
         row.groups.player = target;
       }
-      if (groups.includes('team')) {
+      if (groups.includes(MetricGroup.team) && playersToTeam[target]) {
         row.groups.team = playersToTeam[target];
       }
-      if (groups.includes('time')) {
+      if (groups.includes(MetricGroup.time)) {
         row.groups.time = timestamp.toString();
       }
       rows.push(row);
     });
-  } else if (value === 'final blows') {
+  } else if (value === MetricValue.finalBlows) {
     interactions.forEach((interaction) => {
       const {player, amount, timestamp, type} = interaction;
       if (type !== 'final blow') {
@@ -202,18 +189,18 @@ const getRowsForValue = (
         value: amount,
         groups: {},
       };
-      if (groups.includes('player')) {
+      if (groups.includes(MetricGroup.player)) {
         row.groups.player = player;
       }
-      if (groups.includes('team')) {
+      if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
         row.groups.team = playersToTeam[player];
       }
-      if (groups.includes('time')) {
+      if (groups.includes(MetricGroup.time)) {
         row.groups.time = timestamp.toString();
       }
       rows.push(row);
     });
-  } else if (value === 'elimination') {
+  } else if (value === MetricValue.eliminations) {
     interactions.forEach((interaction) => {
       const {player, amount, timestamp, type} = interaction;
       if (type !== 'elimination') {
@@ -223,18 +210,18 @@ const getRowsForValue = (
         value: amount,
         groups: {},
       };
-      if (groups.includes('team')) {
+      if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
         row.groups.team = playersToTeam[player];
       }
-      if (groups.includes('player')) {
+      if (groups.includes(MetricGroup.player)) {
         row.groups.player = player;
       }
-      if (groups.includes('time')) {
+      if (groups.includes(MetricGroup.time)) {
         row.groups.time = timestamp.toString();
       }
       rows.push(row);
     });
-  } else if (value === 'deaths') {
+  } else if (value === MetricValue.deaths) {
     interactions.forEach((interaction) => {
       const {target, amount, timestamp, type} = interaction;
       if (type !== 'final blow') {
@@ -244,29 +231,29 @@ const getRowsForValue = (
         value: amount,
         groups: {},
       };
-      if (groups.includes('team')) {
+      if (groups.includes(MetricGroup.team) && playersToTeam[target]) {
         row.groups.team = playersToTeam[target];
       }
-      if (groups.includes('player')) {
+      if (groups.includes(MetricGroup.player)) {
         row.groups.player = target;
       }
-      if (groups.includes('time')) {
+      if (groups.includes(MetricGroup.time)) {
         row.groups.time = timestamp.toString();
       }
       rows.push(row);
     });
-  } else if (value === 'time with ult') {
+  } else if (value === MetricValue.timeWithUlt) {
     const damageRows = getRowsForValue(
-      'damage',
+      MetricValue.damage,
       groups,
-      map,
+      maps,
       statuses,
       interactions,
     );
     const healingRows = getRowsForValue(
-      'healing',
+      MetricValue.healing,
       groups,
-      map,
+      maps,
       statuses,
       interactions,
     );
@@ -293,9 +280,20 @@ const getRowsForValue = (
   return rows;
 };
 
+export const calculateMetricNew = (
+  metric: Metric,
+  baseData: BaseData,
+): MetricData =>
+  calculateMetric(
+    metric,
+    baseData.maps,
+    baseData.statuses,
+    baseData.interactions,
+  );
+
 export const calculateMetric = (
   metric: Metric,
-  map: OWMap,
+  maps: OWMap[],
   statuses: PlayerStatus[],
   interactions: PlayerInteraction[],
 ): MetricData => {
@@ -303,7 +301,7 @@ export const calculateMetric = (
   const {values, groups} = metric;
 
   const valuesMap = values.reduce((acc, value) => {
-    acc[value] = getRowsForValue(value, groups, map, statuses, interactions);
+    acc[value] = getRowsForValue(value, groups, maps, statuses, interactions);
     return acc;
   }, {});
 
@@ -312,13 +310,6 @@ export const calculateMetric = (
     const rows: MetricRow[] = valuesMap[value];
     console.log(metricData);
     rows.forEach((row) => {
-      if (
-        metric.filters &&
-        metric.filters.length > 0 &&
-        !metric.filters?.every((filter) => filter(row))
-      ) {
-        return;
-      }
       let ptr = metricData;
       groups.forEach((group, idx) => {
         const isLastGroup = idx === groups.length - 1;
@@ -332,10 +323,10 @@ export const calculateMetric = (
           }
 
           const oldValue = ptr[groupName][value] as number;
-          if (type === 'sum') {
+          if (type === MetricType.sum) {
             ptr[groupName][value] = oldValue + row.value;
           }
-          if (type === 'count') {
+          if (type === MetricType.count) {
             ptr[groupName][value] = oldValue + 1;
           }
         } else {

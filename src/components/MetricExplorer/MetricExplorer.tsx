@@ -9,6 +9,7 @@ import {
 } from '../../lib/data/metrics';
 import {
   Metric,
+  MetricGroup,
   OWMap,
   PlayerInteraction,
   PlayerStatus,
@@ -46,7 +47,7 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
       return {};
     }
 
-    return calculateMetric(metric, mapList[0], statuses, interactions);
+    return calculateMetric(metric, mapList, statuses, interactions);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metric, mapListUpdates, statusUpdates, updates]);
 
@@ -62,7 +63,7 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
     }
     console.log('yay');
     console.log(metric);
-    if (metric.groups.length === 2 && metric.groups[1] === 'time') {
+    if (metric.groups.length === 2 && metric.groups[1] === MetricGroup.time) {
       console.log('formatting time series');
       return formatTimeSeriesHeatmap(metricData);
     }
@@ -96,7 +97,7 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
   //   // );
   // }
 
-  if (dataDimensions === 2 && !metric?.groups.includes('time')) {
+  if (dataDimensions === 2 && !metric?.groups.includes(MetricGroup.time)) {
     // const barChartData: StackedBarChartDatum[] = Object.keys(
     //   metricData,
     // ).flatMap((group1) =>
@@ -117,7 +118,7 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
 
   if (
     dataDimensions === 2 &&
-    metric?.groups.includes('time') &&
+    metric?.groups.includes(MetricGroup.time) &&
     Object.keys(metricData).reduce(
       (acc, g) => isNumeric(Object.keys(metricData[g])[0]) || acc,
       false,
