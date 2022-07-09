@@ -113,7 +113,7 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
     //   }),
     // );
 
-    display = <StackedBarChart data={metricData} width={800} barHeight={30} />;
+    display = <StackedBarChart data={metricData} barHeight={30} />;
   }
 
   if (
@@ -159,7 +159,7 @@ const MetricExplorer = ({mapId}: {mapId: number}) => {
   return (
     <div className="MetricExplorer">
       <div className="controls">
-        <MetricSelect onSelect={setMetric} />
+        <MetricSelect onSelect={setMetric} metric={metric} width={400} />
       </div>
       <div className="display">
         {!!metric && <MetricDisplay metric={metric} />}

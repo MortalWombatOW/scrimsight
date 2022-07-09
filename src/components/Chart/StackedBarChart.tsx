@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {MetricData, Statistic} from '../../lib/data/types';
 import './StackedBarChart.scss';
 import {flatten, getObjectDepth} from './../../lib/data/metrics';
@@ -18,13 +18,16 @@ export interface StackedBarChartDatum {
 
 interface StackedBarChartProps {
   data: MetricData;
-  width: number;
+
   barHeight: number;
 }
 
 const StackedBarChart = (props: StackedBarChartProps) => {
-  const {data, width, barHeight} = props;
+  const {data, barHeight} = props;
   const [oneHundredPercentMode, setOneHundredPercentMode] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number>(1);
+  const [width, setWidth] = useState<number>(1);
 
   const [, setTooltipDatum] = useState<null | StackedBarChartDatum>(null);
   const [sortFn, setSortFn] = useState<string>('total');
@@ -35,6 +38,13 @@ const StackedBarChart = (props: StackedBarChartProps) => {
   // get width of longest primary group in px
   const depth = getObjectDepth(data);
   const hasInnerGroups = depth > 1;
+
+  useEffect(() => {
+    if (wrapperRef.current) {
+      setHeight(wrapperRef.current.clientHeight);
+      setWidth(wrapperRef.current.clientWidth);
+    }
+  }, [wrapperRef.current]);
 
   useEffect(() => {
     if (!hasInnerGroups) {
@@ -153,7 +163,7 @@ const StackedBarChart = (props: StackedBarChartProps) => {
         <td
           className="grouplabel"
           style={{
-            width: leftPadding,
+            // width: leftPadding,
             lineHeight: `${barHeight - 5}px`,
           }}>
           {group}
@@ -206,7 +216,7 @@ const StackedBarChart = (props: StackedBarChartProps) => {
   //   });
 
   return (
-    <div className="StackedBarChart">
+    <div className="StackedBarChart" ref={wrapperRef}>
       <table>
         <thead>
           <tr>

@@ -189,6 +189,7 @@ type MetricData =
     };
 
 enum ReportComponentType {
+  default,
   debug,
   table,
   map,

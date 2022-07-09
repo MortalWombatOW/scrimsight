@@ -1,4 +1,5 @@
 import {
+  BaseData,
   MapEntity,
   OWMap,
   PlayerAbility,
@@ -56,6 +57,15 @@ export const getPlayer = (
 
 export const getHeroImage = (heroName: string): string =>
   `/public/assets/heroes/${heroNameToNormalized(heroName)}.png`;
+
+export const getAllPlayers = (data: BaseData) => {
+  const players: string[] = [];
+  data.maps.forEach((map: OWMap) => {
+    players.push(...map.team1);
+    players.push(...map.team2);
+  });
+  return Array.from(new Set(players)).sort();
+};
 
 export const getTeamInfoForMap = (
   map: OWMap,

@@ -16,6 +16,7 @@ import {
 
 // export const getMetricTypes: () => MetricType[] = () => ['sum', 'count'];w w
 export const getMetricValues: () => MetricValue[] = () => enumKeys(MetricValue);
+export const getMetricValueName = (value: MetricValue) => MetricValue[value];
 
 export const getMetricGroups: () => MetricGroup[] = () => enumKeys(MetricGroup);
 
@@ -282,14 +283,19 @@ const getRowsForValue = (
 
 export const calculateMetricNew = (
   metric: Metric,
-  baseData: BaseData,
-): MetricData =>
-  calculateMetric(
+  baseData: BaseData | undefined,
+): MetricData => {
+  if (baseData === undefined) {
+    return {} as MetricData;
+  }
+
+  return calculateMetric(
     metric,
     baseData.maps,
     baseData.statuses,
     baseData.interactions,
   );
+};
 
 export const calculateMetric = (
   metric: Metric,
