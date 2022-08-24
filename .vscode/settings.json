@@ -18,4 +18,5 @@
   ],
   "files.eol": "\n",
   "typescript.preferences.importModuleSpecifier": "relative",
+  "editor.experimental.stickyScroll.enabled": true,
 }

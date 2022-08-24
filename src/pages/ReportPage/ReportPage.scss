@@ -2,7 +2,7 @@
 
 .ReportPage {
   & .container {
-    padding: 0 $hpadding;
+    padding: 10px $hpadding;
   }
 
   & .componentplaceholder {
@@ -10,5 +10,16 @@
     height: 100%;
     border-radius: 10px;
     border: 1px solid $neutral;
+  }
+
+  & .toplinecontainer {
+    background-color: $mid;
+    padding: 10px $hpadding;
+    padding-bottom: 70px;
+  }
+
+  & .emphasizedcontainer {
+    margin-top: -60px;
+    height: 120px;
   }
 }

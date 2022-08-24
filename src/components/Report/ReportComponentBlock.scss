@@ -1,0 +1,18 @@
+@import 'constants.scss';
+
+.component-block {
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid rgba($light, 0.5);
+  padding: 10px;
+}
+
+.editbutton {
+  position: relative;
+  float: right;
+  z-index: 1;
+  &:hover {
+    background-color: rgba($light, 0.1);
+  }
+  transition: all 0.2s ease-in-out;
+}

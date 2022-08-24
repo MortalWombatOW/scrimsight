@@ -68,13 +68,13 @@ const getRowsForValue = (
         groups: {},
       };
       if (groups.includes(MetricGroup.player)) {
-        row.groups.player = player;
+        row.groups[MetricGroup.player] = player;
       }
       if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
-        row.groups.team = playersToTeam[player];
+        row.groups[MetricGroup.team] = playersToTeam[player];
       }
       if (groups.includes(MetricGroup.time)) {
-        row.groups.time = timestamp.toString();
+        row.groups[MetricGroup.time] = timestamp.toString();
       }
       rows.push(row);
     });
@@ -86,13 +86,13 @@ const getRowsForValue = (
         groups: {},
       };
       if (groups.includes(MetricGroup.player)) {
-        row.groups.player = player;
+        row.groups[MetricGroup.player] = player;
       }
       if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
-        row.groups.team = playersToTeam[player];
+        row.groups[MetricGroup.team] = playersToTeam[player];
       }
       if (groups.includes(MetricGroup.time)) {
-        row.groups.time = timestamp.toString();
+        row.groups[MetricGroup.time] = timestamp.toString();
       }
       rows.push(row);
     });
@@ -107,13 +107,13 @@ const getRowsForValue = (
         groups: {},
       };
       if (groups.includes(MetricGroup.player)) {
-        row.groups.player = player;
+        row.groups[MetricGroup.player] = player;
       }
       if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
-        row.groups.team = playersToTeam[player];
+        row.groups[MetricGroup.team] = playersToTeam[player];
       }
       if (groups.includes(MetricGroup.time)) {
-        row.groups.time = timestamp.toString();
+        row.groups[MetricGroup.time] = timestamp.toString();
       }
       rows.push(row);
     });
@@ -128,13 +128,13 @@ const getRowsForValue = (
         groups: {},
       };
       if (groups.includes(MetricGroup.player)) {
-        row.groups.player = target;
+        row.groups[MetricGroup.player] = target;
       }
       if (groups.includes(MetricGroup.team) && playersToTeam[target]) {
-        row.groups.team = playersToTeam[target];
+        row.groups[MetricGroup.team] = playersToTeam[target];
       }
       if (groups.includes(MetricGroup.time)) {
-        row.groups.time = timestamp.toString();
+        row.groups[MetricGroup.time] = timestamp.toString();
       }
       rows.push(row);
     });
@@ -149,13 +149,13 @@ const getRowsForValue = (
         groups: {},
       };
       if (groups.includes(MetricGroup.player)) {
-        row.groups.player = player;
+        row.groups[MetricGroup.player] = player;
       }
       if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
-        row.groups.team = playersToTeam[player];
+        row.groups[MetricGroup.team] = playersToTeam[player];
       }
       if (groups.includes(MetricGroup.time)) {
-        row.groups.time = timestamp.toString();
+        row.groups[MetricGroup.time] = timestamp.toString();
       }
       rows.push(row);
     });
@@ -170,13 +170,13 @@ const getRowsForValue = (
         groups: {},
       };
       if (groups.includes(MetricGroup.player)) {
-        row.groups.player = target;
+        row.groups[MetricGroup.player] = target;
       }
       if (groups.includes(MetricGroup.team) && playersToTeam[target]) {
-        row.groups.team = playersToTeam[target];
+        row.groups[MetricGroup.team] = playersToTeam[target];
       }
       if (groups.includes(MetricGroup.time)) {
-        row.groups.time = timestamp.toString();
+        row.groups[MetricGroup.time] = timestamp.toString();
       }
       rows.push(row);
     });
@@ -191,13 +191,13 @@ const getRowsForValue = (
         groups: {},
       };
       if (groups.includes(MetricGroup.player)) {
-        row.groups.player = player;
+        row.groups[MetricGroup.player] = player;
       }
       if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
-        row.groups.team = playersToTeam[player];
+        row.groups[MetricGroup.team] = playersToTeam[player];
       }
       if (groups.includes(MetricGroup.time)) {
-        row.groups.time = timestamp.toString();
+        row.groups[MetricGroup.time] = timestamp.toString();
       }
       rows.push(row);
     });
@@ -212,13 +212,13 @@ const getRowsForValue = (
         groups: {},
       };
       if (groups.includes(MetricGroup.team) && playersToTeam[player]) {
-        row.groups.team = playersToTeam[player];
+        row.groups[MetricGroup.team] = playersToTeam[player];
       }
       if (groups.includes(MetricGroup.player)) {
-        row.groups.player = player;
+        row.groups[MetricGroup.player] = player;
       }
       if (groups.includes(MetricGroup.time)) {
-        row.groups.time = timestamp.toString();
+        row.groups[MetricGroup.time] = timestamp.toString();
       }
       rows.push(row);
     });
@@ -233,13 +233,13 @@ const getRowsForValue = (
         groups: {},
       };
       if (groups.includes(MetricGroup.team) && playersToTeam[target]) {
-        row.groups.team = playersToTeam[target];
+        row.groups[MetricGroup.team] = playersToTeam[target];
       }
       if (groups.includes(MetricGroup.player)) {
-        row.groups.player = target;
+        row.groups[MetricGroup.player] = target;
       }
       if (groups.includes(MetricGroup.time)) {
-        row.groups.time = timestamp.toString();
+        row.groups[MetricGroup.time] = timestamp.toString();
       }
       rows.push(row);
     });
@@ -289,7 +289,27 @@ export const calculateMetricNew = (
     return {} as MetricData;
   }
 
+  console.log('calculating metric: ', metric);
+
   return calculateMetric(
+    metric,
+    baseData.maps,
+    baseData.statuses,
+    baseData.interactions,
+  );
+};
+
+export const calculateMetricNewRechart = (
+  metric: Metric,
+  baseData: BaseData | undefined,
+): {[key: string]: number | string}[] => {
+  if (baseData === undefined) {
+    return [];
+  }
+
+  console.log('calculating metric: ', metric);
+
+  return calculateMetricRechart(
     metric,
     baseData.maps,
     baseData.statuses,
@@ -345,6 +365,37 @@ export const calculateMetric = (
   console.log(metricData);
 
   return metricData;
+};
+
+export const calculateMetricRechart = (
+  metric: Metric,
+  maps: OWMap[],
+  statuses: PlayerStatus[],
+  interactions: PlayerInteraction[],
+): {[key: string]: number | string}[] => {
+  const {values, groups} = metric;
+
+  // const valuesMap = values.reduce((acc, value) => {
+  //   acc[value] = getRowsForValue(value, groups, maps, statuses, interactions);
+  //   return acc;
+  // }, {});
+  // if (metric.values.length > 1) {
+  //   console.log('multiple values not yet supported');
+  //   return [];
+  // }
+  const rows = mergeRows(
+    getRowsForValue(values[0], groups, maps, statuses, interactions),
+    metric,
+  );
+
+  return rows.map((row) => {
+    const obj: {[key: string]: number | string} = {};
+    groups.forEach((group) => {
+      obj[group] = row.groups[group];
+    });
+    obj[values[0]] = row.value;
+    return obj;
+  });
 };
 
 const getSumOfAllNumbers = (obj: MetricData | number): number => {
@@ -409,6 +460,30 @@ export const formatDataForChart = (metricData: MetricData): ChartDataset[] => {
   console.log(cData);
   return cData;
 };
+
+// export const formatDataForChart = (metricData: MetricData): ChartDataset[] => {
+//   const data = flatten(metricData, 2);
+//   const cData: ChartDataset[] = [];
+//   for (const [key, value] of Object.entries(data)) {
+//     let i = 0;
+//     for (const [k, v] of Object.entries(value as MetricData)) {
+//       let exists = cData.find((d) => d.label === k);
+//       if (!exists) {
+//         exists = {
+//           label: k,
+//           data: [],
+//         };
+//         cData.push(exists);
+//       }
+
+//       exists.data.push(v as number);
+//       // dataset.data.push(v);
+//       i++;
+//     }
+//   }
+//   console.log(cData);
+//   return cData;
+// };
 
 // export const formatDataForBarChart = (
 //   metric: Metric,
@@ -481,4 +556,66 @@ export const getTimeSeriesLabels = (metricData: MetricData): string[] => {
     return Object.keys(data[key] as MetricData);
   });
   return [...new Set(times)].sort();
+};
+
+export const sumRechart = (
+  data: {[key: string]: number | string}[],
+  groupBy: string | number,
+  aggregate: string | number,
+): {[key: string]: number | string}[] => {
+  const sum = {};
+  data.forEach((d) => {
+    const key = d[groupBy];
+    if (!sum[key]) {
+      sum[key] = 0;
+    }
+    sum[key] += d[aggregate];
+  });
+  return Object.keys(sum).map((key) => {
+    return {
+      [groupBy]: key,
+      [aggregate]: sum[key],
+    };
+  });
+};
+
+// merge rows with the same groups
+const mergeRows = (rows: MetricRow[], metric: Metric): MetricRow[] => {
+  const mergedRows: MetricRow[] = [];
+
+  const hasSameGroups = (row1: MetricRow, row2: MetricRow): boolean => {
+    const groups = metric.groups;
+    for (const group of groups) {
+      if (row1[group] !== row2[group]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const merge = (row1: MetricRow, row2: MetricRow): MetricRow => {
+    const groups = metric.groups;
+    const mergedRow: Partial<MetricRow> = {};
+    for (const group of groups) {
+      mergedRow[group] = row1[group];
+    }
+    for (const key of Object.keys(row2)) {
+      mergedRow[key] = row2[key];
+    }
+    return mergedRow as MetricRow;
+  };
+  for (const row of rows) {
+    // add row to mergedRows if not hasSameGroups with any of the rows in mergedRows
+    const idx = mergedRows.findIndex((mergedRow) =>
+      hasSameGroups(row, mergedRow),
+    );
+    debugger;
+    if (idx === -1) {
+      mergedRows.push(row);
+    } else {
+      // merge row with the row in mergedRows
+      mergedRows[idx] = merge(mergedRows[idx], row);
+    }
+  }
+  return mergedRows;
 };

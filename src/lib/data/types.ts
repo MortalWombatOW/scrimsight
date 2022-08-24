@@ -167,6 +167,7 @@ enum MetricGroup {
   player,
   team,
   time,
+  map,
   teamfight,
 }
 
@@ -193,12 +194,23 @@ enum ReportComponentType {
   debug,
   table,
   map,
-  chart,
+  timeLineChart,
+  barChart,
+  timeBarChart,
+  embed,
+  matrix,
+}
+
+enum ReportComponentStyle {
+  default,
+  emphasized,
+  topLine,
 }
 
 type ReportComponent = {
   type: ReportComponentType;
   metric: Metric;
+  style: ReportComponentStyle;
 };
 
 type ReportControl = {
@@ -267,4 +279,5 @@ export {
   MetricComponent,
   ReportMetricGroup,
   ReportControlType,
+  ReportComponentStyle,
 };

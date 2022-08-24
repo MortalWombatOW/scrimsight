@@ -1,4 +1,4 @@
-import {ColorInternal} from 'lib/data/types';
+import {ColorInternal, MetricValue} from 'lib/data/types';
 
 const parseHex = (hex: string): ColorInternal => {
   const r = parseInt(hex.substring(1, 3), 16);
@@ -45,4 +45,15 @@ export const interpolateColors = (
 
 export const groupColorClass = (group: string): string | undefined => {
   return group.toLowerCase().replaceAll(' ', '-');
+};
+
+export const valueColor = (value: MetricValue): string => {
+  switch (value) {
+    case MetricValue.damage:
+      return '#ff0000';
+    case MetricValue.healing:
+      return '#00ff00';
+    default:
+      return '#8884d8';
+  }
 };

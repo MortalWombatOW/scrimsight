@@ -2,13 +2,14 @@ import {Typography, Button} from '@mui/material';
 import React, {useState} from 'react';
 import {
   Metric,
-  MetricGroup,
   MetricValue,
   ReportComponent,
+  ReportComponentStyle,
   ReportComponentType,
 } from '../../lib/data/types';
 import MetricSelect from '../MetricExplorer/MetricSelect';
 import './ComponentControl.scss';
+
 interface ComponentControlProps {
   component: ReportComponent;
   setComponent: (component: ReportComponent | null) => void;
@@ -23,6 +24,7 @@ const ComponentControl: React.FC<ComponentControlProps> = ({
   setSize,
 }: ComponentControlProps) => {
   const [type, setType] = useState(component.type);
+  const [style, setStyle] = useState(component.style);
   const [values, setValues] = useState(component.metric.values);
   const [groups, setGroups] = useState(component.metric.groups);
   const wrapperRef = React.useRef<HTMLDivElement>(null);
@@ -33,6 +35,7 @@ const ComponentControl: React.FC<ComponentControlProps> = ({
   const submit = () => {
     setComponent({
       type,
+      style,
       metric: {
         values,
         groups,
@@ -47,11 +50,9 @@ const ComponentControl: React.FC<ComponentControlProps> = ({
   const handleSizeChange = (event: React.ChangeEvent<{value: unknown}>) => {
     setSize(event.target.value as number);
   };
-  const handleValuesChange = (event: React.ChangeEvent<{value: unknown}>) => {
-    setValues(event.target.value as MetricValue[]);
-  };
-  const handleGroupsChange = (event: React.ChangeEvent<{value: unknown}>) => {
-    setGroups(event.target.value as MetricGroup[]);
+
+  const handleStyleChange = (event: React.ChangeEvent<{value: unknown}>) => {
+    setStyle(event.target.value as ReportComponentStyle);
   };
 
   return (
@@ -63,7 +64,23 @@ const ComponentControl: React.FC<ComponentControlProps> = ({
         <Typography variant="body1">Type</Typography>
         <select value={type} onChange={handleTypeChange}>
           <option value={ReportComponentType.default}>Default</option>
-          <option value={ReportComponentType.chart}>Chart</option>
+          <option value={ReportComponentType.debug}>Debug</option>
+          <option value={ReportComponentType.map}>Map</option>
+          <option value={ReportComponentType.timeLineChart}>
+            Time Line Chart
+          </option>
+          <option value={ReportComponentType.timeBarChart}>
+            Time Bar Chart
+          </option>
+          <option value={ReportComponentType.barChart}>Bar Chart</option>
+        </select>
+      </div>
+      <div>
+        <Typography variant="body1">Style</Typography>
+        <select value={style} onChange={handleStyleChange}>
+          <option value={ReportComponentStyle.default}>Default</option>
+          <option value={ReportComponentStyle.topLine}>Top Line</option>
+          <option value={ReportComponentStyle.emphasized}>Emphasized</option>
         </select>
       </div>
       <div ref={wrapperRef}>

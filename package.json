@@ -31,6 +31,7 @@
     "react-router-dom": "^6.0.2",
     "react-spring": "^9.4.4",
     "react-tracked": "^1.7.5",
+    "recharts": "^2.1.13",
     "ts-transformer-keys": "^0.4.3",
     "use-query-params": "^1.2.3",
     "web-vitals": "^1.1.2"

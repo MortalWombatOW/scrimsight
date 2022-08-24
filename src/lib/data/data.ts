@@ -1,6 +1,7 @@
 import {
   BaseData,
   MapEntity,
+  MetricData,
   OWMap,
   PlayerAbility,
   PlayerInteraction,
