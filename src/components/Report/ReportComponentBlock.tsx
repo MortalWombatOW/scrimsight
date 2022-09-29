@@ -1,5 +1,5 @@
-import {Box, Fade, Grid, IconButton} from '@mui/material';
-import React, {useMemo} from 'react';
+import {Box, CircularProgress, Fade, Grid, IconButton} from '@mui/material';
+import React, {useEffect, useMemo} from 'react';
 import {
   sumRechart,
   calculateMetricNew,
@@ -18,6 +18,7 @@ import StackedBarChart from '../Chart/StackedBarChart';
 import TimeChart, {TimeChartSeries} from '../Chart/TimeChart/TimeChart';
 import ComponentControl from '../ComponentControl/ComponentControl';
 import CloseIcon from '@mui/icons-material/Close';
+import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
 import './ReportComponentBlock.scss';
 import {
   BarChart,
@@ -29,12 +30,19 @@ import {
   Legend,
   Label,
   ResponsiveContainer,
+  Cell,
 } from 'recharts';
-import {valueColor} from '../../lib/color';
+import {
+  getColorPaletteOfSize,
+  getMetricColor,
+  valueColor,
+} from '../../lib/color';
 import ReplayIcon from '@mui/icons-material/Replay';
 import CopyAllIcon from '@mui/icons-material/CopyAll';
 import {computeMetric} from '../../lib/data/metricsv2';
-
+import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
+import BarChartComponent from '../Component/BarChartComponent';
+import TimeChartComponent from '../Component/TimeChartComponent';
 const componentStrToType: (str: string) => ReportComponentType = (str) => {
   const [lStr, rStr] = str.split('-');
   const l = parseInt(lStr, 10);
@@ -48,25 +56,50 @@ const ReportComponentBlock = ({
   baseData,
   setComponent,
   isEditing,
+  filters,
 }: {
   component: ReportComponent;
   baseData: BaseData | undefined;
   setComponent: (component: ReportComponent | null) => void;
   isEditing: boolean;
+  filters: {[key: string]: string[]};
 }) => {
   const [size, setSize] = React.useState<number>(5);
+  const [sortBy, setSortBy] = React.useState<string>(
+    MetricGroup[component.metric.groups[0]],
+  );
   const {type, style, metric} = component;
 
-  const metricData: {[key: string]: number | string}[] = useMemo(
+  const [metricData, setMetricData] = React.useState<
+    {[key: string]: number | string}[]
+  >([]);
+
+  useEffect(
     () =>
-      metric.values.length === 0 ||
-      metric.groups.length === 0 ||
-      baseData === undefined
-        ? []
-        : computeMetric(metric, baseData),
-    [(JSON.stringify(metric), JSON.stringify(baseData))],
+      setMetricData(
+        component.type === ReportComponentType.default ||
+          metric.values.length === 0 ||
+          metric.groups.length === 0 ||
+          baseData === undefined
+          ? []
+          : computeMetric(metric, baseData),
+      ),
+
+    [(JSON.stringify(metric), baseData == undefined)],
   );
-  console.log('Metric:', metric, metricData);
+
+  const sortedData = useMemo(
+    () =>
+      [...metricData].sort((a, b) => {
+        const aValue = a[sortBy];
+        const bValue = b[sortBy];
+        if (typeof aValue === 'string') {
+          return (bValue as string).localeCompare(aValue as string);
+        }
+        return (bValue as number) - (aValue as number);
+      }),
+    [sortBy, metricData.length],
+  );
 
   const isEmphasized = style === ReportComponentStyle.emphasized;
 
@@ -92,13 +125,32 @@ const ReportComponentBlock = ({
         })
       }
     />,
+    // sortBy === 'label' ? (
+    //   <SortByAlphaIcon key="sortByLabel" onClick={() => setSortBy('value')} />
+    // ) : (
+    //   <SignalCellularAltIcon
+    //     key="sortByValue"
+    //     onClick={() => setSortBy('label')}
+    //   />
+    // ),
     <ReplayIcon key="reload" />,
     <CopyAllIcon key="copy" />,
     <CloseIcon key="close" onClick={() => setComponent(null)} />,
   ];
 
+  // const uniqueGroupCount = new Set(
+  //   sortedData.map((d) => d[MetricGroup[metric.groups[0]]]),
+  // ).size;
+  const uniqueGroupCount = sortedData.length;
+  const colorPalette = getColorPaletteOfSize(uniqueGroupCount);
+  console.log('sortedData', sortedData);
+
   return (
-    <Grid item xs={size}>
+    <Grid
+      item
+      style={{
+        width: `${width}px`,
+      }}>
       <div className="component-block">
         <div
           className="editbutton"
@@ -118,6 +170,18 @@ const ReportComponentBlock = ({
             </Fade>
           ))}
         </div>
+        {sortedData.length === 0 && type !== ReportComponentType.default ? (
+          <div
+            style={{
+              position: 'relative',
+              top: height / 2,
+              left: width / 2,
+              width: 0,
+              height: 0,
+            }}>
+            <CircularProgress />
+          </div>
+        ) : null}
 
         {type === ReportComponentType.default && (
           <ComponentControl
@@ -128,43 +192,22 @@ const ReportComponentBlock = ({
           />
         )}
         {type === ReportComponentType.barChart && (
-          <ResponsiveContainer width="100%" height={height}>
-            <BarChart
-              width={width}
-              height={height}
-              layout="vertical"
-              data={metricData}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 25,
-              }}>
-              {/* <CartesianGrid strokeDasharray="3 3" /> */}
-              <YAxis
-                dataKey={`${MetricGroup[metric.groups[0]]}`}
-                width={180}
-                type="category">
-                <Label
-                  value={MetricGroup[metric.groups[0]]}
-                  position="left"
-                  offset={-30}
-                />
-              </YAxis>
-              <XAxis type="number" dataKey={'value'}>
-                <Label
-                  value={MetricValue[metric.values[0]]}
-                  position="bottom"
-                />
-              </XAxis>
-              <Tooltip />
-              {/* <Legend /> */}
-
-              {metric.values.map((value, index) => (
-                <Bar key={value} dataKey={`value`} fill={valueColor(value)} />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
+          <BarChartComponent
+            width={width}
+            height={height}
+            data={sortedData}
+            metric={metric}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+          />
+        )}
+        {type === ReportComponentType.timeChart && (
+          <TimeChartComponent
+            width={width}
+            height={height}
+            data={sortedData}
+            metric={metric}
+          />
         )}
       </div>
     </Grid>

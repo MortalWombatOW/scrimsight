@@ -194,9 +194,8 @@ enum ReportComponentType {
   debug,
   table,
   map,
-  timeLineChart,
+  timeChart,
   barChart,
-  timeBarChart,
   embed,
   matrix,
 }

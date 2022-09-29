@@ -41,3 +41,20 @@ export function heroNameToNormalized(name: string | undefined): string {
   }
   return normalizeString(name);
 }
+
+export function listToNaturalLanguage(list: string[]): string {
+  if (list.length === 0) {
+    return '';
+  }
+  if (list.length === 1) {
+    return list[0];
+  }
+  if (list.length === 2) {
+    return `${list[0]} and ${list[1]}`;
+  }
+  return `${list.slice(0, -1).join(', ')}, and ${list[list.length - 1]}`;
+}
+
+export function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

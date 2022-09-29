@@ -98,7 +98,6 @@ const stringToComponent = (str: string) => {
 };
 
 const ReportPage = () => {
-  const [title, setTitle] = useQueryParam('t', StringParam);
   // controls
   const [playersRaw, setPlayers] = useQueryParam('p', ArrayParam);
   const [mapIdsRaw, setMapIds] = useQueryParam('m', NumericArrayParam);
@@ -110,6 +109,33 @@ const ReportPage = () => {
   );
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const componentsEqual = (a: ReportComponent, b: ReportComponent) =>
+    a.type === b.type &&
+    a.style === b.style &&
+    a.metric.values.join(',') === b.metric.values.join(',') &&
+    a.metric.groups.join(',') === b.metric.groups.join(',');
+
+  const updateComponent = (
+    oldComponent: ReportComponent,
+    newComponent: ReportComponent | null,
+  ) => {
+    const newComponents = [...components];
+    const index = newComponents.findIndex((c) =>
+      componentsEqual(c, oldComponent),
+    );
+    if (index === -1) {
+      console.error('Could not find component to update');
+      return;
+    }
+
+    if (newComponent) {
+      newComponents[index] = newComponent;
+    } else {
+      newComponents.splice(index, 1);
+    }
+    setComponentStringsFromComponents(newComponents);
+  };
 
   const setComponentStringsFromComponents = (components: ReportComponent[]) => {
     setComponentStrings(components.map(componentToString));
@@ -143,6 +169,7 @@ const ReportPage = () => {
     useData<PlayerInteraction>('player_interaction');
   const [statuses, statusUpdates] = useData<PlayerStatus>('player_status');
   const [abilities, abilityUpdates] = useData<PlayerAbility>('player_ability');
+  const [filters, setFilters] = useState<Record<string, string[]>>({});
 
   const components: ReportComponent[] = useMemo(() => {
     if (!componentStrings) {
@@ -184,8 +211,6 @@ const ReportPage = () => {
         }
       : undefined;
 
-  console.log('ReportPage:', title, players, mapIds, components, baseData);
-
   // const metricGroups = report.metricGroups.map((group) => {
   //   const {metric} = group;
   //   const metricData = calculateMetricNew(metric, baseData);
@@ -194,26 +219,21 @@ const ReportPage = () => {
 
   return (
     <div className="ReportPage">
-      <Header refreshCallback={undefined} />
+      <Header
+        refreshCallback={undefined}
+        filters={filters}
+        setFilters={setFilters}
+      />
+
       <div className="toplinecontainer">
-        <h1>{title}</h1>
         <Grid container spacing={2} className="topLineComponents">
           {topLineComponents.map((component, i) => (
             <ReportComponentBlock
               key={componentToString(component)}
               baseData={baseData}
               component={component}
-              setComponent={(c) => {
-                if (c === null) {
-                  setComponentStringsFromComponents(
-                    components.filter((c2, j) => j !== i),
-                  );
-                } else {
-                  const newComponents = [...components];
-                  newComponents[i] = c;
-                  setComponentStringsFromComponents(newComponents);
-                }
-              }}
+              filters={filters}
+              setComponent={(c) => updateComponent(component, c)}
               isEditing={isEditing}
             />
           ))}
@@ -226,17 +246,8 @@ const ReportPage = () => {
               key={componentToString(component)}
               baseData={baseData}
               component={component}
-              setComponent={(c) => {
-                if (c === null) {
-                  setComponentStringsFromComponents(
-                    components.filter((c2, j) => j !== i),
-                  );
-                } else {
-                  const newComponents = [...components];
-                  newComponents[i] = c;
-                  setComponentStringsFromComponents(newComponents);
-                }
-              }}
+              filters={filters}
+              setComponent={(c) => updateComponent(component, c)}
               isEditing={isEditing}
             />
           ))}
@@ -281,23 +292,19 @@ const ReportPage = () => {
             </Stack>
           </Grid> */}
 
-        <Grid container spacing={2}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            marginTop: emphasizedComponents.length > 0 ? '100px' : '0',
+          }}>
           {defaultComponents.map((component, i) => (
             <ReportComponentBlock
               key={componentToString(component)}
               baseData={baseData}
+              filters={filters}
               component={component}
-              setComponent={(c) => {
-                if (c === null) {
-                  setComponentStringsFromComponents(
-                    components.filter((c2, j) => j !== i),
-                  );
-                } else {
-                  const newComponents = [...components];
-                  newComponents[i] = c;
-                  setComponentStringsFromComponents(newComponents);
-                }
-              }}
+              setComponent={(c) => updateComponent(component, c)}
               isEditing={isEditing}
             />
           ))}

@@ -37,7 +37,12 @@ const ReportBuilderPage = () => {
 
   return (
     <div className="ReportBuilderPage">
-      <Header refreshCallback={undefined} />
+      <Header
+        refreshCallback={undefined}
+        filters={{}}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+        setFilters={(filters) => {}}
+      />
       <div className="container">
         <h1>Report Builder</h1>
         <form onSubmit={handleSubmit}>

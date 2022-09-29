@@ -1,0 +1,34 @@
+@import 'constants.scss';
+
+.searchbar {
+  .searchbar-input {
+    // width: 100%;
+    // height: 100%;
+    // padding: 0;
+    border: none;
+    outline: none;
+    font-size: 1.2rem;
+    .MuiInput-input {
+      color: $light !important;
+    }
+    label {
+      color: $light !important;
+    }
+    .MuiInput-root::before {
+      border-bottom: 1px solid $light !important;
+    }
+    .MuiInput-root::after {
+      border-bottom: 2px solid $light !important;
+    }
+    .MuiAutocomplete-popupIndicator {
+      color: $light !important;
+    }
+    // transition: all 0.3s ease-in-out;
+    float: right;
+  }
+
+  .searchicon {
+    color: $light;
+    margin-top: 10px;
+  }
+}

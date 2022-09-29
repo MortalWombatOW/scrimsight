@@ -66,12 +66,8 @@ const ComponentControl: React.FC<ComponentControlProps> = ({
           <option value={ReportComponentType.default}>Default</option>
           <option value={ReportComponentType.debug}>Debug</option>
           <option value={ReportComponentType.map}>Map</option>
-          <option value={ReportComponentType.timeLineChart}>
-            Time Line Chart
-          </option>
-          <option value={ReportComponentType.timeBarChart}>
-            Time Bar Chart
-          </option>
+          <option value={ReportComponentType.timeChart}>Time Chart</option>
+
           <option value={ReportComponentType.barChart}>Bar Chart</option>
         </select>
       </div>

@@ -7,7 +7,12 @@ const Home = () => {
   const incrementUpdateCount = () => setUpdateCount((prev) => prev + 1);
   return (
     <div>
-      <Header refreshCallback={incrementUpdateCount} />
+      <Header
+        refreshCallback={incrementUpdateCount}
+        filters={{}}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        setFilters={(filters) => {}}
+      />
       <div className="Home-container">
         <MapsList updateCount={updateCount} />
       </div>

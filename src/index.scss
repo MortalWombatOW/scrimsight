@@ -10,6 +10,9 @@
   circle.#{$key} {
     fill: $value;
   }
+  path.#{$key} {
+    fill: $value;
+  }
   line.#{$key} {
     stroke: $value;
   }

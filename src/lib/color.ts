@@ -1,5 +1,20 @@
 import {ColorInternal, MetricValue} from 'lib/data/types';
 
+const colorgorical12 = [
+  '#505f76',
+  '#18857f',
+  '#04451b',
+  '#57832e',
+  '#3b098b',
+  '#465fd8',
+  '#ca2dc5',
+  '#69345e',
+  '#7212ff',
+  '#94721a',
+  '#5a310c',
+  '#dc3c07',
+];
+
 const parseHex = (hex: string): ColorInternal => {
   const r = parseInt(hex.substring(1, 3), 16);
   const g = parseInt(hex.substring(3, 5), 16);
@@ -47,13 +62,38 @@ export const groupColorClass = (group: string): string | undefined => {
   return group.toLowerCase().replaceAll(' ', '-');
 };
 
-export const valueColor = (value: MetricValue): string => {
-  switch (value) {
-    case MetricValue.damage:
-      return '#ff0000';
-    case MetricValue.healing:
-      return '#00ff00';
-    default:
-      return '#8884d8';
+export const valueColor = (
+  value: MetricValue,
+  i: number,
+  length: number,
+): string => {
+  const valueToBaseColorMap: {[key: string]: string} = {
+    [MetricValue[MetricValue.damage]]: '#ff0000',
+    [MetricValue[MetricValue.healing]]: '#00ff00',
+  };
+  const baseColor = valueToBaseColorMap[MetricValue[value]];
+  if (!baseColor) {
+    throw new Error(`No base color for metric value ${value}`);
   }
+  const colors = interpolateColors(baseColor, '#ffffff', 12);
+  return colors[i];
+};
+
+export const getColorPaletteOfSize = (size: number): string[] => {
+  if (size <= 12) {
+    return colorgorical12.slice(0, size);
+  }
+
+  const colors = interpolateColors('#505f76', '#dc3c07', size);
+  return colors;
+};
+
+export const getMetricColor = (metricValue: MetricValue): string => {
+  const valueToColorMap: {[key: string]: string} = {
+    [MetricValue[MetricValue.damage]]: '#b65153',
+    [MetricValue[MetricValue.healing]]: '#d7ae0b',
+    [MetricValue[MetricValue.damageTaken]]: '#903737',
+    [MetricValue[MetricValue.healingTaken]]: '#af684c',
+  };
+  return valueToColorMap[MetricValue[metricValue]];
 };

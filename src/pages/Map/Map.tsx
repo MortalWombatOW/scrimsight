@@ -24,7 +24,12 @@ const Map = () => {
 
   return (
     <div className="MapPage">
-      <Header refreshCallback={undefined} />
+      <Header
+        refreshCallback={undefined}
+        filters={{}}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        setFilters={(filters) => {}}
+      />
 
       <div className="container">
         <div className="section">
