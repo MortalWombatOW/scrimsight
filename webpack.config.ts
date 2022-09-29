@@ -23,7 +23,7 @@ const webpackConfig = (): Configuration => ({
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.([cm]?ts|tsx)$/,
         loader: 'ts-loader',
         options: {
           getCustomTransformers: (program) => ({
