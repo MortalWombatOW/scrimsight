@@ -10,7 +10,7 @@ build:
     PUBLIC_URL: https://mortalwombat.gitlab.io/scrimsight/
   script:
     - npm install
-    - npm build
+    - npm run build
   artifacts:
     paths:
       - build/
