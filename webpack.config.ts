@@ -24,13 +24,25 @@ const webpackConfig = (): Configuration => ({
     rules: [
       {
         test: /\.([cm]?ts|tsx)$/,
-        loader: 'ts-loader',
-        options: {
-          getCustomTransformers: (program) => ({
-            before: [keysTransformer(program)],
-          }),
-        },
+        // loader: 'ts-loader',
+
         exclude: /build/,
+        use: [
+          {
+            loader: 'babel-loader',
+            // options: {
+            //   presets: ['solid'],
+            // },
+          },
+          {
+            loader: 'ts-loader',
+            options: {
+              getCustomTransformers: (program) => ({
+                before: [keysTransformer(program)],
+              }),
+            },
+          },
+        ],
       },
       {
         test: /\.s?css$/,
