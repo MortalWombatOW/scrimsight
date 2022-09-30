@@ -30,9 +30,9 @@ const webpackConfig = (): Configuration => ({
         use: [
           {
             loader: 'babel-loader',
-            // options: {
-            //   presets: ['solid'],
-            // },
+            options: {
+              presets: ['solid'],
+            },
           },
           {
             loader: 'ts-loader',
