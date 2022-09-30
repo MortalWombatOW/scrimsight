@@ -30,7 +30,8 @@
     "build"
   ],
   "include": [
-    "./src",
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
     "webpack.config.ts",
   ]
 }
