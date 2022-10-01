@@ -1,16 +1,25 @@
+cache:
+  paths:
+    - node_modules/
+
+before_script:
+  - apt-get update -qq && apt-get install
+
 stages:
   - build
   - deploy
 
 build:
-  image: node:latest
+  # image: node:latest
+
   stage: build
   variables:
     # Replace this with your site URL
     PUBLIC_URL: https://mortalwombat.gitlab.io/scrimsight/
     NODE_ENV: production
-  script:
+  before_script:
     - npm install
+  script:
     - npm run build
   artifacts:
     paths:
@@ -27,3 +36,4 @@ pages:
   artifacts:
     paths:
       - public
+  only: master
