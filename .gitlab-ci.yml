@@ -17,6 +17,7 @@ build:
     # Replace this with your site URL
     PUBLIC_URL: https://mortalwombat.gitlab.io/scrimsight/
     NODE_ENV: production
+    TS_NODE_COMPILER_OPTIONS: '{"module": "commonjs"}'
   before_script:
     - ls
     - npm list -g --depth 0
