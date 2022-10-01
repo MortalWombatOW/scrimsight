@@ -19,6 +19,7 @@ build:
     NODE_ENV: production
   before_script:
     - ls
+    - npm list -g --depth 0
     - npm install -g webpack webpack-cli
     - npm install
   script:
