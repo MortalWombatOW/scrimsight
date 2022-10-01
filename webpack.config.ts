@@ -1,5 +1,6 @@
 import path from 'path';
 import * as webpack from 'webpack';
+import * as webpackDevServer from 'webpack-dev-server';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import InterpolateHtmlPlugin from 'interpolate-html-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
