@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "start": "webpack-cli serve --mode=development --env development --open --hot",
-    "build": "NODE_ENV=production webpack --mode=production --env production --progress",
+    "build": "set NODE_ENV=production&& webpack --mode=production --env production --progress",
     "lint": "eslint src/**/*.{ts,tsx} --quiet --fix"
   },
   "dependencies": {
+    "@babel/preset-react": "^7.18.6",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@msgpack/msgpack": "^2.7.2",

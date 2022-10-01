@@ -31,7 +31,7 @@ const webpackConfig = (): Configuration => ({
           {
             loader: 'babel-loader',
             options: {
-              presets: ['solid'],
+              presets: ['@babel/preset-react'],
             },
           },
           {
