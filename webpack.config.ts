@@ -42,6 +42,9 @@ const webpackConfig = (): Configuration => ({
               }),
             },
           },
+          {
+            loader: 'ts-node/esm',
+          },
         ],
       },
       {
