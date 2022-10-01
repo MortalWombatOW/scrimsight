@@ -10,7 +10,7 @@ stages:
   - deploy
 
 build:
-  # image: node:latest
+  image: npm:latest
 
   stage: build
   variables:
