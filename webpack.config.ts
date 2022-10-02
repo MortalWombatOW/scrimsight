@@ -1,6 +1,6 @@
-import path from 'path';
-import webpack from 'webpack';
-import * as webpackDevServer from 'webpack-dev-server';
+import * as path from 'path';
+import * as webpack from 'webpack';
+import 'webpack-dev-server';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import InterpolateHtmlPlugin from 'interpolate-html-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
@@ -24,17 +24,17 @@ const webpackConfig = () => ({
   module: {
     rules: [
       {
-        test: /\.([cm]?ts|tsx)$/,
+        test: /\.tsx?$/,
         // loader: 'ts-loader',
 
         exclude: /build/,
         use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-react'],
-            },
-          },
+          // {
+          //   loader: 'babel-loader',
+          //   options: {
+          //     presets: ['@babel/preset-react'],
+          //   },
+          // },
           {
             loader: 'ts-loader',
             options: {
