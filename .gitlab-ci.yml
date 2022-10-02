@@ -23,7 +23,8 @@ build:
     # - npmlist -g --depth 0
     # - npm config get production
     - npm install
-    - webpack --profile --json=test.json
+    - npm install webpack -g
+    - npx webpack --profile --json=test.json
     - cat test.json
     # - npm list --depth 0
   script:
