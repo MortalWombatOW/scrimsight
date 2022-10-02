@@ -32,7 +32,7 @@ const webpackConfig = () => ({
           {
             loader: 'babel-loader',
             options: {
-              presets: ['@babel/preset-react'],
+              presets: ['es2015', 'react'],
             },
           },
           {
