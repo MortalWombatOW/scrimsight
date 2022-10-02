@@ -1,16 +1,44 @@
-# The Docker image that will be used to build your app
-image: node:lts
-# Functions that should be executed before the build script is run
-before_script:
-  - npm install
-pages:
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - build
+  - deploy
+
+build:
+  image: node:latest
+
+  stage: build
+  variables:
+    # Replace this with your site URL
+    PUBLIC_URL: https://mortalwombat.gitlab.io/scrimsight/
+    NODE_ENV: production
+    # TS_NODE_COMPILER_OPTIONS: '{"module": "commonjs"}'
+    # NODE_OPTIONS: '--loader ts-node/esm'
+  before_script:
+    - ls
+    # - apt-get update -qq && apt-get install
+    # - npm install -g webpack webpack-cli ts-node
+    # - npm list -g --depth 0
+    - npm config get production
+    - npm install
+    - npm list --depth 0
   script:
     - npm run build
   artifacts:
     paths:
-      # The folder that contains the files to be exposed at the Page URL
+      - build/
+
+pages:
+  image: alpine:latest
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none # Do not clone git repo
+  script:
+    # Rename the CRA `build` folder to `public`
+    - mv build public
+  artifacts:
+    paths:
       - public
-  rules:
-    # This ensures that only pushes to the default branch will trigger
-    # a pages deploy
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  # only: [master]
