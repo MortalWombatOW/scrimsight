@@ -20,9 +20,9 @@ build:
     - ls
     # - apt-get update -qq && apt-get install
     # - npm install -g webpack webpack-cli ts-node
-    # - npm list -g --depth 0
+    # - npmlist -g --depth 0
     # - npm config get production
-    - sudo npm install
+    - npm install
     # - npm list --depth 0
   script:
     - npm run build
