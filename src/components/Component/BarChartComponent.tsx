@@ -10,16 +10,13 @@ import {
 } from 'recharts';
 import {getMetricColor} from '../../lib/color';
 import {Metric, MetricGroup, MetricValue} from '../../lib/data/types';
-import {height, width} from '@mui/system';
 import {Data, getMetricName} from '../../lib/data/metricsv2';
-import {capitalize, listToNaturalLanguage} from '../../lib/string';
 
 const BarChartComponent = ({
   height,
   width,
   data,
   metric,
-  sortBy,
   setSortBy,
 }: {
   height: number;
@@ -55,7 +52,10 @@ const BarChartComponent = ({
             type="category"></YAxis>
           <XAxis type="number"></XAxis>
           <Tooltip
-            formatter={(value) => new Intl.NumberFormat('en').format(value)}
+            formatter={(value) => {
+              // format the value to a string
+              return value.toLocaleString();
+            }}
           />
           <Legend
             align="right"
@@ -63,7 +63,7 @@ const BarChartComponent = ({
             verticalAlign="top"
             onClick={(e) => setSortBy(e.dataKey)}
           />
-          {metric.values.map((value, _) => (
+          {metric.values.map((value) => (
             <Bar
               key={value}
               dataKey={MetricValue[value]}

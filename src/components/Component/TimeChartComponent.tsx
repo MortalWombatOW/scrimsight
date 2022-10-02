@@ -1,10 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Bar,
-  BarChart,
   Legend,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Scatter,
   ScatterChart,
@@ -44,6 +40,7 @@ const TimeChartComponent = ({
           data.reduce<{
             [key: string]: Data;
           }>((acc, d) => {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const groupValue = d[MetricGroup[nonTimeGroup!]];
 
             if (!acc[groupValue]) {
@@ -57,6 +54,7 @@ const TimeChartComponent = ({
       }
       console.log('TimeChartComponent', groupedData, nonTimeGroup);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.length, JSON.stringify(metric)]);
 
   console.log(metric);
@@ -82,9 +80,7 @@ const TimeChartComponent = ({
           {/* <CartesianGrid strokeDasharray="3 3" /> */}
           <XAxis type="number" dataKey={MetricGroup[metric.groups[0]]} />
           <YAxis type="number" domain={['dataMin', 'dataMax']} />
-          <Tooltip
-            formatter={(value) => new Intl.NumberFormat('en').format(value)}
-          />
+          <Tooltip formatter={(value) => value.toLocaleString()} />
           <Legend align="right" layout="vertical" verticalAlign="top" />
           {data.length > 0 &&
             (hasNonTimeGroup ? Object.values(groupedData) : [data]).map(
@@ -96,6 +92,7 @@ const TimeChartComponent = ({
                     dataKey={MetricValue[value]}
                     fill={getMetricColor(value)}
                     data={lineData}
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     name={lineData[0][MetricGroup[nonTimeGroup!]] as string}
                   />
                 )),
