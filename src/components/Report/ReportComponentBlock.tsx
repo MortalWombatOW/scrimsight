@@ -1,62 +1,33 @@
 import {Box, CircularProgress, Fade, Grid, IconButton} from '@mui/material';
 import React, {useEffect, useMemo} from 'react';
-import {
-  sumRechart,
-  calculateMetricNew,
-  calculateMetricNewRechart,
-} from '../../lib/data/metrics';
 import SettingsIcon from '@mui/icons-material/Settings';
 import {
   BaseData,
   MetricGroup,
-  MetricValue,
   ReportComponent,
   ReportComponentStyle,
   ReportComponentType,
 } from '../../lib/data/types';
-import StackedBarChart from '../Chart/StackedBarChart';
-import TimeChart, {TimeChartSeries} from '../Chart/TimeChart/TimeChart';
 import ComponentControl from '../ComponentControl/ComponentControl';
 import CloseIcon from '@mui/icons-material/Close';
-import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
 import './ReportComponentBlock.scss';
-import {
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Bar,
-  Tooltip,
-  Legend,
-  Label,
-  ResponsiveContainer,
-  Cell,
-} from 'recharts';
-import {
-  getColorPaletteOfSize,
-  getMetricColor,
-  valueColor,
-} from '../../lib/color';
 import ReplayIcon from '@mui/icons-material/Replay';
 import CopyAllIcon from '@mui/icons-material/CopyAll';
 import {computeMetric} from '../../lib/data/metricsv2';
-import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import BarChartComponent from '../Component/BarChartComponent';
 import TimeChartComponent from '../Component/TimeChartComponent';
-const componentStrToType: (str: string) => ReportComponentType = (str) => {
-  const [lStr, rStr] = str.split('-');
-  const l = parseInt(lStr, 10);
-  const r = parseInt(rStr, 10);
-  const componentType: ReportComponentType = l;
-  return componentType;
-};
+// const componentStrToType: (str: string) => ReportComponentType = (str) => {
+//   const [lStr, rStr] = str.split('-');
+//   const l = parseInt(lStr, 10);
+//   const r = parseInt(rStr, 10);
+//   const componentType: ReportComponentType = l;
+//   return componentType;
+// };
 
 const ReportComponentBlock = ({
   component,
   baseData,
   setComponent,
-  isEditing,
-  filters,
 }: {
   component: ReportComponent;
   baseData: BaseData | undefined;
@@ -85,6 +56,7 @@ const ReportComponentBlock = ({
           : computeMetric(metric, baseData),
       ),
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [(JSON.stringify(metric), baseData == undefined)],
   );
 
@@ -98,6 +70,7 @@ const ReportComponentBlock = ({
         }
         return (bValue as number) - (aValue as number);
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [sortBy, metricData.length],
   );
 
@@ -141,8 +114,8 @@ const ReportComponentBlock = ({
   // const uniqueGroupCount = new Set(
   //   sortedData.map((d) => d[MetricGroup[metric.groups[0]]]),
   // ).size;
-  const uniqueGroupCount = sortedData.length;
-  const colorPalette = getColorPaletteOfSize(uniqueGroupCount);
+  // const uniqueGroupCount = sortedData.length;
+  // const colorPalette = getColorPaletteOfSize(uniqueGroupCount);
   console.log('sortedData', sortedData);
 
   return (

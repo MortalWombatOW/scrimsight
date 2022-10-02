@@ -10,11 +10,11 @@ import {
 import {Location} from 'history';
 import Map from './pages/Map/Map';
 import ReportPage from './pages/ReportPage/ReportPage';
-import ReportBuilderPage from './pages/ReportBuilderPage/ReportBuilderPage';
+// import ReportBuilderPage from './pages/ReportBuilderPage/ReportBuilderPage';
 import {QueryParamProvider} from 'use-query-params';
 const App = () => (
   <BrowserRouter>
-    <QueryParamProvider ReactRouterRoute={RouteAdapter}>
+    <QueryParamProvider adapter={RouteAdapter}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/map/:mapId" element={<Map />} />
@@ -25,7 +25,7 @@ const App = () => (
   </BrowserRouter>
 );
 
-const RouteAdapter: React.FC = ({children}) => {
+const RouteAdapter: React.FC = ({children}: {children}) => {
   const reactRouterNavigate = useNavigate();
   const reactRouterlocation = useLocation();
 
