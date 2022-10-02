@@ -38,6 +38,6 @@
   "include": [
     "./src/**/*.ts",
     "./src/**/*.tsx",
-    "webpack.config.ts",
+    "webpack.config.babel.ts",
   ]
 }
