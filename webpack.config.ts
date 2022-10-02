@@ -72,7 +72,7 @@ const webpackConfig = () => ({
       // eslint: {
       //   files: './src/**/*.{ts,tsx,js,jsx}',
       // },
-    } as any),
+    }),
     new Dotenv({
       path: `./.env.${process.env.NODE_ENV}`,
     }),
