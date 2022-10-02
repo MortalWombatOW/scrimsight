@@ -2,9 +2,6 @@ cache:
   paths:
     - node_modules/
 
-before_script:
-  - apt-get update -qq && apt-get install
-
 stages:
   - build
   - deploy
@@ -17,13 +14,15 @@ build:
     # Replace this with your site URL
     PUBLIC_URL: https://mortalwombat.gitlab.io/scrimsight/
     NODE_ENV: production
-    TS_NODE_COMPILER_OPTIONS: '{"module": "commonjs"}'
+    # TS_NODE_COMPILER_OPTIONS: '{"module": "commonjs"}'
     # NODE_OPTIONS: '--loader ts-node/esm'
   before_script:
     - ls
+    - apt-get update -qq && apt-get install
     - npm install -g webpack webpack-cli ts-node
     - npm list -g --depth 0
     - npm install
+    - npm list --depth 0
   script:
     - npm run build
   artifacts:
