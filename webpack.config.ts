@@ -26,7 +26,7 @@ const webpackConfig = () => ({
       {
         test: /\.tsx?$/,
         // loader: 'ts-loader',
-
+        include: path.resolve(__dirname, 'src'),
         exclude: /build/,
         use: [
           {
