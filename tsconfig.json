@@ -25,11 +25,12 @@
     "noImplicitAny": false,
     "strictNullChecks": true
   },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
-    }
-  },
+  // "ts-node": {
+  //   "compilerOptions": {
+  //     "module": "commonjs",
+  //     "moduleResolution": "node"
+  //   }
+  // },
   "exclude": [
     "node_modules",
     "build"

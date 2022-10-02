@@ -1,5 +1,5 @@
 import path from 'path';
-import * as webpack from 'webpack';
+import webpack from 'webpack';
 import * as webpackDevServer from 'webpack-dev-server';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import InterpolateHtmlPlugin from 'interpolate-html-plugin';
@@ -7,7 +7,7 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import Dotenv from 'dotenv-webpack';
 import keysTransformer from 'ts-transformer-keys/transformer';
-const webpackConfig = (): webpack.Configuration => ({
+const webpackConfig = () => ({
   entry: './src/index.tsx',
   ...(process.env.production || !process.env.development
     ? {}
