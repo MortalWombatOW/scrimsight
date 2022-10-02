@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "webpack-cli serve --mode=development --env development --open --hot",
-    "build": "npx webpack --mode=production --env production --progress",
+    "build": "npx webpack --progress",
     "lint": "eslint src/**/*.{ts,tsx} --quiet --fix"
   },
   "dependencies": {
