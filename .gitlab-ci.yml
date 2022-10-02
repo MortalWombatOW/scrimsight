@@ -25,7 +25,6 @@ build:
     - npm install
     - npm install webpack -g
     - npx webpack --profile --json=test.json
-    - cat test.json
     # - npm list --depth 0
   script:
     - npm run build
