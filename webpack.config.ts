@@ -66,12 +66,13 @@ const webpackConfig = () => ({
     }),
     new InterpolateHtmlPlugin(HtmlWebpackPlugin, process.env),
     // DefinePlugin allows you to create global constants which can be configured at compile time
+
     new ForkTsCheckerWebpackPlugin({
       // Speeds up TypeScript type checking and ESLint linting (by moving each to a separate process)
-      eslint: {
-        files: './src/**/*.{ts,tsx,js,jsx}',
-      },
-    }),
+      // eslint: {
+      //   files: './src/**/*.{ts,tsx,js,jsx}',
+      // },
+    } as any),
     new Dotenv({
       path: `./.env.${process.env.NODE_ENV}`,
     }),
