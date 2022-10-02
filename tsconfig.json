@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "target": "ESNext",
     "removeComments": true,
@@ -25,12 +25,12 @@
     "noImplicitAny": false,
     "strictNullChecks": true
   },
-  // "ts-node": {
-  //   "compilerOptions": {
-  //     "module": "commonjs",
-  //     "moduleResolution": "node"
-  //   }
-  // },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node"
+    }
+  },
   "exclude": [
     "node_modules",
     "build"
