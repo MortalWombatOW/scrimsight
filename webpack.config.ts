@@ -30,6 +30,12 @@ const webpackConfig = () => ({
         exclude: /build/,
         use: [
           {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env', '@babel/preset-react'],
+            },
+          },
+          {
             loader: 'ts-loader',
             options: {
               getCustomTransformers: (program) => ({
@@ -37,12 +43,7 @@ const webpackConfig = () => ({
               }),
             },
           },
-          {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env', '@babel/preset-react'],
-            },
-          },
+
           //   // {
           //   //   loader: 'ts-node/esm',
           //   // },
