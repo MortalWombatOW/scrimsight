@@ -27,7 +27,7 @@ build:
     # - npx webpack --profile --json=test.json
     # - npm list --depth 0
   script:
-    - npm run build
+    - npm run build --verbose
   artifacts:
     paths:
       - build/
