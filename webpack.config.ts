@@ -24,29 +24,29 @@ const webpackConfig = () => ({
   module: {
     rules: [
       {
-        test: /\.ts?$/,
-        loader: 'ts-loader',
+        test: /\.(ts|tsx)?$/,
+        // loader: 'ts-loader',
         include: path.resolve(__dirname, 'src'),
         exclude: /build/,
-        // use: [
-        //   {
-        //     loader: 'babel-loader',
-        //     options: {
-        //       presets: ['@babel/preset-env', '@babel/preset-react'],
-        //     },
-        //   },
-        //   {
-        //     loader: 'ts-loader',
-        //     options: {
-        //       getCustomTransformers: (program) => ({
-        //         before: [keysTransformer(program)],
-        //       }),
-        //     },
-        //   },
-        //   // {
-        //   //   loader: 'ts-node/esm',
-        //   // },
-        // ],
+        use: [
+          //   {
+          //     loader: 'babel-loader',
+          //     options: {
+          //       presets: ['@babel/preset-env', '@babel/preset-react'],
+          //     },
+          //   },
+          {
+            loader: 'ts-loader',
+            options: {
+              getCustomTransformers: (program) => ({
+                before: [keysTransformer(program)],
+              }),
+            },
+          },
+          //   // {
+          //   //   loader: 'ts-node/esm',
+          //   // },
+        ],
       },
       {
         test: /\.s?css$/,
