@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
+    "module": "ES2015",
     "moduleResolution": "node",
     "target": "ES5",
     "removeComments": true,
@@ -11,6 +11,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "downlevelIteration": true,
+    "noUnusedParameters": false,
     "paths": {
       "~/*": [
         "*"
