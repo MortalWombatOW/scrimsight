@@ -29,18 +29,18 @@ const webpackConfig = () => ({
         include: path.resolve(__dirname, 'src'),
         exclude: /build/,
         use: [
-          //   {
-          //     loader: 'babel-loader',
-          //     options: {
-          //       presets: ['@babel/preset-env', '@babel/preset-react'],
-          //     },
-          //   },
           {
             loader: 'ts-loader',
             options: {
               getCustomTransformers: (program) => ({
                 before: [keysTransformer(program)],
               }),
+            },
+          },
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env', '@babel/preset-react'],
             },
           },
           //   // {
