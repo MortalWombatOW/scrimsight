@@ -30,6 +30,7 @@
     "babel-loader": "^8.2.5",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "babel-preset-typescript": "^7.0.0-alpha.19",
     "chart.heatmap.js": "0.0.1-alpha",
     "chart.js": "^3.9.1",
     "chartjs-chart-matrix": "^1.2.0",
