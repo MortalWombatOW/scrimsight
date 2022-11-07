@@ -25,6 +25,7 @@ build:
     - sudo apt install curl
     - curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
     - source ~/.bashrc
+    - nvm install node
     - npm ci
     - npm list
     # - npm install webpack -g
