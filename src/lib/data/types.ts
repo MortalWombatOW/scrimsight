@@ -1,4 +1,3 @@
-import {keys} from 'ts-transformer-keys';
 import {debug} from 'webpack';
 
 // identifies each map
@@ -45,12 +44,12 @@ type TableDefinition = OWMap | PlayerStatus | PlayerAbility | PlayerInteraction;
 
 type WithId<T> = T & {id: number};
 
-const types = {
-  map: keys<OWMap>(),
-  player_status: keys<PlayerStatus>(),
-  player_ability: keys<PlayerAbility>(),
-  player_interaction: keys<PlayerInteraction>(),
-};
+// const types = {
+//   map: keys<OWMap>(),
+//   player_status: keys<PlayerStatus>(),
+//   player_ability: keys<PlayerAbility>(),
+//   player_interaction: keys<PlayerInteraction>(),
+// };
 
 type FileUpload = {
   fileName: string;
@@ -249,7 +248,7 @@ export {
   PlayerStatus,
   PlayerAbility,
   PlayerInteraction,
-  types,
+  // types,
   TableDefinition,
   WithId,
   FileUpload,

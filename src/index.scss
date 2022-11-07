@@ -1,18 +1,23 @@
+@use 'sass:math';
 @import './constants.scss';
 
-@each $key, $value in $colors {
+@each $key,
+$value in $colors {
   .#{$key} {
     background-color: $value;
     overflow-x: hidden;
     // text-shadow: 0px 0px 2px $dark;
     color: fade-out(black, 0.3);
   }
+
   circle.#{$key} {
     fill: $value;
   }
+
   path.#{$key} {
     fill: $value;
   }
+
   line.#{$key} {
     stroke: $value;
   }
@@ -228,7 +233,7 @@ code {
   margin-left: 5px;
 }
 
-div > label.MuiButtonBase-root {
+div>label.MuiButtonBase-root {
   // border: 1px solid $mid;
   // background-color: $neutral;
   // padding: 10px;
@@ -280,10 +285,12 @@ table {
 
 .pageSizeSelect {
   width: 100px;
-  > div {
+
+  >div {
     font-size: 13px;
     color: $dark;
   }
+
   height: 36.5px;
   // font-size: 10px;
   color: $dark;
@@ -296,12 +303,12 @@ table {
 }
 
 .fields {
-  > * {
+  >* {
     margin-right: 10px;
   }
 }
 
-div.tablecontrols > * {
+div.tablecontrols>* {
   margin-right: 10px;
 }
 
@@ -321,6 +328,7 @@ div.tablecontrols > * {
 
 .histogram .datapoint {
   fill: $mid;
+
   &:hover {
     fill: $highlight;
   }
@@ -365,7 +373,9 @@ div.tablecontrols > * {
 
 .dataplot {
   padding: 10px;
+
   .datapoint {
+
     // fill: $mid;
     &:hover {
       fill: $highlight;
@@ -418,6 +428,7 @@ div.tablecontrols > * {
   margin: 5px;
   margin-top: 20px;
 }
+
 .RangeSelector-axis {
   stroke: $mid;
 }
@@ -538,10 +549,12 @@ label.Uploader-button.MuiButton-root {
 
   & .MapRow-image {
     height: $maprow-height;
+
     & img {
       width: auto;
       height: 100%;
     }
+
     // padding-right: 10px;
   }
 
@@ -557,12 +570,12 @@ label.Uploader-button.MuiButton-root {
 
   & .MapRow-teams-col {
     height: $maprow-height;
-    line-height: $maprow-height / 2;
+    line-height: math.div($maprow-height, 5);
     width: 200px;
   }
 
   & .MapRow-player {
-    line-height: $maprow-height / 5;
+    line-height: math.div($maprow-height, 5);
     text-align: left;
   }
 
@@ -591,6 +604,7 @@ label.Uploader-button.MuiButton-root {
     padding-right: $hpadding;
     min-width: $min_width;
   }
+
   & .Map-toprow {
     display: flex;
     flex-direction: row;
@@ -600,11 +614,13 @@ label.Uploader-button.MuiButton-root {
     border-radius: 5px;
     padding: 0;
   }
+
   & .Map-info {
     padding: 10px;
     margin-right: 10px;
     // width: 100%;
   }
+
   & .Map-display {
     width: 100%;
     padding: 10px;
@@ -621,6 +637,7 @@ label.Uploader-button.MuiButton-root {
   & .Map-info td {
     border: none;
     padding: 0;
+
     &.right {
       text-align: right;
     }
