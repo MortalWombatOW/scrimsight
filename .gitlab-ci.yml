@@ -18,7 +18,7 @@ build:
     # NODE_OPTIONS: '--loader ts-node/esm'
   before_script:
     - ls
-    # - apt-get update -qq && apt-get install
+    - apt-get update -qq && apt-get install
     # - npm install -g webpack webpack-cli ts-node
     # - npmlist -g --depth 0
     # - npm config get production
