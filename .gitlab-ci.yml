@@ -11,7 +11,7 @@ cache:
     - node_modules/
 
 build:
-  image: ubuntu:latest
+  image: ubuntu:20.04
 
   stage: build
   variables:
