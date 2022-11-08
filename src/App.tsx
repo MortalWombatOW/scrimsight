@@ -13,7 +13,7 @@ import ReportPage from './pages/ReportPage/ReportPage';
 // import ReportBuilderPage from './pages/ReportBuilderPage/ReportBuilderPage';
 import {QueryParamProvider} from 'use-query-params';
 const App = () => (
-  <BrowserRouter>
+  <BrowserRouter basename={process.env.PUBLIC_URL}>
     <QueryParamProvider adapter={RouteAdapter}>
       <Routes>
         <Route path="/" element={<Home />} />

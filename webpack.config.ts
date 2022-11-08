@@ -38,7 +38,6 @@ const webpackConfig = () => ({
                 '@babel/react',
               ],
             },
-            // "options": { "presets": ["es2015", "react"] }
           },
           {
             loader: 'ts-loader',
