@@ -27,17 +27,18 @@ const webpackConfig = () => ({
         test: /.(ts|tsx)?$/,
         // loader: 'ts-loader',
         include: path.resolve(__dirname, 'src'),
-        exclude: /build/,
+       exclude: '/node_modules/',
         use: [
           {
             loader: 'babel-loader',
             options: {
               presets: [
-                '@babel/preset-env',
+                '@babel/env',
                 // '@babel/preset-typescript',
-                '@babel/preset-react',
+                '@babel/react',
               ],
             },
+            // "options": { "presets": ["es2015", "react"] }
           },
           {
             loader: 'ts-loader',
