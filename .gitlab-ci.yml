@@ -21,6 +21,7 @@ build:
     # TS_NODE_COMPILER_OPTIONS: '{"module": "commonjs"}'
     # NODE_OPTIONS: '--loader ts-node/esm'
   before_script:
+    - printenv
     - ls
     - apt-get update -qq && apt-get install
     # - npm install -g webpack webpack-cli ts-node
