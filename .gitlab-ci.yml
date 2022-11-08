@@ -37,6 +37,7 @@ build:
     # - npx webpack --profile --json=test.json
     # - npm list --depth 0
   script:
+    - unset CI
     - npm run build
   artifacts:
     paths:
