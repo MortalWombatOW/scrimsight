@@ -1,58 +1,48 @@
-# cache:
-#   paths:
-#     - node_modules/
-
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
-  - build
-  - deploy
-
+- build
+- deploy
 cache:
   paths:
-    - node_modules/
-
+  - node_modules/
 build:
   image: ubuntu:20.04
-
   stage: build
   variables:
-    # Replace this with your site URL
     PUBLIC_URL: "/scrimsight"
-    NODE_ENV: "production"
-    # TS_NODE_COMPILER_OPTIONS: '{"module": "commonjs"}'
-    # NODE_OPTIONS: '--loader ts-node/esm'
+    NODE_ENV: production
   before_script:
-    - printenv
-    - ls
-    - apt-get update -qq && apt-get install
-    # - npm install -g webpack webpack-cli ts-node
-    # - npmlist -g --depth 0
-    # - npm config get production
-    - apt install curl -y
-    - curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-    - source ~/.bashrc
-    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use #load nvm
-    - eval "[ -f .nvmrc ] && nvm install || nvm install node" #install node
-    - npm ci
-    - npm list
-    # - npm install webpack -g
-    # - npx webpack --profile --json=test.json
-    # - npm list --depth 0
+  - printenv
+  - ls
+  - apt-get update -qq && apt-get install
+  - apt install curl -y
+  - curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+  - source ~/.bashrc
+  - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
+  - eval "[ -f .nvmrc ] && nvm install || nvm install node"
+  - npm ci
+  - npm list
   script:
-    - unset CI
-    - npm run build
+  - unset CI
+  - npm run build
   artifacts:
     paths:
-      - build/
-
+    - build/
 pages:
   image: alpine:latest
   stage: deploy
   variables:
-    GIT_STRATEGY: none # Do not clone git repo
+    GIT_STRATEGY: none
   script:
-    # Rename the CRA `build` folder to `public`
-    - mv build public
+  - mv build public
   artifacts:
     paths:
-      - public
-  # only: [master]
+    - public
+include:
+- template: Security/Dependency-Scanning.gitlab-ci.yml
