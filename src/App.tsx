@@ -13,9 +13,9 @@ import ReportPage from './pages/ReportPage/ReportPage';
 // import ReportBuilderPage from './pages/ReportBuilderPage/ReportBuilderPage';
 import {QueryParamProvider} from 'use-query-params';
 const App = () => (
-  <BrowserRouter basename={process.env.PUBLIC_URL}>
+  <BrowserRouter basename="scrimsight">
     <QueryParamProvider adapter={RouteAdapter}>
-      <Routes basename="/scrimsight" >
+      <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/map/:mapId" element={<Map />} />
         {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
