@@ -15,7 +15,7 @@ import {QueryParamProvider} from 'use-query-params';
 const App = () => (
   <BrowserRouter basename={process.env.PUBLIC_URL}>
     <QueryParamProvider adapter={RouteAdapter}>
-      <Routes>
+      <Routes basename="/scrimsight" >
         <Route path="/" element={<Home />} />
         <Route path="/map/:mapId" element={<Map />} />
         {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
