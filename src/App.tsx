@@ -13,7 +13,7 @@ import ReportPage from './pages/ReportPage/ReportPage';
 // import ReportBuilderPage from './pages/ReportBuilderPage/ReportBuilderPage';
 import {QueryParamProvider} from 'use-query-params';
 const App = () => (
-  <BrowserRouter basename="/scrimsight">
+  <BrowserRouter basename="/">
     <QueryParamProvider adapter={RouteAdapter}>
       <Routes>
         <Route path="/" element={<Home />} />
