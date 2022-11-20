@@ -15,12 +15,12 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Uploader from '../Uploader/Uploader';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, Link} from 'react-router-dom';
 
 import SearchBar from '../SearchBar/SearchBar';
 import './Header.scss';
+import routes from '../../lib/routes';
 
-const pages = ['Players', 'Teams', 'Maps', 'Reports', 'Uploads', 'About'];
 const settings = ['Settings', 'Logout'];
 
 const Header = ({
@@ -50,6 +50,12 @@ const Header = ({
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleClickForPage = (page: string) => {
+    handleCloseNavMenu();
+    navigate(page);
+  };
+
   return (
     // <Toolbar className="header">
     //   <span className="logo" onClick={() => navigate('/')}>
@@ -113,9 +119,9 @@ const Header = ({
               sx={{
                 display: {xs: 'block', md: 'none'},
               }}>
-              {pages.map((page) => (
-                <MenuItem onClick={handleCloseNavMenu} key={page}>
-                  <Typography textAlign="center">{page}</Typography>
+              {routes.map((route) => (
+                <MenuItem onClick={handleCloseNavMenu} key={route.path}>
+                  <Typography textAlign="center">{route.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -139,15 +145,13 @@ const Header = ({
             scrimsight
           </Typography>
           <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-            {pages.map((page) => (
-              <React.Fragment key={page}>
-                <Button
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{my: 2, color: 'white', display: 'block'}}>
-                  {page}
-                </Button>
-              </React.Fragment>
+            {routes.map((route) => (
+              <Button
+                key={route.path}
+                onClick={() => handleClickForPage(route.path)}
+                sx={{my: 2, color: 'white', display: 'block'}}>
+                {route.name}
+              </Button>
             ))}
           </Box>
 

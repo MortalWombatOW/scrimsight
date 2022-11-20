@@ -1,5 +1,5 @@
 import Home from './pages/Home/Home';
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -7,19 +7,21 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-import { Location } from 'history';
+import {Location} from 'history';
 import Map from './pages/Map/Map';
 import ReportPage from './pages/ReportPage/ReportPage';
 // import ReportBuilderPage from './pages/ReportBuilderPage/ReportBuilderPage';
-import { QueryParamProvider } from 'use-query-params';
-import { createTheme, ThemeProvider } from '@mui/material';
+import {QueryParamProvider} from 'use-query-params';
+import {createTheme, ThemeProvider} from '@mui/material';
+import PlayerPage from './pages/PlayerPage/PlayerPage';
+import routes from './lib/routes';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#363636"
-    }
-  }
+      main: '#363636',
+    },
+  },
 });
 
 const App = () => (
@@ -27,16 +29,23 @@ const App = () => (
     <BrowserRouter basename="/">
       <QueryParamProvider adapter={RouteAdapter}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          {routes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={<route.component />}
+            />
+          ))}
+
           <Route path="/map/:mapId" element={<Map />} />
           {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
-          <Route path="/report" element={<ReportPage />} />
         </Routes>
       </QueryParamProvider>
-    </BrowserRouter></ThemeProvider>
+    </BrowserRouter>
+  </ThemeProvider>
 );
 
-const RouteAdapter: React.FC = ({ children }: { children }) => {
+const RouteAdapter: React.FC = ({children}: {children}) => {
   const reactRouterNavigate = useNavigate();
   const reactRouterlocation = useLocation();
 
@@ -45,7 +54,7 @@ const RouteAdapter: React.FC = ({ children }: { children }) => {
       // can disable eslint for parts here, location.state can be anything
       replace(location: Location) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        reactRouterNavigate(location, { replace: true, state: location.state });
+        reactRouterNavigate(location, {replace: true, state: location.state});
       },
       push(location: Location) {
         reactRouterNavigate(location, {
