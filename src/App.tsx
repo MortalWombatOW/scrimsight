@@ -52,7 +52,7 @@ const RouteAdapter: React.FC = ({children}: {children}) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return children({
     history: adaptedHistory,
-    reactRouterLocation: reactRouterlocation,
+    location: reactRouterlocation,
   });
 };
 
