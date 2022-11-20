@@ -143,7 +143,7 @@ const ReportPage = () => {
 
   const addBlankComponent = () => {
     const newComponent = {type: 0, style: 0, metric: {values: [], groups: []}};
-    if (!componentStringsRaw) {
+    if (!componentStringsRaw || !components)  {
       setComponentStringsFromComponents([newComponent]);
     } else {
       setComponentStringsFromComponents([...components, newComponent]);
