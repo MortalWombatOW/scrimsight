@@ -26,10 +26,10 @@ build:
     - eval "[ -f .nvmrc ] && nvm install || nvm install node" #install node
     - npm ci
     - mkdir build
-    - cp -r public/assets build/assets
   script:
     - unset CI
     - npm run build
+    - cp -r public/assets build/assets
   artifacts:
     paths:
       - build/
