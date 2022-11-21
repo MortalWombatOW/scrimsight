@@ -25,6 +25,7 @@ build:
     - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use #load nvm
     - eval "[ -f .nvmrc ] && nvm install || nvm install node" #install node
     - npm ci
+    - cp public/assets build/assets
   script:
     - unset CI
     - npm run build
@@ -40,7 +41,6 @@ pages:
     GIT_STRATEGY: none # Do not clone git repo
   script:
     # Rename the CRA `build` folder to `public`
-    - cp public/assets public/assets
     - mv build public
     - cp public/index.html public/404.html
   artifacts:
