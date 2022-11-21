@@ -25,10 +25,6 @@ build:
     - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use #load nvm
     - eval "[ -f .nvmrc ] && nvm install || nvm install node" #install node
     - npm ci
-    - npm list
-    # - npm install webpack -g
-    # - npx webpack --profile --json=test.json
-    # - npm list --depth 0
   script:
     - unset CI
     - npm run build
