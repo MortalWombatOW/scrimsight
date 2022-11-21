@@ -15,18 +15,10 @@ build:
 
   stage: build
   variables:
-    # Replace this with your site URL
-    PUBLIC_URL: '/scrimsight'
+    PUBLIC_URL: '/'
     NODE_ENV: 'production'
-    # TS_NODE_COMPILER_OPTIONS: '{"module": "commonjs"}'
-    # NODE_OPTIONS: '--loader ts-node/esm'
   before_script:
-    - printenv
-    - ls
     - apt-get update -qq && apt-get install
-    # - npm install -g webpack webpack-cli ts-node
-    # - npmlist -g --depth 0
-    # - npm config get production
     - apt install curl -y
     - curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
     - source ~/.bashrc
