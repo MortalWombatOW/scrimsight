@@ -1,5 +1,6 @@
 // Metrics logic
 
+import {duration} from '@mui/material';
 import {cartesian} from '../cartesian';
 import {capitalize, listToNaturalLanguage} from '../string';
 import {BaseData, Metric, MetricGroup, MetricValue} from './types';
@@ -46,6 +47,91 @@ const extractorMap: {[key: string]: DataExtractor} = {
         });
       });
     });
+    return data;
+  },
+  [MetricValue[MetricValue.mapCount]]: (baseData: BaseData) => {
+    const data: Data = [];
+    baseData.maps.forEach((map) => {
+      const {team1, team2} = map;
+      team1.forEach((player) => {
+        data.push({
+          player: player,
+          mapCount: 1,
+        });
+      });
+      team2.forEach((player) => {
+        data.push({
+          player: player,
+          mapCount: 1,
+        });
+      });
+    });
+    return data;
+  },
+  [MetricValue[MetricValue.topHero]]: (baseData: BaseData) => {
+    const data: Data = [];
+    baseData.statuses.forEach((status) => {
+      const {player, hero} = status;
+      data.push({
+        player: player,
+        topHero: hero,
+      });
+    });
+    return data;
+  },
+  [MetricValue[MetricValue.damagePer10m]]: (baseData: BaseData) => {
+    const data: Data = [];
+    // first calculate total damage and duration by player and map
+    const byPlayerAndMap = baseData.interactions.reduce((acc, interaction) => {
+      const {mapId, timestamp, type, player, amount} = interaction;
+      if (!acc[mapId]) {
+        acc[mapId] = {
+          min: timestamp,
+          max: timestamp,
+        };
+      } else {
+        if (timestamp < acc[mapId].min) {
+          acc[mapId].min = timestamp;
+        }
+        if (timestamp > acc[mapId].max) {
+          acc[mapId].max = timestamp;
+        }
+        if (type === 'damage') {
+          if (!acc[mapId][player]) {
+            acc[mapId][player] = 0;
+          }
+          acc[mapId][player] += amount;
+        }
+      }
+
+      return acc;
+    }, {} as {[key: string]: {min: number; max: number; [key: string]: number}});
+    // then calculate damage per 10 minutes
+    const damagePer10mByPlayer = {};
+    for (const mapId in byPlayerAndMap) {
+      const {min, max, ...players} = byPlayerAndMap[mapId];
+      const duration = max - min;
+      for (const player in players) {
+        if (!damagePer10mByPlayer[player]) {
+          damagePer10mByPlayer[player] = {
+            acc: 0,
+            count: 0,
+          };
+        }
+        const damagePer10m = (players[player] / duration) * 600;
+        damagePer10mByPlayer[player].count += 1;
+        damagePer10mByPlayer[player].acc +=
+          (damagePer10m - damagePer10mByPlayer[player].acc) /
+          damagePer10mByPlayer[player].count;
+      }
+    }
+    // then add to data
+    for (const player in damagePer10mByPlayer) {
+      data.push({
+        player: player,
+        damagePer10m: damagePer10mByPlayer[player].acc,
+      });
+    }
     return data;
   },
 };

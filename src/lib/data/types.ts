@@ -155,11 +155,16 @@ enum MetricValue {
   finalBlows,
   deaths,
   eliminations,
-  killParticipation,
-  damageEfficiency,
-  ultCycleEfficiency,
   ultsUsed,
-  feeds,
+  mapCount,
+  topHero,
+  damagePer10m,
+  healingPer10m,
+  deathsPer10m,
+  eliminationsPer10m,
+  finalBlowsPer10m,
+  finalBlowsPerLife,
+  timePlayed,
 }
 
 enum MetricGroup {
