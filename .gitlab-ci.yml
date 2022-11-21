@@ -43,6 +43,7 @@ build:
   artifacts:
     paths:
       - build/
+      - public/
 
 pages:
   image: alpine:latest
