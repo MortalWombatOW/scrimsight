@@ -16,8 +16,8 @@ build:
   stage: build
   variables:
     # Replace this with your site URL
-    PUBLIC_URL: "/scrimsight"
-    NODE_ENV: "production"
+    PUBLIC_URL: '/scrimsight'
+    NODE_ENV: 'production'
     # TS_NODE_COMPILER_OPTIONS: '{"module": "commonjs"}'
     # NODE_OPTIONS: '--loader ts-node/esm'
   before_script:
@@ -51,6 +51,7 @@ pages:
     GIT_STRATEGY: none # Do not clone git repo
   script:
     # Rename the CRA `build` folder to `public`
+    - cp public/assets public/assets
     - mv build public
     - cp public/index.html public/404.html
   artifacts:
