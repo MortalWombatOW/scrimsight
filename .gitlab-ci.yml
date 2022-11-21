@@ -25,6 +25,7 @@ build:
     - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use #load nvm
     - eval "[ -f .nvmrc ] && nvm install || nvm install node" #install node
     - npm ci
+    - mkdir build
     - cp -r public/assets build/assets
   script:
     - unset CI
