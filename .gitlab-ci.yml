@@ -30,6 +30,7 @@ build:
     - unset CI
     - npm run build
     - cp -r public/assets build/assets
+    - ls -la build
   artifacts:
     paths:
       - build/
