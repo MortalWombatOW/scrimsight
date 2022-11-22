@@ -126,13 +126,17 @@ const SettingsPage = () => {
           </FormControl>
           {currentTable && (
             <DataTable<OWMap | PlayerInteraction | PlayerStatus | PlayerAbility>
-              columns={Object.keys(currentTable[0]).map((key) => ({
-                name: key,
-                selector: (row) =>
-                  typeof row[key] === 'object' || Array.isArray(row[key])
-                    ? JSON.stringify(row[key])
-                    : row[key],
-              }))}
+              columns={
+                currentTable.length > 0
+                  ? Object.keys(currentTable[0]).map((key) => ({
+                      name: key,
+                      selector: (row) =>
+                        typeof row[key] === 'object' || Array.isArray(row[key])
+                          ? JSON.stringify(row[key])
+                          : row[key],
+                    }))
+                  : []
+              }
               data={currentTable}
               pagination
               dense
