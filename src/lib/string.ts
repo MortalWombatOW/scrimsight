@@ -17,9 +17,9 @@ export function isNumeric(str: string): boolean {
 export function mapNameToFileName(name: string, overhead: boolean): string {
   const lower = name.toLowerCase().replaceAll(' ', '').replaceAll("'", '');
   if (overhead) {
-    return `/public/assets/topdown/${lower}_anno.png`;
+    return `/assets/topdown/${lower}_anno.png`;
   }
-  return `/public/assets/maps/${lower}.jpg`;
+  return `/assets/maps/${lower}.jpg`;
 }
 
 function normalizeString(str: string): string {

@@ -57,7 +57,7 @@ export const getPlayer = (
 };
 
 export const getHeroImage = (heroName: string): string =>
-  `/public/assets/heroes/${heroNameToNormalized(heroName)}.png`;
+  `/assets/heroes/${heroNameToNormalized(heroName)}.png`;
 
 export const getAllPlayers = (data: BaseData) => {
   const players: string[] = [];
