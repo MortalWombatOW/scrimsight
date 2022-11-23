@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import useData from '../../hooks/useData';
 import {computeMetric} from '../../lib/data/metricsv2';
 import DataTable from 'react-data-table-component';
@@ -14,87 +14,119 @@ import {
 } from '../../lib/data/types';
 import Header from './../../components/Header/Header';
 import MapsList from './../../components/MapsList/MapsList';
-
-// On the player page, show a list of players with the following metrics:
-// - Name
-// - Number of maps played
-// - Top played hero
-// - Damage per 10 minutes
-// - Healing per 10 minutes
-// - Deaths per 10 minutes
-// - Eliminations per 10 minutes
-// - Final blows per 10 minutes
-// - Average final blows per life
-// - Time played
-
-// When a player is selected, go to the player details view
+import useQuery from '../../hooks/useQuery';
+import alasql from 'alasql';
+import './PlayerPage.scss';
 
 const PlayerPage = () => {
-  const [updateCount, setUpdateCount] = React.useState(0);
-  const incrementUpdateCount = () => setUpdateCount((prev) => prev + 1);
+  const [totals, running, refresh] = useQuery(
+    `
+    select player, \`target\`,
+    sum(CASE WHEN type = "damage" THEN amount ELSE 0 END) as damage,
+    sum(CASE WHEN type = "healing" THEN amount ELSE 0 END) as healing,
+    sum(CASE WHEN type = "elimination" THEN 1 ELSE 0 END) as eliminations,
+    sum(CASE WHEN type = "final blow" THEN 1 ELSE 0 END) as final_blows 
+    from player_interaction
+    group by player_interaction.player,  player_interaction.\`target\` order by damage desc
+    `,
+  );
 
-  const [maps, mapsUpdates] = useData<OWMap>('map');
-  const [interactions, updates] =
-    useData<PlayerInteraction>('player_interaction');
-  const [statuses, statusUpdates] = useData<PlayerStatus>('player_status');
-  const [abilities, abilityUpdates] = useData<PlayerAbility>('player_ability');
+  const [timeData, running2, refresh2] = useQuery(
+    `
+    select player, mapId, timestamp, sum(CASE WHEN type = "damage" THEN amount ELSE 0 END) as damage,
+    sum(CASE WHEN type = "healing" THEN amount ELSE 0 END) as healing
+    from player_interaction
+    group by player_interaction.player,  player_interaction.mapId, player_interaction.timestamp order by damage desc
+    `,
+  );
 
-  const baseData: BaseData | undefined =
-    maps && interactions && statuses && abilities
-      ? {
-          maps,
-          interactions,
-          statuses,
-          abilities,
-        }
-      : undefined;
-
-  const playerList: string[] = [];
-  const metric: Metric = {
-    groups: [MetricGroup.player],
-    values: [
-      MetricValue.mapCount,
-      MetricValue.topHero,
-      MetricValue.damagePer10m,
-      // MetricValue.healingPer10m,
-      // MetricValue.deathsPer10m,
-      // MetricValue.eliminationsPer10m,
-      // MetricValue.finalBlowsPer10m,
-      // MetricValue.finalBlowsPerLife,
-      // MetricValue.timePlayed,
-    ],
-  };
-
-  const results = useMemo(() => {
-    if (baseData) {
-      return computeMetric(metric, baseData);
-    } else {
-      return [];
-    }
-  }, [baseData, metric]);
-
-  console.log(results);
-
-  const columnDef = [
+  const [playerInfo, setPlayerInfo] = useState<
     {
-      name: 'Name',
-      selector: (row) => row.player,
-      sortable: true,
-    },
-  ];
+      [key: string]: string | number;
+    }[]
+  >([]);
 
-  metric.values.forEach((value) => {
-    columnDef.push({
-      name: MetricValue[value],
-      selector: (row) => row[MetricValue[value]],
-      sortable: true,
-    });
-  });
+  const [playerInfo2, setPlayerInfo2] = useState<
+    {
+      [key: string]: string | number;
+    }[]
+  >([]);
+
+  const [joined, setJoined] = useState<
+    {
+      [key: string]: string | number;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    alasql
+      .promise(
+        `
+    select
+     a.player,
+      sum(a.damage) as damage,
+      sum(a.healing) as healing,
+      sum(a.eliminations) as eliminations,
+      sum(a.final_blows) as final_blows,
+      sum(b.damage) as damage_taken,
+      sum(b.healing) as healing_taken,
+      sum(b.final_blows) as deaths,
+      sum(a.final_blows) / sum(b.final_blows) as kdr
+     from ? as a join ? as b on a.player = b.\`target\` group by a.player order by a.player
+    `,
+        [totals, totals],
+      )
+      .then((res) => {
+        setPlayerInfo(res);
+      });
+  }, [totals]);
+
+  useEffect(() => {
+    alasql
+      .promise(
+        `
+    select
+      a.player,
+      avg(a.damage)*600 as damage_per_10m,
+      avg(a.healing)*600 as healing_per_10m
+      from ? as a group by a.player order by a.player
+    `,
+        [timeData],
+      )
+      .then((res) => {
+        setPlayerInfo2(res);
+      });
+  }, [timeData]);
+
+  useEffect(() => {
+    alasql
+      .promise(
+        `
+    select * from ? as a join ? as b on a.player = b.player
+    `,
+        [playerInfo, playerInfo2],
+      )
+      .then((res) => {
+        setJoined(res);
+      });
+  }, [playerInfo, playerInfo2]);
+
+  const columnDef =
+    joined.length == 0
+      ? []
+      : Object.keys(joined[0]).map((k) => ({
+          name: k,
+          selector: (row) =>
+            typeof row[k] == 'number' && row[k] % 1 != 0
+              ? row[k].toFixed(2)
+              : row[k],
+          sortable: true,
+        }));
 
   return (
-    <div>
+    <div className="Playerpage-container">
       <Header
-        refreshCallback={incrementUpdateCount}
+        refreshCallback={refresh}
         filters={{}}
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         setFilters={(filters) => {}}
@@ -102,10 +134,10 @@ const PlayerPage = () => {
       <div className="Home-container">
         <DataTable
           columns={columnDef}
-          data={results}
+          data={joined}
           pointerOnHover
           highlightOnHover
-          progressPending={results.length === 0}
+          progressPending={running}
         />
       </div>
     </div>

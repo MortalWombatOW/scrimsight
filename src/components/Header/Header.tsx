@@ -120,7 +120,9 @@ const Header = ({
                 display: {xs: 'block', md: 'none'},
               }}>
               {routes.map((route) => (
-                <MenuItem onClick={handleCloseNavMenu} key={route.path}>
+                <MenuItem
+                  onClick={() => handleClickForPage(route.path)}
+                  key={route.path}>
                   <Typography textAlign="center">{route.name}</Typography>
                 </MenuItem>
               ))}
