@@ -165,6 +165,7 @@ enum MetricValue {
   finalBlowsPer10m,
   finalBlowsPerLife,
   timePlayed,
+  fileTime,
 }
 
 enum MetricGroup {
@@ -246,6 +247,33 @@ type BaseData = {
   interactions: PlayerInteraction[];
 };
 
+type GameStateTimeSlice = {
+  mapId: number;
+  timestamp: number;
+  players: {
+    name: string;
+    x: number;
+    y: number;
+    z: number;
+    hero: string;
+    health: number;
+    ultCharge: number;
+    abilityies: string[];
+  }[];
+  interactions: {
+    player: string;
+    target: string;
+    healing: number;
+    damage: number;
+    finalBlow: boolean;
+    elimination: boolean;
+  }[];
+};
+
+type GameStateExtractor = (slice: GameStateTimeSlice) => {
+  [key: string]: number;
+};
+
 type MetricComponent = ({data}: {data: MetricData}) => JSX.Element;
 
 export {
@@ -283,4 +311,6 @@ export {
   ReportMetricGroup,
   ReportControlType,
   ReportComponentStyle,
+  GameStateTimeSlice,
+  GameStateExtractor,
 };

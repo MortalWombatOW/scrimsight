@@ -134,6 +134,28 @@ const extractorMap: {[key: string]: DataExtractor} = {
     }
     return data;
   },
+  [MetricValue[MetricValue.fileTime]]: (baseData: BaseData) => {
+    const data: Data = [];
+    baseData.maps.forEach((map) => {
+      const {mapId, fileName, timestamp} = map;
+      data.push({
+        mapId: mapId,
+        fileTime: timestamp,
+      });
+    });
+    return data;
+  },
+  [MetricGroup[MetricGroup.map]]: (baseData: BaseData) => {
+    const data: Data = [];
+    baseData.maps.forEach((map) => {
+      const {mapId, fileName} = map;
+      data.push({
+        mapId: mapId,
+        fileName: fileName,
+      });
+    });
+    return data;
+  },
 };
 
 const groupJoinFieldMap: {[key: string]: string} = {
@@ -155,10 +177,7 @@ const join = (data1: Data, data2: Data, on: string) => {
       }
     });
   });
-  console.log(data);
-  console.log(on);
-  console.log(data1);
-  console.log(data2);
+  console.log('Joining', data1, data2, on, data);
 
   return data;
 };

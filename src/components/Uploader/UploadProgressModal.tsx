@@ -44,6 +44,9 @@ const UploadProgressModal = ({
           variant="determinate"
           value={percent < 0 ? 100 : percent}
           size={32}
+          style={{
+            padding: '4px',
+          }}
           color={
             percent === 100 ? 'success' : percent < 0 ? 'error' : 'primary'
           }
@@ -60,7 +63,10 @@ const UploadProgressModal = ({
           {percent === 100 ? (
             <CheckIcon color="success" />
           ) : percent < 0 ? (
-            <CloseIcon color="error" />
+            <CloseIcon
+              color="error"
+              // set width and height to 32px to match the CircularProgress
+            />
           ) : percent === undefined ? (
             <HourglassEmptyIcon color="primary" />
           ) : null}

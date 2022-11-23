@@ -84,6 +84,13 @@ const SettingsPage = () => {
         }
       : undefined;
 
+  const clearAllData = () => {
+    // clear indexedDB
+    indexedDB.deleteDatabase('scrimsight');
+    // reload page
+    window.location.reload();
+  };
+
   return (
     <div>
       <Header
@@ -153,6 +160,9 @@ const SettingsPage = () => {
           </Typography>
           <Button variant="contained" onClick={loadExampleData}>
             Load example data
+          </Button>
+          <Button variant="contained" onClick={clearAllData}>
+            Clear all data
           </Button>
         </div>
       </div>

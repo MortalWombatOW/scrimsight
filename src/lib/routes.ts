@@ -3,6 +3,7 @@ import PlayerPage from '../pages/PlayerPage/PlayerPage';
 import ReportPage from '../pages/ReportPage/ReportPage';
 import SettingsPage from '../pages/Settings/SettingsPage';
 import UploadPage from '../pages/Uploads/UploadPage';
+import MapList from '../pages/Map/MapList';
 
 interface Route {
   path: string;
@@ -27,9 +28,14 @@ const routes: Route[] = [
     name: 'Reports',
   },
   {
-    path: '/uploads',
+    path: '/maps',
+    component: MapList,
+    name: 'Maps',
+  },
+  {
+    path: '/data',
     component: UploadPage,
-    name: 'Uploads',
+    name: 'Add Data',
   },
   {
     path: '/settings',

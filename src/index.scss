@@ -464,6 +464,8 @@ div.tablecontrols>* {
   & .header {
     font-weight: bold;
     color: $mid;
+    background-color: white;
+    border: none;
     padding-bottom: 3px;
     margin-right: 30px;
   }
