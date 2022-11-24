@@ -369,6 +369,13 @@ const heroToRole = {
   Zenyatta: 'support',
 };
 
+export const heroToRoleTable = Object.entries(heroToRole).map(
+  ([hero, role]) => ({
+    hero,
+    role,
+  }),
+);
+
 export const getRoleFromHero = (hero: string): string => {
   return heroToRole[hero] || 'new hero alert??';
 };

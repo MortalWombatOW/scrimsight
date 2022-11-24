@@ -5,7 +5,8 @@ import {cartesian} from '../cartesian';
 import {capitalize, listToNaturalLanguage} from '../string';
 import {BaseData, Metric, MetricGroup, MetricValue} from './types';
 
-export type Data = {[key: string]: string | number}[];
+export type Data = DataRow[];
+export type DataRow = {[key: string]: string | number};
 
 export type DataExtractor = (baseData: BaseData) => Data;
 
