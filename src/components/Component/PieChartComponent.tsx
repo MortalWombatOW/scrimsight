@@ -23,24 +23,24 @@ const renderCustomizedLabel = ({
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
-  // console.log('percent', percent);
-  // if (percent < 0.02) {
-  //   return null;
-  // }
-  // if (percent < 0.05 && index % 2 === 0) {
-  //   return null;
-  // }
 
+  const midAngleProjectionX = cx + radius * Math.cos(-midAngle * RADIAN);
+  const midAngleProjectionY = cy + radius * Math.sin(-midAngle * RADIAN);
   return (
     <text
-      x={x + 10}
-      y={y + 10}
       fill="white"
+      // stroke="grey"
+      x={midAngleProjectionX}
+      y={midAngleProjectionY}
       // textAnchor={x > cx ? 'start' : 'end'}
-      dominantBaseline="central"
+      textAnchor="middle"
+      dominantBaseline="middle"
+      textRendering="optimizeLegibility"
       style={{
         // let mouse interactions pass through
         pointerEvents: 'none',
+        fontSize: '0.8em',
+        // boxShadow: '0 0 5px 5px black',
       }}>
       {`${(percent * 100).toFixed(0)}%`}
     </text>
@@ -72,7 +72,7 @@ const PieChartComponent = ({
 
   const CustomTooltip = ({active, payload, label}) => {
     if (active && payload && payload.length) {
-      console.log('payload', payload);
+      // console.log('payload', payload);
       return (
         <div className="tooltip">
           <p className="label">{formatFn(payload[0].payload.payload)}</p>
@@ -187,12 +187,10 @@ const PieChartComponent = ({
               data={data}
               cx="50%"
               cy="50%"
-              innerRadius={width / 12}
-              outerRadius={width / 6}
+              innerRadius={width / 7}
+              outerRadius={width / 3}
               dataKey={dataKey}
-              // label
               label={renderCustomizedLabel}
-              // label={(}
               onMouseEnter={(data, index) => setActiveIndex(index)}
               labelLine={false}>
               {data.map((entry, index) => (

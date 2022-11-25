@@ -1,3 +1,22 @@
 .Playerpage-container { 
-    padding: 20px
+    padding: 20px;
+    // overflow: hidden;
+}
+
+.Playerpage-right { 
+    // right side of the page
+    border: 1px solid #ccc;
+    float: right;
+    // resize: horizontal;
+    // overflow : auto;
+    &.expanded {
+        width: 80%;
+    }
+}
+
+.Playerpage-left { 
+    // left side of the page
+    float: left;
+    // width: 300px;
+    width: 100%;
 }

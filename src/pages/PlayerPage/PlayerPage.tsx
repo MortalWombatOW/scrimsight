@@ -18,9 +18,10 @@ import useQuery from '../../hooks/useQueries';
 import alasql from 'alasql';
 import './PlayerPage.scss';
 import PlayerDetails from './PlayerDetails';
+import {Collapse} from '@mui/material';
+import useQueries from '../../hooks/useQueries';
 
 const PlayerPage = () => {
-  const refresh = () => {};
   // const [totals, running, refresh] = useQuery(
   //   `
   //   select player, \`target\`,
@@ -53,46 +54,38 @@ const PlayerPage = () => {
 
   // console.log('heroData', heroData);
 
-  const [playerInfo, setPlayerInfo] = useState<
-    {
-      [key: string]: string | number;
-    }[]
-  >([]);
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
 
-  const [playerInfo2, setPlayerInfo2] = useState<
+  const [results, refresh] = useQueries([
     {
-      [key: string]: string | number;
-    }[]
-  >([]);
-
-  const [joined, setJoined] = useState<
+      query: `
+    select player, \`target\`,
+    sum(CASE WHEN type = "damage" THEN amount ELSE 0 END) as damage,
+    sum(CASE WHEN type = "healing" THEN amount ELSE 0 END) as healing,
+    sum(CASE WHEN type = "elimination" THEN 1 ELSE 0 END) as eliminations,
+    sum(CASE WHEN type = "final blow" THEN 1 ELSE 0 END) as final_blows
+    from player_interaction
+    group by player_interaction.player,  player_interaction.\`target\` order by damage desc
+    `,
+      name: 'interactions',
+    },
     {
-      [key: string]: string | number;
-    }[]
-  >([]);
-
-  // useEffect(() => {
-  //   alasql
-  //     .promise(
-  //       `
-  //   select
-  //    a.player,
-  //     sum(a.damage) as damage,
-  //     sum(a.healing) as healing,
-  //     sum(a.eliminations) as eliminations,
-  //     sum(a.final_blows) as final_blows,
-  //     sum(b.damage) as damage_taken,
-  //     sum(b.healing) as healing_taken,
-  //     sum(b.final_blows) as deaths,
-  //     sum(a.final_blows) / sum(b.final_blows) as kdr
-  //    from ? as a join ? as b on a.player = b.\`target\` group by a.player order by a.player
-  //   `,
-  //       [totals, totals],
-  //     )
-  //     .then((res) => {
-  //       setPlayerInfo(res);
-  //     });
-  // }, [totals]);
+      name: 'totals',
+      query: `select
+     a.player,
+      sum(a.damage) as damage,
+      sum(a.healing) as healing,
+      sum(a.eliminations) as eliminations,
+      sum(a.final_blows) as final_blows,
+      sum(b.damage) as damage_taken,
+      sum(b.healing) as healing_taken,
+      sum(b.final_blows) as deaths,
+      sum(a.final_blows) / sum(b.final_blows) as kdr
+     from ? as a join ? as b on a.player = b.\`target\` group by a.player order by a.player
+    `,
+      deps: ['interactions', 'interactions'],
+    },
+  ]);
 
   // useEffect(() => {
   //   alasql
@@ -123,11 +116,11 @@ const PlayerPage = () => {
   //       setJoined(res);
   //     });
   // }, [playerInfo, playerInfo2]);
-
+  const [expanded, setExpanded] = useState(false);
   const columnDef =
-    joined.length == 0
+    (results['totals'] || []).length === 0
       ? []
-      : Object.keys(joined[0]).map((k) => ({
+      : Object.keys(results['totals'][0]).map((k) => ({
           name: k,
           selector: (row) =>
             typeof row[k] == 'number' && row[k] % 1 != 0
@@ -145,14 +138,22 @@ const PlayerPage = () => {
         setFilters={(filters) => {}}
       />
       <div className="Playerpage-container">
-        <DataTable
-          columns={columnDef}
-          data={joined}
-          pointerOnHover
-          highlightOnHover
-          progressPending={false}
-        />
-        <PlayerDetails />
+        <div className="Playerpage-left">
+          <DataTable
+            columns={columnDef}
+            data={results['totals'] || []}
+            pointerOnHover
+            highlightOnHover
+            progressPending={results['totals'] == undefined}
+            onRowClicked={(row) => {
+              setExpanded(!expanded);
+              setSelectedPlayer(row.player);
+            }}
+          />
+        </div>
+        <div className={`Playerpage-right {expanded ? 'expanded' : ''}`}>
+          <PlayerDetails player={selectedPlayer} />
+        </div>
       </div>
     </div>
   );

@@ -1,12 +1,12 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {ResponsiveContainer, PieChart, Pie} from 'recharts';
 import PieChartComponent from '../../components/Component/PieChartComponent';
 import useQueries from '../../hooks/useQueries';
 import {heroToRoleTable} from '../../lib/data/data';
+import ResultCache from '../../lib/data/ResultCache';
 
-const PlayerDetails = () => {
+const PlayerDetails = ({player}: {player: string | null}) => {
   const [open, setOpen] = useState(false);
-  const [player, setPlayer] = useState('Electric');
   const [playerInfo, setPlayerInfo] = useState<
     {
       [key: string]: string | number;
@@ -45,31 +45,33 @@ const PlayerDetails = () => {
         'player_heroes_per_timestamp_per_map',
       ],
     },
+    {
+      name: 'per_10min',
+      query: `select sum(case when type = 'damage' and player='${player}' then amount else 0 end)/sum(case when type = 'damage' and player='${player}' then 1 else 0 end)*10 as damage, sum(case when type = 'healing' and player='${player}' then amount else 0 end)/sum(case when type = 'healing' and player='${player}' then 1 else 0 end)*10 as healing, sum(case when type = 'elimination' and player='${player}' then 1 else 0 end)/sum(case when type = 'elimination' and player='${player}' then 1 else 0 end)*10 as eliminations, sum(case when type = 'final blow' and player='${player}' then 1 else 0 end)/sum(case when type = 'final blow' and player='${player}' then 1 else 0 end)*10 as final_blows, sum(case when type = 'damage' then amount else 0 end)/sum(case when type = 'damage' then 1 else 0 end)*10 as total_damage, sum(case when type = 'healing' then amount else 0 end)/sum(case when type = 'healing' then 1 else 0 end)*10 as total_healing, sum(case when type = 'elimination' then 1 else 0 end)/sum(case when type = 'elimination' then 1 else 0 end)*10 as total_eliminations, sum(case when type = 'final blow' then 1 else 0 end)/sum(case when type = 'final blow' then 1 else 0 end)*10 as total_final_blows from player_interaction`,
+    },
   ]);
+
+  useEffect(() => {
+    console.log('updating player info');
+    Object.keys(results).forEach((key) => {
+      ResultCache.storeKeyValue(key, undefined);
+    });
+    refresh();
+  }, [player]);
 
   const playerRole = useMemo(() => {
     if (results.roles) {
       if (results.roles.length > 1) {
         return 'flex';
       }
+      if (results.roles.length === 0) {
+        return 'none';
+      }
       return results.roles[0].role;
     }
     return 'unknown';
   }, [results.roles]);
 
-  console.log('results', results);
-
-  // const [interactionOut, running, refresh] = useQuery(
-  //   `
-  //   select mapId, \`target\` as player,
-  //   sum(CASE WHEN type = "damage" THEN amount ELSE 0 END) as damage,
-  //   sum(CASE WHEN type = "healing" THEN amount ELSE 0 END) as healing,
-  //   sum(CASE WHEN type = "elimination" THEN 1 ELSE 0 END) as eliminations,
-  //   sum(CASE WHEN type = "final blow" THEN 1 ELSE 0 END) as final_blows
-  //   from player_interaction
-  //   where player = '${player}'
-  //   group by \`target\` order by damage desc
-  //   `,
   // );
   // const [interactionIn, running2, refresh2] = useQuery(
   //   `
@@ -91,34 +93,51 @@ const PlayerDetails = () => {
       Role: {playerRole}
       <PieChartComponent
         data={results['roles']}
-        height={400}
-        width={400}
+        height={200}
+        width={200}
         title={'Role Breakdown'}
         dataKey={'role_time'}
         colorKey={'role'}
         formatFn={(d) =>
-          `${d.role_time.toLocaleString()} (${(
+          `${d.role_time.toLocaleString()} hours (${(
             ((d.role_time as number) / (d.total_time as number)) *
             100
-          ).toFixed(2)}%) hours played on ${d.role}`
+          ).toFixed(2)}%)  played on ${d.role}`
         }
         deps={[]}
       />
       <PieChartComponent
         data={results['hero_damage_total']}
-        height={400}
-        width={400}
+        height={200}
+        width={200}
         title="Role Damage"
         dataKey="damage"
         colorKey="role"
         formatFn={(d) =>
-          `${d.damage.toLocaleString()} (${(
+          `${d.damage.toLocaleString()} damage (${(
             ((d.damage as number) / (d.total_damage as number)) *
             100
-          ).toFixed(2)}%) damage done to ${d.role} players`
+          ).toFixed(2)}%) done to ${d.role} players`
         }
         deps={[]}
       />
+      {/* <MetricCard
+        value={`${results[
+          'per_10min'
+        ][0].damage.toLocaleString()} damage/10min`}
+        trend={{
+          slope: 1,
+          description: 'Compared to the average player',
+          value: `${(
+            ((results['per_10min'][0].damage as number) /
+              (results['per_10min'][0].total_damage as number)) *
+            100
+          ).toLocaleString()}%`,
+        }}
+        title="Damage"
+        fetching={results['per_10min'] === undefined}
+        error={null}
+      /> */}
     </div>
   );
 };

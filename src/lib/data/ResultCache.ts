@@ -1,7 +1,7 @@
 import {Data} from './metricsv2';
 
 export default class ResultCache {
-  static data: {[key: string]: Data} = {};
+  static data: {[key: string]: Data | string} = {};
 
   static storeKeyValue(key, value) {
     console.log('storing', key);
@@ -13,6 +13,10 @@ export default class ResultCache {
   }
 
   static notDone(key) {
-    return this.data[key] === undefined;
+    return this.data[key] === undefined || this.data[key] === 'running';
+  }
+
+  static clear() {
+    this.data = {};
   }
 }
