@@ -14,7 +14,11 @@ type Query = {
 
 const useQueries = (
   queries: Query[],
-): [{[key: string]: {[key: string]: string | number}[]}, () => void] => {
+): [
+  {[key: string]: {[key: string]: string | number}[]},
+  number,
+  () => void,
+] => {
   const [computeTick, setComputeTick] = useState<number>(0);
 
   const nextComputeStep = () => {
@@ -109,7 +113,7 @@ const useQueries = (
       return acc;
     }, {} as {[key: string]: {[key: string]: string | number}[]});
 
-  return [results, nextComputeStep];
+  return [results, computeTick, nextComputeStep];
 };
 
 export default useQueries;

@@ -18,7 +18,7 @@ import useQuery from '../../hooks/useQueries';
 import alasql from 'alasql';
 import './PlayerPage.scss';
 import PlayerDetails from './PlayerDetails';
-import {Box, Collapse, SwipeableDrawer} from '@mui/material';
+import {Box, Collapse, Drawer, SwipeableDrawer} from '@mui/material';
 import useQueries from '../../hooks/useQueries';
 
 const PlayerPage = () => {
@@ -56,7 +56,7 @@ const PlayerPage = () => {
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
 
-  const [results, refresh] = useQueries([
+  const [results, tick, refresh] = useQueries([
     {
       query: `
     select player, \`target\`,
@@ -141,30 +141,41 @@ const PlayerPage = () => {
         setFilters={(filters) => {}}
       />
       <div className="Playerpage-container">
-        <Box sx={{display: 'flex'}}>
-          <div>
-            <DataTable
-              columns={columnDef}
-              data={results['totals'] || []}
-              pointerOnHover
-              highlightOnHover
-              progressPending={results['totals'] == undefined}
-              onRowClicked={(row) => {
-                setExpanded(true);
-                setSelectedPlayer(row.player);
-              }}
-            />
-          </div>
-          <SwipeableDrawer
-            disableBackdropTransition={!iOS}
-            disableDiscovery={iOS}
+        {/* <Box sx={{display: 'flex'}}> */}
+        <div className={`Playerpage-right ${expanded ? 'expanded' : ''}`}>
+          {selectedPlayer && <PlayerDetails player={selectedPlayer} />}
+        </div>
+        <div className="Playerpage-left">
+          <DataTable
+            columns={columnDef}
+            data={results['totals'] || []}
+            pointerOnHover
+            highlightOnHover
+            progressPending={results['totals'] == undefined}
+            onRowClicked={(row) => {
+              setExpanded(true);
+              setSelectedPlayer(row.player);
+            }}
+          />
+        </div>
+        {/* <Drawer
+            // disableBackdropTransition={!iOS}
+            // disableDiscovery={iOS}
+            style={{
+              position: 'inherit',
+              right: undefined,
+              left: undefined,
+              top: undefined,
+              bottom: undefined,
+            }}
+            ModalProps={{
+              hideBackdrop: true,
+            }}
+            hideBackdrop
             anchor="right"
             open={expanded}
-            onOpen={() => setExpanded(true)}
-            onClose={() => setExpanded(false)}>
-            <PlayerDetails player={selectedPlayer} />
-          </SwipeableDrawer>
-        </Box>
+            onClose={() => setExpanded(false)}></Drawer> */}
+        {/* </Box> */}
       </div>
     </div>
   );

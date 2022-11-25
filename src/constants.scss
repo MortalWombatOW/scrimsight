@@ -5,6 +5,7 @@ $light: #b4b4b4;
 $highlight: #fa9c1d;
 $background: #f3f3f3;
 
+
 $min_width: 500px;
 $col_width: 80%;
 $hpadding: calc((100% - #{$col_width}) / 2);
@@ -103,6 +104,8 @@ $colors: map-merge(
     'color-10': #f55f5f,
     'color-11': #f44b4b,
     'color-12': #f33333,
+    'increase': #286b28,
+    'decrease': #ac1a1a,
   ),
   $colors
 );

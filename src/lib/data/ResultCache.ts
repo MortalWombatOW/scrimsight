@@ -19,4 +19,7 @@ export default class ResultCache {
   static clear() {
     this.data = {};
   }
+
+  // static cancelRunningQueries() {
+  //     // set all running queries to ''
 }

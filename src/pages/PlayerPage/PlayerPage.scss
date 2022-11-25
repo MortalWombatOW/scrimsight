@@ -5,18 +5,19 @@
 
 .Playerpage-right { 
     // right side of the page
-    border: 1px solid #ccc;
+    
     float: right;
     // resize: horizontal;
-    // overflow : auto;
+    overflow : hidden;
+    
     &.expanded {
         width: 80%;
+        border: 1px solid #ccc;
     }
+    width: 0;
 }
 
 .Playerpage-left { 
-    // left side of the page
-    float: left;
-    // width: 300px;
-    width: 100%;
+    width: auto;
+    overflow: hidden;
 }
