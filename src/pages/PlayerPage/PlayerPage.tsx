@@ -18,7 +18,7 @@ import useQuery from '../../hooks/useQueries';
 import alasql from 'alasql';
 import './PlayerPage.scss';
 import PlayerDetails from './PlayerDetails';
-import {Collapse} from '@mui/material';
+import {Box, Collapse, SwipeableDrawer} from '@mui/material';
 import useQueries from '../../hooks/useQueries';
 
 const PlayerPage = () => {
@@ -128,6 +128,9 @@ const PlayerPage = () => {
               : row[k],
           sortable: true,
         }));
+  const iOS =
+    typeof navigator !== 'undefined' &&
+    /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   return (
     <div>
@@ -138,22 +141,30 @@ const PlayerPage = () => {
         setFilters={(filters) => {}}
       />
       <div className="Playerpage-container">
-        <div className="Playerpage-left">
-          <DataTable
-            columns={columnDef}
-            data={results['totals'] || []}
-            pointerOnHover
-            highlightOnHover
-            progressPending={results['totals'] == undefined}
-            onRowClicked={(row) => {
-              setExpanded(!expanded);
-              setSelectedPlayer(row.player);
-            }}
-          />
-        </div>
-        <div className={`Playerpage-right {expanded ? 'expanded' : ''}`}>
-          <PlayerDetails player={selectedPlayer} />
-        </div>
+        <Box sx={{display: 'flex'}}>
+          <div>
+            <DataTable
+              columns={columnDef}
+              data={results['totals'] || []}
+              pointerOnHover
+              highlightOnHover
+              progressPending={results['totals'] == undefined}
+              onRowClicked={(row) => {
+                setExpanded(true);
+                setSelectedPlayer(row.player);
+              }}
+            />
+          </div>
+          <SwipeableDrawer
+            disableBackdropTransition={!iOS}
+            disableDiscovery={iOS}
+            anchor="right"
+            open={expanded}
+            onOpen={() => setExpanded(true)}
+            onClose={() => setExpanded(false)}>
+            <PlayerDetails player={selectedPlayer} />
+          </SwipeableDrawer>
+        </Box>
       </div>
     </div>
   );
