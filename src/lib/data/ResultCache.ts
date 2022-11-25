@@ -11,4 +11,8 @@ export default class ResultCache {
   static getValueForKey(key) {
     return this.data[key];
   }
+
+  static notDone(key) {
+    return this.data[key] === undefined;
+  }
 }

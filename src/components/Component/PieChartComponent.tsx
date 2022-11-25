@@ -1,8 +1,11 @@
-import {CircularProgress} from '@mui/material';
+import {CircularProgress, SvgIcon} from '@mui/material';
 import React, {useState} from 'react';
-import {Legend, Pie, PieChart, Sector, Tooltip} from 'recharts';
+import {Cell, Legend, Pie, PieChart, Sector, Tooltip} from 'recharts';
+import {groupColorClass} from '../../lib/color';
 import {Data, DataRow} from '../../lib/data/metricsv2';
+import ResultCache from '../../lib/data/ResultCache';
 import {Metric} from '../../lib/data/types';
+import {DamageIcon} from '../Icon/Icon';
 import './Charts.scss';
 
 const RADIAN = Math.PI / 180;
@@ -20,26 +23,26 @@ const renderCustomizedLabel = ({
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
-  console.log('percent', percent);
-  if (percent < 0.02) {
-    return null;
-  }
-  if (percent < 0.05 && index % 2 === 0) {
-    return null;
-  }
+  // console.log('percent', percent);
+  // if (percent < 0.02) {
+  //   return null;
+  // }
+  // if (percent < 0.05 && index % 2 === 0) {
+  //   return null;
+  // }
 
   return (
     <text
-      x={x}
-      y={y}
-      fill="#363636"
-      textAnchor={x > cx ? 'start' : 'end'}
+      x={x + 10}
+      y={y + 10}
+      fill="white"
+      // textAnchor={x > cx ? 'start' : 'end'}
       dominantBaseline="central"
       style={{
         // let mouse interactions pass through
         pointerEvents: 'none',
       }}>
-      {`${value.toLocaleString()}`}
+      {`${(percent * 100).toFixed(0)}%`}
     </text>
   );
 };
@@ -51,6 +54,8 @@ const PieChartComponent = ({
   title,
   formatFn,
   dataKey,
+  colorKey,
+  deps,
 }: {
   height: number;
   width: number;
@@ -58,9 +63,25 @@ const PieChartComponent = ({
   title: string;
   formatFn: (value: DataRow) => string;
   dataKey: string;
+  colorKey: string;
+  deps: string[];
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const loading = data === undefined;
+  const loading =
+    data === undefined || deps.some((dep) => ResultCache.notDone(dep));
+
+  const CustomTooltip = ({active, payload, label}) => {
+    if (active && payload && payload.length) {
+      console.log('payload', payload);
+      return (
+        <div className="tooltip">
+          <p className="label">{formatFn(payload[0].payload.payload)}</p>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   const renderActiveShape = (props) => {
     const RADIAN = Math.PI / 180;
@@ -150,27 +171,38 @@ const PieChartComponent = ({
             <CircularProgress />
           </div>
         ) : (
-          <PieChart width={width} height={height}>
+          <PieChart
+            width={width}
+            height={height}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}>
             <Pie
               activeIndex={activeIndex}
-              activeShape={renderActiveShape}
+              // activeShape={renderActiveShape}
+              // activeShape
               data={data}
               cx="50%"
               cy="50%"
               innerRadius={width / 12}
               outerRadius={width / 6}
-              fill="#8884d8"
               dataKey={dataKey}
               // label
-              // label={renderCustomizedLabel}
+              label={renderCustomizedLabel}
+              // label={(}
               onMouseEnter={(data, index) => setActiveIndex(index)}
-              labelLine={false}
-            />
-            <Tooltip />
-            <Legend
-            // onMouseEnter={this.handleMouseEnter}
-            // onMouseLeave={this.handleMouseLeave}
-            />
+              labelLine={false}>
+              {data.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  className={groupColorClass(entry[colorKey] as string)}
+                />
+              ))}
+            </Pie>
+            <Tooltip content={CustomTooltip} />
           </PieChart>
         )}
       </div>
