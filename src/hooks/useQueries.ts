@@ -14,6 +14,7 @@ type Query = {
 
 const useQueries = (
   queries: Query[],
+  deps: any[],
 ): [
   {[key: string]: {[key: string]: string | number}[]},
   number,
@@ -24,6 +25,11 @@ const useQueries = (
   const nextComputeStep = () => {
     setComputeTick((computeTick) => computeTick + 1);
   };
+
+  useEffect(() => {
+    console.log('useQueries deps changed', deps);
+    nextComputeStep();
+  }, deps);
 
   // Build a graph of dependencies between queries
   const buildGraphFn = (queries: Query[]) => {
@@ -106,6 +112,7 @@ const useQueries = (
     queries.filter(shouldRunQuery).forEach(runQuery);
   }, [computeTick]);
 
+  console.log('recomputing queries');
   const results = queries
     .filter((query) => !ResultCache.notDone(query.name))
     .reduce((acc, query) => {

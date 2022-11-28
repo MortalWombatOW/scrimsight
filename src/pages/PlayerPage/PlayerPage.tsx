@@ -56,9 +56,10 @@ const PlayerPage = () => {
 
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
 
-  const [results, tick, refresh] = useQueries([
-    {
-      query: `
+  const [results, tick, refresh] = useQueries(
+    [
+      {
+        query: `
     select player, \`target\`,
     sum(CASE WHEN type = "damage" THEN amount ELSE 0 END) as damage,
     sum(CASE WHEN type = "healing" THEN amount ELSE 0 END) as healing,
@@ -67,11 +68,11 @@ const PlayerPage = () => {
     from player_interaction
     group by player_interaction.player,  player_interaction.\`target\` order by damage desc
     `,
-      name: 'interactions',
-    },
-    {
-      name: 'totals',
-      query: `select
+        name: 'interactions',
+      },
+      {
+        name: 'totals',
+        query: `select
      a.player,
       sum(a.damage) as damage,
       sum(a.healing) as healing,
@@ -83,9 +84,11 @@ const PlayerPage = () => {
       sum(a.final_blows) / sum(b.final_blows) as kdr
      from ? as a join ? as b on a.player = b.\`target\` group by a.player order by a.player
     `,
-      deps: ['interactions', 'interactions'],
-    },
-  ]);
+        deps: ['interactions', 'interactions'],
+      },
+    ],
+    [],
+  );
 
   // useEffect(() => {
   //   alasql
