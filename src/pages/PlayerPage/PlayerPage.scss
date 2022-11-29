@@ -21,3 +21,27 @@
     width: auto;
     overflow: hidden;
 }
+
+.PlayerDetailsHeader {
+    border-top : 1px solid #ccc;
+    border-bottom : 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    padding-left: 30px;
+
+    .PlayerDetailsHeaderImage {
+       box-shadow: 0 3px 3px rgba(0,0,0,0.7);
+      
+    }
+
+    & > .player {
+         margin-right: 10px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    & > .role {
+        font-size: 14px;
+        color: #666;
+    }
+}

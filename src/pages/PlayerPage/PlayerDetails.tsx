@@ -1,12 +1,21 @@
-import {Box, Typography} from '@mui/material';
+import {Box, IconButton, Typography} from '@mui/material';
 import React, {useEffect, useMemo, useState} from 'react';
+import DataTable from 'react-data-table-component';
 import {ResponsiveContainer, PieChart, Pie} from 'recharts';
 import MetricCard from '../../components/Card/MetricCard';
 import PieChartComponent from '../../components/Component/PieChartComponent';
 import useQueries from '../../hooks/useQueries';
-import {heroToRoleTable} from '../../lib/data/data';
+import {getHeroImage, heroToRoleTable} from '../../lib/data/data';
+import {DataRow} from '../../lib/data/metricsv2';
 import ResultCache from '../../lib/data/ResultCache';
-
+import CloseIcon from '@mui/icons-material/Close';
+import IconAndText from '../../components/Common/IconAndText';
+import {
+  DamageIcon,
+  getIcon,
+  SupportIcon,
+  TankIcon,
+} from '../../components/Icon/Icon';
 const sum = (
   agg: string,
   type: string,
@@ -17,7 +26,13 @@ const sum = (
     column || type
   }`;
 
-const PlayerDetails = ({player}: {player: string | null}) => {
+const PlayerDetails = ({
+  player,
+  setPlayer,
+}: {
+  player: string | null;
+  setPlayer: (player: string | null) => void;
+}) => {
   const [open, setOpen] = useState(false);
   const [playerInfo, setPlayerInfo] = useState<
     {
@@ -92,6 +107,14 @@ const PlayerDetails = ({player}: {player: string | null}) => {
         query: `select sum(map_length.map_length) as map_length from ? as map_length`,
         deps: ['map_length'],
       },
+      {
+        name: 'done_by_' + player,
+        query: `select i.\`target\`, sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from player_interaction as i where i.player = '${player}' group by i.\`target\` order by damage desc`,
+      },
+      {
+        name: 'taken_by_' + player,
+        query: `select i.player,  sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from player_interaction as i where i.\`target\` = '${player}' group by i.player`,
+      },
     ],
     [player],
   );
@@ -108,14 +131,15 @@ const PlayerDetails = ({player}: {player: string | null}) => {
   // }, [player]);
 
   const playerRole = useMemo(() => {
-    if (results.roles) {
-      if (results.roles.length > 1) {
-        return 'flex';
+    const roles = results['roles_' + player];
+    if (roles) {
+      if (roles.length > 1) {
+        return roles.map((r) => r.role).join(', ');
       }
-      if (results.roles.length === 0) {
+      if (roles.length === 0) {
         return 'none';
       }
-      return results['roles_' + player][0].role;
+      return roles[0].role;
     }
     return 'unknown';
   }, [tick]);
@@ -150,15 +174,68 @@ const PlayerDetails = ({player}: {player: string | null}) => {
   const per10 = (attr: string) =>
     results['player_stats_' + player] === undefined ||
     results['playtime_' + player] === undefined
-      ? 0
+      ? undefined
       : ((results['player_stats_' + player][0][attr] as number) /
           (results['playtime_' + player][0].map_length as number)) *
         600;
+  const interactions = results['done_by_' + player];
+  const playerRoleIcon = useMemo(() => {
+    if (playerRole === 'tank') {
+      return <TankIcon />;
+    }
+    if (playerRole === 'damage') {
+      return <DamageIcon />;
+    }
+    if (playerRole === 'support') {
+      return <SupportIcon />;
+    }
+    return <span className="blinkingcursor" />;
+  }, [playerRole]);
+
   return (
     <div className="PlayerDetails">
+      <Box display="flex" alignItems="center">
+        <Box flexGrow={1}>
+          {/* <IconAndText
+            icon={}
+            text={player || '...'}
+          /> */}
+          <Box
+            display="flex"
+            alignItems="center"
+            className="PlayerDetailsHeader">
+            <span className="player">
+              <IconAndText icon={playerRoleIcon} text={player || '...'} />
+            </span>
+            <div>
+              {results['top_heroes_' + player] &&
+                results['top_heroes_' + player].map((row) => (
+                  <img
+                    key={row.hero}
+                    src={getHeroImage(row.hero as string)}
+                    alt={row.hero as string}
+                    style={{
+                      borderRadius: '50%',
+                      width: `40px`,
+                      height: `40px`,
+                      pointerEvents: 'none',
+                    }}
+                    className="PlayerDetailsHeaderImage"
+                  />
+                ))}
+            </div>
+          </Box>
+        </Box>
+        <Box
+          style={{
+            verticalAlign: 'top',
+          }}>
+          <IconButton onClick={() => setPlayer(null)}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </Box>
       <div className="text">
-        <Typography variant="h4">{player}</Typography>
-        <Typography variant="h5">{playerRole}</Typography>
         {/* <Typography variant="h6">
           {per10['damage']} damage per 10 minutes
         </Typography> */}
@@ -172,37 +249,6 @@ const PlayerDetails = ({player}: {player: string | null}) => {
           {per10['final_blows']} final blows per 10 minutes
         </Typography> */}
       </div>
-
-      <PieChartComponent
-        data={results['roles_' + player]}
-        height={200}
-        width={200}
-        title={'Role Breakdown'}
-        dataKey={'role_time'}
-        colorKey={'role'}
-        formatFn={(d) =>
-          `${d.role_time.toLocaleString()} hours (${(
-            ((d.role_time as number) / (d.total_time as number)) *
-            100
-          ).toFixed(2)}%)  played on ${d.role}`
-        }
-        deps={[]}
-      />
-      <PieChartComponent
-        data={results['hero_damage_total_' + player]}
-        height={200}
-        width={200}
-        title="Role Damage"
-        dataKey="damage"
-        colorKey="role"
-        formatFn={(d) =>
-          `${d.damage.toLocaleString()} damage (${(
-            ((d.damage as number) / (d.total_damage as number)) *
-            100
-          ).toFixed(2)}%) done to ${d.role} players`
-        }
-        deps={[]}
-      />
       <Box sx={{display: 'flex'}}>
         <MetricCard
           name="Damage per 10 minutes"
@@ -229,6 +275,49 @@ const PlayerDetails = ({player}: {player: string | null}) => {
           compareText="Average Player"
         />
       </Box>
+      <Box sx={{display: 'flex'}}>
+        <PieChartComponent
+          data={results['roles_' + player]}
+          height={200}
+          width={200}
+          title={'Role Breakdown'}
+          dataKey={'role_time'}
+          colorKey={'role'}
+          formatFn={(d) =>
+            `${d.role_time.toLocaleString()} hours (${(
+              ((d.role_time as number) / (d.total_time as number)) *
+              100
+            ).toFixed(2)}%)  played on ${d.role}`
+          }
+          deps={[]}
+        />
+        <PieChartComponent
+          data={results['hero_damage_total_' + player]}
+          height={200}
+          width={200}
+          title="Role Damage"
+          dataKey="damage"
+          colorKey="role"
+          formatFn={(d) =>
+            `${d.damage.toLocaleString()} damage (${(
+              ((d.damage as number) / (d.total_damage as number)) *
+              100
+            ).toFixed(2)}%) done to ${d.role} players`
+          }
+          deps={[]}
+        />
+      </Box>
+      <DataTable
+        columns={Object.keys((interactions || [[]])[0]).map((key) => ({
+          name: key,
+          selector: (row: DataRow) =>
+            typeof row[key] === 'string'
+              ? row[key]
+              : (row[key] as number).toLocaleString(),
+        }))}
+        data={interactions || []}
+        progressPending={interactions == undefined}
+      />
     </div>
   );
 };

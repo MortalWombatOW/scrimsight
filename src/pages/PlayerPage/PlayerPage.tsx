@@ -119,7 +119,7 @@ const PlayerPage = () => {
   //       setJoined(res);
   //     });
   // }, [playerInfo, playerInfo2]);
-  const [expanded, setExpanded] = useState(false);
+  const expanded = selectedPlayer !== null;
   const columnDef =
     (results['totals'] || []).length === 0
       ? []
@@ -146,7 +146,12 @@ const PlayerPage = () => {
       <div className="Playerpage-container">
         {/* <Box sx={{display: 'flex'}}> */}
         <div className={`Playerpage-right ${expanded ? 'expanded' : ''}`}>
-          {selectedPlayer && <PlayerDetails player={selectedPlayer} />}
+          {selectedPlayer && (
+            <PlayerDetails
+              player={selectedPlayer}
+              setPlayer={setSelectedPlayer}
+            />
+          )}
         </div>
         <div className="Playerpage-left">
           <DataTable
@@ -156,7 +161,6 @@ const PlayerPage = () => {
             highlightOnHover
             progressPending={results['totals'] == undefined}
             onRowClicked={(row) => {
-              setExpanded(true);
               setSelectedPlayer(row.player);
             }}
           />
