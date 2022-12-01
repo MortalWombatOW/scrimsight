@@ -1,5 +1,6 @@
 import React from 'react';
 import {Box, Card, Typography} from '@mui/material';
+import {PulseLoader} from 'react-spinners';
 import './Card.scss';
 
 const percentDiff = (a: number, b: number) => {
@@ -32,11 +33,13 @@ const MetricCard = ({
         component="div"
         sx={{display: 'inline-block'}}
         className={value === undefined ? 'blinkingcursor' : 'typingtext'}>
-        {value === undefined
-          ? ''
-          : value > 1000
-          ? `${(value / 1000).toFixed(2)}k`
-          : value.toFixed(2)}
+        {value === undefined ? (
+          <PulseLoader color="#5e5e5e" size={4} />
+        ) : value > 1000 ? (
+          `${(value / 1000).toFixed(2)}k`
+        ) : (
+          value.toFixed(2)
+        )}
       </Typography>
       <Typography variant="body2">
         <span

@@ -84,6 +84,11 @@ const useQueries = (
             nextComputeStep();
           })
           .then(() => {
+            if (timeQueries) {
+              console.log(
+                `query ${query.name} took ${Date.now() - timestampStart}ms`,
+              );
+            }
             buildGraph[query.name].forEach((dep) => {
               if (shouldRunQuery(dep)) {
                 console.log('running', dep.name);
@@ -92,11 +97,6 @@ const useQueries = (
                 console.log('not running', dep.name);
               }
             });
-            if (timeQueries) {
-              console.log(
-                `query ${query.name} took ${Date.now() - timestampStart}ms`,
-              );
-            }
           }),
     );
   };

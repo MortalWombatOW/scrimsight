@@ -28,10 +28,12 @@ $value in $colors {
 
 @keyframes load-anim {
     0% {
-        transform: translateX(0);
+        transform: scaleX(0);
+        transform-origin: bottom left;
     }
     100% {
-       transform: translateX(-50%);
+       transform: scaleX(1);
+       transform-origin: bottom left;
     }
 }
 
@@ -41,15 +43,28 @@ $value in $colors {
   margin: 0 auto; /* Gives that scrolling effect as the typing happens */
   letter-spacing: .15em; /* Adjust as needed */
   animation: 
-    typing 3.5s steps(20, end),  blink-caret .75s step-end infinite;
+    typing 3.5s steps(100, end),  blink-caret .75s step-end infinite;
 }
 
-.blinkingcursor {
-  border-right: 5px solid black; /* The typwriter cursor */
-  height: 10px;
-  margin-left: 10px;
-  animation: blink-caret .75s step-end infinite;
-}
+// .blinkingcursor {
+//   // border-right: 5px solid black; /* The typwriter cursor */
+//   display: inline-block;
+//   margin-left: 10px;
+//   // animation: blink-caret .75s step-end infinite;
+
+//   &::after {
+//     content: 'test';
+//     position: absolute;
+//     width: 100%;
+//     transform: scaleX(0);
+//     height: 2px;
+//     bottom: 0;
+//     left: 0;
+//     background-color: #0087ca;
+//     // transform-origin: bottom right;
+//     animation: load-anim 1s infinite;
+//   }
+// }
 
 /* The typing effect */
 @keyframes typing {
@@ -58,10 +73,10 @@ $value in $colors {
 }
 
 /* The typewriter cursor effect */
-@keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: black; }
-}
+// @keyframes blink-caret {
+//   from, to { border-color: transparent }
+//   50% { border-color: black; }
+// }
 
 // .ana {
 //   background-color: $ana;
