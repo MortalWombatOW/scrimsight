@@ -11,6 +11,8 @@ import {Location} from 'history';
 import Map from './pages/Map/Map';
 import ReportPage from './pages/ReportPage/ReportPage';
 // import ReportBuilderPage from './pages/ReportBuilderPage/ReportBuilderPage';
+import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
+import {parse, stringify} from 'query-string';
 import {QueryParamProvider} from 'use-query-params';
 import {createTheme, ThemeProvider} from '@mui/material';
 import PlayerPage from './pages/PlayerPage/PlayerPage';
@@ -54,7 +56,7 @@ const App = () => {
       {/* <DebugQueries /> */}
       <ThemeProvider theme={theme}>
         <BrowserRouter basename="/">
-          <QueryParamProvider adapter={RouteAdapter}>
+          <QueryParamProvider adapter={ReactRouter6Adapter}>
             <Routes>
               {routes.map((route) => (
                 <Route

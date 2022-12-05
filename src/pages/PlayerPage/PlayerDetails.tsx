@@ -1,4 +1,4 @@
-import {Box, IconButton, Typography} from '@mui/material';
+import {Box, CircularProgress, IconButton, Typography} from '@mui/material';
 import React, {useEffect, useMemo, useState} from 'react';
 import DataTable from 'react-data-table-component';
 import {ResponsiveContainer, PieChart, Pie} from 'recharts';
@@ -16,6 +16,9 @@ import {
   TankIcon,
 } from '../../components/Icon/Icon';
 import {DataRow} from '../../lib/data/types';
+import QueryCard from '../../components/Card/QueryCard';
+import {format, formatTime, safeDivide} from '../../lib/data/metricsv3';
+import QueryText from '../../components/Card/QueryText';
 const sum = (
   agg: string,
   type: string,
@@ -56,26 +59,18 @@ const PlayerDetails = ({
         deps: ['player_status'],
       },
       // {
-      //   name: 'taken_by_map_timestamp_' + player,
-      //   query: `select mapId, timestamp, player, sum(case when type = 'damage' then amount else 0 end) as damage, sum(case when type = 'healing' then amount else 0 end) as healing, sum(case when type = 'elimination' then 1 else 0 end) as eliminations, sum(case when type = 'final blow' then 1 else 0 end) as final_blows from player_interaction where \`target\` = '${player}' group by mapId, timestamp, player`,
+      //   name: 'player_heroes_per_timestamp_per_map',
+      //   query: `select mapId, timestamp, player, hero, hero_roles.role from ? as player_status join ? as hero_roles on player_status.hero = hero_roles.hero`,
+      //   deps: ['player_status', heroToRoleTable],
       // },
-      {
-        name: 'player_heroes_per_timestamp_per_map',
-        query: `select mapId, timestamp, player, hero, hero_roles.role from ? as player_status join ? as hero_roles on player_status.hero = hero_roles.hero`,
-        deps: ['player_status', heroToRoleTable],
-      },
-      {
-        name: 'hero_damage_total_' + player,
-        query: `select player_heroes_per_timestamp_per_map.role, sum(damage_dealt.damage) as damage, (select sum(damage) from ?) as total_damage from ? as damage_dealt join ? as player_heroes_per_timestamp_per_map on damage_dealt.mapId = player_heroes_per_timestamp_per_map.mapId and damage_dealt.timestamp = player_heroes_per_timestamp_per_map.timestamp and damage_dealt.\`target\` = player_heroes_per_timestamp_per_map.player group by player_heroes_per_timestamp_per_map.role order by damage desc`,
-        deps: [
-          'damage_dealt_' + player,
-          'damage_dealt_' + player,
-          'player_heroes_per_timestamp_per_map',
-        ],
-      },
       // {
-      //   name: 'per_10min_' + player,
-      //   query: `select sum(case when type = 'damage' and player='${player}' then amount else 0 end)/sum(case when type = 'damage' and player='${player}' then 1 else 0 end)*600 as damage, sum(case when type = 'healing' and player='${player}' then amount else 0 end)/sum(case when type = 'healing' and player='${player}' then 1 else 0 end)*600 as healing, sum(case when type = 'elimination' and player='${player}' then 1 else 0 end)/sum(case when type = 'elimination' and player='${player}' then 1 else 0 end)*600 as eliminations, sum(case when type = 'final blow' and player='${player}' then 1 else 0 end)/sum(case when type = 'final blow' and player='${player}' then 1 else 0 end)*600 as final_blows, sum(case when type = 'damage' then amount else 0 end)/sum(case when type = 'damage' then 1 else 0 end)*600 as total_damage, sum(case when type = 'healing' then amount else 0 end)/sum(case when type = 'healing' then 1 else 0 end)*600 as total_healing, sum(case when type = 'elimination' then 1 else 0 end)/sum(case when type = 'elimination' then 1 else 0 end)*600 as total_eliminations, sum(case when type = 'final blow' then 1 else 0 end)/sum(case when type = 'final blow' then 1 else 0 end)*600 as total_final_blows from player_interaction`,
+      //   name: 'hero_damage_total_' + player,
+      //   query: `select player_heroes_per_timestamp_per_map.role, sum(damage_dealt.damage) as damage, (select sum(damage) from ?) as total_damage from ? as damage_dealt join ? as player_heroes_per_timestamp_per_map on damage_dealt.mapId = player_heroes_per_timestamp_per_map.mapId and damage_dealt.timestamp = player_heroes_per_timestamp_per_map.timestamp and damage_dealt.\`target\` = player_heroes_per_timestamp_per_map.player group by player_heroes_per_timestamp_per_map.role order by damage desc`,
+      //   deps: [
+      //     'damage_dealt_' + player,
+      //     'damage_dealt_' + player,
+      //     'player_heroes_per_timestamp_per_map',
+      //   ],
       // },
       {
         name: 'per_map_' + player,
@@ -119,17 +114,6 @@ const PlayerDetails = ({
     [player],
   );
 
-  // sum(per_map_${player}.healing)/sum(map_length.map_length) * 600 as healing,
-  // sum(per_map_${player}.eliminations)/sum(map_length.map_length) * 600 as eliminations,
-  // sum(per_map_${player}.final_blows)/sum(map_length.map_length) * 600 as final_blows
-  // useEffect(() => {
-  //   console.log('updating player info');
-  //   Object.keys(results).forEach((key) => {
-  //     ResultCache.storeKeyValue(key, undefined);
-  //   });
-  //   refresh();
-  // }, [player]);
-
   const playerRole = useMemo(() => {
     const roles = results['roles_' + player];
     if (roles) {
@@ -139,73 +123,39 @@ const PlayerDetails = ({
       if (roles.length === 0) {
         return 'none';
       }
-      return roles[0].role;
+      return roles[0].role as string;
     }
     return 'unknown';
-  }, [tick]);
+  }, [tick, player]);
 
-  // );
-  // const [interactionIn, running2, refresh2] = useQuery(
-  //   `
-  //   select mapId, player,
-  //   sum(CASE WHEN type = "damage" THEN amount ELSE 0 END) as damage,
-  //   sum(CASE WHEN type = "healing" THEN amount ELSE 0 END) as healing,
-  //   sum(CASE WHEN type = "elimination" THEN 1 ELSE 0 END) as eliminations,
-  //   sum(CASE WHEN type = "final blow" THEN 1 ELSE 0 END) as final_blows
-  //   from player_interaction
-  //   where \`target\` = '${player}'
-  //   group by player order by damage desc
-  //   `,
-  // );
-
-  // console.log('interactionOut', interactionOut);
-  // console.log('interactionIn', interactionIn);
   console.log('results', results);
 
-  // const per10 = useMemo(() => {
-  //   if (
-  //     results['per_10min_' + player] &&
-  //     results['per_10min_' + player].length > 0
-  //   ) {
-  //     return results['per_10min_' + player][0];
-  //   }
-  //   return {} as {[key: string]: string | number}[];
-  // }, [tick, player]);
-  const per10 = (attr: string) =>
-    results['player_stats_' + player] === undefined ||
-    results['playtime_' + player] === undefined
-      ? undefined
-      : ((results['player_stats_' + player][0][attr] as number) /
-          (results['playtime_' + player][0].map_length as number)) *
-        600;
   const interactions = results['done_by_' + player];
+
   const playerRoleIcon = useMemo(() => {
-    if (playerRole === 'tank') {
+    const topRole = playerRole.split(',')[0];
+    if (topRole === 'tank') {
       return <TankIcon />;
     }
-    if (playerRole === 'damage') {
+    if (topRole === 'damage') {
       return <DamageIcon />;
     }
-    if (playerRole === 'support') {
+    if (topRole === 'support') {
       return <SupportIcon />;
     }
-    return <span className="blinkingcursor" />;
+    return <CircularProgress size={15} />;
   }, [playerRole]);
 
   return (
     <div className="PlayerDetails">
       <Box display="flex" alignItems="center">
         <Box flexGrow={1}>
-          {/* <IconAndText
-            icon={}
-            text={player || '...'}
-          /> */}
           <Box
             display="flex"
             alignItems="center"
             className="PlayerDetailsHeader">
             <span className="player">
-              <IconAndText icon={playerRoleIcon} text={player || '...'} />
+              <IconAndText icon={playerRoleIcon} text={player!} />
             </span>
             <div>
               {results['top_heroes_' + player] &&
@@ -223,6 +173,23 @@ const PlayerDetails = ({
                     className="PlayerDetailsHeaderImage"
                   />
                 ))}
+            </div>
+            <div
+              style={{
+                margin: '0 10px',
+              }}>
+              <QueryText
+                query={{
+                  name: 'time_played_' + player,
+                  query: `select count(*) as time_played from ? where player = '${player}'`,
+                  deps: ['player_status'],
+                }}
+                parseResults={(results) =>
+                  formatTime(results[0].time_played) + ' played'
+                }
+                deps={[player]}
+                variant="body1"
+              />
             </div>
           </Box>
         </Box>
@@ -250,7 +217,48 @@ const PlayerDetails = ({
         </Typography> */}
       </div>
       <Box sx={{display: 'flex'}}>
-        <MetricCard
+        <QueryCard
+          title="Damage done / taken"
+          query={{
+            name: 'damage_done_vs_taken_' + player,
+            query: `select sum(CASE WHEN player = '${player}' THEN amount ELSE 0 END) as damage_done,  sum(CASE WHEN \`target\` = '${player}' THEN amount ELSE 0 END) as damage_taken from ? where type = 'damage'`,
+            deps: ['player_interaction'],
+          }}
+          parseResults={(results) =>
+            format(safeDivide(results[0].damage_done, results[0].damage_taken))
+          }
+          deps={[player]}
+          emphasisLevel="high"
+        />
+        <QueryCard
+          title="Elims / deaths"
+          query={{
+            name: 'elims_vs_deaths_' + player,
+            query: `select sum(CASE WHEN player = '${player}' and type = 'elimination' THEN 1 ELSE 0 END) as eliminations,  sum(CASE WHEN \`target\` = '${player}' and type = 'final blow' THEN 1 ELSE 0 END) as deaths from ?`,
+            deps: ['player_interaction'],
+          }}
+          parseResults={(results) =>
+            format(safeDivide(results[0].eliminations, results[0].deaths))
+          }
+          deps={[player]}
+          emphasisLevel="high"
+        />
+        <QueryCard
+          title="Healing done / taken"
+          query={{
+            name: 'healing_done_vs_taken_' + player,
+            query: `select sum(CASE WHEN player = '${player}' THEN amount ELSE 0 END) as healing_done,  sum(CASE WHEN \`target\` = '${player}' THEN amount ELSE 0 END) as healing_taken from ? where type = 'healing'`,
+            deps: ['player_interaction'],
+          }}
+          parseResults={(results) =>
+            format(
+              safeDivide(results[0].healing_done, results[0].healing_taken),
+            )
+          }
+          deps={[player]}
+          emphasisLevel="high"
+        />
+        {/* <MetricCard
           name="Damage per 10 minutes"
           value={per10('damage')}
           compareValue={1}
@@ -273,10 +281,10 @@ const PlayerDetails = ({
           value={per10('final_blows')}
           compareValue={1}
           compareText="Average Player"
-        />
+        /> */}
       </Box>
       <Box sx={{display: 'flex'}}>
-        <PieChartComponent
+        {/* <PieChartComponent
           data={results['roles_' + player]}
           height={200}
           width={200}
@@ -305,7 +313,7 @@ const PlayerDetails = ({
             ).toFixed(2)}%) done to ${d.role} players`
           }
           deps={[]}
-        />
+        /> */}
       </Box>
       <DataTable
         columns={Object.keys((interactions || [[]])[0]).map((key) => ({

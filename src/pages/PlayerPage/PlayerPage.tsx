@@ -21,6 +21,7 @@ import PlayerDetails from './PlayerDetails';
 import {Box, Collapse, Drawer, SwipeableDrawer} from '@mui/material';
 import useQueries from '../../hooks/useQueries';
 import DebugQueries from '../../components/Debug/DebugQueries';
+import {StringParam, useQueryParam} from 'use-query-params';
 
 const PlayerPage = () => {
   // const [totals, running, refresh] = useQuery(
@@ -57,7 +58,7 @@ const PlayerPage = () => {
 
   const refresh = () => {};
 
-  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useQueryParam('p', StringParam);
 
   const [results, tick] = useQueries(
     [
@@ -128,7 +129,10 @@ const PlayerPage = () => {
   //       setJoined(res);
   //     });
   // }, [playerInfo, playerInfo2]);
-  const expanded = selectedPlayer !== null;
+  const expanded =
+    selectedPlayer !== '' &&
+    selectedPlayer !== undefined &&
+    selectedPlayer !== null;
   const columnDef =
     (results['totals'] || []).length === 0
       ? []
@@ -155,9 +159,9 @@ const PlayerPage = () => {
       <div className="Playerpage-container">
         {/* <Box sx={{display: 'flex'}}> */}
         <div className={`Playerpage-right ${expanded ? 'expanded' : ''}`}>
-          {selectedPlayer && (
+          {expanded && (
             <PlayerDetails
-              player={selectedPlayer}
+              player={selectedPlayer!}
               setPlayer={setSelectedPlayer}
             />
           )}
