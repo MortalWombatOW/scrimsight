@@ -276,6 +276,15 @@ type GameStateExtractor = (slice: GameStateTimeSlice) => {
 
 type MetricComponent = ({data}: {data: MetricData}) => JSX.Element;
 
+type Data = DataRow[];
+type DataRow = {[key: string]: string | number};
+
+type Query = {
+  name: string;
+  query: string;
+  deps?: (string | Data)[];
+};
+
 export {
   OWMap,
   PlayerStatus,
@@ -313,4 +322,7 @@ export {
   ReportComponentStyle,
   GameStateTimeSlice,
   GameStateExtractor,
+  Query,
+  Data,
+  DataRow,
 };

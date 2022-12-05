@@ -9,8 +9,8 @@ import {
   YAxis,
 } from 'recharts';
 import {getMetricColor} from '../../lib/color';
-import {Data, getMetricName} from '../../lib/data/metricsv2';
-import {Metric, MetricGroup, MetricValue} from '../../lib/data/types';
+import {getMetricName} from '../../lib/data/metricsv2';
+import {Data, Metric, MetricGroup, MetricValue} from '../../lib/data/types';
 
 const TimeChartComponent = ({
   height,

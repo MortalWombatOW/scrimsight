@@ -4,6 +4,7 @@ import ReportPage from '../pages/ReportPage/ReportPage';
 import SettingsPage from '../pages/Settings/SettingsPage';
 import UploadPage from '../pages/Uploads/UploadPage';
 import MapList from '../pages/Map/MapList';
+import DebugQueries from '../components/Debug/DebugQueries';
 
 interface Route {
   path: string;

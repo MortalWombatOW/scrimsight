@@ -1,126 +1,44 @@
-import alasql from 'alasql';
-import {useEffect, useState} from 'react';
+import {useEffect, useLayoutEffect, useState} from 'react';
 import memoize from '../lib/data/memoise';
-import {Data} from '../lib/data/metricsv2';
 import ResultCache from '../lib/data/ResultCache';
+import {Data, Query} from '../lib/data/types';
 
-const timeQueries = true;
-
-type Query = {
-  name: string;
-  query: string;
-  deps?: (string | Data)[];
-};
+interface UseQueriesOptions {
+  runFirst?: boolean;
+}
 
 const useQueries = (
   queries: Query[],
   deps: any[],
-): [
-  {[key: string]: {[key: string]: string | number}[]},
-  number,
-  () => void,
-] => {
+  options: UseQueriesOptions = {},
+): [{[key: string]: {[key: string]: string | number}[]}, number] => {
   const [computeTick, setComputeTick] = useState<number>(0);
 
-  const nextComputeStep = () => {
+  const nextComputeStep = (name: string) => {
+    console.log('incrementing tick due to change in', name);
+    console.log('nextComputeStep', computeTick);
     setComputeTick((computeTick) => computeTick + 1);
   };
 
-  useEffect(() => {
-    console.log('useQueries deps changed', deps);
-    nextComputeStep();
+  // useEffect(() => {
+  //   nextComputeStep();
+  // }, deps);
+
+  const runFirst = options.runFirst ?? false;
+  const effectFn = runFirst ? useLayoutEffect : useEffect;
+
+  effectFn(() => {
+    ResultCache.runQueries(queries, nextComputeStep);
   }, deps);
 
-  // Build a graph of dependencies between queries
-  const buildGraphFn = (queries: Query[]) => {
-    const graph: {[key: string]: Query[]} = {};
-    queries.forEach((query) => {
-      graph[query.name] = [];
-    });
-    queries.forEach((query) => {
-      if (query.deps !== undefined) {
-        query.deps.forEach((dep) => {
-          if (typeof dep === 'string') {
-            if (graph[dep].find((q) => q.name === query.name) === undefined) {
-              graph[dep].push(query);
-            }
-          }
-        });
-      }
-    });
-
-    return graph;
-  };
-
-  const buildGraph = buildGraphFn(queries);
-  const hasDepsFulfilled = (query: Query) => {
-    return (query.deps || []).every((dep) =>
-      typeof dep == 'string' ? !ResultCache.notDone(dep) : true,
-    );
-  };
-  const isRunning = (query: Query) =>
-    ResultCache.getValueForKey(query.name) !== undefined;
-
-  const shouldRunQuery = (query: Query) =>
-    hasDepsFulfilled(query) && !isRunning(query);
-
-  const runQuery = (query: Query) => {
-    const timestampStart = Date.now();
-    ResultCache.storeKeyValue(query.name, 'running');
-    alasql(
-      'ATTACH INDEXEDDB DATABASE scrimsight; \
-        USE scrimsight; ',
-      [],
-      () =>
-        alasql
-          .promise(
-            query.query,
-            query.deps?.map((dep) =>
-              typeof dep == 'string' ? ResultCache.getValueForKey(dep) : dep,
-            ) || [],
-          )
-          .then(function (res) {
-            ResultCache.storeKeyValue(query.name, res);
-            nextComputeStep();
-          })
-          .then(() => {
-            if (timeQueries) {
-              console.log(
-                `query ${query.name} took ${Date.now() - timestampStart}ms`,
-              );
-            }
-            buildGraph[query.name].forEach((dep) => {
-              if (shouldRunQuery(dep)) {
-                console.log('running', dep.name);
-                runQuery(dep);
-              } else {
-                console.log('not running', dep.name);
-              }
-            });
-          }),
-    );
-  };
-
-  useEffect(() => {
-    console.log(
-      'tick',
-      computeTick,
-      'running queries',
-      queries.filter(shouldRunQuery).map((q) => q.name),
-    );
-
-    queries.filter(shouldRunQuery).forEach(runQuery);
-  }, [computeTick]);
-
-  console.log('recomputing queries');
   const results = queries
-    .filter((query) => !ResultCache.notDone(query.name))
+    .filter((query) => ResultCache.hasResults(query.name))
     .reduce((acc, query) => {
       acc[query.name] = ResultCache.getValueForKey(query.name) as Data;
       return acc;
     }, {} as {[key: string]: {[key: string]: string | number}[]});
 
-  return [results, computeTick, nextComputeStep];
+  return [results, computeTick];
 };
 
 export default useQueries;

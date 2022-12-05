@@ -20,6 +20,7 @@ import './PlayerPage.scss';
 import PlayerDetails from './PlayerDetails';
 import {Box, Collapse, Drawer, SwipeableDrawer} from '@mui/material';
 import useQueries from '../../hooks/useQueries';
+import DebugQueries from '../../components/Debug/DebugQueries';
 
 const PlayerPage = () => {
   // const [totals, running, refresh] = useQuery(
@@ -54,9 +55,11 @@ const PlayerPage = () => {
 
   // console.log('heroData', heroData);
 
+  const refresh = () => {};
+
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
 
-  const [results, tick, refresh] = useQueries(
+  const [results, tick] = useQueries(
     [
       {
         query: `
@@ -65,10 +68,11 @@ const PlayerPage = () => {
     sum(CASE WHEN type = "healing" THEN amount ELSE 0 END) as healing,
     sum(CASE WHEN type = "elimination" THEN 1 ELSE 0 END) as eliminations,
     sum(CASE WHEN type = "final blow" THEN 1 ELSE 0 END) as final_blows
-    from player_interaction
+    from ? as player_interaction
     group by player_interaction.player,  player_interaction.\`target\` order by damage desc
     `,
         name: 'interactions',
+        deps: ['player_interaction'],
       },
       {
         name: 'totals',
@@ -89,6 +93,11 @@ const PlayerPage = () => {
     ],
     [],
   );
+
+  useEffect(() => {
+    console.log('tick', tick);
+    console.log('foo', results);
+  }, [tick]);
 
   // useEffect(() => {
   //   alasql

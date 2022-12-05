@@ -3,10 +3,7 @@
 import {duration} from '@mui/material';
 import {cartesian} from '../cartesian';
 import {capitalize, listToNaturalLanguage} from '../string';
-import {BaseData, Metric, MetricGroup, MetricValue} from './types';
-
-export type Data = DataRow[];
-export type DataRow = {[key: string]: string | number};
+import {BaseData, Data, Metric, MetricGroup, MetricValue} from './types';
 
 export type DataExtractor = (baseData: BaseData) => Data;
 

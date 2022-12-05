@@ -9,8 +9,8 @@ import {
   Legend,
 } from 'recharts';
 import {getMetricColor} from '../../lib/color';
-import {Metric, MetricGroup, MetricValue} from '../../lib/data/types';
-import {Data, getMetricName} from '../../lib/data/metricsv2';
+import {Data, Metric, MetricGroup, MetricValue} from '../../lib/data/types';
+import {getMetricName} from '../../lib/data/metricsv2';
 
 const BarChartComponent = ({
   height,

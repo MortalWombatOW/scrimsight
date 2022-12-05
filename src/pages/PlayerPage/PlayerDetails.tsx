@@ -6,7 +6,6 @@ import MetricCard from '../../components/Card/MetricCard';
 import PieChartComponent from '../../components/Component/PieChartComponent';
 import useQueries from '../../hooks/useQueries';
 import {getHeroImage, heroToRoleTable} from '../../lib/data/data';
-import {DataRow} from '../../lib/data/metricsv2';
 import ResultCache from '../../lib/data/ResultCache';
 import CloseIcon from '@mui/icons-material/Close';
 import IconAndText from '../../components/Common/IconAndText';
@@ -16,6 +15,7 @@ import {
   SupportIcon,
   TankIcon,
 } from '../../components/Icon/Icon';
+import {DataRow} from '../../lib/data/types';
 const sum = (
   agg: string,
   type: string,
@@ -33,17 +33,12 @@ const PlayerDetails = ({
   player: string | null;
   setPlayer: (player: string | null) => void;
 }) => {
-  const [open, setOpen] = useState(false);
-  const [playerInfo, setPlayerInfo] = useState<
-    {
-      [key: string]: string | number;
-    }[]
-  >([]);
-  const [results, tick, refresh] = useQueries(
+  const [results, tick] = useQueries(
     [
       {
         name: 'top_heroes_' + player,
-        query: `select hero, count(*) as hero_time from player_status where player = '${player}' group by hero order by hero_time desc`,
+        query: `select hero, count(*) as hero_time from ? where player = '${player}' and hero != '' group by hero order by hero_time desc`,
+        deps: ['player_status'],
       },
       {
         name: 'roles_' + player,
@@ -52,11 +47,13 @@ const PlayerDetails = ({
       },
       {
         name: 'damage_dealt_' + player,
-        query: `select mapId, timestamp, \`target\`, sum(amount) as damage from player_interaction where player = '${player}' and type = 'damage' group by mapId, timestamp, \`target\``,
+        query: `select mapId, timestamp, \`target\`, sum(amount) as damage from ? where player = '${player}' and type = 'damage' group by mapId, timestamp, \`target\``,
+        deps: ['player_interaction'],
       },
       {
         name: 'map_length',
-        query: `select mapId, max(timestamp) - min(timestamp) as map_length from player_status group by mapId`,
+        query: `select mapId, max(timestamp) - min(timestamp) as map_length from ? group by mapId`,
+        deps: ['player_status'],
       },
       // {
       //   name: 'taken_by_map_timestamp_' + player,
@@ -64,8 +61,8 @@ const PlayerDetails = ({
       // },
       {
         name: 'player_heroes_per_timestamp_per_map',
-        query: `select mapId, timestamp, player, hero, hero_roles.role from player_status join ? as hero_roles on player_status.hero = hero_roles.hero`,
-        deps: [heroToRoleTable],
+        query: `select mapId, timestamp, player, hero, hero_roles.role from ? as player_status join ? as hero_roles on player_status.hero = hero_roles.hero`,
+        deps: ['player_status', heroToRoleTable],
       },
       {
         name: 'hero_damage_total_' + player,
@@ -91,7 +88,8 @@ const PlayerDetails = ({
           'final blow',
           player,
           'final_blows',
-        )} from player_interaction group by mapId`,
+        )} from ? group by mapId`,
+        deps: ['player_interaction'],
       },
       {
         name: 'player_stats_' + player,
@@ -109,11 +107,13 @@ const PlayerDetails = ({
       },
       {
         name: 'done_by_' + player,
-        query: `select i.\`target\`, sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from player_interaction as i where i.player = '${player}' group by i.\`target\` order by damage desc`,
+        query: `select i.\`target\`, sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from ? as i where i.player = '${player}' group by i.\`target\` order by damage desc`,
+        deps: ['player_interaction'],
       },
       {
         name: 'taken_by_' + player,
-        query: `select i.player,  sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from player_interaction as i where i.\`target\` = '${player}' group by i.player`,
+        query: `select i.player,  sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from ? as i where i.\`target\` = '${player}' group by i.player`,
+        deps: ['player_interaction'],
       },
     ],
     [player],

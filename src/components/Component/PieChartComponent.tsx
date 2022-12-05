@@ -2,9 +2,8 @@ import {CircularProgress, SvgIcon} from '@mui/material';
 import React, {useState} from 'react';
 import {Cell, Legend, Pie, PieChart, Sector, Tooltip} from 'recharts';
 import {groupColorClass} from '../../lib/color';
-import {Data, DataRow} from '../../lib/data/metricsv2';
 import ResultCache from '../../lib/data/ResultCache';
-import {Metric} from '../../lib/data/types';
+import {Data, DataRow, Metric} from '../../lib/data/types';
 import {DamageIcon} from '../Icon/Icon';
 import './Charts.scss';
 
