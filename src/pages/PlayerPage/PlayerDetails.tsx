@@ -126,7 +126,12 @@ const PlayerDetails = ({
       return roles[0].role as string;
     }
     return 'unknown';
-  }, [tick, player]);
+  }, [
+    tick,
+    player,
+    // TODO this is a hack, why is this not updating?
+    results['roles_' + player]?.length,
+  ]);
 
   console.log('results', results);
 
