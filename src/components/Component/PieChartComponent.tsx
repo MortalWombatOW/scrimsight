@@ -1,10 +1,9 @@
-import {CircularProgress, SvgIcon} from '@mui/material';
+import {CircularProgress} from '@mui/material';
 import React, {useState} from 'react';
-import {Cell, Legend, Pie, PieChart, Sector, Tooltip} from 'recharts';
+import {Cell, Pie, PieChart, Sector, Tooltip} from 'recharts';
 import {groupColorClass} from '../../lib/color';
 import ResultCache from '../../lib/data/ResultCache';
-import {Data, DataRow, Metric} from '../../lib/data/types';
-import {DamageIcon} from '../Icon/Icon';
+import {Data, DataRow} from '../../lib/data/types';
 import './Charts.scss';
 
 const RADIAN = Math.PI / 180;

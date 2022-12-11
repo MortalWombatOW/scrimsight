@@ -1,27 +1,10 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import useData from '../../hooks/useData';
-import {computeMetric} from '../../lib/data/metricsv2';
+import React, {useEffect} from 'react';
 import DataTable from 'react-data-table-component';
-import {
-  OWMap,
-  PlayerInteraction,
-  PlayerStatus,
-  PlayerAbility,
-  BaseData,
-  Metric,
-  MetricGroup,
-  MetricValue,
-} from '../../lib/data/types';
-import Header from './../../components/Header/Header';
-import MapsList from './../../components/MapsList/MapsList';
-import useQuery from '../../hooks/useQueries';
-import alasql from 'alasql';
-import './PlayerPage.scss';
-import PlayerDetails from './PlayerDetails';
-import {Box, Collapse, Drawer, SwipeableDrawer} from '@mui/material';
-import useQueries from '../../hooks/useQueries';
-import DebugQueries from '../../components/Debug/DebugQueries';
 import {StringParam, useQueryParam} from 'use-query-params';
+import useQueries from '../../hooks/useQueries';
+import Header from './../../components/Header/Header';
+import PlayerDetails from './PlayerDetails';
+import './PlayerPage.scss';
 
 const PlayerPage = () => {
   // const [totals, running, refresh] = useQuery(

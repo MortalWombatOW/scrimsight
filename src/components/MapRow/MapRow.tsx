@@ -1,4 +1,4 @@
-import {DamageIcon, TankIcon, SupportIcon} from 'components/Icon/Icon';
+import {DamageIcon, TankIcon, SupportIcon} from '~/components/Common/RoleIcons';
 import React from 'react';
 import {OWMap} from 'lib/data/types';
 import {useNavigate} from 'react-router-dom';

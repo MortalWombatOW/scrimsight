@@ -1,10 +1,31 @@
+import {
+  Container,
+  Box,
+  Typography,
+  Card,
+  CardActionArea,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Button,
+  CircularProgress,
+} from '@mui/material';
 import React from 'react';
+import {Link} from 'react-router-dom';
+import HomeDashboard from '../../components/HomeDashboard/HomeDashboard';
+import {useResult} from '../../hooks/useQueries';
+import SplashPage from '../SplashPage/SplashPage';
 import Header from './../../components/Header/Header';
 import MapsList from './../../components/MapsList/MapsList';
 
 const Home = () => {
   const [updateCount, setUpdateCount] = React.useState(0);
   const incrementUpdateCount = () => setUpdateCount((prev) => prev + 1);
+
+  const [maps, tick] = useResult('map');
+  const isLoading = maps === undefined;
+  const isNewUser = !isLoading && maps.length === 0;
+
   return (
     <div>
       <Header
@@ -14,7 +35,10 @@ const Home = () => {
         setFilters={(filters) => {}}
       />
       <div className="Home-container">
-        <MapsList updateCount={updateCount} />
+        {isLoading ? (
+          <CircularProgress variant="indeterminate" color="primary" />
+        ) : null}
+        {isNewUser ? <SplashPage /> : <HomeDashboard />}
       </div>
     </div>
   );

@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
 import Header from 'components/Header/Header';
 import MapInfo from 'components/MapInfo/MapInfo';
+import PlayByPlay from 'components/PlayByPlay/PlayByPlay';
+import React, {useState} from 'react';
 import {useParams, useSearchParams} from 'react-router-dom';
 import './Map.scss';
-import PlayByPlay from 'components/PlayByPlay/PlayByPlay';
-import MetricExplorer from '../../components/MetricExplorer/MetricExplorer';
-import ViewSelect from '../../components/ViewSelect/ViewSelect';
+
 const Map = () => {
   const {mapId: mapIdStr} = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -50,25 +49,10 @@ const Map = () => {
             <MapTotals mapId={mapId} />
           </div>
         </div> */}
-        <div className="sidebar">
-          <ViewSelect currentView={view} setView={setView} />
+        <div className="sidebar">sidebar</div>
+        <div className="section">
+          <div className="content"></div>
         </div>
-        {view === 'stats' && (
-          <div className="section">
-            {/* <div className="header">Statistics</div> */}
-            <div className="content">
-              <MetricExplorer mapId={mapId} />
-            </div>
-          </div>
-        )}
-        {view === 'play-by-play' && (
-          <div className="section">
-            {/* <div className="header">Play-by-play</div> */}
-            <div className="content">
-              <PlayByPlay mapId={mapId} />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

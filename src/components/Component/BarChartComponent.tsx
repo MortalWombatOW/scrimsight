@@ -1,38 +1,22 @@
 import React from 'react';
-import {
-  ResponsiveContainer,
-  BarChart,
-  YAxis,
-  XAxis,
-  Bar,
-  Tooltip,
-  Legend,
-} from 'recharts';
-import {getMetricColor} from '../../lib/color';
-import {Data, Metric, MetricGroup, MetricValue} from '../../lib/data/types';
-import {getMetricName} from '../../lib/data/metricsv2';
+import {BarChart, Legend, ResponsiveContainer, Tooltip, XAxis} from 'recharts';
+import {Data} from '../../lib/data/types';
 
 const BarChartComponent = ({
   height,
   width,
   data,
-  metric,
   setSortBy,
 }: {
   height: number;
   width: number;
   data: Data;
-  metric: Metric;
   sortBy: string;
   setSortBy: (sortBy: string) => void;
 }) => {
   console.log('BarChartComponent');
   return (
     <div>
-      <div className="title">
-        <div className="title-text">{getMetricName(metric)}</div>
-      </div>
-
       <ResponsiveContainer width="100%" height={height}>
         <BarChart
           width={width}
@@ -46,10 +30,10 @@ const BarChartComponent = ({
             bottom: 25,
           }}>
           {/* <CartesianGrid strokeDasharray="3 3" /> */}
-          <YAxis
+          {/* <YAxis
             dataKey={MetricGroup[metric.groups[0]]}
             width={180}
-            type="category"></YAxis>
+            type="category"></YAxis> */}
           <XAxis type="number"></XAxis>
           <Tooltip
             formatter={(value) => {
@@ -63,12 +47,12 @@ const BarChartComponent = ({
             verticalAlign="top"
             onClick={(e) => setSortBy(e.dataKey)}
           />
-          {metric.values.map((value) => (
+          {/* {metric.values.map((value) => (
             <Bar
               key={value}
               dataKey={MetricValue[value]}
               fill={getMetricColor(value)}></Bar>
-          ))}
+          ))} */}
         </BarChart>
       </ResponsiveContainer>
     </div>

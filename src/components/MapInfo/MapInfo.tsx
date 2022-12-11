@@ -1,17 +1,16 @@
-import useData from 'hooks/useData';
-import {OWMap, PlayerStatus} from 'lib/data/types';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import Grid from '@mui/material/Grid';
+import 'components/MapInfo/MapInfo.scss';
 import {
   getHeroesByPlayer,
   getHeroImage,
   getMostCommonHeroes,
   getTeamInfoForMap,
 } from 'lib/data/data';
-import React from 'react';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import 'components/MapInfo/MapInfo.scss';
+import {OWMap} from 'lib/data/types';
 import {heroNameToNormalized, mapNameToFileName} from 'lib/string';
-import Grid from '@mui/material/Grid';
+import React from 'react';
 import {groupColorClass} from '../../lib/color';
 
 const PlayerAndHero = ({
@@ -43,9 +42,12 @@ const MapInfo = ({
   selectedPlayerNames: string[];
   setSelectedPlayerNames: (names: string[]) => void;
 }) => {
-  const [mapList] = useData<OWMap>('map', mapId);
+  // const [mapList] = useData<OWMap>('map', mapId);
 
-  const [statuses] = useData<PlayerStatus>('player_status', mapId);
+  // const [statuses] = I<PlayerStatus>('player_status', mapId);
+
+  const mapList = [];
+  const statuses = [];
 
   if (!mapList || !statuses) {
     return <div>Loading...</div>;

@@ -1,10 +1,7 @@
 import Home from '../pages/Home/Home';
-import PlayerPage from '../pages/PlayerPage/PlayerPage';
-import ReportPage from '../pages/ReportPage/ReportPage';
-import SettingsPage from '../pages/Settings/SettingsPage';
-import UploadPage from '../pages/Uploads/UploadPage';
 import MapList from '../pages/Map/MapList';
-import DebugQueries from '../components/Debug/DebugQueries';
+import PlayerPage from '../pages/PlayerPage/PlayerPage';
+import SettingsPage from '../pages/Settings/SettingsPage';
 
 interface Route {
   path: string;
@@ -24,19 +21,9 @@ const routes: Route[] = [
     name: 'Players',
   },
   {
-    path: '/report',
-    component: ReportPage,
-    name: 'Reports',
-  },
-  {
     path: '/maps',
     component: MapList,
     name: 'Maps',
-  },
-  {
-    path: '/data',
-    component: UploadPage,
-    name: 'Add Data',
   },
   {
     path: '/settings',

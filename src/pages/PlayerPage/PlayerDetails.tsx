@@ -1,24 +1,20 @@
-import {Box, CircularProgress, IconButton, Typography} from '@mui/material';
-import React, {useEffect, useMemo, useState} from 'react';
-import DataTable from 'react-data-table-component';
-import {ResponsiveContainer, PieChart, Pie} from 'recharts';
-import MetricCard from '../../components/Card/MetricCard';
-import PieChartComponent from '../../components/Component/PieChartComponent';
-import useQueries from '../../hooks/useQueries';
-import {getHeroImage, heroToRoleTable} from '../../lib/data/data';
-import ResultCache from '../../lib/data/ResultCache';
 import CloseIcon from '@mui/icons-material/Close';
+import {Box, CircularProgress, IconButton} from '@mui/material';
+import React, {useMemo} from 'react';
+import DataTable from 'react-data-table-component';
+import QueryCard from '../../components/Card/QueryCard';
+import QueryText from '../../components/Card/QueryText';
+import SimpleCard from '../../components/Card/SimpleCard';
 import IconAndText from '../../components/Common/IconAndText';
 import {
   DamageIcon,
-  getIcon,
   SupportIcon,
   TankIcon,
-} from '../../components/Icon/Icon';
-import {DataRow} from '../../lib/data/types';
-import QueryCard from '../../components/Card/QueryCard';
+} from '../../components/Common/RoleIcons';
+import useQueries from '../../hooks/useQueries';
+import {getHeroImage, heroToRoleTable} from '../../lib/data/data';
 import {format, formatTime, safeDivide} from '../../lib/data/metricsv3';
-import QueryText from '../../components/Card/QueryText';
+import {DataRow} from '../../lib/data/types';
 const sum = (
   agg: string,
   type: string,
@@ -58,20 +54,11 @@ const PlayerDetails = ({
         query: `select mapId, max(timestamp) - min(timestamp) as map_length from ? group by mapId`,
         deps: ['player_status'],
       },
-      // {
-      //   name: 'player_heroes_per_timestamp_per_map',
-      //   query: `select mapId, timestamp, player, hero, hero_roles.role from ? as player_status join ? as hero_roles on player_status.hero = hero_roles.hero`,
-      //   deps: ['player_status', heroToRoleTable],
-      // },
-      // {
-      //   name: 'hero_damage_total_' + player,
-      //   query: `select player_heroes_per_timestamp_per_map.role, sum(damage_dealt.damage) as damage, (select sum(damage) from ?) as total_damage from ? as damage_dealt join ? as player_heroes_per_timestamp_per_map on damage_dealt.mapId = player_heroes_per_timestamp_per_map.mapId and damage_dealt.timestamp = player_heroes_per_timestamp_per_map.timestamp and damage_dealt.\`target\` = player_heroes_per_timestamp_per_map.player group by player_heroes_per_timestamp_per_map.role order by damage desc`,
-      //   deps: [
-      //     'damage_dealt_' + player,
-      //     'damage_dealt_' + player,
-      //     'player_heroes_per_timestamp_per_map',
-      //   ],
-      // },
+      {
+        name: 'ult_times_' + player,
+        query: `select mapId, timestamp, ultCharge from ? where player = '${player}' and (ultCharge = 100 or ultCharge = 0)`,
+        deps: ['player_status'],
+      },
       {
         name: 'per_map_' + player,
         query: `select mapId, ${sum('amount', 'damage', player)}, ${sum(
@@ -133,7 +120,45 @@ const PlayerDetails = ({
     results['roles_' + player]?.length,
   ]);
 
-  console.log('results', results);
+  console.log('results', results['ult_times_' + player]);
+
+  const averageTimeToUlt: number = useMemo(() => {
+    const ult_charge_timestamps = results['ult_times_' + player];
+    if (!ult_charge_timestamps) {
+      return 0;
+    }
+    // first, transform the data. we want to remove rows that are preceded by a row with the same ult charge and mapId
+    const ult_charge_timestamps_filtered = ult_charge_timestamps.filter(
+      (row, index) => {
+        if (index === 0) {
+          return true;
+        }
+        const prev = ult_charge_timestamps[index - 1];
+        return row.ultCharge !== prev.ultCharge || row.mapId !== prev.mapId;
+      },
+    );
+    console.log(
+      'ult_charge_timestamps_filtered',
+      ult_charge_timestamps_filtered,
+    );
+
+    // we want to find the average time it takes for the player to charge their ult from 0 to 100
+    // to do this, we need to find the time between each 0 and 100 ult charge
+    // remember that these happen on different maps
+    const times: number[] = [];
+    let lastTimePerMap: {[mapId: string]: number} = {};
+    ult_charge_timestamps_filtered.forEach((row) => {
+      if (row.ultCharge === 0) {
+        lastTimePerMap[row.mapId] = row.timestamp as number;
+      } else {
+        const lastTime = lastTimePerMap[row.mapId];
+        if (lastTime) {
+          times.push((row.timestamp as number) - lastTime);
+        }
+      }
+    });
+    return times.reduce((a, b) => a + b, 0) / times.length;
+  }, [tick, player, results['ult_times_' + player]?.length]);
 
   const interactions = results['done_by_' + player];
 
@@ -249,6 +274,19 @@ const PlayerDetails = ({
           emphasisLevel="high"
         />
         <QueryCard
+          title="Final blows / eliminations"
+          query={{
+            name: 'final_blows_vs_elims_' + player,
+            query: `select sum(CASE WHEN type = 'final blow' THEN 1 ELSE 0 END) as final_blows, sum(CASE WHEN type = 'elimination' THEN 1 ELSE 0 END) as eliminations from ? where player = '${player}'`,
+            deps: ['player_interaction'],
+          }}
+          parseResults={(results) =>
+            format(safeDivide(results[0].final_blows, results[0].eliminations))
+          }
+          deps={[player]}
+          emphasisLevel="high"
+        />
+        <QueryCard
           title="Healing done / taken"
           query={{
             name: 'healing_done_vs_taken_' + player,
@@ -263,30 +301,23 @@ const PlayerDetails = ({
           deps={[player]}
           emphasisLevel="high"
         />
-        {/* <MetricCard
-          name="Damage per 10 minutes"
-          value={per10('damage')}
-          compareValue={1}
-          compareText="Average Player"
+        <QueryCard
+          title="Self healing / healing done"
+          query={{
+            name: 'self_healing_vs_healing_done_' + player,
+            query: `select sum(CASE WHEN player = '${player}' THEN amount ELSE 0 END) as healing_done,  sum(CASE WHEN player = '${player}' and \`target\` = '${player}' THEN amount ELSE 0 END) as self_healing from ? where type = 'healing'`,
+            deps: ['player_interaction'],
+          }}
+          parseResults={(results) =>
+            format(safeDivide(results[0].self_healing, results[0].healing_done))
+          }
+          deps={[player]}
+          emphasisLevel="high"
         />
-        <MetricCard
-          name="Healing per 10 minutes"
-          value={per10('healing')}
-          compareValue={1}
-          compareText="Average Player"
+        <SimpleCard
+          title="Average time to ult"
+          content={formatTime(averageTimeToUlt)!}
         />
-        <MetricCard
-          name="Eliminations per 10 minutes"
-          value={per10('eliminations')}
-          compareValue={1}
-          compareText="Average Player"
-        />
-        <MetricCard
-          name="Final Blows per 10 minutes"
-          value={per10('final_blows')}
-          compareValue={1}
-          compareText="Average Player"
-        /> */}
       </Box>
       <Box sx={{display: 'flex'}}>
         {/* <PieChartComponent

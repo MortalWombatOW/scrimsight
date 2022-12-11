@@ -1,7 +1,5 @@
 import {
-  BaseData,
   MapEntity,
-  MetricData,
   OWMap,
   PlayerAbility,
   PlayerInteraction,
@@ -59,9 +57,9 @@ export const getPlayer = (
 export const getHeroImage = (heroName: string): string =>
   `/assets/heroes/${heroNameToNormalized(heroName)}.png`;
 
-export const getAllPlayers = (data: BaseData) => {
+export const getAllPlayers = (maps: OWMap[]) => {
   const players: string[] = [];
-  data.maps.forEach((map: OWMap) => {
+  maps.forEach((map: OWMap) => {
     players.push(...map.team1);
     players.push(...map.team2);
   });

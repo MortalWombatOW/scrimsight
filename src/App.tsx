@@ -1,25 +1,18 @@
-import Home from './pages/Home/Home';
-import React, {useEffect, useLayoutEffect, useMemo} from 'react';
+import {Location} from 'history';
+import React, {useMemo} from 'react';
 import {
   BrowserRouter,
-  Routes,
   Route,
+  Routes,
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-import {Location} from 'history';
 import Map from './pages/Map/Map';
-import ReportPage from './pages/ReportPage/ReportPage';
-// import ReportBuilderPage from './pages/ReportBuilderPage/ReportBuilderPage';
-import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
-import {parse, stringify} from 'query-string';
-import {QueryParamProvider} from 'use-query-params';
 import {createTheme, ThemeProvider} from '@mui/material';
-import PlayerPage from './pages/PlayerPage/PlayerPage';
-import routes from './lib/routes';
+import {QueryParamProvider} from 'use-query-params';
+import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 import useQueries from './hooks/useQueries';
-import ResultCache from './lib/data/ResultCache';
-import DebugQueries from './components/Debug/DebugQueries';
+import routes from './lib/routes';
 
 const theme = createTheme({
   palette: {

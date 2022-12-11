@@ -6,23 +6,21 @@ import {
   Select,
   Typography,
 } from '@mui/material';
-import React, {useMemo, useState} from 'react';
-import Header from '../../components/Header/Header';
-import MapsList from '../../components/MapsList/MapsList';
-import useData from '../../hooks/useData';
-import DataTable from 'react-data-table-component';
 import sizeof from 'object-sizeof';
+import React from 'react';
+import DataTable from 'react-data-table-component';
+import Header from '../../components/Header/Header';
+import {useResults} from '../../hooks/useQueries';
 import {
-  BaseData,
+  DataRow,
   FileUpload,
   OWMap,
   PlayerAbility,
   PlayerInteraction,
   PlayerStatus,
 } from '../../lib/data/types';
-import './SettingsPage.scss';
-import {Treemap} from 'recharts';
 import {uploadFile} from '../../lib/data/uploadfile';
+import './SettingsPage.scss';
 
 const loadExampleData = async () => {
   [
@@ -54,35 +52,26 @@ const loadExampleData = async () => {
 const SettingsPage = () => {
   const [updateCount, setUpdateCount] = React.useState(0);
   const incrementUpdateCount = () => setUpdateCount((prev) => prev + 1);
+  const [selectedDataType, setSelectedDataType] = React.useState('maps');
 
-  const [selectedDataType, setSelectedDataType] = useState('Maps');
-
-  const [maps, mapsUpdates] = useData<OWMap>('map');
-  const [interactions, updates] =
-    useData<PlayerInteraction>('player_interaction');
-  const [statuses, statusUpdates] = useData<PlayerStatus>('player_status');
-  const [abilities, abilityUpdates] = useData<PlayerAbility>('player_ability');
+  const [results, tick] = useResults([
+    'maps',
+    'player_status',
+    'player_interaction',
+    'player_ability',
+  ]);
+  const {maps, player_status, player_interaction, player_ability} = results;
 
   const dataTypeOptions = [
     {value: maps, label: 'Maps'},
-    {value: interactions, label: 'Interactions'},
-    {value: statuses, label: 'Statuses'},
-    {value: abilities, label: 'Abilities'},
+    {value: player_interaction, label: 'Interactions'},
+    {value: player_status, label: 'Statuses'},
+    {value: player_ability, label: 'Abilities'},
   ];
 
   const currentTable = dataTypeOptions.find(
     (option) => option.label === selectedDataType,
   )?.value;
-
-  const baseData: BaseData | undefined =
-    maps && interactions && statuses && abilities
-      ? {
-          maps,
-          interactions,
-          statuses,
-          abilities,
-        }
-      : undefined;
 
   const clearAllData = () => {
     // clear indexedDB
@@ -105,8 +94,8 @@ const SettingsPage = () => {
           <Typography variant="h6">Usage</Typography>
           <Typography variant="body1">
             Dataset uses{' '}
-            {baseData !== undefined &&
-              (sizeof(baseData) / 1000000).toLocaleString()}{' '}
+            {/* {baseData !== undefined &&
+              (sizeof(baseData) / 1000000).toLocaleString()}{' '} */}
             MB of storage.
           </Typography>
         </div>
@@ -132,7 +121,7 @@ const SettingsPage = () => {
             </Select>
           </FormControl>
           {currentTable && (
-            <DataTable<OWMap | PlayerInteraction | PlayerStatus | PlayerAbility>
+            <DataTable<DataRow>
               columns={
                 currentTable.length > 0
                   ? Object.keys(currentTable[0]).map((key) => ({

@@ -1,5 +1,4 @@
 import {useEffect, useLayoutEffect, useState} from 'react';
-import memoize from '../lib/data/memoise';
 import ResultCache from '../lib/data/ResultCache';
 import {Data, Query} from '../lib/data/types';
 
@@ -11,7 +10,7 @@ const useQueries = (
   queries: Query[],
   deps: any[],
   options: UseQueriesOptions = {},
-): [{[key: string]: {[key: string]: string | number}[]}, number] => {
+): [{[key: string]: Data}, number] => {
   const [computeTick, setComputeTick] = useState<number>(0);
 
   const nextComputeStep = (name: string) => {
@@ -39,6 +38,40 @@ const useQueries = (
     }, {} as {[key: string]: {[key: string]: string | number}[]});
 
   return [results, computeTick];
+};
+
+export const useQuery = (
+  query: Query,
+  deps: any[],
+  options: UseQueriesOptions = {},
+): [Data, number] => {
+  const [results, computeTick] = useQueries([query], deps, options);
+  return [results[query.name], computeTick];
+};
+
+// just get existing results, don't start a query if it doesn't exist
+export const useResults = (
+  queryNames: string[],
+): [{[key: string]: Data}, number] => {
+  const [computeTick, setComputeTick] = useState<number>(0);
+  const nextComputeStep = () => {
+    setComputeTick((computeTick) => computeTick + 1);
+  };
+  queryNames.forEach((name) => {
+    ResultCache.registerListener(name, nextComputeStep);
+  });
+  const results = queryNames
+    .filter((query) => ResultCache.hasResults(query))
+    .reduce((acc, query) => {
+      acc[query] = ResultCache.getValueForKey(query) as Data;
+      return acc;
+    }, {} as {[key: string]: Data});
+  return [results, computeTick];
+};
+
+export const useResult = (queryName: string): [Data, number] => {
+  const [results, computeTick] = useResults([queryName]);
+  return [results[queryName], computeTick];
 };
 
 export default useQueries;

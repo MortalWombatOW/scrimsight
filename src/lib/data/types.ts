@@ -42,8 +42,6 @@ type PlayerInteraction = GameEvent & {
 
 type TableDefinition = OWMap | PlayerStatus | PlayerAbility | PlayerInteraction;
 
-type WithId<T> = T & {id: number};
-
 // const types = {
 //   map: keys<OWMap>(),
 //   player_status: keys<PlayerStatus>(),
@@ -138,62 +136,6 @@ type RenderState = {
   };
 };
 
-enum MetricType {
-  sum,
-  count,
-  average,
-}
-
-enum MetricValue {
-  health,
-  timeToUlt,
-  timeWithUlt,
-  damage,
-  damageTaken,
-  healing,
-  healingTaken,
-  finalBlows,
-  deaths,
-  eliminations,
-  ultsUsed,
-  mapCount,
-  topHero,
-  damagePer10m,
-  healingPer10m,
-  deathsPer10m,
-  eliminationsPer10m,
-  finalBlowsPer10m,
-  finalBlowsPerLife,
-  timePlayed,
-  fileTime,
-}
-
-enum MetricGroup {
-  player,
-  team,
-  time,
-  map,
-  teamfight,
-}
-
-type Metric = {
-  values: MetricValue[];
-  groups: MetricGroup[];
-};
-
-type MetricRow = {
-  value: number;
-  groups: {
-    [key: string]: string;
-  };
-};
-
-type MetricData =
-  | Statistic
-  | {
-      [key: string]: MetricData;
-    };
-
 enum ReportComponentType {
   default,
   debug,
@@ -213,7 +155,7 @@ enum ReportComponentStyle {
 
 type ReportComponent = {
   type: ReportComponentType;
-  metric: Metric;
+  // metric: Metric; TODO change to query?
   style: ReportComponentStyle;
 };
 
@@ -227,24 +169,10 @@ enum ReportControlType {
   player,
 }
 
-type ReportMetricGroup = {
-  metric: Metric;
-  components: ReportComponent[];
-};
-
 type Report = {
   title: string;
   controls: ReportControl[];
-  metricGroups: ReportMetricGroup[];
-};
-
-type PackedReport = (string | number)[];
-
-type BaseData = {
-  maps: OWMap[];
-  statuses: PlayerStatus[];
-  abilities: PlayerAbility[];
-  interactions: PlayerInteraction[];
+  // metricGroups: ReportMetricGroup[]; TODO
 };
 
 type GameStateTimeSlice = {
@@ -274,8 +202,6 @@ type GameStateExtractor = (slice: GameStateTimeSlice) => {
   [key: string]: number;
 };
 
-type MetricComponent = ({data}: {data: MetricData}) => JSX.Element;
-
 type Data = DataRow[];
 type DataRow = {[key: string]: string | number};
 
@@ -292,32 +218,16 @@ export {
   PlayerInteraction,
   // types,
   TableDefinition,
-  WithId,
   FileUpload,
-  Column,
-  Dataset,
-  Extractor,
-  Transform,
-  Metric,
-  Aggregation,
   TeamInfo,
   Statistic,
   ColorInternal,
   MapEntity,
   RenderState,
-  MetricType,
-  MetricValue,
-  MetricGroup,
-  MetricData,
-  MetricRow,
   Report,
-  BaseData,
   ReportComponent,
   ReportControl,
   ReportComponentType,
-  PackedReport,
-  MetricComponent,
-  ReportMetricGroup,
   ReportControlType,
   ReportComponentStyle,
   GameStateTimeSlice,

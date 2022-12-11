@@ -1,25 +1,20 @@
-import React, {useState, MouseEvent} from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar,
-  Avatar,
   Box,
   Button,
   Container,
-  Divider,
   IconButton,
   Menu,
   MenuItem,
   Toolbar,
-  Tooltip,
   Typography,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import Uploader from '../Uploader/Uploader';
-import {useNavigate, Link} from 'react-router-dom';
+import React, {MouseEvent, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 
-import SearchBar from '../SearchBar/SearchBar';
-import './Header.scss';
 import routes from '../../lib/routes';
+import './Header.scss';
 
 const settings = ['Settings', 'Logout'];
 

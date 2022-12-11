@@ -1,35 +1,35 @@
 import React, {useMemo} from 'react';
-import useData from '../../hooks/useData';
+import {useResult} from '../../hooks/useQueries';
+import {groupMapsByDate} from '../../lib/data/data';
 import {OWMap} from '../../lib/data/types';
 import MapRow from '../MapRow/MapRow';
-import {groupMapsByDate} from '../../lib/data/data';
 import './MapsList.scss';
 
 const MapsList = ({updateCount}: {updateCount: number}) => {
-  const [data, updates] = useData<OWMap>('map', undefined, updateCount);
+  const [results, tick] = useResult('maps');
 
   console.log(updateCount);
 
-  const groupedByTime = useMemo(() => {
-    return groupMapsByDate(data);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updates]);
+  // const groupedByTime = useMemo(() => {
+  //   return groupMapsByDate();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [tick]);
 
-  if (!data) {
+  if (!results) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="MapsList">
       <div className="MapsList-header">Maps</div>
-      {Object.entries(groupedByTime).map(([date, maps]) => (
+      {/* {Object.entries(groupedByTime).map(([date, maps]) => (
         <div key={date}>
           <div className="MapsList-datedivider">{date}</div>
           {maps.map((map) => (
             <MapRow key={map.mapId} map={map} />
           ))}
         </div>
-      ))}
+      ))} */}
     </div>
   );
 };

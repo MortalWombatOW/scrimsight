@@ -1,5 +1,3 @@
-import {PackedReport} from './types';
-
 // Original: https://github.com/michael-mcanulty/tsBase64
 
 export class TsBase64 {
