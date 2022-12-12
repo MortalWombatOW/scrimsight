@@ -16,6 +16,7 @@ const CardCarousel = (props) => {
         // width: '500px',
         maxWidth: width,
         overflowX: 'hidden',
+        padding: '10px 0',
       }}>
       {...children.map((child) => (
         <div

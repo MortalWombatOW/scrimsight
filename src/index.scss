@@ -46,6 +46,30 @@ $value in $colors {
     typing 3.5s steps(100, end),  blink-caret .75s step-end infinite;
 }
 
+.hover-underline-animation {
+  display: inline-block;
+  position: relative;
+  color: #a93669;
+}
+
+.hover-underline-animation::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #a93669;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.hover-underline-animation:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
 // .blinkingcursor {
 //   // border-right: 5px solid black; /* The typwriter cursor */
 //   display: inline-block;

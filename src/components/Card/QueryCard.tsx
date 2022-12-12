@@ -3,7 +3,7 @@ import {Box, Card, Typography} from '@mui/material';
 import './Card.scss';
 import {Data, Query} from '../../lib/data/types';
 import useQueries from '../../hooks/useQueries';
-import {format} from '../../lib/data/metricsv3';
+import {format} from '../../lib/data/format';
 
 const QueryCard = ({
   title,

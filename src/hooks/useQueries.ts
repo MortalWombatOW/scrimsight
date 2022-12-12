@@ -10,7 +10,7 @@ const useQueries = (
   queries: Query[],
   deps: any[],
   options: UseQueriesOptions = {},
-): [{[key: string]: Data}, number] => {
+): [{[key: string]: Data}, number, boolean] => {
   const [computeTick, setComputeTick] = useState<number>(0);
 
   const nextComputeStep = (name: string) => {
@@ -37,7 +37,10 @@ const useQueries = (
       return acc;
     }, {} as {[key: string]: {[key: string]: string | number}[]});
 
-  return [results, computeTick];
+  const numQueries = queries.length;
+  const allLoaded = Object.keys(results).length === numQueries;
+
+  return [results, computeTick, allLoaded];
 };
 
 export const useQuery = (

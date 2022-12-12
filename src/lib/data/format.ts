@@ -19,7 +19,10 @@ export const format = (
 };
 
 export const formatTime = (val: number | string | undefined) => {
-  if (typeof val === 'string' || val === undefined) {
+  if (val === undefined) {
+    return '';
+  }
+  if (typeof val === 'string') {
     return val;
   }
   const hours = Math.floor(val / 3600);

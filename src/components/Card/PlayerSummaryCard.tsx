@@ -1,26 +1,100 @@
-import {Card, CardContent, Grid, Avatar, Typography, Chip} from '@mui/material';
+import {
+  Card,
+  CardContent,
+  Grid,
+  Avatar,
+  Typography,
+  Chip,
+  CircularProgress,
+  CardActions,
+  CardHeader,
+  Button,
+  List,
+  ListItem,
+  Skeleton,
+} from '@mui/material';
 import React from 'react';
+import usePlayerSummaryMetrics from '../../hooks/usePlayerSummaryMetrics';
+import {format, formatTime} from '../../lib/data/format';
+import MetricText from '../Common/MetricText';
+import {getIcon} from '../Common/RoleIcons';
 
 const PlayerSummaryCard = ({playerName}: {playerName: string}) => {
-  const playerIcon = 'https://i.imgur.com/0X2V9w1.png';
   const metrics = ['Top 500', 'Top 100', 'Top 10', 'Top 1'];
+
+  const [results, tick] = usePlayerSummaryMetrics(playerName);
+
+  const isLoaded = results !== undefined;
+
   return (
-    <Card sx={{minWidth: '200px'}}>
+    <Card sx={{width: '400px'}}>
+      <CardHeader
+        avatar={
+          results?.role === undefined ? (
+            <CircularProgress
+              variant="indeterminate"
+              color="primary"
+              size={15}
+            />
+          ) : (
+            getIcon(results.role)
+          )
+        }
+        disableTypography
+        title={<Typography variant="h5">{playerName}</Typography>}
+        subheader={
+          <Typography variant="subtitle1">
+            {results?.role === undefined ? (
+              <span>...</span>
+            ) : (
+              results.role + ' player'
+            )}
+          </Typography>
+        }
+      />
       <CardContent>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item>
-            <Avatar src={playerIcon} />
+        {isLoaded ? (
+          <Grid container spacing={0}>
+            <Grid item xs={4}>
+              <MetricText
+                label="Maps played"
+                value={format(results.mapsPlayed, 0)}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <MetricText
+                label="Playtime"
+                value={formatTime(results.playTime)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <MetricText
+                label="Damage done / taken"
+                value={format(results.damageDoneVsTaken, 2)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <MetricText
+                label="Eliminations / deaths"
+                value={format(results.elimsVsDeaths, 2)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <MetricText
+                label="Final blows / eliminations"
+                value={format(results.finalBlowsVsElims, 2)}
+              />
+            </Grid>
           </Grid>
-          <Grid item>
-            <Typography variant="h5">{playerName}</Typography>
-          </Grid>
-          <Grid item>
-            {metrics.map((metric, index) => {
-              return <Chip key={index} label={metric} variant="outlined" />;
-            })}
-          </Grid>
-        </Grid>
+        ) : (
+          <Skeleton variant="rectangular" width={210} height={60} />
+        )}
       </CardContent>
+      <CardActions>
+        <Button size="small" color="secondary">
+          View Player
+        </Button>
+      </CardActions>
     </Card>
   );
 };

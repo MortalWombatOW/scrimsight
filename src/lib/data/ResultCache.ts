@@ -153,7 +153,7 @@ export default class ResultCache {
         }
       });
     }
-    ResultCache.printBuildGraph();
+    // ResultCache.printBuildGraph();
   }
 
   private static runQuery(query: Query, callback: () => void) {

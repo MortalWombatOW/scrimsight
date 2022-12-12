@@ -17,7 +17,10 @@ import routes from './lib/routes';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#363636',
+      main: '#001732',
+    },
+    secondary: {
+      main: '#a93669',
     },
   },
 });

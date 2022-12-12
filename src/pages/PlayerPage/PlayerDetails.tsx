@@ -13,7 +13,7 @@ import {
 } from '../../components/Common/RoleIcons';
 import useQueries from '../../hooks/useQueries';
 import {getHeroImage, heroToRoleTable} from '../../lib/data/data';
-import {format, formatTime, safeDivide} from '../../lib/data/metricsv3';
+import {format, formatTime, safeDivide} from '../../lib/data/format';
 import {DataRow} from '../../lib/data/types';
 const sum = (
   agg: string,
