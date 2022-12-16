@@ -55,13 +55,13 @@ const PlayerSummaryCard = ({playerName}: {playerName: string}) => {
       <CardContent>
         {isLoaded ? (
           <Grid container spacing={0}>
-            <Grid item xs={4}>
+            <Grid item xs={6}>
               <MetricText
                 label="Maps played"
                 value={format(results.mapsPlayed, 0)}
               />
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={6}>
               <MetricText
                 label="Playtime"
                 value={formatTime(results.playTime)}
@@ -87,7 +87,7 @@ const PlayerSummaryCard = ({playerName}: {playerName: string}) => {
             </Grid>
           </Grid>
         ) : (
-          <Skeleton variant="rectangular" width={210} height={60} />
+          <Skeleton variant="rectangular" width={380} height={150} />
         )}
       </CardContent>
       <CardActions>

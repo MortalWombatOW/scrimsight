@@ -23,6 +23,9 @@ const theme = createTheme({
       main: '#a93669',
     },
   },
+  typography: {
+    fontFamily: 'Bitter',
+  },
 });
 
 const App = () => {

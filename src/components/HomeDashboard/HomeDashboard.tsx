@@ -1,9 +1,10 @@
-import {CircularProgress} from '@mui/material';
+import {Box, CircularProgress, Typography} from '@mui/material';
 import React from 'react';
 import {useQuery} from '../../hooks/useQueries';
 import useWindowSize from '../../hooks/useWindowSize';
 import CardCarousel from '../Card/CardCarousel';
 import PlayerSummaryCard from '../Card/PlayerSummaryCard';
+import WelcomeMessage from '../WelcomeMessage/WelcomeMessage';
 
 const HomeDashboard = () => {
   const {width} = useWindowSize();
@@ -20,16 +21,32 @@ const HomeDashboard = () => {
   const isLoading = team === undefined;
 
   return (
-    <div>
-      {isLoading ? (
-        <CircularProgress variant="indeterminate" color="primary" />
-      ) : (
-        <CardCarousel width={width} childSpacing={10}>
-          {team.map(({player}) => (
-            <PlayerSummaryCard playerName={player as string} />
-          ))}
-        </CardCarousel>
-      )}
+    <div
+      style={
+        {
+          // padding: '50px',
+          // width: width,
+        }
+      }>
+      <WelcomeMessage />
+      <Box>
+        <Box
+          sx={{
+            paddingLeft: '50px',
+          }}>
+          <Typography variant="h4">Your Team</Typography>
+        </Box>
+
+        {isLoading ? (
+          <CircularProgress variant="indeterminate" color="primary" />
+        ) : (
+          <CardCarousel width={width} childSpacing={10}>
+            {team.map(({player}) => (
+              <PlayerSummaryCard playerName={player as string} />
+            ))}
+          </CardCarousel>
+        )}
+      </Box>
     </div>
   );
 };

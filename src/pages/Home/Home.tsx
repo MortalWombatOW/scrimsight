@@ -24,7 +24,7 @@ const Home = () => {
 
   const [maps, tick] = useResult('map');
   const isLoading = maps === undefined;
-  const isNewUser = !isLoading && maps.length === 0;
+  const isNewUser = (!isLoading && maps.length === 0) || true;
 
   return (
     <div>
