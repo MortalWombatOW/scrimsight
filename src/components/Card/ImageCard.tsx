@@ -21,7 +21,7 @@ const ImageCard = ({
   src: string;
   titleText: string;
   contentText: string;
-  buttons: {
+  buttons?: {
     text: string;
     onClick: () => void;
   }[];
@@ -55,7 +55,7 @@ const ImageCard = ({
           }}>
           <Typography
             gutterBottom
-            variant="h2"
+            variant="h1"
             style={{
               textShadow: '0 0 10px rgba(0, 0, 0, 1)',
             }}
@@ -77,19 +77,20 @@ const ImageCard = ({
             backgroundColor: 'rgba(0, 0, 0, 0.33)',
             position: 'relative',
           }}>
-          {buttons.map((button) => (
-            <Button
-              key={button.text}
-              size="small"
-              color="inherit"
-              variant="outlined"
-              style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.75)',
-              }}
-              onClick={button.onClick}>
-              {button.text}
-            </Button>
-          ))}
+          {buttons &&
+            buttons.map((button) => (
+              <Button
+                key={button.text}
+                size="small"
+                color="inherit"
+                variant="outlined"
+                style={{
+                  backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                }}
+                onClick={button.onClick}>
+                {button.text}
+              </Button>
+            ))}
         </CardActions>
       </Card>
     </Box>

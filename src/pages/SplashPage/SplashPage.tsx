@@ -7,11 +7,11 @@ import {
   CardMedia,
   CardContent,
   CardActions,
-  Button,
 } from '@mui/material';
 import React from 'react';
 import {Link} from 'react-router-dom';
 import ImageCard from '../../components/Card/ImageCard';
+import {Button} from '../../components/Common/Mui';
 import SplashRow from './SplashRow';
 
 const SplashPage = () => {
@@ -21,28 +21,52 @@ const SplashPage = () => {
         width="100%"
         src="/assets/splash.png"
         titleText="Take your team to the next level"
-        contentText="Unlock the power of data-driven decision making with Scrimsight."
-        buttons={[
-          {
-            text: 'Explore example data',
-            onClick: () => {},
-          },
-          {
-            text: 'Create your team',
-            onClick: () => {},
-          },
-        ]}
+        contentText="Unlock the power of data-driven insights for your Overwatch team with Scrimsight"
+        // buttons={[
+        //   {
+        //     text: 'Explore example data',
+        //     onClick: () => {},
+        //   },
+        //   {
+        //     text: 'Create your team',
+        //     onClick: () => {},
+        //   },
+        // ]}
         style={{
           marginLeft: '50px',
           marginRight: '50px',
         }}
       />
+      <Container
+        style={{
+          width: '100%',
+          justifyContent: 'center',
+          display: 'flex',
+          marginBottom: '32px',
+        }}>
+        <Button
+          variant="contained"
+          color="secondary"
+          style={{marginRight: '100px', fontSize: '32px'}}>
+          Explore example data
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          style={{fontSize: '32px'}}>
+          Create your team
+        </Button>
+      </Container>
       <SplashRow
         title="Easy to set up"
         content="With a custom workshop code, your scrims are automatically logged to your PC."
         image="/assets/settingsscreen.png"
-        backgroundColor="#a93669"
-        textColor="white"
+        backgroundColor="#F9A03F"
+        textColor="black"
+        button={{
+          text: 'Get started',
+          onClick: () => {},
+        }}
       />
       <SplashRow
         title="Control your data"
@@ -50,13 +74,21 @@ const SplashPage = () => {
         image="/assets/settingsscreen.png"
         backgroundColor="#001732"
         textColor="white"
+        button={{
+          text: 'Learn more',
+          onClick: () => {},
+        }}
       />
       <SplashRow
         title="Cumulative insights"
         content="Browse metrics for players and teams over time. The more games you log, the more insights you'll gain."
         image="/assets/settingsscreen.png"
-        backgroundColor="#a93669"
-        textColor="white"
+        backgroundColor="#F9A03F"
+        textColor="black"
+        button={{
+          text: 'See an example',
+          onClick: () => {},
+        }}
       />
       <SplashRow
         title="Revisit matches"
@@ -64,6 +96,10 @@ const SplashPage = () => {
         image="/assets/settingsscreen.png"
         backgroundColor="#001732"
         textColor="white"
+        button={{
+          text: 'Try it out',
+          onClick: () => {},
+        }}
       />
     </Box>
   );
