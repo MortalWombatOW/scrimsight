@@ -29,14 +29,6 @@ const theme = createTheme({
 });
 
 const App = () => {
-  // React runs useEffects from child components before parent components.
-  // Because this is the root component, and we need this to run first, we use useLayoutEffect instead.
-  // useLayoutEffect(() => {
-  //   ResultCache.runQueries(
-
-  //   );
-  // }, []);
-
   const [results, tick] = useQueries(
     [
       {name: 'player_status', query: 'select * from player_status'},

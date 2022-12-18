@@ -37,30 +37,67 @@ const SplashPage = () => {
           marginRight: '50px',
         }}
       />
+
       <Container
         style={{
           width: '100%',
           justifyContent: 'center',
           display: 'flex',
-          marginBottom: '32px',
         }}>
-        <Button
-          variant="contained"
-          color="secondary"
-          style={{marginRight: '100px', fontSize: '32px'}}>
-          Explore example data
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          style={{fontSize: '32px'}}>
-          Create your team
-        </Button>
+        <Box style={{width: '600px', maxWidth: '80%', minWidth: '66%'}}>
+          <Typography variant="h5" style={{marginBottom: '20px'}}>
+            Are you tired of not understanding why your team is struggling in
+            Overwatch?
+          </Typography>
+          <Typography variant="body2" style={{marginBottom: '20px'}}>
+            Scrimsight takes the guesswork out of analyzing your performance in
+            Overwatch. Through detailed analysis of your team's performance, you
+            can quickly identify the issues that are causing you to lose and
+            make better-informed decisions to turn things around. Don't let the
+            confusion of Overwatch hold you back - use Scrimsight to find the
+            keys to victory for your team!
+          </Typography>
+        </Box>
       </Container>
+
+      <Box
+        style={{
+          width: '100%',
+          justifyContent: 'center',
+          display: 'flex',
+          paddingLeft: 0,
+          paddingRight: 0,
+          backgroundColor: '#F9A03F',
+        }}>
+        <Box
+          style={{
+            width: '100%',
+            borderBottomLeftRadius: '50% 32%',
+            borderBottomRightRadius: '50% 32%',
+            paddingBottom: '50px',
+            backgroundColor: 'white',
+            justifyContent: 'center',
+            display: 'flex',
+          }}>
+          <Button
+            variant="contained"
+            color="secondary"
+            style={{marginRight: '100px', fontSize: '32px'}}>
+            Explore example data
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            style={{fontSize: '32px'}}>
+            Create your team
+          </Button>
+        </Box>
+      </Box>
       <SplashRow
         title="Easy to set up"
         content="With a custom workshop code, your scrims are automatically logged to your PC."
         image="/assets/settingsscreen.png"
+        beforeBackgroundColor="#001732"
         backgroundColor="#F9A03F"
         textColor="black"
         button={{
@@ -72,6 +109,7 @@ const SplashPage = () => {
         title="Control your data"
         content="All of your data is stored and processed locally on your PC. Load your data manually or integrate with your prefered file storage service."
         image="/assets/settingsscreen.png"
+        beforeBackgroundColor="#F9A03F"
         backgroundColor="#001732"
         textColor="white"
         button={{
@@ -83,6 +121,7 @@ const SplashPage = () => {
         title="Cumulative insights"
         content="Browse metrics for players and teams over time. The more games you log, the more insights you'll gain."
         image="/assets/settingsscreen.png"
+        beforeBackgroundColor="#001732"
         backgroundColor="#F9A03F"
         textColor="black"
         button={{
@@ -94,6 +133,7 @@ const SplashPage = () => {
         title="Revisit matches"
         content="See how the match unfolded with the play-by-play viewer. Link to specific moments in your match to share with your team."
         image="/assets/settingsscreen.png"
+        beforeBackgroundColor="#F9A03F"
         backgroundColor="#001732"
         textColor="white"
         button={{
@@ -101,6 +141,18 @@ const SplashPage = () => {
           onClick: () => {},
         }}
       />
+      <Container
+        style={{
+          width: '100%',
+          backgroundColor: '#F9A03F',
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '20px',
+        }}>
+        <Typography variant="body1">
+          Terms of Service | Privacy Policy | © 2022 Andrew Gleeson
+        </Typography>
+      </Container>
     </Box>
   );
 };
