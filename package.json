@@ -65,6 +65,7 @@
     "react-spinners": "^0.13.6",
     "react-spring": "^9.5.5",
     "react-tracked": "^1.7.10",
+    "react-use-cookie": "^1.4.0",
     "react-use-draggable-scroll": "^0.4.7",
     "recharts": "^2.1.14",
     "sass": "^1.55.0",

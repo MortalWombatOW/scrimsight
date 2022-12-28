@@ -20,8 +20,6 @@ import MetricText from '../Common/MetricText';
 import {getIcon} from '../Common/RoleIcons';
 
 const PlayerSummaryCard = ({playerName}: {playerName: string}) => {
-  const metrics = ['Top 500', 'Top 100', 'Top 10', 'Top 1'];
-
   const [results, tick] = usePlayerSummaryMetrics(playerName);
 
   const isLoaded = results !== undefined;

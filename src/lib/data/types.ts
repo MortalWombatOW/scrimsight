@@ -211,6 +211,13 @@ type Query = {
   deps?: (string | Data)[];
 };
 
+type Team = {
+  name: string;
+  players: string[];
+  notes?: string;
+  id?: number;
+};
+
 export {
   OWMap,
   PlayerStatus,
@@ -235,4 +242,5 @@ export {
   Query,
   Data,
   DataRow,
+  Team,
 };

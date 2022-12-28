@@ -38,7 +38,7 @@ const Home = () => {
         {isLoading ? (
           <CircularProgress variant="indeterminate" color="primary" />
         ) : null}
-        {isNewUser ? <SplashPage /> : <HomeDashboard />}
+        <HomeDashboard />
       </div>
     </div>
   );

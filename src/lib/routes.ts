@@ -2,6 +2,7 @@ import Home from '../pages/Home/Home';
 import MapList from '../pages/Map/MapList';
 import PlayerPage from '../pages/PlayerPage/PlayerPage';
 import SettingsPage from '../pages/Settings/SettingsPage';
+import SplashPage from '../pages/SplashPage/SplashPage';
 
 interface Route {
   path: string;
@@ -12,8 +13,13 @@ interface Route {
 const routes: Route[] = [
   {
     path: '/',
+    component: SplashPage,
+    name: 'Overview',
+  },
+  {
+    path: '/team',
     component: Home,
-    name: 'Home',
+    name: 'Team',
   },
   {
     path: '/player',
@@ -24,6 +30,11 @@ const routes: Route[] = [
     path: '/maps',
     component: MapList,
     name: 'Maps',
+  },
+  {
+    path: '/workshop',
+    component: SettingsPage,
+    name: 'Workshop Config',
   },
   {
     path: '/settings',

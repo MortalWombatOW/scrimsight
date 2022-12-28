@@ -15,6 +15,7 @@ import {useNavigate} from 'react-router-dom';
 
 import routes from '../../lib/routes';
 import './Header.scss';
+import TeamConfigurator from './TeamConfigurator';
 
 const settings = ['Settings', 'Logout'];
 
@@ -52,21 +53,6 @@ const Header = ({
   };
 
   return (
-    // <Toolbar className="header">
-    //   <span className="logo" onClick={() => navigate('/')}>
-    //     scrimsight
-    //   </span>
-    //   <div className="center">
-    //     <SearchBar
-    //       filters={filters}
-    //       setFilters={setFilters}
-    //       allOptions={[{foo: 'bar'}]}
-    //     />
-    //   </div>
-    //   <div className="navbuttons">
-    //     <Uploader refreshCallback={refreshCallback} />
-    //   </div>
-    // </Toolbar>
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -77,7 +63,7 @@ const Header = ({
             href="/"
             sx={{
               mr: 2,
-              display: {xs: 'none', md: 'flex'},
+              display: {xs: 'none', lg: 'flex'},
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',
@@ -87,7 +73,7 @@ const Header = ({
             scrimsight
           </Typography>
 
-          <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
+          <Box sx={{display: {xs: 'flex', lg: 'none'}}}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -112,8 +98,11 @@ const Header = ({
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: {xs: 'block', md: 'none'},
+                display: {xs: 'block', lg: 'none'},
               }}>
+              <MenuItem>
+                <TeamConfigurator />
+              </MenuItem>
               {routes.map((route) => (
                 <MenuItem
                   onClick={() => handleClickForPage(route.path)}
@@ -125,31 +114,37 @@ const Header = ({
           </Box>
 
           <Typography
-            variant="h5"
+            variant="h6"
             noWrap
             component="a"
             href=""
             sx={{
               mr: 2,
-              display: {xs: 'flex', md: 'none'},
+              display: {xs: 'flex', lg: 'none'},
               flexGrow: 1,
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
+              marginLeft: '50px',
             }}>
             scrimsight
           </Typography>
-          <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
-            {routes.map((route) => (
-              <Button
-                key={route.path}
-                onClick={() => handleClickForPage(route.path)}
-                sx={{my: 2, color: 'white', display: 'block'}}>
-                {route.name}
-              </Button>
-            ))}
+          <Box sx={{flexGrow: 1, display: {xs: 'none', lg: 'flex'}}}>
+            <Box sx={{display: 'flex', marginLeft: '100px'}}>
+              {routes.map((route) => (
+                <Button
+                  key={route.path}
+                  onClick={() => handleClickForPage(route.path)}
+                  sx={{my: 2, color: 'white', display: 'block'}}>
+                  {route.name}
+                </Button>
+              ))}
+            </Box>
+            <Box sx={{marginLeft: 'auto', order: 2, my: 2}}>
+              <TeamConfigurator />
+            </Box>
           </Box>
 
           {/* <Box sx={{flexGrow: 0}}>

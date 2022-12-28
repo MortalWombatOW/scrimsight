@@ -35,6 +35,7 @@ const App = () => {
       {name: 'player_interaction', query: 'select * from player_interaction'},
       {name: 'player_ability', query: 'select * from player_ability'},
       {name: 'map', query: 'select * from map'},
+      {name: 'team', query: 'select * from team'},
     ],
     [],
     {

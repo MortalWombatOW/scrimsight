@@ -1,52 +1,45 @@
-import {Box, CircularProgress, Typography} from '@mui/material';
-import React from 'react';
-import {useQuery} from '../../hooks/useQueries';
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CircularProgress,
+  Typography,
+} from '@mui/material';
+import React, {useState} from 'react';
 import useWindowSize from '../../hooks/useWindowSize';
-import CardCarousel from '../Card/CardCarousel';
-import PlayerSummaryCard from '../Card/PlayerSummaryCard';
-import WelcomeMessage from '../WelcomeMessage/WelcomeMessage';
+import Globals from '../../lib/data/globals';
+
+import TeamDisplay from './TeamDisplay';
 
 const HomeDashboard = () => {
   const {width} = useWindowSize();
 
-  const [team, tick] = useQuery(
-    {
-      name: 'uniquePlayers',
-      query: ` select distinct player from ? as player_status`,
-      deps: ['player_status'],
-    },
-    [],
-  );
+  const team = Globals.getTeam();
 
   const isLoading = team === undefined;
 
   return (
-    <div
-      style={
-        {
-          // padding: '50px',
-          // width: width,
-        }
-      }>
-      <WelcomeMessage />
-      <Box>
-        <Box
-          sx={{
-            paddingLeft: '50px',
+    <div style={{width: '100%'}}>
+      {team === undefined ? (
+        <div
+          style={{
+            padding: '50px',
           }}>
-          <Typography variant="h4">Your Team</Typography>
-        </Box>
-
-        {isLoading ? (
-          <CircularProgress variant="indeterminate" color="primary" />
-        ) : (
-          <CardCarousel width={width} childSpacing={10}>
-            {team.map(({player}) => (
-              <PlayerSummaryCard playerName={player as string} />
-            ))}
-          </CardCarousel>
-        )}
-      </Box>
+          <Card className="welcome-card">
+            <CardContent>
+              <Typography variant="h5">Select your team</Typography>
+              <Typography variant="body1">
+                Select your team to get started. If you don't have a team, you
+                can create one.
+              </Typography>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        <TeamDisplay />
+      )}
     </div>
   );
 };

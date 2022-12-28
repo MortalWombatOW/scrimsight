@@ -1,5 +1,7 @@
 import {open} from 'idb-factory';
 import Schema from 'idb-schema';
+import {Team} from './types';
+import batch from 'idb-batch';
 
 //https://github.com/treojs/idb-batch
 
@@ -11,7 +13,8 @@ const schema = new Schema()
   .addIndex('byMapId', 'mapId', {unique: true})
   .addStore('player_status', {key: 'id', increment: true})
   .addStore('player_ability', {key: 'id', increment: true})
-  .addStore('player_interaction', {key: 'id', increment: true});
+  .addStore('player_interaction', {key: 'id', increment: true})
+  .addStore('team', {key: 'id', increment: true});
 
 export const setupDB = async (callback) => {
   console.log('setupDB');
@@ -46,3 +49,19 @@ export const mapExists = async (mapId) => {
     };
   });
 };
+
+export function storeObjectInDatabase<T extends {id?: number}>(
+  object: T,
+  storeName: string,
+) {
+  console.log('storeObjectInDatabase', object);
+
+  const db = getDB();
+  if (!db) {
+    throw new Error('Database is not open!');
+  }
+
+  const store = db.transaction([storeName], 'readwrite').objectStore(storeName);
+
+  store.put(object);
+}

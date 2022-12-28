@@ -37,19 +37,22 @@ const useQueries = (
       return acc;
     }, {} as {[key: string]: {[key: string]: string | number}[]});
 
-  const numQueries = queries.length;
-  const allLoaded = Object.keys(results).length === numQueries;
+  const allLoaded = queries.every((query) =>
+    ResultCache.hasResults(query.name),
+  );
 
   return [results, computeTick, allLoaded];
 };
 
-export const useQuery = (
+export const useQuery = <T>(
   query: Query,
   deps: any[],
   options: UseQueriesOptions = {},
-): [Data, number] => {
+): [T[], number] => {
   const [results, computeTick] = useQueries([query], deps, options);
-  return [results[query.name], computeTick];
+  // coerce to T[] because we know the query will return an array of T
+  // will throw an error if the query returns something else
+  return [results[query.name] as unknown as T[], computeTick];
 };
 
 // just get existing results, don't start a query if it doesn't exist

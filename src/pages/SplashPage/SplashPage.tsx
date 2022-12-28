@@ -1,7 +1,6 @@
 import {
   Container,
   Box,
-  Typography,
   Card,
   CardActionArea,
   CardMedia,
@@ -11,12 +10,19 @@ import {
 import React from 'react';
 import {Link} from 'react-router-dom';
 import ImageCard from '../../components/Card/ImageCard';
-import {Button} from '../../components/Common/Mui';
+import {Button, Typography} from '../../components/Common/Mui';
+import Header from '../../components/Header/Header';
 import SplashRow from './SplashRow';
 
 const SplashPage = () => {
   return (
     <Box style={{width: '100%'}}>
+      <Header
+        refreshCallback={() => {}}
+        filters={{}}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        setFilters={(filters) => {}}
+      />
       <ImageCard
         width="100%"
         src="/assets/splash.png"
@@ -38,35 +44,27 @@ const SplashPage = () => {
         }}
       />
 
-      <Container
+      <Box
         style={{
-          width: '100%',
-          justifyContent: 'center',
-          display: 'flex',
+          marginLeft: '50px',
+          marginRight: '50px',
         }}>
-        <Box style={{width: '600px', maxWidth: '80%', minWidth: '66%'}}>
+        <Box>
           <Typography variant="h5" style={{marginBottom: '20px'}}>
-            Are you tired of not understanding why your team is struggling in
-            Overwatch?
+            Do you manage or coach a competitive Overwatch team?
           </Typography>
           <Typography variant="body2" style={{marginBottom: '20px'}}>
-            Scrimsight takes the guesswork out of analyzing your performance in
-            Overwatch. Through detailed analysis of your team's performance, you
-            can quickly identify the issues that are causing you to lose and
-            make better-informed decisions to turn things around. Don't let the
-            confusion of Overwatch hold you back - use Scrimsight to find the
-            keys to victory for your team!
+            Scrimsight takes the guesswork out of analyzing your team's
+            performance. With detailed statistics and replay features, you can
+            quickly identify and communicate the issues that are holding your
+            team back and make better-informed decisions to supercharge your
+            team. Use Scrimsight to find the keys to victory for your team!
           </Typography>
         </Box>
-      </Container>
-
+      </Box>
       <Box
         style={{
           width: '100%',
-          justifyContent: 'center',
-          display: 'flex',
-          paddingLeft: 0,
-          paddingRight: 0,
           backgroundColor: '#F9A03F',
         }}>
         <Box
@@ -74,25 +72,38 @@ const SplashPage = () => {
             width: '100%',
             borderBottomLeftRadius: '50% 32%',
             borderBottomRightRadius: '50% 32%',
-            paddingBottom: '50px',
-            backgroundColor: 'white',
-            justifyContent: 'center',
+            backgroundColor: '#f3f3f3',
             display: 'flex',
+            paddingLeft: '50px',
+            paddingRight: '50px',
+            flexWrap: 'wrap',
+            marginTop: '50px',
+            paddingBottom: '32px',
           }}>
           <Button
             variant="contained"
             color="secondary"
-            style={{marginRight: '100px', fontSize: '32px'}}>
+            style={{
+              marginRight: '100px',
+              fontSize: '32px',
+              width: '350px',
+              marginBottom: '20px',
+            }}>
             Explore example data
           </Button>
           <Button
             variant="contained"
             color="secondary"
-            style={{fontSize: '32px'}}>
-            Create your team
+            style={{
+              fontSize: '32px',
+              width: '350px',
+              marginBottom: '20px',
+            }}>
+            Get started with your data
           </Button>
         </Box>
       </Box>
+
       <SplashRow
         title="Easy to set up"
         content="With a custom workshop code, your scrims are automatically logged to your PC."
@@ -141,7 +152,7 @@ const SplashPage = () => {
           onClick: () => {},
         }}
       />
-      <Container
+      <Box
         style={{
           width: '100%',
           backgroundColor: '#F9A03F',
@@ -152,7 +163,7 @@ const SplashPage = () => {
         <Typography variant="body1">
           Terms of Service | Privacy Policy | © 2022 Andrew Gleeson
         </Typography>
-      </Container>
+      </Box>
     </Box>
   );
 };
