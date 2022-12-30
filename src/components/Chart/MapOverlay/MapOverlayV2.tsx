@@ -15,6 +15,7 @@ import useAnimatedPath from '../../../hooks/useAnimatedPath';
 import {animated} from 'react-spring';
 import {groupColorClass} from '../../../lib/color';
 import MapBackground from './MapBackground';
+import Connection from './Connection';
 const colorScale = scaleLinear<number>({range: [0, 1], domain: [0, 1000]});
 const sizeScale = scaleLinear<number>({domain: [0, 600], range: [0.5, 8]});
 
@@ -80,25 +81,23 @@ const getBounds = (entities: MapEntity[]) => {
     maxY: a.maxY ? Math.max(a.maxY, b.maxY || a.maxY) : b.maxY,
   });
   // calculate bounds for each entity and timestamp. then find the max/min of all of them
-  const bounds = entities.flatMap((entity) => {
-    const entityBounds = Object.values(entity.states)
-      .map((state) => {
-        const x = Number(state.x);
-        const y = Number(state.z);
-        return {
-          minX: x,
-          maxX: x,
-          minY: y,
-          maxY: y,
-        };
-      })
-      .reduce(union, {});
-    return entityBounds;
-  });
-  const boundsUnion = bounds.reduce(union, {});
-  return boundsUnion;
+  return entities
+    .flatMap((entity) =>
+      Object.values(entity.states)
+        .map((state) => {
+          const x = Number(state.x);
+          const y = Number(state.z);
+          return {
+            minX: x,
+            maxX: x,
+            minY: y,
+            maxY: y,
+          };
+        })
+        .reduce(union, {}),
+    )
+    .reduce(union, {});
 };
-
 const MapOverlayV2 = ({width, height, entities}: ZoomIProps) => {
   const [time, setTime] = useState<number>(100);
   const [mousePosition, setMousePosition] = useState<{x: number; y: number}>({
@@ -111,8 +110,9 @@ const MapOverlayV2 = ({width, height, entities}: ZoomIProps) => {
     setMousePosition({x, y});
   };
 
-  const playerPositions = entities.filter(
-    (entity) => entity.entityType === 'player',
+  const playerPositions = useMemo(
+    () => entities.filter((entity) => entity.entityType === 'player'),
+    [entities],
   );
 
   const currentPosition = (
@@ -126,81 +126,94 @@ const MapOverlayV2 = ({width, height, entities}: ZoomIProps) => {
     };
   };
 
-  const bounds = getBounds(entities);
+  const bounds = useMemo(() => getBounds(entities), [entities]);
 
-  const currentPositions = playerPositions.flatMap((entity) => {
-    const position = currentPosition(entity);
-    if (!position) return [];
-    return [position];
-  });
-
-  const playerNodes = playerPositions.flatMap((entity) => {
-    const state = entity.states[time];
-    if (!state) return [];
-    const player = state['name'];
-    const hero = state['hero'];
-    const health = Number(state['health']);
-    const maxHealth = Number(state['maxHealth']);
-    const ultCharge = Number(state['ultCharge']);
-    const position = currentPosition(entity);
-    if (!position) return [];
-    return [
-      {
-        x: position.x,
-        y: position.y,
-        player: player as string,
-        hero: hero as string,
-        health: health as number,
-        maxHealth: maxHealth as number,
-        ultCharge: ultCharge as number,
-      },
-    ];
-  });
-
-  const initialTransform = {
-    ...allVisibleTransform(currentPositions),
-    skewX: 0,
-    skewY: 0,
-  };
-
-  const linkEntities = entities.filter(
-    (entity) =>
-      entity.entityType === 'damage' || entity.entityType === 'healing',
+  const currentPositions = useMemo(
+    () =>
+      playerPositions.flatMap((entity) => {
+        const position = currentPosition(entity);
+        if (!position) return [];
+        return [position];
+      }),
+    [playerPositions, time],
   );
 
-  const links = linkEntities.flatMap((entity) => {
-    const state = entity.states[time];
-    if (!state) return [];
-    const source = state['player'] as string;
-    const target = state['target'] as string;
-    const sourceNode = playerNodes.find((node) => node.player === source);
-    const targetNode = playerNodes.find((node) => node.player === target);
-    if (!sourceNode || !targetNode) {
-      console.log('no source or target', entity, state);
-      return [];
-    }
-    return [
-      {
-        source: sourceNode,
-        target: targetNode,
-        type: entity.entityType,
-        amount: Number(state['amount']),
-      },
-    ];
-  });
+  const playerNodes = useMemo(
+    () =>
+      playerPositions.flatMap((entity) => {
+        const state = entity.states[time];
+        if (!state) return [];
+        const player = state['name'];
+        const hero = state['hero'];
+        const health = Number(state['health']);
+        const maxHealth = Number(state['maxHealth']);
+        const ultCharge = Number(state['ultCharge']);
+        const position = currentPosition(entity);
+        if (!position) return [];
+        return [
+          {
+            x: position.x,
+            y: position.y,
+            player: player as string,
+            hero: hero as string,
+            health: health as number,
+            maxHealth: maxHealth as number,
+            ultCharge: ultCharge as number,
+          },
+        ];
+      }),
+    [playerPositions, time],
+  );
 
-  const graph = {
-    nodes: playerNodes,
-    links,
-  };
-  console.log('graph', graph);
-
-  const [lineColor, setLineColor] = useState<(node: HeroLink) => string>(() => {
-    return (link) => {
-      if (!link) return 'white';
-      return groupColorClass(link.source.hero);
+  const initialTransform = useMemo(() => {
+    return {
+      ...allVisibleTransform(currentPositions),
+      skewX: 0,
+      skewY: 0,
     };
-  });
+  }, [currentPositions]);
+
+  const linkEntities = useMemo(
+    () =>
+      entities.filter(
+        (entity) =>
+          entity.entityType === 'damage' || entity.entityType === 'healing',
+      ),
+    [entities],
+  );
+
+  const links = useMemo(
+    () =>
+      linkEntities.flatMap((entity) => {
+        const state = entity.states[time];
+        if (!state) return [];
+        const source = state['player'] as string;
+        const target = state['target'] as string;
+        const sourceNode = playerNodes.find((node) => node.player === source);
+        const targetNode = playerNodes.find((node) => node.player === target);
+        if (!sourceNode || !targetNode) {
+          console.log('no source or target', entity, state);
+          return [];
+        }
+        return [
+          {
+            source: sourceNode,
+            target: targetNode,
+            type: entity.entityType,
+            amount: Number(state['amount']),
+          },
+        ];
+      }),
+    [linkEntities, time, playerNodes],
+  );
+
+  const graph = useMemo(() => {
+    return {
+      nodes: playerNodes,
+      links,
+    };
+  }, [playerNodes, links]);
+  // console.log('graph', graph);
 
   return (
     <div onMouseMove={onMouseMove}>
@@ -282,18 +295,28 @@ const MapOverlayV2 = ({width, height, entities}: ZoomIProps) => {
                     />
                   )}
                   linkComponent={(props) => (
-                    <animated.line
-                      className={lineColor(props.link)}
+                    // <animated.line
+                    //   className={lineColor(props.link)}
+                    //   x1={props.link.source.x}
+                    //   y1={props.link.source.y}
+                    //   x2={props.link.target.x}
+                    //   y2={props.link.target.y}
+                    //   strokeWidth={Math.sqrt(props.link.amount + 9)}
+                    //   // stroke={lineColor(link)}
+                    //   strokeOpacity={0.6}
+                    //   // strokeDasharray={
+                    //   //   link.type === 'damage' ? '8,4' : undefined
+                    //   // }
+                    // />
+                    <Connection
+                      key={props.link.source.player + props.link.target.player}
                       x1={props.link.source.x}
                       y1={props.link.source.y}
                       x2={props.link.target.x}
                       y2={props.link.target.y}
-                      strokeWidth={Math.sqrt(props.link.amount + 9)}
-                      // stroke={lineColor(link)}
-                      strokeOpacity={0.6}
-                      // strokeDasharray={
-                      //   link.type === 'damage' ? '8,4' : undefined
-                      // }
+                      type={props.link.type}
+                      amount={props.link.amount}
+                      className={groupColorClass(props.link.source.hero)}
                     />
                   )}
                 />

@@ -18,7 +18,8 @@ $value in $colors {
   }
 
   path.#{$key} {
-    fill: $value;
+    // fill: $value;
+    stroke: $value;
   }
 
   line.#{$key} {
