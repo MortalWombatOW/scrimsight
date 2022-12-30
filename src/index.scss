@@ -24,6 +24,10 @@ $value in $colors {
   line.#{$key} {
     stroke: $value;
   }
+  text.#{$key} {
+    fill: $value;
+    stroke: $value;
+  }
 }
 
 @keyframes load-anim {

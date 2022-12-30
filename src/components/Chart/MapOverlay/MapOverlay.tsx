@@ -57,12 +57,33 @@ const MapOverlay = (props: MapOverlayProps) => {
     });
   };
 
-  const zoom = (scale: number) => {
-    console.log('zoom', scale);
+  // const zoom = (scale: number) => {
+  //   console.log('zoom', scale);
+  //   api.start({
+  //     scale: transform.scale.get() * scale,
+  //     x: transform.x.get() * scale + (1 - scale) * centerX,
+  //     y: transform.y.get() * scale + (1 - scale) * centerY,
+  //   });
+  // };
+
+  const zoom = (
+    delta: number,
+    mouseScreenX: number,
+    mouseScreenY: number,
+  ): void => {
+    const [mouseWorldX, mouseWorldY] = screenCoordsToworldCoords(
+      mouseScreenX,
+      mouseScreenY,
+    );
+
+    const [mouseScreenXafterZoom, mouseScreenYafterZoom] =
+      worldCoordsToScreenCoords(mouseWorldX, mouseWorldY);
+    const xDifference = mouseScreenXafterZoom - mouseScreenX;
+    const yDifference = mouseScreenYafterZoom - mouseScreenY;
     api.start({
-      scale: transform.scale.get() * scale,
-      x: transform.x.get() * scale + (1 - scale) * centerX,
-      y: transform.y.get() * scale + (1 - scale) * centerY,
+      x: transform.x.get() - xDifference,
+      y: transform.y.get() - yDifference,
+      scale: transform.scale.get() * (1 + delta),
     });
   };
 
@@ -92,21 +113,35 @@ const MapOverlay = (props: MapOverlayProps) => {
       drag: {
         from: () => [transform.x.get(), transform.y.get()],
       },
-      // wheel: {
-      //   from: () => transform.zoom.get(),
-      // },
+      wheel: {
+        from: (e) => {
+          const rect = svgRef!.current!.getBoundingClientRect();
+          zoom(
+            e.event.deltaY / 100,
+            e.event.clientX - rect.left,
+            e.event.clientY - rect.top,
+          );
+          return [transform.x.get(), transform.y.get()];
+        },
+      },
     },
   );
 
   const screenCoordsToworldCoords = (screenX: number, screenY: number) => {
-    const worldX = (screenX - transform.x.get()) / transform.scale.get();
-    const worldY = (screenY - transform.y.get()) / transform.scale.get();
+    const x = transform.x.get();
+    const y = transform.y.get();
+    const scale = transform.scale.get();
+    const worldX = (screenX - x) / scale;
+    const worldY = (screenY - y) / scale;
     return [worldX, worldY];
   };
 
   const worldCoordsToScreenCoords = (worldX: number, worldY: number) => {
-    const screenX = worldX * transform.scale.get() + transform.x.get();
-    const screenY = worldY * transform.scale.get() + transform.y.get();
+    const x = transform.x.get();
+    const y = transform.y.get();
+    const scale = transform.scale.get();
+    const screenX = worldX * scale + x;
+    const screenY = worldY * scale + y;
     return [screenX, screenY];
   };
 
@@ -226,12 +261,13 @@ const MapOverlay = (props: MapOverlayProps) => {
   let mapImage: null | ReactElement = null;
 
   if (mapTransform) {
+    const [maskWidth, maskHeight] = screenCoordsToworldCoords(width, height);
     mapImage = (
       <foreignObject
         x={0}
         y={0}
-        width={1000000}
-        height={1000000}
+        width={maskWidth}
+        height={maskHeight}
         style={{
           transform: mapTransform,
         }}>
@@ -469,10 +505,14 @@ const MapOverlay = (props: MapOverlayProps) => {
           {playing ? 'pause' : 'play'}
         </button>
         <span className="control">{time} s</span>
-        <button className="control" onClick={() => zoom(2)}>
+        <button
+          className="control"
+          onClick={() => zoom(0.1, width / 2, height / 2)}>
           +
         </button>
-        <button className="control" onClick={() => zoom(0.5)}>
+        <button
+          className="control"
+          onClick={() => zoom(-0.1, width / 2, height / 2)}>
           -
         </button>
       </div>

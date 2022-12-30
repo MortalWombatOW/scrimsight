@@ -1,6 +1,8 @@
 import React from 'react';
 import {useSpring, animated, to} from 'react-spring';
 import {getHeroImage} from '../../../lib/data/data';
+import Globals from '../../../lib/data/globals';
+import {Team} from '../../../lib/data/types';
 
 interface PlayerEntityProps {
   x: number;
@@ -29,8 +31,15 @@ const PlayerEntity = (props: PlayerEntityProps) => {
 
   const size = 50;
 
+  const currentTeam: Team | undefined = Globals.getTeam();
+  const playerInCurrentTeam = (name: string) => {
+    if (!currentTeam) return false;
+    return currentTeam.players.some((player) => player === name);
+  };
+
   return (
-    <animated.g transform={to([x, y, z], (x, y, z) => `translate(${x}, ${z})`)}>
+    // <animated.g transform={to([x, y, z], (x, y, z) => `translate(${x}, ${z})`)}>
+    <g>
       <foreignObject
         x={-size / 2}
         y={-size / 2}
@@ -46,6 +55,7 @@ const PlayerEntity = (props: PlayerEntityProps) => {
             width: `${size}px`,
             height: `${size}px`,
             pointerEvents: 'none',
+            filter: props.health <= 0 ? 'grayscale(100%)' : 'none',
           }}
         />
       </foreignObject>
@@ -91,10 +101,11 @@ const PlayerEntity = (props: PlayerEntityProps) => {
         textAnchor="middle"
         alignmentBaseline="middle"
         fontSize="20"
-        fill="white">
+        className={playerInCurrentTeam(props.name) ? 'team-1' : 'team-2'}>
         {props.name}
       </text>
-    </animated.g>
+      {/* </animated.g> */}
+    </g>
   );
 };
 

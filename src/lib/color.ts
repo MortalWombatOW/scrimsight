@@ -58,7 +58,7 @@ export const interpolateColors = (
   return colors;
 };
 
-export const groupColorClass = (group: string): string | undefined => {
+export const groupColorClass = (group: string): string => {
   return group.toLowerCase().replaceAll(' ', '-');
 };
 

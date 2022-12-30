@@ -1,43 +1,43 @@
 import Home from '../pages/Home/Home';
-import MapList from '../pages/Map/MapList';
+import MapPage from '../pages/Map/MapPage';
 import PlayerPage from '../pages/PlayerPage/PlayerPage';
 import SettingsPage from '../pages/Settings/SettingsPage';
 import SplashPage from '../pages/SplashPage/SplashPage';
 
 interface Route {
-  path: string;
+  path: string[];
   component: () => JSX.Element;
   name: string;
 }
 
 const routes: Route[] = [
   {
-    path: '/',
+    path: ['/'],
     component: SplashPage,
     name: 'Overview',
   },
   {
-    path: '/team',
+    path: ['/team'],
     component: Home,
     name: 'Team',
   },
   {
-    path: '/player',
+    path: ['/player'],
     component: PlayerPage,
     name: 'Players',
   },
   {
-    path: '/maps',
-    component: MapList,
+    path: ['/map', '/map/:mapId', '/map/:mapId/:view'],
+    component: MapPage,
     name: 'Maps',
   },
   {
-    path: '/workshop',
+    path: ['/workshop'],
     component: SettingsPage,
     name: 'Workshop Config',
   },
   {
-    path: '/settings',
+    path: ['/settings'],
     component: SettingsPage,
     name: 'Settings',
   },

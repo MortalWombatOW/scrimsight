@@ -6,14 +6,12 @@ import MapRow from '../MapRow/MapRow';
 import './MapsList.scss';
 
 const MapsList = ({updateCount}: {updateCount: number}) => {
-  const [results, tick] = useResult('maps');
+  const [results, tick] = useResult<OWMap>('map');
 
-  console.log(updateCount);
-
-  // const groupedByTime = useMemo(() => {
-  //   return groupMapsByDate();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [tick]);
+  const groupedByTime = useMemo(() => {
+    return groupMapsByDate(results);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick]);
 
   if (!results) {
     return <div>Loading...</div>;
@@ -22,14 +20,14 @@ const MapsList = ({updateCount}: {updateCount: number}) => {
   return (
     <div className="MapsList">
       <div className="MapsList-header">Maps</div>
-      {/* {Object.entries(groupedByTime).map(([date, maps]) => (
+      {Object.entries(groupedByTime).map(([date, maps]) => (
         <div key={date}>
           <div className="MapsList-datedivider">{date}</div>
           {maps.map((map) => (
             <MapRow key={map.mapId} map={map} />
           ))}
         </div>
-      ))} */}
+      ))}
     </div>
   );
 };

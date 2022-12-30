@@ -7,7 +7,6 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-import Map from './pages/Map/Map';
 import {createTheme, ThemeProvider} from '@mui/material';
 import {QueryParamProvider} from 'use-query-params';
 import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
@@ -50,15 +49,18 @@ const App = () => {
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>
             <Routes>
-              {routes.map((route) => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={<route.component />}
-                />
-              ))}
+              {routes.map((route) =>
+                route.path.map((path, i) => (
+                  <Route
+                    key={path}
+                    path={path}
+                    index={i === 0}
+                    element={<route.component />}
+                  />
+                )),
+              )}
 
-              <Route path="/map/:mapId" element={<Map />} />
+              {/* <Route path="/map/:mapId" element={<Map />} />
               {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
             </Routes>
           </QueryParamProvider>

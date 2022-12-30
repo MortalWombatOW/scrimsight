@@ -75,9 +75,9 @@ export const useResults = (
   return [results, computeTick];
 };
 
-export const useResult = (queryName: string): [Data, number] => {
+export const useResult = <T>(queryName: string): [T[], number] => {
   const [results, computeTick] = useResults([queryName]);
-  return [results[queryName], computeTick];
+  return [results[queryName] as unknown as T[], computeTick];
 };
 
 export default useQueries;

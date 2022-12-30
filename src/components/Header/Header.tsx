@@ -105,8 +105,8 @@ const Header = ({
               </MenuItem>
               {routes.map((route) => (
                 <MenuItem
-                  onClick={() => handleClickForPage(route.path)}
-                  key={route.path}>
+                  onClick={() => handleClickForPage(route.path[0])}
+                  key={route.path[0]}>
                   <Typography textAlign="center">{route.name}</Typography>
                 </MenuItem>
               ))}
@@ -135,8 +135,8 @@ const Header = ({
             <Box sx={{display: 'flex', marginLeft: '100px'}}>
               {routes.map((route) => (
                 <Button
-                  key={route.path}
-                  onClick={() => handleClickForPage(route.path)}
+                  key={route.path[0]}
+                  onClick={() => handleClickForPage(route.path[0])}
                   sx={{my: 2, color: 'white', display: 'block'}}>
                   {route.name}
                 </Button>

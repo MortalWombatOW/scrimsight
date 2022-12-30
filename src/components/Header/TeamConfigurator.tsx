@@ -128,7 +128,17 @@ const TeamConfigurator = () => {
                 {teams.map((team2) => (
                   <Box
                     key={team2.name}
-                    style={{display: 'flex', alignItems: 'center'}}>
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      backgroundColor:
+                        teamInternal?.name === team2.name ? '#eee' : '#fff',
+                      boxShadow:
+                        teamInternal?.name === team2.name
+                          ? '0 0 4px #aaa'
+                          : 'none',
+                    }}>
                     <IconButton
                       onClick={() => {
                         setTeamInternal(team2);

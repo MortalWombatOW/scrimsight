@@ -8,9 +8,10 @@ import {
   getMostCommonHeroes,
   getTeamInfoForMap,
 } from 'lib/data/data';
-import {OWMap} from 'lib/data/types';
+import {OWMap, PlayerStatus} from 'lib/data/types';
 import {heroNameToNormalized, mapNameToFileName} from 'lib/string';
 import React from 'react';
+import {useQuery} from '../../hooks/useQueries';
 import {groupColorClass} from '../../lib/color';
 
 const PlayerAndHero = ({
@@ -46,8 +47,23 @@ const MapInfo = ({
 
   // const [statuses] = I<PlayerStatus>('player_status', mapId);
 
-  const mapList = [];
-  const statuses = [];
+  const [mapList, mapTick] = useQuery<OWMap>(
+    {
+      name: 'map_' + mapId,
+      query: `SELECT * FROM ? as map WHERE mapId = ${mapId} LIMIT 1`,
+      deps: ['map'],
+    },
+    [mapId],
+  );
+
+  const [statuses, statusTick] = useQuery<PlayerStatus>(
+    {
+      name: 'player_status_' + mapId,
+      query: `SELECT * FROM ? as status WHERE mapId = ${mapId}`,
+      deps: ['player_status'],
+    },
+    [mapId],
+  );
 
   if (!mapList || !statuses) {
     return <div>Loading...</div>;
