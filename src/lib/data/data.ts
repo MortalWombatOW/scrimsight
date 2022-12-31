@@ -54,8 +54,13 @@ export const getPlayer = (
   ];
 };
 
-export const getHeroImage = (heroName: string): string =>
-  `/assets/heroes/${heroNameToNormalized(heroName)}.png`;
+export const getHeroImage = (
+  heroName: string,
+  rounded: boolean = true,
+): string =>
+  `/assets/heroes/${rounded && 'rounded/'}${heroNameToNormalized(
+    heroName,
+  )}.png`;
 
 export const getAllPlayers = (maps: OWMap[]) => {
   const players: string[] = [];

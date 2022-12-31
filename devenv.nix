@@ -12,7 +12,6 @@
     npm outdated
     git --version
     tsc --version
-    webpack --version
   '';
 
   # https://devenv.sh/languages/
