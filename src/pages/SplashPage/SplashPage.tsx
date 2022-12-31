@@ -16,7 +16,7 @@ import SplashRow from './SplashRow';
 
 const SplashPage = () => {
   return (
-    <Box style={{width: '100%'}}>
+    <Box component="div" style={{width: '100%'}}>
       <Header
         refreshCallback={() => {}}
         filters={{}}
@@ -45,11 +45,12 @@ const SplashPage = () => {
       />
 
       <Box
+        component="div"
         style={{
           marginLeft: '50px',
           marginRight: '50px',
         }}>
-        <Box>
+        <Box component="div">
           <Typography variant="h5" style={{marginBottom: '20px'}}>
             Do you manage or coach a competitive Overwatch team?
           </Typography>
@@ -63,11 +64,13 @@ const SplashPage = () => {
         </Box>
       </Box>
       <Box
+        component="div"
         style={{
           width: '100%',
           backgroundColor: '#F9A03F',
         }}>
         <Box
+          component="div"
           style={{
             width: '100%',
             borderBottomLeftRadius: '50% 32%',
@@ -153,6 +156,7 @@ const SplashPage = () => {
         }}
       />
       <Box
+        component="div"
         style={{
           width: '100%',
           backgroundColor: '#F9A03F',

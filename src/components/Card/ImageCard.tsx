@@ -28,7 +28,7 @@ const ImageCard = ({
   style?: React.CSSProperties;
 }) => {
   return (
-    <Box my={4} style={style}>
+    <Box component="div" my={4} style={style}>
       <Card
         style={{
           maxWidth: width,

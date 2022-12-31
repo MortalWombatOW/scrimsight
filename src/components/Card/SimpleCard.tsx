@@ -3,7 +3,7 @@ import React from 'react';
 
 const SimpleCard = ({title, content}: {title: string; content: string}) => {
   return (
-    <Box sx={{minWidth: 275}}>
+    <Box component="div" sx={{minWidth: 275}}>
       <Card variant="outlined">
         <Typography variant="h5" component="div">
           {title}

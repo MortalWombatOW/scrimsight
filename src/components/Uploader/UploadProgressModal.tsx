@@ -39,7 +39,7 @@ const UploadProgressModal = ({
     //   );
     // }
     return (
-      <Box position="relative" display="inline-flex">
+      <Box component="div" position="relative" display="inline-flex">
         <CircularProgress
           variant="determinate"
           value={percent < 0 ? 100 : percent}
@@ -52,6 +52,7 @@ const UploadProgressModal = ({
           }
         />
         <Box
+          component="div"
           top={0}
           left={0}
           bottom={0}
@@ -78,7 +79,7 @@ const UploadProgressModal = ({
   return (
     <Modal open={isOpen} onClose={() => setIsOpen(false)}>
       <div className="Uploader-progresscontainer">
-        <Box display="flex" alignItems="center">
+        <Box component="div" display="flex" alignItems="center">
           <span className="header">File Uploads</span>
           <IconButton
             aria-label="close"

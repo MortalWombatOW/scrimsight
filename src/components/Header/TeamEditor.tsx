@@ -137,6 +137,7 @@ const TeamEditor = ({
 
   return (
     <Box
+      component="div"
       style={{
         width: size == 'half' ? '50%' : '100%',
         borderLeft: '1px solid #9ca0ac',
@@ -153,9 +154,9 @@ const TeamEditor = ({
           setTeamName(e.target.value);
         }}
       />
-      <Box>
+      <Box component="div">
         <Typography variant="body1">Players</Typography>
-        <Box>
+        <Box component="div">
           {teamPlayers &&
             teamPlayers.map((player, i) => (
               <Chip
@@ -177,11 +178,12 @@ const TeamEditor = ({
             ))}
         </Box>
         <Box
+          component="div"
           style={{
             marginTop: '8px',
           }}>
           {isEditingPlayer ? (
-            <Box>
+            <Box component="div">
               <FormControl
                 variant="outlined"
                 style={{display: 'flex', flexDirection: 'row'}}>
@@ -257,7 +259,7 @@ const TeamEditor = ({
           )}
         </Box>
       </Box>
-      <Box>
+      <Box component="div">
         <Typography variant="body1">Team Notes</Typography>
         <TextField
           placeholder="Notes"

@@ -27,12 +27,14 @@ const SplashRow = ({
 }) => {
   return (
     <Box
+      component="div"
       style={{
         display: 'flex',
         width: '100%',
         backgroundColor: beforeBackgroundColor,
       }}>
       <Box
+        component="div"
         style={{
           display: 'flex',
           width: '100%',

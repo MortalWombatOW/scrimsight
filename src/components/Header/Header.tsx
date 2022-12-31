@@ -73,7 +73,7 @@ const Header = ({
             scrimsight
           </Typography>
 
-          <Box sx={{display: {xs: 'flex', lg: 'none'}}}>
+          <Box component="div" sx={{display: {xs: 'flex', lg: 'none'}}}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -131,8 +131,10 @@ const Header = ({
             }}>
             scrimsight
           </Typography>
-          <Box sx={{flexGrow: 1, display: {xs: 'none', lg: 'flex'}}}>
-            <Box sx={{display: 'flex', marginLeft: '100px'}}>
+          <Box
+            component="div"
+            sx={{flexGrow: 1, display: {xs: 'none', lg: 'flex'}}}>
+            <Box component="div" sx={{display: 'flex', marginLeft: '100px'}}>
               {routes.map((route) => (
                 <Button
                   key={route.path[0]}
@@ -142,7 +144,7 @@ const Header = ({
                 </Button>
               ))}
             </Box>
-            <Box sx={{marginLeft: 'auto', order: 2, my: 2}}>
+            <Box component="div" sx={{marginLeft: 'auto', order: 2, my: 2}}>
               <TeamConfigurator />
             </Box>
           </Box>

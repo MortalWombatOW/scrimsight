@@ -11,6 +11,7 @@ import {buildMapEntitiesFromData} from '../../lib/data/data';
 import {useQuery, useResult} from '../../hooks/useQueries';
 import useWindowSize from '../../hooks/useWindowSize';
 import MapOverlayV2 from '../Chart/MapOverlay/MapOverlayV2';
+import ThreeRenderer from '../ThreeRenderer/ThreeRenderer';
 
 const PlayByPlay = ({mapId}: {mapId: number}) => {
   const {width, height} = useWindowSize();
@@ -85,17 +86,26 @@ const PlayByPlay = ({mapId}: {mapId: number}) => {
   // //   ];
 
   return (
-    <div className="PlayByPlay">
+    <div
+      className="PlayByPlay"
+      style={{
+        height: height - 144,
+      }}>
       {/* <MapOverlay
         map={map}
         entities={entities}
         width={width - 17}
         height={height - 144}
       /> */}
-      <MapOverlayV2
+      {/* <MapOverlayV2
         entities={entities}
         width={width - 17}
         height={height - 144}
+      /> */}
+      <ThreeRenderer
+        entities={entities}
+        width={width - 17}
+        height={height - 140}
       />
     </div>
   );

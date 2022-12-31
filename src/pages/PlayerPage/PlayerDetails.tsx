@@ -178,9 +178,10 @@ const PlayerDetails = ({
 
   return (
     <div className="PlayerDetails">
-      <Box display="flex" alignItems="center">
-        <Box flexGrow={1}>
+      <Box component="div" display="flex" alignItems="center">
+        <Box component="div" flexGrow={1}>
           <Box
+            component="div"
             display="flex"
             alignItems="center"
             className="PlayerDetailsHeader">
@@ -224,6 +225,7 @@ const PlayerDetails = ({
           </Box>
         </Box>
         <Box
+          component="div"
           style={{
             verticalAlign: 'top',
           }}>
@@ -246,7 +248,7 @@ const PlayerDetails = ({
           {per10['final_blows']} final blows per 10 minutes
         </Typography> */}
       </div>
-      <Box sx={{display: 'flex'}}>
+      <Box component="div" sx={{display: 'flex'}}>
         <QueryCard
           title="Damage done / taken"
           query={{
@@ -319,7 +321,7 @@ const PlayerDetails = ({
           content={formatTime(averageTimeToUlt)!}
         />
       </Box>
-      <Box sx={{display: 'flex'}}>
+      <Box component="div" sx={{display: 'flex'}}>
         {/* <PieChartComponent
           data={results['roles_' + player]}
           height={200}

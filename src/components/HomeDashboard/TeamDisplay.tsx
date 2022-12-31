@@ -12,19 +12,20 @@ const TeamDisplay = () => {
   Globals.subscribeToTeamChange(setTeam);
 
   if (team === undefined) {
-    return <Box>No team selected</Box>;
+    return <Box component="div">No team selected</Box>;
   }
 
   return (
-    <Box>
+    <Box component="div">
       <Box
+        component="div"
         sx={{
           paddingLeft: '50px',
           paddingTop: '50px',
         }}>
         <Typography variant="h4">{team.name}</Typography>
         {team.notes && (
-          <Box>
+          <Box component="div">
             <Typography variant="h6">Notes</Typography>
             <Typography variant="body1">{team.notes}</Typography>
           </Box>

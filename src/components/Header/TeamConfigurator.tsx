@@ -89,6 +89,7 @@ const TeamConfigurator = () => {
 
   return (
     <Box
+      component="div"
       sx={{
         display: 'flex',
         alignItems: 'center',
@@ -117,7 +118,7 @@ const TeamConfigurator = () => {
             component="form"
             sx={{display: 'flex', flexWrap: 'wrap', flexDirection: 'row'}}>
             {hasTeams && (
-              <Box>
+              <Box component="div">
                 <Typography
                   variant="body1"
                   style={{
@@ -128,6 +129,7 @@ const TeamConfigurator = () => {
                 {teams.map((team2) => (
                   <Box
                     key={team2.name}
+                    component="div"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
