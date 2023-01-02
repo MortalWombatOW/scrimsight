@@ -7,6 +7,7 @@ export function Links({
   time,
   playerNameToIndex,
   currentPosition,
+  playing,
 }) {
   // represents the current time in the animation between two states of the game
   // goes from 0 to 1
@@ -35,6 +36,7 @@ export function Links({
             target={targetPosition}
             amount={Number(state.amount)}
             type={state.type as string}
+            playing={playing}
           />
         );
       })}

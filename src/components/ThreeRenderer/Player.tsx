@@ -2,18 +2,22 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useFrame} from '@react-three/fiber';
 import * as THREE from 'three';
 import {getHeroImage} from '../../lib/data/data';
-import {getColorForHero} from '../../lib/color';
+import {getColorFor} from '../../lib/color';
 
 export function Player({
   name,
   hero,
   getPosition,
   playing,
+  team,
+  health,
 }: {
   name: string;
   hero: string;
   getPosition: () => {x: number; y: number; z: number} | undefined;
   playing: boolean;
+  team: 1 | 2;
+  health: number;
 }) {
   const loader = new THREE.TextureLoader();
   const [heroImg, setHeroImg] = useState<THREE.Texture | null>(null);
@@ -32,12 +36,9 @@ export function Player({
 
   const ref = useRef<THREE.Mesh>();
   const spriteRef = useRef<THREE.Sprite>();
-  // console.log(
-  //   'hero',
-  //   hero,
-  //   'pos',
-  //   to([pos.x, pos.y, pos.z], (x, y, z) => [x, y, z]).get(),
-  // );
+
+  const pillRadius = 0.3;
+  const spriteOffset = pillRadius + 0.15;
   useFrame(({camera}, delta) => {
     // move towards target position
     const pos = getPosition();
@@ -67,10 +68,11 @@ export function Player({
           cameraPos.y - currentPos.y,
           cameraPos.z - currentPos.z,
         ).normalize();
+
         // rotate sprite to face camera
-        spriteRef.current.position.x = dir.x;
-        spriteRef.current.position.y = dir.y + 0.4;
-        spriteRef.current.position.z = dir.z;
+        spriteRef.current.position.x = dir.x * spriteOffset;
+        spriteRef.current.position.y = dir.y * spriteOffset + 0.2;
+        spriteRef.current.position.z = dir.z * spriteOffset;
       }
     }
   });
@@ -79,10 +81,21 @@ export function Player({
     /* @ts-ignore */
     <group key={name} ref={ref}>
       <mesh scale={[1, 1, 1]}>
-        <capsuleGeometry attach="geometry" args={[0.5, 1, 8]} />
-        <meshLambertMaterial attach="material" color={getColorForHero(hero)} />
+        <capsuleGeometry attach="geometry" args={[pillRadius, 0.7, 8]} />
+        <meshLambertMaterial
+          attach="material"
+          color={health > 0 ? getColorFor(hero) : 0x000000}
+        />
       </mesh>
-      <sprite scale={[1, 1, 1]} ref={spriteRef}>
+      <mesh scale={[1.25, 1.25, 1.25]}>
+        <capsuleGeometry attach="geometry" args={[pillRadius, 0.7, 8]} />
+        <meshBasicMaterial
+          attach="material"
+          color={getColorFor(team === 1 ? 'team1' : 'team2')}
+          side={THREE.BackSide}
+        />
+      </mesh>
+      <sprite scale={[0.6, 0.6, 0.6]} ref={spriteRef}>
         {heroImg ? <spriteMaterial attach="material" map={heroImg} /> : null}
       </sprite>
     </group>

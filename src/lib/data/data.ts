@@ -206,7 +206,7 @@ export const buildMapEntitiesFromData = (
   interactions: PlayerInteraction[],
   abilities: PlayerAbility[],
 ): MapEntity[] => {
-  const coordScale = 50;
+  const coordScale = 1;
 
   const entities: MapEntity[] = [];
   const getEntity = (
@@ -268,29 +268,18 @@ export const buildMapEntitiesFromData = (
 
   interactions.forEach((interaction) => {
     const {player, timestamp, target, type, amount} = interaction;
-    const fromPlayer = getEntity(player, 'player');
-    const toPlayer = getEntity(target, 'player');
-    const fromState = fromPlayer.states[timestamp];
-    const toState = toPlayer.states[timestamp];
-    if (fromState && toState) {
-      // const fromX = fromState.x;
-      // const fromY = fromState.y;
-      // const toX = toState.x;
-      // const toY = toState.y;
-      // const fromZ = fromState.z;
-      // const toZ = toState.z;
-      const edge = getEntity(
-        `${player}-${target}-${type}`,
-        type as 'damage' | 'healing' | 'final blow' | 'elimination',
-      );
-      if (!edge.states[timestamp]) {
-        edge.states[timestamp] = {
-          player,
-          target,
-          type,
-          amount,
-        };
-      }
+
+    const edge = getEntity(
+      `${player}-${target}-${type}`,
+      type as 'damage' | 'healing' | 'final blow' | 'elimination',
+    );
+    if (!edge.states[timestamp]) {
+      edge.states[timestamp] = {
+        player,
+        target,
+        type,
+        amount,
+      };
     }
   });
   abilities.forEach((ability) => {

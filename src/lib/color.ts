@@ -71,7 +71,7 @@ export const getColorPaletteOfSize = (size: number): string[] => {
   return colors;
 };
 
-export const getColorForHero = (hero: string): string => {
+export const getColorFor = (key: string): string => {
   const map = {
     ana: '#718ab3',
     ashe: '#f3d19c',
@@ -105,6 +105,8 @@ export const getColorForHero = (hero: string): string => {
     wreckingball: '#c09e74',
     zarya: '#e77eb6',
     zenyatta: '#ede582',
+    team1: '#566fdd',
+    team2: '#c76756',
   };
-  return map[hero];
+  return map[key];
 };
