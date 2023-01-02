@@ -115,6 +115,13 @@ interface ColorInternal {
   a: number;
 }
 
+interface ColorInternalHSL {
+  h: number;
+  s: number;
+  l: number;
+  a: number;
+}
+
 interface MapEntity {
   id: string;
   // label?: string;
@@ -229,6 +236,7 @@ export {
   TeamInfo,
   Statistic,
   ColorInternal,
+  ColorInternalHSL,
   MapEntity,
   RenderState,
   Report,

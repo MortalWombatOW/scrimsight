@@ -1,89 +1,20 @@
 /* eslint react/jsx-handler-names: "off" */
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {Zoom} from '@visx/zoom';
-import {localPoint} from '@visx/event';
-import {RectClipPath} from '@visx/clip-path';
-import {scaleLinear} from '@visx/scale';
 import {MapEntity, RenderState, Team} from '../../lib/data/types';
-import Globals from '../../lib/data/globals';
-import PlayerEntity from '../Chart/MapOverlay/PlayerEntity';
-import {Button} from '@mui/material';
 const bg = '#0a0a0a';
-import {DefaultNode, Graph} from '@visx/network';
-import {node} from 'webpack';
-import useAnimatedPath from '../../hooks/useAnimatedPath';
-import {
-  useSpring,
-  animated,
-  config,
-  useSprings,
-  to,
-  SpringValue,
-} from '@react-spring/three';
-import {groupColorClass} from '../../lib/color';
-import MapBackground from '../Chart/MapOverlay/MapBackground';
-import Connection from '../Chart/MapOverlay/Connection';
-import {OrbitControls, Trail} from '@react-three/drei';
-import {Canvas, useFrame} from '@react-three/fiber';
+import {OrbitControls} from '@react-three/drei';
+import {Canvas} from '@react-three/fiber';
 import * as THREE from 'three';
-import {getHeroImage} from '../../lib/data/data';
 import {useControls} from 'leva';
+import {duration} from '@mui/material';
+import {Links} from './Links';
+import {Player} from './Player';
 
-function Player({
-  name,
-  hero,
-  pos,
-}: {
-  name: string;
-  hero: string;
-  pos: {
-    x: SpringValue<number>;
-    y: SpringValue<number>;
-    z: SpringValue<number>;
-  };
-}) {
-  const loader = new THREE.TextureLoader();
-  const [heroImg, setHeroImg] = useState<THREE.Texture | null>(null);
-  useEffect(() => {
-    loader.load(
-      'https://scrimsight.com' + getHeroImage(hero),
-      (texture) => {
-        texture.center = new THREE.Vector2(0.5, 0.5);
-        // texture.wrapS = THREE.RepeatWrapping;
-        // texture.wrapT = THREE.RepeatWrapping;
-        // texture.repeat.set(200, 200);
-        // console.log('loaded hero image', texture);
-
-        setHeroImg(texture);
-      },
-      undefined,
-      (err) => {
-        console.error('error loading hero image', err);
-      },
-    );
-  }, [hero]);
-
-  const mesh = useRef();
-  // console.log(
-  //   'hero',
-  //   hero,
-  //   'pos',
-  //   to([pos.x, pos.y, pos.z], (x, y, z) => [x, y, z]).get(),
-  // );
-
-  return (
-    /* @ts-ignore */
-    <animated.sprite
-      key={name}
-      scale={[1, 1, 1]}
-      position={to([pos.x, pos.y, pos.z], (x, y, z) => [x, y, z])}>
-      {heroImg ? (
-        <spriteMaterial attach="material" map={heroImg} />
-      ) : (
-        <meshBasicMaterial attach="material" color="red" />
-      )}
-    </animated.sprite>
-  );
+function getIndexForPlayer(
+  player: MapEntity,
+  playerEntities: MapEntity[],
+): number {
+  return playerEntities.findIndex((p) => p.id === player.id);
 }
 
 const BackgroundPlane = () => {
@@ -104,18 +35,30 @@ export type ZoomIProps = {
 };
 
 const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
-  const {time} = useControls({time: 130});
-  const {smoothTime} = useSpring({
-    smoothTime: time,
-  });
-  const {zoom, offsetX, offsetY} = useSpring({
-    zoom: 1,
-    offsetX: 0,
-    offsetY: 0,
-  });
+  const playbackSpeed = 0.5;
+  const [time, setTime] = useState(120);
+  const [playing, setPlaying] = useState(false);
+  const [minTime, setMinTime] = useState(0);
+  const [maxTime, setMaxTime] = useState(300);
+  const timeBetweenStates = 1 / playbackSpeed;
+  useEffect(() => {
+    if (!playing) return;
+    const interval = setInterval(() => {
+      setTime((time) => {
+        if (time >= maxTime) {
+          setPlaying(false);
+          return time;
+        }
+        return time + 1;
+      });
+    }, timeBetweenStates * 1000);
+    return () => clearInterval(interval);
+  }, [playing, timeBetweenStates]);
 
   const playerEntities = entities.filter((e) => e.entityType === 'player');
-
+  const linkEntities = entities.filter(
+    (e) => e.entityType === 'damage' || e.entityType === 'healing',
+  );
   const currentPosition = (
     entity: MapEntity,
   ): {x: number; y: number; z: number} | undefined => {
@@ -128,42 +71,58 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
     };
   };
 
-  const [smoothPositions, set] = useSprings(playerEntities.length, (i) => ({
-    x: 0,
-    y: 0,
-    z: 0,
-  }));
-  useEffect(() => {
-    set((i) => {
-      const pos = currentPosition(playerEntities[i]);
-      if (!pos) return {x: 0, y: 0, z: 0};
-      return {
-        x: pos.x,
-        y: pos.y,
-        z: pos.z,
-        config: {duration: 100},
-      };
+  const playerNameToIndex = useMemo(() => {
+    const map = new Map<string, number>();
+    playerEntities.forEach((p, i) => {
+      const name = p.states[time]?.name as string;
+      if (name) map.set(name, i);
     });
+    return map;
   }, [time]);
 
   return (
-    <Canvas
-      camera={{position: [0, 100, -30]}}
-      onCreated={({gl}) => {
-        gl.setClearColor(new THREE.Color(bg));
-      }}>
-      <ambientLight />
-      <pointLight position={[10, 10, 10]} />
-      {playerEntities.map((entity, i) => {
-        const pos = smoothPositions[i];
-        const hero = entity.states[time]?.hero as string;
-        const name = entity.states[time]?.name as string;
-        if (!pos || !hero) return null;
-        return <Player hero={hero} pos={pos} name={name} />;
-      })}
-      <BackgroundPlane />
-      <OrbitControls />
-    </Canvas>
+    <div style={{height: '100%'}}>
+      <Canvas
+        camera={{position: [0, 100, -30]}}
+        onCreated={({gl}) => {
+          gl.setClearColor(new THREE.Color(bg));
+        }}>
+        <ambientLight intensity={0.5} />
+        {/* <hemisphereLight intensity={0.5} /> */}
+        <pointLight position={[30, 100, -30]} intensity={2} />
+        {playerEntities.map((entity, i) => {
+          const hero = entity.states[time]?.hero as string;
+          const name = entity.states[time]?.name as string;
+          if (!hero || !name) return null;
+          return (
+            <Player
+              hero={hero}
+              name={name}
+              getPosition={() => currentPosition(entity)}
+              key={i}
+              playing={playing}
+            />
+          );
+        })}
+        <Links
+          linkEntities={linkEntities}
+          playerEntities={playerEntities}
+          time={time}
+          playerNameToIndex={playerNameToIndex}
+          currentPosition={currentPosition}
+        />
+
+        <BackgroundPlane />
+        <OrbitControls />
+      </Canvas>
+      <div style={{position: 'absolute', bottom: 10, left: width / 2}}>
+        <button onClick={() => setPlaying(!playing)}>
+          {playing ? 'Pause' : 'Play'}
+        </button>
+        <button onClick={() => setTime(time - 1)}>Back</button>
+        <button onClick={() => setTime(time + 1)}>Forward</button>
+      </div>
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import {ColorInternal} from 'lib/data/types';
+import {ColorInternal, ColorInternalHSL} from 'lib/data/types';
 
 const colorgorical12 = [
   '#505f76',
@@ -69,4 +69,42 @@ export const getColorPaletteOfSize = (size: number): string[] => {
 
   const colors = interpolateColors('#505f76', '#dc3c07', size);
   return colors;
+};
+
+export const getColorForHero = (hero: string): string => {
+  const map = {
+    ana: '#718ab3',
+    ashe: '#f3d19c',
+    bastion: '#7c8f7b',
+    brigitte: '#be736e',
+    baptiste: '#fea350',
+    dva: '#ed93c7',
+    doomfist: '#815049',
+    echo: '#31a5cc',
+    genji: '#97ef43',
+    hanzo: '#b9b48a',
+    junkrat: '#ecbd53',
+    lucio: '#85c952',
+    cassidy: '#ae595c',
+    mei: '#6faced',
+    mercy: '#ebe8bb',
+    moira: '#803c51',
+    orisa: '#468c43',
+    pharah: '#3e7dca',
+    reaper: '#7d3e51',
+    reinhardt: '#929da3',
+    roadhog: '#b68c52',
+    soldier76: '#697794',
+    sombra: '#7359ba',
+    sigma: '#7aa3b9',
+    symmetra: '#8ebccc',
+    torbjorn: '#c0726e',
+    tracer: '#d79342',
+    widowmaker: '#9e6aa8',
+    winston: '#a2a6bf',
+    wreckingball: '#c09e74',
+    zarya: '#e77eb6',
+    zenyatta: '#ede582',
+  };
+  return map[hero];
 };
