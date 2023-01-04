@@ -96,51 +96,6 @@ function addColorForFixedPoints(geometry: THREE.BufferGeometry) {
   geometry.getAttribute('color').needsUpdate = true;
 }
 
-// function newGeometryFromFixed(geometry: THREE.BufferGeometry): THREE.Buffer {
-//   const isFixedAttribute = geometry.getAttribute('isFixed');
-//   const isFixedArray = isFixedAttribute.array as number[];
-//   const numFixedPoints = isFixedArray.reduce((sum, isFixed) => {
-//     if (isFixed === 1) {
-//       return sum + 1;
-//     }
-//     return sum;
-//   }, 0);
-
-//   const newGeometry = new THREE.BufferGeometry();
-//   newGeometry.setAttribute(
-//     'position',
-//     new THREE.BufferAttribute(new Float32Array(numFixedPoints * 3), 3),
-//   );
-//   newGeometry.setAttribute(
-//     'color',
-//     new THREE.BufferAttribute(new Float32Array(numFixedPoints * 3), 3),
-//   );
-//   const newPositionArray = newGeometry.getAttribute('position')
-//     .array as number[];
-//   const newColorArray = newGeometry.getAttribute('color').array as number[];
-
-//   const positionArray = geometry.getAttribute('position').array as number[];
-//   const colorArray = geometry.getAttribute('color').array as number[];
-//   let index = 0;
-//   for (let i = 0; i < isFixedArray.length; i++) {
-//     if (isFixedArray[i] === 1) {
-//       newPositionArray[index * 3] = positionArray[i * 3];
-//       newPositionArray[index * 3 + 1] = positionArray[i * 3 + 1];
-//       newPositionArray[index * 3 + 2] = positionArray[i * 3 + 2];
-//       newColorArray[index * 3] = colorArray[i * 3];
-//       newColorArray[index * 3 + 1] = colorArray[i * 3 + 1];
-//       newColorArray[index * 3 + 2] = colorArray[i * 3 + 2];
-//       index++;
-//     }
-//   }
-
-//   newGeometry.getAttribute('position').needsUpdate = true;
-//   newGeometry.getAttribute('color').needsUpdate = true;
-//   newGeometry.computeVertexNormals();
-
-//   return newGeometry;
-// }
-
 export function generateMapGeometry(entities: MapEntity[]): THREE.Geometry {
   // render a wireframe box around the world bounds
   const positions = extractPositions(entities);
@@ -166,77 +121,110 @@ export function generateMapGeometry(entities: MapEntity[]): THREE.Geometry {
   applyDataToVertices(floorGeometry, positions);
   addColorForFixedPoints(floorGeometry);
 
-  // const simplified = newGeometryFromFixed(floorGeometry);
-
-  // offsetVerticesToLowestPoint(floorGeometry, positions, bounds);
-  // for (let i = 0; i < 1; i++) {
-  //   smoothGeometryMainainingLocalMaxima(floorGeometry);
-  // }
-
   return floorGeometry;
 }
 
-export function buildCurvesForPlayers(entities: MapEntity[], time: number) {
-  return entities.map((entity) => buildCurvesForPlayer(entity, time));
+export function buildCurvesForPlayers(
+  entities: MapEntity[],
+  ticksPerGameSecond: number,
+): THREE.BufferGeometry[] {
+  return entities.map((entity) => {
+    const curve = buildCurveForPlayer(entity, ticksPerGameSecond);
+    setCurveBaseColor(curve, new THREE.Color('#cc99ee'));
+    return curve;
+  });
 }
 
-function buildCurvesForPlayer(
+function buildCurveForPlayer(
   entity: MapEntity,
-  time: number,
+  ticksPerGameSecond: number,
 ): THREE.BufferGeometry {
   const rawPoints: THREE.Vector3[] = [];
-  const times: number[] = [];
-  const heroes: string[] = [];
+
   Object.entries(entity.states).forEach(([key, state]) => {
     rawPoints.push(
       new THREE.Vector3(state.x, (state.y as number) - 0.7, state.z),
     );
-    times.push(Number(key));
-    heroes.push(state.hero as string);
   });
 
-  const startTime = times[0];
-  const endTime = times[times.length - 1];
-  const timeRange = endTime - startTime;
-  const timeOffset = time - startTime;
-
-  const scaleFactor = 10;
-  const numPoints = rawPoints.length * scaleFactor;
+  const numPoints = rawPoints.length * ticksPerGameSecond;
   const curve = new THREE.CatmullRomCurve3(rawPoints);
   const points: THREE.Vector3[] = curve.getPoints(numPoints);
+
   const geometry = new THREE.BufferGeometry();
-
-  const vertices: number[] = [];
-  const colors: number[] = [];
-  for (let i = 0; i < points.length; i++) {
-    vertices.push(points[i].x, points[i].y, points[i].z);
-    const pointTime = (i / points.length) * timeRange + startTime;
-    const distToCurrentTime = Math.abs(pointTime - time);
-    const hero = heroes[Math.floor(i / scaleFactor)];
-    const color = new THREE.Color(getColorFor(hero));
-    const hsl = {h: 0, s: 0, l: 0};
-    color.getHSL(hsl);
-    const lightnessOffset = distToCurrentTime / 10;
-    const newLightness = Math.max(0, hsl.l - lightnessOffset);
-    color.setHSL(hsl.h, hsl.s, newLightness);
-    colors.push(color.r, color.g, color.b);
-  }
-
   geometry.setAttribute(
     'position',
-    new THREE.Float32BufferAttribute(vertices, 3),
+    new THREE.BufferAttribute(new Float32Array(numPoints * 3), 3),
   );
-  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-  // draw the line starting from 3 seconds ago and ending 5 seconds from now
-  const startOffset = 4;
-  const seconds = 8;
-  const numPointsToDraw = seconds * scaleFactor;
-  const startDrawTime = time - startOffset;
-  const startDrawIndex = Math.floor(
-    ((startDrawTime - startTime) / timeRange) * numPoints,
+  geometry.setAttribute(
+    'color',
+    new THREE.BufferAttribute(new Float32Array(numPoints * 3), 3),
   );
-  // geometry.setDrawRange(startDrawIndex, numPointsToDraw);
-  geometry.computeVertexNormals();
+  const positionAttribute = geometry.getAttribute('position');
+  const positionArray = positionAttribute.array as number[];
+
+  for (let i = 0; i < points.length; i++) {
+    positionArray[i * 3] = points[i].x;
+    positionArray[i * 3 + 1] = points[i].y;
+    positionArray[i * 3 + 2] = points[i].z;
+  }
+
+  positionAttribute.needsUpdate = true;
 
   return geometry;
+}
+
+// TODO how to make this work for multiple colors?
+export function setCurveBaseColor(
+  curve: THREE.BufferGeometry,
+  color: THREE.Color,
+) {
+  const colorAttribute = curve.getAttribute('color');
+  const colorArray = colorAttribute.array as number[];
+  for (let i = 0; i < colorArray.length; i += 3) {
+    colorArray[i] = color.r;
+    colorArray[i + 1] = color.g;
+    colorArray[i + 2] = color.b;
+  }
+  colorAttribute.needsUpdate = true;
+}
+
+export function highlightCurveAroundPercent(
+  // the curve we're highlighting. It should already have a color attribute.
+  curve: THREE.BufferGeometry,
+  // the percent along the curve we want to highlight
+  percent: number,
+  // maps a distance from the percent to a lightness offset
+  dampFn: (dist: number) => number,
+  // (optional) the number of points before and after the percent to render. If not provided, the entire curve will be rendered.
+  bounds?: [number, number],
+) {
+  const colorAttribute = curve.getAttribute('color');
+  const colorArray = colorAttribute.array as number[];
+  const numPoints = colorArray.length / 3;
+  const percentIndex = Math.floor(numPoints * percent);
+  const hasDrawRange = bounds !== undefined;
+  const start = hasDrawRange ? percentIndex - bounds[0] : 0;
+  const end = hasDrawRange ? percentIndex + bounds[1] : numPoints;
+  const diff = end - start;
+  curve.setDrawRange(start, diff);
+
+  for (let i = start; i < end; i++) {
+    const dist = Math.abs(i - percentIndex);
+    const lightnessOffset = dampFn(dist);
+    const color = new THREE.Color(
+      colorArray[i * 3],
+      colorArray[i * 3 + 1],
+      colorArray[i * 3 + 2],
+    );
+    const hsl = {h: 0, s: 0, l: 0};
+    color.getHSL(hsl);
+    const newLightness = Math.max(0, hsl.l - lightnessOffset);
+    color.setHSL(hsl.h, hsl.s, newLightness);
+    colorArray[i * 3] = color.r;
+    colorArray[i * 3 + 1] = color.g;
+    colorArray[i * 3 + 2] = color.b;
+  }
+
+  colorAttribute.needsUpdate = true;
 }

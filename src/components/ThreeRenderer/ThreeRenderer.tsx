@@ -21,7 +21,10 @@ import {BackgroundPlane} from './BackgroundPlane';
 import {extend} from '@react-three/fiber';
 import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry';
 import Globals from '../../lib/data/globals';
-import {buildCurvesForPlayers} from '../../lib/data/geometry';
+import {
+  buildCurvesForPlayers,
+  highlightCurveAroundPercent,
+} from '../../lib/data/geometry';
 function getIndexForPlayer(
   player: MapEntity,
   playerEntities: MapEntity[],
@@ -89,28 +92,86 @@ export type ZoomIProps = {
   entities: MapEntity[];
 };
 
+function getTimeBounds(entities: MapEntity[]): [number, number] {
+  let minTime = Number.MAX_SAFE_INTEGER;
+  let maxTime = Number.MIN_SAFE_INTEGER;
+  for (const entity of entities) {
+    for (const time of Object.keys(entity.states)) {
+      const timeNum = Number(time);
+      if (timeNum < minTime) {
+        minTime = timeNum;
+      }
+      if (timeNum > maxTime) {
+        maxTime = timeNum;
+      }
+    }
+  }
+  return [minTime, maxTime];
+}
+
 const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
-  const playbackSpeed = 0.5;
-  const [time, setTime] = useState(120);
+  // How much to interpolate between states
+  // 1 = no interpolation
+  const ticksPerGameSecond = 5;
+  // how many seconds of game time to show per second of real time
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const realSecondsPerTick = 1 / (ticksPerGameSecond * playbackSpeed);
+
+  // time state
+  const [startTime, endTime] = useMemo(
+    () => getTimeBounds(entities),
+    [entities.length],
+  );
+
+  console.log(`startTime: ${startTime}, endTime: ${endTime}`);
+
+  const tickToTime = (tick: number) => {
+    return startTime + tick / ticksPerGameSecond;
+  };
+  const timeToTick = (time: number) => {
+    return (time - startTime) * ticksPerGameSecond;
+  };
+
+  const [tick, setTick] = useState(0);
+
+  // current game time is the floor of tick / ticksPerSecond
+  const currentGameTime = useMemo(() => Math.floor(tickToTime(tick)), [tick]);
+  const maxTick = useMemo(() => timeToTick(endTime), [endTime]);
+
+  // playback state
   const [playing, setPlaying] = useState(false);
-  const [minTime, setMinTime] = useState(0);
-  const [maxTime, setMaxTime] = useState(300);
-  const timeBetweenStates = 1 / playbackSpeed;
+
   useEffect(() => {
     if (!playing) return;
     const interval = setInterval(() => {
-      setTime((time) => {
-        if (time >= maxTime) {
+      setTick((tick) => {
+        if (tick >= maxTick) {
+          console.log(
+            `stopping playback at tick ${tick} = ${tickToTime(tick)}s`,
+          );
           setPlaying(false);
-          return time;
+          return tick;
         }
-        return time + 1;
+        return tick + 1;
       });
-    }, timeBetweenStates * 1000);
+    }, realSecondsPerTick * 1000);
     return () => clearInterval(interval);
-  }, [playing, timeBetweenStates]);
+  }, [playing, realSecondsPerTick]);
 
   const playerEntities = entities.filter((e) => e.entityType === 'player');
+  const playerCurves = useMemo(
+    () => buildCurvesForPlayers(playerEntities, ticksPerGameSecond),
+    [playerEntities],
+  );
+
+  useEffect(() => {
+    const percentDone = tick / maxTick;
+    console.log('percent done', percentDone);
+    playerCurves.forEach((curve) => {
+      highlightCurveAroundPercent(curve, percentDone, (dist) => dist / 10);
+    });
+  }, [tick]);
+
   const linkEntities = entities.filter(
     (e) => e.entityType === 'damage' || e.entityType === 'healing',
   );
@@ -121,7 +182,7 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
   const currentPosition = (
     entity: MapEntity,
   ): {x: number; y: number; z: number} | undefined => {
-    const state = entity.states[time];
+    const state = entity.states[currentGameTime];
     if (!state) return undefined;
     return {
       x: Number(state.x),
@@ -133,33 +194,20 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
   const playerNameToIndex = useMemo(() => {
     const map = new Map<string, number>();
     playerEntities.forEach((p, i) => {
-      const name = p.states[time]?.name as string;
+      const name = p.states[currentGameTime]?.name as string;
       if (name) map.set(name, i);
     });
     return map;
-  }, [time]);
+  }, [currentGameTime]);
+
   const currentTeam = Globals.getTeam();
   const playerTeam = (name: string): 1 | 2 => {
     return currentTeam?.players.includes(name) ? 1 : 2;
   };
 
-  // const [playerRefs, setPlayerRefs] = useState<
-  //   Array<React.MutableRefObject<THREE.Group>>
-  // >([]);
-
-  // ref of refs
   const playerRefs: React.MutableRefObject<{
     [key: string]: React.MutableRefObject<THREE.Group>;
   }> = useRef({});
-
-  // useEffect(() => {
-  //   playerEntities.forEach((p) => {
-  //     const name = p.states[time]?.name as string;
-  //     if (name && !playerRefs.current[name]) {
-  //       playerRefs.current[name] = createRef();
-  //     }
-  //   });
-  // }, []);
 
   const lineMaterial = new THREE.LineBasicMaterial({
     vertexColors: true,
@@ -176,10 +224,13 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
         {/* <hemisphereLight intensity={0.5} /> */}
         <pointLight position={[30, 100, -30]} intensity={2} />
         {playerEntities.map((entity, i) => {
-          const hero = entity.states[time]?.hero as string;
-          const name = entity.states[time]?.name as string;
-          const health = entity.states[time]?.health as number;
-          if (!hero || !name || !health) return null;
+          const hero = entity.states[currentGameTime]?.hero as string;
+          const name = entity.states[currentGameTime]?.name as string;
+          const health = entity.states[currentGameTime]?.health as number;
+          if (!hero || !name || !health) {
+            console.log(`skipping render at ${currentGameTime}`);
+            return null;
+          }
           if (!playerRefs.current[name]) {
             playerRefs.current[name] = createRef();
           }
@@ -198,13 +249,13 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
         })}
         <Links
           linkEntities={linkEntities}
-          time={time}
+          time={currentGameTime}
           playing={playing}
           playerRefs={playerRefs}
         />
         {abilityEntities.map((entity, i) => {
-          const abilityName = entity.states[time]?.ability as string;
-          const name = entity.states[time]?.name as string;
+          const abilityName = entity.states[currentGameTime]?.ability as string;
+          const name = entity.states[currentGameTime]?.name as string;
           if (!abilityName || !name) return null;
           const playerPosition = currentPosition(
             playerEntities[playerNameToIndex.get(name) as number],
@@ -218,13 +269,11 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
             />
           );
         })}
-        {buildCurvesForPlayers(playerEntities, time).map(
-          (geometry: THREE.BufferGeometry, i) => {
-            const line = new THREE.Line(geometry, lineMaterial);
-            line.computeLineDistances();
-            return <primitive object={line} key={`line-${i}`} />;
-          },
-        )}
+        {playerCurves.map((geometry: THREE.BufferGeometry, i) => {
+          const line = new THREE.Line(geometry, lineMaterial);
+          // line.computeLineDistances();
+          return <primitive object={line} key={`line-${i}`} />;
+        })}
 
         {/* <BackgroundPlane entities={playerEntities} /> */}
         <OrbitControls />
@@ -240,8 +289,10 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
         <button onClick={() => setPlaying(!playing)}>
           {playing ? 'Pause' : 'Play'}
         </button>
-        <button onClick={() => setTime(time - 1)}>Back</button>
-        <button onClick={() => setTime(time + 1)}>Forward</button>
+        <button onClick={() => setTick(tick - ticksPerGameSecond)}>Back</button>
+        <button onClick={() => setTick(tick + ticksPerGameSecond)}>
+          Forward
+        </button>
       </div>
     </div>
   );
