@@ -1,5 +1,12 @@
 /* eslint react/jsx-handler-names: "off" */
-import React, {Suspense, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  createRef,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {MapEntity, RenderState, Team} from '../../lib/data/types';
 const bg = '#0a0a0a';
 import {OrbitControls} from '@react-three/drei';
@@ -14,6 +21,7 @@ import {BackgroundPlane} from './BackgroundPlane';
 import {extend} from '@react-three/fiber';
 import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry';
 import Globals from '../../lib/data/globals';
+import {buildCurvesForPlayers} from '../../lib/data/geometry';
 function getIndexForPlayer(
   player: MapEntity,
   playerEntities: MapEntity[],
@@ -135,6 +143,28 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
     return currentTeam?.players.includes(name) ? 1 : 2;
   };
 
+  // const [playerRefs, setPlayerRefs] = useState<
+  //   Array<React.MutableRefObject<THREE.Group>>
+  // >([]);
+
+  // ref of refs
+  const playerRefs: React.MutableRefObject<{
+    [key: string]: React.MutableRefObject<THREE.Group>;
+  }> = useRef({});
+
+  // useEffect(() => {
+  //   playerEntities.forEach((p) => {
+  //     const name = p.states[time]?.name as string;
+  //     if (name && !playerRefs.current[name]) {
+  //       playerRefs.current[name] = createRef();
+  //     }
+  //   });
+  // }, []);
+
+  const lineMaterial = new THREE.LineBasicMaterial({
+    vertexColors: true,
+  });
+
   return (
     <div style={{height: '100%'}}>
       <Canvas
@@ -150,6 +180,9 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
           const name = entity.states[time]?.name as string;
           const health = entity.states[time]?.health as number;
           if (!hero || !name || !health) return null;
+          if (!playerRefs.current[name]) {
+            playerRefs.current[name] = createRef();
+          }
           return (
             <Player
               hero={hero}
@@ -159,16 +192,15 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
               playing={playing}
               team={playerTeam(name)}
               health={health}
+              ref={playerRefs.current[name]}
             />
           );
         })}
         <Links
           linkEntities={linkEntities}
-          playerEntities={playerEntities}
           time={time}
-          playerNameToIndex={playerNameToIndex}
-          currentPosition={currentPosition}
           playing={playing}
+          playerRefs={playerRefs}
         />
         {abilityEntities.map((entity, i) => {
           const abilityName = entity.states[time]?.ability as string;
@@ -186,8 +218,15 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
             />
           );
         })}
+        {buildCurvesForPlayers(playerEntities, time).map(
+          (geometry: THREE.BufferGeometry, i) => {
+            const line = new THREE.Line(geometry, lineMaterial);
+            line.computeLineDistances();
+            return <primitive object={line} key={`line-${i}`} />;
+          },
+        )}
 
-        <BackgroundPlane entities={playerEntities} />
+        {/* <BackgroundPlane entities={playerEntities} /> */}
         <OrbitControls />
         <EffectComposer>
           <Bloom

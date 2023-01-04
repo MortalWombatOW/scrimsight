@@ -6,7 +6,7 @@ import {MapEntity} from '../../lib/data/types';
 export function BackgroundPlane({entities}: {entities: MapEntity[]}) {
   const geometry = useMemo(() => generateMapGeometry(entities), []);
   const material = useMemo(
-    () => new THREE.MeshLambertMaterial({color: 0x333333, wireframe: true}),
+    () => new THREE.MeshLambertMaterial({wireframe: false, vertexColors: true}),
     [],
   );
   return (

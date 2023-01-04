@@ -12,16 +12,8 @@ export function PlayerConnection({
   amount: number;
   type: string;
   playing: boolean;
-  source: {
-    x: number;
-    y: number;
-    z: number;
-  };
-  target: {
-    x: number;
-    y: number;
-    z: number;
-  };
+  source: React.RefObject<THREE.Group>;
+  target: React.RefObject<THREE.Group>;
 }) {
   const color = type === 'damage' ? '#b65153' : '#d7ae0b';
   const lightVelocity = 3;
@@ -42,9 +34,9 @@ export function PlayerConnection({
       return;
     }
     const pos = ref.current.position as THREE.Vector3;
-    pos.x = source.x;
-    pos.y = source.y;
-    pos.z = source.z;
+    pos.x = source.current.position.x;
+    pos.y = source.current.position.y;
+    pos.z = source.current.position.z;
   }, [source]);
 
   useFrame((_, delta) => {
@@ -52,8 +44,7 @@ export function PlayerConnection({
       return;
     }
     const pos = ref.current.position as THREE.Vector3;
-    const targetPos = new THREE.Vector3(target.x, target.y, target.z);
-    pos.lerp(targetPos, lightVelocity * delta);
+    pos.lerp(target.current.position, lightVelocity * delta);
   });
 
   return (
