@@ -1,7 +1,7 @@
 import React from 'react';
 import {PlayerConnection} from './PlayerConnection';
 
-export function Links({linkEntities, time, playing, playerRefs}) {
+export function Links({linkEntities, time, playing, playerPositions}) {
   return (
     <group>
       {linkEntities.map((entity, i) => {
@@ -12,8 +12,8 @@ export function Links({linkEntities, time, playing, playerRefs}) {
         return (
           <PlayerConnection
             key={i}
-            source={playerRefs.current[source]}
-            target={playerRefs.current[target]}
+            source={playerPositions[source]}
+            target={playerPositions[target]}
             amount={Number(state.amount)}
             type={state.type as string}
             playing={playing}

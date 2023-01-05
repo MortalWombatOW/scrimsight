@@ -7,7 +7,8 @@ import {getColorFor} from '../../lib/color';
 interface PlayerProps {
   name: string;
   hero: string;
-  getPosition: () => {x: number; y: number; z: number} | undefined;
+  // getPosition: () => {x: number; y: number; z: number} | undefined;
+  position: THREE.Vector3;
   playing: boolean;
   team: 1 | 2;
   health: number;
@@ -15,7 +16,7 @@ interface PlayerProps {
 
 export const Player = React.forwardRef<PlayerProps, THREE.Group>(
   (
-    {name, hero, getPosition, playing, team, health}: PlayerProps,
+    {name, hero, position, playing, team, health}: PlayerProps,
     ref: React.Ref<THREE.Group> | null,
   ) => {
     if (!ref) {
@@ -44,14 +45,13 @@ export const Player = React.forwardRef<PlayerProps, THREE.Group>(
     const spriteOffset = pillRadius + 0.15;
     useFrame(({camera}, delta) => {
       // move towards target position
-      const pos = getPosition();
       const current = (ref as React.MutableRefObject<THREE.Group>).current;
-      if (current && pos) {
+      if (current && position) {
         const currentPos = current.position;
         const {x, y, z} = currentPos;
-        const dx = pos.x - x;
-        const dy = pos.y - y;
-        const dz = pos.z - z;
+        const dx = position.x - x;
+        const dy = position.y - y;
+        const dz = position.z - z;
         const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
         const velocity = 3;
         if (dist > 0.1 && playing) {
@@ -60,24 +60,25 @@ export const Player = React.forwardRef<PlayerProps, THREE.Group>(
           current.position.z += (dz / dist) * velocity * delta;
         } else {
           // snap to position
-          current.position.x = pos.x;
-          current.position.y = pos.y;
-          current.position.z = pos.z;
+          current.position.x = position.x;
+          current.position.y = position.y;
+          current.position.z = position.z;
         }
-        if (spriteRef.current) {
-          const cameraPos = camera.position;
-          // vector from currentPos to cameraPos
-          const dir = new THREE.Vector3(
-            cameraPos.x - currentPos.x,
-            cameraPos.y - currentPos.y,
-            cameraPos.z - currentPos.z,
-          ).normalize();
+      }
+      if (spriteRef.current) {
+        const cameraPos = camera.position;
+        // vector from currentPos to cameraPos
+        const dir = new THREE.Vector3(
+          cameraPos.x - position.x,
+          cameraPos.y - position.y,
+          cameraPos.z - position.z,
+        ).normalize();
 
-          // rotate sprite to face camera
-          spriteRef.current.position.x = dir.x * spriteOffset;
-          spriteRef.current.position.y = dir.y * spriteOffset + 0.2;
-          spriteRef.current.position.z = dir.z * spriteOffset;
-        }
+        // rotate sprite to face camera
+        spriteRef.current.position.x = dir.x * spriteOffset;
+        spriteRef.current.position.y = dir.y * spriteOffset + 0.2;
+        spriteRef.current.position.z = dir.z * spriteOffset;
+        // spriteRef.current.lookAt(cameraPos);
       }
     });
 

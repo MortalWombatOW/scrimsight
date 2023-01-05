@@ -123,8 +123,6 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
     [entities.length],
   );
 
-  console.log(`startTime: ${startTime}, endTime: ${endTime}`);
-
   const tickToTime = (tick: number) => {
     return startTime + tick / ticksPerGameSecond;
   };
@@ -138,6 +136,10 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
   const currentGameTime = useMemo(() => Math.floor(tickToTime(tick)), [tick]);
   const maxTick = useMemo(() => timeToTick(endTime), [endTime]);
 
+  const currentTeam = Globals.getTeam();
+  const playerTeam = (name: string): 1 | 2 => {
+    return currentTeam?.players.includes(name) ? 1 : 2;
+  };
   // playback state
   const [playing, setPlaying] = useState(false);
 
@@ -159,15 +161,58 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
   }, [playing, realSecondsPerTick]);
 
   const playerEntities = entities.filter((e) => e.entityType === 'player');
-  const playerCurves = useMemo(
-    () => buildCurvesForPlayers(playerEntities, ticksPerGameSecond),
+  const playerNames = useMemo(
+    () => playerEntities.map((entity) => entity.id),
     [playerEntities],
   );
+
+  const bounds = useMemo(() => {
+    const bounds_ = new THREE.Box3();
+    const vec = new THREE.Vector3();
+    for (let t = startTime; t <= endTime; t++) {
+      for (const player of playerEntities) {
+        const state = player.states[t];
+        if (!state) {
+          continue;
+        }
+        const {x, y, z} = state;
+        if (Number.isNaN(x) || Number.isNaN(y) || Number.isNaN(z)) {
+          continue;
+        }
+        vec.set(x, y, z);
+        bounds_.expandByPoint(vec);
+      }
+    }
+    return bounds_;
+  }, []);
+
+  const playerCurves: Record<string, THREE.BufferGeometry> = useMemo(
+    () => buildCurvesForPlayers(playerEntities, ticksPerGameSecond, playerTeam),
+    [],
+  );
+  const playerPositions: Record<string, THREE.Vector3> = useMemo(() => {
+    const positions: Record<string, THREE.Vector3> = {};
+    for (const player of playerNames) {
+      const curve: THREE.BufferGeometry = playerCurves[player];
+      if (!curve) {
+        console.warn(`no curve for player ${player}`);
+        continue;
+      }
+      if (positions[player] === undefined) {
+        positions[player] = new THREE.Vector3();
+      }
+      positions[player].fromBufferAttribute(
+        curve.getAttribute('position'),
+        tick,
+      );
+    }
+    return positions;
+  }, [tick]);
 
   useEffect(() => {
     const percentDone = tick / maxTick;
     console.log('percent done', percentDone);
-    playerCurves.forEach((curve) => {
+    Object.values(playerCurves).forEach((curve) => {
       highlightCurveAroundPercent(curve, percentDone, (dist) => dist / 10);
     });
   }, [tick]);
@@ -179,31 +224,6 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
     (e) => e.entityType === 'elimination' || e.entityType === 'final blow',
   );
   const abilityEntities = entities.filter((e) => e.entityType === 'ability');
-  const currentPosition = (
-    entity: MapEntity,
-  ): {x: number; y: number; z: number} | undefined => {
-    const state = entity.states[currentGameTime];
-    if (!state) return undefined;
-    return {
-      x: Number(state.x),
-      y: Number(state.y),
-      z: Number(state.z),
-    };
-  };
-
-  const playerNameToIndex = useMemo(() => {
-    const map = new Map<string, number>();
-    playerEntities.forEach((p, i) => {
-      const name = p.states[currentGameTime]?.name as string;
-      if (name) map.set(name, i);
-    });
-    return map;
-  }, [currentGameTime]);
-
-  const currentTeam = Globals.getTeam();
-  const playerTeam = (name: string): 1 | 2 => {
-    return currentTeam?.players.includes(name) ? 1 : 2;
-  };
 
   const playerRefs: React.MutableRefObject<{
     [key: string]: React.MutableRefObject<THREE.Group>;
@@ -238,7 +258,8 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
             <Player
               hero={hero}
               name={name}
-              getPosition={() => currentPosition(entity)}
+              // getPosition={() => currentPosition(name)}
+              position={playerPositions[name]}
               key={i}
               playing={playing}
               team={playerTeam(name)}
@@ -251,15 +272,13 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
           linkEntities={linkEntities}
           time={currentGameTime}
           playing={playing}
-          playerRefs={playerRefs}
+          playerPositions={playerPositions}
         />
-        {abilityEntities.map((entity, i) => {
+        {/* {abilityEntities.map((entity, i) => {
           const abilityName = entity.states[currentGameTime]?.ability as string;
           const name = entity.states[currentGameTime]?.name as string;
           if (!abilityName || !name) return null;
-          const playerPosition = currentPosition(
-            playerEntities[playerNameToIndex.get(name) as number],
-          );
+          const playerPosition = playerPositions[name];
           if (!playerPosition) return null;
           return (
             <AbilityText
@@ -268,14 +287,14 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
               key={i}
             />
           );
-        })}
-        {playerCurves.map((geometry: THREE.BufferGeometry, i) => {
+        })} */}
+        {Object.entries(playerCurves).map(([player, geometry], i) => {
           const line = new THREE.Line(geometry, lineMaterial);
           // line.computeLineDistances();
-          return <primitive object={line} key={`line-${i}`} />;
+          return <primitive object={line} key={`line-${player}`} />;
         })}
 
-        {/* <BackgroundPlane entities={playerEntities} /> */}
+        <BackgroundPlane bounds={bounds} cellSize={1} isWireframe={false} />
         <OrbitControls />
         <EffectComposer>
           <Bloom

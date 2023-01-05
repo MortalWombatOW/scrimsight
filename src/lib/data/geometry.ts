@@ -2,40 +2,6 @@ import * as THREE from 'three';
 import {getColorFor} from '../color';
 import {MapEntity, RenderState} from './types';
 
-function extractPositions(entities: MapEntity[]): THREE.Vector3[] {
-  return entities.flatMap((entity) =>
-    Object.values(entity.states).flatMap((state) => {
-      const {
-        x,
-        y,
-        z,
-      }: {
-        x?: number;
-        y?: number;
-        z?: number;
-      } = state;
-      if (
-        Number.isNaN(x) ||
-        Number.isNaN(y) ||
-        Number.isNaN(z) ||
-        x === undefined ||
-        y === undefined ||
-        z === undefined
-      ) {
-        return [];
-      }
-
-      return [new THREE.Vector3(x, y, z)];
-    }),
-  );
-}
-
-function getBounds(positions: THREE.Vector3[]): THREE.Box3 {
-  const bounds = new THREE.Box3();
-  positions.forEach((position) => bounds.expandByPoint(position));
-  return bounds;
-}
-
 function positionsForBucket(
   positions: THREE.Vector3[],
   x: number,
@@ -96,12 +62,13 @@ function addColorForFixedPoints(geometry: THREE.BufferGeometry) {
   geometry.getAttribute('color').needsUpdate = true;
 }
 
-export function generateMapGeometry(entities: MapEntity[]): THREE.Geometry {
+export function generateBackgroundPlaneGeometry(
+  bounds: THREE.Box3,
+  cellSize: number,
+): THREE.Geometry {
   // render a wireframe box around the world bounds
-  const positions = extractPositions(entities);
-  const bounds = getBounds(positions);
 
-  const vertsPerUnitLength = 1;
+  const vertsPerUnitLength = 1 / cellSize;
   // build a plane geometry for the floor along the x/z plane
   const floorGeometry = new THREE.PlaneGeometry(
     bounds.max.x - bounds.min.x,
@@ -118,8 +85,8 @@ export function generateMapGeometry(entities: MapEntity[]): THREE.Geometry {
     bounds.min.z + (bounds.max.z - bounds.min.z) / 2,
   );
 
-  applyDataToVertices(floorGeometry, positions);
-  addColorForFixedPoints(floorGeometry);
+  // applyDataToVertices(floorGeometry, positions);
+  // addColorForFixedPoints(floorGeometry);
 
   return floorGeometry;
 }
@@ -127,12 +94,21 @@ export function generateMapGeometry(entities: MapEntity[]): THREE.Geometry {
 export function buildCurvesForPlayers(
   entities: MapEntity[],
   ticksPerGameSecond: number,
-): THREE.BufferGeometry[] {
-  return entities.map((entity) => {
+  playerTeam: (player: string) => number,
+): Record<string, THREE.BufferGeometry> {
+  const curves: Record<string, THREE.BufferGeometry> = {};
+  entities.forEach((entity) => {
+    const player = entity.id;
     const curve = buildCurveForPlayer(entity, ticksPerGameSecond);
-    setCurveBaseColor(curve, new THREE.Color('#cc99ee'));
-    return curve;
+    setCurveBaseColor(
+      curve,
+      new THREE.Color(
+        getColorFor(playerTeam(player) === 1 ? 'team1' : 'team2'),
+      ),
+    );
+    curves[entity.id] = curve;
   });
+  return curves;
 }
 
 function buildCurveForPlayer(
@@ -142,9 +118,15 @@ function buildCurveForPlayer(
   const rawPoints: THREE.Vector3[] = [];
 
   Object.entries(entity.states).forEach(([key, state]) => {
-    rawPoints.push(
-      new THREE.Vector3(state.x, (state.y as number) - 0.7, state.z),
-    );
+    if (
+      state.x === undefined ||
+      state.y === undefined ||
+      state.z === undefined
+    ) {
+      console.log('bad state', state);
+      return;
+    }
+    rawPoints.push(new THREE.Vector3(state.x, state.y as number, state.z));
   });
 
   const numPoints = rawPoints.length * ticksPerGameSecond;
@@ -164,9 +146,21 @@ function buildCurveForPlayer(
   const positionArray = positionAttribute.array as number[];
 
   for (let i = 0; i < points.length; i++) {
-    positionArray[i * 3] = points[i].x;
-    positionArray[i * 3 + 1] = points[i].y;
-    positionArray[i * 3 + 2] = points[i].z;
+    if (
+      Number.isNaN(points[i].x) ||
+      Number.isNaN(points[i].y) ||
+      Number.isNaN(points[i].z)
+    ) {
+      console.log('undefined point', i, points[i]);
+      // TODO figure out why this is happening
+      positionArray[i * 3] = 0;
+      positionArray[i * 3 + 1] = 0;
+      positionArray[i * 3 + 2] = 0;
+    } else {
+      positionArray[i * 3] = points[i].x;
+      positionArray[i * 3 + 1] = points[i].y;
+      positionArray[i * 3 + 2] = points[i].z;
+    }
   }
 
   positionAttribute.needsUpdate = true;
@@ -196,19 +190,17 @@ export function highlightCurveAroundPercent(
   percent: number,
   // maps a distance from the percent to a lightness offset
   dampFn: (dist: number) => number,
-  // (optional) the number of points before and after the percent to render. If not provided, the entire curve will be rendered.
-  bounds?: [number, number],
 ) {
   const colorAttribute = curve.getAttribute('color');
   const colorArray = colorAttribute.array as number[];
   const numPoints = colorArray.length / 3;
   const percentIndex = Math.floor(numPoints * percent);
-  const hasDrawRange = bounds !== undefined;
-  const start = hasDrawRange ? percentIndex - bounds[0] : 0;
-  const end = hasDrawRange ? percentIndex + bounds[1] : numPoints;
+  // TODO optimize this by only updating the points that changed
+  const start = 0;
+  const end = numPoints;
   const diff = end - start;
-  curve.setDrawRange(start, diff);
-
+  let startRenderIndex = 0;
+  let endRenderIndex = 0;
   for (let i = start; i < end; i++) {
     const dist = Math.abs(i - percentIndex);
     const lightnessOffset = dampFn(dist);
@@ -220,11 +212,21 @@ export function highlightCurveAroundPercent(
     const hsl = {h: 0, s: 0, l: 0};
     color.getHSL(hsl);
     const newLightness = Math.max(0, hsl.l - lightnessOffset);
+    if (newLightness === 0) {
+      if (i < percentIndex) {
+        startRenderIndex = i;
+      } else if (endRenderIndex === 0) {
+        endRenderIndex = i;
+      }
+    }
     color.setHSL(hsl.h, hsl.s, newLightness);
     colorArray[i * 3] = color.r;
     colorArray[i * 3 + 1] = color.g;
     colorArray[i * 3 + 2] = color.b;
   }
+
+  console.log(`rendering ${endRenderIndex - startRenderIndex} points`);
+  curve.setDrawRange(startRenderIndex, endRenderIndex - startRenderIndex);
 
   colorAttribute.needsUpdate = true;
 }
