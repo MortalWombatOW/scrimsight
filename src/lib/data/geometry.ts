@@ -91,32 +91,38 @@ export function generateBackgroundPlaneGeometry(
   return floorGeometry;
 }
 
+export type PlayerCurve = {
+  startTime: number;
+  endTime: number;
+  curve: THREE.BufferGeometry;
+};
+
+type PlayerCurveRawPoints = {
+  startTime: number;
+  endTime: number;
+  rawPoints: THREE.Vector3[];
+};
+
 export function buildCurvesForPlayers(
   entities: MapEntity[],
   ticksPerGameSecond: number,
-  playerTeam: (player: string) => number,
-): Record<string, THREE.BufferGeometry> {
+): Record<string, PlayerCurve[]> {
   const curves: Record<string, THREE.BufferGeometry> = {};
   entities.forEach((entity) => {
-    const player = entity.id;
-    const curve = buildCurveForPlayer(entity, ticksPerGameSecond);
-    setCurveBaseColor(
-      curve,
-      new THREE.Color(
-        getColorFor(playerTeam(player) === 1 ? 'team1' : 'team2'),
-      ),
-    );
-    curves[entity.id] = curve;
+    const curvesForPlayer = buildCurvesForPlayer(entity, ticksPerGameSecond);
+    curves[entity.id] = curvesForPlayer;
   });
   return curves;
 }
 
-function buildCurveForPlayer(
+function buildCurvesForPlayer(
   entity: MapEntity,
   ticksPerGameSecond: number,
-): THREE.BufferGeometry {
-  const rawPoints: THREE.Vector3[] = [];
-
+): PlayerCurve[] {
+  const rawPoints: PlayerCurveRawPoints[] = [];
+  let currentPoints: THREE.Vector3[] = [];
+  let startTime = 0;
+  let endTime = 0;
   Object.entries(entity.states).forEach(([key, state]) => {
     if (
       state.x === undefined ||
@@ -126,10 +132,55 @@ function buildCurveForPlayer(
       console.log('bad state', state);
       return;
     }
-    rawPoints.push(new THREE.Vector3(state.x, state.y as number, state.z));
+    if (state.health === 0) {
+      if (currentPoints.length > 0) {
+        rawPoints.push({
+          startTime,
+          endTime,
+          rawPoints: currentPoints,
+        });
+        currentPoints = [];
+      }
+    } else {
+      if (currentPoints.length === 0) {
+        startTime = parseInt(key, 10);
+      }
+      endTime = parseInt(key, 10);
+      currentPoints.push(
+        new THREE.Vector3(state.x, state.y as number, state.z),
+      );
+    }
   });
 
+  if (currentPoints.length > 0) {
+    rawPoints.push({
+      startTime,
+      endTime,
+      rawPoints: currentPoints,
+    });
+  }
+
+  return rawPoints.flatMap((rawPoints) => {
+    if (rawPoints.rawPoints.length < 2) {
+      console.log('not enough points', rawPoints);
+      return [];
+    }
+    return [
+      {
+        startTime: rawPoints.startTime,
+        endTime: rawPoints.endTime,
+        curve: buildCurve(rawPoints.rawPoints, ticksPerGameSecond),
+      },
+    ];
+  });
+}
+
+function buildCurve(
+  rawPoints: THREE.Vector3[],
+  ticksPerGameSecond: number,
+): THREE.BufferGeometry {
   const numPoints = rawPoints.length * ticksPerGameSecond;
+  console.log('building curve', rawPoints.length, numPoints);
   const curve = new THREE.CatmullRomCurve3(rawPoints);
   const points: THREE.Vector3[] = curve.getPoints(numPoints);
 
@@ -198,7 +249,6 @@ export function highlightCurveAroundPercent(
   // TODO optimize this by only updating the points that changed
   const start = 0;
   const end = numPoints;
-  const diff = end - start;
   let startRenderIndex = 0;
   let endRenderIndex = 0;
   for (let i = start; i < end; i++) {
@@ -211,8 +261,9 @@ export function highlightCurveAroundPercent(
     );
     const hsl = {h: 0, s: 0, l: 0};
     color.getHSL(hsl);
-    const newLightness = Math.max(0, hsl.l - lightnessOffset);
-    if (newLightness === 0) {
+    const minLightness = 0.05;
+    const newLightness = Math.max(minLightness, hsl.l - lightnessOffset);
+    if (newLightness === minLightness) {
       if (i < percentIndex) {
         startRenderIndex = i;
       } else if (endRenderIndex === 0) {
@@ -225,7 +276,11 @@ export function highlightCurveAroundPercent(
     colorArray[i * 3 + 2] = color.b;
   }
 
-  console.log(`rendering ${endRenderIndex - startRenderIndex} points`);
+  // console.log(
+  //   `rendering ${
+  //     endRenderIndex - startRenderIndex
+  //   } points from ${startRenderIndex} to ${endRenderIndex} out of ${numPoints}`,
+  // );
   curve.setDrawRange(startRenderIndex, endRenderIndex - startRenderIndex);
 
   colorAttribute.needsUpdate = true;

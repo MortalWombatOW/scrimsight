@@ -24,7 +24,10 @@ import Globals from '../../lib/data/globals';
 import {
   buildCurvesForPlayers,
   highlightCurveAroundPercent,
+  PlayerCurve,
+  setCurveBaseColor,
 } from '../../lib/data/geometry';
+import {getColorFor} from '../../lib/color';
 function getIndexForPlayer(
   player: MapEntity,
   playerEntities: MapEntity[],
@@ -96,7 +99,19 @@ function getTimeBounds(entities: MapEntity[]): [number, number] {
   let minTime = Number.MAX_SAFE_INTEGER;
   let maxTime = Number.MIN_SAFE_INTEGER;
   for (const entity of entities) {
-    for (const time of Object.keys(entity.states)) {
+    if (entity.entityType !== 'player') {
+      continue;
+    }
+    for (const [time, state] of Object.entries(entity.states)) {
+      // console.log(`time: ${time}, state: ${JSON.stringify(state)}`);
+      if (
+        state.health === 0 ||
+        state.x === 0 ||
+        state.y === 0 ||
+        state.z === 0
+      ) {
+        continue;
+      }
       const timeNum = Number(time);
       if (timeNum < minTime) {
         minTime = timeNum;
@@ -143,6 +158,10 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
   // playback state
   const [playing, setPlaying] = useState(false);
 
+  console.log(
+    `startTime: ${startTime}, endTime: ${endTime}, currentGameTime: ${currentGameTime}, tick: ${tick}, maxTick: ${maxTick}`,
+  );
+
   useEffect(() => {
     if (!playing) return;
     const interval = setInterval(() => {
@@ -186,35 +205,107 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
     return bounds_;
   }, []);
 
-  const playerCurves: Record<string, THREE.BufferGeometry> = useMemo(
-    () => buildCurvesForPlayers(playerEntities, ticksPerGameSecond, playerTeam),
-    [],
-  );
+  const playerCurves: Record<string, PlayerCurve[]> = useMemo(() => {
+    const curves = buildCurvesForPlayers(playerEntities, ticksPerGameSecond);
+    console.log('curves', curves);
+    return curves;
+  }, []);
+
+  const currentPlayerCurve: Record<string, PlayerCurve | undefined> =
+    useMemo(() => {
+      const curves: Record<string, THREE.BufferGeometry | undefined> = {};
+      for (const player of playerNames) {
+        const playerCurve: PlayerCurve | undefined = playerCurves[player].find(
+          (curve: PlayerCurve) =>
+            curve.startTime <= currentGameTime &&
+            curve.endTime >= currentGameTime,
+        );
+        if (!playerCurve) {
+          console.log(
+            `no curve for player ${player} at tick ${tick} = ${tickToTime(
+              tick,
+            )}s`,
+          );
+          continue;
+        }
+        curves[player] = playerCurve;
+      }
+      return curves;
+    }, [currentGameTime]);
+
+  console.log('currentPlayerCurve', currentPlayerCurve);
+
   const playerPositions: Record<string, THREE.Vector3> = useMemo(() => {
     const positions: Record<string, THREE.Vector3> = {};
     for (const player of playerNames) {
-      const curve: THREE.BufferGeometry = playerCurves[player];
+      const curve = currentPlayerCurve[player];
       if (!curve) {
-        console.warn(`no curve for player ${player}`);
+        console.log(
+          `no curve for player ${player} at tick ${tick} = ${tickToTime(
+            tick,
+          )}s`,
+        );
         continue;
       }
       if (positions[player] === undefined) {
         positions[player] = new THREE.Vector3();
       }
       positions[player].fromBufferAttribute(
-        curve.getAttribute('position'),
-        tick,
+        curve.curve.getAttribute('position'),
+        tick - (curve.startTime - startTime) * ticksPerGameSecond,
       );
     }
     return positions;
   }, [tick]);
 
+  // map from player name to it's current speed by interpolating between the two closest states
+  const currentPlayerSpeed: Record<string, number> = useMemo(() => {
+    const velocities: Record<string, number> = {};
+    for (const player of playerNames) {
+      const curve = currentPlayerCurve[player];
+      if (!curve) {
+        console.log(
+          `no curve for player ${player} at tick ${tick} = ${tickToTime(
+            tick,
+          )}s`,
+        );
+        continue;
+      }
+      const prevPosition = new THREE.Vector3().fromBufferAttribute(
+        curve.curve.getAttribute('position'),
+        tick - (curve.startTime - startTime) * ticksPerGameSecond - 1,
+      );
+      const nextPosition = playerPositions[player];
+      const distance = prevPosition.distanceTo(nextPosition);
+      const velocity = distance / realSecondsPerTick;
+      velocities[player] = velocity;
+    }
+    return velocities;
+  }, [tick]);
+
+  console.log('playerPositions', playerPositions);
+
   useEffect(() => {
     const percentDone = tick / maxTick;
     console.log('percent done', percentDone);
-    Object.values(playerCurves).forEach((curve) => {
-      highlightCurveAroundPercent(curve, percentDone, (dist) => dist / 10);
-    });
+    Object.entries(currentPlayerCurve)
+      .filter(([player, curve]) => curve !== undefined)
+      .forEach(([player, curve]: [string, PlayerCurve]) => {
+        const percentForCurve =
+          (tick - timeToTick(curve.startTime)) /
+          (timeToTick(curve.endTime) - timeToTick(curve.startTime));
+        setCurveBaseColor(
+          curve.curve,
+          new THREE.Color(
+            getColorFor(playerTeam(player) === 1 ? 'team1' : 'team2'),
+          ),
+        );
+        highlightCurveAroundPercent(
+          curve.curve,
+          percentForCurve,
+          (dist) => dist / 10,
+        );
+      });
   }, [tick]);
 
   const linkEntities = entities.filter(
@@ -244,27 +335,31 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
         {/* <hemisphereLight intensity={0.5} /> */}
         <pointLight position={[30, 100, -30]} intensity={2} />
         {playerEntities.map((entity, i) => {
-          const hero = entity.states[currentGameTime]?.hero as string;
-          const name = entity.states[currentGameTime]?.name as string;
-          const health = entity.states[currentGameTime]?.health as number;
+          let hero = entity.states[currentGameTime]?.hero as string;
+          let name = entity.states[currentGameTime]?.name as string;
+          let health = entity.states[currentGameTime]?.health as number;
           if (!hero || !name || !health) {
-            console.log(`skipping render at ${currentGameTime}`);
-            return null;
+            // console.log(`skipping render at ${currentGameTime}`);
+            hero = 'Orisa';
+            name = 'unknown';
+            health = 0;
           }
           if (!playerRefs.current[name]) {
             playerRefs.current[name] = createRef();
           }
+          const playerPosition = playerPositions[name];
+          if (!playerPosition) return null;
           return (
             <Player
               hero={hero}
               name={name}
               // getPosition={() => currentPosition(name)}
-              position={playerPositions[name]}
+              position={playerPosition}
+              speed={currentPlayerSpeed[name]}
               key={i}
               playing={playing}
               team={playerTeam(name)}
               health={health}
-              ref={playerRefs.current[name]}
             />
           );
         })}
@@ -288,10 +383,27 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
             />
           );
         })} */}
-        {Object.entries(playerCurves).map(([player, geometry], i) => {
-          const line = new THREE.Line(geometry, lineMaterial);
+        {Object.entries(currentPlayerCurve).map(([player, currentCurve], i) => {
+          if (!currentCurve) {
+            return null;
+          }
+          const startPoint: THREE.Vector3 = new THREE.Vector3();
+          const endPoint: THREE.Vector3 = new THREE.Vector3();
+          startPoint.fromBufferAttribute(
+            currentCurve.curve.getAttribute('position'),
+            0,
+          );
+          endPoint.fromBufferAttribute(
+            currentCurve.curve.getAttribute('position'),
+            currentCurve.curve.getAttribute('position').count - 1,
+          );
+          const line = new THREE.Line(currentCurve.curve, lineMaterial);
           // line.computeLineDistances();
-          return <primitive object={line} key={`line-${player}`} />;
+          return (
+            <group key={`line-${player}`}>
+              <primitive object={line} />
+            </group>
+          );
         })}
 
         <BackgroundPlane bounds={bounds} cellSize={1} isWireframe={false} />

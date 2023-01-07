@@ -9,11 +9,17 @@ export function Links({linkEntities, time, playing, playerPositions}) {
         if (!state) return null;
         const source = state.player as string;
         const target = state.target as string;
+        const sourcePos = playerPositions[source];
+        const targetPos = playerPositions[target];
+        if (!sourcePos || !targetPos) {
+          console.log(`No position for ${source} or ${target}`);
+          return null;
+        }
         return (
           <PlayerConnection
             key={i}
-            source={playerPositions[source]}
-            target={playerPositions[target]}
+            source={sourcePos}
+            target={sourcePos}
             amount={Number(state.amount)}
             type={state.type as string}
             playing={playing}

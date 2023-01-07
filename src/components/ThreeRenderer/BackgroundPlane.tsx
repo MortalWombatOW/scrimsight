@@ -21,7 +21,7 @@ export function BackgroundPlane(props: BackgroundPlaneProps) {
       new THREE.MeshLambertMaterial({
         wireframe: isWireframe,
         // vertexColors: true,
-        color: 0x555555,
+        color: 0x333333,
       }),
     [],
   );
