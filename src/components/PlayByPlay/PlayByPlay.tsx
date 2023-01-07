@@ -104,7 +104,7 @@ const PlayByPlay = ({mapId}: {mapId: number}) => {
       /> */}
       <ThreeRenderer
         entities={entities}
-        width={width - 17}
+        width={width - 37}
         height={height - 140}
       />
     </div>

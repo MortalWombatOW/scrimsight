@@ -49,7 +49,7 @@ export const Player = ({
     );
   }, [lastHero]);
 
-  const spriteRef = useRef<THREE.Sprite>();
+  const spriteRef = useRef<THREE.Sprite | null>(null);
 
   const pillRadius = 0.3;
   const spriteOffset = pillRadius + 0.15;

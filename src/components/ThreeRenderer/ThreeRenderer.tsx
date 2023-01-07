@@ -9,7 +9,12 @@ import React, {
 } from 'react';
 import {MapEntity, RenderState, Team} from '../../lib/data/types';
 const bg = '#0a0a0a';
-import {OrbitControls} from '@react-three/drei';
+import {
+  OrbitControls,
+  OrthographicCamera,
+  PerspectiveCamera,
+  Select,
+} from '@react-three/drei';
 import {Canvas, useFrame} from '@react-three/fiber';
 import * as THREE from 'three';
 import {useControls} from 'leva';
@@ -28,6 +33,8 @@ import {
   setCurveBaseColor,
 } from '../../lib/data/geometry';
 import {getColorFor} from '../../lib/color';
+import {CameraControls} from './CameraControls';
+import Controls, {CameraMode, LayerMode} from './Controls';
 function getIndexForPlayer(
   player: MapEntity,
   playerEntities: MapEntity[],
@@ -35,59 +42,60 @@ function getIndexForPlayer(
   return playerEntities.findIndex((p) => p.id === player.id);
 }
 
-function AbilityText({
-  abilityName,
-  playerPosition,
-}: {
-  abilityName: string;
-  playerPosition: THREE.Vector3;
-}) {
-  const ref = useRef<THREE.Mesh>();
-  // display the ability name above the player. the text should rise up and then fade out
+// function AbilityText({
+//   abilityName,
+//   playerPosition,
+// }: {
+//   abilityName: string;
+//   playerPosition: THREE.Vector3;
+// }) {
+//   const ref = useRef<THREE.Mesh>();
+//   // display the ability name above the player. the text should rise up and then fade out
 
-  const textGeometry = new TextGeometry(abilityName, {
-    size: 20,
-    height: 10,
-  });
-  const startY = playerPosition.y + 1;
-  const fadeStartY = startY + 1;
-  const endY = startY + 2;
-  const textPosition = new THREE.Vector3(
-    playerPosition.x,
-    startY,
-    playerPosition.z,
-  );
-  const textMaterial = new THREE.MeshBasicMaterial({color: 0xffffff});
-  const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-  useFrame(({camera}, delta) => {
-    if (!ref.current) {
-      return;
-    }
-    // rotate towards camera
-    ref.current.lookAt(camera.position);
-    // rise up
-    if (textPosition.y < endY) {
-      textPosition.y += 1 * delta;
-    } else {
-      // restart
-      textPosition.y = startY;
-    }
+//   const textGeometry = new TextGeometry(abilityName, {
+//     size: 20,
+//     height: 10,
+//     font: 'helvetiker',
+//   });
+//   const startY = playerPosition.y + 1;
+//   const fadeStartY = startY + 1;
+//   const endY = startY + 2;
+//   const textPosition = new THREE.Vector3(
+//     playerPosition.x,
+//     startY,
+//     playerPosition.z,
+//   );
+//   const textMaterial = new THREE.MeshBasicMaterial({color: 0xffffff});
+//   const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+//   useFrame(({camera}, delta) => {
+//     if (!ref.current) {
+//       return;
+//     }
+//     // rotate towards camera
+//     ref.current.lookAt(camera.position);
+//     // rise up
+//     if (textPosition.y < endY) {
+//       textPosition.y += 1 * delta;
+//     } else {
+//       // restart
+//       textPosition.y = startY;
+//     }
 
-    // fade out
-    if (textPosition.y > fadeStartY) {
-      const opacity = 1 - (textPosition.y - fadeStartY) / (endY - fadeStartY);
-      textMaterial.opacity = opacity;
-    } else {
-      textMaterial.opacity = 1;
-    }
-  });
+//     // fade out
+//     if (textPosition.y > fadeStartY) {
+//       const opacity = 1 - (textPosition.y - fadeStartY) / (endY - fadeStartY);
+//       textMaterial.opacity = opacity;
+//     } else {
+//       textMaterial.opacity = 1;
+//     }
+//   });
 
-  return (
-    <mesh ref={ref} position={textPosition}>
-      <primitive object={textMesh} />
-    </mesh>
-  );
-}
+//   return (
+//     <mesh ref={ref} position={textPosition}>
+//       <primitive object={textMesh} />
+//     </mesh>
+//   );
+// }
 
 export type ZoomIProps = {
   width: number;
@@ -158,18 +166,18 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
   // playback state
   const [playing, setPlaying] = useState(false);
 
-  console.log(
-    `startTime: ${startTime}, endTime: ${endTime}, currentGameTime: ${currentGameTime}, tick: ${tick}, maxTick: ${maxTick}`,
-  );
+  // console.log(
+  //   `startTime: ${startTime}, endTime: ${endTime}, currentGameTime: ${currentGameTime}, tick: ${tick}, maxTick: ${maxTick}`,
+  // );
 
   useEffect(() => {
     if (!playing) return;
     const interval = setInterval(() => {
       setTick((tick) => {
         if (tick >= maxTick) {
-          console.log(
-            `stopping playback at tick ${tick} = ${tickToTime(tick)}s`,
-          );
+          // console.log(
+          //   `stopping playback at tick ${tick} = ${tickToTime(tick)}s`,
+          // );
           setPlaying(false);
           return tick;
         }
@@ -198,7 +206,7 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
         if (Number.isNaN(x) || Number.isNaN(y) || Number.isNaN(z)) {
           continue;
         }
-        vec.set(x, y, z);
+        vec.set(x as number, y as number, z as number);
         bounds_.expandByPoint(vec);
       }
     }
@@ -207,13 +215,12 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
 
   const playerCurves: Record<string, PlayerCurve[]> = useMemo(() => {
     const curves = buildCurvesForPlayers(playerEntities, ticksPerGameSecond);
-    console.log('curves', curves);
     return curves;
   }, []);
 
   const currentPlayerCurve: Record<string, PlayerCurve | undefined> =
     useMemo(() => {
-      const curves: Record<string, THREE.BufferGeometry | undefined> = {};
+      const curves: Record<string, PlayerCurve | undefined> = {};
       for (const player of playerNames) {
         const playerCurve: PlayerCurve | undefined = playerCurves[player].find(
           (curve: PlayerCurve) =>
@@ -221,11 +228,6 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
             curve.endTime >= currentGameTime,
         );
         if (!playerCurve) {
-          console.log(
-            `no curve for player ${player} at tick ${tick} = ${tickToTime(
-              tick,
-            )}s`,
-          );
           continue;
         }
         curves[player] = playerCurve;
@@ -233,18 +235,11 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
       return curves;
     }, [currentGameTime]);
 
-  console.log('currentPlayerCurve', currentPlayerCurve);
-
   const playerPositions: Record<string, THREE.Vector3> = useMemo(() => {
     const positions: Record<string, THREE.Vector3> = {};
     for (const player of playerNames) {
       const curve = currentPlayerCurve[player];
       if (!curve) {
-        console.log(
-          `no curve for player ${player} at tick ${tick} = ${tickToTime(
-            tick,
-          )}s`,
-        );
         continue;
       }
       if (positions[player] === undefined) {
@@ -258,17 +253,24 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
     return positions;
   }, [tick]);
 
+  const currentPositionBounds = useMemo(() => {
+    const bounds_ = new THREE.Box3();
+    for (const player of playerNames) {
+      const position = playerPositions[player];
+      if (!position) {
+        continue;
+      }
+      bounds_.expandByPoint(position);
+    }
+    return bounds_;
+  }, [playerPositions]);
+
   // map from player name to it's current speed by interpolating between the two closest states
   const currentPlayerSpeed: Record<string, number> = useMemo(() => {
     const velocities: Record<string, number> = {};
     for (const player of playerNames) {
       const curve = currentPlayerCurve[player];
       if (!curve) {
-        console.log(
-          `no curve for player ${player} at tick ${tick} = ${tickToTime(
-            tick,
-          )}s`,
-        );
         continue;
       }
       const prevPosition = new THREE.Vector3().fromBufferAttribute(
@@ -283,11 +285,7 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
     return velocities;
   }, [tick]);
 
-  console.log('playerPositions', playerPositions);
-
   useEffect(() => {
-    const percentDone = tick / maxTick;
-    console.log('percent done', percentDone);
     Object.entries(currentPlayerCurve)
       .filter(([player, curve]) => curve !== undefined)
       .forEach(([player, curve]: [string, PlayerCurve]) => {
@@ -316,53 +314,115 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
   );
   const abilityEntities = entities.filter((e) => e.entityType === 'ability');
 
-  const playerRefs: React.MutableRefObject<{
-    [key: string]: React.MutableRefObject<THREE.Group>;
-  }> = useRef({});
-
   const lineMaterial = new THREE.LineBasicMaterial({
     vertexColors: true,
   });
 
+  const [cameraMode, setCameraMode] = useState<CameraMode>('topdown');
+
+  const cameraControls = useRef<CameraControls | null>(null);
+
+  useEffect(() => {
+    // console.log('fitting camera to box', cameraControls?.current);
+    if (cameraControls.current) {
+      cameraControls.current.fitToBox(currentPositionBounds, true, {
+        paddingBottom: 5,
+        paddingLeft: 5,
+        paddingRight: 5,
+        paddingTop: 5,
+      });
+    }
+  }, [tick]);
+
+  useEffect(() => {
+    // when the camera mode changes, reset the camera to the default position
+    setTimeout(() => {
+      console.log(`camera mode changed to ${cameraMode}`);
+      if (!cameraControls.current) {
+        console.log('no camera controls');
+        return;
+      }
+      if (cameraMode === 'topdown') {
+        cameraControls.current.setPosition(0, 100, 0, false);
+        cameraControls.current.setTarget(0, 0, 0, false);
+        cameraControls.current!.fitToBox(currentPositionBounds, false, {
+          paddingBottom: 5,
+          paddingLeft: 5,
+          paddingRight: 5,
+          paddingTop: 5,
+        });
+      } else if (cameraMode === 'sideview') {
+        const avgY =
+          (currentPositionBounds.max.y + currentPositionBounds.min.y) / 2;
+        cameraControls.current.setPosition(50, avgY, 0, false);
+        cameraControls.current.setTarget(0, 0, 0, false);
+        cameraControls.current!.fitToBox(currentPositionBounds, false, {
+          paddingBottom: 5,
+          paddingLeft: 5,
+          paddingRight: 5,
+          paddingTop: 5,
+        });
+      } else if (cameraMode === 'free') {
+        cameraControls.current.setPosition(0, 100, 0, false);
+        cameraControls.current.setTarget(0, 0, 0, false);
+      }
+    }, 0);
+  }, [cameraMode]);
+
+  const [layerMode, setLayerMode] = useState<LayerMode>('default');
+
   return (
     <div style={{height: '100%'}}>
       <Canvas
-        camera={{position: [0, 100, -30]}}
         onCreated={({gl}) => {
           gl.setClearColor(new THREE.Color(bg));
         }}>
+        <group>
+          <OrthographicCamera
+            makeDefault={cameraMode === 'topdown'}
+            position={[0, 100, 0]}
+            zoom={1}
+          />
+          <PerspectiveCamera
+            makeDefault={cameraMode === 'free' || cameraMode === 'teamfollow'}
+            position={[0, 100, 0]}
+            zoom={1}
+          />
+          <CameraControls ref={cameraControls} />
+        </group>
+
         <ambientLight intensity={0.5} />
         {/* <hemisphereLight intensity={0.5} /> */}
         <pointLight position={[30, 100, -30]} intensity={2} />
-        {playerEntities.map((entity, i) => {
-          let hero = entity.states[currentGameTime]?.hero as string;
-          let name = entity.states[currentGameTime]?.name as string;
-          let health = entity.states[currentGameTime]?.health as number;
-          if (!hero || !name || !health) {
-            // console.log(`skipping render at ${currentGameTime}`);
-            hero = 'Orisa';
-            name = 'unknown';
-            health = 0;
-          }
-          if (!playerRefs.current[name]) {
-            playerRefs.current[name] = createRef();
-          }
-          const playerPosition = playerPositions[name];
-          if (!playerPosition) return null;
-          return (
-            <Player
-              hero={hero}
-              name={name}
-              // getPosition={() => currentPosition(name)}
-              position={playerPosition}
-              speed={currentPlayerSpeed[name]}
-              key={i}
-              playing={playing}
-              team={playerTeam(name)}
-              health={health}
-            />
-          );
-        })}
+        <Select box onChange={(e) => console.log(e)}>
+          {playerEntities.map((entity, i) => {
+            let hero = entity.states[currentGameTime]?.hero as string;
+            let name = entity.states[currentGameTime]?.name as string;
+            let health = entity.states[currentGameTime]?.health as number;
+            if (!hero || !name || !health) {
+              // console.log(`skipping render at ${currentGameTime}`);
+              hero = 'Orisa';
+              name = 'unknown';
+              health = 0;
+            }
+            const playerPosition = playerPositions[name];
+            if (!playerPosition) return null;
+            return (
+              <Player
+                hero={hero}
+                name={name}
+                // getPosition={() => currentPosition(name)}
+                position={playerPosition}
+                speed={currentPlayerSpeed[name]}
+                key={i}
+                playing={playing}
+                team={playerTeam(name)}
+                health={health}
+              />
+            );
+          })}
+        </Select>
+
         <Links
           linkEntities={linkEntities}
           time={currentGameTime}
@@ -406,8 +466,14 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
           );
         })}
 
-        <BackgroundPlane bounds={bounds} cellSize={1} isWireframe={false} />
-        <OrbitControls />
+        <BackgroundPlane
+          bounds={bounds}
+          cellSize={1}
+          isWireframe={false}
+          layerMode={layerMode}
+          playerEntities={playerEntities}
+          currentTime={currentGameTime}
+        />
         <EffectComposer>
           <Bloom
             luminanceThreshold={1}
@@ -416,15 +482,21 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
           />
         </EffectComposer>
       </Canvas>
-      <div style={{position: 'absolute', bottom: 10, left: width / 2}}>
-        <button onClick={() => setPlaying(!playing)}>
-          {playing ? 'Pause' : 'Play'}
-        </button>
-        <button onClick={() => setTick(tick - ticksPerGameSecond)}>Back</button>
-        <button onClick={() => setTick(tick + ticksPerGameSecond)}>
-          Forward
-        </button>
-      </div>
+      <Controls
+        width={width}
+        playing={playing}
+        setPlaying={setPlaying}
+        currentTime={currentGameTime}
+        setCurrentTime={(time: number) => setTick(timeToTick(time))}
+        startTime={startTime}
+        endTime={endTime}
+        playbackSpeed={playbackSpeed}
+        setPlaybackSpeed={setPlaybackSpeed}
+        cameraMode={cameraMode}
+        setCameraMode={setCameraMode}
+        layerMode={layerMode}
+        setLayerMode={setLayerMode}
+      />
     </div>
   );
 };

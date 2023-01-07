@@ -6,11 +6,12 @@ function positionsForBucket(
   positions: THREE.Vector3[],
   x: number,
   z: number,
+  radius: number = 0.5,
 ): THREE.Vector3[] {
   // return positions that are within .5 units of the given x/z
   return positions.filter(
     (position) =>
-      Math.abs(position.x - x) < 0.5 && Math.abs(position.z - z) < 0.5,
+      Math.abs(position.x - x) < radius && Math.abs(position.z - z) < radius,
   );
 }
 
@@ -65,7 +66,7 @@ function addColorForFixedPoints(geometry: THREE.BufferGeometry) {
 export function generateBackgroundPlaneGeometry(
   bounds: THREE.Box3,
   cellSize: number,
-): THREE.Geometry {
+): THREE.PlaneGeometry {
   // render a wireframe box around the world bounds
 
   const vertsPerUnitLength = 1 / cellSize;
@@ -91,6 +92,59 @@ export function generateBackgroundPlaneGeometry(
   return floorGeometry;
 }
 
+export function colorPlaneForMapControl(
+  geometry: THREE.BufferGeometry,
+  team1Positions: THREE.Vector3[],
+  team2Positions: THREE.Vector3[],
+) {
+  console.log('colorPlaneForMapControl', team1Positions, team2Positions);
+  // color the area around each player based on their team
+  // for each vertex, color it blue if the closest player is on team 1, red if the closest player is on team 2
+  const positionAttribute = geometry.getAttribute('position');
+  const positionArray = positionAttribute.array as number[];
+  if (!geometry.getAttribute('color')) {
+    geometry.setAttribute(
+      'color',
+      new THREE.BufferAttribute(
+        new Float32Array(positionAttribute.count * 3),
+        3,
+      ),
+    );
+  }
+
+  const colorAttribute = geometry.getAttribute('color');
+  const colorArray = colorAttribute.array as number[];
+  for (let i = 0; i < positionArray.length; i += 3) {
+    const x = positionArray[i];
+    const y = positionArray[i + 1];
+    const z = positionArray[i + 2];
+    let team1Distance = Infinity;
+    let team2Distance = Infinity;
+    team1Positions.forEach((position) => {
+      const distance = Math.sqrt((x - position.x) ** 2 + (z - position.z) ** 2);
+      if (distance < team1Distance) {
+        team1Distance = distance;
+      }
+    });
+    team2Positions.forEach((position) => {
+      const distance = Math.sqrt((x - position.x) ** 2 + (z - position.z) ** 2);
+      if (distance < team2Distance) {
+        team2Distance = distance;
+      }
+    });
+    if (team1Distance < team2Distance) {
+      colorArray[i] = 0.2;
+      colorArray[i + 1] = 0.2;
+      colorArray[i + 2] = 0.8;
+    } else {
+      colorArray[i] = 0.8;
+      colorArray[i + 1] = 0.2;
+      colorArray[i + 2] = 0.2;
+    }
+  }
+  geometry.getAttribute('color').needsUpdate = true;
+}
+
 export type PlayerCurve = {
   startTime: number;
   endTime: number;
@@ -107,7 +161,7 @@ export function buildCurvesForPlayers(
   entities: MapEntity[],
   ticksPerGameSecond: number,
 ): Record<string, PlayerCurve[]> {
-  const curves: Record<string, THREE.BufferGeometry> = {};
+  const curves: Record<string, PlayerCurve[]> = {};
   entities.forEach((entity) => {
     const curvesForPlayer = buildCurvesForPlayer(entity, ticksPerGameSecond);
     curves[entity.id] = curvesForPlayer;
@@ -129,7 +183,7 @@ function buildCurvesForPlayer(
       state.y === undefined ||
       state.z === undefined
     ) {
-      console.log('bad state', state);
+      // console.log('bad state', state);
       return;
     }
     if (state.health === 0) {
@@ -147,7 +201,11 @@ function buildCurvesForPlayer(
       }
       endTime = parseInt(key, 10);
       currentPoints.push(
-        new THREE.Vector3(state.x, state.y as number, state.z),
+        new THREE.Vector3(
+          state.x as number,
+          state.y as number,
+          state.z as number,
+        ),
       );
     }
   });
@@ -162,7 +220,7 @@ function buildCurvesForPlayer(
 
   return rawPoints.flatMap((rawPoints) => {
     if (rawPoints.rawPoints.length < 2) {
-      console.log('not enough points', rawPoints);
+      // console.log('not enough points', rawPoints);
       return [];
     }
     return [
@@ -180,7 +238,7 @@ function buildCurve(
   ticksPerGameSecond: number,
 ): THREE.BufferGeometry {
   const numPoints = rawPoints.length * ticksPerGameSecond;
-  console.log('building curve', rawPoints.length, numPoints);
+  // console.log('building curve', rawPoints.length, numPoints);
   const curve = new THREE.CatmullRomCurve3(rawPoints);
   const points: THREE.Vector3[] = curve.getPoints(numPoints);
 
@@ -202,7 +260,7 @@ function buildCurve(
       Number.isNaN(points[i].y) ||
       Number.isNaN(points[i].z)
     ) {
-      console.log('undefined point', i, points[i]);
+      // console.log('undefined point', i, points[i]);
       // TODO figure out why this is happening
       positionArray[i * 3] = 0;
       positionArray[i * 3 + 1] = 0;

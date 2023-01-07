@@ -27,7 +27,7 @@ export function PlayerConnection({
   });
   const sphere = new THREE.Mesh(sphereGeom, sphereMat);
 
-  const ref = React.useRef<THREE.Group>();
+  const ref = React.useRef<THREE.Group | null>(null);
 
   useEffect(() => {
     if (!ref.current) {
