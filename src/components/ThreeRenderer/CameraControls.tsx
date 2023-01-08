@@ -53,17 +53,33 @@ const subsetOfTHREE = {
 CameraControlsDefault.install({THREE: subsetOfTHREE});
 extend({CameraControlsDefault});
 
-export const CameraControls = forwardRef<CameraControlsDefault, unknown>(
-  (_, ref) => {
+interface CameraProps {
+  primaryAction: 'pan' | 'rotate';
+}
+
+export const CameraControls = forwardRef<CameraControlsDefault, CameraProps>(
+  (props, ref) => {
+    console.log('CameraControls', props);
     const cameraControls = useRef<CameraControlsDefault | null>(null);
     const camera = useThree((state) => state.camera);
     const renderer = useThree((state) => state.gl);
     useFrame((_, delta) => cameraControls.current?.update(delta));
     useEffect(() => () => cameraControls.current?.dispose(), []);
+
     return (
       <cameraControlsDefault
         ref={mergeRefs<CameraControlsDefault>(cameraControls, ref)}
         args={[camera, renderer.domElement]}
+        mouseButtons={{
+          left:
+            props.primaryAction === 'pan'
+              ? CameraControlsDefault.ACTION.TRUCK
+              : CameraControlsDefault.ACTION.ROTATE,
+          middle: CameraControlsDefault.ACTION.NONE,
+          right: CameraControlsDefault.ACTION.NONE,
+          wheel: CameraControlsDefault.ACTION.ZOOM,
+        }}
+        dollyToCursor={true}
       />
     );
   },

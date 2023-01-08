@@ -92,10 +92,31 @@ export function generateBackgroundPlaneGeometry(
   return floorGeometry;
 }
 
+export function colorPlaneFlat(geometry: THREE.BufferGeometry) {
+  // color the plane a flat color
+  geometry.setAttribute(
+    'color',
+    new THREE.BufferAttribute(
+      new Float32Array(geometry.attributes.position.count * 3),
+      3,
+    ),
+  );
+  const colorAttribute = geometry.getAttribute('color');
+  const colorArray = colorAttribute.array as number[];
+  const color = new THREE.Color(0x333333);
+  for (let i = 0; i < colorArray.length; i += 3) {
+    colorArray[i] = color.r;
+    colorArray[i + 1] = color.g;
+    colorArray[i + 2] = color.b;
+  }
+  geometry.getAttribute('color').needsUpdate = true;
+}
+
 export function colorPlaneForMapControl(
   geometry: THREE.BufferGeometry,
   team1Positions: THREE.Vector3[],
   team2Positions: THREE.Vector3[],
+  smooth: boolean = true,
 ) {
   console.log('colorPlaneForMapControl', team1Positions, team2Positions);
   // color the area around each player based on their team
@@ -111,6 +132,9 @@ export function colorPlaneForMapControl(
       ),
     );
   }
+
+  const team1Color = new THREE.Color(getColorFor('team1'));
+  const team2Color = new THREE.Color(getColorFor('team2'));
 
   const colorAttribute = geometry.getAttribute('color');
   const colorArray = colorAttribute.array as number[];
@@ -132,15 +156,31 @@ export function colorPlaneForMapControl(
         team2Distance = distance;
       }
     });
-    if (team1Distance < team2Distance) {
-      colorArray[i] = 0.2;
-      colorArray[i + 1] = 0.2;
-      colorArray[i + 2] = 0.8;
-    } else {
-      colorArray[i] = 0.8;
-      colorArray[i + 1] = 0.2;
-      colorArray[i + 2] = 0.2;
+
+    const color = new THREE.Color(
+      team1Distance < team2Distance ? team1Color : team2Color,
+    );
+    const origHSL = {h: 0, s: 0, l: 0};
+    color.getHSL(origHSL);
+    // if smooth is set, darken the vertex the farther it is from the closest player
+    if (smooth) {
+      const distance = Math.min(team1Distance, team2Distance);
+
+      const minLightness = 0.05;
+      const lightnessOffset = distance / 100;
+      const newLightness = Math.max(minLightness, origHSL.l - lightnessOffset);
+      const minSaturation = 0;
+      const saturationOffset = distance / 100;
+      const newSaturation = Math.max(
+        minSaturation,
+        origHSL.s - saturationOffset,
+      );
+      color.setHSL(origHSL.h, newSaturation, origHSL.l);
     }
+
+    colorArray[i] = color.r;
+    colorArray[i + 1] = color.g;
+    colorArray[i + 2] = color.b;
   }
   geometry.getAttribute('color').needsUpdate = true;
 }

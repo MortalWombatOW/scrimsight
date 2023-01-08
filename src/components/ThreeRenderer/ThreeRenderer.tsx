@@ -10,6 +10,7 @@ import React, {
 import {MapEntity, RenderState, Team} from '../../lib/data/types';
 const bg = '#0a0a0a';
 import {
+  MapControls,
   OrbitControls,
   OrthographicCamera,
   PerspectiveCamera,
@@ -35,12 +36,12 @@ import {
 import {getColorFor} from '../../lib/color';
 import {CameraControls} from './CameraControls';
 import Controls, {CameraMode, LayerMode} from './Controls';
-function getIndexForPlayer(
-  player: MapEntity,
-  playerEntities: MapEntity[],
-): number {
-  return playerEntities.findIndex((p) => p.id === player.id);
-}
+const BOUND_FIT_OPTIONS = {
+  paddingBottom: 15,
+  paddingLeft: 5,
+  paddingRight: 5,
+  paddingTop: 5,
+};
 
 // function AbilityText({
 //   abilityName,
@@ -325,12 +326,11 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
   useEffect(() => {
     // console.log('fitting camera to box', cameraControls?.current);
     if (cameraControls.current) {
-      cameraControls.current.fitToBox(currentPositionBounds, true, {
-        paddingBottom: 5,
-        paddingLeft: 5,
-        paddingRight: 5,
-        paddingTop: 5,
-      });
+      cameraControls.current.fitToBox(
+        currentPositionBounds,
+        true,
+        BOUND_FIT_OPTIONS,
+      );
     }
   }, [tick]);
 
@@ -345,23 +345,21 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
       if (cameraMode === 'topdown') {
         cameraControls.current.setPosition(0, 100, 0, false);
         cameraControls.current.setTarget(0, 0, 0, false);
-        cameraControls.current!.fitToBox(currentPositionBounds, false, {
-          paddingBottom: 5,
-          paddingLeft: 5,
-          paddingRight: 5,
-          paddingTop: 5,
-        });
+        cameraControls.current!.fitToBox(
+          currentPositionBounds,
+          false,
+          BOUND_FIT_OPTIONS,
+        );
       } else if (cameraMode === 'sideview') {
         const avgY =
           (currentPositionBounds.max.y + currentPositionBounds.min.y) / 2;
         cameraControls.current.setPosition(50, avgY, 0, false);
         cameraControls.current.setTarget(0, 0, 0, false);
-        cameraControls.current!.fitToBox(currentPositionBounds, false, {
-          paddingBottom: 5,
-          paddingLeft: 5,
-          paddingRight: 5,
-          paddingTop: 5,
-        });
+        cameraControls.current!.fitToBox(
+          currentPositionBounds,
+          false,
+          BOUND_FIT_OPTIONS,
+        );
       } else if (cameraMode === 'free') {
         cameraControls.current.setPosition(0, 100, 0, false);
         cameraControls.current.setTarget(0, 0, 0, false);
@@ -388,7 +386,11 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
             position={[0, 100, 0]}
             zoom={1}
           />
-          <CameraControls ref={cameraControls} />
+
+          <CameraControls
+            ref={cameraControls}
+            primaryAction={cameraMode === 'topdown' ? 'pan' : 'rotate'}
+          />
         </group>
 
         <ambientLight intensity={0.5} />
@@ -468,7 +470,7 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
 
         <BackgroundPlane
           bounds={bounds}
-          cellSize={1}
+          cellSize={5}
           isWireframe={false}
           layerMode={layerMode}
           playerEntities={playerEntities}

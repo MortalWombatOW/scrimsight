@@ -1,8 +1,14 @@
-import {Box, Slider, ToggleButton, ToggleButtonGroup} from '@mui/material';
+import {
+  Box,
+  Grid,
+  Slider,
+  ToggleButton,
+  ToggleButtonGroup,
+} from '@mui/material';
 import React, {useState} from 'react';
 import {useSpring} from 'react-spring';
 import {formatTime} from '../../lib/data/format';
-import {Button} from '../Common/Mui';
+import {Button, Typography} from '../Common/Mui';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -49,10 +55,10 @@ const LabeledSlider = (props: {
       component="div"
       sx={{
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         width: width || '100%',
       }}>
-      <Box
+      {/* <Box
         component="div"
         sx={{
           display: 'flex',
@@ -66,20 +72,7 @@ const LabeledSlider = (props: {
           }}>
           {label}:
         </Box>
-        <Box
-          component="div"
-          sx={{
-            fontSize: '0.8em',
-          }}>
-          {renderValue ? renderValue(value) : value}
-          {info && (
-            <InfoOutlinedIcon
-              sx={{fontSize: '0.8em', marginLeft: '0.5em'}}
-              onClick={() => alert(info)}
-            />
-          )}
-        </Box>
-      </Box>
+      </Box> */}
       <Slider
         value={value}
         min={min}
@@ -88,6 +81,26 @@ const LabeledSlider = (props: {
           setValue(value as number);
         }}
       />
+      <Box
+        component="div"
+        sx={{
+          fontSize: '0.8em',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          whiteSpace: 'nowrap',
+          marginLeft: '0.5em',
+        }}>
+        <Typography variant="body2" sx={{fontSize: '0.8em'}}>
+          {renderValue ? renderValue(value) : value}
+        </Typography>
+        {info && (
+          <InfoOutlinedIcon
+            sx={{fontSize: '0.8em', marginLeft: '0.5em'}}
+            onClick={() => alert(info)}
+          />
+        )}
+      </Box>
     </Box>
   );
 };
@@ -154,34 +167,43 @@ const Controls = (props: ControlsProps) => {
         component="div"
         sx={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'space-around',
           alignItems: 'center',
         }}
         id="basicControls">
-        <Button onClick={() => setCurrentTime(startTime)}>
-          <FirstPageIcon />
-        </Button>
-        <Button
-          onClick={() => setCurrentTime(Math.max(startTime, currentTime - 10))}>
-          <Replay10Icon />
-        </Button>
-        <Button onClick={() => setPlaying(!playing)}>
-          {playing ? <PauseIcon /> : <PlayArrowIcon />}
-        </Button>
-        <Button
-          onMouseDown={() => setPlaybackSpeed(10)}
-          onMouseUp={() => setPlaybackSpeed(1)}>
-          <FastForwardIcon />
-        </Button>
-        <LabeledSlider
-          label="Timestamp"
-          value={currentTime}
-          min={startTime}
-          max={endTime}
-          setValue={setCurrentTime}
-          renderValue={formatTime}
-          info={`Play begins at ${formatTime(startTime)}`}
-        />
+        <Grid container spacing={1}>
+          <Grid item xs={3}>
+            <Button onClick={() => setCurrentTime(startTime)}>
+              <FirstPageIcon />
+            </Button>
+            <Button
+              onClick={() =>
+                setCurrentTime(Math.max(startTime, currentTime - 10))
+              }>
+              <Replay10Icon />
+            </Button>
+            <Button onClick={() => setPlaying(!playing)}>
+              {playing ? <PauseIcon /> : <PlayArrowIcon />}
+            </Button>
+            <Button
+              onMouseDown={() => setPlaybackSpeed(10)}
+              onMouseUp={() => setPlaybackSpeed(1)}>
+              <FastForwardIcon />
+            </Button>
+          </Grid>
+          <Grid item xs={6}>
+            <LabeledSlider
+              label="Timestamp"
+              value={currentTime}
+              min={startTime}
+              max={endTime}
+              setValue={setCurrentTime}
+              renderValue={formatTime}
+              info={`Play begins at ${formatTime(startTime)}`}
+            />
+          </Grid>
+          <Grid item xs={3}></Grid>
+        </Grid>
       </Box>
       {expanded && (
         <Box

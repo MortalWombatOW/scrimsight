@@ -2,6 +2,7 @@ import React, {useEffect, useMemo} from 'react';
 import * as THREE from 'three';
 import {getColorFor} from '../../lib/color';
 import {
+  colorPlaneFlat,
   colorPlaneForMapControl,
   generateBackgroundPlaneGeometry,
 } from '../../lib/data/geometry';
@@ -38,7 +39,9 @@ export function BackgroundPlane(props: BackgroundPlaneProps) {
     getColorFor(playerTeam(name) === 1 ? 'team1' : 'team2');
 
   useEffect(() => {
-    if (layerMode === 'mapcontrol') {
+    if (layerMode === 'default') {
+      colorPlaneFlat(geometry);
+    } else if (layerMode === 'mapcontrol') {
       const team1Positions = playerEntities
         .filter((e) => playerTeam(e.id) === 1)
         .map((e) => e.states[currentTime])
@@ -64,7 +67,7 @@ export function BackgroundPlane(props: BackgroundPlaneProps) {
             ),
         );
 
-      colorPlaneForMapControl(geometry, team1Positions, team2Positions);
+      colorPlaneForMapControl(geometry, team1Positions, team2Positions, true);
     }
   }, [layerMode, currentTime]);
 
@@ -72,8 +75,7 @@ export function BackgroundPlane(props: BackgroundPlaneProps) {
     () =>
       new THREE.MeshLambertMaterial({
         wireframe: isWireframe,
-        vertexColors: layerMode === 'mapcontrol',
-        color: layerMode === 'default' ? 0x333333 : undefined,
+        vertexColors: true,
       }),
     [layerMode],
   );
