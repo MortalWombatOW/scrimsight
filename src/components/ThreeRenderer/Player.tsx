@@ -1,9 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useFrame} from '@react-three/fiber';
 import * as THREE from 'three';
 import {getHeroImage} from '../../lib/data/data';
 import {getColorFor} from '../../lib/color';
-
+import {SpriteText2D, textAlign} from 'three-text2d';
 interface PlayerProps {
   name: string;
   hero: string;
@@ -12,6 +12,16 @@ interface PlayerProps {
   playing: boolean;
   team: 1 | 2;
   health: number;
+  maxHealth: number;
+  ultCharge: number;
+  renderText: (
+    key: string,
+    text: string,
+    position: THREE.Vector3,
+    positionTop: THREE.Vector3,
+    camera: THREE.Camera,
+    color: string,
+  ) => void;
 }
 
 export const Player = ({
@@ -21,7 +31,10 @@ export const Player = ({
   playing,
   team,
   health,
+  maxHealth,
   speed,
+  ultCharge,
+  renderText,
 }: PlayerProps) => {
   const ref = useRef<THREE.Group>();
 
@@ -49,7 +62,7 @@ export const Player = ({
     );
   }, [lastHero]);
 
-  const spriteRef = useRef<THREE.Sprite | null>(null);
+  const spriteRef = useRef<THREE.Mesh | null>(null);
 
   const pillRadius = 0.3;
   const spriteOffset = pillRadius + 0.15;
@@ -87,7 +100,131 @@ export const Player = ({
       spriteRef.current.position.x = dir.x * spriteOffset;
       spriteRef.current.position.y = dir.y * spriteOffset + 0.2;
       spriteRef.current.position.z = dir.z * spriteOffset;
-      // spriteRef.current.lookAt(cameraPos);
+
+      // should be rotated to maintain the same angle to the camera
+      spriteRef.current.rotation.x = camera.rotation.x;
+      spriteRef.current.rotation.y = camera.rotation.y;
+      spriteRef.current.rotation.z = camera.rotation.z;
+    }
+  });
+
+  // display an arc around the player to indicate health
+  const healthRadius = 0.45;
+  const healthThickness = 0.07;
+  const healthPercent = health / maxHealth;
+  const initialRotation = Math.PI * 1.5;
+  const angleOffsetPercent = 0.15;
+  const angleOffset = Math.PI * 2 * angleOffsetPercent;
+
+  const arc = useMemo(() => {
+    const arc_ = new THREE.Shape();
+    const innerRadius = healthRadius - healthThickness;
+    const outerRadius = healthRadius;
+    const startAngle = initialRotation - angleOffset;
+    const endAngle =
+      startAngle - Math.PI * 2 * (1 - angleOffsetPercent * 2) * healthPercent;
+    const startInner = new THREE.Vector2(
+      Math.cos(startAngle) * innerRadius,
+      Math.sin(startAngle) * innerRadius,
+    );
+    const startOuter = new THREE.Vector2(
+      Math.cos(startAngle) * outerRadius,
+
+      Math.sin(startAngle) * outerRadius,
+    );
+    const endInner = new THREE.Vector2(
+      Math.cos(endAngle) * innerRadius,
+      Math.sin(endAngle) * innerRadius,
+    );
+    arc_.moveTo(startInner.x, startInner.y);
+    arc_.lineTo(startOuter.x, startOuter.y);
+    arc_.absarc(0, 0, outerRadius, startAngle, endAngle, true);
+    arc_.lineTo(endInner.x, endInner.y);
+    arc_.absarc(0, 0, innerRadius, endAngle, startAngle, false);
+    arc_.closePath();
+    return arc_;
+  }, [healthPercent]);
+
+  // health color should be red when low, yellow when medium, green when high
+  const healthColor = useMemo(
+    () =>
+      new THREE.Color(
+        healthPercent > 0.66
+          ? 0x00ff00
+          : healthPercent > 0.33
+          ? 0xffff00
+          : 0xff0000,
+      ),
+    [healthPercent],
+  );
+  const healthMaterial = new THREE.MeshBasicMaterial({
+    color: healthColor,
+    side: THREE.DoubleSide,
+  });
+
+  const healthGeometry = new THREE.ShapeGeometry(arc, 16);
+  const healthMesh = new THREE.Mesh(healthGeometry, healthMaterial);
+
+  // ultimate charge bar goes below the sprite
+  const ultChargeBarWidth = 0.7;
+  const ultChargeBarHeight = 0.05;
+  const ultChargeBarOffset = 0.42;
+  const ultChargeOutlineGeometry = new THREE.PlaneGeometry(
+    ultChargeBarWidth,
+    ultChargeBarHeight,
+    1,
+    1,
+  );
+  const ultChargeOutlineMaterial = new THREE.MeshBasicMaterial({
+    color: 0x0000fcc,
+    side: THREE.DoubleSide,
+  });
+  const ultChargeOutlineMesh = new THREE.Mesh(
+    ultChargeOutlineGeometry,
+    ultChargeOutlineMaterial,
+  );
+  const ultChargeBarGeometry = new THREE.CylinderGeometry(
+    ultChargeBarHeight / 2,
+    ultChargeBarHeight / 2,
+    ultChargeBarWidth,
+    4,
+    1,
+    false,
+  );
+  ultChargeBarGeometry.rotateZ(Math.PI / 2);
+  const ultChargeBarMaterial = new THREE.MeshPhongMaterial({
+    color: 0x2575f7,
+    side: THREE.DoubleSide,
+    emissive: 0x5e92e6,
+    emissiveIntensity: ultCharge === 100 ? 10 : 0,
+  });
+  const ultChargeBarMesh = new THREE.Mesh(
+    ultChargeBarGeometry,
+    ultChargeBarMaterial,
+  );
+  ultChargeBarMesh.scale.x = ultCharge / 100;
+  ultChargeOutlineMesh.position.y = -ultChargeBarOffset;
+  ultChargeBarMesh.position.y = -ultChargeBarOffset;
+
+  // render name above the sprite
+  useFrame(({camera}) => {
+    if (spriteRef.current) {
+      const namePosition = spriteRef.current.localToWorld(
+        new THREE.Vector3(0, 1, 0),
+      );
+
+      const namePositionTop = spriteRef.current.localToWorld(
+        new THREE.Vector3(0, 1.5, 0),
+      );
+
+      renderText(
+        `player_name_${name}`,
+        name,
+        namePosition,
+        namePositionTop,
+        camera,
+        getColorFor(team === 1 ? 'team1' : 'team2'),
+      );
     }
   });
 
@@ -95,23 +232,29 @@ export const Player = ({
     /* @ts-ignore */
     <group key={name} ref={ref}>
       <mesh scale={[1, 1, 1]}>
-        <capsuleGeometry attach="geometry" args={[pillRadius, 0.7, 8]} />
+        <capsuleGeometry attach="geometry" args={[pillRadius, 0.7, 8, 32]} />
         <meshLambertMaterial
           attach="material"
           color={health > 0 ? getColorFor(lastHero) : 0x000000}
         />
       </mesh>
       <mesh scale={[1.25, 1.25, 1.25]}>
-        <capsuleGeometry attach="geometry" args={[pillRadius, 0.7, 8]} />
+        <capsuleGeometry attach="geometry" args={[pillRadius, 0.7, 8, 32]} />
         <meshBasicMaterial
           attach="material"
           color={getColorFor(team === 1 ? 'team1' : 'team2')}
           side={THREE.BackSide}
         />
       </mesh>
-      <sprite scale={[0.6, 0.6, 0.6]} ref={spriteRef}>
-        {heroImg ? <spriteMaterial attach="material" map={heroImg} /> : null}
-      </sprite>
+      <mesh scale={[1, 1, 1]} ref={spriteRef}>
+        <sprite scale={[0.6, 0.6, 0.6]}>
+          {heroImg ? <spriteMaterial attach="material" map={heroImg} /> : null}
+        </sprite>
+        <primitive object={healthMesh} />
+        {/* <primitive object={ultChargeOutlineMesh} /> */}
+        <primitive object={ultChargeBarMesh} />
+        {/* <primitive object={nameSprite} /> */}
+      </mesh>
     </group>
   );
 };

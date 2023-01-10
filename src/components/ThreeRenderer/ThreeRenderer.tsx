@@ -16,7 +16,7 @@ import {
   PerspectiveCamera,
   Select,
 } from '@react-three/drei';
-import {Canvas, useFrame} from '@react-three/fiber';
+import {Canvas, useFrame, useThree} from '@react-three/fiber';
 import * as THREE from 'three';
 import {useControls} from 'leva';
 import {duration} from '@mui/material';
@@ -368,6 +368,84 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
   }, [cameraMode]);
 
   const [layerMode, setLayerMode] = useState<LayerMode>('default');
+  const [controlsHeight, setControlsHeight] = useState(0);
+
+  // for text rendering
+  const worldToScreen = (
+    world: THREE.Vector3,
+    camera: THREE.Camera,
+    snap: boolean,
+  ): THREE.Vector2 => {
+    const screen = new THREE.Vector2();
+    // camera.updateMatrixWorld();
+    // camera.updateProjectionMatrix();
+    const navHeight = 142;
+    const canvasWidth = window.innerWidth;
+    const canvasHeight = window.innerHeight - navHeight;
+    const vector = world.clone();
+    vector.project(camera);
+    screen.x = (vector.x + 1) / 2;
+    screen.y = (vector.y + 1) / 2;
+    screen.x *= canvasWidth;
+    screen.y *= canvasHeight;
+    return screen;
+  };
+
+  const textRefs = useRef<Record<string, HTMLDivElement>>({});
+
+  const renderText = (
+    key: string,
+    text: string,
+    position: THREE.Vector3,
+    positionTop: THREE.Vector3,
+    camera: THREE.Camera,
+    color: string,
+  ) => {
+    const screen = worldToScreen(position, camera, true);
+    const screenTop = worldToScreen(positionTop, camera, true);
+    const fontSize = screenTop.y - screen.y;
+    // const distanceToCamera = camera.position.distanceTo(position);
+    // compute the distance to camera by projecting the position onto the camera's forward vector
+    const cameraVector = new THREE.Vector3(0, 0, -1);
+    cameraVector.applyQuaternion(camera.quaternion);
+    const distanceToCamera = position
+      .clone()
+      .sub(camera.position)
+      .dot(cameraVector);
+
+    let div: HTMLDivElement = textRefs.current[key];
+    if (!div) {
+      textRefs.current[key] = document.createElement('div');
+      div = textRefs.current[key];
+      div.style.position = 'absolute';
+      div.style.fontWeight = 'bold';
+      div.style.fontFamily = 'sans-serif';
+      div.style.textAlign = 'center';
+      div.style.pointerEvents = 'none';
+      div.style.textShadow = '0 0 2px black';
+      div.style.zIndex = '2';
+      // document.body.appendChild(div);
+      document.getElementById('textcontainer')!.appendChild(div);
+    }
+
+    const divWidth = text.length * fontSize * 0.6;
+
+    const xPos = screen.x - divWidth / 2;
+    const yPos = screen.y;
+
+    const offScreen =
+      xPos < 0 ||
+      xPos + divWidth > window.innerWidth ||
+      yPos < controlsHeight ||
+      screenTop.y > window.innerHeight - 145;
+    div.style.display = offScreen ? 'none' : 'block';
+
+    div.style.left = `${xPos}px`;
+    div.style.bottom = `${yPos}px`;
+    div.style.color = color;
+    div.style.fontSize = `${fontSize}px`;
+    div.textContent = text;
+  };
 
   return (
     <div style={{height: '100%'}}>
@@ -401,6 +479,8 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
             let hero = entity.states[currentGameTime]?.hero as string;
             let name = entity.states[currentGameTime]?.name as string;
             let health = entity.states[currentGameTime]?.health as number;
+            let maxHealth = entity.states[currentGameTime]?.maxHealth as number;
+            let ultCharge = entity.states[currentGameTime]?.ultCharge as number;
             if (!hero || !name || !health) {
               // console.log(`skipping render at ${currentGameTime}`);
               hero = 'Orisa';
@@ -420,6 +500,9 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
                 playing={playing}
                 team={playerTeam(name)}
                 health={health}
+                maxHealth={maxHealth}
+                ultCharge={ultCharge}
+                renderText={renderText}
               />
             );
           })}
@@ -481,9 +564,11 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
             luminanceThreshold={1}
             luminanceSmoothing={0.9}
             height={height}
+            intensity={0.5}
           />
         </EffectComposer>
       </Canvas>
+      <div id="textcontainer" style={{position: 'absolute', zIndex: 2}} />
       <Controls
         width={width}
         playing={playing}
@@ -498,6 +583,7 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
         setCameraMode={setCameraMode}
         layerMode={layerMode}
         setLayerMode={setLayerMode}
+        setControlsHeight={setControlsHeight}
       />
     </div>
   );

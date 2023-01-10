@@ -5,7 +5,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from '@mui/material';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSpring} from 'react-spring';
 import {formatTime} from '../../lib/data/format';
 import {Button, Typography} from '../Common/Mui';
@@ -37,6 +37,7 @@ interface ControlsProps {
   setCameraMode: (mode: CameraMode) => void;
   layerMode: LayerMode;
   setLayerMode: (mode: LayerMode) => void;
+  setControlsHeight: (height: number) => void;
 }
 
 const LabeledSlider = (props: {
@@ -120,6 +121,7 @@ const Controls = (props: ControlsProps) => {
     setCameraMode,
     layerMode,
     setLayerMode,
+    setControlsHeight,
   } = props;
 
   const [expanded, setExpanded] = useState(false);
@@ -135,9 +137,19 @@ const Controls = (props: ControlsProps) => {
     }
   };
 
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+
+  // when controls are expanded, set the height of the controls
+  useEffect(() => {
+    if (containerRef.current) {
+      setControlsHeight(containerRef.current.clientHeight);
+    }
+  }, [expanded, containerRef, setControlsHeight]);
+
   return (
     <Box
       component="div"
+      ref={containerRef}
       sx={{
         position: 'absolute',
         bottom: 0,
