@@ -2,6 +2,7 @@ import {
   Box,
   Grid,
   Slider,
+  Switch,
   ToggleButton,
   ToggleButtonGroup,
 } from '@mui/material';
@@ -19,9 +20,10 @@ import FastForwardIcon from '@mui/icons-material/FastForward';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 import LayersIcon from '@mui/icons-material/Layers';
+import {Stack} from '@mui/system';
 
-export type CameraMode = 'topdown' | 'teamfollow' | 'sideview' | 'free';
 export type LayerMode = 'default' | 'mapcontrol';
+export type CameraFollowMode = null | 'all' | {player: string};
 
 interface ControlsProps {
   width: number;
@@ -33,11 +35,15 @@ interface ControlsProps {
   endTime: number;
   playbackSpeed: number;
   setPlaybackSpeed: (speed: number) => void;
-  cameraMode: CameraMode;
-  setCameraMode: (mode: CameraMode) => void;
   layerMode: LayerMode;
   setLayerMode: (mode: LayerMode) => void;
   setControlsHeight: (height: number) => void;
+  isOrthographic: boolean;
+  setIsOrthographic: (isOrthographic: boolean) => void;
+  triggerTopDownCamera: (zoomDelay: number) => void;
+  triggerSideViewCamera: () => void;
+  follow: CameraFollowMode;
+  setFollow: (follow: CameraFollowMode) => void;
 }
 
 const LabeledSlider = (props: {
@@ -117,25 +123,21 @@ const Controls = (props: ControlsProps) => {
     endTime,
     playbackSpeed,
     setPlaybackSpeed,
-    cameraMode,
-    setCameraMode,
     layerMode,
     setLayerMode,
     setControlsHeight,
+    isOrthographic,
+    setIsOrthographic,
+    triggerTopDownCamera,
+    triggerSideViewCamera,
+    follow,
+    setFollow,
   } = props;
 
-  const [expanded, setExpanded] = useState(false);
-  const [cameraControlsExpanded, setCameraControlsExpanded] = useState(false);
-  const [layersExpanded, setLayersExpanded] = useState(false);
-
-  const handleCameraMode = (
-    event: React.MouseEvent<HTMLElement>,
-    newCameraMode: CameraMode | null,
-  ) => {
-    if (newCameraMode) {
-      setCameraMode(newCameraMode);
-    }
-  };
+  const [detailsType, setDetailsType] = useState<'camera' | 'layers' | null>(
+    null,
+  );
+  const expanded = detailsType !== null;
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -153,31 +155,16 @@ const Controls = (props: ControlsProps) => {
       sx={{
         position: 'absolute',
         bottom: 0,
-        paddingLeft: '10px',
-        paddingRight: '10px',
         borderTopLeftRadius: '10px',
         borderTopRightRadius: '10px',
         width: width,
         backgroundColor: '#ffffff88',
         backdropFilter: 'blur(10px)',
-        transition: 'height 0.5s ease',
       }}>
       <Box
         component="div"
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          height: '15px',
-        }}>
-        <Button onClick={() => setExpanded(!expanded)}>
-          {expanded ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-        </Button>
-      </Box>
-      <Box
-        component="div"
-        sx={{
+          padding: '5px',
           display: 'flex',
           justifyContent: 'space-around',
           alignItems: 'center',
@@ -214,7 +201,20 @@ const Controls = (props: ControlsProps) => {
               info={`Play begins at ${formatTime(startTime)}`}
             />
           </Grid>
-          <Grid item xs={3}></Grid>
+          <Grid item xs={3}>
+            <Button
+              onClick={() =>
+                setDetailsType(detailsType === 'camera' ? null : 'camera')
+              }>
+              <VideocamOutlinedIcon />
+            </Button>
+            <Button
+              onClick={() => {
+                setDetailsType(detailsType === 'layers' ? null : 'layers');
+              }}>
+              <LayersIcon />
+            </Button>
+          </Grid>
         </Grid>
       </Box>
       {expanded && (
@@ -226,44 +226,54 @@ const Controls = (props: ControlsProps) => {
             alignItems: 'center',
           }}
           id="advancedControls">
-          <Box component="div" sx={{height: '50px', lineHeight: '50px'}}>
-            <Button
-              onClick={() =>
-                setCameraControlsExpanded(!cameraControlsExpanded)
-              }>
-              <VideocamOutlinedIcon />
-            </Button>
-            {cameraControlsExpanded && (
-              <ToggleButtonGroup
-                value={cameraMode}
-                exclusive
-                onChange={handleCameraMode}>
-                <ToggleButton value="topdown">Top Down</ToggleButton>
-                <ToggleButton value="teamfollow">Team Follow</ToggleButton>
-                <ToggleButton value="sideview">Side View</ToggleButton>
-                <ToggleButton value="free">Free Cam</ToggleButton>
-              </ToggleButtonGroup>
-            )}
-            <Button
-              onClick={() => {
-                setLayersExpanded(!layersExpanded);
-              }}>
-              <LayersIcon />
-            </Button>
-            {layersExpanded && (
-              <ToggleButtonGroup
-                value={layerMode}
-                exclusive
-                onChange={(event, newLayerMode) => {
-                  if (newLayerMode) {
-                    setLayerMode(newLayerMode);
-                  }
+          {detailsType === 'camera' && (
+            //
+            <Box component="div" sx={{display: 'flex', flexDirection: 'row'}}>
+              <Button
+                onClick={() => triggerTopDownCamera(0)}
+                sx={{
+                  fontSize: '0.8em',
+                  marginLeft: '0.5em',
+                  marginRight: '0.5em',
                 }}>
-                <ToggleButton value="default">Default</ToggleButton>
-                <ToggleButton value="mapcontrol">Map Control</ToggleButton>
-              </ToggleButtonGroup>
-            )}
-          </Box>
+                <Typography>Top Down</Typography>
+              </Button>
+              <Button
+                onClick={() => triggerSideViewCamera()}
+                sx={{
+                  fontSize: '0.8em',
+                  marginLeft: '0.5em',
+                  marginRight: '0.5em',
+                }}>
+                <Typography>Side View</Typography>
+              </Button>
+              <Box component="div">
+                <Typography>Camera</Typography>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography>Overhead</Typography>
+                  <Switch
+                    checked={!isOrthographic}
+                    onChange={() => setIsOrthographic(!isOrthographic)}
+                  />
+                  <Typography>3D</Typography>
+                </Stack>
+              </Box>
+            </Box>
+          )}
+
+          {detailsType === 'layers' && (
+            <ToggleButtonGroup
+              value={layerMode}
+              exclusive
+              onChange={(event, newLayerMode) => {
+                if (newLayerMode) {
+                  setLayerMode(newLayerMode);
+                }
+              }}>
+              <ToggleButton value="default">Default</ToggleButton>
+              <ToggleButton value="mapcontrol">Map Control</ToggleButton>
+            </ToggleButtonGroup>
+          )}
         </Box>
       )}
     </Box>

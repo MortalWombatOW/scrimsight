@@ -16,7 +16,7 @@ const MapRow = (props: MapRowProps) => {
   const {top, bottom} = getTeamInfoForMap(map);
   const imageSrc = mapNameToFileName(map.mapName, false);
   return (
-    <button className="MapRow" onClick={() => navigate(`/map/${map.mapId}`)}>
+    <button className="MapRow" onClick={() => navigate(`/review/${map.mapId}`)}>
       <div className="MapRow-image">
         <img src={imageSrc} alt={map.mapName} />
       </div>

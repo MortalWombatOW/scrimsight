@@ -59,7 +59,7 @@ interface CameraProps {
 
 export const CameraControls = forwardRef<CameraControlsDefault, CameraProps>(
   (props, ref) => {
-    console.log('CameraControls', props);
+    // console.log('CameraControls', props);
     const cameraControls = useRef<CameraControlsDefault | null>(null);
     const camera = useThree((state) => state.camera);
     const renderer = useThree((state) => state.gl);

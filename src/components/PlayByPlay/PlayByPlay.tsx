@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   OWMap,
   PlayerAbility,
@@ -13,7 +13,13 @@ import useWindowSize from '../../hooks/useWindowSize';
 import MapOverlayV2 from '../Chart/MapOverlay/MapOverlayV2';
 import ThreeRenderer from '../ThreeRenderer/ThreeRenderer';
 
-const PlayByPlay = ({mapId}: {mapId: number}) => {
+const PlayByPlay = ({
+  mapId,
+  onLoaded,
+}: {
+  mapId: number;
+  onLoaded: () => void;
+}) => {
   const {width, height} = useWindowSize();
   // const [mapList] = useData<OWMap>('map', mapId);
   // const [interactions] = useData<PlayerInteraction>(
@@ -71,25 +77,12 @@ const PlayByPlay = ({mapId}: {mapId: number}) => {
 
   const map = mapList[0].mapName;
   const entities = buildMapEntitiesFromData(statuses, interactions, abilities);
-  // //     {
-  // //       id: 'test',
-  // //       label: 'test',
-  // //       clazz: 'ana',
-  // //       image: 'https://d1u1mce87gyfbn.cloudfront.net/hero/ana/icon-portrait.png',
-  // //       states: [
-  // //         {
-  // //           x: 0,
-  // //           y: 0,
-  // //         },
-  // //       ],
-  // //     },
-  // //   ];
 
   return (
     <div
       className="PlayByPlay"
       style={{
-        height: height - 144,
+        height: height - 70,
       }}>
       {/* <MapOverlay
         map={map}
@@ -104,8 +97,9 @@ const PlayByPlay = ({mapId}: {mapId: number}) => {
       /> */}
       <ThreeRenderer
         entities={entities}
-        width={width - 37}
-        height={height - 140}
+        width={width}
+        height={height - 70}
+        onLoaded={onLoaded}
       />
     </div>
   );

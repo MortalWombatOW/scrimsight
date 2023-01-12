@@ -27,9 +27,9 @@ const routes: Route[] = [
     name: 'Players',
   },
   {
-    path: ['/map', '/map/:mapId', '/map/:mapId/:view'],
+    path: ['/review', '/review/:mapId'],
     component: MapPage,
-    name: 'Maps',
+    name: 'Review Map',
   },
   {
     path: ['/workshop'],

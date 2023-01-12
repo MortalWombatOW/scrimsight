@@ -103,7 +103,7 @@ export function colorPlaneFlat(geometry: THREE.BufferGeometry) {
   );
   const colorAttribute = geometry.getAttribute('color');
   const colorArray = colorAttribute.array as number[];
-  const color = new THREE.Color(0x333333);
+  const color = new THREE.Color(0xf3f3f3);
   for (let i = 0; i < colorArray.length; i += 3) {
     colorArray[i] = color.r;
     colorArray[i + 1] = color.g;
@@ -349,26 +349,32 @@ export function highlightCurveAroundPercent(
   const end = numPoints;
   let startRenderIndex = 0;
   let endRenderIndex = 0;
+  const colorDist = (a: THREE.Color, b: THREE.Color) => {
+    return Math.sqrt(
+      Math.pow(a.r - b.r, 2) + Math.pow(a.g - b.g, 2) + Math.pow(a.b - b.b, 2),
+    );
+  };
+  const endColor = new THREE.Color('#ebebeb');
   for (let i = start; i < end; i++) {
-    const dist = Math.abs(i - percentIndex);
-    const lightnessOffset = dampFn(dist);
+    const dist = percentIndex - i;
+    const lerpAmount = dampFn(dist);
     const color = new THREE.Color(
       colorArray[i * 3],
       colorArray[i * 3 + 1],
       colorArray[i * 3 + 2],
     );
-    const hsl = {h: 0, s: 0, l: 0};
-    color.getHSL(hsl);
-    const minLightness = 0.05;
-    const newLightness = Math.max(minLightness, hsl.l - lightnessOffset);
-    if (newLightness === minLightness) {
+
+    // const minLightness = 0.05;
+    // const newLightness = Math.max(minLightness, hsl.l - lightnessOffset);
+    color.lerp(endColor, lerpAmount);
+    const distanceToEndColor = colorDist(color, endColor);
+    if (distanceToEndColor <= 0.01) {
       if (i < percentIndex) {
         startRenderIndex = i;
       } else if (endRenderIndex === 0) {
         endRenderIndex = i;
       }
     }
-    color.setHSL(hsl.h, hsl.s, newLightness);
     colorArray[i * 3] = color.r;
     colorArray[i * 3 + 1] = color.g;
     colorArray[i * 3 + 2] = color.b;

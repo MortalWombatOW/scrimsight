@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react';
 import {MapEntity, RenderState, Team} from '../../lib/data/types';
-const bg = '#0a0a0a';
+const bg = '#f3f3f3';
 import {
   MapControls,
   OrbitControls,
@@ -35,7 +35,7 @@ import {
 } from '../../lib/data/geometry';
 import {getColorFor} from '../../lib/color';
 import {CameraControls} from './CameraControls';
-import Controls, {CameraMode, LayerMode} from './Controls';
+import Controls, {CameraFollowMode, LayerMode} from './Controls';
 const BOUND_FIT_OPTIONS = {
   paddingBottom: 15,
   paddingLeft: 5,
@@ -102,6 +102,7 @@ export type ZoomIProps = {
   width: number;
   height: number;
   entities: MapEntity[];
+  onLoaded: () => void;
 };
 
 function getTimeBounds(entities: MapEntity[]): [number, number] {
@@ -133,7 +134,7 @@ function getTimeBounds(entities: MapEntity[]): [number, number] {
   return [minTime, maxTime];
 }
 
-const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
+const ThreeRenderer = ({width, height, entities, onLoaded}: ZoomIProps) => {
   // How much to interpolate between states
   // 1 = no interpolation
   const ticksPerGameSecond = 5;
@@ -299,10 +300,8 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
             getColorFor(playerTeam(player) === 1 ? 'team1' : 'team2'),
           ),
         );
-        highlightCurveAroundPercent(
-          curve.curve,
-          percentForCurve,
-          (dist) => dist / 10,
+        highlightCurveAroundPercent(curve.curve, percentForCurve, (dist) =>
+          Math.max(Math.min(-dist / 10, 1), 0),
         );
       });
   }, [tick]);
@@ -319,53 +318,97 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
     vertexColors: true,
   });
 
-  const [cameraMode, setCameraMode] = useState<CameraMode>('topdown');
-
+  const [isOrthographic, setIsOrthographic] = useState(true);
+  const [follow, setFollow] = useState<CameraFollowMode>('all');
   const cameraControls = useRef<CameraControls | null>(null);
+  const orthographicCam = useRef<THREE.OrthographicCamera | null>(null);
+  const perspectiveCam = useRef<THREE.PerspectiveCamera | null>(null);
+
+  const refit = (bounds: THREE.Box3, smooth: boolean) => {
+    if (cameraControls.current) {
+      cameraControls.current.fitToBox(bounds, smooth, BOUND_FIT_OPTIONS);
+    }
+  };
+
+  const triggerTopDownCamera = (zoomDelay: number) => {
+    console.log('triggering top down camera');
+    console.log('current position bounds', currentPositionBounds);
+    const currentTarget = currentPositionBounds.getCenter(new THREE.Vector3());
+    // position camera above the current target, looking down at it
+    setTimeout(() => {
+      if (cameraControls.current) {
+        cameraControls.current.setPosition(
+          currentTarget.x,
+          currentTarget.y + 100,
+          currentTarget.z,
+          false,
+        );
+        cameraControls.current.setTarget(
+          currentTarget.x,
+          currentTarget.y,
+          currentTarget.z,
+          false,
+        );
+        setTimeout(() => {
+          refit(currentPositionBounds, true);
+        }, zoomDelay);
+      }
+    }, 0);
+  };
+
+  const triggerSideViewCamera = () => {
+    if (cameraControls.current) {
+      refit(currentPositionBounds, false);
+      const currentTarget = cameraControls.current.getTarget(
+        new THREE.Vector3(),
+      );
+      // position camera to the side of the current target, looking at it
+      cameraControls.current.setPosition(
+        currentTarget.x + 100,
+        currentTarget.y,
+        currentTarget.z,
+        true,
+      );
+      cameraControls.current.setTarget(
+        currentTarget.x,
+        currentTarget.y,
+        currentTarget.z,
+        true,
+      );
+    }
+  };
 
   useEffect(() => {
     // console.log('fitting camera to box', cameraControls?.current);
     if (cameraControls.current) {
-      cameraControls.current.fitToBox(
-        currentPositionBounds,
-        true,
-        BOUND_FIT_OPTIONS,
-      );
+      if (follow === 'all') {
+        refit(currentPositionBounds, true);
+      }
     }
-  }, [tick]);
+  }, [tick, follow]);
 
   useEffect(() => {
-    // when the camera mode changes, reset the camera to the default position
-    setTimeout(() => {
-      console.log(`camera mode changed to ${cameraMode}`);
-      if (!cameraControls.current) {
-        console.log('no camera controls');
-        return;
-      }
-      if (cameraMode === 'topdown') {
-        cameraControls.current.setPosition(0, 100, 0, false);
-        cameraControls.current.setTarget(0, 0, 0, false);
-        cameraControls.current!.fitToBox(
-          currentPositionBounds,
-          false,
-          BOUND_FIT_OPTIONS,
-        );
-      } else if (cameraMode === 'sideview') {
-        const avgY =
-          (currentPositionBounds.max.y + currentPositionBounds.min.y) / 2;
-        cameraControls.current.setPosition(50, avgY, 0, false);
-        cameraControls.current.setTarget(0, 0, 0, false);
-        cameraControls.current!.fitToBox(
-          currentPositionBounds,
-          false,
-          BOUND_FIT_OPTIONS,
-        );
-      } else if (cameraMode === 'free') {
-        cameraControls.current.setPosition(0, 100, 0, false);
-        cameraControls.current.setTarget(0, 0, 0, false);
-      }
-    }, 0);
-  }, [cameraMode]);
+    // copy camera position when isOrthographic changes
+    if (
+      orthographicCam.current &&
+      perspectiveCam.current &&
+      cameraControls.current
+    ) {
+      const previousCameraPostion = isOrthographic
+        ? perspectiveCam.current.position
+        : orthographicCam.current.position;
+      const previousCameraRotation = isOrthographic
+        ? perspectiveCam.current.rotation
+        : orthographicCam.current.rotation;
+      cameraControls.current.setPosition(
+        previousCameraPostion.x,
+        previousCameraPostion.y,
+        previousCameraPostion.z,
+      );
+
+      // cameraControls.current.setT
+    }
+  }, [isOrthographic]);
 
   const [layerMode, setLayerMode] = useState<LayerMode>('default');
   const [controlsHeight, setControlsHeight] = useState(0);
@@ -379,7 +422,7 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
     const screen = new THREE.Vector2();
     // camera.updateMatrixWorld();
     // camera.updateProjectionMatrix();
-    const navHeight = 142;
+    const navHeight = 70;
     const canvasWidth = window.innerWidth;
     const canvasHeight = window.innerHeight - navHeight;
     const vector = world.clone();
@@ -422,7 +465,7 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
       div.style.fontFamily = 'sans-serif';
       div.style.textAlign = 'center';
       div.style.pointerEvents = 'none';
-      div.style.textShadow = '0 0 2px black';
+      // div.style.textShadow = '0 0 2px black';
       div.style.zIndex = '2';
       // document.body.appendChild(div);
       document.getElementById('textcontainer')!.appendChild(div);
@@ -452,26 +495,37 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
       <Canvas
         onCreated={({gl}) => {
           gl.setClearColor(new THREE.Color(bg));
+          triggerTopDownCamera(0);
+          onLoaded();
         }}>
         <group>
-          <OrthographicCamera
-            makeDefault={cameraMode === 'topdown'}
+          {/* <OrthographicCamera
+            makeDefault={isOrthographic}
             position={[0, 100, 0]}
             zoom={1}
           />
           <PerspectiveCamera
-            makeDefault={cameraMode === 'free' || cameraMode === 'teamfollow'}
+            makeDefault={!isOrthographic}
             position={[0, 100, 0]}
             zoom={1}
+          /> */}
+          {/* <primitive object={orthographicCam} />
+          <primitive object={perspectiveCam} /> */}
+          <OrthographicCamera
+            makeDefault={isOrthographic}
+            ref={orthographicCam}
           />
-
+          <PerspectiveCamera
+            makeDefault={!isOrthographic}
+            ref={perspectiveCam}
+          />
           <CameraControls
             ref={cameraControls}
-            primaryAction={cameraMode === 'topdown' ? 'pan' : 'rotate'}
+            primaryAction={isOrthographic ? 'pan' : 'rotate'}
           />
         </group>
 
-        <ambientLight intensity={0.5} />
+        {/* <ambientLight intensity={0.5} /> */}
         {/* <hemisphereLight intensity={0.5} /> */}
         <pointLight position={[30, 100, -30]} intensity={2} />
         <Select box onChange={(e) => console.log(e)}>
@@ -568,7 +622,7 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
           />
         </EffectComposer>
       </Canvas>
-      <div id="textcontainer" style={{position: 'absolute', zIndex: 2}} />
+      <div id="textcontainer" style={{position: 'absolute', zIndex: 1}} />
       <Controls
         width={width}
         playing={playing}
@@ -579,11 +633,15 @@ const ThreeRenderer = ({width, height, entities}: ZoomIProps) => {
         endTime={endTime}
         playbackSpeed={playbackSpeed}
         setPlaybackSpeed={setPlaybackSpeed}
-        cameraMode={cameraMode}
-        setCameraMode={setCameraMode}
         layerMode={layerMode}
         setLayerMode={setLayerMode}
         setControlsHeight={setControlsHeight}
+        isOrthographic={isOrthographic}
+        setIsOrthographic={setIsOrthographic}
+        triggerTopDownCamera={triggerTopDownCamera}
+        triggerSideViewCamera={triggerSideViewCamera}
+        follow={follow}
+        setFollow={setFollow}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import {AppBar, Toolbar} from '@mui/material';
+import {AppBar, CircularProgress, Toolbar} from '@mui/material';
 import Header from 'components/Header/Header';
 import MapInfo from 'components/MapInfo/MapInfo';
 import PlayByPlay from 'components/PlayByPlay/PlayByPlay';
@@ -9,26 +9,43 @@ import MapsList from '../../components/MapsList/MapsList';
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 import './Map.scss';
 import {useNavigate} from 'react-router-dom';
+import {animated, useSpring, useSpringRef} from 'react-spring';
+import useWindowSize from '../../hooks/useWindowSize';
 
 const MapPage = () => {
   const navigate = useNavigate();
   const params = useParams();
   console.log('params', params.mapId);
 
-  const {mapId: mapIdStr, view} = params;
+  const {mapId: mapIdStr} = params;
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedPlayerNamesStr = searchParams.get('players');
-  // const [view, setView] = useState('map');
-  console.log('foo', selectedPlayerNamesStr);
-  // if (!mapIdStr) {
-  //   return <div>No mapId</div>;
-  // }
+
   const mapId = mapIdStr ? Number.parseInt(mapIdStr, 10) : undefined;
   let selectedPlayerNames: string[] = [];
   if (selectedPlayerNamesStr) {
     selectedPlayerNames = selectedPlayerNamesStr.split(',');
   }
-  console.log(selectedPlayerNames);
+
+  const needsMap = mapId === undefined;
+  const [loaded, setLoaded] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(true);
+
+  // const maskWidthRef = useSpringRef();
+  // const {maskWidth} = useSpring({
+  //   maskWidth: loaded ? '0%' : '50%',
+  //   // config: {duration: 1000},
+  // });
+
+  const {height} = useWindowSize();
+  const maskHeight = height - 70;
+
+  const startLoadAnimation = () => {
+    setShowSpinner(false);
+    setTimeout(() => {
+      setLoaded(true);
+    }, 1000);
+  };
 
   return (
     <div className="MapPage">
@@ -38,73 +55,69 @@ const MapPage = () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         setFilters={(filters) => {}}
       />
-      {mapIdStr && (
-        <AppBar
-          position="static"
-          sx={{
-            backgroundColor: '#4e566c',
-          }}>
-          <Toolbar disableGutters>
-            <SubdirectoryArrowRightIcon sx={{mr: 1, ml: '10%'}} />
-            <Button
-              onClick={() => {
-                navigate(`/map/${mapIdStr}/stats`);
-              }}
-              sx={{
-                my: 2,
-                mx: 1,
-                color: '#f1f1f1',
-                display: 'block',
-                fontFamily: 'Bitter',
-                fontSize: view === 'stats' ? '16px' : '14px',
-              }}>
-              Statistics
-            </Button>
-            <Button
-              onClick={() => {
-                navigate(`/map/${mapIdStr}/review`);
-              }}
-              sx={{
-                my: 2,
-                mx: 1,
-                color: '#f1f1f1',
-                display: 'block',
-                fontFamily: 'Bitter',
-                fontSize: view === 'review' ? '16px' : '14px',
-              }}>
-              Review
-            </Button>
-          </Toolbar>
-        </AppBar>
-      )}
       <div className="container">
-        {!mapIdStr ? (
-          <MapsList updateCount={0} />
-        ) : (
-          <div className="section">
-            {view === 'stats' && (
-              <MapInfo
-                mapId={mapId!}
-                selectedPlayerNames={selectedPlayerNames}
-                setSelectedPlayerNames={(names: string[]) =>
-                  setSearchParams({players: names.join(',')})
-                }
-              />
-            )}
-            {view === 'review' && <PlayByPlay mapId={mapId!} />}
-          </div>
-        )}
-        {/* <div className="section">
-          <div className="header">Statistics</div>
-          <div className="content">
-            <MapTotals mapId={mapId} />
-          </div>
-        </div> */}
-        {/* <div className="sidebar">sidebar</div>
-        <div className="section">
-          <div className="content"></div>
-        </div> */}
+        {mapId && <PlayByPlay mapId={mapId!} onLoaded={startLoadAnimation} />}
       </div>
+
+      <div
+        style={{
+          position: 'absolute',
+          top: 70,
+          left: 0,
+          width: loaded ? '0%' : '50%',
+          height: maskHeight,
+          background: 'grey',
+          transition: 'width 1s ease-in-out',
+          zIndex: 2,
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: 70,
+          right: 0,
+          width: loaded ? '0%' : '50%',
+          height: maskHeight,
+          background: 'grey',
+          transition: 'width 1s ease-in-out',
+          zIndex: 2,
+        }}
+      />
+      {mapId !== undefined && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'calc(50% - 50px)',
+            left: 'calc(50% - 50px)',
+            zIndex: 3,
+          }}>
+          <CircularProgress
+            style={{
+              opacity: showSpinner ? 1 : 0,
+              transition: 'opacity 1s ease-in-out',
+              width: 100,
+              height: 100,
+            }}
+          />
+        </div>
+      )}
+      {mapId === undefined && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'calc(50% - 400px)',
+            left: 'calc(50% - 750px)',
+            width: 1500,
+            height: 800,
+            background: 'white',
+            borderRadius: 10,
+            boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.75)',
+            justifyContent: 'center',
+            zIndex: 3,
+          }}>
+          <MapsList onLoaded={() => console.log('yay')} height={800} />
+        </div>
+      )}
     </div>
   );
 };
