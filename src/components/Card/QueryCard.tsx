@@ -1,9 +1,10 @@
 import React, {useMemo} from 'react';
-import {Box, Card, Typography} from '@mui/material';
+import {Card, Typography} from '@mui/material';
 import './Card.scss';
-import {Data, Query} from '../../lib/data/types';
+import {Query} from '../../lib/data/types';
 import useQueries from '../../hooks/useQueries';
 import {format} from '../../lib/data/format';
+import { DataRow } from '../../lib/data/logging/spec';
 
 const QueryCard = ({
   title,
@@ -15,7 +16,7 @@ const QueryCard = ({
   title: string;
   query: Query;
   deps: any[];
-  parseResults: (results: Data) => number | string;
+  parseResults: (results: DataRow[]) => number | string;
   emphasisLevel: 'low' | 'medium' | 'high';
 }) => {
   const [results, tick] = useQueries([query], deps);

@@ -301,7 +301,7 @@ const ThreeRenderer = ({width, height, entities, onLoaded}: ZoomIProps) => {
           ),
         );
         highlightCurveAroundPercent(curve.curve, percentForCurve, (dist) =>
-          Math.max(Math.min(-dist / 10, 1), 0),
+          Math.max(Math.min(dist / 10, 1), 0),
         );
       });
   }, [tick]);

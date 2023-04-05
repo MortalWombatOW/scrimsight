@@ -2,6 +2,7 @@ import {open} from 'idb-factory';
 import Schema from 'idb-schema';
 import {Team} from './types';
 import batch from 'idb-batch';
+import { DataRow, logSpec } from '~/lib/data/logging/spec';
 
 //https://github.com/treojs/idb-batch
 
@@ -9,16 +10,18 @@ let globalDB: IDBDatabase | undefined;
 
 const schema = new Schema()
   .version(1)
-  .addStore('map', {key: 'mapId', unique: true})
-  .addIndex('byMapId', 'mapId', {unique: true})
-  .addStore('player_status', {key: 'id', increment: true})
-  .addStore('player_ability', {key: 'id', increment: true})
-  .addStore('player_interaction', {key: 'id', increment: true})
-  .addStore('team', {key: 'id', increment: true});
+  // .addStore('player_status', {key: 'id', increment: true})
+  // .addStore('player_ability', {key: 'id', increment: true})
+  // .addStore('player_interaction', {key: 'id', increment: true})
+  ;
+
+  Object.keys(logSpec).forEach((key) => {
+    schema.addStore(key, {key: 'id', increment: true});
+  });
 
 export const setupDB = async (callback) => {
   console.log('setupDB');
-  open('scrimsight', schema.version(), schema.callback()).then((db) => {
+  open('scrimsight4', schema.version(), schema.callback()).then((db) => {
     globalDB = db;
     console.log('setupDB done');
     callback();
@@ -64,4 +67,23 @@ export function storeObjectInDatabase<T extends {id?: number}>(
   const store = db.transaction([storeName], 'readwrite').objectStore(storeName);
 
   store.put(object);
+}
+
+export function getData(storeName: string): Promise<DataRow[]> {
+  const db = getDB();
+  if (!db) {
+    throw new Error('Database is not open!');
+  }
+
+  return new Promise((resolve, reject) => {
+    const store = db.transaction([storeName], 'readonly').objectStore(storeName);
+    const req = store.getAll();
+    req.onsuccess = () => {
+      resolve(req.result);
+    };
+    req.onerror = () => {
+      reject(req.error);
+    };
+  }
+  );z
 }

@@ -1,10 +1,4 @@
 import React, {useEffect} from 'react';
-import {
-  OWMap,
-  PlayerAbility,
-  PlayerInteraction,
-  PlayerStatus,
-} from 'lib/data/types';
 import './PlayByPlay.scss';
 import MapOverlay from '~/components/Chart/MapOverlay/MapOverlay';
 import {buildMapEntitiesFromData} from '../../lib/data/data';
@@ -12,6 +6,7 @@ import {useQuery, useResult} from '../../hooks/useQueries';
 import useWindowSize from '../../hooks/useWindowSize';
 import MapOverlayV2 from '../Chart/MapOverlay/MapOverlayV2';
 import ThreeRenderer from '../ThreeRenderer/ThreeRenderer';
+import { DataRow, getField } from '~/lib/data/logging/spec';
 
 const PlayByPlay = ({
   mapId,
@@ -29,7 +24,7 @@ const PlayByPlay = ({
   // const [statuses] = useData<PlayerStatus>('player_status', mapId);
   // const [abilities] = useData<PlayerAbility>('player_ability', mapId);
 
-  const [mapList, mapTick] = useQuery<OWMap>(
+  const [mapList, mapTick] = useQuery<DataRow>(
     {
       name: 'map_' + mapId,
       query: `SELECT * FROM ? as map WHERE mapId = ${mapId} LIMIT 1`,
@@ -37,7 +32,7 @@ const PlayByPlay = ({
     },
     [mapId],
   );
-  const [interactions, interactionsTick] = useQuery<PlayerInteraction>(
+  const [interactions, interactionsTick] = useQuery<DataRow>(
     {
       name: 'player_interaction_' + mapId,
       query: `select * from ? as player_interaction where mapId = ${mapId}`,
@@ -45,7 +40,7 @@ const PlayByPlay = ({
     },
     [],
   );
-  const [statuses, statusesTick] = useQuery<PlayerStatus>(
+  const [statuses, statusesTick] = useQuery<DataRow>(
     {
       name: 'player_status_' + mapId,
       query: `select * from ? as player_status where mapId = ${mapId}`,
@@ -53,7 +48,7 @@ const PlayByPlay = ({
     },
     [],
   );
-  const [abilities, abilitiesTick] = useQuery<PlayerAbility>(
+  const [abilities, abilitiesTick] = useQuery<DataRow>(
     {
       name: 'player_ability_' + mapId,
       query: `select * from ? as player_ability where mapId = ${mapId}`,
@@ -75,7 +70,6 @@ const PlayByPlay = ({
     return <div>No maps found</div>;
   }
 
-  const map = mapList[0].mapName;
   const entities = buildMapEntitiesFromData(statuses, interactions, abilities);
 
   return (

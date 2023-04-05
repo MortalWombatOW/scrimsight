@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
+import { DataRow } from '~/lib/data/logging/spec';
 import {useResult} from '../../hooks/useQueries';
 import {groupMapsByDate} from '../../lib/data/data';
-import {OWMap} from '../../lib/data/types';
 import {Typography} from '../Common/Mui';
 import MapRow from '../MapRow/MapRow';
 import './MapsList.scss';
@@ -12,7 +12,7 @@ type MapsListProps = {
 };
 
 const MapsList = ({height, onLoaded}: MapsListProps) => {
-  const [results, tick] = useResult<OWMap>('map');
+  const [results, tick] = useResult<DataRow>('map');
 
   const groupedByTime = useMemo(() => {
     return groupMapsByDate(results);

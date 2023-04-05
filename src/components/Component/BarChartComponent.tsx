@@ -1,6 +1,6 @@
 import React from 'react';
 import {BarChart, Legend, ResponsiveContainer, Tooltip, XAxis} from 'recharts';
-import {Data} from '../../lib/data/types';
+import { DataRow } from '../../lib/data/logging/spec';
 
 const BarChartComponent = ({
   height,
@@ -10,7 +10,7 @@ const BarChartComponent = ({
 }: {
   height: number;
   width: number;
-  data: Data;
+  data: DataRow[];
   sortBy: string;
   setSortBy: (sortBy: string) => void;
 }) => {

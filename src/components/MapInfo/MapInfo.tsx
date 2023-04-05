@@ -3,12 +3,8 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import Grid from '@mui/material/Grid';
 import 'components/MapInfo/MapInfo.scss';
 import {
-  getHeroesByPlayer,
   getHeroImage,
-  getMostCommonHeroes,
-  getTeamInfoForMap,
 } from 'lib/data/data';
-import {OWMap, PlayerStatus} from 'lib/data/types';
 import {heroNameToNormalized, mapNameToFileName} from 'lib/string';
 import React from 'react';
 import {useQuery} from '../../hooks/useQueries';
@@ -47,20 +43,20 @@ const MapInfo = ({
 
   // const [statuses] = I<PlayerStatus>('player_status', mapId);
 
-  const [mapList, mapTick] = useQuery<OWMap>(
+  const [mapList, mapTick] = useQuery<any>(
     {
       name: 'map_' + mapId,
       query: `SELECT * FROM ? as map WHERE mapId = ${mapId} LIMIT 1`,
-      deps: ['map'],
+      deps: ['map_start'],
     },
     [mapId],
   );
 
-  const [statuses, statusTick] = useQuery<PlayerStatus>(
+  const [statuses, statusTick] = useQuery(
     {
       name: 'player_status_' + mapId,
       query: `SELECT * FROM ? as status WHERE mapId = ${mapId}`,
-      deps: ['player_status'],
+      deps: ['player_stat'],
     },
     [mapId],
   );
@@ -76,7 +72,7 @@ const MapInfo = ({
   const playerHeroes = getHeroesByPlayer(statuses);
   const mostCommonHeroes = getMostCommonHeroes(playerHeroes);
 
-  const map: OWMap = mapList[0];
+  const map = mapList[0];
 
   const {top, bottom} = getTeamInfoForMap(map);
 

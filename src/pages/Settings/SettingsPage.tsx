@@ -12,12 +12,7 @@ import DataTable from 'react-data-table-component';
 import Header from '../../components/Header/Header';
 import {useResults} from '../../hooks/useQueries';
 import {
-  DataRow,
-  FileUpload,
-  OWMap,
-  PlayerAbility,
-  PlayerInteraction,
-  PlayerStatus,
+  FileUpload
 } from '../../lib/data/types';
 import {uploadFile} from '../../lib/data/uploadfile';
 import './SettingsPage.scss';

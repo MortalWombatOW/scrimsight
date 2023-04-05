@@ -1,9 +1,9 @@
 import {CircularProgress} from '@mui/material';
 import React, {useState} from 'react';
 import {Cell, Pie, PieChart, Sector, Tooltip} from 'recharts';
+import { DataRow } from '../../lib/data/logging/spec';
 import {groupColorClass} from '../../lib/color';
 import ResultCache from '../../lib/data/ResultCache';
-import {Data, DataRow} from '../../lib/data/types';
 import './Charts.scss';
 
 const RADIAN = Math.PI / 180;
@@ -57,7 +57,7 @@ const PieChartComponent = ({
 }: {
   height: number;
   width: number;
-  data: Data;
+  data: DataRow[];
   title: string;
   formatFn: (value: DataRow) => string;
   dataKey: string;

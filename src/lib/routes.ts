@@ -1,3 +1,4 @@
+import AnalysisPage from '../pages/AnalysisPage/AnalysisPage';
 import Home from '../pages/Home/Home';
 import MapPage from '../pages/Map/MapPage';
 import PlayerPage from '../pages/PlayerPage/PlayerPage';
@@ -30,6 +31,11 @@ const routes: Route[] = [
     path: ['/review', '/review/:mapId'],
     component: MapPage,
     name: 'Review Map',
+  },
+  {
+    path: ['/analyze'],
+    component: AnalysisPage,
+    name: 'Analyze',
   },
   {
     path: ['/workshop'],

@@ -1,92 +1,14 @@
-import {debug} from 'webpack';
-
-// identifies each map
-type OWMap = {
-  mapId: number;
-  fileName: string;
-  mapName: string;
-  timestamp: number;
-  team1Name: string;
-  team2Name: string;
-  team1: string[];
-  team2: string[];
-  roles: {[key: string]: string};
-};
-
-type GameEvent = {
-  mapId: number;
-  timestamp: number;
-};
-
-type PlayerStatus = GameEvent & {
-  player: string;
-  hero: string;
-  x: number;
-  y: number;
-  z: number;
-  health: number;
-  ultCharge: number;
-};
-
-type PlayerAbility = GameEvent & {
-  player: string;
-  type: string;
-};
-
-type PlayerInteraction = GameEvent & {
-  player: string;
-  target: string;
-  type: string;
-  amount: number;
-};
-
-type TableDefinition = OWMap | PlayerStatus | PlayerAbility | PlayerInteraction;
-
-// const types = {
-//   map: keys<OWMap>(),
-//   player_status: keys<PlayerStatus>(),
-//   player_ability: keys<PlayerAbility>(),
-//   player_interaction: keys<PlayerInteraction>(),
-// };
+import { DataAndSpecName, DataRow } from './logging/spec';
 
 type FileUpload = {
   fileName: string;
   file?: File;
   data?: string;
-  map?: OWMap;
-  playerStatus?: PlayerStatus[];
-  playerAbilities?: PlayerAbility[];
-  playerInteractions?: PlayerInteraction[];
+  mapId?: number;
+  events: DataAndSpecName[];
   error?: string;
   done?: boolean;
 };
-
-type Column = {
-  name: string;
-  type: string;
-};
-
-type Aggregation = {
-  by: string[];
-  col: string;
-  method: string; //'sum' | 'avg' | 'count';
-  newName?: string;
-};
-
-type Dataset = {
-  columns: Column[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rows: any[];
-};
-
-type Extractor = (
-  maps: OWMap[],
-  status: PlayerStatus[],
-  abilities: PlayerAbility[],
-  interactions: PlayerInteraction[],
-) => Dataset;
-
-type Transform = (dataset: Dataset) => Dataset;
 
 // interface SimpleMetric {
 //   displayName: string;
@@ -209,13 +131,11 @@ type GameStateExtractor = (slice: GameStateTimeSlice) => {
   [key: string]: number;
 };
 
-type Data = DataRow[];
-type DataRow = {[key: string]: string | number};
 
 type Query = {
   name: string;
   query: string;
-  deps?: (string | Data)[];
+  deps?: (string | DataRow[])[];
 };
 
 type Team = {
@@ -226,12 +146,6 @@ type Team = {
 };
 
 export {
-  OWMap,
-  PlayerStatus,
-  PlayerAbility,
-  PlayerInteraction,
-  // types,
-  TableDefinition,
   FileUpload,
   TeamInfo,
   Statistic,
@@ -248,7 +162,5 @@ export {
   GameStateTimeSlice,
   GameStateExtractor,
   Query,
-  Data,
-  DataRow,
   Team,
 };
