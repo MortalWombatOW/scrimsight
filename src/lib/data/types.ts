@@ -5,7 +5,7 @@ type FileUpload = {
   file?: File;
   data?: string;
   mapId?: number;
-  events: DataAndSpecName[];
+  events?: DataAndSpecName[];
   error?: string;
   done?: boolean;
 };

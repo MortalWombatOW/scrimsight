@@ -1,8 +1,9 @@
-import {Query, Data} from './types';
+import {Query} from './types';
 import alasql from 'alasql';
+import { DataRowBySpecName } from '~/lib/data/logging/spec';
 
 export default class ResultCache {
-  private static data: {[key: string]: Data | string} = {};
+  private static data: DataRowBySpecName = {};
   // reverse of deps - which queries depend on this one
   private static buildGraph: {[key: string]: Query[]} = {};
 
@@ -49,7 +50,7 @@ export default class ResultCache {
   }
 
   static notDone(key) {
-    return this.data[key] === undefined || this.data[key] === 'running';
+    return this.data[key] === undefined || this.isRunning(key);
   }
 
   static hasResults(name: string) {
@@ -118,7 +119,7 @@ export default class ResultCache {
   }
 
   static isRunning(query: Query) {
-    return this.data[query.name] === 'running';
+    return this.data[query.name] !== undefined && Object.keys(this.data[query.name]).length === 0;
   }
 
   static canRunQuery(query: Query) {

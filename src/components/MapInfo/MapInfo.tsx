@@ -69,12 +69,12 @@ const MapInfo = ({
     return <div>No maps found</div>;
   }
 
-  const playerHeroes = getHeroesByPlayer(statuses);
-  const mostCommonHeroes = getMostCommonHeroes(playerHeroes);
+  // const playerHeroes = getHeroesByPlayer(statuses);
+  // const mostCommonHeroes = getMostCommonHeroes(playerHeroes);
 
   const map = mapList[0];
 
-  const {top, bottom} = getTeamInfoForMap(map);
+  // const {top, bottom} = getTeamInfoForMap(map);
 
   const selectPlayer = (name: string) => {
     selectedPlayerNames.push(name);
@@ -85,7 +85,7 @@ const MapInfo = ({
     setSelectedPlayerNames(selectedPlayerNames.filter((n) => n != name));
   const isSelected = (name: string) => selectedPlayerNames.includes(name);
 
-  const tileCols = top.tanks.length == 2 ? 6 / 6 : 6 / 5;
+  // const tileCols = top.tanks.length == 2 ? 6 / 6 : 6 / 5;
 
   console.log(selectedPlayerNames);
 
@@ -115,7 +115,7 @@ const MapInfo = ({
         </Grid>
       </div>
 
-      <Grid container spacing={0} direction="row">
+      {/* <Grid container spacing={0} direction="row">
         <Grid item xs={6}>
           <div className={`team-name ${groupColorClass(top.name)}`}>
             {top.name}
@@ -231,7 +231,7 @@ const MapInfo = ({
             </div>
           </Grid>
         ))}
-      </Grid>
+      </Grid> */}
     </div>
   );
 };

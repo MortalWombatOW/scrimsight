@@ -14,10 +14,10 @@ type MapsListProps = {
 const MapsList = ({height, onLoaded}: MapsListProps) => {
   const [results, tick] = useResult<DataRow>('map');
 
-  const groupedByTime = useMemo(() => {
-    return groupMapsByDate(results);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tick]);
+  // const groupedByTime = useMemo(() => {
+  //   return groupMapsByDate(results);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [tick]);
 
   if (!results) {
     return <div>Loading...</div>;
@@ -42,14 +42,14 @@ const MapsList = ({height, onLoaded}: MapsListProps) => {
           justifyContent: 'center',
           display: 'flex',
         }}>
-        {Object.entries(groupedByTime).map(([date, maps]) => (
+        {/* {Object.entries(groupedByTime).map(([date, maps]) => (
           <div key={date}>
             <div className="MapsList-datedivider">{date}</div>
             {maps.map((map) => (
               <MapRow key={map.mapId} map={map} />
             ))}
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );

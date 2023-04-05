@@ -1,6 +1,7 @@
 import {useEffect, useLayoutEffect, useState} from 'react';
+import { DataRowBySpecName } from '../lib/data/logging/spec';
 import ResultCache from '../lib/data/ResultCache';
-import {Data, Query} from '../lib/data/types';
+import {Query} from '../lib/data/types';
 
 interface UseQueriesOptions {
   runFirst?: boolean;
@@ -10,7 +11,7 @@ const useQueries = (
   queries: Query[],
   deps: any[],
   options: UseQueriesOptions = {},
-): [{[key: string]: Data}, number, boolean] => {
+): [DataRowBySpecName, number, boolean] => {
   const [computeTick, setComputeTick] = useState<number>(0);
 
   const nextComputeStep = (name: string) => {
@@ -30,18 +31,18 @@ const useQueries = (
     ResultCache.runQueries(queries, nextComputeStep);
   }, deps);
 
-  const results = queries
-    .filter((query) => ResultCache.hasResults(query.name))
-    .reduce((acc, query) => {
-      acc[query.name] = ResultCache.getValueForKey(query.name) as Data;
-      return acc;
-    }, {} as {[key: string]: {[key: string]: string | number}[]});
+  // const results = queries
+  //   .filter((query) => ResultCache.hasResults(query.name))
+  //   .reduce((acc, query) => {
+  //     acc[query.name] = ResultCache.getValueForKey(query.name) as Data;
+  //     return acc;
+  //   }, {} as {[key: string]: {[key: string]: string | number}[]});
 
   const allLoaded = queries.every((query) =>
     ResultCache.hasResults(query.name),
   );
 
-  return [results, computeTick, allLoaded];
+  return [{}, computeTick, allLoaded];
 };
 
 export const useQuery = <T>(
@@ -58,7 +59,7 @@ export const useQuery = <T>(
 // just get existing results, don't start a query if it doesn't exist
 export const useResults = (
   queryNames: string[],
-): [{[key: string]: Data}, number] => {
+): [DataRowBySpecName, number] => {
   const [computeTick, setComputeTick] = useState<number>(0);
   const nextComputeStep = () => {
     setComputeTick((computeTick) => computeTick + 1);
@@ -66,13 +67,13 @@ export const useResults = (
   queryNames.forEach((name) => {
     ResultCache.registerListener(name, nextComputeStep);
   });
-  const results = queryNames
-    .filter((query) => ResultCache.hasResults(query))
-    .reduce((acc, query) => {
-      acc[query] = ResultCache.getValueForKey(query) as Data;
-      return acc;
-    }, {} as {[key: string]: Data});
-  return [results, computeTick];
+  // const results = queryNames
+  //   .filter((query) => ResultCache.hasResults(query))
+  //   .reduce((acc, query) => {
+  //     acc[query] = ResultCache.getValueForKey(query);
+  //     return acc;
+  //   }, {} as {[key: string]: Data});
+  return [{}, computeTick];
 };
 
 export const useResult = <T>(queryName: string): [T[], number] => {

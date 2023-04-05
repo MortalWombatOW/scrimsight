@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import './PlayByPlay.scss';
 import MapOverlay from '~/components/Chart/MapOverlay/MapOverlay';
-import {buildMapEntitiesFromData} from '../../lib/data/data';
+// import {buildMapEntitiesFromData} from '../../lib/data/data';
 import {useQuery, useResult} from '../../hooks/useQueries';
 import useWindowSize from '../../hooks/useWindowSize';
 import MapOverlayV2 from '../Chart/MapOverlay/MapOverlayV2';
@@ -70,7 +70,8 @@ const PlayByPlay = ({
     return <div>No maps found</div>;
   }
 
-  const entities = buildMapEntitiesFromData(statuses, interactions, abilities);
+  const entities = [];
+  // const entities = buildMapEntitiesFromData(statuses, interactions, abilities);
 
   return (
     <div

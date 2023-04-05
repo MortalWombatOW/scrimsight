@@ -14,19 +14,20 @@ import {
   Skeleton,
 } from '@mui/material';
 import React from 'react';
-import usePlayerSummaryMetrics from '../../hooks/usePlayerSummaryMetrics';
+// import usePlayerSummaryMetrics from '../../hooks/usePlayerSummaryMetrics';
 import {format, formatTime} from '../../lib/data/format';
 import MetricText from '../Common/MetricText';
 import {getIcon} from '../Common/RoleIcons';
 
 const PlayerSummaryCard = ({playerName}: {playerName: string}) => {
-  const [results, tick] = usePlayerSummaryMetrics(playerName);
+  // const [results, tick] = usePlayerSummaryMetrics(playerName);
+  const results = undefined;
 
   const isLoaded = results !== undefined;
 
   return (
     <Card sx={{width: '400px'}}>
-      <CardHeader
+      {/* <CardHeader
         avatar={
           results?.role === undefined ? (
             <CircularProgress
@@ -87,7 +88,7 @@ const PlayerSummaryCard = ({playerName}: {playerName: string}) => {
         ) : (
           <Skeleton variant="rectangular" width={380} height={150} />
         )}
-      </CardContent>
+      </CardContent> */}
       <CardActions>
         <Button size="small" color="secondary">
           View Player

@@ -85,5 +85,5 @@ export function getData(storeName: string): Promise<DataRow[]> {
       reject(req.error);
     };
   }
-  );z
+  );
 }

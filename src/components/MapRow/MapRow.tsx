@@ -1,7 +1,6 @@
 import {DamageIcon, TankIcon, SupportIcon} from '~/components/Common/RoleIcons';
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
-import {getTeamInfoForMap} from 'lib/data/data';
 import {mapNameToFileName} from './../../lib/string';
 import { DataRow } from 'lib/data/logging/spec';
 interface MapRowProps {

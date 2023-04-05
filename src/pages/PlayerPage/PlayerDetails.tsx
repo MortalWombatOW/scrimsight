@@ -14,7 +14,7 @@ import {
 import useQueries from '../../hooks/useQueries';
 import {getHeroImage, heroToRoleTable} from '../../lib/data/data';
 import {format, formatTime, safeDivide} from '../../lib/data/format';
-import {DataRow} from '../../lib/data/types';
+import {DataRow} from '../../lib/data/logging/spec';
 const sum = (
   agg: string,
   type: string,
@@ -32,153 +32,154 @@ const PlayerDetails = ({
   player: string | null;
   setPlayer: (player: string | null) => void;
 }) => {
-  const [results, tick] = useQueries(
-    [
-      {
-        name: 'top_heroes_' + player,
-        query: `select hero, count(*) as hero_time from ? where player = '${player}' and hero != '' group by hero order by hero_time desc`,
-        deps: ['player_status'],
-      },
-      {
-        name: 'roles_' + player,
-        query: `select hero_roles.role, sum(top_heroes.hero_time)/60/60 as role_time, (select sum(hero_time)/60/60 from ? as top_heroes) as total_time from ? as top_heroes join ? as hero_roles on top_heroes.hero = hero_roles.hero group by hero_roles.role order by role_time desc`,
-        deps: ['top_heroes_' + player, 'top_heroes_' + player, heroToRoleTable],
-      },
-      {
-        name: 'damage_dealt_' + player,
-        query: `select mapId, timestamp, \`target\`, sum(amount) as damage from ? where player = '${player}' and type = 'damage' group by mapId, timestamp, \`target\``,
-        deps: ['player_interaction'],
-      },
-      {
-        name: 'map_length',
-        query: `select mapId, max(timestamp) - min(timestamp) as map_length from ? group by mapId`,
-        deps: ['player_status'],
-      },
-      {
-        name: 'ult_times_' + player,
-        query: `select mapId, timestamp, ultCharge from ? where player = '${player}' and (ultCharge = 100 or ultCharge = 0)`,
-        deps: ['player_status'],
-      },
-      {
-        name: 'per_map_' + player,
-        query: `select mapId, ${sum('amount', 'damage', player)}, ${sum(
-          'amount',
-          'healing',
-          player,
-        )}, ${sum('1', 'elimination', player, 'eliminations')}, ${sum(
-          '1',
-          'final blow',
-          player,
-          'final_blows',
-        )} from ? group by mapId`,
-        deps: ['player_interaction'],
-      },
-      {
-        name: 'player_stats_' + player,
-        query: `select sum(per_map_${player}.damage) as damage ,
-        sum(per_map_${player}.healing) as healing,
-        sum(per_map_${player}.eliminations) as eliminations,
-        sum(per_map_${player}.final_blows) as final_blows
-        from ? as per_map_${player}`,
-        deps: ['per_map_' + player],
-      },
-      {
-        name: 'playtime_' + player,
-        query: `select sum(map_length.map_length) as map_length from ? as map_length`,
-        deps: ['map_length'],
-      },
-      {
-        name: 'done_by_' + player,
-        query: `select i.\`target\`, sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from ? as i where i.player = '${player}' group by i.\`target\` order by damage desc`,
-        deps: ['player_interaction'],
-      },
-      {
-        name: 'taken_by_' + player,
-        query: `select i.player,  sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from ? as i where i.\`target\` = '${player}' group by i.player`,
-        deps: ['player_interaction'],
-      },
-    ],
-    [player],
-  );
+  // const [results, tick] = useQueries(
+  //   [
+  //     {
+  //       name: 'top_heroes_' + player,
+  //       query: `select hero, count(*) as hero_time from ? where player = '${player}' and hero != '' group by hero order by hero_time desc`,
+  //       deps: ['player_status'],
+  //     },
+  //     {
+  //       name: 'roles_' + player,
+  //       query: `select hero_roles.role, sum(top_heroes.hero_time)/60/60 as role_time, (select sum(hero_time)/60/60 from ? as top_heroes) as total_time from ? as top_heroes join ? as hero_roles on top_heroes.hero = hero_roles.hero group by hero_roles.role order by role_time desc`,
+  //       deps: ['top_heroes_' + player, 'top_heroes_' + player, heroToRoleTable],
+  //     },
+  //     {
+  //       name: 'damage_dealt_' + player,
+  //       query: `select mapId, timestamp, \`target\`, sum(amount) as damage from ? where player = '${player}' and type = 'damage' group by mapId, timestamp, \`target\``,
+  //       deps: ['player_interaction'],
+  //     },
+  //     {
+  //       name: 'map_length',
+  //       query: `select mapId, max(timestamp) - min(timestamp) as map_length from ? group by mapId`,
+  //       deps: ['player_status'],
+  //     },
+  //     {
+  //       name: 'ult_times_' + player,
+  //       query: `select mapId, timestamp, ultCharge from ? where player = '${player}' and (ultCharge = 100 or ultCharge = 0)`,
+  //       deps: ['player_status'],
+  //     },
+  //     {
+  //       name: 'per_map_' + player,
+  //       query: `select mapId, ${sum('amount', 'damage', player)}, ${sum(
+  //         'amount',
+  //         'healing',
+  //         player,
+  //       )}, ${sum('1', 'elimination', player, 'eliminations')}, ${sum(
+  //         '1',
+  //         'final blow',
+  //         player,
+  //         'final_blows',
+  //       )} from ? group by mapId`,
+  //       deps: ['player_interaction'],
+  //     },
+  //     {
+  //       name: 'player_stats_' + player,
+  //       query: `select sum(per_map_${player}.damage) as damage ,
+  //       sum(per_map_${player}.healing) as healing,
+  //       sum(per_map_${player}.eliminations) as eliminations,
+  //       sum(per_map_${player}.final_blows) as final_blows
+  //       from ? as per_map_${player}`,
+  //       deps: ['per_map_' + player],
+  //     },
+  //     {
+  //       name: 'playtime_' + player,
+  //       query: `select sum(map_length.map_length) as map_length from ? as map_length`,
+  //       deps: ['map_length'],
+  //     },
+  //     {
+  //       name: 'done_by_' + player,
+  //       query: `select i.\`target\`, sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from ? as i where i.player = '${player}' group by i.\`target\` order by damage desc`,
+  //       deps: ['player_interaction'],
+  //     },
+  //     {
+  //       name: 'taken_by_' + player,
+  //       query: `select i.player,  sum(case when i.type = 'damage' then i.amount else 0 end) as damage, sum(case when i.type = 'healing' then i.amount else 0 end) as healing, sum(case when i.type = 'elimination' then 1 else 0 end) as eliminations, sum(case when i.type = 'final blow' then 1 else 0 end) as final_blows from ? as i where i.\`target\` = '${player}' group by i.player`,
+  //       deps: ['player_interaction'],
+  //     },
+  //   ],
+  //   [player],
+  // );
 
-  const playerRole = useMemo(() => {
-    const roles = results['roles_' + player];
-    if (roles) {
-      if (roles.length > 1) {
-        return roles.map((r) => r.role).join(', ');
-      }
-      if (roles.length === 0) {
-        return 'none';
-      }
-      return roles[0].role as string;
-    }
-    return 'unknown';
-  }, [
-    tick,
-    player,
-    // TODO this is a hack, why is this not updating?
-    results['roles_' + player]?.length,
-  ]);
+  // const playerRole = useMemo(() => {
+  //   const roles = results['roles_' + player];
+  //   if (roles) {
+  //     if (roles.length > 1) {
+  //       return roles.map((r) => r.role).join(', ');
+  //     }
+  //     if (roles.length === 0) {
+  //       return 'none';
+  //     }
+  //     return roles[0].role as string;
+  //   }
+  //   return 'unknown';
+  // }, [
+  //   tick,
+  //   player,
+  //   // TODO this is a hack, why is this not updating?
+  //   results['roles_' + player]?.length,
+  // ]);
 
-  console.log('results', results['ult_times_' + player]);
+  // console.log('results', results['ult_times_' + player]);
 
-  const averageTimeToUlt: number = useMemo(() => {
-    const ult_charge_timestamps = results['ult_times_' + player];
-    if (!ult_charge_timestamps) {
-      return 0;
-    }
-    // first, transform the data. we want to remove rows that are preceded by a row with the same ult charge and mapId
-    const ult_charge_timestamps_filtered = ult_charge_timestamps.filter(
-      (row, index) => {
-        if (index === 0) {
-          return true;
-        }
-        const prev = ult_charge_timestamps[index - 1];
-        return row.ultCharge !== prev.ultCharge || row.mapId !== prev.mapId;
-      },
-    );
-    console.log(
-      'ult_charge_timestamps_filtered',
-      ult_charge_timestamps_filtered,
-    );
+  // const averageTimeToUlt: number = useMemo(() => {
+  //   const ult_charge_timestamps = results['ult_times_' + player];
+  //   if (!ult_charge_timestamps) {
+  //     return 0;
+  //   }
+  //   // first, transform the data. we want to remove rows that are preceded by a row with the same ult charge and mapId
+  //   const ult_charge_timestamps_filtered = ult_charge_timestamps.filter(
+  //     (row, index) => {
+  //       if (index === 0) {
+  //         return true;
+  //       }
+  //       const prev = ult_charge_timestamps[index - 1];
+  //       return row.ultCharge !== prev.ultCharge || row.mapId !== prev.mapId;
+  //     },
+  //   );
+  //   console.log(
+  //     'ult_charge_timestamps_filtered',
+  //     ult_charge_timestamps_filtered,
+  //   );
 
-    // we want to find the average time it takes for the player to charge their ult from 0 to 100
-    // to do this, we need to find the time between each 0 and 100 ult charge
-    // remember that these happen on different maps
-    const times: number[] = [];
-    let lastTimePerMap: {[mapId: string]: number} = {};
-    ult_charge_timestamps_filtered.forEach((row) => {
-      if (row.ultCharge === 0) {
-        lastTimePerMap[row.mapId] = row.timestamp as number;
-      } else {
-        const lastTime = lastTimePerMap[row.mapId];
-        if (lastTime) {
-          times.push((row.timestamp as number) - lastTime);
-        }
-      }
-    });
-    return times.reduce((a, b) => a + b, 0) / times.length;
-  }, [tick, player, results['ult_times_' + player]?.length]);
+  //   // we want to find the average time it takes for the player to charge their ult from 0 to 100
+  //   // to do this, we need to find the time between each 0 and 100 ult charge
+  //   // remember that these happen on different maps
+  //   const times: number[] = [];
+  //   let lastTimePerMap: {[mapId: string]: number} = {};
+  //   ult_charge_timestamps_filtered.forEach((row) => {
+  //     if (row.ultCharge === 0) {
+  //       lastTimePerMap[row.mapId] = row.timestamp as number;
+  //     } else {
+  //       const lastTime = lastTimePerMap[row.mapId];
+  //       if (lastTime) {
+  //         times.push((row.timestamp as number) - lastTime);
+  //       }
+  //     }
+  //   });
+  //   return times.reduce((a, b) => a + b, 0) / times.length;
+  // }, [tick, player, results['ult_times_' + player]?.length]);
 
-  const interactions = results['done_by_' + player];
+  // const interactions = results['done_by_' + player];
 
-  const playerRoleIcon = useMemo(() => {
-    const topRole = playerRole.split(',')[0];
-    if (topRole === 'tank') {
-      return <TankIcon />;
-    }
-    if (topRole === 'damage') {
-      return <DamageIcon />;
-    }
-    if (topRole === 'support') {
-      return <SupportIcon />;
-    }
-    return <CircularProgress size={15} />;
-  }, [playerRole]);
+  // const playerRoleIcon = useMemo(() => {
+  //   const topRole = playerRole.split(',')[0];
+  //   if (topRole === 'tank') {
+  //     return <TankIcon />;
+  //   }
+  //   if (topRole === 'damage') {
+  //     return <DamageIcon />;
+  //   }
+  //   if (topRole === 'support') {
+  //     return <SupportIcon />;
+  //   }
+  //   return <CircularProgress size={15} />;
+  // }, [playerRole]);
 
   return (
     <div className="PlayerDetails">
-      <Box component="div" display="flex" alignItems="center">
+      playerdetails
+      {/* <Box component="div" display="flex" alignItems="center">
         <Box component="div" flexGrow={1}>
           <Box
             component="div"
@@ -246,7 +247,7 @@ const PlayerDetails = ({
         </Typography>
         <Typography variant="h6">
           {per10['final_blows']} final blows per 10 minutes
-        </Typography> */}
+        </Typography>
       </div>
       <Box component="div" sx={{display: 'flex'}}>
         <QueryCard
@@ -351,7 +352,7 @@ const PlayerDetails = ({
             ).toFixed(2)}%) done to ${d.role} players`
           }
           deps={[]}
-        /> */}
+        /> 
       </Box>
       <DataTable
         columns={Object.keys((interactions || [[]])[0]).map((key) => ({
@@ -363,7 +364,7 @@ const PlayerDetails = ({
         }))}
         data={interactions || []}
         progressPending={interactions == undefined}
-      />
+      /> */}
     </div>
   );
 };
