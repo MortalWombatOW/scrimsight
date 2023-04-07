@@ -7,7 +7,8 @@ import {getRoleFromHero} from './data';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
 import { parallelProcessLogLines } from './logging/manager';
-import { DataRow } from './logging/spec';
+import { DataRow, logSpec } from './logging/spec';
+import { parseLines } from '~/lib/data/logging/parseLine';
 
 type GroupedData = {
   [key: string]: DataRow[];
@@ -52,9 +53,10 @@ const parseFile = async (fileUpload: FileUpload) => {
 
   const data = fileUpload.data;
   const hash = stringHash(data);
-
-  const lines = data.split('\n');
-  const result = await parallelProcessLogLines(lines, hash);
+ 
+  const lines = data.split('\n').filter((l) => l.length > 0);
+  // const result = await parallelProcessLogLines(lines, hash);
+  const result = parseLines(lines, hash, logSpec);
 
   fileUpload.events = result;
 };

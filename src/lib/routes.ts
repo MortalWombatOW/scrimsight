@@ -15,12 +15,12 @@ const routes: Route[] = [
   {
     path: ['/'],
     component: SplashPage,
-    name: 'Overview',
+    name: 'Splash',
   },
   {
-    path: ['/team'],
+    path: ['/home'],
     component: Home,
-    name: 'Team',
+    name: 'Home',
   },
   {
     path: ['/player'],

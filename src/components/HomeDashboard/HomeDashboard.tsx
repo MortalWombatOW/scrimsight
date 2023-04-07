@@ -8,6 +8,8 @@ import {
   Typography,
 } from '@mui/material';
 import React, {useState} from 'react';
+import MapsList from '~/components/MapsList/MapsList';
+import Uploader from '~/components/Uploader/Uploader';
 import useWindowSize from '../../hooks/useWindowSize';
 import Globals from '../../lib/data/globals';
 
@@ -18,28 +20,20 @@ const HomeDashboard = () => {
 
   const team = Globals.getTeam();
 
-  const isLoading = team === undefined;
+  // const isLoading = team === undefined;
 
   return (
     <div style={{width: '100%'}}>
-      {team === undefined ? (
-        <div
-          style={{
-            padding: '50px',
-          }}>
-          <Card className="welcome-card">
-            <CardContent>
-              <Typography variant="h5">Select your team</Typography>
-              <Typography variant="body1">
-                Select your team to get started. If you don't have a team, you
-                can create one.
-              </Typography>
-            </CardContent>
-          </Card>
-        </div>
-      ) : (
+      {team !== undefined ? (
         <TeamDisplay />
-      )}
+      ) : null}
+      <Uploader 
+       refreshCallback={() => {} }
+      />
+      <MapsList
+      height={width > 600 ? 400 : 200}
+      onLoaded={() => {}}
+      />
     </div>
   );
 };

@@ -24,6 +24,16 @@ const webpackConfig = () => ({
   module: {
     rules: [
       {
+        test: /\.worker\.ts$/,
+        use: {
+          loader: 'worker-loader',
+          options: {
+            // Use directory structure & typical names of chunks produces by "react-scripts"
+            filename: 'static/js/[name].[contenthash:8].js',
+          },
+        },
+      },
+      {
         test: /.(ts|tsx)?$/,
         // loader: 'ts-loader',
         include: path.resolve(__dirname, 'src'),
