@@ -10,10 +10,8 @@ let globalDB: IDBDatabase | undefined;
 
 const schema = new Schema()
   .version(1)
-  // .addStore('player_status', {key: 'id', increment: true})
-  // .addStore('player_ability', {key: 'id', increment: true})
-  // .addStore('player_interaction', {key: 'id', increment: true})
-  ;
+  .addStore('maps', {key: 'id', increment: true})
+  .addStore('teams', {key: 'id', increment: true});
 
   Object.keys(logSpec).forEach((key) => {
     schema.addStore(key, {key: 'id', increment: true});
@@ -21,7 +19,7 @@ const schema = new Schema()
 
 export const setupDB = async (callback) => {
   console.log('setupDB');
-  open('scrimsight4', schema.version(), schema.callback()).then((db) => {
+  open('scrimsight', schema.version(), schema.callback()).then((db) => {
     globalDB = db;
     console.log('setupDB done');
     callback();
@@ -41,8 +39,8 @@ export const mapExists = async (mapId) => {
     if (!db) {
       return false;
     }
-    const tx = db.transaction('map', 'readonly');
-    const store = tx.objectStore('map');
+    const tx = db.transaction('maps', 'readonly');
+    const store = tx.objectStore('maps');
     const req = store.get(mapId);
     req.onsuccess = () => {
       resolve(req.result !== undefined);

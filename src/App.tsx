@@ -28,19 +28,19 @@ const theme = createTheme({
 });
 
 const App = () => {
-  const [results, tick] = useQueries(
-    [
-      {name: 'player_status', query: 'select * from player_status'},
-      {name: 'player_interaction', query: 'select * from player_interaction'},
-      {name: 'player_ability', query: 'select * from player_ability'},
-      {name: 'map', query: 'select * from map'},
-      {name: 'team', query: 'select * from team'},
-    ],
-    [],
-    {
-      runFirst: true,
-    },
-  );
+  // const [results, tick] = useQueries(
+  //   [
+  //     {name: 'player_status', query: 'select * from player_status'},
+  //     {name: 'player_interaction', query: 'select * from player_interaction'},
+  //     {name: 'player_ability', query: 'select * from player_ability'},
+  //     {name: 'map', query: 'select * from map'},
+  //     {name: 'team', query: 'select * from team'},
+  //   ],
+  //   [],
+  //   {
+  //     runFirst: true,
+  //   },
+  // );
 
   return (
     <div>

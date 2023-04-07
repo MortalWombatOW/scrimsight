@@ -35,7 +35,7 @@ const TeamConfigurator = () => {
     {
       name: 'teams',
       query: `select * from ? as team`,
-      deps: ['team'],
+      deps: ['teams'],
     },
     [],
   );

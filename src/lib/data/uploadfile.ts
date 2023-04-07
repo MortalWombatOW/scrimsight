@@ -7,12 +7,8 @@ import {getRoleFromHero} from './data';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
 import { parallelProcessLogLines } from './logging/manager';
-import { DataRow, logSpec } from './logging/spec';
+import { DataAndSpecName, logSpec } from './logging/spec';
 import { parseLines } from '~/lib/data/logging/parseLine';
-
-type GroupedData = {
-  [key: string]: DataRow[];
-};
 
 const loadFile = async (fileUpload: FileUpload) => {
   if (!fileUpload.file) {
@@ -56,9 +52,19 @@ const parseFile = async (fileUpload: FileUpload) => {
  
   const lines = data.split('\n').filter((l) => l.length > 0);
   // const result = await parallelProcessLogLines(lines, hash);
-  const result = parseLines(lines, hash, logSpec);
+  const result: DataAndSpecName[] = parseLines(lines, hash, logSpec);
 
-  fileUpload.events = result;
+  const groupedData: DataAndSpecName[] = [];
+  for (const key of Object.keys(logSpec)) {
+    const data = result.filter((r) => r.specName === key);
+    groupedData.push({
+      specName: key,
+      data: data.map((d) => d.data).flat(),
+    });
+  }
+
+  fileUpload.events = groupedData;
+  fileUpload.mapId = hash;
 };
 
 
@@ -72,6 +78,7 @@ const saveFile = async (
     !fileUpload.mapId
   ) {
     console.error('no parsed data');
+    console.log (fileUpload);
     return;
   }
 
@@ -85,12 +92,45 @@ const saveFile = async (
 
   const db = getDB();
 
-  // await batch(db, 'map', [
-  //   {
-  //     type: 'add',
-  //     value: fileUpload
-  //   },
-  // ]);
+  const numKeys = Object.keys(logSpec).length;
+  const startPercent = 40;
+  const endPercent = 90;
+  const percentPerKey = (endPercent - startPercent) / numKeys;
+  console.log('fileUpload', fileUpload);
+
+  let percent = startPercent;
+  for (const key of Object.keys(logSpec)) {
+    const data = fileUpload.events.find((e) => e.specName === key)?.data;
+    console.log('writing', key);
+    if (!data || data.length === 0) {
+      console.log('no data for', key);
+      continue;
+    }
+    console.log('writing', data.length, 'items');
+    await batch(
+      db,
+      key,
+      data.map((p) => ({
+        type: 'add',
+        value: p,
+      })),
+    );
+    percent += percentPerKey;
+    setPercent(percent);
+    console.log('wrote', key);
+  }
+
+  await batch(db, 'maps', [
+    {
+      type: 'add',
+      value: {
+        id: fileUpload.mapId,
+        name: fileUpload.fileName,
+        fileModified: fileUpload.file!.lastModified,
+      }
+    },
+  ]);
+  setPercent(100);
   // setPercent(50);
 
   // console.log('wrote map', fileUpload.fileName);
@@ -126,19 +166,12 @@ const saveFile = async (
 
   // write to db on objectStore = specName
   // group by specName
-   const groupedData = fileUpload.events.reduce((acc: GroupedData, event) => {
-    const specName = event.specName;
-    if (!acc[specName]) {
-      acc[specName] = [];
-    }
-    acc[specName].push(...event.data);
-    return acc;
-  }, {});
+   
 
     
   console.log('wrote events', fileUpload.fileName);
     
-  setPercent(100);
+  // setPercent(100);
 };
 
 const uploadFile = async (
