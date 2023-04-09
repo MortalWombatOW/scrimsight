@@ -30,18 +30,6 @@ export type DataAndSpecName = {
   specName: string;
 };
 
-export const getField = (fieldName: string, specName: string, data: DataRow) => {
-  const spec = logSpec[specName];
-  if (!spec) {
-    throw new Error(`Spec not found for spec name: ${specName}`);
-  }
-  const fieldIndex = spec.fields.findIndex((field) => field.name === fieldName);
-  if (fieldIndex === -1) {
-    throw new Error(`Field not found for field name: ${fieldName}`);
-  }
-  return data[fieldIndex];
-};
-
 export const logSpec: LogSpec = {
   match_start: {
     name: "Match Start",
@@ -437,4 +425,27 @@ export const logSpec: LogSpec = {
   },
 };
 
+export const getField = (fieldName: string, specName: string, data: DataRow) => {
+  const spec = logSpec[specName];
+  if (!spec) {
+    throw new Error(`Spec not found for spec name: ${specName}`);
+  }
+  const fieldIndex = spec.fields.findIndex((field) => field.name === fieldName);
+  if (fieldIndex === -1) {
+    throw new Error(`Field not found for field name: ${fieldName}`);
+  }
+  return data[fieldIndex];
+};
 
+export const objectify = (data: DataRow, specName: string) => {
+  const spec = logSpec[specName];
+  if (!spec) {
+    throw new Error(`Spec not found for spec name: ${specName}`);
+  }
+  const obj: Record<string, string | number | boolean> = {};
+  spec.fields.forEach((field, index) => {
+    const value = getField(field.name, specName, data);
+    obj[field.name] = value;
+  });
+  return obj;
+};

@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import { DataRow } from '~/lib/data/logging/spec';
-import {useResult} from '../../hooks/useQueries';
+import {useQuery, useResult} from '../../hooks/useQueries';
 import {groupMapsByDate} from '../../lib/data/data';
 import {Typography} from '../Common/Mui';
 import MapRow from '../MapRow/MapRow';
@@ -12,16 +12,22 @@ type MapsListProps = {
 };
 
 const MapsList = ({height, onLoaded}: MapsListProps) => {
-  const [results, tick] = useResult<DataRow>('map');
+  const [results, tick] = useQuery(
+    {
+      name: 'all_maps',
+      query: `SELECT maps.id, match_start.[Map Name], match_start.[Map Type], match_start.[Team 1 Name], match_start.[Team 2 Name], ARRAY({[Player Name]:  player_stat.[Player Name], [Player Team]:  player_stat.[Player Team]}) as players FROM maps inner join match_start on maps.id = match_start.[Map ID] join player_stat on maps.id = player_stat.[Map ID] group by maps.id, match_start.[Map Name], match_start.[Map Type], match_start.[Team 1 Name], match_start.[Team 2 Name]`,
+      deps: [],
+    },
+    [],
+  )
 
-  // const groupedByTime = useMemo(() => {
-  //   return groupMapsByDate(results);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [tick]);
+  console.log('results:',
+    results, tick);
 
   if (!results) {
     return <div>Loading...</div>;
   }
+
 
   return (
     <div className="MapsList">

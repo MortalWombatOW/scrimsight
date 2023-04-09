@@ -7,7 +7,7 @@ import {getRoleFromHero} from './data';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
 import { parallelProcessLogLines } from './logging/manager';
-import { DataAndSpecName, logSpec } from './logging/spec';
+import { DataAndSpecName, logSpec, objectify } from './logging/spec';
 import { parseLines } from '~/lib/data/logging/parseLine';
 
 const loadFile = async (fileUpload: FileUpload) => {
@@ -112,7 +112,7 @@ const saveFile = async (
       key,
       data.map((p) => ({
         type: 'add',
-        value: p,
+        value: objectify(p, key)
       })),
     );
     percent += percentPerKey;

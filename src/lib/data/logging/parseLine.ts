@@ -18,13 +18,11 @@ export function parseLine(line: string, mapId: number, logSpec: LogSpec): DataAn
     console.log(line);
     throw new Error(`Event spec not found for event type: ${eventType}`);
   }
-  const totalTimeInSeconds = parseTimestamp(values[0]);
   const parsedData: DataRow = [];
   parsedData.push(mapId);
-  parsedData.push(totalTimeInSeconds);
 
   for (let i = 2; i < values.length; i++) {
-    const fieldSpec = eventSpec.fields[i - 2];
+    const fieldSpec = eventSpec.fields[i - 1];
     let parsedValue: string | number | boolean;
 
     switch (fieldSpec.dataType) {

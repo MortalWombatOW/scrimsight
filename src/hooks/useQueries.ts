@@ -31,18 +31,18 @@ const useQueries = (
     ResultCache.runQueries(queries, nextComputeStep);
   }, deps);
 
-  // const results = queries
-  //   .filter((query) => ResultCache.hasResults(query.name))
-  //   .reduce((acc, query) => {
-  //     acc[query.name] = ResultCache.getValueForKey(query.name) as Data;
-  //     return acc;
-  //   }, {} as {[key: string]: {[key: string]: string | number}[]});
+  const results = queries
+    .filter((query) => ResultCache.hasResults(query.name))
+    .reduce((acc, query) => {
+      acc[query.name] = ResultCache.getValueForKey(query.name);
+      return acc;
+    }, {} as DataRowBySpecName);
 
   const allLoaded = queries.every((query) =>
     ResultCache.hasResults(query.name),
   );
 
-  return [{}, computeTick, allLoaded];
+  return [results, computeTick, allLoaded];
 };
 
 export const useQuery = <T>(
