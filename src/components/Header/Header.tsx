@@ -103,7 +103,7 @@ const Header = ({
               <MenuItem>
                 <TeamConfigurator />
               </MenuItem>
-              {routes.map((route) => (
+              {routes.filter((route) => route.name).map((route) => (
                 <MenuItem
                   onClick={() => handleClickForPage(route.path[0])}
                   key={route.path[0]}>
@@ -135,7 +135,7 @@ const Header = ({
             component="div"
             sx={{flexGrow: 1, display: {xs: 'none', lg: 'flex'}}}>
             <Box component="div" sx={{display: 'flex', marginLeft: '100px'}}>
-              {routes.map((route) => (
+              {routes.filter((route) => route.name).map((route) => (
                 <Button
                   key={route.path[0]}
                   onClick={() => handleClickForPage(route.path[0])}

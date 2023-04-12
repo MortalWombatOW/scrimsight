@@ -1,3 +1,4 @@
+import ExplorePage from '~/pages/Explore/Explore';
 import AnalysisPage from '../pages/AnalysisPage/AnalysisPage';
 import Home from '../pages/Home/Home';
 import MapPage from '../pages/Map/MapPage';
@@ -8,14 +9,13 @@ import SplashPage from '../pages/SplashPage/SplashPage';
 interface Route {
   path: string[];
   component: () => JSX.Element;
-  name: string;
+  name?: string;
 }
 
 const routes: Route[] = [
   {
     path: ['/'],
     component: SplashPage,
-    name: 'Splash',
   },
   {
     path: ['/home'],
@@ -26,6 +26,10 @@ const routes: Route[] = [
     path: ['/player'],
     component: PlayerPage,
     name: 'Players',
+  },
+  {
+    path: ['/map/:mapId'],
+    component: MapPage,
   },
   {
     path: ['/review', '/review/:mapId'],
@@ -41,6 +45,11 @@ const routes: Route[] = [
     path: ['/workshop'],
     component: SettingsPage,
     name: 'Workshop Config',
+  },
+  {
+    path: ['/explore'],
+    component: ExplorePage,
+    name: 'Explorer',
   },
   {
     path: ['/settings'],

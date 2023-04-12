@@ -1,3 +1,4 @@
+import { QueryBuilder } from '~/lib/data/explore';
 import { DataAndSpecName, DataRow } from './logging/spec';
 
 type FileUpload = {
@@ -134,7 +135,7 @@ type GameStateExtractor = (slice: GameStateTimeSlice) => {
 
 type Query = {
   name: string;
-  query: string;
+  query: QueryBuilder;
   deps?: (string | DataRow[])[];
 };
 

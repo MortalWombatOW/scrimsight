@@ -1,5 +1,6 @@
 import {Query} from './types';
 import alasql from 'alasql';
+import { build } from '~/lib/data/explore';
 import { DataRowBySpecName } from '~/lib/data/logging/spec';
 
 export default class ResultCache {
@@ -173,7 +174,7 @@ export default class ResultCache {
         );
         alasql
           .promise(
-            query.query,
+            build(query.query),
             query.deps?.map((dep) =>
               typeof dep == 'string' ? ResultCache.getValueForKey(dep) : dep,
             ) || [],

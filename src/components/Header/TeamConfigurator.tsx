@@ -31,61 +31,61 @@ const TeamConfigurator = () => {
   );
   const [teamInternal, setTeamInternal] = useState<Team | undefined>(team);
 
-  const [allTeams, tick] = useQuery<Team>(
-    {
-      name: 'teams',
-      query: `select * from ? as team`,
-      deps: ['teams'],
-    },
-    [],
-  );
+  // const [allTeams, tick] = useQuery<Team>(
+  //   {
+  //     name: 'teams',
+  //     query: `select * from ? as team`,
+  //     deps: ['teams'],
+  //   },
+  //   [],
+  // );
 
-  useEffect(() => {
-    if (teamId) {
-      const team = allTeams?.find((t) => t.id === Number(teamId));
-      if (team) {
-        setTeamInternal(team);
-        Globals.setTeam(team);
-      }
-    }
-  }, [teamId, allTeams]);
+  // useEffect(() => {
+  //   if (teamId) {
+  //     const team = allTeams?.find((t) => t.id === Number(teamId));
+  //     if (team) {
+  //       setTeamInternal(team);
+  //       Globals.setTeam(team);
+  //     }
+  //   }
+  // }, [teamId, allTeams]);
 
-  console.log('allTeams', allTeams);
+  // console.log('allTeams', allTeams);
 
-  const [teams, setTeams] = useState<Team[]>([]);
+  // const [teams, setTeams] = useState<Team[]>([]);
 
-  const updateTeam = (team: Team, index: number) => {
-    const newTeams = [...teams];
-    newTeams[index] = team;
-    setTeams(newTeams);
-  };
+  // const updateTeam = (team: Team, index: number) => {
+  //   const newTeams = [...teams];
+  //   newTeams[index] = team;
+  //   setTeams(newTeams);
+  // };
 
-  useEffect(() => {
-    if (allTeams) {
-      setTeams(allTeams);
-    }
-  }, [allTeams]);
+  // useEffect(() => {
+  //   if (allTeams) {
+  //     setTeams(allTeams);
+  //   }
+  // }, [allTeams]);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
 
-  const handleClose = () => {
-    setEditorState('closed');
-    setOpen(false);
-    setTeamInternal(undefined);
-  };
+  // const handleClose = () => {
+  //   setEditorState('closed');
+  //   setOpen(false);
+  //   setTeamInternal(undefined);
+  // };
 
-  const apply = () => {
-    if (teamInternal) {
-      Globals.setTeam(teamInternal);
-      setTeamId(teamInternal.id?.toString() ?? '');
-    }
-    handleClose();
-  };
+  // const apply = () => {
+  //   if (teamInternal) {
+  //     Globals.setTeam(teamInternal);
+  //     setTeamId(teamInternal.id?.toString() ?? '');
+  //   }
+  //   handleClose();
+  // };
 
-  const loaded = allTeams !== undefined;
-  const hasTeams = loaded && teams.length > 0;
+  // const loaded = allTeams !== undefined;
+  // const hasTeams = loaded && teams.length > 0;
 
   return (
     <Box
@@ -94,7 +94,7 @@ const TeamConfigurator = () => {
         display: 'flex',
         alignItems: 'center',
       }}>
-      <Button
+      {/* <Button
         variant="contained"
         color="primary"
         onClick={handleClickOpen}
@@ -216,7 +216,7 @@ const TeamConfigurator = () => {
             <CheckIcon />
           </IconButton>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </Box>
   );
 };

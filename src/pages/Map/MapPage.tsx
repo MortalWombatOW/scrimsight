@@ -115,7 +115,7 @@ const MapPage = () => {
             justifyContent: 'center',
             zIndex: 3,
           }}>
-          <MapsList onLoaded={() => console.log('yay')} height={800} />
+          <MapsList onLoaded={() => console.log('yay')} />
         </div>
       )}
     </div>

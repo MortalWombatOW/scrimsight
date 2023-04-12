@@ -4,19 +4,28 @@ import {useNavigate} from 'react-router-dom';
 import {mapNameToFileName} from './../../lib/string';
 import { DataRow } from 'lib/data/logging/spec';
 interface MapRowProps {
-  map: DataRow
+  map: object;
+  size: 'compact' | 'full';
+  click: () => void;
 }
 
 const MapRow = (props: MapRowProps) => {
   const navigate = useNavigate();
-  const {map} = props;
+  const {map, size, click} = props;
+  console.log('size:', size);
 
-  // const timestampString = new Date(map.timestamp).toLocaleString();
+  const timestampString = new Date(map['fileModified']).toLocaleString();
   // const {top, bottom} = getTeamInfoForMap(map);
-  // const imageSrc = mapNameToFileName(map.mapName, false);
   return (
-    <div className="MapRow">
-      test
+    <div className="MapRow" onClick={() => navigate(`/review/${map['id']}`)} onClickCapture={() => click()}>
+       <div className="MapRow-image">
+         <img src={mapNameToFileName(map['Map Name'], false)} alt={map['Map Name']} />
+       </div>
+       <div className="MapRow-name">{map['Map Name']}</div>
+       <div className="MapRow-filename">{map['name']}</div>
+       <div className="MapRow-teams-col">
+         <div className="MapRow-timestamp">{timestampString}</div>
+       </div>
     </div>
   );
   // return (
@@ -24,10 +33,7 @@ const MapRow = (props: MapRowProps) => {
   //     <div className="MapRow-image">
   //       <img src={imageSrc} alt={map.mapName} />
   //     </div>
-  //     <div className="MapRow-name">{map.mapName}</div>
-  //     <div className="MapRow-teams-col">
-  //       <div className="MapRow-timestamp">{timestampString}</div>
-  //     </div>
+       
   //     <div className="MapRow-teams-col">
   //       <div className="MapRow-teams-row">{top.name}</div>
   //       <div className="MapRow-teams-row">{bottom.name}</div>

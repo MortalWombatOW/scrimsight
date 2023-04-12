@@ -43,36 +43,36 @@ const MapInfo = ({
 
   // const [statuses] = I<PlayerStatus>('player_status', mapId);
 
-  const [mapList, mapTick] = useQuery<any>(
-    {
-      name: 'map_' + mapId,
-      query: `SELECT * FROM ? as map WHERE mapId = ${mapId} LIMIT 1`,
-      deps: ['map_start'],
-    },
-    [mapId],
-  );
+  // const [mapList, mapTick] = useQuery<any>(
+  //   {
+  //     name: 'map_' + mapId,
+  //     query: `SELECT * FROM ? as map WHERE mapId = ${mapId} LIMIT 1`,
+  //     deps: ['map_start'],
+  //   },
+  //   [mapId],
+  // );
 
-  const [statuses, statusTick] = useQuery(
-    {
-      name: 'player_status_' + mapId,
-      query: `SELECT * FROM ? as status WHERE mapId = ${mapId}`,
-      deps: ['player_stat'],
-    },
-    [mapId],
-  );
+  // const [statuses, statusTick] = useQuery(
+  //   {
+  //     name: 'player_status_' + mapId,
+  //     query: `SELECT * FROM ? as status WHERE mapId = ${mapId}`,
+  //     deps: ['player_stat'],
+  //   },
+  //   [mapId],
+  // );
 
-  if (!mapList || !statuses) {
+  // if (!mapList || !statuses) {
     return <div>Loading...</div>;
-  }
+  // }
 
-  if (mapList.length === 0) {
-    return <div>No maps found</div>;
-  }
+  // if (mapList.length === 0) {
+  //   return <div>No maps found</div>;
+  // }
 
   // const playerHeroes = getHeroesByPlayer(statuses);
   // const mostCommonHeroes = getMostCommonHeroes(playerHeroes);
 
-  const map = mapList[0];
+  // const map = mapList[0];
 
   // const {top, bottom} = getTeamInfoForMap(map);
 
@@ -89,31 +89,31 @@ const MapInfo = ({
 
   console.log(selectedPlayerNames);
 
-  return (
-    <div className="MapInfo">
-      <div
-        className="mapname"
-        style={{
-          backgroundImage: ` linear-gradient(to right, grey 0%, grey 30%, transparent 35%, transparent 100%), url(${mapNameToFileName(
-            map.mapName,
-            false,
-          )})`,
-        }}>
-        <div className="txt">{map.mapName}</div>
-        <Grid
-          container
-          direction="row"
-          alignItems="center"
-          className="bottomtext">
-          <InsertDriveFileIcon /> {map.fileName}
-          <AccessTimeIcon
-            style={{
-              marginLeft: '1rem',
-            }}
-          />{' '}
-          {new Date(map.timestamp).toLocaleString()}
-        </Grid>
-      </div>
+  // return (
+  //   <div className="MapInfo">
+  //     <div
+  //       className="mapname"
+  //       style={{
+  //         backgroundImage: ` linear-gradient(to right, grey 0%, grey 30%, transparent 35%, transparent 100%), url(${mapNameToFileName(
+  //           map.mapName,
+  //           false,
+  //         )})`,
+  //       }}>
+  //       <div className="txt">{map.mapName}</div>
+  //       <Grid
+  //         container
+  //         direction="row"
+  //         alignItems="center"
+  //         className="bottomtext">
+  //         <InsertDriveFileIcon /> {map.fileName}
+  //         <AccessTimeIcon
+  //           style={{
+  //             marginLeft: '1rem',
+  //           }}
+  //         />{' '}
+  //         {new Date(map.timestamp).toLocaleString()}
+  //       </Grid>
+  //     </div>
 
       {/* <Grid container spacing={0} direction="row">
         <Grid item xs={6}>
@@ -232,8 +232,8 @@ const MapInfo = ({
           </Grid>
         ))}
       </Grid> */}
-    </div>
-  );
+  //   </div>
+  // );
 };
 
 export default MapInfo;

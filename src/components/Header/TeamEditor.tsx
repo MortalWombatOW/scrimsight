@@ -40,14 +40,14 @@ const TeamEditor = ({
   const isEditingPlayer =
     editingPlayer !== undefined || newPlayerName !== undefined;
   const playerNameEditorRef = useRef<HTMLInputElement>(null);
-  const [allPlayers, tick] = useQuery<{player: string}>(
-    {
-      name: 'allPlayers',
-      query: 'select distinct player from ? as player_status',
-      deps: ['player_status'],
-    },
-    [],
-  );
+  // const [allPlayers, tick] = useQuery<{player: string}>(
+  //   {
+  //     name: 'allPlayers',
+  //     query: 'select distinct player from ? as player_status',
+  //     deps: ['player_status'],
+  //   },
+  //   [],
+  // );
 
   useEffect(() => {
     setTeamName(team?.name ?? '');
@@ -190,9 +190,10 @@ const TeamEditor = ({
                 <Autocomplete
                   disablePortal
                   filterOptions={filterOptions}
-                  options={allPlayers
-                    .map((p) => p.player)
-                    .sort((a, b) => -b.localeCompare(a))}
+                  // options={allPlayers
+                  //   .map((p) => p.player)
+                  //   .sort((a, b) => -b.localeCompare(a))}
+                  options={[]}
                   sx={{width: 300}}
                   onInputChange={(e, value) => {
                     if (editingPlayer === undefined) {
