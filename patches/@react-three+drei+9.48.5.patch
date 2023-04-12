@@ -1,0 +1,80 @@
+diff --git a/node_modules/@react-three/drei/core/MeshDistortMaterial.d.ts b/node_modules/@react-three/drei/core/MeshDistortMaterial.d.ts
+deleted file mode 100644
+index 86f7f10..0000000
+--- a/node_modules/@react-three/drei/core/MeshDistortMaterial.d.ts
++++ /dev/null
+@@ -1,23 +0,0 @@
+-import * as React from 'react';
+-import { MeshPhysicalMaterial, MeshPhysicalMaterialParameters } from 'three';
+-declare type DistortMaterialType = JSX.IntrinsicElements['meshPhysicalMaterial'] & {
+-    time?: number;
+-    distort?: number;
+-    radius?: number;
+-};
+-declare global {
+-    namespace JSX {
+-        interface IntrinsicElements {
+-            distortMaterialImpl: DistortMaterialType;
+-        }
+-    }
+-}
+-export declare const MeshDistortMaterial: React.ForwardRefExoticComponent<Pick<import("@react-three/fiber").ExtendedColors<import("@react-three/fiber").Overwrite<Partial<MeshPhysicalMaterial>, import("@react-three/fiber").NodeProps<MeshPhysicalMaterial, [MeshPhysicalMaterialParameters]>>> & {
+-    time?: number | undefined;
+-    distort?: number | undefined;
+-    radius?: number | undefined;
+-} & {
+-    speed?: number | undefined;
+-    factor?: number | undefined;
+-}, "attach" | "args" | "children" | "key" | "onUpdate" | "time" | keyof MeshPhysicalMaterial | "radius" | "speed" | "distort" | "factor"> & React.RefAttributes<unknown>>;
+-export {};
+diff --git a/node_modules/@react-three/drei/core/MeshWobbleMaterial.d.ts b/node_modules/@react-three/drei/core/MeshWobbleMaterial.d.ts
+deleted file mode 100644
+index a2a5326..0000000
+--- a/node_modules/@react-three/drei/core/MeshWobbleMaterial.d.ts
++++ /dev/null
+@@ -1,23 +0,0 @@
+-import * as React from 'react';
+-import { MeshStandardMaterial, MeshStandardMaterialParameters } from 'three';
+-declare type WobbleMaterialType = JSX.IntrinsicElements['meshStandardMaterial'] & {
+-    time?: number;
+-    factor?: number;
+-    speed?: number;
+-};
+-declare global {
+-    namespace JSX {
+-        interface IntrinsicElements {
+-            wobbleMaterialImpl: WobbleMaterialType;
+-        }
+-    }
+-}
+-export declare const MeshWobbleMaterial: React.ForwardRefExoticComponent<Pick<import("@react-three/fiber").ExtendedColors<import("@react-three/fiber").Overwrite<Partial<MeshStandardMaterial>, import("@react-three/fiber").NodeProps<MeshStandardMaterial, [MeshStandardMaterialParameters]>>> & {
+-    time?: number | undefined;
+-    factor?: number | undefined;
+-    speed?: number | undefined;
+-} & {
+-    speed?: number | undefined;
+-    factor?: number | undefined;
+-}, "attach" | "args" | "children" | "key" | "onUpdate" | "time" | keyof MeshStandardMaterial | "speed" | "factor"> & React.RefAttributes<unknown>>;
+-export {};
+diff --git a/node_modules/@react-three/drei/core/PointMaterial.d.ts b/node_modules/@react-three/drei/core/PointMaterial.d.ts
+deleted file mode 100644
+index bdaa1cf..0000000
+--- a/node_modules/@react-three/drei/core/PointMaterial.d.ts
++++ /dev/null
+@@ -1,16 +0,0 @@
+-import * as THREE from 'three';
+-import * as React from 'react';
+-import { PrimitiveProps } from '@react-three/fiber';
+-declare type PointMaterialType = JSX.IntrinsicElements['pointsMaterial'];
+-declare global {
+-    namespace JSX {
+-        interface IntrinsicElements {
+-            pointMaterialImpl: PointMaterialType;
+-        }
+-    }
+-}
+-export declare class PointMaterialImpl extends THREE.PointsMaterial {
+-    constructor(props: any);
+-}
+-export declare const PointMaterial: React.ForwardRefExoticComponent<Pick<Omit<PrimitiveProps, "object" | "attach">, string | number> & React.RefAttributes<PointMaterialImpl>>;
+-export {};

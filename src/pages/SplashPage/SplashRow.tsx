@@ -1,7 +1,6 @@
-import {Grid} from '@mui/material';
+import {Grid, Typography, Button} from '@mui/material';
 import {Box} from '@mui/system';
 import React from 'react';
-import {Button, Typography} from '../../components/Common/Mui';
 
 const SplashRow = ({
   title,
@@ -48,7 +47,7 @@ const SplashRow = ({
         className={className}>
         <Grid container>
           <Grid item xs={8}>
-            <Typography variant="h3" header sx={{marginBottom: '32px'}}>
+            <Typography variant="h3" sx={{marginBottom: '32px'}}>
               {title}
             </Typography>
             <Typography variant="body1">{content}</Typography>

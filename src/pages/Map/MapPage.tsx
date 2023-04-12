@@ -4,7 +4,6 @@ import MapInfo from 'components/MapInfo/MapInfo';
 import PlayByPlay from 'components/PlayByPlay/PlayByPlay';
 import React, {useState} from 'react';
 import {useParams, useSearchParams} from 'react-router-dom';
-import {Button} from '../../components/Common/Mui';
 import MapsList from '../../components/MapsList/MapsList';
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 import './Map.scss';

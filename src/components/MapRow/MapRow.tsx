@@ -3,6 +3,7 @@ import React from 'react';
 import {useNavigate} from 'react-router-dom';
 import {mapNameToFileName} from './../../lib/string';
 import { DataRow } from 'lib/data/logging/spec';
+import { Box, Card, CardMedia } from '@mui/material';
 interface MapRowProps {
   map: object;
   size: 'compact' | 'full';
@@ -17,16 +18,23 @@ const MapRow = (props: MapRowProps) => {
   const timestampString = new Date(map['fileModified']).toLocaleString();
   // const {top, bottom} = getTeamInfoForMap(map);
   return (
-    <div className="MapRow" onClick={() => navigate(`/review/${map['id']}`)} onClickCapture={() => click()}>
-       <div className="MapRow-image">
-         <img src={mapNameToFileName(map['Map Name'], false)} alt={map['Map Name']} />
-       </div>
-       <div className="MapRow-name">{map['Map Name']}</div>
-       <div className="MapRow-filename">{map['name']}</div>
-       <div className="MapRow-teams-col">
-         <div className="MapRow-timestamp">{timestampString}</div>
-       </div>
-    </div>
+    // <div className="MapRow" onClick={() => navigate(`/review/${map['id']}`)} onClickCapture={() => click()}>
+    //    <div className="MapRow-image">
+    //      <img src={mapNameToFileName(map['Map Name'], false)} alt={map['Map Name']} />
+    //    </div>
+    //    <div className="MapRow-name">{map['Map Name']}</div>
+    //    <div className="MapRow-filename">{map['name']}</div>
+    //    <div className="MapRow-teams-col">
+    //      <div className="MapRow-timestamp">{timestampString}</div>
+    //    </div>
+    // </div>
+    <Card onClick={() => navigate(`/review/${map['id']}`)} onClickCapture={() => click()} sx={{ display: 'flex' }}>
+ <Box sx={{ display: 'flex', flexDirection: 'column' }} >
+  test
+  </Box>
+  <CardMedia component="img" sx={{ width: 151 }} image={mapNameToFileName(map['Map Name'], false)} alt={map['Map Name']} />
+  
+      </Card>
   );
   // return (
   //   <button className="MapRow" onClick={() => navigate(`/review/${map.mapId}`)}>

@@ -5,9 +5,10 @@ import {
   CardContent,
   CardMedia,
   Box,
+  Typography,
+  Button,
 } from '@mui/material';
 import React from 'react';
-import {Button, Typography} from '../Common/Mui';
 
 const ImageCard = ({
   width,
@@ -59,7 +60,7 @@ const ImageCard = ({
             style={{
               textShadow: '0 0 10px rgba(0, 0, 0, 1)',
             }}
-            header>
+            >
             {titleText}
           </Typography>
           <Typography

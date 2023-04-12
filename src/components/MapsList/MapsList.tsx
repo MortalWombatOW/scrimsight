@@ -2,9 +2,9 @@ import React, {useMemo} from 'react';
 import {DataRow} from '~/lib/data/logging/spec';
 import {useQuery, useResult} from '../../hooks/useQueries';
 import {groupMapsByDate} from '../../lib/data/data';
-import {Typography} from '../Common/Mui';
 import MapRow from '../MapRow/MapRow';
 import './MapsList.scss';
+import { Typography } from '@mui/material';
 
 type MapsListProps = {
   onLoaded: () => void;

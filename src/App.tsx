@@ -12,35 +12,11 @@ import {QueryParamProvider} from 'use-query-params';
 import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 import useQueries from './hooks/useQueries';
 import routes from './lib/routes';
+import { themeDef } from '~/theme';
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#001732',
-    },
-    secondary: {
-      main: '#A356A7',
-    },
-  },
-  typography: {
-    fontFamily: 'Bitter',
-  },
-});
+const theme = createTheme(themeDef);
 
 const App = () => {
-  // const [results, tick] = useQueries(
-  //   [
-  //     {name: 'player_status', query: 'select * from player_status'},
-  //     {name: 'player_interaction', query: 'select * from player_interaction'},
-  //     {name: 'player_ability', query: 'select * from player_ability'},
-  //     {name: 'map', query: 'select * from map'},
-  //     {name: 'team', query: 'select * from team'},
-  //   ],
-  //   [],
-  //   {
-  //     runFirst: true,
-  //   },
-  // );
 
   return (
     <div>

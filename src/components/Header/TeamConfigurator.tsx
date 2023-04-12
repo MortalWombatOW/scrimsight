@@ -8,7 +8,6 @@ import {
 import {Box} from '@mui/system';
 import React, {useEffect, useState} from 'react';
 import {Team} from '../../lib/data/types';
-import {Button, Typography} from '../Common/Mui';
 import {useQuery} from '../../hooks/useQueries';
 import TeamEditor from './TeamEditor';
 import EditIcon from '@mui/icons-material/Edit';

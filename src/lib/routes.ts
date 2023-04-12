@@ -42,11 +42,6 @@ const routes: Route[] = [
     name: 'Analyze',
   },
   {
-    path: ['/workshop'],
-    component: SettingsPage,
-    name: 'Workshop Config',
-  },
-  {
     path: ['/explore'],
     component: ExplorePage,
     name: 'Explorer',

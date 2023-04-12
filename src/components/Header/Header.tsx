@@ -57,7 +57,7 @@ const Header = ({
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
-            variant="h6"
+            variant="h3"
             noWrap
             component="a"
             href="/"
@@ -114,7 +114,7 @@ const Header = ({
           </Box>
 
           <Typography
-            variant="h6"
+            variant="h3"
             noWrap
             component="a"
             href=""

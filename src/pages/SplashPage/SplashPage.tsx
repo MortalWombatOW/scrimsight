@@ -6,11 +6,12 @@ import {
   CardMedia,
   CardContent,
   CardActions,
+  Typography,
+  Button,
 } from '@mui/material';
 import React from 'react';
 import {Link} from 'react-router-dom';
 import ImageCard from '../../components/Card/ImageCard';
-import {Button, Typography} from '../../components/Common/Mui';
 import Header from '../../components/Header/Header';
 import SplashRow from './SplashRow';
 
@@ -51,10 +52,10 @@ const SplashPage = () => {
           marginRight: '50px',
         }}>
         <Box component="div">
-          <Typography variant="h5" style={{marginBottom: '20px'}}>
+          <Typography variant="h2" style={{marginBottom: '20px'}}>
             Do you manage or coach a competitive Overwatch team?
           </Typography>
-          <Typography variant="body2" style={{marginBottom: '20px'}}>
+          <Typography variant="body1" style={{marginBottom: '20px'}}>
             Scrimsight takes the guesswork out of analyzing your team's
             performance. With detailed statistics and replay features, you can
             quickly identify and communicate the issues that are holding your
@@ -85,23 +86,12 @@ const SplashPage = () => {
           }}>
           <Button
             variant="contained"
-            color="secondary"
-            style={{
-              marginRight: '100px',
-              fontSize: '32px',
-              width: '350px',
-              marginBottom: '20px',
-            }}>
+            color="primary">
             Explore example data
           </Button>
           <Button
             variant="contained"
-            color="secondary"
-            style={{
-              fontSize: '32px',
-              width: '350px',
-              marginBottom: '20px',
-            }}>
+            color="secondary">
             Get started with your data
           </Button>
         </Box>
