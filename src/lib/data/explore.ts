@@ -7,6 +7,7 @@ export type Value = {
 export type Aggregation = {
   value: Value;
   aggregation: 'sum' | 'avg' | 'min' | 'max' | 'count' | 'array';
+  as: string;
 };
 
 export type Filter = {
@@ -37,7 +38,7 @@ export function build(query: QueryBuilder): string {
     if (metric['aggregation']) {
       const aggregation = metric as Aggregation;
       console.log(metric);
-      return `${aggregation.aggregation}(${aggregation.value.table}.[${aggregation.value.field}])`;
+      return `${aggregation.aggregation}(${aggregation.value.table}.[${aggregation.value.field}]) AS ${aggregation.as}`;
     } else {
       const value = metric as Value;
       return `\t${value.table}.[${value.field}]`;

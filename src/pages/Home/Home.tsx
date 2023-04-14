@@ -22,9 +22,6 @@ const Home = () => {
   const [updateCount, setUpdateCount] = React.useState(0);
   const incrementUpdateCount = () => setUpdateCount((prev) => prev + 1);
 
-  const [maps, tick] = useResult('map');
-  const isLoading = maps === undefined;
-  const isNewUser = (!isLoading && maps.length === 0) || true;
 
   return (
     <div>
@@ -34,10 +31,7 @@ const Home = () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         setFilters={(filters) => {}}
       />
-      <div className="Home-container">
-        {isLoading ? (
-          <CircularProgress variant="indeterminate" color="primary" />
-        ) : null}
+      <div>
         <HomeDashboard />
       </div>
     </div>

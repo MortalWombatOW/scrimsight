@@ -23,15 +23,10 @@ const HomeDashboard = () => {
   // const isLoading = team === undefined;
 
   return (
-    <div style={{width: '100%', paddingLeft:  '20%', paddingRight: '20%'}}>
+    <div style={{width: '100%', paddingLeft:  '20px', paddingRight: '20px', paddingTop: '20px'}}>
       {team !== undefined ? (
         <TeamDisplay />
       ) : null}
-      <div style={{float: 'right'}}>
-      <Uploader 
-       refreshCallback={() => {} }
-      />
-      </div>
       <MapsList
       onLoaded={() => {}}
       />

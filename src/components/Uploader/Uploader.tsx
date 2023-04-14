@@ -56,7 +56,7 @@ const Uploader = ({
 
   return (
     <div>
-      <ButtonGroup variant="outlined" color="inherit">
+      {/* <ButtonGroup variant="outlined" color="inherit">
         <Button component="label" className="Uploader-button">
           Load Files
           <input
@@ -73,7 +73,17 @@ const Uploader = ({
           onClick={() => setModalOpen(true)}>
           <ManageSearchIcon />
         </Button>
-      </ButtonGroup>
+      </ButtonGroup> */}
+      <Button variant='contained' component="label" color="secondary">
+          Add maps
+          <input
+            id="fileinput"
+            type="file"
+            onChange={onInputChange}
+            hidden
+            multiple
+          />
+        </Button>
       <UploadProgressModal
         isOpen={modalOpen}
         setIsOpen={setModalOpen}
