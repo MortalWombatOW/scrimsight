@@ -42,6 +42,8 @@ const useQueries = (
     ResultCache.hasResults(query.name),
   );
 
+  console. log('queries', queries);
+
   return [results, computeTick, allLoaded];
 };
 

@@ -36,6 +36,7 @@ export const logSpec: LogSpec = {
     key: "match_start",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Map Name", dataType: "string" },
       { name: "Map Type", dataType: "string" },
@@ -48,6 +49,7 @@ export const logSpec: LogSpec = {
     key: "match_end",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Round Number", dataType: "number" },
       { name: "Team 1 Score", dataType: "number" },
@@ -59,6 +61,7 @@ export const logSpec: LogSpec = {
     key: "round_start",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Round Number", dataType: "number" },
       { name: "Capturing Team", dataType: "string" },
@@ -72,6 +75,7 @@ export const logSpec: LogSpec = {
     key: "round_end",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Round Number", dataType: "number" },
       { name: "Capturing Team", dataType: "string" },
@@ -88,6 +92,7 @@ export const logSpec: LogSpec = {
     key: "setup_complete",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Round Number", dataType: "number" },
       { name: "Match Time Remaining", dataType: "number" },
@@ -98,6 +103,7 @@ export const logSpec: LogSpec = {
     key: "objective_captured",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Round Number", dataType: "number" },
       { name: "Capturing Team", dataType: "string" },
@@ -112,6 +118,7 @@ export const logSpec: LogSpec = {
     key: "point_progress",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Round Number", dataType: "number" },
       { name: "Capturing Team", dataType: "string" },
@@ -124,6 +131,7 @@ export const logSpec: LogSpec = {
     key: "payload_progress",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Round Number", dataType: "number" },
       { name: "Capturing Team", dataType: "string" },
@@ -136,6 +144,7 @@ export const logSpec: LogSpec = {
     key: "hero_spawn",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -149,6 +158,7 @@ export const logSpec: LogSpec = {
     key: "hero_swap",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -162,6 +172,7 @@ export const logSpec: LogSpec = {
     key: "ability_1_used",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -174,6 +185,7 @@ export const logSpec: LogSpec = {
     key: "ability_2_used",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -186,6 +198,7 @@ export const logSpec: LogSpec = {
     key: "offensive_assist",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -198,6 +211,7 @@ export const logSpec: LogSpec = {
     key: "defensive_assist",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -210,6 +224,7 @@ export const logSpec: LogSpec = {
     key: "ultimate_charged",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -223,6 +238,7 @@ export const logSpec: LogSpec = {
     key: "ultimate_start",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -236,6 +252,7 @@ export const logSpec: LogSpec = {
     key: "ultimate_end",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -249,6 +266,7 @@ export const logSpec: LogSpec = {
     key: "kill",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Attacker Team", dataType: "string" },
       { name: "Attacker Name", dataType: "string" },
@@ -267,6 +285,7 @@ export const logSpec: LogSpec = {
     key: "damage",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Attacker Team", dataType: "string" },
       { name: "Attacker Name", dataType: "string" },
@@ -285,6 +304,7 @@ export const logSpec: LogSpec = {
     key: "healing",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Healer Team", dataType: "string" },
       { name: "Healer Name", dataType: "string" },
@@ -302,6 +322,7 @@ export const logSpec: LogSpec = {
     key: "mercy_rez",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Mercy Team", dataType: "string" },
       { name: "Mercy Name", dataType: "string" },
@@ -316,6 +337,7 @@ export const logSpec: LogSpec = {
     key: "echo_duplicate_start",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -329,6 +351,7 @@ export const logSpec: LogSpec = {
     key: "echo_duplicate_end",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -341,6 +364,7 @@ export const logSpec: LogSpec = {
     key: "dva_demech",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Attacker Team", dataType: "string" },
       { name: "Attacker Name", dataType: "string" },
@@ -359,6 +383,7 @@ export const logSpec: LogSpec = {
     key: "dva_remech",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -371,6 +396,7 @@ export const logSpec: LogSpec = {
     key: "remech_charged",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Player Team", dataType: "string" },
       { name: "Player Name", dataType: "string" },
@@ -383,6 +409,7 @@ export const logSpec: LogSpec = {
     key: "player_stat",
     fields: [
       { name: "Map ID", dataType: "number"},
+      { name: "Type", dataType: "string" },
       { name: "Match Time", dataType: "number" },
       { name: "Round Number", dataType: "number" },
       { name: "Player Team", dataType: "string" },

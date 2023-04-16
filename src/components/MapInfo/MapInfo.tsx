@@ -6,9 +6,12 @@ import {
   getHeroImage,
 } from 'lib/data/data';
 import {heroNameToNormalized, mapNameToFileName} from 'lib/string';
-import React from 'react';
-import {useQuery} from '../../hooks/useQueries';
+import React, { useEffect, useMemo } from 'react';
+import useQueries, {useQuery} from '../../hooks/useQueries';
 import {groupColorClass} from '../../lib/color';
+import { QueryBuilder } from '~/lib/data/QueryBuilder';
+import { DataRow, logSpec } from '~/lib/data/logging/spec';
+import { Typography } from '@mui/material';
 
 const PlayerAndHero = ({
   player,
@@ -39,31 +42,69 @@ const MapInfo = ({
   selectedPlayerNames: string[];
   setSelectedPlayerNames: (names: string[]) => void;
 }) => {
-  // const [mapList] = useData<OWMap>('map', mapId);
+  const result = useQueries([
+    // z
+    // {
+    //   name: 'map_info_' + mapId,
+    //   query: new QueryBuilder()
+    //   .select([
+    //     {table: 'maps', field: 'id'},
+    //     {table: 'maps', field: 'name'},
+    //     {table: 'maps', field: 'fileModified'},
+    //   ])
+    //   .from([
+    //     {
+    //       table: 'maps',
+    //       field: 'id',
+    //     },
+    //   ])
+    //   .addAllFromSpec(logSpec['match_start'], "Map ID")
+    //   .where([{
+    //     operator: '=',
+    //     field: {table: 'maps', field: 'id'},
+    //     value: mapId,
+    //   }]),
+    // },
+    {
+      name: 'kills_' + mapId,
+      query: new QueryBuilder()
+      .addAllFromSpec(logSpec['kill'], "Map ID")
+      .where([{
+        operator: '=',
+        field: {table: 'kill', field: 'Map ID'},
+        value: mapId,
+      }]),
+    },
+    {
+      name: 'objective_captured_' + mapId,
+      query: new QueryBuilder()
+      .addAllFromSpec(logSpec['objective_captured'], "Map ID")
+      .where([{
+        operator: '=',
+        field: {table: 'objective_captured', field: 'Map ID'},
+        value: mapId,
+      }]),
+    },
+    {
+      name: 'round_end_' + mapId,
+      query: new QueryBuilder()
+      .addAllFromSpec(logSpec['round_end'], "Map ID")
+      .where([{
+        operator: '=',
+        field: {table: 'round_end', field: 'Map ID'},
+        value: mapId,
+      }]),
+    },  
 
-  // const [statuses] = I<PlayerStatus>('player_status', mapId);
 
-  // const [mapList, mapTick] = useQuery<any>(
-  //   {
-  //     name: 'map_' + mapId,
-  //     query: `SELECT * FROM ? as map WHERE mapId = ${mapId} LIMIT 1`,
-  //     deps: ['map_start'],
-  //   },
-  //   [mapId],
-  // );
+  ], [mapId]);
 
-  // const [statuses, statusTick] = useQuery(
-  //   {
-  //     name: 'player_status_' + mapId,
-  //     query: `SELECT * FROM ? as status WHERE mapId = ${mapId}`,
-  //     deps: ['player_stat'],
-  //   },
-  //   [mapId],
-  // );
+  console.log(result);
 
-  // if (!mapList || !statuses) {
-    return <div>Loading...</div>;
-  // }
+   
+
+  // const map = result[0]['map_info_' + mapId][0];
+
 
   // if (mapList.length === 0) {
   //   return <div>No maps found</div>;
@@ -87,153 +128,53 @@ const MapInfo = ({
 
   // const tileCols = top.tanks.length == 2 ? 6 / 6 : 6 / 5;
 
-  console.log(selectedPlayerNames);
+ 
+  const sortedEvents = useMemo (() => {
+    if (!result[2]) {
+      return [];
+    }
+    const queryNames = Object.keys(result[0]);
+    console.log('queryNames', queryNames);
+    const arr: object[] = [];
+    const counters = {};
+    for (const queryName of queryNames) {
+      counters[queryName] = 0;
+    }
+    while (true) {
+      let minTime = Infinity;
+      let minQueryName: string | null = null;
+      for (const queryName of queryNames) {
+        if (counters[queryName] >= result[0][queryName].length) {
+          continue;
+        }
+        const entry = result[0][queryName][counters[queryName]];
+        const time = entry['Match Time'];
+        if (time < minTime) {
+          minTime = time;
+          minQueryName = queryName;
+        }
+      }
+      if (minQueryName === null) {
+        break;
+      }
+      const minEntry = result[0][minQueryName][counters[minQueryName]];
+      arr.push(minEntry);
+      counters[minQueryName]++;
+    }
+    return arr;
+  }, [result[1]]);
 
-  // return (
-  //   <div className="MapInfo">
-  //     <div
-  //       className="mapname"
-  //       style={{
-  //         backgroundImage: ` linear-gradient(to right, grey 0%, grey 30%, transparent 35%, transparent 100%), url(${mapNameToFileName(
-  //           map.mapName,
-  //           false,
-  //         )})`,
-  //       }}>
-  //       <div className="txt">{map.mapName}</div>
-  //       <Grid
-  //         container
-  //         direction="row"
-  //         alignItems="center"
-  //         className="bottomtext">
-  //         <InsertDriveFileIcon /> {map.fileName}
-  //         <AccessTimeIcon
-  //           style={{
-  //             marginLeft: '1rem',
-  //           }}
-  //         />{' '}
-  //         {new Date(map.timestamp).toLocaleString()}
-  //       </Grid>
-  //     </div>
+  console.log(sortedEvents);
 
-      {/* <Grid container spacing={0} direction="row">
-        <Grid item xs={6}>
-          <div className={`team-name ${groupColorClass(top.name)}`}>
-            {top.name}
-          </div>
-        </Grid>
-        <Grid item xs={6}>
-          <div className={`team-name ${groupColorClass(bottom.name)}`}>
-            {bottom.name}
-          </div>
-        </Grid>
-      </Grid>
-      <Grid container spacing={0} direction="row">
-        {top.tanks.map((player, index) => (
-          <Grid key={index} item xs={tileCols}>
-            <div
-              className="player-container"
-              onClick={() =>
-                isSelected(player)
-                  ? unselectPlayer(player)
-                  : selectPlayer(player)
-              }>
-              <PlayerAndHero
-                player={player}
-                hero={mostCommonHeroes[player]}
-                selected={isSelected(player)}
-              />
-            </div>
-          </Grid>
-        ))}
-        {top.dps.map((player, index) => (
-          <Grid key={index} item xs={tileCols}>
-            <div
-              className="player-container"
-              onClick={() =>
-                isSelected(player)
-                  ? unselectPlayer(player)
-                  : selectPlayer(player)
-              }>
-              <PlayerAndHero
-                player={player}
-                hero={mostCommonHeroes[player]}
-                selected={isSelected(player)}
-              />
-            </div>
-          </Grid>
-        ))}
-        {top.supports.map((player, index) => (
-          <Grid key={index} item xs={tileCols}>
-            <div
-              className="player-container"
-              onClick={() =>
-                isSelected(player)
-                  ? unselectPlayer(player)
-                  : selectPlayer(player)
-              }>
-              <PlayerAndHero
-                player={player}
-                hero={mostCommonHeroes[player]}
-                selected={isSelected(player)}
-              />
-            </div>
-          </Grid>
-        ))}
+  if (!result[2]) {
+    return <div>Loading...</div>;
+  }
 
-        {bottom.tanks.map((player, index) => (
-          <Grid key={index} item xs={tileCols}>
-            <div
-              className="player-container"
-              onClick={() =>
-                isSelected(player)
-                  ? unselectPlayer(player)
-                  : selectPlayer(player)
-              }>
-              <PlayerAndHero
-                player={player}
-                hero={mostCommonHeroes[player]}
-                selected={isSelected(player)}
-              />
-            </div>
-          </Grid>
-        ))}
-        {bottom.dps.map((player, index) => (
-          <Grid key={index} item xs={tileCols}>
-            <div
-              className="player-container"
-              onClick={() =>
-                isSelected(player)
-                  ? unselectPlayer(player)
-                  : selectPlayer(player)
-              }>
-              <PlayerAndHero
-                player={player}
-                hero={mostCommonHeroes[player]}
-                selected={isSelected(player)}
-              />
-            </div>
-          </Grid>
-        ))}
-        {bottom.supports.map((player, index) => (
-          <Grid key={index} item xs={tileCols}>
-            <div
-              className="player-container"
-              onClick={() =>
-                isSelected(player)
-                  ? unselectPlayer(player)
-                  : selectPlayer(player)
-              }>
-              <PlayerAndHero
-                player={player}
-                hero={mostCommonHeroes[player]}
-                selected={isSelected(player)}
-              />
-            </div>
-          </Grid>
-        ))}
-      </Grid> */}
-  //   </div>
-  // );
+  return (
+    <div className="MapInfo">
+
+    </div>
+  );
 };
 
 export default MapInfo;

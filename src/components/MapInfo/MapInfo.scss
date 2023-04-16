@@ -8,8 +8,7 @@
     background-position-x: center;
     background-size: 100%;
     width: 100%;
-
-    //vertically center content
+    margin-left: -20px;  
 
     justify-content: center;
 
@@ -19,10 +18,8 @@
     //   rgba(0, 0, 0, 0.9)
     // );
     & .txt {
-      margin: 10px;
-      font-size: 50px;
       color: $background;
-      text-shadow: 0 0 10px black;
+      // text-shadow: 0 0 2px black;
       // line-height: 100px;
     }
     & .bottomtext {

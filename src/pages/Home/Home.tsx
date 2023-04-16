@@ -17,6 +17,7 @@ import {useResult} from '../../hooks/useQueries';
 import SplashPage from '../SplashPage/SplashPage';
 import Header from './../../components/Header/Header';
 import MapsList from './../../components/MapsList/MapsList';
+import DebugQueries from '~/components/Debug/DebugQueries';
 
 const Home = () => {
   const [updateCount, setUpdateCount] = React.useState(0);
@@ -25,6 +26,7 @@ const Home = () => {
 
   return (
     <div>
+      <DebugQueries />
       <Header
         refreshCallback={incrementUpdateCount}
         filters={{}}

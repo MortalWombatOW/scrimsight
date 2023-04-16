@@ -20,6 +20,7 @@ export function parseLine(line: string, mapId: number, logSpec: LogSpec): DataAn
   }
   const parsedData: DataRow = [];
   parsedData.push(mapId);
+  parsedData.push(eventType);
 
   for (let i = 2; i < values.length; i++) {
     const fieldSpec = eventSpec.fields[i - 1];

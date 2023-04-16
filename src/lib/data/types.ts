@@ -1,4 +1,4 @@
-import { QueryBuilder } from '~/lib/data/explore';
+import { QueryBuilder } from '~/lib/data/QueryBuilder';
 import { DataAndSpecName, DataRow } from './logging/spec';
 
 type FileUpload = {
