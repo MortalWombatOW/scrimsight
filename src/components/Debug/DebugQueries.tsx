@@ -137,6 +137,7 @@ const DebugQueries = () => {
       node.color = {
         background: ResultCache.hasResults(name) ? '#3c912b' : '#af684c',
       };
+      
       nodes.update(node);
     });
   }, [tick]);

@@ -17,7 +17,7 @@ const MapRow = (props: MapRowProps) => {
   const {mapId, size, click} = props;
   console.log('size:', size);
 
-  const [results, tick] = useQueries(
+  const [results, tick, allLoaded] = useQueries(
     [
       {
         name: 'map_player_stats_' + mapId,
@@ -119,11 +119,7 @@ const MapRow = (props: MapRowProps) => {
   );
 
   console.log('results:', results);
-  if (
-    !results ||
-    !results['map_player_stats_' + mapId] ||
-    !results['map_' + mapId]
-  ) {
+  if (!allLoaded()) {
     return <div>Loading...</div>;
   }
 
@@ -170,7 +166,9 @@ const MapRow = (props: MapRowProps) => {
           <Typography variant={size === 'compact' ? 'subtitle1' : 'h3'}>
             {map['name']}
           </Typography>
-          <Typography variant="subtitle2">{map['Map Name']} ({map['Map Type']})</Typography>
+          <Typography variant="subtitle2">
+            {map['Map Name']} ({map['Map Type']})
+          </Typography>
           <Typography variant="subtitle2">{timestampString}</Typography>
           {/* <Typography variant="body1">{map['Players'].join(', ')}</Typography> */}
         </div>

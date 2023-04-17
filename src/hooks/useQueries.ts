@@ -11,7 +11,7 @@ const useQueries = (
   queries: Query[],
   deps: any[],
   options: UseQueriesOptions = {},
-): [DataRowBySpecName, number, boolean] => {
+): [DataRowBySpecName, number, () => boolean] =>  {
   const [computeTick, setComputeTick] = useState<number>(0);
 
   const nextComputeStep = (name: string) => {
@@ -38,11 +38,9 @@ const useQueries = (
       return acc;
     }, {} as DataRowBySpecName);
 
-  const allLoaded = queries.every((query) =>
-    ResultCache.hasResults(query.name),
-  );
-
-  console. log('queries', queries);
+  const allLoaded = () => {
+    return queries.every((query) => ResultCache.hasResults(query.name));
+  };
 
   return [results, computeTick, allLoaded];
 };
