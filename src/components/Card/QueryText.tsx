@@ -1,9 +1,8 @@
 import React, {useMemo} from 'react';
-import {Box, Card, Typography} from '@mui/material';
+import { Typography} from '@mui/material';
 import './Card.scss';
 import { Query} from '../../lib/data/types';
 import useQueries from '../../hooks/useQueries';
-import { DataRow } from '../../lib/data/logging/spec';
 
 const QueryText = ({
   query,
@@ -13,7 +12,7 @@ const QueryText = ({
 }: {
   query: Query;
   deps: any[];
-  parseResults: (results: DataRow[]) => string | undefined;
+  parseResults: (results: object[]) => string | undefined;
   variant: 'h4' | 'h6' | 'body1';
 }) => {
   const [results, tick] = useQueries([query], deps);

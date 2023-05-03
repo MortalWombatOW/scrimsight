@@ -13,6 +13,7 @@ import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 import useQueries from './hooks/useQueries';
 import routes from './lib/routes';
 import { themeDef } from '~/theme';
+import DebugQueries from '~/components/Debug/DebugQueries';
 
 const theme = createTheme(themeDef);
 
@@ -20,7 +21,7 @@ const App = () => {
 
   return (
     <div>
-      {/* <DebugQueries /> */}
+      <DebugQueries />
       <ThemeProvider theme={theme}>
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>

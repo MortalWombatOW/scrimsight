@@ -1,14 +1,45 @@
 import {DataSpec} from '~/lib/data/logging/spec';
 
-export type Value = {
+export type SimpleValue = {
   field: string;
   table: string;
 };
 
-export type Aggregation = {
-  value: Value;
-  aggregation: 'sum' | 'avg' | 'min' | 'max' | 'count' | 'array';
+export type RenamedValue = {
+  value: SimpleValue;
   as: string;
+};
+
+export type Value = {
+  field: string;
+  table: string;
+  as?: string;
+  function?: string;
+  math?: string;
+};
+
+export type CompoundValue = {
+  left: Value;
+  right: Value;
+  operator: string;
+};
+
+export type Expression = SimpleValue | CompoundValue | RenamedValue;
+
+export type DataSource = {
+  table?: string;
+  isLiteral?: boolean;
+  as?: string;
+};
+
+export type Join = {
+  left: DataSource;
+  right: DataSource;
+  type: 'inner' | 'left' | 'right' | 'full';
+  on: {
+    left: string;
+    right: string;
+  };
 };
 
 export type Filter = {
@@ -23,8 +54,9 @@ export type OrderBy = {
 };
 
 export class QueryBuilder {
-  private select_: (Value | Aggregation)[];
-  private from_: Value[];
+  private select_: Value[];
+  private from_: DataSource;
+  private joins_: Join[];
   private groupBy_?: Value[];
   private filters_?: Filter[];
   private orderBy_: OrderBy[];
@@ -32,7 +64,7 @@ export class QueryBuilder {
   private offset_?: number;
   constructor() {
     this.select_ = [];
-    this.from_ = [];
+    this.joins_ = [];
     this.groupBy_ = [];
     this.filters_ = [];
     this.orderBy_ = [];
@@ -40,30 +72,46 @@ export class QueryBuilder {
     this.offset_ = 0;
   }
 
-  public getSelect(): (Value | Aggregation)[] {
+  public getSelect(): Value[] {
     return this.select_;
   }
 
-  public select(select: (Value | Aggregation)[]): QueryBuilder {
+  public select(select: Value[]): QueryBuilder {
     this.select_ = select;
     return this;
   }
 
-  public getFrom(): Value[] {
+  public getFrom(): DataSource {
     return this.from_;
   }
 
-  public from(from: Value[]): QueryBuilder {
+  public getJoins(): Join[] {
+    return this.joins_;
+  }
+
+  public from(from: DataSource, joins: Join[] = []): QueryBuilder {
     this.from_ = from;
+    this.joins_ = joins;
     return this;
   }
 
   public getGroupBy(): Value[] | undefined {
     return this.groupBy_;
   }
+  public groupBy(groupBy: (Value | string)[] | undefined): QueryBuilder {
+    this.groupBy_ = groupBy?.map((value) => {
+      if (typeof value === 'string') {
+        const val = this.getSelect().find(
+          (select) => select.as === value || select.field === value,
+        ) as Value;
+        const valSansAs = {...val};
+        valSansAs.as = undefined;
+        return valSansAs;
+      }
 
-  public groupBy(groupBy: Value[] | undefined): QueryBuilder {
-    this.groupBy_ = groupBy;
+      return value as Value;
+    });
+
     return this;
   }
 
@@ -103,86 +151,141 @@ export class QueryBuilder {
     return this;
   }
 
-  public addAllFromSpec(spec: DataSpec, on: string) {
-    this.from_.push({table: spec.key, field: on});
+  public addAllFromSpec(spec: DataSpec, onLeft?: string, onRight?: string) {
+    const baseTable = this.getFrom().table;
+
+    // check that if the base table is set, onLeft and onRight are also set
+    if (baseTable && !(onLeft && onRight)) { 
+      throw new Error('base table is set, but onLeft and onRight are not');
+    }
+
+    if (!baseTable) {
+      // use as the base table
+      this.from({table: spec.key});
+    } else {
+      this.joins_.push({
+        left: {table: baseTable},
+        right: {table: spec.key},
+        type: 'inner',
+        on: {left: onLeft!, right: onRight!},
+      });
+    }
     for (const field of spec.fields) {
+      // check if a field with the same name already exists
+      if (
+        this.getSelect().find(
+          (select) => select.field === field.name
+        )
+      ) {
+        console.log(`field ${field.name} already exists in select, skipping`)
+        continue;
+      }
       this.select_.push({table: spec.key, field: field.name});
     }
     return this;
   }
 
   public build(): string {
-    let queryStr = 'SELECT\n';
+    const select = this.getSelectClause();
+    const from = this.getFromClause();
+    const where = this.getWhereClause();
+    const groupBy = this.getGroupByClause();
+    const orderBy = this.getOrderByClause();
+    const limit = this.getLimitClause();
+    const offset = this.getOffsetClause();
+    return `${select} ${from} ${where} ${groupBy} ${orderBy} ${limit} ${offset}`;
+  }
 
-    const metrics = this.getSelect()
-      .map((metric) => {
-        if (metric['aggregation']) {
-          const aggregation = metric as Aggregation;
-          console.log(metric);
-          return `${aggregation.aggregation}(${aggregation.value.table}.[${aggregation.value.field}]) AS [${aggregation.as}]`;
-        } else {
-          const value = metric as Value;
-          return `\t${value.table}.[${value.field}]`;
-        }
-      })
-      .join(',\n');
+  private getSelectClause(): string {
+    return  `SELECT ${this.getSelect()
+      .map((metric) => this.buildMetricString(metric))
+      .join(', ')}`;
+  }
 
-    queryStr += metrics;
-    queryStr += ' FROM ';
+  private buildMetricString(metric: Value): string {
+    return `${this.valueString(metric)}`;
+  }
 
-    if (Array.isArray(this.getFrom())) {
-      queryStr += this.getFrom()[0].table;
-      for (let i = 1; i < this.getFrom().length; i++) {
-        queryStr += `\nJOIN ${this.getFrom()[i].table} ON ${
-          this.getFrom()[i].table
-        }.[${this.getFrom()[i].field}] = ${this.getFrom()[0].table}.[${
-          this.getFrom()[0].field
-        }]`;
-      }
-    } else {
-      queryStr += this.getFrom();
-    }
+  private getFromClause(): string {
+    console.log(this.getJoins());
 
+    const from = this.getFrom().isLiteral ? `?` : this.getFrom().table;
+    const joinClause =
+      this.getJoins().length === 0
+        ? ''
+        : this.getJoins()
+            // .slice(1)
+            .map((table) => {
+              const left = table.left.isLiteral ? '?' : table.left.table;
+              const right = table.right.isLiteral ? '?' : table.right.table;
+              return `JOIN ${right} ON ${left}.[${table.on.left}] = ${right}.[${table.on.right}]`;
+            })
+            .join('\n');
+
+    return `FROM ${from} ${joinClause}`;
+  }
+
+  private getWhereClause(): string {
     if (this.getFilters() && this.getFilters()!.length > 0) {
-      queryStr += '\nWHERE\n';
-      const filters = this.getFilters()!
-        .map(
-          (filter) =>
-            `\t${filter.field.table}.[${filter.field.field}] ${filter.operator} ${filter.value}`,
-        )
-        .join('\nAND ');
-      queryStr += filters;
+      const filters = this.getFilters()!.map(
+        (filter) =>
+          `${this.valueString(filter.field)} ${filter.operator} ${
+            filter.value
+          }`,
+      );
+      return `WHERE ${filters.join(' AND ')}`;
+    } else {
+      return '';
     }
+  }
 
+  private getGroupByClause(): string {
     if (this.getGroupBy() && this.getGroupBy()!.length > 0) {
-      queryStr += '\nGROUP BY\n';
-      const groupBy = this.getGroupBy()!
-        .map((group) => `\t${group.table}.[${group.field}]`)
-        .join(',\n');
-      queryStr += groupBy;
+      const groupBy = this.getGroupBy()!.map((group) =>
+        this.valueString(group),
+      );
+      return `GROUP BY ${groupBy.join(',\n')}`;
+    } else {
+      return '';
     }
+  }
 
+  private getOrderByClause(): string {
     if (this.getOrderBy() && this.getOrderBy().length > 0) {
-      const orderBy = this.getOrderBy()
-        .map(
-          (order) =>
-            `\t${order.value.table}.[${order.value.field}] ${order.order}`,
-        )
-        .join(',\n');
-      queryStr += `\nORDER BY\n${orderBy}`;
+      const orderBy = this.getOrderBy().map(
+        (order) => `${this.valueString(order.value)} ${order.order}`,
+      );
+      return `ORDER BY ${orderBy.join(',\n')}`;
+    } else {
+      return '';
     }
+  }
 
-    const limit = this.getLimit();
-    if (limit) {
-      queryStr += `\nLIMIT ${limit}`;
+  private getLimitClause(): string {
+    if (this.getLimit()) {
+      return `LIMIT ${this.getLimit()}`;
+    } else {
+      return '';
     }
-    const offset = this.getOffset();
-    if (offset) {
-      queryStr += `\nOFFSET ${offset}`;
-    }
+  }
 
-    console.log('queryStr: ', queryStr);
-    console.log(queryStr);
-    return queryStr;
+  private getOffsetClause(): string {
+    if (this.getOffset()) {
+      return `OFFSET ${this.getOffset()}t`;
+    } else {
+      return '';
+    }
+  }
+
+  private valueString(value: Value): string {
+    const hasFunction = value.function && value.function.length > 0;
+    const hasMath = value.math && value.math.length > 0;
+    const hasAlias = value.as && value.as.length > 0;
+
+    return `${hasFunction ? `${value.function}(` : ''}${value.table}.[${
+      value.field
+    }]${hasMath ? ` ${value.math}` : ''}${hasFunction ? ')' : ''}${
+      hasAlias ? ` AS [${value.as}]` : ''
+    }`;
   }
 }

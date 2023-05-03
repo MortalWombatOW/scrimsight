@@ -135,8 +135,8 @@ type GameStateExtractor = (slice: GameStateTimeSlice) => {
 
 type Query = {
   name: string;
-  query: QueryBuilder;
-  deps?: (string | DataRow[])[];
+  query: string;
+  deps?: (string | object[])[];
 };
 
 type Team = {

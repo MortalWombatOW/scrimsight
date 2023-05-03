@@ -61,16 +61,21 @@
     padding: 5px;
     // border-bottom: 5px solid transparentize($color: $highlight, $amount: 1);
     transition: all 0.2s ease;
-    text-align: center;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    // text-align: center;
+
     &:hover {
       cursor: pointer;
       box-shadow: 0 0 5px $mid;
       z-index: 1;
     }
     & img {
-      width: 50px;
-      height: 50px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
+      margin-right: 5px;
     }
 
     & .name {

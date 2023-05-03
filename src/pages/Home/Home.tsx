@@ -26,7 +26,7 @@ const Home = () => {
 
   return (
     <div>
-      <DebugQueries />
+      {/* <DebugQueries /> */}
       <Header
         refreshCallback={incrementUpdateCount}
         filters={{}}

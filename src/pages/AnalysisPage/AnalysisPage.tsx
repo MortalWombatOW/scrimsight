@@ -24,14 +24,14 @@ const buildQueryFromSpec = (dataType: string) => {
         };
       }),
     )
-    .from([{field: dataType, table: dataType}])
+    .from({table: dataType})
     .orderBy([{value: {table: dataType, field: 'id'}, order: 'asc'}]);
 
-  return query;
+  return query.build();
 };
 
 const QueryResultToData = (
-  result: DataRowBySpecName,
+  result: Record<string, object[]>,
   spec: any,
   dataType: string,
 ) => {
@@ -57,7 +57,9 @@ const AnalysisPage = () => {
 
   console.log(buildQueryFromSpec(dataType));
 
-  const result = useQueries(
+  const [{
+    analysis
+  }] = useQueries(
     [
       {
         query: buildQueryFromSpec(dataType),
@@ -67,18 +69,18 @@ const AnalysisPage = () => {
     [dataType],
   );
   console.log('state', state);
-  console.log('result', result);
+  console.log('result', analysis);
   console.log('datatype', dataType);
 
   useEffect(() => {
-    if (result[0]['analysis'] !== undefined) {
-      const datarorbyspecname: DataRowBySpecName = {};
-      datarorbyspecname[dataType] = result[0]['analysis'];
-      const data2 = QueryResultToData(datarorbyspecname, spec, dataType);
+    if (analysis !== undefined) {
+      const datarowbyspecname: Record<string, object[]> = {};
+      datarowbyspecname[dataType] = analysis;
+      const data2 = QueryResultToData(datarowbyspecname, spec, dataType);
       console.log('data', data2);
       setData(data2);
     }
-  }, [result[0]['analysis'] !== undefined, dataType]);
+  }, [analysis !== undefined, dataType]);
   return (
     <div>
       <Header

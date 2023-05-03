@@ -170,10 +170,11 @@ export default class ResultCache {
           `Query ${query.name} - attached database at ${
             Date.now() - timestampStart
           }ms`,
+          query,
         );
         alasql
           .promise(
-            query.query.build(),
+            query.query,
             query.deps?.map((dep) =>
               typeof dep == 'string' ? ResultCache.getValueForKey(dep) : dep,
             ) || [],
@@ -185,6 +186,15 @@ export default class ResultCache {
                 Date.now() - timestampStart
               }ms`,
               res,
+            );
+            callback();
+          })
+          .catch(function (err) {
+            console.error(
+              `Error running query ${query.name} - took ${
+                Date.now() - timestampStart
+              }ms`,
+              err,
             );
             callback();
           });

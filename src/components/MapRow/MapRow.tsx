@@ -21,104 +21,41 @@ const MapRow = (props: MapRowProps) => {
     [
       {
         name: 'map_player_stats_' + mapId,
-        query: new QueryBuilder()
-          .select([
-            {table: 'player_stat', field: 'Map ID'},
-            {table: 'player_stat', field: 'Player Name'},
-            {table: 'player_stat', field: 'Player Team'},
-            {
-              aggregation: 'sum',
-              value: {table: 'player_stat', field: 'Eliminations'},
-              as: 'Eliminations',
-            },
-            {
-              aggregation: 'sum',
-              value: {table: 'player_stat', field: 'Deaths'},
-              as: 'Deaths',
-            },
-            {
-              aggregation: 'sum',
-              value: {table: 'player_stat', field: 'All Damage Dealt'},
-              as: 'All Damage Dealt',
-            },
-            {
-              aggregation: 'sum',
-              value: {table: 'player_stat', field: 'Barrier Damage Dealt'},
-              as: 'Barrier Damage Dealt',
-            },
-            {
-              aggregation: 'sum',
-              value: {table: 'player_stat', field: 'Damage Taken'},
-              as: 'Damage Taken',
-            },
-            {
-              aggregation: 'sum',
-              value: {table: 'player_stat', field: 'Healing Recieved'},
-              as: 'Healing Recieved',
-            },
-          ])
-          .from([
-            {
-              field: 'id',
-              table: 'player_stat',
-            },
-          ])
-          .groupBy([
-            {table: 'player_stat', field: 'Map ID'},
-            {table: 'player_stat', field: 'Player Name'},
-            {table: 'player_stat', field: 'Player Team'},
-          ])
-          .orderBy([
-            {
-              value: {
-                field: 'Map ID',
-                table: 'player_stat',
-              },
-              order: 'asc',
-            },
-          ])
-          .where([
-            {
-              field: {
-                field: 'Map ID',
-                table: 'player_stat',
-              },
-              operator: '=',
-              value: mapId,
-            },
-          ]),
+        query: `select \
+          player_stat.[Map ID], \
+          player_stat.[Player Name], \
+          player_stat.[Player Team], \
+          sum(player_stat.[Eliminations]) as [Eliminations], \
+          sum(player_stat.[Deaths]) as [Deaths], \
+          sum(player_stat.[All Damage Dealt]) as [All Damage Dealt], \
+          sum(player_stat.[Barrier Damage Dealt]) as [Barrier Damage Dealt], \
+          sum(player_stat.[Damage Taken]) as [Damage Taken], \
+          sum(player_stat.[Healing Recieved]) as [Healing Recieved] \
+        from player_stat \
+        where player_stat.[Map ID] = ${mapId} \
+        group by player_stat.[Map ID], player_stat.[Player Name], player_stat.[Player Team] \
+        order by player_stat.[Map ID] asc`,
       },
+
       {
         name: 'map_' + mapId,
-        query: new QueryBuilder()
-
-          .select([
-            {table: 'maps', field: 'fileModified'},
-            {table: 'maps', field: 'name'},
-          ])
-          .from([
-            {
-              field: 'id',
-              table: 'maps',
-            },
-          ])
-          .addAllFromSpec(logSpec['match_start'], 'Map ID')
-          .where([
-            {
-              field: {
-                field: 'id',
-                table: 'maps',
-              },
-              operator: '=',
-              value: mapId,
-            },
-          ]),
+        query: `select \
+          maps.[id] as [Map ID], \
+          maps.[name], \
+          maps.fileModified, \
+          match_start.[Map Name], \
+          match_start.[Map Type], \
+          match_start.[Team 1 Name], \
+          match_start.[Team 2 Name] \
+          from maps \
+          inner join match_start on match_start.[Map ID] = maps.[id] \
+          where maps.[id] = ${mapId}`,
       },
     ],
     [mapId],
   );
 
-  console.log('results:', results);
+  // console.log('results:', results);
   if (!allLoaded()) {
     return <div>Loading...</div>;
   }
@@ -139,7 +76,6 @@ const MapRow = (props: MapRowProps) => {
       <div
         style={{
           gap: '8px',
-
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
@@ -181,7 +117,9 @@ const MapRow = (props: MapRowProps) => {
             }}>
             <Button
               variant="contained"
-              onClick={() => navigate(`/review/${map['id']}`)}>
+              onClick={() => {
+                navigate(`/review/${map['id']}`);
+              }}>
               View
             </Button>
           </div>

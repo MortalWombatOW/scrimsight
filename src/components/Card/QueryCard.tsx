@@ -16,7 +16,7 @@ const QueryCard = ({
   title: string;
   query: Query;
   deps: any[];
-  parseResults: (results: DataRow[]) => number | string;
+  parseResults: (results: object[]) => number | string;
   emphasisLevel: 'low' | 'medium' | 'high';
 }) => {
   const [results, tick] = useQueries([query], deps);

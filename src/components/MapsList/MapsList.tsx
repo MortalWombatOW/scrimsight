@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {DataRow} from '~/lib/data/logging/spec';
 import useQueries, {useQuery, useResult} from '../../hooks/useQueries';
 import {groupMapsByDate} from '../../lib/data/data';
@@ -10,45 +10,39 @@ import MapInfo from '~/components/MapInfo/MapInfo';
 
 type MapsListProps = {
   onLoaded: () => void;
+  onMapSelected: (mapId: number | undefined) => void;
 };
 
-const MapsList = ({onLoaded}: MapsListProps) => {
-  const [results, tick] = useQueries(
+const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
+  const [{
+    MapsList_allMaps: maps,
+  }, tick, allLoaded] = useQueries(
     [
       {
-        name: 'all_maps',
-        query: new QueryBuilder()
-          .select([{table: 'maps', field: 'id'}])
-          .from([
-            {
-              field: 'id',
-              table: 'maps',
-            },
-          ])
-          .groupBy([{table: 'maps', field: 'id'}])
-          .orderBy([
-            {
-              value: {
-                field: 'fileModified',
-                table: 'maps',
-              },
-              order: 'desc',
-            },
-          ]),
+        name: 'MapsList_allMaps',
+        query:`select \
+          maps.[id] as [Map ID] \
+        from maps \
+        order by maps.[fileModified] desc`,
       },
     ],
     [],
   );
 
-  console.log('results:', results, tick);
+  console.log('results:', maps, tick);
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
-  const collapsed = selectedId !== null;
-  if (!results['all_maps']) {
+
+  useEffect(() => {
+    onMapSelected(selectedId === null ? undefined : maps[selectedId]['Map ID']);
+  }, [selectedId]);
+
+  if (!allLoaded()) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'
+    }}>
       <Typography variant="h1">Maps</Typography>
       <div style={{display: 'flex', gap: '8px'}}>
         <Uploader refreshCallback={() => {}} />
@@ -61,27 +55,22 @@ const MapsList = ({onLoaded}: MapsListProps) => {
           display: 'inline-block',
           
         }}>
-        {results['all_maps']
+        {maps
           .filter((map, i) => selectedId === null || i === selectedId)
           .map((map, i) => (
             <div
-              key={map['id']}>
+              key={map['Map ID']}
+              >
               <MapRow
-                key={map['id']}
-                mapId={map['id']}
-                size={i === selectedId ?'compact' : 'full'  }
+                key={map['Map ID']}
+                mapId={map['Map ID']}
+                size={i === selectedId ? 'full' : 'compact'  }
                 click={() => setSelectedId(i === selectedId ? null : i)}
               />
             </div>
           ))}
       </div>
-      {selectedId !== null && (
-        <MapInfo
-          mapId={results['all_maps'][selectedId]['id']}
-          selectedPlayerNames={[]}
-          setSelectedPlayerNames={() => {}}
-        />
-      )}
+      
     </div>
   );
 };

@@ -8,11 +8,20 @@ interface UseQueriesOptions {
 }
 
 const useQueries = (
-  queries: Query[],
+  queriesRaw: Query[],
   deps: any[],
   options: UseQueriesOptions = {},
-): [DataRowBySpecName, number, () => boolean] =>  {
+): [Record<string, object[]>, number, () => boolean] =>  {
   const [computeTick, setComputeTick] = useState<number>(0);
+  const queries = queriesRaw.map((query) => {
+    const rawQuery = query.query;
+    // replace indentation with spaces
+    const queryStr = rawQuery.split(' ').filter((s) => s.length > 0).join(' ');
+    return {
+      ...query,
+      query: queryStr,
+    };  
+  });
 
   const nextComputeStep = (name: string) => {
     console.log('incrementing tick due to change in', name);

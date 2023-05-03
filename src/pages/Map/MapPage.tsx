@@ -114,7 +114,8 @@ const MapPage = () => {
             justifyContent: 'center',
             zIndex: 3,
           }}>
-          <MapsList onLoaded={() => console.log('yay')} />
+          {/* <MapsList onLoaded={() => console.log('yay')} /> */}
+          no map selected
         </div>
       )}
     </div>
