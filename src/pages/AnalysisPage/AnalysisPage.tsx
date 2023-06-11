@@ -13,7 +13,7 @@ import {DataRowBySpecName} from '~/lib/data/logging/spec';
 import {Button} from '@mui/material';
 const PlotlyRenderers = createPlotlyRenderers(Plot);
 
-const buildQueryFromSpec = (dataType: string) => {
+export const buildQueryFromSpec = (dataType: string, mapId?: number) => {
   const spec = logSpec;
   const query = new QueryBuilder()
     .select(
@@ -24,8 +24,19 @@ const buildQueryFromSpec = (dataType: string) => {
         };
       }),
     )
-    .from({table: dataType})
-    .orderBy([{value: {table: dataType, field: 'id'}, order: 'asc'}]);
+    .from({table: dataType});
+
+  if (mapId !== undefined) {
+    query.where([
+      {
+        field: {table: dataType, field: 'Map ID'},
+        operator: '=',
+        value: mapId,
+      },
+    ]);
+  }
+
+  query.orderBy([{value: {table: dataType, field: 'id'}, order: 'asc'}]);
 
   return query.build();
 };
@@ -55,11 +66,7 @@ const AnalysisPage = () => {
   const [data, setData] = React.useState<any[]>([]);
   const [dataType, setDataType] = React.useState<string>('damage');
 
-  console.log(buildQueryFromSpec(dataType));
-
-  const [{
-    analysis
-  }] = useQueries(
+  const [{analysis}] = useQueries(
     [
       {
         query: buildQueryFromSpec(dataType),

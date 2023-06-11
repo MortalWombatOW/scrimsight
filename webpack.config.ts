@@ -16,6 +16,10 @@ const webpackConfig = () => ({
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
     plugins: [new TsconfigPathsPlugin({configFile: './tsconfig.json'})],
+    fallback: {
+      "stream": require.resolve("stream-browserify"),
+      "assert": require.resolve("assert/")
+    },
   },
   output: {
     path: path.join(__dirname, '/build'),

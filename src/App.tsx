@@ -21,7 +21,7 @@ const App = () => {
 
   return (
     <div>
-      <DebugQueries />
+      {/* <DebugQueries /> */}
       <ThemeProvider theme={theme}>
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>

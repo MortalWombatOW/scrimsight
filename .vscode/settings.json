@@ -19,4 +19,6 @@
   "files.eol": "\n",
   "typescript.preferences.importModuleSpecifier": "relative",
   "editor.stickyScroll.enabled": true,
+  "editor.tabCompletion": "on",
+  "diffEditor.codeLens": true,
 }
