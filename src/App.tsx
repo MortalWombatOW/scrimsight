@@ -12,15 +12,14 @@ import {QueryParamProvider} from 'use-query-params';
 import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 import useQueries from './hooks/useQueries';
 import routes from './lib/routes';
-import { themeDef } from '~/theme';
+import {themeDef} from '~/theme';
 import DebugQueries from '~/components/Debug/DebugQueries';
 
 const theme = createTheme(themeDef);
 
 const App = () => {
-
   return (
-    <div>
+    <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
       {/* <DebugQueries /> */}
       <ThemeProvider theme={theme}>
         <BrowserRouter basename="/">

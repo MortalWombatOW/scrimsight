@@ -23,9 +23,8 @@ const Home = () => {
   const [updateCount, setUpdateCount] = React.useState(0);
   const incrementUpdateCount = () => setUpdateCount((prev) => prev + 1);
 
-
   return (
-    <div>
+    <div style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
       {/* <DebugQueries /> */}
       <Header
         refreshCallback={incrementUpdateCount}
@@ -33,9 +32,8 @@ const Home = () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         setFilters={(filters) => {}}
       />
-      <div>
-        <HomeDashboard />
-      </div>
+
+      <HomeDashboard />
     </div>
   );
 };

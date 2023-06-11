@@ -18,9 +18,14 @@ const routes: Route[] = [
     component: SplashPage,
   },
   {
-    path: ['/home'],
+    path: ['/pricing'],
+    component: SplashPage,
+    name: 'Pricing',
+  },
+  {
+    path: ['/dashboard'],
     component: Home,
-    name: 'Home',
+    name: 'Dashboard',
   },
   {
     path: ['/player'],

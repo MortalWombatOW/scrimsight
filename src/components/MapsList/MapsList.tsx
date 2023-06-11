@@ -14,16 +14,13 @@ type MapsListProps = {
 };
 
 const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
-  const [{
-    MapsList_allMaps: maps,
-  }, tick, allLoaded] = useQueries(
+  const [{MapsList_allMaps: maps}, tick, allLoaded] = useQueries(
     [
       {
         name: 'MapsList_allMaps',
-        query:`select \
-          maps.[id] as [Map ID] \
-        from maps \
-        order by maps.[fileModified] desc`,
+        query: `select \
+          match_start.[Map ID] \
+        from match_start`,
       },
     ],
     [],
@@ -41,8 +38,7 @@ const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
   }
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'
-    }}>
+    <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
       <Typography variant="h1">Maps</Typography>
       <div style={{display: 'flex', gap: '8px'}}>
         <Uploader refreshCallback={() => {}} />
@@ -53,24 +49,20 @@ const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
       <div
         style={{
           display: 'inline-block',
-          
         }}>
         {maps
           .filter((map, i) => selectedId === null || i === selectedId)
           .map((map, i) => (
-            <div
-              key={map['Map ID']}
-              >
+            <div key={map['Map ID']}>
               <MapRow
                 key={map['Map ID']}
                 mapId={map['Map ID']}
-                size={i === selectedId ? 'full' : 'compact'  }
+                size={i === selectedId ? 'full' : 'compact'}
                 click={() => setSelectedId(i === selectedId ? null : i)}
               />
             </div>
           ))}
       </div>
-      
     </div>
   );
 };
