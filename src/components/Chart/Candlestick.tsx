@@ -35,24 +35,17 @@ interface CandlestickProps {
 }
 
 export function toPointData(
-  events: Record<string, object[]>,
+  events: object[],
   startTimestamp: number,
   windowLength: number,
+  categoryKey: string,
 ) {
-  const flatEvents = Object.entries(events)
-    .map(([category, events]) => {
-      return events.map((event) => ({
-        category,
-        ...event,
-      }));
-    })
-    .flat()
-    .filter((event) => {
-      return (
-        event['Match Time'] >= startTimestamp &&
-        event['Match Time'] <= startTimestamp + windowLength
-      );
-    });
+  const flatEvents = events.filter((event) => {
+    return (
+      event['Match Time'] >= startTimestamp &&
+      event['Match Time'] <= startTimestamp + windowLength
+    );
+  });
 
   const sortedEvents = flatEvents.sort(
     (a, b) => a['Match Time'] - b['Match Time'],
@@ -171,7 +164,7 @@ export function toPointData(
 
     const type = event['Type'];
     const timestamp = event['Match Time'];
-    const category = event['category'];
+    const category = event[categoryKey];
 
     return [
       {
@@ -193,7 +186,7 @@ export function toPointData(
 }
 
 export function toMetricPeriod(
-  events: Record<string, object[]>,
+  events: object[],
   period_seconds: number,
   topMetric: string,
   bottomMetric: string,
@@ -202,14 +195,12 @@ export function toMetricPeriod(
   startTimestamp: number,
   windowLength: number,
 ) {
-  const flatEvents = Object.values(events)
-    .flat()
-    .filter((event) => {
-      return (
-        event['Match Time'] >= startTimestamp &&
-        event['Match Time'] <= startTimestamp + windowLength
-      );
-    });
+  const flatEvents = events.filter((event) => {
+    return (
+      event['Match Time'] >= startTimestamp &&
+      event['Match Time'] <= startTimestamp + windowLength
+    );
+  });
 
   const sortedEvents = flatEvents.sort(
     (a, b) => a['Match Time'] - b['Match Time'],
@@ -305,7 +296,6 @@ export function toMetricPeriod(
     return Math.abs(b.value - a.value);
   });
 
-  const currTimestamp = 0;
   for (let i = 0; i < currentPeriods.length; i++) {
     const period = currentPeriods[i];
     period.description = `(${period.category}, ${period.subcategory}) ${period.value} ${period.metric} at ${period.startTimestamp}`;
@@ -324,23 +314,14 @@ export function toMetricPeriod(
         prevPeriodWithSameCategoryList[
           prevPeriodWithSameCategoryList.length - 1
         ];
-      console.log(
-        'prevPeriodWithSameCategory val',
-        prevPeriodWithSameCategory.value,
-      );
+
       period.base =
         prevPeriodWithSameCategory.value +
         (prevPeriodWithSameCategory.base || 0);
     }
-
-    // if (period.startTimestamp > currTimestamp) {
-    //   period.base = currentPeriods[i - 1].value;
-    // }
   }
 
   const metricPeriods = Object.values(currentPeriods).flat();
-
-  console.log('metricPeriods', metricPeriods);
 
   return metricPeriods;
 }

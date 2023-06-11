@@ -14,7 +14,7 @@ type MapsListProps = {
 };
 
 const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
-  const [{MapsList_allMaps: maps}, tick, allLoaded] = useQueries(
+  const [{MapsList_allMaps: maps}, tick, loaded] = useQueries(
     [
       {
         name: 'MapsList_allMaps',
@@ -33,7 +33,7 @@ const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
     onMapSelected(selectedId === null ? undefined : maps[selectedId]['Map ID']);
   }, [selectedId]);
 
-  if (!allLoaded()) {
+  if (!loaded) {
     return <div>Loading...</div>;
   }
 
@@ -57,7 +57,7 @@ const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
               <MapRow
                 key={map['Map ID']}
                 mapId={map['Map ID']}
-                size={i === selectedId ? 'full' : 'compact'}
+                size={'compact'}
                 click={() => setSelectedId(i === selectedId ? null : i)}
               />
             </div>

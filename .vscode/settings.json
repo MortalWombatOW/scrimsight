@@ -1,21 +1,10 @@
 {
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "eslint.workingDirectories": [
-    {
-      "mode": "auto"
-    }
-  ],
   "editor.codeActionsOnSave": {
-    // "source.fixAll.eslint": true
-    "eslint.executeAutofix": true
+    "source.fixAll": true
+    // "eslint.executeAutofix": true
   },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "html",
-    "typescriptreact"
-  ],
   "files.eol": "\n",
   "typescript.preferences.importModuleSpecifier": "relative",
   "editor.stickyScroll.enabled": true,

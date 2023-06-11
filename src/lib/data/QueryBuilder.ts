@@ -207,7 +207,6 @@ export class QueryBuilder {
   }
 
   private getFromClause(): string {
-    console.log(this.getJoins());
 
     const from = this.getFrom().isLiteral ? `?` : this.getFrom().table;
     const joinClause =

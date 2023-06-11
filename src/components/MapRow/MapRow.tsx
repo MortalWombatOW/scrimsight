@@ -17,7 +17,7 @@ const MapRow = (props: MapRowProps) => {
   const {mapId, size, click} = props;
   console.log('size:', size);
 
-  const [results, tick, allLoaded] = useQueries(
+  const [results, tick, loaded] = useQueries(
     [
       {
         name: 'map_player_stats_' + mapId,
@@ -56,7 +56,7 @@ const MapRow = (props: MapRowProps) => {
   );
 
   // console.log('results:', results);
-  if (!allLoaded()) {
+  if (!loaded) {
     return <div>Loading...</div>;
   }
 

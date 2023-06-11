@@ -50,6 +50,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-typescript": "^7.0.0-alpha.19",
+    "cache-hook": "^0.1.0",
     "camera-controls": "^1.37.4",
     "chart.heatmap.js": "0.0.1-alpha",
     "chart.js": "^3.9.1",

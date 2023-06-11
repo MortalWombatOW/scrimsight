@@ -1,22 +1,12 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CircularProgress,
-  Typography,
-} from '@mui/material';
-import React, {useState} from 'react';
-import MapsList from '~/components/MapsList/MapsList';
-import Uploader from '~/components/Uploader/Uploader';
-import useWindowSize from '../../hooks/useWindowSize';
-import Globals from '../../lib/data/globals';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import React, {useState} from 'react';
+import MapsList from '~/components/MapsList/MapsList';
+import useWindowSize from '../../hooks/useWindowSize';
+import Globals from '../../lib/data/globals';
 
-import TeamDisplay from './TeamDisplay';
 import MapInfo from '~/components/MapInfo/MapInfo';
+import PlayByPlay from '../PlayByPlay/PlayByPlay';
 
 const HomeDashboard = () => {
   const {width} = useWindowSize();
@@ -50,12 +40,13 @@ const HomeDashboard = () => {
           gap: '16px',
           marginBottom: '16px',
         }}>
+        <div style={{flexGrow: 1}}></div>
         <ToggleButtonGroup
           value={contentComponent}
           exclusive
           onChange={(e, value) => setContentComponent(value)}
-          aria-label="text alignment"
-          style={{alignSelf: 'center'}}>
+          aria-label="main content type"
+          fullWidth>
           {Object.keys(contentComponents).map((component) => (
             <ToggleButton
               key={component}
@@ -66,14 +57,19 @@ const HomeDashboard = () => {
           ))}
         </ToggleButtonGroup>
       </div>
-      <div style={{flexGrow: 1, border: '1px solid red'}}>test</div>
-      {selectedId && (
-        <MapInfo
-          mapId={selectedId}
-          selectedPlayerNames={[]}
-          setSelectedPlayerNames={() => {}}
-        />
-      )}
+      <div style={{flexGrow: 1, border: '1px solid red'}}>
+        {selectedId && contentComponent === 'timeline' && (
+          <PlayByPlay mapId={selectedId} onLoaded={() => {}} />
+        )}
+        {selectedId && contentComponent === 'stats' && (
+          <MapInfo
+            mapId={selectedId}
+            selectedPlayerNames={[]}
+            setSelectedPlayerNames={() => {}}
+          />
+        )}
+      </div>
+
       <div style={{display: 'flex', flexDirection: 'row', gap: '16px'}}>
         <MapsList
           onLoaded={() => {}}

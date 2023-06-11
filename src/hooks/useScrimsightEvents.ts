@@ -34,6 +34,8 @@ const useScrimsightEvents = (mapId: number): [object[], boolean] => {
       ScrimsightEvents_ultimate_end: ultimateEnd,
       ScrimsightEvents_ultimate_start: ultimateStart,
     },
+    i,
+    isLoaded,
   ] = useQueries(
     [
       {
@@ -47,107 +49,107 @@ const useScrimsightEvents = (mapId: number): [object[], boolean] => {
         order by player_stat.[Player Team] asc, player_stat.[Player Name] asc`,
       },
       {
-        name: 'ScrimsightEvents_damage',
+        name: `ScrimsightEvents_damage_${mapId}`,
         query: buildQueryFromSpec('damage', mapId),
       },
       {
-        name: 'ScrimsightEvents_healing',
+        name: `ScrimsightEvents_healing_${mapId}`,
         query: buildQueryFromSpec('healing', mapId),
       },
       {
-        name: 'ScrimsightEvents_kill',
+        name: `ScrimsightEvents_kill_${mapId}`,
         query: buildQueryFromSpec('kill', mapId),
       },
       {
-        name: 'ScrimsightEvents_ability_1_used',
+        name: `ScrimsightEvents_ability_1_used_${mapId}`,
         query: buildQueryFromSpec('ability_1_used', mapId),
       },
       {
-        name: 'ScrimsightEvents_ability_2_used',
+        name: `ScrimsightEvents_ability_2_used_${mapId}`,
         query: buildQueryFromSpec('ability_2_used', mapId),
       },
       {
-        name: 'ScrimsightEvents_defensive_assist',
+        name: `ScrimsightEvents_defensive_assist_${mapId}`,
         query: buildQueryFromSpec('defensive_assist', mapId),
       },
       {
-        name: 'ScrimsightEvents_dva_remech',
+        name: `ScrimsightEvents_dva_remech_${mapId}`,
         query: buildQueryFromSpec('dva_remech', mapId),
       },
       {
-        name: 'ScrimsightEvents_dva_demech',
+        name: `ScrimsightEvents_dva_demech_${mapId}`,
         query: buildQueryFromSpec('dva_demech', mapId),
       },
       {
-        name: 'ScrimsightEvents_echo_duplication_start',
+        name: `ScrimsightEvents_echo_duplication_start_${mapId}`,
         query: buildQueryFromSpec('echo_duplicate_start', mapId),
       },
       {
-        name: 'ScrimsightEvents_echo_duplication_end',
+        name: `ScrimsightEvents_echo_duplication_end_${mapId}`,
         query: buildQueryFromSpec('echo_duplicate_end', mapId),
       },
       {
-        name: 'ScrimsightEvents_hero_spawn',
+        name: `ScrimsightEvents_hero_spawn_${mapId}`,
         query: buildQueryFromSpec('hero_spawn', mapId),
       },
       {
-        name: 'ScrimsightEvents_hero_swap',
+        name: `ScrimsightEvents_hero_swap_${mapId}`,
         query: buildQueryFromSpec('hero_swap', mapId),
       },
       {
-        name: 'ScrimsightEvents_match_start',
+        name: `ScrimsightEvents_match_start_${mapId}`,
         query: buildQueryFromSpec('match_start', mapId),
       },
       {
-        name: 'ScrimsightEvents_match_end',
+        name: `ScrimsightEvents_match_end_${mapId}`,
         query: buildQueryFromSpec('match_end', mapId),
       },
       {
-        name: 'ScrimsightEvents_mercy_res',
+        name: `ScrimsightEvents_mercy_res_${mapId}`,
         query: buildQueryFromSpec('mercy_rez', mapId),
       },
       {
-        name: 'ScrimsightEvents_objective_captured',
+        name: `ScrimsightEvents_objective_captured_${mapId}`,
         query: buildQueryFromSpec('objective_captured', mapId),
       },
       {
-        name: 'ScrimsightEvents_offensive_assist',
+        name: `ScrimsightEvents_offensive_assist_${mapId}`,
         query: buildQueryFromSpec('offensive_assist', mapId),
       },
       {
-        name: 'ScrimsightEvents_payload_progress',
+        name: `ScrimsightEvents_payload_progress_${mapId}`,
         query: buildQueryFromSpec('payload_progress', mapId),
       },
       {
-        name: 'ScrimsightEvents_point_progress',
+        name: `ScrimsightEvents_point_progress_${mapId}`,
         query: buildQueryFromSpec('point_progress', mapId),
       },
       {
-        name: 'ScrimsightEvents_remech_charged',
+        name: `ScrimsightEvents_remech_charged_${mapId}`,
         query: buildQueryFromSpec('remech_charged', mapId),
       },
       {
-        name: 'ScrimsightEvents_round_start',
+        name: `ScrimsightEvents_round_start_${mapId}`,
         query: buildQueryFromSpec('round_start', mapId),
       },
       {
-        name: 'ScrimsightEvents_round_end',
+        name: `ScrimsightEvents_round_end_${mapId}`,
         query: buildQueryFromSpec('round_end', mapId),
       },
       {
-        name: 'ScrimsightEvents_setup_complete',
+        name: `ScrimsightEvents_setup_complete_${mapId}`,
         query: buildQueryFromSpec('setup_complete', mapId),
       },
       {
-        name: 'ScrimsightEvents_ultimate_charged',
+        name: `ScrimsightEvents_ultimate_charged_${mapId}`,
         query: buildQueryFromSpec('ultimate_charged', mapId),
       },
       {
-        name: 'ScrimsightEvents_ultimate_end',
+        name: `ScrimsightEvents_ultimate_end_${mapId}`,
         query: buildQueryFromSpec('ultimate_end', mapId),
       },
       {
-        name: 'ScrimsightEvents_ultimate_start',
+        name: `ScrimsightEvents_ultimate_start_${mapId}`,
         query: buildQueryFromSpec('ultimate_start', mapId),
       },
     ],

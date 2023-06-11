@@ -1,25 +1,22 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import './PlayByPlay.scss';
-import useQueries, {useQuery, useResult} from '../../hooks/useQueries';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import useWindowSize from '../../hooks/useWindowSize';
+import './PlayByPlay.scss';
 // import ThreeRenderer from '../ThreeRenderer/ThreeRenderer';
-import {buildQueryFromSpec} from '~/pages/AnalysisPage/AnalysisPage';
 import Candlestick, {
   toMetricPeriod,
   toPointData,
 } from '~/components/Chart/Candlestick';
 import useScrimsightEvents from '../../hooks/useScrimsightEvents';
 
-// displays players grouped by team. each player has an associated value that scales the bar to the right of their name. all data is passed in.
-const PlayerPanel = ({playerTimeData}) => {
-  // const longestNameLength = players.reduce((acc, player) => {
-  //   const name = player['Player Name'] + player['Player Team'];
-  //   return name.length > acc ? name.length : acc;
-  // }, 0);
-  // const width = longestNameLength * 10;
-
-  console.log('playerTimeData', playerTimeData);
-
+const Timeline = ({
+  events,
+  width,
+  height,
+}: {
+  events: object[];
+  width: number;
+  height: number;
+}) => {
   const [categoryKey, setCategoryKey] = useState('Player Name');
   const [subcategoryKey, setSubcategoryKey] = useState('Target Name');
   const validCategories = [
@@ -44,7 +41,7 @@ const PlayerPanel = ({playerTimeData}) => {
   const candlestickData = useMemo(
     () =>
       toMetricPeriod(
-        playerTimeData,
+        events,
         period,
         topMetric,
         bottomMetric,
@@ -54,7 +51,7 @@ const PlayerPanel = ({playerTimeData}) => {
         windowLength,
       ),
     [
-      playerTimeData,
+      events,
       period,
       categoryKey,
       subcategoryKey,
@@ -66,13 +63,18 @@ const PlayerPanel = ({playerTimeData}) => {
   );
 
   const pointData = useMemo(
-    () => toPointData(playerTimeData, startTime, windowLength),
-    [playerTimeData, startTime, windowLength],
+    () => toPointData(events, startTime, windowLength, categoryKey),
+    [events, startTime, windowLength, categoryKey],
   );
-  const {width, height} = useWindowSize();
   // console.log('candlestickData', candlestickData);
   return (
-    <div style={{display: 'flex', flexDirection: 'column', paddingLeft: 10}}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        paddingLeft: 10,
+        flexGrow: 1,
+      }}>
       <div
         style={{
           display: 'flex',
@@ -148,71 +150,9 @@ const PlayerPanel = ({playerTimeData}) => {
         metricName="Health change"
         barData={candlestickData}
         pointData={pointData}
-        width={width - 200}
-        height={height - 200}
+        width={width}
+        height={height}
       />
-      {/* {players.map((player, i) => {
-      
-
-        const playerData = playerTimeData[player['Player Name']].map((event) => {
-          return {
-            x: [event['Match Time']],
-            y: [event['Event Damage']],
-            type: 'scatter',
-            mode: 'markers',
-            marker: { color: 'red' },
-        };
-        });
-
-
-        return (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              position: 'relative',
-              height: '36px',
-              lineHeight: '36px',
-            }}
-            key={i}
-          >
-            <div style={{ width, textAlign: 'left' }}>
-              {player['Player Team']} {player['Player Name']}
-            </div>
-            <div
-              style={{
-                width: '150px',
-                height: '100%',
-                borderRight: '1px solid #32466d',
-              }}
-            >
-              <div
-                style={{
-                  width: `${playerValues[player['Player Name']]}%`,
-                  height: '100%',
-                  backgroundColor: 'red',
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                }}
-              >
-                {playerValues[player['Player Name']]}
-              </div>
-            </div>
-            <div>
-              <Candlestick
-                metricName="Damage"
-                slice={player['Player Name']}
-                data={playerData}
-                width={500}
-                height={100}
-              />
-
-            </div>
-          </div>
-        );
-      })} */}
     </div>
   );
 };
@@ -225,49 +165,34 @@ const PlayByPlay = ({
   onLoaded: () => void;
 }) => {
   const [events, loaded] = useScrimsightEvents(mapId);
+  const [width, setWidth] = useState(100);
+  const [height, setHeight] = useState(100);
+  const ref = useRef(null);
 
   useEffect(() => {
     if (loaded) {
-      console.log('loaded');
       onLoaded();
     }
   }, [loaded]);
 
-  console.log('events', events);
-  const {width, height} = useWindowSize();
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((event) => {
+      // Depending on the layout, you may need to swap inlineSize with blockSize
+      // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/contentBoxSize
+      setWidth(event[0].contentBoxSize[0].inlineSize);
+      setHeight(event[0].contentBoxSize[0].blockSize);
+    });
 
-  const playerTimeData = useMemo(() => {
-    if (!loaded) {
-      return {};
+    if (ref && ref.current) {
+      resizeObserver.observe(ref.current);
     }
-    events!.reduce<Record<string, any[]>>((acc, event) => {
-      const player = event['Player Name'];
-      if (!acc[player]) {
-        acc[player] = [];
-      }
-      acc[player].push(event);
-      return acc;
-    }, {});
-  }, [loaded]);
-
-  console.log('playerTimeData', playerTimeData);
+  });
 
   return (
     <div
-      className="PlayByPlay"
-      style={{
-        height: height - 70,
-      }}>
-      {/* <ThreeRenderer
-        entities={entities}
-        width={width}
-        height={height - 70}
-        onLoaded={onLoaded}
-      /> */}
-      <div style={{display: 'flex', flexDirection: 'row'}}>
-        <PlayerPanel playerTimeData={playerTimeData} />
-        {/* <Timeline events={events} currentTime={currentTime} /> */}
-      </div>
+      ref={ref}
+      style={{display: 'flex', flexDirection: 'column', flexGrow: 1}}>
+      <Timeline events={events} width={width} height={height} />
     </div>
   );
 };

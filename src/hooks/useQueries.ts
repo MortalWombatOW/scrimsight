@@ -1,44 +1,51 @@
 import {useEffect, useLayoutEffect, useState} from 'react';
-import { DataRowBySpecName } from '../lib/data/logging/spec';
+import {DataRowBySpecName} from '../lib/data/logging/spec';
 import ResultCache from '../lib/data/ResultCache';
 import {Query} from '../lib/data/types';
-
+import createCache from 'cache-hook';
 interface UseQueriesOptions {
   runFirst?: boolean;
 }
+
+const cache = createCache((queries: Query[]) => {
+  ResultCache.runQueries(queries, () => {});
+});
 
 const useQueries = (
   queriesRaw: Query[],
   deps: any[],
   options: UseQueriesOptions = {},
-): [Record<string, object[]>, number, () => boolean] =>  {
+): [Record<string, object[]>, number, boolean] => {
   const [computeTick, setComputeTick] = useState<number>(0);
+  // Map through queriesRaw and modify each query
   const queries = queriesRaw.map((query) => {
+    // Extract the raw query from the current query object
     const rawQuery = query.query;
-    // replace indentation with spaces
-    const queryStr = rawQuery.split(' ').filter((s) => s.length > 0).join(' ');
+    // Remove unnecessary whitespaces from the raw query
+    const queryStr = rawQuery
+      .split(' ')
+      .filter((s) => s.length > 0)
+      .join(' ');
+    // Return a new query object with the modified query string
     return {
       ...query,
       query: queryStr,
-    };  
+    };
   });
 
-  const nextComputeStep = (name: string) => {
-    console.log('incrementing tick due to change in', name);
-    console.log('nextComputeStep', computeTick);
-    setComputeTick((computeTick) => computeTick + 1);
-  };
+  // const nextComputeStep = (name: string) => {
+  //   console.log('incrementing tick due to change in', name);
+  //   console.log('nextComputeStep', computeTick);
+  //   setComputeTick((computeTick) => computeTick + 1);
+  // };
 
-  // useEffect(() => {
-  //   nextComputeStep();
-  // }, deps);
+  // // useEffect(() => {
+  // //   nextComputeStep();
+  // // }, deps);
 
-  const runFirst = options.runFirst ?? false;
-  const effectFn = runFirst ? useLayoutEffect : useEffect;
+  // const runFirst = options.runFirst ?? false;
 
-  effectFn(() => {
-    ResultCache.runQueries(queries, nextComputeStep);
-  }, deps);
+  cache(queries);
 
   const results = queries
     .filter((query) => ResultCache.hasResults(query.name))
@@ -51,7 +58,15 @@ const useQueries = (
     return queries.every((query) => ResultCache.hasResults(query.name));
   };
 
-  return [results, computeTick, allLoaded];
+  const [loaded, setLoaded] = useState(allLoaded());
+
+  useEffect(() => {
+    if (allLoaded()) {
+      setLoaded(true);
+    }
+  }, [computeTick]);
+
+  return [results, computeTick, loaded];
 };
 
 export const useQuery = <T>(
@@ -62,7 +77,7 @@ export const useQuery = <T>(
   const [results, computeTick] = useQueries([query], deps, options);
   // coerce to T[] because we know the query will return an array of T
   // will throw an error if the query returns something else
-  return [results[query.name] as unknown as T[], computeTick];
+  return [(results[query.name] as unknown) as T[], computeTick];
 };
 
 // just get existing results, don't start a query if it doesn't exist
@@ -87,7 +102,7 @@ export const useResults = (
 
 export const useResult = <T>(queryName: string): [T[], number] => {
   const [results, computeTick] = useResults([queryName]);
-  return [results[queryName] as unknown as T[], computeTick];
+  return [(results[queryName] as unknown) as T[], computeTick];
 };
 
 export default useQueries;
