@@ -15,7 +15,6 @@ interface MapRowProps {
 const MapRow = (props: MapRowProps) => {
   const navigate = useNavigate();
   const {mapId, size, click} = props;
-  console.log('size:', size);
 
   const [results, tick, loaded] = useQueries(
     [
@@ -60,24 +59,16 @@ const MapRow = (props: MapRowProps) => {
     return <div>Loading...</div>;
   }
 
-  const playerStats = results['map_player_stats_' + mapId];
   const map = results['map_' + mapId][0];
 
   const timestampString = new Date(map['fileModified']).toLocaleString();
   // const {top, bottom} = getTeamInfoForMap(map);
   return (
-    <div
-      onClickCapture={() => click()}
-      style={{
-        display: 'inline-block',
-        borderBottom: '1px solid #ccc',
-        padding: '8px',
-      }}>
+    <div onClickCapture={() => click()}>
       <div
         style={{
           gap: '8px',
           display: 'flex',
-          flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
@@ -97,7 +88,7 @@ const MapRow = (props: MapRowProps) => {
             display: 'flex',
             flexDirection: 'column',
             gap: '4px',
-            padding: '8px',
+            marginRight: '8px',
           }}>
           <Typography variant={size === 'compact' ? 'subtitle1' : 'h3'}>
             {map['name']}

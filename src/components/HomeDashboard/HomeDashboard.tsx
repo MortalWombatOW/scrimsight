@@ -34,10 +34,18 @@ const HomeDashboard = () => {
         flexDirection: 'column',
       }}>
       <div
+        style={{display: 'flex', flexDirection: 'row', marginBottom: '16px'}}>
+        <MapsList
+          onLoaded={() => {}}
+          onMapSelected={(mapId) => {
+            setSelectedId(mapId);
+          }}
+        />
+      </div>
+      <div
         style={{
           display: 'flex',
           flexDirection: 'row',
-          gap: '16px',
           marginBottom: '16px',
         }}>
         <div style={{flexGrow: 1}}></div>
@@ -68,15 +76,6 @@ const HomeDashboard = () => {
             setSelectedPlayerNames={() => {}}
           />
         )}
-      </div>
-
-      <div style={{display: 'flex', flexDirection: 'row', gap: '16px'}}>
-        <MapsList
-          onLoaded={() => {}}
-          onMapSelected={(mapId) => {
-            setSelectedId(mapId);
-          }}
-        />
       </div>
     </div>
   );

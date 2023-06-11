@@ -7,9 +7,11 @@ interface UseQueriesOptions {
   runFirst?: boolean;
 }
 
-const cache = createCache((queries: Query[]) => {
-  ResultCache.runQueries(queries, () => {});
-});
+// const cache = createCache((queries: Query[]) => {
+//   ResultCache.runQueries(queries, (query) => {
+//     console.log(' query done', query);
+//   });
+// });
 
 const useQueries = (
   queriesRaw: Query[],
@@ -33,11 +35,17 @@ const useQueries = (
     };
   });
 
-  // const nextComputeStep = (name: string) => {
-  //   console.log('incrementing tick due to change in', name);
-  //   console.log('nextComputeStep', computeTick);
-  //   setComputeTick((computeTick) => computeTick + 1);
-  // };
+  const nextComputeStep = (name: string) => {
+    setComputeTick((computeTick) => {
+      return computeTick + 1;
+    });
+  };
+
+  useEffect(() => {
+    ResultCache.runQueries(queries, (query) => {
+      nextComputeStep(query);
+    });
+  }, []);
 
   // // useEffect(() => {
   // //   nextComputeStep();
@@ -45,7 +53,7 @@ const useQueries = (
 
   // const runFirst = options.runFirst ?? false;
 
-  cache(queries);
+  // cache(queries);
 
   const results = queries
     .filter((query) => ResultCache.hasResults(query.name))
@@ -55,14 +63,23 @@ const useQueries = (
     }, {} as DataRowBySpecName);
 
   const allLoaded = () => {
-    return queries.every((query) => ResultCache.hasResults(query.name));
+    return queries.every((query) => {
+      // console.log(
+      //   'checking if query has results:',
+      //   query.name,
+      //   ResultCache.hasResults(query.name),
+      // );
+      return ResultCache.hasResults(query.name);
+    });
   };
 
-  const [loaded, setLoaded] = useState(allLoaded());
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (allLoaded()) {
+    console.log('computeTick changed to:', computeTick);
+    if (allLoaded() && !loaded) {
       setLoaded(true);
+      console.log('Loaded state set to true.');
     }
   }, [computeTick]);
 

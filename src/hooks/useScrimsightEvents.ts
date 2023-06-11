@@ -3,40 +3,7 @@ import {buildQueryFromSpec} from '../pages/AnalysisPage/AnalysisPage';
 import useQueries from './useQueries';
 
 const useScrimsightEvents = (mapId: number): [object[], boolean] => {
-  const [loaded, setLoaded] = useState(false);
-  const [
-    {
-      ScrimsightEvents_players: players,
-      ScrimsightEvents_damage: damage,
-      ScrimsightEvents_healing: healing,
-      ScrimsightEvents_kill: kill,
-      ScrimsightEvents_ability_1_used: ability1,
-      ScrimsightEvents_ability_2_used: ability2,
-      ScrimsightEvents_defensive_assist: defensiveAssist,
-      ScrimsightEvents_dva_remech: dvaRemech,
-      ScrimsightEvents_dva_demech: dvaDemech,
-      ScrimsightEvents_echo_duplication_start: echoDuplicationStart,
-      ScrimsightEvents_echo_duplication_end: echoDuplicationEnd,
-      ScrimsightEvents_hero_spawn: heroSpawn,
-      ScrimsightEvents_hero_swap: heroSwap,
-      ScrimsightEvents_match_start: matchStart,
-      ScrimsightEvents_match_end: matchEnd,
-      ScrimsightEvents_mercy_res: mercyRes,
-      ScrimsightEvents_objective_captured: objectiveCaptured,
-      ScrimsightEvents_offensive_assist: offensiveAssist,
-      ScrimsightEvents_payload_progress: payloadProgress,
-      ScrimsightEvents_point_progress: pointProgress,
-      ScrimsightEvents_remech_charged: remechCharged,
-      ScrimsightEvents_round_start: roundStart,
-      ScrimsightEvents_round_end: roundEnd,
-      ScrimsightEvents_setup_complete: setupComplete,
-      ScrimsightEvents_ultimate_charged: ultimateCharged,
-      ScrimsightEvents_ultimate_end: ultimateEnd,
-      ScrimsightEvents_ultimate_start: ultimateStart,
-    },
-    i,
-    isLoaded,
-  ] = useQueries(
+  const [results, i, loaded] = useQueries(
     [
       {
         name: 'ScrimsightEvents_players',
@@ -156,67 +123,35 @@ const useScrimsightEvents = (mapId: number): [object[], boolean] => {
     [mapId],
   );
 
-  useEffect(() => {
-    if (
-      damage &&
-      healing &&
-      kill &&
-      ability1 &&
-      ability2 &&
-      players &&
-      defensiveAssist &&
-      dvaRemech &&
-      dvaDemech &&
-      echoDuplicationStart &&
-      echoDuplicationEnd &&
-      heroSpawn &&
-      heroSwap &&
-      matchStart &&
-      matchEnd &&
-      mercyRes &&
-      objectiveCaptured &&
-      offensiveAssist &&
-      payloadProgress &&
-      pointProgress &&
-      remechCharged &&
-      roundStart &&
-      roundEnd &&
-      setupComplete &&
-      ultimateCharged &&
-      ultimateEnd &&
-      ultimateStart
-    ) {
-      setLoaded(true);
-    }
-  }, [
-    damage,
-    healing,
-    kill,
-    ability1,
-    ability2,
-    players,
-    defensiveAssist,
-    dvaRemech,
-    dvaDemech,
-    echoDuplicationStart,
-    echoDuplicationEnd,
-    heroSpawn,
-    heroSwap,
-    matchStart,
-    matchEnd,
-    mercyRes,
-    objectiveCaptured,
-    offensiveAssist,
-    payloadProgress,
-    pointProgress,
-    remechCharged,
-    roundStart,
-    roundEnd,
-    setupComplete,
-    ultimateCharged,
-    ultimateEnd,
-    ultimateStart,
-  ]);
+  const damage = results['ScrimsightEvents_damage_' + mapId];
+  const healing = results['ScrimsightEvents_healing_' + mapId];
+  const kill = results['ScrimsightEvents_kill_' + mapId];
+  const ability1 = results['ScrimsightEvents_ability_1_used_' + mapId];
+  const ability2 = results['ScrimsightEvents_ability_2_used_' + mapId];
+  const defensiveAssist = results['ScrimsightEvents_defensive_assist_' + mapId];
+  const dvaRemech = results['ScrimsightEvents_dva_remech_' + mapId];
+  const dvaDemech = results['ScrimsightEvents_dva_demech_' + mapId];
+  const echoDuplicationStart =
+    results['ScrimsightEvents_echo_duplication_start_' + mapId];
+  const echoDuplicationEnd =
+    results['ScrimsightEvents_echo_duplication_end_' + mapId];
+  const heroSpawn = results['ScrimsightEvents_hero_spawn_' + mapId];
+  const heroSwap = results['ScrimsightEvents_hero_swap_' + mapId];
+  const matchStart = results['ScrimsightEvents_match_start_' + mapId];
+  const matchEnd = results['ScrimsightEvents_match_end_' + mapId];
+  const mercyRes = results['ScrimsightEvents_mercy_res_' + mapId];
+  const objectiveCaptured =
+    results['ScrimsightEvents_objective_captured_' + mapId];
+  const offensiveAssist = results['ScrimsightEvents_offensive_assist_' + mapId];
+  const payloadProgress = results['ScrimsightEvents_payload_progress_' + mapId];
+  const pointProgress = results['ScrimsightEvents_point_progress_' + mapId];
+  const remechCharged = results['ScrimsightEvents_remech_charged_' + mapId];
+  const roundStart = results['ScrimsightEvents_round_start_' + mapId];
+  const roundEnd = results['ScrimsightEvents_round_end_' + mapId];
+  const setupComplete = results['ScrimsightEvents_setup_complete_' + mapId];
+  const ultimateCharged = results['ScrimsightEvents_ultimate_charged_' + mapId];
+  const ultimateEnd = results['ScrimsightEvents_ultimate_end_' + mapId];
+  const ultimateStart = results['ScrimsightEvents_ultimate_start_' + mapId];
 
   const events: any[] = useMemo(() => {
     const evts: any[] = [];
@@ -224,6 +159,9 @@ const useScrimsightEvents = (mapId: number): [object[], boolean] => {
     if (!loaded) {
       return evts;
     }
+
+    // console.log('loaded', loaded, damage, healing, kill);
+
     damage.forEach((event) => {
       evts.push({
         ...event,

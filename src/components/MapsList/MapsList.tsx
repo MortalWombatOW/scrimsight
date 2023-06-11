@@ -26,7 +26,7 @@ const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
     [],
   );
 
-  console.log('results:', maps, tick);
+  console.log('results:', maps, tick, loaded);
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-      <Typography variant="h1">Maps</Typography>
+      <Typography variant="h3">Your Maps</Typography>
       <div style={{display: 'flex', gap: '8px'}}>
         <Uploader refreshCallback={() => {}} />
         <Button variant="contained" color="secondary">
@@ -53,14 +53,19 @@ const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
         {maps
           .filter((map, i) => selectedId === null || i === selectedId)
           .map((map, i) => (
-            <div key={map['Map ID']}>
+            <Button
+              key={map['Map ID']}
+              variant="outlined"
+              style={{
+                padding: '0px',
+              }}>
               <MapRow
                 key={map['Map ID']}
                 mapId={map['Map ID']}
                 size={'compact'}
                 click={() => setSelectedId(i === selectedId ? null : i)}
               />
-            </div>
+            </Button>
           ))}
       </div>
     </div>

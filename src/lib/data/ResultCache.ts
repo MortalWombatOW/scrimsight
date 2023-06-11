@@ -1,6 +1,6 @@
 import {Query} from './types';
 import alasql from 'alasql';
-import { DataRowBySpecName } from '~/lib/data/logging/spec';
+import {DataRowBySpecName} from '~/lib/data/logging/spec';
 
 export default class ResultCache {
   private static data: DataRowBySpecName = {};
@@ -119,7 +119,10 @@ export default class ResultCache {
   }
 
   static isRunning(query: Query) {
-    return this.data[query.name] !== undefined && Object.keys(this.data[query.name]).length === 0;
+    return (
+      this.data[query.name] !== undefined &&
+      Object.keys(this.data[query.name]).length === 0
+    );
   }
 
   static canRunQuery(query: Query) {
@@ -137,11 +140,11 @@ export default class ResultCache {
         if (ResultCache.canRunQuery(query)) {
           ResultCache.callListenersForQuery(query.name);
           ResultCache.runQuery(query, () => {
-            console.log(
-              'finished running query',
-              query.name,
-              'running callback',
-            );
+            // console.log(
+            //   'finished running query',
+            //   query.name,
+            //   'running callback',
+            // );
             callback(query.name);
             ResultCache.callListenersForQuery(query.name);
 
@@ -159,19 +162,15 @@ export default class ResultCache {
 
   private static runQuery(query: Query, callback: () => void) {
     const timestampStart = Date.now();
+    let startTime;
     ResultCache.storeKeyValue(query.name, 'running');
-    console.log(`Running query ${query.name}`);
+    // console.log(`Running query ${query.name}`);
     alasql(
       'ATTACH INDEXEDDB DATABASE scrimsight; \
         USE scrimsight; ',
       [],
       () => {
-        console.log(
-          `Query ${query.name} - attached database at ${
-            Date.now() - timestampStart
-          }ms`,
-          query,
-        );
+        startTime = Date.now();
         alasql
           .promise(
             query.query,
@@ -181,12 +180,12 @@ export default class ResultCache {
           )
           .then(function (res) {
             ResultCache.storeKeyValue(query.name, res);
-            console.log(
-              `Finished query ${query.name} - took ${
-                Date.now() - timestampStart
-              }ms`,
-              res,
-            );
+            // console.log(
+            //   `Finished query ${query.name} - took ${
+            //     Date.now() - timestampStart
+            //   }ms`,
+            //   res,
+            // );
             callback();
           })
           .catch(function (err) {
