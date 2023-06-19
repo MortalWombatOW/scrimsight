@@ -2,7 +2,10 @@ import {useEffect, useState, useMemo} from 'react';
 import {buildQueryFromSpec} from '../pages/AnalysisPage/AnalysisPage';
 import useQueries from './useQueries';
 
-const useScrimsightEvents = (mapId: number): [object[], boolean] => {
+const useScrimsightEvents = (
+  mapId: number,
+  extensions: string[] = [],
+): [object[], boolean] => {
   const [results, i, loaded] = useQueries(
     [
       {
@@ -252,7 +255,100 @@ const useScrimsightEvents = (mapId: number): [object[], boolean] => {
     return evts;
   }, [loaded]);
 
+  const extensionResults = useMemo(() => {
+    if (!loaded) {
+      return {};
+    }
+    const extResults: any = {};
+    extensions.forEach((extension) => {
+      if (extension === 'interactions') {
+        extResults[extension] = extractInteractions(events);
+      }
+    });
+    return extResults;
+  }, [loaded, events]);
+
   return [events, loaded];
 };
 
 export default useScrimsightEvents;
+
+interface EventGroup {
+  type: 'duel' | 'teamfight' | 'other';
+  startTimestamp: number;
+  endTimestamp: number;
+  eventIndices: number[];
+  groups: string[];
+}
+
+type Dataset = {[key: string]: any}[];
+
+function computeHistogram(
+  dataset: Dataset,
+  valueFunction: (row: any) => any,
+  maxExamplesPerBin: number = 5,
+): void {
+  const histogram: {[key: string]: {count: number; examples: any[]}} = {};
+
+  for (const row of dataset) {
+    const value = valueFunction(row);
+    if (value in histogram) {
+      histogram[value].count++;
+      if (histogram[value].examples.length < maxExamplesPerBin) {
+        histogram[value].examples.push(row);
+      }
+    } else {
+      histogram[value] = {count: 1, examples: [row]};
+    }
+  }
+
+  console.log(`Histogram:`, histogram);
+}
+
+function extractInteractions(events: any[]): any {
+  const maxEventSpacing = 4;
+  const groupBy = ['Player Name', 'Target Name', 'Type'];
+  const interactions: EventGroup[] = [];
+  let currentGroupMap: {[key: string]: EventGroup} = {};
+
+  for (let i = 0; i < events.length; i++) {
+    const event = events[i];
+    const eventKey = groupBy
+      .map((k) => event[k])
+      .sort()
+      .join('|');
+
+    if (currentGroupMap[eventKey] == undefined) {
+      currentGroupMap[eventKey] = {
+        type: 'duel',
+        startTimestamp: event['Match Time'],
+        endTimestamp: event['Match Time'],
+        eventIndices: [i],
+        groups: groupBy.map((k) => event[k]),
+      };
+      continue;
+    }
+
+    const currentGroup = currentGroupMap[eventKey];
+
+    if (event['Match Time'] - currentGroup.endTimestamp > maxEventSpacing) {
+      interactions.push(currentGroup);
+      currentGroupMap[eventKey] = {
+        type: 'duel',
+        startTimestamp: event['Match Time'],
+        endTimestamp: event['Match Time'],
+        eventIndices: [i],
+        groups: groupBy.map((k) => event[k]),
+      };
+      continue;
+    }
+
+    currentGroup.endTimestamp = event['Match Time'];
+    currentGroup.eventIndices.push(i);
+  }
+
+  console.log('interactions', interactions);
+  computeHistogram(interactions, (d) => d.eventIndices.length);
+
+  return interactions;
+}

@@ -164,7 +164,8 @@ const PlayByPlay = ({
   mapId: number;
   onLoaded: () => void;
 }) => {
-  const [events, loaded] = useScrimsightEvents(mapId);
+  const [events, loaded] = useScrimsightEvents(mapId, ['interactions']);
+
   const [width, setWidth] = useState(100);
   const [height, setHeight] = useState(100);
   const ref = useRef(null);
