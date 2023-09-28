@@ -1,4 +1,4 @@
-import {DataSpec} from '~/lib/data/logging/spec';
+import {DataSpec} from '~/lib/data/types';
 
 export type SimpleValue = {
   field: string;
@@ -155,7 +155,7 @@ export class QueryBuilder {
     const baseTable = this.getFrom().table;
 
     // check that if the base table is set, onLeft and onRight are also set
-    if (baseTable && !(onLeft && onRight)) { 
+    if (baseTable && !(onLeft && onRight)) {
       throw new Error('base table is set, but onLeft and onRight are not');
     }
 
@@ -172,12 +172,8 @@ export class QueryBuilder {
     }
     for (const field of spec.fields) {
       // check if a field with the same name already exists
-      if (
-        this.getSelect().find(
-          (select) => select.field === field.name
-        )
-      ) {
-        console.log(`field ${field.name} already exists in select, skipping`)
+      if (this.getSelect().find((select) => select.field === field.name)) {
+        console.log(`field ${field.name} already exists in select, skipping`);
         continue;
       }
       this.select_.push({table: spec.key, field: field.name});
@@ -197,7 +193,7 @@ export class QueryBuilder {
   }
 
   private getSelectClause(): string {
-    return  `SELECT ${this.getSelect()
+    return `SELECT ${this.getSelect()
       .map((metric) => this.buildMetricString(metric))
       .join(', ')}`;
   }
@@ -207,7 +203,6 @@ export class QueryBuilder {
   }
 
   private getFromClause(): string {
-
     const from = this.getFrom().isLiteral ? `?` : this.getFrom().table;
     const joinClause =
       this.getJoins().length === 0

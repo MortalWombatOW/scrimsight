@@ -1,6 +1,5 @@
-import {Query} from './types';
+import {DataRowBySpecName, Query} from './types';
 import alasql from 'alasql';
-import {DataRowBySpecName} from '~/lib/data/logging/spec';
 
 export default class ResultCache {
   private static data: DataRowBySpecName = {};

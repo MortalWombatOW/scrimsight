@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {getColorFor} from '../color';
-import {MapEntity, RenderState} from './types';
+import {MapEntity, RenderState} from '../data/types';
 
 function positionsForBucket(
   positions: THREE.Vector3[],

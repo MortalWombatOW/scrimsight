@@ -15,7 +15,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import Globals from '../../lib/data/globals';
+import Globals from '../../lib/globals';
 import IconAndText from '../Common/IconAndText';
 import GroupsIcon from '@mui/icons-material/Groups';
 import useCookie from 'react-use-cookie';

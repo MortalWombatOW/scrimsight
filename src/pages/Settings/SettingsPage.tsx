@@ -6,15 +6,12 @@ import {
   Select,
   Typography,
 } from '@mui/material';
-import sizeof from 'object-sizeof';
 import React from 'react';
 import DataTable from 'react-data-table-component';
-import { DataRow } from '~/lib/data/logging/spec';
+import {DataRow} from '~/lib/data/types';
 import Header from '../../components/Header/Header';
 import {useResults} from '../../hooks/useQueries';
-import {
-  FileUpload
-} from '../../lib/data/types';
+import {FileUpload} from '../../lib/data/types';
 import {uploadFile} from '../../lib/data/uploadfile';
 import './SettingsPage.scss';
 

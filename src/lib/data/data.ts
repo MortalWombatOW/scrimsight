@@ -1,15 +1,11 @@
-import {
-  MapEntity,
-  Statistic,
-  TeamInfo,
-} from 'lib/data/types';
+import {MapEntity} from 'lib/data/types';
 import {heroNameToNormalized} from 'lib/string';
 
 const dayMillis = 1000 * 60 * 60 * 24;
 
 const timeFilters: {[key: string]: (timestamp: number) => boolean} = {
   Today: (timestamp: number) => timestamp >= Date.now() - dayMillis,
-  Yesterday: (timestamp: number) =>timestamp >= Date.now() - 2 * dayMillis,
+  Yesterday: (timestamp: number) => timestamp >= Date.now() - 2 * dayMillis,
   'Last Week': (timestamp: number) => timestamp >= Date.now() - 7 * dayMillis,
   'Last Month': (timestamp: number) => timestamp >= Date.now() - 30 * dayMillis,
   'Last Year': (timestamp: number) => timestamp >= Date.now() - 365 * dayMillis,
@@ -59,137 +55,6 @@ export const getHeroImage = (
     heroName,
   )}.png`;
 
-
-// export const getAllPlayers = (maps: OWMap[]) => {
-//   const players: string[] = [];
-//   maps.forEach((map: OWMap) => {
-//     players.push(...map.team1);
-//     players.push(...map.team2);
-//   });
-//   return Array.from(new Set(players)).sort();
-// };
-
-// export const getTeamInfoForMap = (
-//   map: OWMap,
-// ): {top: TeamInfo; bottom: TeamInfo} => {
-//   const {team1, team2, team1Name, team2Name, roles} = map;
-
-//   let topName = team1Name;
-//   let bottomName = team2Name;
-//   let topTeam = team1;
-//   let bottomTeam = team2;
-//   if (topName.localeCompare(bottomName) > 0) {
-//     const temp = team1;
-//     topTeam = team2;
-//     bottomTeam = temp;
-//     const tempName = team1Name;
-//     topName = team2Name;
-//     bottomName = tempName;
-//   }
-
-//   const tanks = Object.entries(roles)
-//     .filter(([, role]) => role === 'tank')
-//     .map(([player]) => player);
-
-//   const dps = Object.entries(map.roles)
-//     .filter(([, role]) => role === 'damage')
-//     .map(([player]) => player);
-
-//   const supports = Object.entries(map.roles)
-//     .filter(([, role]) => role === 'support')
-//     .map(([player]) => player);
-
-//   const topTanks = tanks.filter((tank) => topTeam.includes(tank));
-//   const bottomTanks = tanks.filter((tank) => bottomTeam.includes(tank));
-//   const topDps = dps.filter((dps) => topTeam.includes(dps));
-//   const bottomDps = dps.filter((dps) => bottomTeam.includes(dps));
-//   const topSupports = supports.filter((support) => topTeam.includes(support));
-//   const bottomSupports = supports.filter((support) =>
-//     bottomTeam.includes(support),
-//   );
-
-//   return {
-//     top: {
-//       name: topName,
-//       tanks: topTanks,
-//       dps: topDps,
-//       supports: topSupports,
-//     },
-//     bottom: {
-//       name: bottomName,
-//       tanks: bottomTanks,
-//       dps: bottomDps,
-//       supports: bottomSupports,
-//     },
-//   };
-// };
-
-// export const getPlayersToTeam = (map: OWMap): {[player: string]: string} => {
-//   const {team1, team2} = map;
-//   const playersToTeam: {[player: string]: string} = {};
-//   team1.forEach((player) => {
-//     playersToTeam[player] = map.team1Name;
-//   });
-//   team2.forEach((player) => {
-//     playersToTeam[player] = map.team2Name;
-//   });
-//   return playersToTeam;
-// };
-
-// export const getInteractionStat = (
-//   interactions: PlayerInteraction[],
-//   method: 'sum' | 'count',
-//   statType: 'damage' | 'healing' | 'final blow',
-//   by: 'player' | 'timestamp' | 'target',
-// ): Statistic =>
-//   interactions.reduce((acc, interaction) => {
-//     const {type, amount} = interaction;
-//     if (type !== statType) {
-//       return acc;
-//     }
-//     const group = interaction[by];
-//     if (!acc[group]) {
-//       acc[group] = 0;
-//     }
-//     if (method === 'sum') {
-//       acc[group] += amount;
-//     } else if (method === 'count') {
-//       acc[group] += 1;
-//     }
-//     return acc;
-//   }, {});
-
-// export const getHeroesByPlayer = (
-//   statuses: PlayerStatus[],
-// ): {[player: string]: {[hero: string]: number}} => {
-//   const heroesByPlayer: {[player: string]: {[hero: string]: number}} = {};
-//   statuses.forEach((status) => {
-//     const {player, hero} = status;
-//     if (hero == '') {
-//       return;
-//     }
-//     if (!heroesByPlayer[player]) {
-//       heroesByPlayer[player] = {};
-//     }
-//     if (!heroesByPlayer[player][hero]) {
-//       heroesByPlayer[player][hero] = 0;
-//     }
-//     heroesByPlayer[player][hero] += 1;
-//   });
-//   return heroesByPlayer;
-// };
-
-// export const getMostCommonHeroes = (heroesByPlayer: {
-//   [player: string]: {[hero: string]: number};
-// }): {[player: string]: string} => {
-//   const mostCommonHeroes: {[player: string]: string} = {};
-//   Object.entries(heroesByPlayer).forEach(([player, heroes]) => {
-//     const sortedHeroes = Object.entries(heroes).sort((a, b) => b[1] - a[1]);
-//     mostCommonHeroes[player] = sortedHeroes[0][0];
-//   });
-//   return mostCommonHeroes;
-// };
-
 export const getMapEntitiesForTime = (
   entities: MapEntity[],
   time: number,
@@ -198,101 +63,6 @@ export const getMapEntitiesForTime = (
     (entity) => entity.states[time.toString()] != undefined,
   );
 };
-
-// export const buildMapEntitiesFromData = (
-//   statuses: PlayerStatus[],
-//   interactions: PlayerInteraction[],
-//   abilities: PlayerAbility[],
-// ): MapEntity[] => {
-//   const coordScale = 1;
-
-//   const entities: MapEntity[] = [];
-//   const getEntity = (
-//     id: string,
-//     type:
-//       | 'player'
-//       | 'damage'
-//       | 'healing'
-//       | 'final blow'
-//       | 'elimination'
-//       | 'ability',
-//   ): MapEntity => {
-//     const entity = entities.find(
-//       (entity) => entity.id === id && entity.entityType === type,
-//     );
-//     if (entity) {
-//       return entity;
-//     }
-//     const newEntity: MapEntity = {id, states: {}, entityType: type};
-//     entities.push(newEntity);
-//     return newEntity;
-//   };
-
-//   const heroMaxHealth: {[hero: string]: number} = {};
-
-//   statuses.forEach((status) => {
-//     const {player, timestamp, hero, x, y, z, health, ultCharge} = status;
-
-//     const scaledX = x * coordScale;
-//     const scaledY = y * coordScale;
-//     const scaledZ = z * coordScale;
-
-//     if (!heroMaxHealth[hero]) {
-//       heroMaxHealth[hero] = health;
-//     } else {
-//       if (timestamp < 120) {
-//         heroMaxHealth[hero] = Math.max(heroMaxHealth[hero], health);
-//       }
-//     }
-
-//     const entity = getEntity(player, 'player');
-//     // entity.label = player;
-//     // entity.clazz = hero;
-//     // entity.image = getHeroImage(hero);
-//     if (!entity.states[timestamp]) {
-//       entity.states[timestamp] = {
-//         name: player,
-//         hero: heroNameToNormalized(hero),
-//         x: scaledX,
-//         y: scaledY,
-//         z: scaledZ,
-//         health,
-//         maxHealth: heroMaxHealth[hero],
-//         ultCharge,
-//       };
-//     }
-//   });
-//   // console.log(heroMaxHealth);
-
-//   interactions.forEach((interaction) => {
-//     const {player, timestamp, target, type, amount} = interaction;
-
-//     const edge = getEntity(
-//       `${player}-${target}-${type}`,
-//       type as 'damage' | 'healing' | 'final blow' | 'elimination',
-//     );
-//     if (!edge.states[timestamp]) {
-//       edge.states[timestamp] = {
-//         player,
-//         target,
-//         type,
-//         amount,
-//       };
-//     }
-//   });
-//   abilities.forEach((ability) => {
-//     const {player, timestamp, type} = ability;
-//     const abilityEntity = getEntity(`${player}-${type}-ability`, 'ability');
-//     if (!abilityEntity.states[timestamp]) {
-//       abilityEntity.states[timestamp] = {
-//         player,
-//         type,
-//       };
-//     }
-//   });
-//   // console.log(entities);
-//   return entities;
-// };
 
 export const getCameraTransformFromMapEntities = (
   entities: MapEntity[],

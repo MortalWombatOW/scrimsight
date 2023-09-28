@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import React from 'react';
 // import usePlayerSummaryMetrics from '../../hooks/usePlayerSummaryMetrics';
-import {format, formatTime} from '../../lib/data/format';
+import {format, formatTime} from '../../lib/format';
 import MetricText from '../Common/MetricText';
 import {getIcon} from '../Common/RoleIcons';
 

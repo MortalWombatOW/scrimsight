@@ -1,18 +1,9 @@
-import {useEffect, useLayoutEffect, useState} from 'react';
-import {DataRowBySpecName} from '../lib/data/logging/spec';
+import {useEffect, useState} from 'react';
 import ResultCache from '../lib/data/ResultCache';
-import {Query} from '../lib/data/types';
-import createCache from 'cache-hook';
+import {Query, DataRowBySpecName} from '../lib/data/types';
 interface UseQueriesOptions {
   runFirst?: boolean;
 }
-
-// const cache = createCache((queries: Query[]) => {
-//   ResultCache.runQueries(queries, (query) => {
-//     console.log(' query done', query);
-//   });
-// });
-
 const useQueries = (
   queriesRaw: Query[],
   deps: any[],
@@ -47,14 +38,6 @@ const useQueries = (
     });
   }, []);
 
-  // // useEffect(() => {
-  // //   nextComputeStep();
-  // // }, deps);
-
-  // const runFirst = options.runFirst ?? false;
-
-  // cache(queries);
-
   const results = queries
     .filter((query) => ResultCache.hasResults(query.name))
     .reduce((acc, query) => {
@@ -64,11 +47,6 @@ const useQueries = (
 
   const allLoaded = () => {
     return queries.every((query) => {
-      // console.log(
-      //   'checking if query has results:',
-      //   query.name,
-      //   ResultCache.hasResults(query.name),
-      // );
       return ResultCache.hasResults(query.name);
     });
   };

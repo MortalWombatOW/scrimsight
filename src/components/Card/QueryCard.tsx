@@ -3,8 +3,7 @@ import {Card, Typography} from '@mui/material';
 import './Card.scss';
 import {Query} from '../../lib/data/types';
 import useQueries from '../../hooks/useQueries';
-import {format} from '../../lib/data/format';
-import { DataRow } from '../../lib/data/logging/spec';
+import {format} from '../../lib/format';
 
 const QueryCard = ({
   title,

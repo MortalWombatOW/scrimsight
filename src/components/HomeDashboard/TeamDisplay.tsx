@@ -2,7 +2,7 @@ import {Box, Typography, CircularProgress} from '@mui/material';
 import {width} from '@mui/system';
 import React, {useState} from 'react';
 import {useQuery} from '../../hooks/useQueries';
-import Globals from '../../lib/data/globals';
+import Globals from '../../lib/globals';
 import {Team} from '../../lib/data/types';
 import CardCarousel from '../Card/CardCarousel';
 import PlayerSummaryCard from '../Card/PlayerSummaryCard';

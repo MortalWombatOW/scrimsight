@@ -7,17 +7,15 @@ import TableRenderers from 'react-pivottable/TableRenderers';
 import createPlotlyRenderers from 'react-pivottable/PlotlyRenderers';
 import Plot from 'react-plotly.js';
 import useQueries from '~/hooks/useQueries';
-import {logSpec} from '~/lib/data/logging/spec';
 import {QueryBuilder} from '~/lib/data/QueryBuilder';
-import {DataRowBySpecName} from '~/lib/data/logging/spec';
 import {Button} from '@mui/material';
+import {LOG_SPEC} from '../../lib/data/types';
 const PlotlyRenderers = createPlotlyRenderers(Plot);
 
 export const buildQueryFromSpec = (dataType: string, mapId?: number) => {
-  const spec = logSpec;
   const query = new QueryBuilder()
     .select(
-      spec[dataType].fields.map((field) => {
+      LOG_SPEC[dataType].fields.map((field) => {
         return {
           table: dataType,
           field: field.name,
@@ -62,7 +60,6 @@ const QueryResultToData = (
 
 const AnalysisPage = () => {
   const [state, setState] = React.useState({});
-  const spec = logSpec;
   const [data, setData] = React.useState<any[]>([]);
   const [dataType, setDataType] = React.useState<string>('damage');
 
@@ -83,7 +80,7 @@ const AnalysisPage = () => {
     if (analysis !== undefined) {
       const datarowbyspecname: Record<string, object[]> = {};
       datarowbyspecname[dataType] = analysis;
-      const data2 = QueryResultToData(datarowbyspecname, spec, dataType);
+      const data2 = QueryResultToData(datarowbyspecname, LOG_SPEC, dataType);
       console.log('data', data2);
       setData(data2);
     }
@@ -99,7 +96,7 @@ const AnalysisPage = () => {
       <Box
         component="div"
         sx={{display: 'flex', margin: '50px', flexWrap: 'wrap'}}>
-        {Object.keys(spec).map((key) => {
+        {Object.keys(LOG_SPEC).map((key) => {
           let niceName = key.replaceAll('_', ' ');
           // cinvert to title case
           niceName = niceName.replace(/\w\S*/g, (txt) => {

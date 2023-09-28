@@ -3,7 +3,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import React, {useState} from 'react';
 import MapsList from '~/components/MapsList/MapsList';
 import useWindowSize from '../../hooks/useWindowSize';
-import Globals from '../../lib/data/globals';
+import Globals from '../../lib/globals';
 
 import MapInfo from '~/components/MapInfo/MapInfo';
 import PlayByPlay from '../PlayByPlay/PlayByPlay';

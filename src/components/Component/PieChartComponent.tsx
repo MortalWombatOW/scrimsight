@@ -1,7 +1,7 @@
 import {CircularProgress} from '@mui/material';
 import React, {useState} from 'react';
 import {Cell, Pie, PieChart, Sector, Tooltip} from 'recharts';
-import { DataRow } from '../../lib/data/logging/spec';
+import {DataRow} from '../../lib/data/types';
 import {groupColorClass} from '../../lib/color';
 import ResultCache from '../../lib/data/ResultCache';
 import './Charts.scss';

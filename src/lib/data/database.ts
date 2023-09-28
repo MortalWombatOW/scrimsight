@@ -1,6 +1,6 @@
 import {open} from 'idb-factory';
 import {Team} from './types';
-import {DataRow, logSpec} from '~/lib/data/logging/spec';
+import {DataRow, LOG_SPEC} from '~/lib/data/types';
 
 //https://github.com/treojs/idb-batch
 
@@ -26,7 +26,7 @@ const onCompleted = (e) => {
     autoIncrement: true,
   }).createIndex('id', 'id', {unique: true});
 
-  Object.keys(logSpec).forEach((key) => {
+  Object.keys(LOG_SPEC).forEach((key) => {
     db.createObjectStore(key, {
       keyPath: 'id',
       autoIncrement: true,

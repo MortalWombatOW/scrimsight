@@ -5,7 +5,7 @@ import {localPoint} from '@visx/event';
 import {RectClipPath} from '@visx/clip-path';
 import {scaleLinear} from '@visx/scale';
 import {MapEntity, RenderState, Team} from '../../../lib/data/types';
-import Globals from '../../../lib/data/globals';
+import Globals from '../../../lib/globals';
 import PlayerEntity from './PlayerEntity';
 import {Button} from '@mui/material';
 const bg = '#0a0a0a';

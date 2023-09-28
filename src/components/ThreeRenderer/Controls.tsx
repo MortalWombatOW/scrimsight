@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import React, {useEffect, useState} from 'react';
 import {useSpring} from 'react-spring';
-import {formatTime} from '../../lib/data/format';
+import {formatTime} from '../../lib/format';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';

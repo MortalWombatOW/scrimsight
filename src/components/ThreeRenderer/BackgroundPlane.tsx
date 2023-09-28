@@ -5,8 +5,8 @@ import {
   colorPlaneFlat,
   colorPlaneForMapControl,
   generateBackgroundPlaneGeometry,
-} from '../../lib/data/geometry';
-import Globals from '../../lib/data/globals';
+} from '../../lib/geom/geometry';
+import Globals from '../../lib/globals';
 import {MapEntity} from '../../lib/data/types';
 import {LayerMode} from './Controls';
 

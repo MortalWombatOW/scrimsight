@@ -7,11 +7,9 @@ import {heroNameToNormalized, mapNameToFileName} from 'lib/string';
 import React, {useEffect, useMemo} from 'react';
 import useQueries, {useQuery} from '../../hooks/useQueries';
 import {groupColorClass} from '../../lib/color';
-import {QueryBuilder} from '~/lib/data/QueryBuilder';
-import {DataRow, logSpec} from '~/lib/data/logging/spec';
 import {Button, Typography} from '@mui/material';
-import { formatTime } from '~/lib/data/format';
-import { useNavigate } from 'react-router';
+import {formatTime} from '~/lib/format';
+import {useNavigate} from 'react-router';
 // import ComparativeTimePlot from '~/components/Chart/ComparativeTimePlot';
 
 const PlayerAndHero = ({
@@ -52,9 +50,7 @@ const MapInfo = ({
 }) => {
   const navigate = useNavigate();
 
-  const [{
-    MapInfo_map: mapWrapped,
-  }] = useQueries(
+  const [{MapInfo_map: mapWrapped}] = useQueries(
     [
       {
         name: 'MapInfo_map',
@@ -72,12 +68,9 @@ const MapInfo = ({
         inner join match_end on match_end.[Map ID] = match_start.[Map ID] \
         where match_start.[Map ID] = ${mapId}`,
       },
-        
     ],
     [mapId],
   );
-
-  
 
   if (!mapWrapped) {
     return <div>Loading...</div>;
@@ -86,7 +79,7 @@ const MapInfo = ({
   const map = mapWrapped[0];
 
   console.log(map);
-  
+
   return (
     <div className="MapInfo">
       <div>
@@ -102,13 +95,15 @@ const MapInfo = ({
       </div>
       <div>
         <Typography variant="h5">Players</Typography>
-    </div>
-    <div>
-      <Button variant="contained" color="secondary" onClick={() => navigate(`/maps/${mapId}`)}>
-        View
-      </Button>
-    </div>
-
+      </div>
+      <div>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => navigate(`/maps/${mapId}`)}>
+          View
+        </Button>
+      </div>
     </div>
   );
 };

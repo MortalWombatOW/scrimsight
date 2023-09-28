@@ -1,12 +1,38 @@
-import {isNumeric} from '../string';
-import {FileUpload} from 'lib/data/types';
+import {
+  FileUpload,
+  DataRow,
+  LogSpec,
+  LOG_SPEC,
+  DataAndSpecName,
+} from 'lib/data/types';
 import {stringHash} from './../string';
-import {getRoleFromHero} from './data';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
-import {parallelProcessLogLines} from './logging/manager';
-import {DataAndSpecName, logSpec, objectify} from './logging/spec';
-import {parseLines} from '~/lib/data/logging/parseLine';
+
+const getField = (fieldName: string, specName: string, data: DataRow) => {
+  const spec = LOG_SPEC[specName];
+  if (!spec) {
+    throw new Error(`Spec not found for spec name: ${specName}`);
+  }
+  const fieldIndex = spec.fields.findIndex((field) => field.name === fieldName);
+  if (fieldIndex === -1) {
+    throw new Error(`Field not found for field name: ${fieldName}`);
+  }
+  return data[fieldIndex];
+};
+
+const objectify = (data: DataRow, specName: string) => {
+  const spec = LOG_SPEC[specName];
+  if (!spec) {
+    throw new Error(`Spec not found for spec name: ${specName}`);
+  }
+  const obj: Record<string, string | number | boolean> = {};
+  spec.fields.forEach((field, index) => {
+    const value = getField(field.name, specName, data);
+    obj[field.name] = value;
+  });
+  return obj;
+};
 
 const loadFile = async (fileUpload: FileUpload) => {
   if (!fileUpload.file) {
@@ -39,6 +65,57 @@ const readFileAsync = (file: File) => {
   });
 };
 
+function parseLine(line: string, mapId: number): DataAndSpecName {
+  const values = line.trim().split(',');
+
+  const eventType = values[1];
+  const eventSpec = LOG_SPEC[eventType];
+
+  if (!eventSpec) {
+    console.log(line);
+    throw new Error(`Event spec not found for event type: ${eventType}`);
+  }
+  const parsedData: DataRow = [];
+  parsedData.push(mapId);
+  parsedData.push(eventType);
+
+  for (let i = 2; i < values.length; i++) {
+    const fieldSpec = eventSpec.fields[i];
+
+    if (!fieldSpec) {
+      console.log(line);
+      throw new Error(
+        `Field spec not found for event type: ${eventType}, field index: ${i}`,
+      );
+    }
+
+    let parsedValue: string | number | boolean;
+    switch (fieldSpec.dataType) {
+      case 'string':
+        parsedValue = values[i];
+        break;
+      case 'number':
+        parsedValue = parseFloat(values[i]);
+        break;
+      case 'boolean':
+        parsedValue = values[i].toLowerCase() === 'true';
+        break;
+      default:
+        throw new Error(`Unsupported data type: ${fieldSpec.dataType}`);
+    }
+
+    parsedData.push(parsedValue);
+  }
+  return {
+    data: [parsedData],
+    specName: eventType,
+  };
+}
+
+export function parseLines(lines: string[], mapId: number): DataAndSpecName[] {
+  return lines.map((line) => parseLine(line, mapId));
+}
+
 const parseFile = async (fileUpload: FileUpload) => {
   if (!fileUpload.data) {
     fileUpload.error = 'no data';
@@ -49,11 +126,10 @@ const parseFile = async (fileUpload: FileUpload) => {
   const hash = stringHash(data);
 
   const lines = data.split('\n').filter((l) => l.length > 0);
-  // const result = await parallelProcessLogLines(lines, hash);
-  const result: DataAndSpecName[] = parseLines(lines, hash, logSpec);
+  const result: DataAndSpecName[] = parseLines(lines, hash);
 
   const groupedData: DataAndSpecName[] = [];
-  for (const key of Object.keys(logSpec)) {
+  for (const key of Object.keys(LOG_SPEC)) {
     const data = result.filter((r) => r.specName === key);
     groupedData.push({
       specName: key,
@@ -85,14 +161,14 @@ const saveFile = async (
 
   const db = getDB();
 
-  const numKeys = Object.keys(logSpec).length;
+  const numKeys = Object.keys(LOG_SPEC).length;
   const startPercent = 40;
   const endPercent = 90;
   const percentPerKey = (endPercent - startPercent) / numKeys;
   console.log('fileUpload', fileUpload);
 
   let percent = startPercent;
-  for (const key of Object.keys(logSpec)) {
+  for (const key of Object.keys(LOG_SPEC)) {
     const data = fileUpload.events.find((e) => e.specName === key)?.data;
     console.log('writing', key);
     if (!data || data.length === 0) {
@@ -124,41 +200,6 @@ const saveFile = async (
     },
   ]);
   setPercent(100);
-  // setPercent(50);
-
-  // console.log('wrote map', fileUpload.fileName);
-  // await batch(
-  //   db,
-  //   'player_ability',
-  //   fileUpload.playerAbilities.map((p) => ({
-  //     type: 'add',
-  //     value: p,
-  //   })),
-  // );
-  // setPercent(65);
-  // console.log('wrote player abilities', fileUpload.fileName);
-  // await batch(
-  //   db,
-  //   'player_interaction',
-  //   fileUpload.playerInteractions.map((p) => ({
-  //     type: 'add',
-  //     value: p,
-  //   })),
-  // );
-  // setPercent(80);
-  // console.log('wrote player interactions', fileUpload.fileName);
-  // await batch(
-  //   db,
-  //   'player_status',
-  //   fileUpload.playerStatus.map((p) => ({
-  //     type: 'add',
-  //     value: p,
-  //   })),
-  // );
-  // console.log('wrote player status', fileUpload.fileName);
-
-  // write to db on objectStore = specName
-  // group by specName
 
   console.log('wrote events', fileUpload.fileName);
 

@@ -1,4 +1,4 @@
-import {Team} from './types';
+import {Team} from './data/types';
 
 export default class Globals {
   private static team: Team | undefined;

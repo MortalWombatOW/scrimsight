@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSpring, animated, to} from 'react-spring';
 import {getHeroImage} from '../../../lib/data/data';
-import Globals from '../../../lib/data/globals';
+import Globals from '../../../lib/globals';
 import {Team} from '../../../lib/data/types';
 
 interface PlayerEntityProps {

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Popover, Tooltip, Typography} from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import {getMetric, getTextForMetric} from '../../lib/data/metrics';
+import {getMetric, getTextForMetric} from '../../lib/metrics';
 
 const MetricText = ({value, label}: {value: string; label: string}) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

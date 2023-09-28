@@ -13,8 +13,7 @@ import {
 } from '../../components/Common/RoleIcons';
 import useQueries from '../../hooks/useQueries';
 import {getHeroImage, heroToRoleTable} from '../../lib/data/data';
-import {format, formatTime, safeDivide} from '../../lib/data/format';
-import {DataRow} from '../../lib/data/logging/spec';
+import {DataRow} from '../../lib/data/types';
 const sum = (
   agg: string,
   type: string,
@@ -239,7 +238,7 @@ const PlayerDetails = ({
         {/* <Typography variant="h6">
           {per10['damage']} damage per 10 minutes
         </Typography> */}
-        {/* <Typography variant="h6">
+      {/* <Typography variant="h6">
           {per10['healing']} healing per 10 minutes
         </Typography>
         <Typography variant="h6">
