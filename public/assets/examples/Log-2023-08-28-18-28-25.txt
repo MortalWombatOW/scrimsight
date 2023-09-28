@@ -1,0 +1,276 @@
+[00:00:00] ,match_start,0,New Queen Street,Push,Tempest,Paradise Aegis
+[00:00:00] ,round_start,0,1,Paradise Aegis,0,0,0
+[00:00:06] ,hero_spawn,0,Tempest,Shadowph33r,Lúcio,0,0
+[00:00:07] ,hero_spawn,0,Tempest,Triage3,Kiriko,0,0
+[00:00:08] ,hero_spawn,0,Tempest,KANKAN,Tracer,0,0
+[00:00:08] ,hero_spawn,0,Paradise Aegis,Tubeit,Junker Queen,0,0
+[00:00:09] ,hero_spawn,0,Tempest,ICE,Junker Queen,0,0
+[00:00:10] ,hero_spawn,0,Paradise Aegis,Duelan,Genji,0,0
+[00:00:11] ,hero_spawn,0,Paradise Aegis,persephone,Lúcio,0,0
+[00:00:15] ,hero_spawn,0,Tempest,Ranc1dRandy,Torbjörn,0,0
+[00:00:16] ,hero_spawn,0,Paradise Aegis,BrickWall,Sojourn,0,0
+[00:00:32] ,hero_spawn,0,Paradise Aegis,Alert,Kiriko,0,0
+[00:00:51] ,setup_complete,0,1,599.99
+[00:01:12] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,Shadowph33r,Lúcio,Ability 2,60.44,0,0
+[00:01:13] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:01:18] ,kill,0,Tempest,KANKAN,Tracer,Paradise Aegis,BrickWall,Sojourn,Primary Fire,4.46,0,0
+[00:01:25] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,persephone,Lúcio,Ability 1,7.64,0,0
+[00:01:26] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:01:30] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,KANKAN,Tracer,0,3.50,0,0
+[00:01:33] ,kill,0,Paradise Aegis,Duelan,Genji,Tempest,Ranc1dRandy,Torbjörn,Secondary Fire,19.47,0,0
+[00:01:33] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:01:50] ,kill,0,Paradise Aegis,Alert,Kiriko,Tempest,Triage3,Kiriko,0,37.19,0,0
+[00:01:52] ,kill,0,Paradise Aegis,Duelan,Genji,Tempest,Shadowph33r,Lúcio,Secondary Fire,16.78,0,0
+[00:01:52] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:01:57] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,ICE,Junker Queen,Secondary Fire,34.55,0,0
+[00:01:57] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:02:02] ,ultimate_charged,0,Paradise Aegis,Tubeit,Junker Queen,0,1
+[00:02:24] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,persephone,Lúcio,Primary Fire,86,True,0
+[00:02:30] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,KANKAN,Tracer,Secondary Fire,69,0,0
+[00:02:30] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:02:31] ,ultimate_start,0,Paradise Aegis,Tubeit,Junker Queen,0,1
+[00:02:32] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,BrickWall,Sojourn,Primary Fire,26,0,0
+[00:02:32] ,offensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:02:32] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:02:33] ,kill,0,Tempest,ICE,Junker Queen,Paradise Aegis,Duelan,Genji,0,75.21,0,0
+[00:02:33] ,offensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:02:35] ,ultimate_charged,0,Tempest,KANKAN,Tracer,0,1
+[00:02:36] ,ultimate_charged,0,Tempest,Triage3,Kiriko,0,1
+[00:02:36] ,ultimate_end,0,Paradise Aegis,Tubeit,Junker Queen,0,1
+[00:02:38] ,ultimate_charged,0,Paradise Aegis,Alert,Kiriko,0,1
+[00:02:41] ,ultimate_charged,0,Tempest,ICE,Junker Queen,0,1
+[00:02:42] ,kill,0,Tempest,Shadowph33r,Lúcio,Paradise Aegis,Tubeit,Junker Queen,Primary Fire,8.13,0,0
+[00:02:43] ,offensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:02:43] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:02:57] ,ultimate_charged,0,Tempest,Ranc1dRandy,Torbjörn,0,1
+[00:03:16] ,ultimate_start,0,Tempest,KANKAN,Tracer,0,1
+[00:03:16] ,ultimate_end,0,Tempest,KANKAN,Tracer,0,1
+[00:03:20] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,Ranc1dRandy,Torbjörn,0,79.83,0,0
+[00:03:21] ,offensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:03:21] ,ultimate_start,0,Tempest,ICE,Junker Queen,0,1
+[00:03:21] ,ultimate_charged,0,Paradise Aegis,Duelan,Genji,0,1
+[00:03:25] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,KANKAN,Tracer,Secondary Fire,123,0,0
+[00:03:25] ,ultimate_charged,0,Paradise Aegis,BrickWall,Sojourn,0,1
+[00:03:26] ,ultimate_end,0,Tempest,ICE,Junker Queen,0,1
+[00:03:26] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,Triage3,Kiriko,0,9.59,0,0
+[00:03:27] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:03:27] ,kill,0,Tempest,Shadowph33r,Lúcio,Paradise Aegis,Tubeit,Junker Queen,Primary Fire,19.26,0,0
+[00:03:27] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:03:27] ,defensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:03:55] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,Duelan,Genji,Secondary Fire,11,0,0
+[00:03:55] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:03:55] ,offensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:03:55] ,defensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:04:07] ,ultimate_start,0,Paradise Aegis,BrickWall,Sojourn,0,1
+[00:04:12] ,ultimate_charged,0,Tempest,Shadowph33r,Lúcio,0,1
+[00:04:13] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,Shadowph33r,Lúcio,Ultimate,95.44,0,0
+[00:04:13] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:04:13] ,offensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:04:13] ,defensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:04:15] ,kill,0,Paradise Aegis,Alert,Kiriko,Tempest,KANKAN,Tracer,0,95,True,0
+[00:04:16] ,ultimate_start,0,Tempest,Ranc1dRandy,Torbjörn,0,1
+[00:04:16] ,ultimate_end,0,Paradise Aegis,BrickWall,Sojourn,0,1
+[00:04:18] ,ultimate_end,0,Tempest,Ranc1dRandy,Torbjörn,0,1
+[00:04:19] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,persephone,Lúcio,Ultimate,18.24,0,0
+[00:04:21] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:04:21] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,Ranc1dRandy,Torbjörn,Primary Fire,7.05,0,0
+[00:04:31] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,Duelan,Genji,Ability 1,1.20,0,0
+[00:04:31] ,offensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:04:31] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:04:33] ,ultimate_start,0,Paradise Aegis,Alert,Kiriko,0,1
+[00:04:33] ,ultimate_end,0,Paradise Aegis,Alert,Kiriko,0,1
+[00:04:33] ,ultimate_start,0,Paradise Aegis,Alert,Kiriko,0,1
+[00:04:38] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,KANKAN,Tracer,Secondary Fire,123.22,0,0
+[00:04:39] ,kill,0,Paradise Aegis,Alert,Kiriko,Tempest,ICE,Junker Queen,0,40.66,0,0
+[00:04:39] ,offensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:04:39] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:04:40] ,ultimate_charged,0,Paradise Aegis,Tubeit,Junker Queen,0,2
+[00:04:44] ,ultimate_end,0,Paradise Aegis,Alert,Kiriko,0,1
+[00:04:51] ,ultimate_charged,0,Paradise Aegis,persephone,Lúcio,0,1
+[00:05:09] ,ultimate_start,0,Tempest,Triage3,Kiriko,0,1
+[00:05:10] ,ultimate_start,0,Paradise Aegis,Duelan,Genji,0,1
+[00:05:10] ,ultimate_end,0,Tempest,Triage3,Kiriko,0,1
+[00:05:10] ,ultimate_start,0,Tempest,Triage3,Kiriko,0,1
+[00:05:18] ,ultimate_end,0,Paradise Aegis,Duelan,Genji,0,1
+[00:05:19] ,kill,0,Tempest,Triage3,Kiriko,Paradise Aegis,persephone,Lúcio,0,108.51,True,0
+[00:05:19] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:05:19] ,defensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:05:20] ,ultimate_start,0,Paradise Aegis,Tubeit,Junker Queen,0,2
+[00:05:21] ,ultimate_end,0,Tempest,Triage3,Kiriko,0,1
+[00:05:21] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,Tubeit,Junker Queen,Ability 1,5.32,0,0
+[00:05:21] ,ultimate_end,0,Paradise Aegis,Tubeit,Junker Queen,0,2
+[00:05:21] ,offensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:05:21] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:05:22] ,ultimate_charged,0,Tempest,KANKAN,Tracer,0,2
+[00:05:23] ,kill,0,Paradise Aegis,Duelan,Genji,Tempest,Triage3,Kiriko,Secondary Fire,38.93,True,0
+[00:05:24] ,ultimate_start,0,Tempest,KANKAN,Tracer,0,2
+[00:05:24] ,ultimate_end,0,Tempest,KANKAN,Tracer,0,2
+[00:05:25] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,KANKAN,Tracer,Secondary Fire,77.84,0,0
+[00:05:27] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,Alert,Kiriko,Secondary Fire,8.48,0,0
+[00:05:27] ,offensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:05:27] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:05:35] ,hero_swap,0,Tempest,KANKAN,Genji,Tracer,0
+[00:05:35] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,Duelan,Genji,Ability 1,5.04,0,0
+[00:05:35] ,defensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:05:36] ,ultimate_charged,0,Tempest,ICE,Junker Queen,0,2
+[00:06:01] ,ultimate_charged,0,Tempest,Ranc1dRandy,Torbjörn,0,2
+[00:06:02] ,ultimate_start,0,Tempest,ICE,Junker Queen,0,2
+[00:06:04] ,ultimate_start,0,Tempest,Ranc1dRandy,Torbjörn,0,2
+[00:06:04] ,ultimate_start,0,Paradise Aegis,persephone,Lúcio,0,1
+[00:06:07] ,ultimate_start,0,Tempest,Shadowph33r,Lúcio,0,1
+[00:06:07] ,ultimate_end,0,Tempest,Ranc1dRandy,Torbjörn,0,2
+[00:06:08] ,ultimate_end,0,Tempest,ICE,Junker Queen,0,2
+[00:06:12] ,ultimate_end,0,Paradise Aegis,persephone,Lúcio,0,1
+[00:06:14] ,ultimate_end,0,Tempest,Shadowph33r,Lúcio,0,1
+[00:06:24] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,Triage3,Kiriko,0,10,0,0
+[00:06:29] ,kill,0,Paradise Aegis,Duelan,Genji,Tempest,KANKAN,Genji,Ability 1,15.66,0,0
+[00:06:29] ,kill,0,Paradise Aegis,Duelan,Genji,Tempest,Ranc1dRandy,Torbjörn,Ability 1,33.53,0,0
+[00:06:32] ,ultimate_charged,0,Paradise Aegis,BrickWall,Sojourn,0,2
+[00:06:35] ,kill,0,Paradise Aegis,Duelan,Genji,Tempest,Shadowph33r,Lúcio,Secondary Fire,23.80,0,0
+[00:06:36] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:06:37] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,ICE,Junker Queen,0,30.43,0,0
+[00:06:37] ,offensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:06:39] ,ultimate_charged,0,Paradise Aegis,Alert,Kiriko,0,2
+[00:07:01] ,ultimate_charged,0,Paradise Aegis,Duelan,Genji,0,2
+[00:07:05] ,ultimate_start,0,Paradise Aegis,Alert,Kiriko,0,2
+[00:07:05] ,ultimate_start,0,Paradise Aegis,Duelan,Genji,0,2
+[00:07:05] ,ultimate_end,0,Paradise Aegis,Alert,Kiriko,0,2
+[00:07:06] ,ultimate_start,0,Paradise Aegis,Alert,Kiriko,0,2
+[00:07:08] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,Ranc1dRandy,Torbjörn,0,19.98,0,0
+[00:07:08] ,ultimate_charged,0,Paradise Aegis,Tubeit,Junker Queen,0,3
+[00:07:08] ,offensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:07:08] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:07:12] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,Shadowph33r,Lúcio,Secondary Fire,56.32,0,0
+[00:07:12] ,offensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:07:12] ,offensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:07:12] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:07:14] ,ultimate_end,0,Paradise Aegis,Duelan,Genji,0,2
+[00:07:16] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,Triage3,Kiriko,Primary Fire,7.23,0,0
+[00:07:16] ,offensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:07:16] ,ultimate_end,0,Paradise Aegis,Alert,Kiriko,0,2
+[00:07:18] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,KANKAN,Genji,0,103,True,0
+[00:07:18] ,offensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:07:18] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:07:19] ,kill,0,Tempest,ICE,Junker Queen,Paradise Aegis,BrickWall,Sojourn,0,11.39,True,0
+[00:07:19] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:07:25] ,kill,0,Paradise Aegis,Duelan,Genji,Tempest,ICE,Junker Queen,Secondary Fire,12.95,0,0
+[00:07:25] ,offensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:07:25] ,defensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:07:25] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:07:50] ,ultimate_charged,0,Tempest,Triage3,Kiriko,0,2
+[00:07:55] ,ultimate_charged,0,Paradise Aegis,persephone,Lúcio,0,2
+[00:07:56] ,ultimate_start,0,Tempest,Triage3,Kiriko,0,2
+[00:07:57] ,ultimate_end,0,Tempest,Triage3,Kiriko,0,2
+[00:07:57] ,ultimate_start,0,Tempest,Triage3,Kiriko,0,2
+[00:08:00] ,kill,0,Tempest,Triage3,Kiriko,Paradise Aegis,Tubeit,Junker Queen,0,36.37,0,0
+[00:08:00] ,offensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:08:04] ,ultimate_charged,0,Tempest,Ranc1dRandy,Torbjörn,0,3
+[00:08:04] ,ultimate_charged,0,Tempest,KANKAN,Genji,0,3
+[00:08:05] ,kill,0,Tempest,Shadowph33r,Lúcio,Paradise Aegis,persephone,Lúcio,Primary Fire,27.20,True,0
+[00:08:05] ,offensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:08:05] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:08:05] ,kill,0,Tempest,KANKAN,Genji,Paradise Aegis,Duelan,Genji,Ability 1,33.64,0,0
+[00:08:05] ,offensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:08:05] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:08:08] ,ultimate_end,0,Tempest,Triage3,Kiriko,0,2
+[00:08:09] ,ultimate_charged,0,Tempest,ICE,Junker Queen,0,3
+[00:08:09] ,kill,0,Tempest,Shadowph33r,Lúcio,Paradise Aegis,Alert,Kiriko,Melee,7.37,0,0
+[00:08:09] ,offensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:08:10] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,BrickWall,Sojourn,Secondary Fire,4.25,0,0
+[00:08:11] ,offensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:08:11] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:08:31] ,kill,0,Tempest,ICE,Junker Queen,Paradise Aegis,persephone,Lúcio,0,1.44,0,0
+[00:08:33] ,ultimate_start,0,Tempest,ICE,Junker Queen,0,3
+[00:08:34] ,ultimate_start,0,Tempest,KANKAN,Genji,0,3
+[00:08:35] ,ultimate_end,0,Tempest,ICE,Junker Queen,0,3
+[00:08:35] ,ultimate_start,0,Paradise Aegis,BrickWall,Sojourn,0,2
+[00:08:36] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,Triage3,Kiriko,Ultimate,167.04,True,0
+[00:08:36] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:08:37] ,ultimate_start,0,Tempest,Ranc1dRandy,Torbjörn,0,3
+[00:08:41] ,ultimate_end,0,Tempest,Ranc1dRandy,Torbjörn,0,3
+[00:08:41] ,ultimate_charged,0,Tempest,Shadowph33r,Lúcio,0,2
+[00:08:42] ,ultimate_end,0,Tempest,KANKAN,Genji,0,3
+[00:08:44] ,ultimate_end,0,Paradise Aegis,BrickWall,Sojourn,0,2
+[00:08:45] ,kill,0,Tempest,ICE,Junker Queen,Paradise Aegis,Tubeit,Junker Queen,Secondary Fire,1.36,0,0
+[00:08:45] ,offensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:08:45] ,defensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:08:52] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,Duelan,Genji,Secondary Fire,13.32,0,0
+[00:08:52] ,offensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:08:52] ,defensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:09:11] ,ultimate_charged,0,Paradise Aegis,Alert,Kiriko,0,3
+[00:09:25] ,ultimate_start,0,Paradise Aegis,Alert,Kiriko,0,3
+[00:09:26] ,ultimate_end,0,Paradise Aegis,Alert,Kiriko,0,3
+[00:09:26] ,ultimate_start,0,Paradise Aegis,Alert,Kiriko,0,3
+[00:09:31] ,ultimate_start,0,Paradise Aegis,Tubeit,Junker Queen,0,3
+[00:09:32] ,ultimate_start,0,Tempest,Shadowph33r,Lúcio,0,2
+[00:09:36] ,ultimate_charged,0,Paradise Aegis,Duelan,Genji,0,3
+[00:09:36] ,ultimate_end,0,Paradise Aegis,Alert,Kiriko,0,3
+[00:09:37] ,ultimate_end,0,Paradise Aegis,Tubeit,Junker Queen,0,3
+[00:09:38] ,kill,0,Paradise Aegis,Alert,Kiriko,Tempest,ICE,Junker Queen,0,76.27,True,0
+[00:09:38] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:09:39] ,ultimate_end,0,Tempest,Shadowph33r,Lúcio,0,2
+[00:09:52] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,Ranc1dRandy,Torbjörn,Secondary Fire,10.67,0,0
+[00:09:53] ,offensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:09:53] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:09:53] ,offensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:09:55] ,kill,0,Tempest,KANKAN,Genji,Paradise Aegis,persephone,Lúcio,Primary Fire,15.48,0,0
+[00:09:56] ,offensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:09:56] ,defensive_assist,0,Tempest,Shadowph33r,Lúcio,0
+[00:10:04] ,ultimate_charged,0,Tempest,Triage3,Kiriko,0,3
+[00:10:13] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,Shadowph33r,Lúcio,Secondary Fire,7.16,0,0
+[00:10:13] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:10:16] ,kill,0,Tempest,KANKAN,Genji,Paradise Aegis,Duelan,Genji,Secondary Fire,14.50,0,0
+[00:10:17] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:10:19] ,ultimate_charged,0,Tempest,Ranc1dRandy,Torbjörn,0,4
+[00:10:19] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,Tubeit,Junker Queen,Ability 1,6.64,0,0
+[00:10:19] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:10:25] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,Triage3,Kiriko,Secondary Fire,173,True,0
+[00:10:25] ,kill,0,Tempest,Ranc1dRandy,Torbjörn,Paradise Aegis,BrickWall,Sojourn,Secondary Fire,71,0,0
+[00:10:25] ,defensive_assist,0,Tempest,Triage3,Kiriko,0
+[00:10:47] ,ultimate_start,0,Tempest,Ranc1dRandy,Torbjörn,0,4
+[00:10:47] ,kill,0,Paradise Aegis,BrickWall,Sojourn,Tempest,Ranc1dRandy,Torbjörn,Secondary Fire,63.46,0,0
+[00:10:47] ,ultimate_end,0,Tempest,Ranc1dRandy,Torbjörn,0,4
+[00:10:49] ,ultimate_start,0,Paradise Aegis,Duelan,Genji,0,3
+[00:10:52] ,ultimate_start,0,Tempest,Triage3,Kiriko,0,3
+[00:10:52] ,ultimate_end,0,Tempest,Triage3,Kiriko,0,3
+[00:10:52] ,ultimate_start,0,Tempest,Triage3,Kiriko,0,3
+[00:10:53] ,kill,0,Paradise Aegis,Duelan,Genji,Tempest,Shadowph33r,Lúcio,Ultimate,40,0,0
+[00:10:53] ,offensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:10:53] ,defensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:10:54] ,ultimate_start,0,Paradise Aegis,persephone,Lúcio,0,2
+[00:10:57] ,ultimate_end,0,Paradise Aegis,Duelan,Genji,0,3
+[00:10:57] ,kill,0,Paradise Aegis,persephone,Lúcio,Tempest,Triage3,Kiriko,Primary Fire,3.28,0,0
+[00:10:57] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:10:57] ,defensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:10:58] ,hero_swap,0,Tempest,Ranc1dRandy,Tracer,Torbjörn,0
+[00:11:00] ,ultimate_charged,0,Tempest,KANKAN,Genji,0,4
+[00:11:01] ,ultimate_start,0,Tempest,KANKAN,Genji,0,4
+[00:11:02] ,ultimate_end,0,Paradise Aegis,persephone,Lúcio,0,2
+[00:11:02] ,kill,0,Paradise Aegis,Tubeit,Junker Queen,Tempest,KANKAN,Genji,Ability 2,65,0,0
+[00:11:02] ,ultimate_end,0,Tempest,KANKAN,Genji,0,4
+[00:11:03] ,defensive_assist,0,Paradise Aegis,Alert,Kiriko,0
+[00:11:03] ,defensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:11:03] ,ultimate_end,0,Tempest,Triage3,Kiriko,0,3
+[00:11:03] ,ultimate_charged,0,Paradise Aegis,BrickWall,Sojourn,0,3
+[00:11:04] ,ultimate_start,0,Paradise Aegis,BrickWall,Sojourn,0,3
+[00:11:05] ,ultimate_charged,0,Tempest,ICE,Junker Queen,0,4
+[00:11:07] ,ultimate_start,0,Tempest,ICE,Junker Queen,0,4
+[00:11:08] ,offensive_assist,0,Paradise Aegis,persephone,Lúcio,0
+[00:11:08] ,kill,0,Paradise Aegis,Alert,Kiriko,Tempest,ICE,Junker Queen,0,3.93,True,0
+[00:11:11] ,kill,0,Paradise Aegis,Duelan,Genji,Tempest,Ranc1dRandy,Tracer,Secondary Fire,2,True,0
+[00:11:12] ,ultimate_end,0,Tempest,ICE,Junker Queen,0,4
+[00:11:13] ,ultimate_end,0,Paradise Aegis,BrickWall,Sojourn,0,3
+[00:11:15] ,round_end,0,1,Paradise Aegis,0,0,0,0,0,0
+[00:11:15] ,match_end,0,1,0,0
+[00:11:15] ,player_stat,0,1,Paradise Aegis,Duelan,Genji,20,9,7,8343.90,0,7079.51,0,2331.60,0,4309.34,0,0,0,3,3,0,0,0,8,0,0,13,0.06,0,0,0,840,204,621,0,0,0.25,0
+[00:11:15] ,player_stat,0,1,Tempest,Triage3,Kiriko,7,2,8,3002.37,0,3002.37,8058.60,1806.83,0,3498.41,0,16,8,3,3,0,0,0,5,0,0,10,0.19,0,0,0,214,52,153,0,0,0.25,0
+[00:11:15] ,player_stat,0,1,Tempest,KANKAN,Tracer,7,1,6,1699.55,0,1699.55,0,193.23,189.40,1332.63,0,0,0,2,2,0,0,1,3,0,0,25,0.08,0,0,0,1282,298,979,0,0,0.23,0
+[00:11:15] ,player_stat,0,1,Tempest,KANKAN,Genji,7,3,3,3474.62,0,3474.62,0,1116.80,0,1835.91,0,0,0,2,2,0,0,0,2,0,0,13,0.17,0,0,0,495,76,414,0,0,0.16,0
+[00:11:15] ,player_stat,0,1,Paradise Aegis,persephone,Lúcio,12,1,7,2252.35,0,2212.35,5202.44,2280.46,769.37,4181.28,0,5,8,2,2,0,0,0,6,0,0,6,0.06,0,0,0,437,96,333,0,0,0.22,0
+[00:11:15] ,player_stat,0,1,Tempest,ICE,Junker Queen,19,4,6,9405.77,0,9405.77,0,8435.40,2885.20,13217.71,0,0,0,4,4,0,0,0,13,0,0,0,0,0,0,0,2310,459,1798,0,0,0.20,0
+[00:11:15] ,player_stat,0,1,Tempest,Shadowph33r,Lúcio,13,4,7,2776.96,0,2776.96,5299.16,1791.14,848.28,3835.33,0,7,7,2,2,0,0,0,5,0,0,12,0.12,0,0,0,646,100,527,0,0,0.16,0
+[00:11:15] ,player_stat,0,1,Paradise Aegis,Alert,Kiriko,11,5,2,2960.51,0,2429.51,10123.58,2004.60,0,2887.19,0,20,6,3,3,0,0,1,3,0,0,9,0.16,0,0,0,201,57,138,0,0,0.29,0
+[00:11:15] ,player_stat,0,1,Tempest,Ranc1dRandy,Torbjörn,20,13,7,10461.12,0,10461.12,0,3023.44,0,6620.96,0,0,0,4,4,0,0,2,11,0,0,21,0.10,0,0,0,1212,208,965,0,0,0.18,0
+[00:11:15] ,player_stat,0,1,Tempest,Ranc1dRandy,Tracer,0,0,1,0,0,0,0,0,0,150,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,12,0,12,0,0,0,0
+[00:11:15] ,player_stat,0,1,Paradise Aegis,Tubeit,Junker Queen,24,11,6,11223.21,0,10989.80,0,9977.11,3453.67,15516.96,0,0,0,3,3,0,0,0,12,0,0,0,0,0,0,0,2430,627,1758,0,0,0.26,0
+[00:11:15] ,player_stat,0,1,Paradise Aegis,BrickWall,Sojourn,24,12,5,8880.38,0,7779.78,0,2749.62,0,3925.62,0,0,0,3,3,0,0,2,16,0,0,0,0,0,0,0,3027,566,2415,0,0,0.19,0

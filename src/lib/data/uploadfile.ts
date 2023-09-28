@@ -1,14 +1,12 @@
 import {isNumeric} from '../string';
-import {
-  FileUpload,
-} from 'lib/data/types';
+import {FileUpload} from 'lib/data/types';
 import {stringHash} from './../string';
 import {getRoleFromHero} from './data';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
-import { parallelProcessLogLines } from './logging/manager';
-import { DataAndSpecName, logSpec, objectify } from './logging/spec';
-import { parseLines } from '~/lib/data/logging/parseLine';
+import {parallelProcessLogLines} from './logging/manager';
+import {DataAndSpecName, logSpec, objectify} from './logging/spec';
+import {parseLines} from '~/lib/data/logging/parseLine';
 
 const loadFile = async (fileUpload: FileUpload) => {
   if (!fileUpload.file) {
@@ -49,7 +47,7 @@ const parseFile = async (fileUpload: FileUpload) => {
 
   const data = fileUpload.data;
   const hash = stringHash(data);
- 
+
   const lines = data.split('\n').filter((l) => l.length > 0);
   // const result = await parallelProcessLogLines(lines, hash);
   const result: DataAndSpecName[] = parseLines(lines, hash, logSpec);
@@ -67,18 +65,13 @@ const parseFile = async (fileUpload: FileUpload) => {
   fileUpload.mapId = hash;
 };
 
-
-
 const saveFile = async (
   fileUpload: FileUpload,
   setPercent: (number) => void,
 ) => {
-  if (
-    !fileUpload.events ||
-    !fileUpload.mapId
-  ) {
+  if (!fileUpload.events || !fileUpload.mapId) {
     console.error('no parsed data');
-    console.log (fileUpload);
+    console.log(fileUpload);
     return;
   }
 
@@ -112,7 +105,7 @@ const saveFile = async (
       key,
       data.map((p) => ({
         type: 'add',
-        value: objectify(p, key)
+        value: objectify(p, key),
       })),
     );
     percent += percentPerKey;
@@ -127,7 +120,7 @@ const saveFile = async (
         id: fileUpload.mapId,
         name: fileUpload.fileName,
         fileModified: fileUpload.file!.lastModified,
-      }
+      },
     },
   ]);
   setPercent(100);
@@ -166,11 +159,9 @@ const saveFile = async (
 
   // write to db on objectStore = specName
   // group by specName
-   
 
-    
   console.log('wrote events', fileUpload.fileName);
-    
+
   // setPercent(100);
 };
 
@@ -180,7 +171,6 @@ const uploadFile = async (
 ) => {
   setPercent(0);
   await loadFile(fileUpload);
-
 
   if (fileUpload.error) {
     setPercent(-1);

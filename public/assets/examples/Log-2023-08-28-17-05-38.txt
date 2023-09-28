@@ -1,0 +1,504 @@
+[00:00:00] ,match_start,0,Oasis,Control,Team 1,Team 2
+[00:00:00] ,round_start,0,1,0,0,0,1
+[00:00:18] ,hero_spawn,0,Team 1,Huntertain,Orisa,0,0
+[00:00:22] ,hero_spawn,0,Team 2,BrickWall,Hanzo,0,0
+[00:00:25] ,hero_spawn,0,Team 1,Shadowph33r,Lúcio,0,0
+[00:00:25] ,hero_spawn,0,Team 2,Tubeit,Orisa,0,0
+[00:00:28] ,hero_spawn,0,Team 1,KANKAN,Widowmaker,0,0
+[00:00:34] ,hero_spawn,0,Team 2,Alert,Pharah,0,0
+[00:00:34] ,hero_spawn,0,Team 1,Triage3,Baptiste,0,0
+[00:00:37] ,hero_swap,0,Team 1,KANKAN,Soldier: 76,Widowmaker,0
+[00:00:41] ,hero_swap,0,Team 2,Alert,Kiriko,Pharah,0
+[00:00:54] ,hero_spawn,0,Team 2,Duelan,Soldier: 76,0,0
+[00:00:59] ,hero_swap,0,Team 2,Duelan,Bastion,Soldier: 76,0
+[00:01:03] ,hero_swap,0,Team 2,BrickWall,Tracer,Hanzo,0
+[00:01:07] ,hero_swap,0,Team 2,BrickWall,Torbjörn,Tracer,0
+[00:01:29] ,hero_spawn,0,Team 2,persephone,Baptiste,0,0
+[00:01:32] ,hero_swap,0,Team 2,Alert,Illari,Kiriko,0
+[00:01:44] ,hero_spawn,0,Team 1,Ranc1dRandy,Tracer,0,0
+[00:01:56] ,hero_swap,0,Team 1,Ranc1dRandy,Sojourn,Tracer,0
+[00:02:17] ,hero_swap,0,Team 1,KANKAN,Junkrat,Soldier: 76,0
+[00:02:20] ,hero_swap,0,Team 1,Ranc1dRandy,Soldier: 76,Sojourn,0
+[00:02:23] ,hero_swap,0,Team 1,KANKAN,Sojourn,Junkrat,0
+[00:02:47] ,setup_complete,0,1,29.99
+[00:03:12] ,kill,0,Team 2,Duelan,Bastion,Team 1,KANKAN,Sojourn,Secondary Fire,88,0,0
+[00:03:12] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:03:27] ,point_progress,0,1,All Teams,1,33.40
+[00:03:28] ,point_progress,0,1,All Teams,1,66.70
+[00:03:29] ,kill,0,Team 2,Tubeit,Orisa,Team 1,Triage3,Baptiste,Secondary Fire,158.00,0,True
+[00:03:30] ,point_progress,0,1,All Teams,1,99.90
+[00:03:30] ,objective_captured,0,1,Team 2,1,0,0.01,0
+[00:03:37] ,kill,0,Team 2,Tubeit,Orisa,Team 1,Huntertain,Orisa,Primary Fire,8.07,True,0
+[00:03:37] ,kill,0,Team 2,persephone,Baptiste,Team 1,Shadowph33r,Lúcio,Primary Fire,14.50,0,0
+[00:03:37] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:03:37] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:03:43] ,kill,0,Team 2,Tubeit,Orisa,Team 1,KANKAN,Sojourn,Primary Fire,0.12,0,0
+[00:04:12] ,point_progress,0,1,Team 1,1,33.39
+[00:04:14] ,point_progress,0,1,Team 1,1,66.69
+[00:04:24] ,kill,0,Team 1,Ranc1dRandy,Soldier: 76,Team 2,Tubeit,Orisa,Primary Fire,10.08,0,0
+[00:04:24] ,offensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:04:24] ,defensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:04:24] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:04:24] ,offensive_assist,0,Team 1,Huntertain,Orisa,0
+[00:04:24] ,ultimate_charged,0,Team 2,Alert,Illari,0,1
+[00:04:26] ,ultimate_charged,0,Team 1,Triage3,Baptiste,0,1
+[00:04:27] ,kill,0,Team 2,BrickWall,Torbjörn,Team 1,Huntertain,Orisa,Ability 1,10.31,0,0
+[00:04:27] ,offensive_assist,0,Team 2,Tubeit,Orisa,0
+[00:04:27] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:04:28] ,ultimate_start,0,Team 1,Triage3,Baptiste,0,1
+[00:04:32] ,kill,0,Team 2,BrickWall,Torbjörn,Team 1,Ranc1dRandy,Soldier: 76,Primary Fire,12,0,0
+[00:04:32] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:04:33] ,kill,0,Team 1,Shadowph33r,Lúcio,Team 2,persephone,Baptiste,Primary Fire,17.48,0,0
+[00:04:33] ,offensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:04:33] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:04:34] ,ultimate_start,0,Team 2,Alert,Illari,0,1
+[00:04:34] ,ultimate_charged,0,Team 2,BrickWall,Torbjörn,0,1
+[00:04:36] ,ultimate_charged,0,Team 2,Duelan,Bastion,0,1
+[00:04:36] ,kill,0,Team 2,Duelan,Bastion,Team 1,Triage3,Baptiste,Primary Fire,7.82,0,0
+[00:04:36] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:04:38] ,kill,0,Team 2,Alert,Illari,Team 1,Shadowph33r,Lúcio,Ultimate,91.81,0,0
+[00:04:38] ,ultimate_end,0,Team 1,Triage3,Baptiste,0,1
+[00:04:39] ,ultimate_end,0,Team 2,Alert,Illari,0,1
+[00:04:40] ,kill,0,Team 2,BrickWall,Torbjörn,Team 1,KANKAN,Sojourn,Secondary Fire,68.53,0,0
+[00:05:00] ,ultimate_start,0,Team 2,Duelan,Bastion,0,1
+[00:05:06] ,kill,0,Team 2,Duelan,Bastion,Team 1,Triage3,Baptiste,Ultimate,141.85,0,0
+[00:05:06] ,offensive_assist,0,Team 2,Tubeit,Orisa,0
+[00:05:06] ,ultimate_end,0,Team 2,Duelan,Bastion,0,1
+[00:05:09] ,ultimate_charged,0,Team 2,persephone,Baptiste,0,1
+[00:05:11] ,ultimate_charged,0,Team 2,Tubeit,Orisa,0,1
+[00:05:21] ,ultimate_start,0,Team 2,BrickWall,Torbjörn,0,1
+[00:05:25] ,ultimate_end,0,Team 2,BrickWall,Torbjörn,0,1
+[00:05:28] ,ultimate_charged,0,Team 1,Ranc1dRandy,Soldier: 76,0,1
+[00:05:34] ,ultimate_start,0,Team 1,Ranc1dRandy,Soldier: 76,0,1
+[00:05:34] ,ultimate_start,0,Team 2,persephone,Baptiste,0,1
+[00:05:35] ,ultimate_charged,0,Team 1,Shadowph33r,Lúcio,0,1
+[00:05:37] ,ultimate_charged,0,Team 1,KANKAN,Sojourn,0,1
+[00:05:38] ,ultimate_start,0,Team 1,KANKAN,Sojourn,0,1
+[00:05:39] ,ultimate_start,0,Team 1,Shadowph33r,Lúcio,0,1
+[00:05:39] ,kill,0,Team 2,persephone,Baptiste,Team 1,KANKAN,Sojourn,Primary Fire,23.63,0,0
+[00:05:39] ,ultimate_end,0,Team 1,KANKAN,Sojourn,0,1
+[00:05:40] ,ultimate_start,0,Team 2,Tubeit,Orisa,0,1
+[00:05:41] ,ultimate_end,0,Team 1,Ranc1dRandy,Soldier: 76,0,1
+[00:05:43] ,kill,0,Team 2,Tubeit,Orisa,Team 1,Huntertain,Orisa,Ultimate,103.37,0,0
+[00:05:43] ,ultimate_end,0,Team 2,Tubeit,Orisa,0,1
+[00:05:44] ,offensive_assist,0,Team 2,persephone,Baptiste,0
+[00:05:44] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:05:44] ,ultimate_end,0,Team 2,persephone,Baptiste,0,1
+[00:05:46] ,kill,0,Team 2,BrickWall,Torbjörn,Team 1,Triage3,Baptiste,Primary Fire,63.58,0,0
+[00:05:46] ,offensive_assist,0,Team 2,Tubeit,Orisa,0
+[00:05:47] ,ultimate_end,0,Team 1,Shadowph33r,Lúcio,0,1
+[00:05:47] ,kill,0,Team 2,Duelan,Bastion,Team 1,Ranc1dRandy,Soldier: 76,Primary Fire,22.48,0,0
+[00:05:50] ,kill,0,Team 2,persephone,Baptiste,Team 1,Shadowph33r,Lúcio,Primary Fire,6.39,0,0
+[00:05:51] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:05:51] ,offensive_assist,0,Team 2,Tubeit,Orisa,0
+[00:05:53] ,ultimate_charged,0,Team 1,Huntertain,Orisa,0,1
+[00:05:54] ,player_stat,0,1,Team 1,Huntertain,Orisa,1,0,3,1477.40,0,1374.07,0,2328.56,0,4918.56,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,408,142,246,0,0,0.37,0
+[00:05:54] ,player_stat,0,1,Team 2,BrickWall,Hanzo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 2,BrickWall,Tracer,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 2,BrickWall,Torbjörn,11,4,0,3093.86,0,3023.86,0,806.55,0,1085.99,0,0,0,1,1,0,0,0,10,0,0,8,0.09,0,0,0,289,87,185,0,0,0.32,0
+[00:05:54] ,player_stat,0,1,Team 2,Duelan,Soldier: 76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 2,Duelan,Bastion,12,4,0,2911.91,0,2881.91,0,1769.17,0,1780.07,0,0,0,1,1,0,0,0,9,0,0,9,0.06,0,0,0,912,154,738,0,0,0.17,0
+[00:05:54] ,player_stat,0,1,Team 2,Alert,Pharah,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 2,Alert,Kiriko,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 2,Alert,Illari,7,1,0,1587.21,0,1587.21,2902.76,667.33,410.97,667.33,0,0,0,1,1,1,3,0,6,0,0,6,0.25,0,0,0,61,24,34,0,0,0.41,0
+[00:05:54] ,player_stat,0,1,Team 2,persephone,Baptiste,7,3,1,961.56,0,911.56,2228.66,576.59,144.56,776.59,0,8,1,1,1,0,0,0,7,0,0,2,0.08,0,0,0,111,24,80,0,0,0.23,0
+[00:05:54] ,player_stat,0,1,Team 1,KANKAN,Widowmaker,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 1,KANKAN,Soldier: 76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 1,KANKAN,Junkrat,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 1,KANKAN,Sojourn,2,0,4,2350.61,0,1697.21,0,631.47,0,1431.47,0,0,0,1,1,0,0,0,2,0,0,0,0,0,0,0,593,222,333,0,0,0.40,0
+[00:05:54] ,player_stat,0,1,Team 2,Tubeit,Orisa,9,3,1,2566.72,0,2566.72,0,1432.67,0,2483.59,0,0,4,1,1,0,0,1,8,1,0,0,0,0,0,0,610,139,468,0,0,0.23,0
+[00:05:54] ,round_end,0,1,0,0,1,1,0,100,0
+[00:05:54] ,player_stat,0,1,Team 1,Triage3,Baptiste,2,0,4,516.17,0,431.17,3125.56,429.59,102.42,1428.19,0,2,1,1,1,0,0,0,2,0,1,1,0.04,0,0,0,69,24,39,0,0,0.38,0
+[00:05:54] ,player_stat,0,1,Team 1,Shadowph33r,Lúcio,2,1,3,971.55,0,726.55,1784.53,980.91,402.44,1900.91,0,1,1,1,1,0,0,0,2,0,0,4,0.07,0,0,0,178,58,95,0,0,0.38,0
+[00:05:54] ,player_stat,0,1,Team 1,Ranc1dRandy,Tracer,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 1,Ranc1dRandy,Sojourn,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:05:54] ,player_stat,0,1,Team 1,Ranc1dRandy,Soldier: 76,2,1,2,2635.90,0,2564.57,339.78,919.65,208.65,1319.65,0,0,0,1,1,0,0,0,2,0,0,12,0.09,0,0,0,346,135,208,0,0,0.39,0
+[00:06:05] ,round_start,0,2,0,0,1,2
+[00:06:43] ,hero_swap,0,Team 2,BrickWall,Symmetra,Torbjörn,0
+[00:06:46] ,hero_swap,0,Team 2,Tubeit,Reinhardt,Orisa,0
+[00:07:06] ,hero_swap,0,Team 2,Alert,Lúcio,Illari,0
+[00:08:22] ,hero_swap,0,Team 1,Huntertain,Reinhardt,Orisa,0
+[00:08:23] ,hero_swap,0,Team 1,KANKAN,Symmetra,Sojourn,0
+[00:08:27] ,hero_swap,0,Team 1,Ranc1dRandy,Bastion,Soldier: 76,0
+[00:08:46] ,setup_complete,0,2,29.99
+[00:09:03] ,kill,0,Team 2,Duelan,Bastion,Team 1,Triage3,Baptiste,Secondary Fire,70,0,0
+[00:09:04] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:09:18] ,point_progress,0,2,All Teams,2,33.38
+[00:09:19] ,kill,0,Team 2,Alert,Lúcio,Team 1,Huntertain,Reinhardt,Primary Fire,8.44,0,0
+[00:09:19] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:09:19] ,point_progress,0,2,All Teams,2,66.98
+[00:09:21] ,objective_captured,0,2,Team 2,2,0,0.01,0
+[00:09:28] ,ultimate_charged,0,Team 2,persephone,Baptiste,0,2
+[00:09:44] ,ultimate_start,0,Team 2,persephone,Baptiste,0,2
+[00:09:45] ,kill,0,Team 2,Tubeit,Reinhardt,Team 1,Triage3,Baptiste,Ability 2,181.12,0,0
+[00:09:46] ,offensive_assist,0,Team 2,persephone,Baptiste,0
+[00:09:46] ,defensive_assist,0,Team 2,Alert,Lúcio,0
+[00:09:46] ,ultimate_charged,0,Team 2,Duelan,Bastion,0,2
+[00:09:54] ,ultimate_end,0,Team 2,persephone,Baptiste,0,2
+[00:10:02] ,ultimate_charged,0,Team 1,Huntertain,Reinhardt,0,2
+[00:10:13] ,ultimate_start,0,Team 2,Duelan,Bastion,0,2
+[00:10:18] ,ultimate_end,0,Team 2,Duelan,Bastion,0,2
+[00:10:27] ,ultimate_start,0,Team 1,Huntertain,Reinhardt,0,2
+[00:10:27] ,ultimate_charged,0,Team 2,BrickWall,Symmetra,0,2
+[00:10:28] ,ultimate_charged,0,Team 1,KANKAN,Symmetra,0,2
+[00:10:28] ,ultimate_start,0,Team 2,BrickWall,Symmetra,0,2
+[00:10:29] ,ultimate_end,0,Team 1,Huntertain,Reinhardt,0,2
+[00:10:30] ,ultimate_start,0,Team 1,KANKAN,Symmetra,0,2
+[00:10:32] ,ultimate_charged,0,Team 1,Ranc1dRandy,Bastion,0,2
+[00:10:33] ,ultimate_charged,0,Team 1,Triage3,Baptiste,0,2
+[00:10:33] ,ultimate_charged,0,Team 1,Shadowph33r,Lúcio,0,2
+[00:10:38] ,kill,0,Team 2,Tubeit,Reinhardt,Team 1,KANKAN,Symmetra,Primary Fire,80.12,0,0
+[00:10:38] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:10:41] ,ultimate_end,0,Team 2,BrickWall,Symmetra,0,2
+[00:10:41] ,ultimate_charged,0,Team 2,Tubeit,Reinhardt,0,2
+[00:10:42] ,ultimate_end,0,Team 1,KANKAN,Symmetra,0,2
+[00:10:43] ,kill,0,Team 1,Ranc1dRandy,Bastion,Team 2,BrickWall,Symmetra,Primary Fire,3.57,0,0
+[00:10:43] ,offensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:10:44] ,ultimate_start,0,Team 1,Ranc1dRandy,Bastion,0,2
+[00:10:48] ,kill,0,Team 2,Duelan,Bastion,Team 1,Ranc1dRandy,Bastion,Primary Fire,1.88,0,0
+[00:10:48] ,ultimate_end,0,Team 1,Ranc1dRandy,Bastion,0,2
+[00:10:49] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:10:49] ,offensive_assist,0,Team 2,Alert,Lúcio,0
+[00:10:55] ,ultimate_start,0,Team 2,Tubeit,Reinhardt,0,2
+[00:10:58] ,ultimate_end,0,Team 2,Tubeit,Reinhardt,0,2
+[00:11:02] ,ultimate_charged,0,Team 2,Alert,Lúcio,0,2
+[00:11:03] ,ultimate_charged,0,Team 2,persephone,Baptiste,0,3
+[00:11:07] ,ultimate_start,0,Team 2,persephone,Baptiste,0,3
+[00:11:07] ,ultimate_start,0,Team 1,Shadowph33r,Lúcio,0,2
+[00:11:08] ,kill,0,Team 2,persephone,Baptiste,Team 1,KANKAN,Symmetra,Primary Fire,53,True,0
+[00:11:08] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:11:10] ,ultimate_start,0,Team 2,Alert,Lúcio,0,2
+[00:11:12] ,ultimate_start,0,Team 1,Triage3,Baptiste,0,2
+[00:11:15] ,ultimate_end,0,Team 1,Shadowph33r,Lúcio,0,2
+[00:11:16] ,kill,0,Team 1,Ranc1dRandy,Bastion,Team 2,persephone,Baptiste,Primary Fire,8.77,0,0
+[00:11:16] ,defensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:11:16] ,offensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:11:16] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:11:17] ,ultimate_charged,0,Team 2,Duelan,Bastion,0,3
+[00:11:18] ,ultimate_end,0,Team 2,Alert,Lúcio,0,2
+[00:11:18] ,ultimate_end,0,Team 2,persephone,Baptiste,0,3
+[00:11:19] ,ultimate_start,0,Team 2,Duelan,Bastion,0,3
+[00:11:22] ,ultimate_end,0,Team 1,Triage3,Baptiste,0,2
+[00:11:22] ,hero_swap,0,Team 1,KANKAN,Tracer,Symmetra,0
+[00:11:23] ,kill,0,Team 1,Ranc1dRandy,Bastion,Team 2,Tubeit,Reinhardt,Primary Fire,5.63,0,0
+[00:11:23] ,offensive_assist,0,Team 1,Huntertain,Reinhardt,0
+[00:11:23] ,offensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:11:23] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:11:25] ,ultimate_end,0,Team 2,Duelan,Bastion,0,3
+[00:11:26] ,kill,0,Team 1,Shadowph33r,Lúcio,Team 2,Duelan,Bastion,Primary Fire,18.60,0,0
+[00:11:26] ,offensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:11:26] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:11:26] ,defensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:11:29] ,point_progress,0,2,Team 1,2,33.58
+[00:11:29] ,kill,0,Team 1,Ranc1dRandy,Bastion,Team 2,BrickWall,Symmetra,Primary Fire,7.99,0,0
+[00:11:29] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:11:30] ,point_progress,0,2,Team 1,2,66.68
+[00:11:31] ,objective_captured,0,2,Team 1,2,0.01,99.99,0
+[00:11:32] ,kill,0,Team 1,Triage3,Baptiste,Team 2,Alert,Lúcio,Primary Fire,17.66,0,0
+[00:11:32] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:11:35] ,ultimate_charged,0,Team 1,Huntertain,Reinhardt,0,3
+[00:12:01] ,ultimate_start,0,Team 1,Huntertain,Reinhardt,0,3
+[00:12:03] ,kill,0,Team 1,Ranc1dRandy,Bastion,Team 2,persephone,Baptiste,Primary Fire,18.94,0,0
+[00:12:03] ,offensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:12:03] ,ultimate_end,0,Team 1,Huntertain,Reinhardt,0,3
+[00:12:03] ,offensive_assist,0,Team 1,Huntertain,Reinhardt,0
+[00:12:03] ,kill,0,Team 1,KANKAN,Tracer,Team 2,Duelan,Bastion,Primary Fire,0.95,0,0
+[00:12:03] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:12:03] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:12:04] ,offensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:12:04] ,kill,0,Team 1,KANKAN,Tracer,Team 2,BrickWall,Symmetra,Primary Fire,10.57,True,0
+[00:12:04] ,offensive_assist,0,Team 1,Huntertain,Reinhardt,0
+[00:12:04] ,offensive_assist,0,Team 1,Huntertain,Reinhardt,0
+[00:12:04] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:12:04] ,offensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:12:07] ,kill,0,Team 1,Ranc1dRandy,Bastion,Team 2,Tubeit,Reinhardt,Primary Fire,22.25,0,0
+[00:12:07] ,offensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:12:08] ,offensive_assist,0,Team 1,Huntertain,Reinhardt,0
+[00:12:08] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:12:13] ,kill,0,Team 1,Ranc1dRandy,Bastion,Team 2,Alert,Lúcio,Secondary Fire,22.84,0,0
+[00:12:34] ,ultimate_charged,0,Team 1,Ranc1dRandy,Bastion,0,3
+[00:12:44] ,ultimate_start,0,Team 1,Ranc1dRandy,Bastion,0,3
+[00:12:51] ,ultimate_end,0,Team 1,Ranc1dRandy,Bastion,0,3
+[00:12:51] ,kill,0,Team 1,Ranc1dRandy,Bastion,Team 2,Tubeit,Reinhardt,Primary Fire,16.81,0,0
+[00:12:51] ,ultimate_charged,0,Team 1,KANKAN,Tracer,0,3
+[00:12:51] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:12:51] ,offensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:12:52] ,ultimate_start,0,Team 1,KANKAN,Tracer,0,3
+[00:12:52] ,ultimate_end,0,Team 1,KANKAN,Tracer,0,3
+[00:12:53] ,kill,0,Team 1,KANKAN,Tracer,Team 2,Duelan,Bastion,Ultimate,270.55,0,0
+[00:12:53] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:12:53] ,offensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:12:53] ,defensive_assist,0,Team 1,Shadowph33r,Lúcio,0
+[00:12:56] ,ultimate_charged,0,Team 2,BrickWall,Symmetra,0,3
+[00:12:59] ,kill,0,Team 1,Ranc1dRandy,Bastion,Team 2,persephone,Baptiste,Primary Fire,0.72,0,0
+[00:12:59] ,defensive_assist,0,Team 1,Triage3,Baptiste,0
+[00:13:07] ,ultimate_charged,0,Team 1,Triage3,Baptiste,0,3
+[00:13:08] ,ultimate_charged,0,Team 2,Tubeit,Reinhardt,0,3
+[00:13:21] ,kill,0,Team 2,Duelan,Bastion,Team 1,Ranc1dRandy,Bastion,Secondary Fire,61.62,0,0
+[00:13:21] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:13:24] ,ultimate_start,0,Team 1,Triage3,Baptiste,0,3
+[00:13:25] ,ultimate_start,0,Team 2,BrickWall,Symmetra,0,3
+[00:13:25] ,ultimate_start,0,Team 2,Tubeit,Reinhardt,0,3
+[00:13:25] ,ultimate_charged,0,Team 1,Shadowph33r,Lúcio,0,3
+[00:13:27] ,point_progress,0,2,Team 2,2,33.39
+[00:13:28] ,ultimate_end,0,Team 2,Tubeit,Reinhardt,0,3
+[00:13:29] ,point_progress,0,2,Team 2,2,66.79
+[00:13:29] ,kill,0,Team 2,Tubeit,Reinhardt,Team 1,Triage3,Baptiste,Primary Fire,37.67,0,0
+[00:13:30] ,offensive_assist,0,Team 2,Alert,Lúcio,0
+[00:13:30] ,objective_captured,0,2,Team 2,2,99.99,99.99,0
+[00:13:32] ,kill,0,Team 2,Tubeit,Reinhardt,Team 1,Shadowph33r,Lúcio,Primary Fire,25.87,0,0
+[00:13:32] ,offensive_assist,0,Team 2,Alert,Lúcio,0
+[00:13:32] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:13:34] ,ultimate_charged,0,Team 1,Huntertain,Reinhardt,0,4
+[00:13:34] ,kill,0,Team 2,Tubeit,Reinhardt,Team 1,Huntertain,Reinhardt,Primary Fire,78.97,0,0
+[00:13:34] ,offensive_assist,0,Team 2,Alert,Lúcio,0
+[00:13:34] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:13:34] ,ultimate_end,0,Team 1,Triage3,Baptiste,0,3
+[00:13:37] ,ultimate_charged,0,Team 2,persephone,Baptiste,0,4
+[00:13:38] ,ultimate_end,0,Team 2,BrickWall,Symmetra,0,3
+[00:13:38] ,kill,0,Team 2,BrickWall,Symmetra,Team 1,KANKAN,Tracer,Secondary Fire,79.05,0,0
+[00:13:38] ,defensive_assist,0,Team 2,persephone,Baptiste,0
+[00:13:39] ,ultimate_start,0,Team 2,persephone,Baptiste,0,4
+[00:13:41] ,ultimate_charged,0,Team 2,Alert,Lúcio,0,3
+[00:13:42] ,ultimate_start,0,Team 2,Alert,Lúcio,0,3
+[00:13:43] ,player_stat,0,2,Team 1,Huntertain,Orisa,1,0,3,1477.40,0,1374.07,0,2328.56,0,4918.56,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,408,142,246,0,0,0.37,0
+[00:13:43] ,player_stat,0,2,Team 1,Huntertain,Reinhardt,9,0,2,8665.15,2442.90,6066.45,0,4904.29,0,6604.29,9155.68,0,5,3,2,1,3,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 2,BrickWall,Hanzo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 2,BrickWall,Tracer,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 2,BrickWall,Torbjörn,11,4,0,3093.86,0,3023.86,0,806.55,0,1085.99,0,0,0,1,1,0,0,0,10,0,0,8,0.09,0,0,0,289,87,185,0,0,0.32,0
+[00:13:43] ,player_stat,0,2,Team 2,BrickWall,Symmetra,7,1,3,6946.37,3303.95,3482.54,0,2125.81,0,2987.33,3000.10,0,0,2,2,0,0,0,5,0,0,0,0,0,0,0,83,31,45,0,0,0.41,0
+[00:13:43] ,player_stat,0,2,Team 2,Duelan,Soldier: 76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 2,Duelan,Bastion,17,7,3,14745.87,5077.13,8969.98,0,3988.68,0,4899.57,0,0,0,3,3,0,0,0,10,0,0,11,0.02,0,0,0,2667,491,1866,0,0,0.21,0
+[00:13:43] ,player_stat,0,2,Team 1,Triage3,Baptiste,11,1,7,3195.66,1397.42,1463.24,9326.14,1705.91,492.89,3580.51,0,14,4,3,3,0,0,0,7,0,1,4,0.05,0,0,0,282,78,148,0,0,0.35,0
+[00:13:43] ,player_stat,0,2,Team 1,Shadowph33r,Lúcio,11,2,4,5544.05,2335,2856.05,5615.11,2746.60,1074.70,4030.60,0,4,8,3,2,0,0,0,5,0,0,8,0.05,0,0,0,685,168,388,0,0,0.30,0
+[00:13:43] ,player_stat,0,2,Team 2,Alert,Pharah,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 2,Alert,Kiriko,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 2,Alert,Illari,7,1,0,1587.21,0,1587.21,2902.76,667.33,410.97,667.33,0,0,0,1,1,1,3,0,6,0,0,6,0.25,0,0,0,61,24,34,0,0,0.41,0
+[00:13:43] ,player_stat,0,2,Team 2,Alert,Lúcio,3,1,2,2111.05,820,1191.05,3550.81,1450.83,431.80,1850.83,0,1,4,2,2,0,0,0,3,0,0,2,0.03,0,0,0,334,62,230,0,0,0.21,0
+[00:13:43] ,player_stat,0,2,Team 1,Ranc1dRandy,Tracer,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 1,Ranc1dRandy,Sojourn,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 1,Ranc1dRandy,Soldier: 76,2,1,2,2635.90,0,2564.57,339.78,919.65,208.65,1319.65,0,0,0,1,1,0,0,0,2,0,0,12,0.09,0,0,0,346,135,208,0,0,0.39,0
+[00:13:43] ,player_stat,0,2,Team 1,Ranc1dRandy,Bastion,11,9,2,12012.59,5728.74,5681.63,0,1957.92,0,2892.01,0,0,0,2,2,0,0,0,5,0,0,0,0,0,0,0,1510,325,843,0,0,0.28,0
+[00:13:43] ,player_stat,0,2,Team 2,persephone,Baptiste,9,4,4,2988.98,1100,1838.98,10216.77,1759.11,379.68,2891.87,0,17,2,4,4,0,0,0,8,0,0,5,0.09,0,0,0,268,57,173,0,0,0.25,0
+[00:13:43] ,player_stat,0,2,Team 2,Tubeit,Orisa,9,3,1,2566.72,0,2566.72,0,1432.67,0,2483.59,0,0,4,1,1,0,0,1,8,1,0,0,0,0,0,0,610,139,468,0,0,0.23,0
+[00:13:43] ,player_stat,0,2,Team 2,Tubeit,Reinhardt,6,5,3,6059.90,2100,3699.90,0,5481.88,0,7805.88,10755.26,0,0,2,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,round_end,0,2,0,0,2,2,99.99,100,0
+[00:13:43] ,player_stat,0,2,Team 1,KANKAN,Widowmaker,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 1,KANKAN,Soldier: 76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 1,KANKAN,Junkrat,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:13:43] ,player_stat,0,2,Team 1,KANKAN,Sojourn,2,0,4,2350.61,0,1697.21,0,631.47,0,1431.47,0,0,0,1,1,0,0,0,2,0,0,0,0,0,0,0,593,222,333,0,0,0.40,0
+[00:13:43] ,player_stat,0,2,Team 1,KANKAN,Symmetra,0,0,2,3547.06,1658.80,1802.28,0,1073.35,0,1523.35,3245.40,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,42,21,14,0,0,0.60,0
+[00:13:43] ,player_stat,0,2,Team 1,KANKAN,Tracer,6,3,1,1657.40,192.50,1166.90,0,99.05,85,334.05,0,0,0,1,1,1,3,0,0,0,0,13,0.05,0,0,0,718,242,439,0,0,0.36,0
+[00:13:49] ,ultimate_end,0,Team 2,Alert,Lúcio,0,3
+[00:13:50] ,ultimate_end,0,Team 2,persephone,Baptiste,0,4
+[00:13:54] ,round_start,0,3,0,0,2,0
+[00:14:04] ,hero_swap,0,Team 1,KANKAN,Genji,Tracer,0
+[00:14:13] ,hero_swap,0,Team 2,Duelan,Tracer,Bastion,0
+[00:14:39] ,hero_swap,0,Team 2,Duelan,Echo,Tracer,0
+[00:14:44] ,hero_swap,0,Team 2,BrickWall,Tracer,Symmetra,0
+[00:14:46] ,hero_swap,0,Team 2,Tubeit,Winston,Reinhardt,0
+[00:15:06] ,hero_swap,0,Team 2,persephone,Mercy,Baptiste,0
+[00:15:30] ,hero_swap,0,Team 2,Alert,Ana,Lúcio,0
+[00:16:00] ,hero_swap,0,Team 2,Alert,Kiriko,Ana,0
+[00:16:07] ,hero_swap,0,Team 1,Ranc1dRandy,Echo,Bastion,0
+[00:16:15] ,hero_swap,0,Team 2,Alert,Ana,Kiriko,0
+[00:16:18] ,hero_swap,0,Team 1,Huntertain,D.Va,Reinhardt,0
+[00:16:23] ,hero_swap,0,Team 1,Triage3,Kiriko,Baptiste,0
+[00:16:25] ,hero_swap,0,Team 1,Shadowph33r,Mercy,Lúcio,0
+[00:16:25] ,hero_swap,0,Team 1,KANKAN,Tracer,Genji,0
+[00:16:36] ,hero_swap,0,Team 1,KANKAN,Hanzo,Tracer,0
+[00:16:37] ,hero_swap,0,Team 1,KANKAN,Tracer,Hanzo,0
+[00:17:17] ,hero_swap,0,Team 2,BrickWall,Symmetra,Tracer,0
+[00:17:25] ,setup_complete,0,3,29.99
+[00:17:28] ,hero_swap,0,Team 2,BrickWall,Tracer,Symmetra,0
+[00:17:57] ,point_progress,0,3,All Teams,0,33.59
+[00:18:07] ,point_progress,0,3,All Teams,0,66.97
+[00:18:09] ,kill,0,Team 2,Tubeit,Winston,Team 1,Ranc1dRandy,Echo,Primary Fire,0.90,0,0
+[00:18:09] ,offensive_assist,0,Team 2,Alert,Ana,0
+[00:18:09] ,defensive_assist,0,Team 2,Alert,Ana,0
+[00:18:09] ,offensive_assist,0,Team 2,persephone,Mercy,0
+[00:18:09] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:18:10] ,objective_captured,0,3,Team 1,0,0.01,0,0
+[00:18:26] ,kill,0,Team 2,Duelan,Echo,Team 1,KANKAN,Tracer,Primary Fire,29.23,True,0
+[00:18:26] ,offensive_assist,0,Team 2,Alert,Ana,0
+[00:18:27] ,offensive_assist,0,Team 2,persephone,Mercy,0
+[00:18:30] ,kill,0,Team 2,Tubeit,Winston,Team 1,Shadowph33r,Mercy,Primary Fire,2.39,0,0
+[00:18:34] ,ultimate_charged,0,Team 2,Duelan,Echo,0,4
+[00:18:35] ,point_progress,0,3,Team 2,0,33.56
+[00:18:48] ,kill,0,Team 2,Tubeit,Winston,Team 1,Triage3,Kiriko,Primary Fire,4.76,0,0
+[00:18:53] ,kill,0,Team 2,Alert,Ana,Team 1,Huntertain,D.Va,Ability 2,45.82,0,0
+[00:18:53] ,ultimate_charged,0,Team 2,Alert,Ana,0,4
+[00:18:53] ,offensive_assist,0,Team 2,persephone,Mercy,0
+[00:18:59] ,ultimate_charged,0,Team 1,KANKAN,Tracer,0,4
+[00:19:00] ,kill,0,Team 2,Duelan,Echo,Team 1,KANKAN,Tracer,Melee,25.04,0,0
+[00:19:00] ,defensive_assist,0,Team 2,Alert,Ana,0
+[00:19:01] ,ultimate_charged,0,Team 2,BrickWall,Tracer,0,4
+[00:19:01] ,ultimate_charged,0,Team 2,persephone,Mercy,0,5
+[00:19:04] ,kill,0,Team 2,Tubeit,Winston,Team 1,Shadowph33r,Mercy,Primary Fire,2.18,0,0
+[00:19:05] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:19:08] ,ultimate_charged,0,Team 1,Ranc1dRandy,Echo,0,4
+[00:19:08] ,kill,0,Team 2,persephone,Mercy,Team 1,Ranc1dRandy,Echo,Primary Fire,16.63,0,0
+[00:19:08] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:19:09] ,point_progress,0,3,Team 2,0,66.88
+[00:19:10] ,ultimate_charged,0,Team 1,Shadowph33r,Mercy,0,4
+[00:19:11] ,objective_captured,0,3,Team 2,0,50.68,0.01,0
+[00:19:34] ,ultimate_start,0,Team 2,BrickWall,Tracer,0,4
+[00:19:34] ,ultimate_end,0,Team 2,BrickWall,Tracer,0,4
+[00:19:36] ,ultimate_start,0,Team 2,persephone,Mercy,0,5
+[00:19:38] ,ultimate_charged,0,Team 1,Huntertain,D.Va,0,5
+[00:19:43] ,ultimate_start,0,Team 1,Shadowph33r,Mercy,0,4
+[00:19:44] ,ultimate_charged,0,Team 2,Tubeit,Winston,0,4
+[00:19:45] ,ultimate_charged,0,Team 1,Triage3,Kiriko,0,4
+[00:19:47] ,ultimate_start,0,Team 1,KANKAN,Tracer,0,4
+[00:19:47] ,ultimate_end,0,Team 1,KANKAN,Tracer,0,4
+[00:19:49] ,echo_duplicate_start,0,Team 2,Duelan,Echo,D.Va,4
+[00:19:51] ,ultimate_end,0,Team 2,persephone,Mercy,0,5
+[00:19:54] ,echo_duplicate_start,0,Team 1,Ranc1dRandy,Echo,Winston,4
+[00:19:55] ,echo_duplicate_end,0,Team 2,Duelan,Echo,4
+[00:19:55] ,ultimate_start,0,Team 2,Alert,Ana,0,4
+[00:19:56] ,ultimate_start,0,Team 1,Huntertain,D.Va,0,5
+[00:19:58] ,remech_charged,0,Team 1,Huntertain,D.Va,0,6
+[00:19:58] ,kill,0,Team 1,Huntertain,D.Va,Team 2,persephone,Mercy,Ultimate,200,0,0
+[00:19:58] ,ultimate_end,0,Team 1,Shadowph33r,Mercy,0,4
+[00:20:00] ,ultimate_end,0,Team 1,Huntertain,D.Va,0,6
+[00:20:03] ,ultimate_end,0,Team 2,Alert,Ana,0,4
+[00:20:05] ,kill,0,Team 1,KANKAN,Tracer,Team 2,Alert,Ana,Primary Fire,1.83,0,0
+[00:20:10] ,echo_duplicate_end,0,Team 1,Ranc1dRandy,Echo,4
+[00:20:14] ,kill,0,Team 1,Ranc1dRandy,Echo,Team 2,Duelan,Echo,Secondary Fire,4.99,0,0
+[00:20:15] ,offensive_assist,0,Team 1,Shadowph33r,Mercy,0
+[00:20:15] ,defensive_assist,0,Team 1,Shadowph33r,Mercy,0
+[00:20:15] ,defensive_assist,0,Team 1,Triage3,Kiriko,0
+[00:20:17] ,ultimate_start,0,Team 2,Tubeit,Winston,0,4
+[00:20:20] ,kill,0,Team 2,Tubeit,Winston,Team 1,Triage3,Kiriko,Ultimate,24.44,0,0
+[00:20:21] ,hero_swap,0,Team 2,Alert,Kiriko,Ana,0
+[00:20:23] ,kill,0,Team 1,KANKAN,Tracer,Team 2,BrickWall,Tracer,Primary Fire,5.73,True,0
+[00:20:23] ,defensive_assist,0,Team 1,Shadowph33r,Mercy,0
+[00:20:25] ,kill,0,Team 1,Ranc1dRandy,Echo,Team 2,Tubeit,Winston,Ability 2,2.98,0,0
+[00:20:25] ,ultimate_end,0,Team 2,Tubeit,Winston,0,4
+[00:20:26] ,offensive_assist,0,Team 1,Shadowph33r,Mercy,0
+[00:20:26] ,defensive_assist,0,Team 1,Shadowph33r,Mercy,0
+[00:20:27] ,point_progress,0,3,Team 1,0,33.44
+[00:20:28] ,point_progress,0,3,Team 1,0,66.64
+[00:20:29] ,mercy_rez,0,Team 1,Shadowph33r,Mercy,Team 1,Triage3,Kiriko
+[00:20:30] ,objective_captured,0,3,Team 1,0,50.69,65.69,0
+[00:21:08] ,ultimate_start,0,Team 1,Triage3,Kiriko,0,4
+[00:21:08] ,ultimate_end,0,Team 1,Triage3,Kiriko,0,4
+[00:21:08] ,ultimate_start,0,Team 1,Triage3,Kiriko,0,4
+[00:21:11] ,kill,0,Team 1,Ranc1dRandy,Echo,Team 2,Tubeit,Winston,Ability 2,15.86,0,0
+[00:21:11] ,offensive_assist,0,Team 1,Shadowph33r,Mercy,0
+[00:21:11] ,offensive_assist,0,Team 1,Triage3,Kiriko,0
+[00:21:11] ,defensive_assist,0,Team 1,Triage3,Kiriko,0
+[00:21:12] ,kill,0,Team 2,Duelan,Echo,Team 1,Ranc1dRandy,Echo,Ability 2,6.98,0,0
+[00:21:13] ,defensive_assist,0,Team 2,Alert,Kiriko,0
+[00:21:13] ,offensive_assist,0,Team 2,persephone,Mercy,0
+[00:21:13] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:21:14] ,ultimate_charged,0,Team 1,KANKAN,Tracer,0,5
+[00:21:14] ,mercy_rez,0,Team 2,persephone,Mercy,Team 2,Tubeit,Winston
+[00:21:18] ,ultimate_start,0,Team 1,KANKAN,Tracer,0,5
+[00:21:18] ,ultimate_end,0,Team 1,KANKAN,Tracer,0,5
+[00:21:18] ,kill,0,Team 2,Duelan,Echo,Team 1,Shadowph33r,Mercy,Primary Fire,31.96,0,0
+[00:21:19] ,ultimate_end,0,Team 1,Triage3,Kiriko,0,4
+[00:21:19] ,ultimate_charged,0,Team 2,BrickWall,Tracer,0,5
+[00:21:25] ,kill,0,Team 2,Duelan,Echo,Team 1,Triage3,Kiriko,Ability 2,5.02,0,0
+[00:21:25] ,defensive_assist,0,Team 2,Alert,Kiriko,0
+[00:21:25] ,offensive_assist,0,Team 2,persephone,Mercy,0
+[00:21:25] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:21:30] ,kill,0,Team 2,Duelan,Echo,Team 1,KANKAN,Tracer,Primary Fire,7.89,0,0
+[00:21:30] ,defensive_assist,0,Team 2,Alert,Kiriko,0
+[00:21:30] ,offensive_assist,0,Team 2,persephone,Mercy,0
+[00:21:30] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:21:33] ,kill,0,Team 2,Duelan,Echo,Team 1,Huntertain,D.Va,Melee,21.43,0,0
+[00:21:33] ,offensive_assist,0,Team 2,persephone,Mercy,0
+[00:21:33] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:21:34] ,defensive_assist,0,Team 2,Alert,Kiriko,0
+[00:21:35] ,point_progress,0,3,Team 2,0,33.57
+[00:21:37] ,point_progress,0,3,Team 2,0,66.78
+[00:21:38] ,point_progress,0,3,Team 2,0,99.98
+[00:21:38] ,objective_captured,0,3,Team 2,0,99.99,65.70,0
+[00:21:39] ,remech_charged,0,Team 1,Huntertain,D.Va,0,7
+[00:21:46] ,ultimate_charged,0,Team 1,Huntertain,D.Va,0,8
+[00:21:58] ,ultimate_charged,0,Team 2,Duelan,Echo,0,5
+[00:22:00] ,ultimate_charged,0,Team 1,Ranc1dRandy,Echo,0,5
+[00:22:01] ,ultimate_start,0,Team 2,BrickWall,Tracer,0,5
+[00:22:01] ,ultimate_end,0,Team 2,BrickWall,Tracer,0,5
+[00:22:08] ,echo_duplicate_start,0,Team 2,Duelan,Echo,Kiriko,5
+[00:22:16] ,ultimate_charged,0,Team 1,Shadowph33r,Mercy,0,5
+[00:22:16] ,echo_duplicate_start,0,Team 1,Ranc1dRandy,Echo,Winston,5
+[00:22:16] ,kill,0,Team 2,BrickWall,Tracer,Team 1,KANKAN,Tracer,Primary Fire,2.10,0,0
+[00:22:17] ,ultimate_start,0,Team 1,Shadowph33r,Mercy,0,5
+[00:22:18] ,point_progress,0,3,Team 1,0,33.39
+[00:22:24] ,ultimate_charged,0,Team 2,Tubeit,Winston,0,5
+[00:22:24] ,echo_duplicate_end,0,Team 2,Duelan,Echo,5
+[00:22:25] ,ultimate_charged,0,Team 1,Ranc1dRandy,Echo,Winston,6
+[00:22:25] ,ultimate_charged,0,Team 2,Alert,Kiriko,0,5
+[00:22:25] ,ultimate_start,0,Team 1,Ranc1dRandy,Echo,Winston,6
+[00:22:27] ,ultimate_charged,0,Team 2,persephone,Mercy,0,6
+[00:22:28] ,ultimate_start,0,Team 2,persephone,Mercy,0,6
+[00:22:29] ,ultimate_start,0,Team 2,Alert,Kiriko,0,5
+[00:22:29] ,ultimate_end,0,Team 2,Alert,Kiriko,0,5
+[00:22:29] ,ultimate_start,0,Team 2,Alert,Kiriko,0,5
+[00:22:31] ,ultimate_start,0,Team 1,Huntertain,D.Va,0,8
+[00:22:32] ,remech_charged,0,Team 1,Huntertain,D.Va,0,9
+[00:22:32] ,ultimate_end,0,Team 1,Ranc1dRandy,Echo,0,6
+[00:22:32] ,echo_duplicate_end,0,Team 1,Ranc1dRandy,Echo,5
+[00:22:32] ,ultimate_end,0,Team 1,Shadowph33r,Mercy,0,5
+[00:22:33] ,ultimate_end,0,Team 1,Huntertain,D.Va,0,9
+[00:22:35] ,dva_remech,0,Team 1,Huntertain,D.Va,9
+[00:22:38] ,kill,0,Team 2,Duelan,Echo,Team 1,Ranc1dRandy,Echo,Ability 2,11,0,0
+[00:22:39] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:22:39] ,offensive_assist,0,Team 2,Alert,Kiriko,0
+[00:22:40] ,ultimate_end,0,Team 2,Alert,Kiriko,0,5
+[00:22:42] ,kill,0,Team 2,Tubeit,Winston,Team 1,Triage3,Kiriko,Secondary Fire,15.60,0,0
+[00:22:42] ,mercy_rez,0,Team 1,Shadowph33r,Mercy,Team 1,Ranc1dRandy,Echo
+[00:22:42] ,offensive_assist,0,Team 2,Alert,Kiriko,0
+[00:22:42] ,defensive_assist,0,Team 2,Alert,Kiriko,0
+[00:22:42] ,kill,0,Team 2,Duelan,Echo,Team 1,Shadowph33r,Mercy,Primary Fire,8.75,0,0
+[00:22:42] ,offensive_assist,0,Team 2,persephone,Mercy,0
+[00:22:43] ,ultimate_end,0,Team 2,persephone,Mercy,0,6
+[00:22:43] ,kill,0,Team 2,Alert,Kiriko,Team 1,KANKAN,Tracer,0,92.75,True,0
+[00:22:44] ,defensive_assist,0,Team 2,Alert,Kiriko,0
+[00:22:44] ,offensive_assist,0,Team 2,persephone,Mercy,0
+[00:22:44] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:22:47] ,kill,0,Team 2,BrickWall,Tracer,Team 1,Ranc1dRandy,Echo,Primary Fire,0.40,0,0
+[00:22:47] ,defensive_assist,0,Team 2,persephone,Mercy,0
+[00:22:48] ,defensive_assist,0,Team 2,Alert,Kiriko,0
+[00:22:49] ,player_stat,0,3,Team 2,persephone,Baptiste,9,4,4,2988.98,1100,1838.98,10216.77,1759.11,379.68,2891.87,0,17,2,4,4,0,0,0,8,0,0,5,0.09,0,0,0,268,57,173,0,0,0.25,0
+[00:22:49] ,player_stat,0,3,Team 2,persephone,Mercy,1,1,1,16.63,0,16.63,3854.80,1519.59,263.74,1794.65,0,10,9,2,2,0,0,0,1,0,0,0,0,0,0,0,23,1,22,0,0,0.04,0
+[00:22:49] ,round_end,0,3,0,0,3,0,99.99,100,0
+[00:22:49] ,match_end,0,3,0,3
+[00:22:49] ,player_stat,0,3,Team 1,Huntertain,Orisa,1,0,3,1477.40,0,1374.07,0,2328.56,0,4918.56,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,408,142,246,0,0,0.37,0
+[00:22:49] ,player_stat,0,3,Team 1,Huntertain,Reinhardt,9,0,2,8665.15,2442.90,6066.45,0,4904.29,0,6604.29,9155.68,0,5,3,2,1,3,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 1,Huntertain,D.Va,5,1,2,5414.06,1704.91,3709.15,0,3837.11,0,5540.55,3138.25,0,0,2,5,0,0,1,4,0,0,164,0.10,0,0,0,8211,1623,5934,0,0,0.21,0
+[00:22:49] ,player_stat,0,3,Team 2,BrickWall,Hanzo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 2,BrickWall,Tracer,11,2,1,3186.47,160.67,3010.40,0,1100.05,401.65,1651.71,0,0,0,2,2,0,0,0,9,0,0,33,0.05,0,0,0,2530,630,1659,0,0,0.28,0
+[00:22:49] ,player_stat,0,3,Team 2,BrickWall,Torbjörn,11,4,0,3093.86,0,3023.86,0,806.55,0,1085.99,0,0,0,1,1,0,0,0,10,0,0,8,0.09,0,0,0,289,87,185,0,0,0.32,0
+[00:22:49] ,player_stat,0,3,Team 2,BrickWall,Symmetra,7,1,3,6946.37,3303.95,3482.54,0,2125.81,0,2987.33,3000.10,0,0,2,2,0,0,0,5,0,0,0,0,0,0,0,83,31,45,0,0,0.41,0
+[00:22:49] ,player_stat,0,3,Team 2,Duelan,Soldier: 76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 2,Duelan,Bastion,17,7,3,14745.87,5077.13,8969.98,0,3988.68,0,4899.57,0,0,0,3,3,0,0,0,10,0,0,11,0.02,0,0,0,2667,491,1866,0,0,0.21,0
+[00:22:49] ,player_stat,0,3,Team 2,Duelan,Tracer,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 2,Duelan,Echo,14,9,1,5837.22,200,5521.18,0,1552.37,0,2255.45,284.75,0,0,2,2,0,0,0,8,0,0,27,0.10,0,0,0,1165,283,688,0,0,0.29,0
+[00:22:49] ,player_stat,0,3,Team 1,Triage3,Baptiste,11,1,7,3195.66,1397.42,1463.24,9326.14,1705.91,492.89,3580.51,0,14,4,3,3,0,0,0,7,0,1,4,0.05,0,0,0,282,78,148,0,0,0.35,0
+[00:22:49] ,player_stat,0,3,Team 1,Triage3,Kiriko,0,0,4,1784.04,311.50,1472.54,4229.34,1920.27,0,2720.27,0,2,1,1,1,0,0,0,0,0,0,5,0.17,0,0,0,169,30,129,0,0,0.19,0
+[00:22:49] ,player_stat,0,3,Team 1,Shadowph33r,Lúcio,11,2,4,5544.05,2335,2856.05,5615.11,2746.60,1074.70,4030.60,0,4,8,3,2,0,0,0,5,0,0,8,0.05,0,0,0,685,168,388,0,0,0.30,0
+[00:22:49] ,player_stat,0,3,Team 1,Shadowph33r,Mercy,0,0,4,0,0,0,3800.51,748.29,210.42,1548.29,0,3,3,2,2,0,0,0,0,0,0,0,0,0,0,0,15,0,15,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 2,Alert,Pharah,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 2,Alert,Kiriko,2,1,0,882.15,90,721.26,1982.02,232.65,0,232.65,0,7,2,1,1,0,0,0,2,0,0,3,0.17,0,0,0,66,18,40,0,0,0.31,0
+[00:22:49] ,player_stat,0,3,Team 2,Alert,Illari,7,1,0,1587.21,0,1587.21,2902.76,667.33,410.97,667.33,0,0,0,1,1,1,3,0,6,0,0,6,0.25,0,0,0,61,24,34,0,0,0.41,0
+[00:22:49] ,player_stat,0,3,Team 2,Alert,Lúcio,3,1,2,2111.05,820,1191.05,3550.81,1450.83,431.80,1850.83,0,1,4,2,2,0,0,0,3,0,0,2,0.03,0,0,0,334,62,230,0,0,0.21,0
+[00:22:49] ,player_stat,0,3,Team 2,Alert,Ana,3,1,1,1120.90,130,990.90,2108.70,921.30,60,1121.30,0,2,2,1,1,0,0,0,2,0,0,0,0,0.55,0,0,77,14,32,62,34,0.30,0
+[00:22:49] ,player_stat,0,3,Team 1,Ranc1dRandy,Tracer,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 1,Ranc1dRandy,Sojourn,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 1,Ranc1dRandy,Soldier: 76,2,1,2,2635.90,0,2564.57,339.78,919.65,208.65,1319.65,0,0,0,1,1,0,0,0,2,0,0,12,0.09,0,0,0,346,135,208,0,0,0.39,0
+[00:22:49] ,player_stat,0,3,Team 1,Ranc1dRandy,Bastion,11,9,2,12012.59,5728.74,5681.63,0,1957.92,0,2892.01,0,0,0,2,2,0,0,0,5,0,0,0,0,0,0,0,1510,325,843,0,0,0.28,0
+[00:22:49] ,player_stat,0,3,Team 1,Ranc1dRandy,Echo,4,3,5,5694.36,1393.57,4300.77,0,1536.62,0,2821.08,621.91,0,0,3,3,0,0,0,3,0,0,7,0.05,0,0,0,825,154,614,0,0,0.20,0
+[00:22:49] ,player_stat,0,3,Team 1,KANKAN,Widowmaker,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 1,KANKAN,Soldier: 76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 1,KANKAN,Junkrat,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 1,KANKAN,Sojourn,2,0,4,2350.61,0,1697.21,0,631.47,0,1431.47,0,0,0,1,1,0,0,0,2,0,0,0,0,0,0,0,593,222,333,0,0,0.40,0
+[00:22:49] ,player_stat,0,3,Team 1,KANKAN,Symmetra,0,0,2,3547.06,1658.80,1802.28,0,1073.35,0,1523.35,3245.40,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,42,21,14,0,0,0.60,0
+[00:22:49] ,player_stat,0,3,Team 1,KANKAN,Tracer,8,5,6,6977.61,2612.95,4066.66,0,647.45,269.43,1816.88,0,0,0,3,3,1,3,0,1,0,0,95,0.11,0,0,0,2956,837,1756,0,0,0.32,0
+[00:22:49] ,player_stat,0,3,Team 1,KANKAN,Genji,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 1,KANKAN,Hanzo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 2,Tubeit,Orisa,9,3,1,2566.72,0,2566.72,0,1432.67,0,2483.59,0,0,4,1,1,0,0,1,8,1,0,0,0,0,0,0,610,139,468,0,0,0.23,0
+[00:22:49] ,player_stat,0,3,Team 2,Tubeit,Reinhardt,6,5,3,6059.90,2100,3699.90,0,5481.88,0,7805.88,10755.26,0,0,2,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:22:49] ,player_stat,0,3,Team 2,Tubeit,Winston,14,6,2,3839.47,41.25,3729.56,0,3574.72,0,5410.55,5830.43,0,0,2,1,0,0,1,11,0,0,0,0,0,0,0,73,33,39,0,0,0.46,0

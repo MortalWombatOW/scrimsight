@@ -1,0 +1,323 @@
+[00:00:00] ,match_start,0,Hollywood,Hybrid,Tempest,Paradise Aegis
+[00:00:00] ,round_start,0,1,Paradise Aegis,0,0,0
+[00:00:10] ,hero_spawn,0,Paradise Aegis,BrickWall,Hanzo,0,0
+[00:00:18] ,hero_spawn,0,Tempest,KANKAN,Ashe,0,0
+[00:00:23] ,hero_spawn,0,Paradise Aegis,Tubeit,Zarya,0,0
+[00:00:24] ,hero_spawn,0,Tempest,Shadowph33r,Zenyatta,0,0
+[00:00:29] ,hero_spawn,0,Paradise Aegis,Duelan,Genji,0,0
+[00:00:54] ,hero_swap,0,Tempest,Shadowph33r,Mercy,Zenyatta,0
+[00:01:02] ,hero_swap,0,Tempest,Shadowph33r,Baptiste,Mercy,0
+[00:01:10] ,hero_swap,0,Tempest,Shadowph33r,Illari,Baptiste,0
+[00:01:19] ,hero_swap,0,Tempest,Shadowph33r,Kiriko,Illari,0
+[00:01:19] ,hero_swap,0,Paradise Aegis,Tubeit,Doomfist,Zarya,0
+[00:01:30] ,hero_swap,0,Tempest,Shadowph33r,Ana,Kiriko,0
+[00:01:42] ,hero_swap,0,Tempest,Shadowph33r,Lifeweaver,Ana,0
+[00:01:44] ,hero_swap,0,Paradise Aegis,Duelan,Echo,Genji,0
+[00:01:52] ,hero_swap,0,Paradise Aegis,BrickWall,Tracer,Hanzo,0
+[00:02:04] ,hero_spawn,0,Tempest,Huntertain,D.Va,0,0
+[00:02:07] ,hero_swap,0,Paradise Aegis,Tubeit,D.Va,Doomfist,0
+[00:02:08] ,hero_spawn,0,Tempest,Ranc1dRandy,Tracer,0,0
+[00:02:25] ,hero_spawn,0,Paradise Aegis,persephone,Mercy,0,0
+[00:02:26] ,hero_spawn,0,Tempest,Triage3,Ana,0,0
+[00:02:33] ,hero_swap,0,Paradise Aegis,Tubeit,Winston,D.Va,0
+[00:03:07] ,hero_swap,0,Paradise Aegis,BrickWall,Sombra,Tracer,0
+[00:03:25] ,hero_spawn,0,Paradise Aegis,Alert,Illari,0,0
+[00:04:31] ,setup_complete,0,1,239.99
+[00:04:46] ,kill,0,Tempest,Huntertain,D.Va,Paradise Aegis,Duelan,Echo,0,10.94,0,0
+[00:04:47] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:04:58] ,kill,0,Paradise Aegis,Alert,Illari,Tempest,KANKAN,Ashe,Primary Fire,93.46,True,0
+[00:04:58] ,defensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:05:10] ,kill,0,Paradise Aegis,Alert,Illari,Tempest,Ranc1dRandy,Tracer,Primary Fire,70.17,True,0
+[00:05:12] ,kill,0,Paradise Aegis,Tubeit,Winston,Tempest,Triage3,Ana,Primary Fire,3.98,0,0
+[00:05:12] ,defensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:05:12] ,offensive_assist,0,Paradise Aegis,BrickWall,Sombra,0
+[00:05:19] ,kill,0,Paradise Aegis,Duelan,Echo,Tempest,Shadowph33r,Lifeweaver,Secondary Fire,17.43,0,0
+[00:05:19] ,offensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:05:22] ,kill,0,Paradise Aegis,Tubeit,Winston,Tempest,Huntertain,D.Va,Primary Fire,0.89,0,0
+[00:05:24] ,point_progress,0,1,Paradise Aegis,0,33.32
+[00:05:29] ,point_progress,0,1,Paradise Aegis,0,66.60
+[00:05:34] ,point_progress,0,1,Paradise Aegis,0,99.99
+[00:05:34] ,objective_captured,0,1,Paradise Aegis,1,0,0,326.42
+[00:05:51] ,payload_progress,0,1,Paradise Aegis,1,10.01
+[00:06:02] ,payload_progress,0,1,Paradise Aegis,1,20.01
+[00:06:06] ,ultimate_charged,0,Paradise Aegis,Alert,Illari,0,1
+[00:06:36] ,kill,0,Paradise Aegis,BrickWall,Sombra,Tempest,KANKAN,Ashe,Primary Fire,16.23,True,0
+[00:06:36] ,offensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:06:36] ,defensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:06:37] ,ultimate_start,0,Paradise Aegis,Alert,Illari,0,1
+[00:06:41] ,kill,0,Paradise Aegis,Alert,Illari,Tempest,Shadowph33r,Lifeweaver,Ultimate,15.06,0,0
+[00:06:41] ,ultimate_charged,0,Tempest,Huntertain,D.Va,0,1
+[00:06:42] ,ultimate_charged,0,Paradise Aegis,Duelan,Echo,0,1
+[00:06:42] ,ultimate_end,0,Paradise Aegis,Alert,Illari,0,1
+[00:06:49] ,kill,0,Paradise Aegis,BrickWall,Sombra,Tempest,Triage3,Ana,Primary Fire,4.68,0,0
+[00:06:51] ,ultimate_charged,0,Tempest,Triage3,Ana,0,1
+[00:06:53] ,ultimate_charged,0,Paradise Aegis,persephone,Mercy,0,1
+[00:06:55] ,kill,0,Paradise Aegis,persephone,Mercy,Tempest,Huntertain,D.Va,Primary Fire,13.36,True,0
+[00:06:55] ,remech_charged,0,Tempest,Huntertain,D.Va,0,2
+[00:07:03] ,payload_progress,0,1,Paradise Aegis,1,30.02
+[00:07:05] ,ultimate_charged,0,Tempest,Huntertain,D.Va,0,3
+[00:07:09] ,ultimate_charged,0,Paradise Aegis,Tubeit,Winston,0,1
+[00:07:11] ,ultimate_charged,0,Tempest,Shadowph33r,Lifeweaver,0,1
+[00:07:14] ,payload_progress,0,1,Paradise Aegis,1,40.03
+[00:07:27] ,ultimate_charged,0,Paradise Aegis,BrickWall,Sombra,0,1
+[00:07:27] ,ultimate_start,0,Paradise Aegis,persephone,Mercy,0,1
+[00:07:28] ,ultimate_start,0,Paradise Aegis,BrickWall,Sombra,0,1
+[00:07:28] ,kill,0,Paradise Aegis,BrickWall,Sombra,Tempest,KANKAN,Ashe,Primary Fire,5.27,0,0
+[00:07:29] ,payload_progress,0,1,Paradise Aegis,1,50.02
+[00:07:29] ,offensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:07:30] ,ultimate_start,0,Paradise Aegis,Tubeit,Winston,0,1
+[00:07:30] ,ultimate_start,0,Tempest,Triage3,Ana,0,1
+[00:07:31] ,kill,0,Paradise Aegis,Tubeit,Winston,Tempest,Ranc1dRandy,Tracer,Ultimate,38.50,0,0
+[00:07:31] ,offensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:07:31] ,ultimate_start,0,Tempest,Shadowph33r,Lifeweaver,0,1
+[00:07:32] ,ultimate_end,0,Tempest,Shadowph33r,Lifeweaver,0,1
+[00:07:33] ,ultimate_end,0,Paradise Aegis,BrickWall,Sombra,0,1
+[00:07:34] ,echo_duplicate_start,0,Paradise Aegis,Duelan,Echo,D.Va,1
+[00:07:38] ,ultimate_end,0,Tempest,Triage3,Ana,0,1
+[00:07:40] ,ultimate_charged,0,Tempest,KANKAN,Ashe,0,1
+[00:07:40] ,ultimate_charged,0,Paradise Aegis,Duelan,Echo,D.Va,2
+[00:07:40] ,ultimate_end,0,Paradise Aegis,Tubeit,Winston,0,1
+[00:07:41] ,ultimate_start,0,Paradise Aegis,Duelan,Echo,D.Va,2
+[00:07:42] ,ultimate_end,0,Paradise Aegis,persephone,Mercy,0,1
+[00:07:43] ,ultimate_end,0,Paradise Aegis,Duelan,Echo,D.Va,2
+[00:07:45] ,ultimate_start,0,Tempest,Huntertain,D.Va,0,3
+[00:07:46] ,ultimate_charged,0,Tempest,Ranc1dRandy,Tracer,0,1
+[00:07:47] ,remech_charged,0,Tempest,Huntertain,D.Va,0,4
+[00:07:47] ,ultimate_end,0,Tempest,Huntertain,D.Va,0,4
+[00:07:48] ,ultimate_charged,0,Paradise Aegis,Duelan,Echo,D.Va,3
+[00:07:48] ,kill,0,Paradise Aegis,Duelan,Echo,Tempest,Shadowph33r,Lifeweaver,0,5.40,0,0
+[00:07:49] ,offensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:07:49] ,defensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:07:49] ,ultimate_start,0,Tempest,KANKAN,Ashe,0,1
+[00:07:49] ,ultimate_start,0,Paradise Aegis,Duelan,Echo,D.Va,3
+[00:07:49] ,dva_remech,0,Tempest,Huntertain,D.Va,4
+[00:07:50] ,ultimate_start,0,Tempest,Ranc1dRandy,Tracer,0,1
+[00:07:50] ,ultimate_end,0,Tempest,Ranc1dRandy,Tracer,0,1
+[00:07:50] ,ultimate_end,0,Paradise Aegis,Duelan,Echo,0,3
+[00:07:50] ,echo_duplicate_end,0,Paradise Aegis,Duelan,Echo,1
+[00:07:52] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,persephone,Mercy,Ultimate,23.90,0,0
+[00:07:54] ,kill,0,Tempest,KANKAN,Ashe,Paradise Aegis,Alert,Illari,Primary Fire,146.68,True,0
+[00:07:55] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,Duelan,Echo,Primary Fire,5.50,0,0
+[00:07:55] ,offensive_assist,0,Tempest,Triage3,Ana,0
+[00:07:55] ,defensive_assist,0,Tempest,Triage3,Ana,0
+[00:07:58] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,Tubeit,Winston,Primary Fire,1.49,0,0
+[00:08:00] ,ultimate_end,0,Tempest,KANKAN,Ashe,0,1
+[00:08:52] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,Duelan,Echo,Primary Fire,2.24,0,0
+[00:08:52] ,defensive_assist,0,Tempest,Triage3,Ana,0
+[00:09:00] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,persephone,Mercy,Primary Fire,1.47,True,0
+[00:09:00] ,defensive_assist,0,Tempest,Triage3,Ana,0
+[00:09:00] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:09:02] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,Tubeit,Winston,Primary Fire,5.03,True,0
+[00:09:02] ,defensive_assist,0,Tempest,Triage3,Ana,0
+[00:09:02] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:09:10] ,ultimate_charged,0,Tempest,Ranc1dRandy,Tracer,0,2
+[00:09:10] ,ultimate_charged,0,Paradise Aegis,Alert,Illari,0,2
+[00:09:16] ,ultimate_start,0,Tempest,Ranc1dRandy,Tracer,0,2
+[00:09:16] ,ultimate_end,0,Tempest,Ranc1dRandy,Tracer,0,2
+[00:09:17] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,Alert,Illari,Ultimate,142.23,0,0
+[00:09:17] ,defensive_assist,0,Tempest,Triage3,Ana,0
+[00:09:17] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:09:29] ,mercy_rez,0,Paradise Aegis,persephone,Mercy,Paradise Aegis,Alert,Illari
+[00:09:51] ,ultimate_start,0,Paradise Aegis,Alert,Illari,0,2
+[00:09:55] ,kill,0,Tempest,KANKAN,Ashe,Paradise Aegis,Duelan,Echo,Primary Fire,48.12,0,0
+[00:09:55] ,defensive_assist,0,Tempest,Triage3,Ana,0
+[00:09:55] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:09:55] ,ultimate_charged,0,Paradise Aegis,BrickWall,Sombra,0,2
+[00:09:57] ,ultimate_end,0,Paradise Aegis,Alert,Illari,0,2
+[00:09:58] ,ultimate_charged,0,Tempest,KANKAN,Ashe,0,2
+[00:10:01] ,ultimate_charged,0,Tempest,Triage3,Ana,0,2
+[00:10:06] ,ultimate_charged,0,Paradise Aegis,persephone,Mercy,0,2
+[00:10:06] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,persephone,Mercy,Primary Fire,4.11,0,0
+[00:10:06] ,offensive_assist,0,Tempest,Triage3,Ana,0
+[00:10:06] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:10:11] ,ultimate_charged,0,Tempest,Shadowph33r,Lifeweaver,0,2
+[00:10:13] ,kill,0,Paradise Aegis,Tubeit,Winston,Tempest,Ranc1dRandy,Tracer,Primary Fire,4.52,0,0
+[00:10:13] ,offensive_assist,0,Paradise Aegis,Alert,Illari,0
+[00:10:14] ,ultimate_start,0,Tempest,KANKAN,Ashe,0,2
+[00:10:14] ,kill,0,Tempest,Huntertain,D.Va,Paradise Aegis,Alert,Illari,0,0.81,0,0
+[00:10:15] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:10:22] ,kill,0,Tempest,Triage3,Ana,Paradise Aegis,Tubeit,Winston,Primary Fire,0.69,0,0
+[00:10:27] ,ultimate_end,0,Tempest,KANKAN,Ashe,0,2
+[00:10:36] ,hero_swap,0,Paradise Aegis,Alert,Kiriko,Illari,0
+[00:10:46] ,ultimate_charged,0,Paradise Aegis,Tubeit,Winston,0,2
+[00:10:46] ,ultimate_charged,0,Tempest,Huntertain,D.Va,0,5
+[00:10:46] ,ultimate_charged,0,Paradise Aegis,Duelan,Echo,0,4
+[00:10:53] ,ultimate_start,0,Paradise Aegis,persephone,Mercy,0,2
+[00:10:54] ,ultimate_start,0,Paradise Aegis,BrickWall,Sombra,0,2
+[00:10:55] ,kill,0,Paradise Aegis,BrickWall,Sombra,Tempest,KANKAN,Ashe,Primary Fire,3.55,0,0
+[00:10:55] ,offensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:10:55] ,defensive_assist,0,Paradise Aegis,persephone,Mercy,0
+[00:10:55] ,echo_duplicate_start,0,Paradise Aegis,Duelan,Echo,Ana,4
+[00:10:58] ,ultimate_start,0,Tempest,Triage3,Ana,0,2
+[00:10:59] ,ultimate_end,0,Paradise Aegis,BrickWall,Sombra,0,2
+[00:10:59] ,ultimate_start,0,Tempest,Shadowph33r,Lifeweaver,0,2
+[00:11:00] ,ultimate_end,0,Tempest,Shadowph33r,Lifeweaver,0,2
+[00:11:01] ,player_stat,0,1,Paradise Aegis,Tubeit,Zarya,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,Tubeit,Doomfist,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,Tubeit,D.Va,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,Tubeit,Winston,11,4,3,3828.21,0,3258.38,0,3963.84,0,6247.50,6801.31,0,0,2,1,0,0,0,2,0,0,0,0,0,0,0,76,36,40,0,0,0.47,0
+[00:11:01] ,player_stat,0,1,Tempest,Shadowph33r,Zenyatta,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Tempest,Shadowph33r,Mercy,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Tempest,Shadowph33r,Baptiste,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Tempest,Shadowph33r,Illari,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Tempest,Shadowph33r,Kiriko,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Tempest,Shadowph33r,Ana,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Tempest,Shadowph33r,Lifeweaver,1,0,3,1393.26,705.29,687.96,4327.22,1204.90,844.41,1965.83,0,7,0,2,2,0,0,0,0,0,0,9,0.07,0,0,0,1003,130,751,0,0,0.15,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,Alert,Illari,6,3,3,3362.01,0,3092.01,3409.94,1410.21,327.62,2010.21,0,0,1,2,2,0,0,0,2,0,0,9,0.19,0,0,0,100,48,47,0,0,0.51,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,Alert,Kiriko,1,0,0,135,0,135,154.17,73.60,0,96.08,0,0,0,0,0,0,0,0,0,0,0,1,0.50,0,0,0,14,2,10,0,0,0.17,0
+[00:11:01] ,player_stat,0,1,Tempest,Ranc1dRandy,Tracer,10,8,3,3358.46,902.74,2323.72,0,686.86,195.56,1291.54,0,0,0,2,2,0,0,0,5,0,0,41,0.09,0,0,0,2334,447,1686,0,0,0.21,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,BrickWall,Hanzo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,BrickWall,Tracer,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,BrickWall,Sombra,7,4,0,2707.51,0,2556.57,0,1178.65,0,1190.26,0,0,1,2,2,0,0,0,1,0,0,28,0.09,0,0,0,1040,304,656,0,0,0.32,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,Duelan,Genji,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,Duelan,Echo,9,2,4,4402.90,0,3636.75,0,610.43,0,1828.41,123,0,0,5,4,0,0,0,3,0,0,26,0.16,0,0,0,1192,158,575,0,0,0.22,0
+[00:11:01] ,player_stat,0,1,Tempest,Triage3,Ana,4,1,2,2627.29,777.92,1724.37,3265.67,1588.83,300,2160.11,0,6,2,2,2,0,0,0,0,0,0,0,0,0.49,0,0,188,26,97,72,35,0.21,0
+[00:11:01] ,player_stat,0,1,Tempest,Huntertain,D.Va,8,2,2,5820.79,2218.84,3143.64,0,3179.94,0,5263.60,2211.65,0,0,3,2,0,0,0,0,0,0,115,0.06,0,0,0,9584,1957,6729,0,0,0.23,0
+[00:11:01] ,player_stat,0,1,Paradise Aegis,persephone,Mercy,1,1,3,53.36,0,53.36,2923.30,615.20,192.10,1215.20,0,5,6,2,2,0,0,0,1,0,0,2,1,0,0,0,10,2,8,0,0,0.20,0
+[00:11:01] ,round_end,0,1,Paradise Aegis,0,1,1,0,0,0
+[00:11:01] ,player_stat,0,1,Tempest,KANKAN,Ashe,10,2,4,7138.87,2196.51,4692.36,0,1348.03,0,2223.03,0,0,0,2,2,0,0,0,1,0,0,12,0.24,0.41,0.26,1,201,50,86,115,47,0.37,0
+[00:11:01] ,echo_duplicate_end,0,Paradise Aegis,Duelan,Echo,4
+[00:11:07] ,ultimate_end,0,Tempest,Triage3,Ana,0,2
+[00:11:08] ,ultimate_end,0,Paradise Aegis,persephone,Mercy,0,2
+[00:11:12] ,round_start,0,2,Tempest,0,1,0
+[00:11:15] ,hero_spawn,0,Paradise Aegis,persephone,Lifeweaver,,0
+[00:11:21] ,hero_spawn,0,Paradise Aegis,Duelan,Tracer,,0
+[00:11:21] ,hero_spawn,0,Paradise Aegis,Alert,Illari,,0
+[00:11:25] ,hero_spawn,0,Tempest,KANKAN,Widowmaker,,0
+[00:11:26] ,hero_spawn,0,Paradise Aegis,Tubeit,Sigma,,0
+[00:11:27] ,hero_spawn,0,Paradise Aegis,BrickWall,Ashe,,0
+[00:11:28] ,hero_spawn,0,Tempest,Shadowph33r,Lifeweaver,,0
+[00:11:41] ,hero_spawn,0,Tempest,Triage3,Kiriko,,0
+[00:11:42] ,hero_spawn,0,Tempest,Huntertain,D.Va,,0
+[00:11:49] ,hero_swap,0,Tempest,KANKAN,Ashe,Widowmaker,0
+[00:11:54] ,hero_swap,0,Tempest,KANKAN,Widowmaker,Ashe,0
+[00:12:43] ,hero_swap,0,Tempest,Triage3,Ana,Kiriko,0
+[00:13:54] ,hero_spawn,0,Tempest,Ranc1dRandy,Tracer,,0
+[00:15:46] ,setup_complete,0,2,239.99
+[00:16:23] ,kill,0,Paradise Aegis,BrickWall,Ashe,Tempest,KANKAN,Widowmaker,Primary Fire,60.51,True,0
+[00:16:33] ,hero_swap,0,Tempest,KANKAN,Ashe,Widowmaker,0
+[00:16:41] ,kill,0,Paradise Aegis,Duelan,Tracer,Tempest,Ranc1dRandy,Tracer,Melee,19,0,0
+[00:16:59] ,kill,0,Paradise Aegis,BrickWall,Ashe,Tempest,Shadowph33r,Lifeweaver,Primary Fire,137.42,True,0
+[00:16:59] ,defensive_assist,0,Paradise Aegis,persephone,Lifeweaver,0
+[00:17:01] ,ultimate_charged,0,Tempest,Triage3,Ana,0,3
+[00:17:12] ,ultimate_start,0,Tempest,Triage3,Ana,0,3
+[00:17:15] ,kill,0,Paradise Aegis,Tubeit,Sigma,Tempest,Triage3,Ana,Primary Fire,13.84,0,0
+[00:17:15] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,persephone,Lifeweaver,Primary Fire,4.65,0,0
+[00:17:15] ,offensive_assist,0,Tempest,Triage3,Ana,0
+[00:17:18] ,kill,0,Paradise Aegis,Tubeit,Sigma,Tempest,KANKAN,Ashe,Melee,13.31,0,0
+[00:17:18] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,Alert,Illari,Primary Fire,3.20,0,0
+[00:17:19] ,offensive_assist,0,Tempest,Triage3,Ana,0
+[00:17:20] ,ultimate_end,0,Tempest,Triage3,Ana,0,3
+[00:17:22] ,ultimate_charged,0,Paradise Aegis,Duelan,Tracer,0,5
+[00:17:29] ,kill,0,Paradise Aegis,Duelan,Tracer,Tempest,Ranc1dRandy,Tracer,Primary Fire,8.14,True,0
+[00:17:29] ,ultimate_charged,0,Paradise Aegis,Tubeit,Sigma,0,3
+[00:17:29] ,ultimate_charged,0,Paradise Aegis,BrickWall,Ashe,0,3
+[00:17:30] ,ultimate_start,0,Paradise Aegis,BrickWall,Ashe,0,3
+[00:17:30] ,ultimate_charged,0,Tempest,Huntertain,D.Va,0,6
+[00:17:31] ,kill,0,Tempest,Huntertain,D.Va,Paradise Aegis,BrickWall,Ashe,0,5,0,0
+[00:17:31] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:17:36] ,ultimate_start,0,Tempest,Huntertain,D.Va,0,6
+[00:17:37] ,remech_charged,0,Tempest,Huntertain,D.Va,0,7
+[00:17:37] ,ultimate_end,0,Tempest,Huntertain,D.Va,0,7
+[00:17:39] ,dva_remech,0,Tempest,Huntertain,D.Va,7
+[00:17:42] ,ultimate_end,0,Paradise Aegis,BrickWall,Ashe,0,3
+[00:17:45] ,ultimate_start,0,Paradise Aegis,Tubeit,Sigma,0,3
+[00:17:49] ,ultimate_end,0,Paradise Aegis,Tubeit,Sigma,0,3
+[00:17:50] ,ultimate_start,0,Paradise Aegis,Duelan,Tracer,0,5
+[00:17:50] ,ultimate_end,0,Paradise Aegis,Duelan,Tracer,0,5
+[00:17:51] ,ultimate_charged,0,Tempest,Shadowph33r,Lifeweaver,0,3
+[00:17:53] ,ultimate_charged,0,Tempest,Ranc1dRandy,Tracer,0,3
+[00:17:57] ,ultimate_start,0,Tempest,Shadowph33r,Lifeweaver,0,3
+[00:17:58] ,ultimate_end,0,Tempest,Shadowph33r,Lifeweaver,0,3
+[00:17:59] ,ultimate_start,0,Tempest,Ranc1dRandy,Tracer,0,3
+[00:17:59] ,ultimate_end,0,Tempest,Ranc1dRandy,Tracer,0,3
+[00:18:00] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,Alert,Illari,Ultimate,200,0,0
+[00:18:00] ,kill,0,Tempest,Ranc1dRandy,Tracer,Paradise Aegis,BrickWall,Ashe,Ultimate,135.05,0,0
+[00:18:00] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:18:00] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:18:01] ,ultimate_charged,0,Paradise Aegis,persephone,Lifeweaver,0,3
+[00:18:04] ,ultimate_start,0,Paradise Aegis,persephone,Lifeweaver,0,3
+[00:18:05] ,ultimate_end,0,Paradise Aegis,persephone,Lifeweaver,0,3
+[00:18:08] ,ultimate_charged,0,Paradise Aegis,Alert,Illari,0,3
+[00:18:21] ,kill,0,Paradise Aegis,Duelan,Tracer,Tempest,KANKAN,Ashe,Primary Fire,1.93,0,0
+[00:18:21] ,defensive_assist,0,Paradise Aegis,persephone,Lifeweaver,0
+[00:18:23] ,kill,0,Tempest,Huntertain,D.Va,Paradise Aegis,persephone,Lifeweaver,0,13.91,0,0
+[00:18:23] ,defensive_assist,0,Tempest,Triage3,Ana,0
+[00:18:23] ,defensive_assist,0,Tempest,Shadowph33r,Lifeweaver,0
+[00:18:29] ,kill,0,Paradise Aegis,BrickWall,Ashe,Tempest,Triage3,Ana,Primary Fire,134.96,True,0
+[00:18:34] ,kill,0,Paradise Aegis,Duelan,Tracer,Tempest,Shadowph33r,Lifeweaver,Primary Fire,0.48,0,0
+[00:18:38] ,kill,0,Paradise Aegis,BrickWall,Ashe,Tempest,Huntertain,D.Va,Primary Fire,75,0,0
+[00:18:38] ,kill,0,Paradise Aegis,Duelan,Tracer,Tempest,Ranc1dRandy,Tracer,Primary Fire,5,0,0
+[00:18:50] ,ultimate_charged,0,Paradise Aegis,Duelan,Tracer,0,6
+[00:18:58] ,ultimate_charged,0,Tempest,Ranc1dRandy,Tracer,0,4
+[00:19:06] ,ultimate_charged,0,Tempest,KANKAN,Ashe,0,3
+[00:19:11] ,ultimate_charged,0,Paradise Aegis,Tubeit,Sigma,0,4
+[00:19:11] ,ultimate_charged,0,Tempest,Huntertain,D.Va,0,8
+[00:19:14] ,ultimate_start,0,Paradise Aegis,Tubeit,Sigma,0,4
+[00:19:16] ,ultimate_start,0,Tempest,KANKAN,Ashe,0,3
+[00:19:19] ,ultimate_end,0,Paradise Aegis,Tubeit,Sigma,0,4
+[00:19:20] ,ultimate_start,0,Tempest,Ranc1dRandy,Tracer,0,4
+[00:19:20] ,ultimate_end,0,Tempest,Ranc1dRandy,Tracer,0,4
+[00:19:25] ,kill,0,Paradise Aegis,Tubeit,Sigma,Tempest,Shadowph33r,Lifeweaver,Primary Fire,3.16,0,0
+[00:19:25] ,defensive_assist,0,Paradise Aegis,persephone,Lifeweaver,0
+[00:19:29] ,ultimate_end,0,Tempest,KANKAN,Ashe,0,3
+[00:19:29] ,kill,0,Paradise Aegis,Tubeit,Sigma,Tempest,Triage3,Ana,Primary Fire,21.22,0,0
+[00:19:30] ,defensive_assist,0,Paradise Aegis,persephone,Lifeweaver,0
+[00:19:31] ,ultimate_charged,0,Tempest,Triage3,Ana,0,4
+[00:19:31] ,kill,0,Tempest,Huntertain,D.Va,Paradise Aegis,Alert,Illari,0,3.55,0,0
+[00:19:38] ,kill,0,Paradise Aegis,BrickWall,Ashe,Tempest,KANKAN,Ashe,Primary Fire,34.26,0,0
+[00:19:40] ,ultimate_start,0,Tempest,Huntertain,D.Va,0,8
+[00:19:42] ,remech_charged,0,Tempest,Huntertain,D.Va,0,9
+[00:19:44] ,ultimate_end,0,Tempest,Huntertain,D.Va,0,9
+[00:19:50] ,ultimate_start,0,Paradise Aegis,Alert,Illari,0,3
+[00:19:50] ,ultimate_start,0,Tempest,Triage3,Ana,0,4
+[00:19:53] ,hero_swap,0,Tempest,KANKAN,Soldier: 76,Ashe,0
+[00:19:55] ,ultimate_charged,0,Paradise Aegis,BrickWall,Ashe,0,4
+[00:19:55] ,ultimate_charged,0,Tempest,Shadowph33r,Lifeweaver,0,4
+[00:19:55] ,kill,0,Paradise Aegis,Duelan,Tracer,Tempest,Ranc1dRandy,Tracer,Primary Fire,9.34,True,0
+[00:19:55] ,ultimate_start,0,Paradise Aegis,BrickWall,Ashe,0,4
+[00:19:55] ,ultimate_end,0,Paradise Aegis,Alert,Illari,0,3
+[00:19:56] ,ultimate_start,0,Tempest,Shadowph33r,Lifeweaver,0,4
+[00:19:57] ,ultimate_end,0,Tempest,Shadowph33r,Lifeweaver,0,4
+[00:19:58] ,kill,0,Paradise Aegis,Alert,Illari,Tempest,Shadowph33r,Lifeweaver,Primary Fire,17.70,True,0
+[00:19:58] ,defensive_assist,0,Paradise Aegis,persephone,Lifeweaver,0
+[00:19:59] ,ultimate_end,0,Tempest,Triage3,Ana,0,4
+[00:20:03] ,kill,0,Tempest,KANKAN,Soldier: 76,Paradise Aegis,Duelan,Tracer,Secondary Fire,43.20,0,0
+[00:20:03] ,defensive_assist,0,Tempest,Triage3,Ana,0
+[00:20:07] ,ultimate_end,0,Paradise Aegis,BrickWall,Ashe,0,4
+[00:20:08] ,kill,0,Paradise Aegis,BrickWall,Ashe,Tempest,Huntertain,D.Va,Melee,25.13,0,0
+[00:20:08] ,defensive_assist,0,Paradise Aegis,persephone,Lifeweaver,0
+[00:20:09] ,kill,0,Paradise Aegis,Tubeit,Sigma,Tempest,KANKAN,Soldier: 76,Primary Fire,46.07,0,0
+[00:20:09] ,defensive_assist,0,Paradise Aegis,persephone,Lifeweaver,0
+[00:20:09] ,round_end,0,2,Tempest,0,3,0,0,0,0
+[00:20:09] ,match_end,0,2,0,3
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Tubeit,Zarya,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Tubeit,Doomfist,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Tubeit,D.Va,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Tubeit,Winston,11,4,3,3828.21,0,3258.38,0,3963.84,0,6247.50,6801.31,0,0,2,1,0,0,0,2,0,0,0,0,0,0,0,76,36,40,0,0,0.47,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Tubeit,Sigma,9,5,0,6262.03,0,5936.09,0,4745.49,0,5764.54,4987.51,0,0,2,2,0,0,1,5,0,0,0,0,0,0,0,126,72,44,0,0,0.62,0
+[00:20:09] ,player_stat,0,2,Tempest,KANKAN,Ashe,11,2,7,10925.32,3105.41,7100.57,0,2021.43,0,3496.43,0,0,0,3,3,0,0,0,1,0,0,14,0.19,0.39,0.21,1,309,74,135,171,67,0.35,0
+[00:20:09] ,player_stat,0,2,Tempest,KANKAN,Widowmaker,0,0,1,383.65,172.81,210.84,0,0,0,175.00,0,0,0,0,0,0,0,0,0,0,0,0,0,0.40,0,0,7,2,2,5,2,0.50,0
+[00:20:09] ,player_stat,0,2,Tempest,KANKAN,Soldier: 76,1,1,1,385.20,209,176.20,150.94,220.94,150.94,444.61,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,38,7,17,0,0,0.29,0
+[00:20:09] ,player_stat,0,2,Tempest,Shadowph33r,Zenyatta,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Tempest,Shadowph33r,Mercy,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Tempest,Shadowph33r,Baptiste,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Tempest,Shadowph33r,Illari,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Tempest,Shadowph33r,Kiriko,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Tempest,Shadowph33r,Ana,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Tempest,Shadowph33r,Lifeweaver,1,0,7,2958.26,1479.29,1371.96,8859.68,3081.80,1389.45,5001.33,0,11,0,4,4,0,0,0,0,0,0,18,0.07,0,0,0,1692,254,1181,0,0,0.18,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Alert,Illari,8,4,6,4751.92,0,4356.92,6087.09,2189.86,641.85,3393.68,0,0,1,3,3,0,0,0,2,0,0,14,0.19,0,0,0,161,72,81,0,0,0.47,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Alert,Kiriko,1,0,0,135,0,135,154.17,73.60,0,96.08,0,0,0,0,0,0,0,0,0,0,0,1,0.50,0,0,0,14,2,10,0,0,0.17,0
+[00:20:09] ,player_stat,0,2,Tempest,Ranc1dRandy,Tracer,16,12,7,6613.99,1204.57,5100.53,0,1104.60,429.56,2591.28,0,0,0,4,4,0,0,0,6,0,0,73,0.08,0,0,0,3920,867,2762,0,0,0.24,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,BrickWall,Hanzo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,BrickWall,Tracer,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,BrickWall,Sombra,7,4,0,2707.51,0,2556.57,0,1178.65,0,1190.26,0,0,1,2,2,0,0,0,1,0,0,28,0.09,0,0,0,1040,304,656,0,0,0.32,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,BrickWall,Ashe,11,6,2,5296.79,0,4861.25,0,544.56,0,972.56,0,0,0,2,2,0,0,3,2,0,0,9,0.15,0.42,0.20,3,148,59,61,106,44,0.49,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Duelan,Genji,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Duelan,Echo,9,2,4,4402.90,0,3636.75,0,610.43,0,1828.41,123,0,0,5,4,0,0,0,3,0,0,26,0.16,0,0,0,1192,158,575,0,0,0.22,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,Duelan,Tracer,7,6,1,3208.22,0,2881.46,0,372.27,360.46,882.73,0,0,0,2,1,0,0,3,2,0,0,63,0.10,0,0,0,1708,635,1023,0,0,0.38,0
+[00:20:09] ,player_stat,0,2,Tempest,Triage3,Ana,6,1,5,5301.05,2113.76,2383.33,7988.35,3020.36,409.28,4289.16,0,8,4,4,4,0,0,0,0,0,0,0,0,0.51,0,0,321,41,137,88,45,0.23,0
+[00:20:09] ,player_stat,0,2,Tempest,Triage3,Kiriko,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+[00:20:09] ,player_stat,0,2,Tempest,Huntertain,D.Va,13,5,4,12373.79,3503.97,6705.09,0,8242.82,0,12755.50,5532.32,0,0,5,7,0,0,0,1,0,0,239,0.07,0,0,0,16221,3545,10772,0,0,0.25,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,persephone,Mercy,1,1,3,53.36,0,53.36,2923.30,615.20,192.10,1215.20,0,5,6,2,2,0,0,0,1,0,0,2,1,0,0,0,10,2,8,0,0,0.20,0
+[00:20:09] ,player_stat,0,2,Paradise Aegis,persephone,Lifeweaver,0,0,2,1032.25,0,798.25,4196.64,1170.64,447.26,1711.20,0,7,0,1,1,0,0,0,0,0,0,18,0.09,0,0,0,478,198,249,0,0,0.44,0
