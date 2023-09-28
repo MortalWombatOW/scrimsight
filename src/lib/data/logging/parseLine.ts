@@ -1,15 +1,19 @@
-import { DataAndSpecName, DataRow, LogSpec } from "~/lib/data/logging/spec";
+import {DataAndSpecName, DataRow, LogSpec} from '~/lib/data/logging/spec';
 
 function parseTimestamp(timestamp: string): number {
   const cleanedTimestamp = timestamp.substring(1, timestamp.length - 1);
   const [hours, minutes, seconds] = cleanedTimestamp
-    .split(":")
+    .split(':')
     .map((value) => parseInt(value, 10));
   return hours * 3600 + minutes * 60 + seconds;
 }
 
-export function parseLine(line: string, mapId: number, logSpec: LogSpec): DataAndSpecName {
-  const values = line.trim().split(",");
+export function parseLine(
+  line: string,
+  mapId: number,
+  logSpec: LogSpec,
+): DataAndSpecName {
+  const values = line.trim().split(',');
 
   const eventType = values[1];
   const eventSpec = logSpec[eventType];
@@ -24,17 +28,24 @@ export function parseLine(line: string, mapId: number, logSpec: LogSpec): DataAn
 
   for (let i = 2; i < values.length; i++) {
     const fieldSpec = eventSpec.fields[i];
-    let parsedValue: string | number | boolean;
 
+    if (!fieldSpec) {
+      console.log(line);
+      throw new Error(
+        `Field spec not found for event type: ${eventType}, field index: ${i}`,
+      );
+    }
+
+    let parsedValue: string | number | boolean;
     switch (fieldSpec.dataType) {
-      case "string":
+      case 'string':
         parsedValue = values[i];
         break;
-      case "number":
+      case 'number':
         parsedValue = parseFloat(values[i]);
         break;
-      case "boolean":
-        parsedValue = values[i].toLowerCase() === "true";
+      case 'boolean':
+        parsedValue = values[i].toLowerCase() === 'true';
         break;
       default:
         throw new Error(`Unsupported data type: ${fieldSpec.dataType}`);
@@ -43,12 +54,15 @@ export function parseLine(line: string, mapId: number, logSpec: LogSpec): DataAn
     parsedData.push(parsedValue);
   }
   return {
-    data : [parsedData],
+    data: [parsedData],
     specName: eventType,
   };
-
 }
 
-export function parseLines(lines: string[], mapId: number, logSpec: LogSpec): DataAndSpecName[] {
+export function parseLines(
+  lines: string[],
+  mapId: number,
+  logSpec: LogSpec,
+): DataAndSpecName[] {
   return lines.map((line) => parseLine(line, mapId, logSpec));
 }

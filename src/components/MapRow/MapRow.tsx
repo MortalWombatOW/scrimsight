@@ -54,7 +54,7 @@ const MapRow = (props: MapRowProps) => {
     [mapId],
   );
 
-  // console.log('results:', results);
+  console.log('resultsdfs:', results);
   if (!loaded) {
     return <div>Loading...</div>;
   }

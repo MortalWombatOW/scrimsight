@@ -1,26 +1,45 @@
 import {open} from 'idb-factory';
-import Schema from 'idb-schema';
 import {Team} from './types';
-import batch from 'idb-batch';
-import { DataRow, logSpec } from '~/lib/data/logging/spec';
+import {DataRow, logSpec} from '~/lib/data/logging/spec';
 
 //https://github.com/treojs/idb-batch
 
 let globalDB: IDBDatabase | undefined;
 
-const schema = new Schema()
-  .version(1)
-  .addStore('maps', {key: 'id', increment: true})
-  .addStore('teams', {key: 'id', increment: true});
+// const schema = new Schema()
+//   .version(1)
+//   .addStore('maps', {key: 'id', increment: true})
+//   .addStore('teams', {key: 'id', increment: true});
+
+// Object.keys(logSpec).forEach((key) => {
+//   schema.addStore(key, {key: 'id', increment: true});
+// });
+
+const onCompleted = (e) => {
+  const db = e.target.result;
+  db.createObjectStore('maps', {keyPath: 'id'}).createIndex('id', 'id', {
+    unique: true,
+  });
+
+  db.createObjectStore('teams', {
+    keyPath: 'id',
+    autoIncrement: true,
+  }).createIndex('id', 'id', {unique: true});
 
   Object.keys(logSpec).forEach((key) => {
-    schema.addStore(key, {key: 'id', increment: true});
+    db.createObjectStore(key, {
+      keyPath: 'id',
+      autoIncrement: true,
+    }).createIndex('MapID', 'MapID', {unique: false});
   });
+  console.log('onCompleted');
+};
 
 export const setupDB = async (callback) => {
   console.log('setupDB');
-  open('scrimsight', schema.version(), schema.callback()).then((db) => {
+  open('scrimsight', 1, onCompleted).then((db) => {
     globalDB = db;
+
     console.log('setupDB done');
     callback();
   });
@@ -74,7 +93,9 @@ export function getData(storeName: string): Promise<DataRow[]> {
   }
 
   return new Promise((resolve, reject) => {
-    const store = db.transaction([storeName], 'readonly').objectStore(storeName);
+    const store = db
+      .transaction([storeName], 'readonly')
+      .objectStore(storeName);
     const req = store.getAll();
     req.onsuccess = () => {
       resolve(req.result);
@@ -82,6 +103,5 @@ export function getData(storeName: string): Promise<DataRow[]> {
     req.onerror = () => {
       reject(req.error);
     };
-  }
-  );
+  });
 }

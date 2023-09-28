@@ -14,23 +14,28 @@ type MapsListProps = {
 };
 
 const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
-  const [{MapsList_allMaps: maps}, tick, loaded] = useQueries(
+  const [{MapsList_allMaps}, tick, loaded] = useQueries(
     [
       {
         name: 'MapsList_allMaps',
-        query: `select \
-          match_start.[Map ID] \
-        from match_start`,
+        query: `select * from maps order by fileModified desc`,
       },
     ],
     [],
   );
 
+  const maps = useMemo(() => {
+    if (!MapsList_allMaps) {
+      return [];
+    }
+    return Object.values(MapsList_allMaps).map((map) => Object.values(map)[0]);
+  }, [tick]);
+
   console.log('results:', maps, tick, loaded);
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
 
   useEffect(() => {
-    onMapSelected(selectedId === null ? undefined : maps[selectedId]['Map ID']);
+    onMapSelected(selectedId === null ? undefined : maps[selectedId]['id']);
   }, [selectedId]);
 
   if (!loaded) {
@@ -54,14 +59,14 @@ const MapsList = ({onLoaded, onMapSelected}: MapsListProps) => {
           .filter((map, i) => selectedId === null || i === selectedId)
           .map((map, i) => (
             <Button
-              key={map['Map ID']}
+              key={map['id']}
               variant="outlined"
               style={{
                 padding: '0px',
               }}>
               <MapRow
-                key={map['Map ID']}
-                mapId={map['Map ID']}
+                key={map['id']}
+                mapId={map['id']}
                 size={'compact'}
                 click={() => setSelectedId(i === selectedId ? null : i)}
               />
