@@ -172,11 +172,11 @@ export class QueryBuilder {
     }
     for (const field of spec.fields) {
       // check if a field with the same name already exists
-      if (this.getSelect().find((select) => select.field === field.name)) {
-        console.log(`field ${field.name} already exists in select, skipping`);
+      if (this.getSelect().find((select) => select.field === field.key)) {
+        console.log(`field ${field.key} already exists in select, skipping`);
         continue;
       }
-      this.select_.push({table: spec.key, field: field.name});
+      this.select_.push({table: spec.key, field: field.key});
     }
     return this;
   }

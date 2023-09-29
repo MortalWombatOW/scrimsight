@@ -1,63 +1,69 @@
-import {useEffect, useState} from 'react';
-import ResultCache from '../lib/data/ResultCache';
+import {useEffect, useState, useContext, useMemo} from 'react';
 import {Query, DataRowBySpecName} from '../lib/data/types';
+import {QueryManagerContext} from '../lib/data/QueryManagerContext';
+
+// Custom hook for compute tick
+const useComputeTick = () => {
+  const [computeTick, setComputeTick] = useState<number>(0);
+  const nextComputeStep = () => {
+    setComputeTick((prevTick) => prevTick + 1);
+  };
+  return [computeTick, nextComputeStep] as const;
+};
+
+// Helper function to transform query string
+const transformQueryString = (query: string) => {
+  return query
+    .split(' ')
+    .filter((s) => s.length > 0)
+    .join(' ');
+};
+
 interface UseQueriesOptions {
   runFirst?: boolean;
 }
+
 const useQueries = (
   queriesRaw: Query[],
   deps: any[],
   options: UseQueriesOptions = {},
 ): [Record<string, object[]>, number, boolean] => {
-  const [computeTick, setComputeTick] = useState<number>(0);
-  // Map through queriesRaw and modify each query
-  const queries = queriesRaw.map((query) => {
-    // Extract the raw query from the current query object
-    const rawQuery = query.query;
-    // Remove unnecessary whitespaces from the raw query
-    const queryStr = rawQuery
-      .split(' ')
-      .filter((s) => s.length > 0)
-      .join(' ');
-    // Return a new query object with the modified query string
-    return {
-      ...query,
-      query: queryStr,
-    };
-  });
+  const queryManager = useContext(QueryManagerContext);
+  const [computeTick, nextComputeStep] = useComputeTick();
 
-  const nextComputeStep = (name: string) => {
-    setComputeTick((computeTick) => {
-      return computeTick + 1;
-    });
-  };
+  // Transform query strings
+  const queries = queriesRaw.map((query) => ({
+    ...query,
+    query: transformQueryString(query.query),
+  }));
 
   useEffect(() => {
-    ResultCache.runQueries(queries, (query) => {
-      nextComputeStep(query);
+    queries.forEach((query) => {
+      queryManager.registerListener(query.name, () => {
+        nextComputeStep();
+      });
     });
-  }, []);
+    queryManager.runQueries(queries, nextComputeStep);
+  }, []); // If this should depend on `queries`, add it to the dependency array
 
-  const results = queries
-    .filter((query) => ResultCache.hasResults(query.name))
-    .reduce((acc, query) => {
-      acc[query.name] = ResultCache.getValueForKey(query.name);
-      return acc;
-    }, {} as DataRowBySpecName);
+  const results = useMemo(() => {
+    return queries
+      .filter((query) => queryManager.hasResults(query.name))
+      .reduce((acc, query) => {
+        acc[query.name] = queryManager.getValueForKey(query.name);
+        return acc;
+      }, {} as DataRowBySpecName);
+  }, [queries, queryManager, computeTick]);
 
-  const allLoaded = () => {
-    return queries.every((query) => {
-      return ResultCache.hasResults(query.name);
-    });
-  };
+  const allLoaded = useMemo(() => {
+    return queries.every((query) => queryManager.hasResults(query.name));
+  }, [queries, queryManager]);
 
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    console.log('computeTick changed to:', computeTick);
-    if (allLoaded() && !loaded) {
+    if (allLoaded && !loaded) {
       setLoaded(true);
-      console.log('Loaded state set to true.');
     }
   }, [computeTick]);
 
@@ -69,30 +75,38 @@ export const useQuery = <T>(
   deps: any[],
   options: UseQueriesOptions = {},
 ): [T[], number] => {
-  const [results, computeTick] = useQueries([query], deps, options);
+  const [results, computeTick, _] = useQueries([query], deps, options);
   // coerce to T[] because we know the query will return an array of T
   // will throw an error if the query returns something else
   return [(results[query.name] as unknown) as T[], computeTick];
 };
 
-// just get existing results, don't start a query if it doesn't exist
 export const useResults = (
   queryNames: string[],
 ): [DataRowBySpecName, number] => {
-  const [computeTick, setComputeTick] = useState<number>(0);
-  const nextComputeStep = () => {
-    setComputeTick((computeTick) => computeTick + 1);
-  };
-  queryNames.forEach((name) => {
-    ResultCache.registerListener(name, nextComputeStep);
-  });
-  // const results = queryNames
-  //   .filter((query) => ResultCache.hasResults(query))
-  //   .reduce((acc, query) => {
-  //     acc[query] = ResultCache.getValueForKey(query);
-  //     return acc;
-  //   }, {} as {[key: string]: Data});
-  return [{}, computeTick];
+  const [computeTick, nextComputeStep] = useComputeTick();
+  const queryManager = useContext(QueryManagerContext);
+
+  useEffect(() => {
+    queryNames.forEach((name) => {
+      queryManager.registerListener(name, nextComputeStep);
+    });
+    // Optional: Cleanup function to unregister listeners if needed
+    return () => {
+      // Unregister listeners here if you have such a method
+    };
+  }, [queryNames]);
+
+  const results = useMemo(() => {
+    return queryNames
+      .filter((query) => queryManager.hasResults(query))
+      .reduce((acc, query) => {
+        acc[query] = queryManager.getValueForKey(query);
+        return acc;
+      }, {} as DataRowBySpecName);
+  }, [queryNames, queryManager, computeTick]);
+
+  return [results, computeTick];
 };
 
 export const useResult = <T>(queryName: string): [T[], number] => {

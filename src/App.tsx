@@ -14,6 +14,8 @@ import useQueries from './hooks/useQueries';
 import routes from './lib/routes';
 import {themeDef} from '~/theme';
 import DebugQueries from '~/components/Debug/DebugQueries';
+import {QueryManager} from './lib/data/QueryManager';
+import {QueryManagerContext} from './lib/data/QueryManagerContext';
 
 const theme = createTheme(themeDef);
 
@@ -24,21 +26,23 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>
-            <Routes>
-              {routes.map((route) =>
-                route.path.map((path, i) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    index={i === 0}
-                    element={<route.component />}
-                  />
-                )),
-              )}
+            <QueryManagerContext.Provider value={new QueryManager()}>
+              <Routes>
+                {routes.map((route) =>
+                  route.path.map((path, i) => (
+                    <Route
+                      key={path}
+                      path={path}
+                      index={i === 0}
+                      element={<route.component />}
+                    />
+                  )),
+                )}
 
-              {/* <Route path="/map/:mapId" element={<Map />} />
+                {/* <Route path="/map/:mapId" element={<Map />} />
               {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
-            </Routes>
+              </Routes>
+            </QueryManagerContext.Provider>
           </QueryParamProvider>
         </BrowserRouter>
       </ThemeProvider>

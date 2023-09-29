@@ -1,8 +1,8 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {DataSet} from 'vis-data/esnext';
 import {Edge, Network, Node} from 'vis-network/esnext';
 import 'vis-network/styles/vis-network.css';
-import ResultCache from '../../lib/data/ResultCache';
+import {QueryManagerContext} from '../../lib/data/QueryManagerContext';
 
 // interface NodeData {
 //   id: number;
@@ -15,6 +15,7 @@ import ResultCache from '../../lib/data/ResultCache';
 const DebugQueries = () => {
   const ref = useRef(null);
   const [tick, setTick] = React.useState(0);
+  const queryManager = useContext(QueryManagerContext);
 
   // never change the object reference, only mutate the object
   const [nodes] = React.useState<DataSet<Node, 'id'>>(new DataSet([]));
@@ -46,7 +47,7 @@ const DebugQueries = () => {
     //   return nodes.length;
     // };
 
-    ResultCache.registerGlobalListener(() => {
+    queryManager.registerGlobalListener(() => {
       // console.log('debug global listener');
       setTick((tick) => tick + 1);
     });
@@ -100,7 +101,7 @@ const DebugQueries = () => {
   // updates
   useEffect(() => {
     console.log('tick', tick);
-    const queryNames = Object.keys(ResultCache.getBuildGraph());
+    const queryNames = queryManager.getAllQueryNames();
 
     // add nodes for queries that aren't in the graph yet
     const newNodes = queryNames.filter(
@@ -111,33 +112,30 @@ const DebugQueries = () => {
         id: nodes.length + i,
         label: name,
         color: {
-          background: ResultCache.hasResults(name) ? '#3c912b' : '#af684c',
+          background: queryManager.hasResults(name) ? '#3c912b' : '#af684c',
         },
       })),
     );
 
     // add edges for queries that aren't in the graph yet
-    const newEdges = Object.entries(ResultCache.getBuildGraph()).flatMap(
-      ([name, deps]) =>
-        deps
-          .filter(
-            (dep) =>
-              !edges.get().find((e) => e.to === nodeIdFromName(dep.name)),
+
+    const newEdges = queryManager.getAllEdges().filter(
+            ([name, depName]) =>
+              !edges.get().find((e) => e.to === nodeIdFromName(depName)),
           )
-          .map((dep) => ({
+          .map(([name, depName]) => ({
             from: nodeIdFromName(name),
-            to: nodeIdFromName(dep.name),
-          })),
-    );
+            to: nodeIdFromName(depName),
+          });
     edges.add(newEdges as Edge[]);
 
     // update colors for nodes that are in the graph
     queryNames.forEach((name) => {
       const node = nodes.get(nodeIdFromName(name))!;
       node.color = {
-        background: ResultCache.hasResults(name) ? '#3c912b' : '#af684c',
+        background: queryManager.hasResults(name) ? '#3c912b' : '#af684c',
       };
-      
+
       nodes.update(node);
     });
   }, [tick]);

@@ -17,9 +17,13 @@ let globalDB: IDBDatabase | undefined;
 
 const onCompleted = (e) => {
   const db = e.target.result;
-  db.createObjectStore('maps', {keyPath: 'id'}).createIndex('id', 'id', {
-    unique: true,
-  });
+  db.createObjectStore('maps', {keyPath: 'mapId'}).createIndex(
+    'mapId',
+    'mapId',
+    {
+      unique: true,
+    },
+  );
 
   db.createObjectStore('teams', {
     keyPath: 'id',
@@ -30,7 +34,7 @@ const onCompleted = (e) => {
     db.createObjectStore(key, {
       keyPath: 'id',
       autoIncrement: true,
-    }).createIndex('MapID', 'MapID', {unique: false});
+    }).createIndex('mapId', 'mapId', {unique: false});
   });
   console.log('onCompleted');
 };

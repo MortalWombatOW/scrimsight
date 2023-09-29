@@ -18,7 +18,7 @@ export const buildQueryFromSpec = (dataType: string, mapId?: number) => {
       LOG_SPEC[dataType].fields.map((field) => {
         return {
           table: dataType,
-          field: field.name,
+          field: field.key,
         };
       }),
     )
@@ -27,7 +27,7 @@ export const buildQueryFromSpec = (dataType: string, mapId?: number) => {
   if (mapId !== undefined) {
     query.where([
       {
-        field: {table: dataType, field: 'Map ID'},
+        field: {table: dataType, field: 'mapId'},
         operator: '=',
         value: mapId,
       },
