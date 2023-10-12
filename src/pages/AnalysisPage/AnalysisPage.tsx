@@ -1,134 +1,115 @@
-import React, {useEffect} from 'react';
-import PivotTableUI from 'react-pivottable/PivotTableUI';
-import 'react-pivottable/pivottable.css';
-import Header from '../../components/Header/Header';
-import {Box} from '@mui/system';
-import TableRenderers from 'react-pivottable/TableRenderers';
-import createPlotlyRenderers from 'react-pivottable/PlotlyRenderers';
-import Plot from 'react-plotly.js';
-import useQueries from '~/hooks/useQueries';
-import {QueryBuilder} from '~/lib/data/QueryBuilder';
-import {Button} from '@mui/material';
-import {LOG_SPEC} from '../../lib/data/types';
-const PlotlyRenderers = createPlotlyRenderers(Plot);
+// import React, {useEffect} from 'react';
+// import PivotTableUI from 'react-pivottable/PivotTableUI';
+// import 'react-pivottable/pivottable.css';
+// import Header from '../../components/Header/Header';
+// import {Box} from '@mui/system';
+// import TableRenderers from 'react-pivottable/TableRenderers';
+// import createPlotlyRenderers from 'react-pivottable/PlotlyRenderers';
+// import Plot from 'react-plotly.js';
+// import useQueries from '~/hooks/useQueries';
+// import {Button} from '@mui/material';
+// import {DBQuery, LOG_SPEC, Query} from '../../lib/data/types';
+// const PlotlyRenderers = createPlotlyRenderers(Plot);
 
-export const buildQueryFromSpec = (dataType: string, mapId?: number) => {
-  const query = new QueryBuilder()
-    .select(
-      LOG_SPEC[dataType].fields.map((field) => {
-        return {
-          table: dataType,
-          field: field.key,
-        };
-      }),
-    )
-    .from({table: dataType});
+// export const buildQueryFromSpec = (dataType: string, mapId?: number) => {
 
-  if (mapId !== undefined) {
-    query.where([
-      {
-        field: {table: dataType, field: 'mapId'},
-        operator: '=',
-        value: mapId,
-      },
-    ]);
-  }
+//   const spec = LOG_SPEC[dataType];
+//   let query: DBQuery = {
+//     name: dataType,
+//     objectStore: dataType,
+//   };
+// };
 
-  query.orderBy([{value: {table: dataType, field: 'id'}, order: 'asc'}]);
+// const QueryResultToData = (
+//   result: Record<string, object[]>,
+//   spec: any,
+//   dataType: string,
+// ) => {
+//   const data: any[] = [];
+//   const fields = spec[dataType].fields;
+//   const fieldNames = fields.map((field) => field.name);
+//   data.push(fieldNames);
+//   result[dataType].forEach((row) => {
+//     const rowData: any[] = [];
+//     fields.forEach((field) => {
+//       rowData.push(row[field.name]);
+//     });
+//     data.push(rowData);
+//   });
+//   return data;
+// };
 
-  return query.build();
-};
+// const AnalysisPage = () => {
+//   const [state, setState] = React.useState({});
+//   const [data, setData] = React.useState<any[]>([]);
+//   const [dataType, setDataType] = React.useState<string>('damage');
 
-const QueryResultToData = (
-  result: Record<string, object[]>,
-  spec: any,
-  dataType: string,
-) => {
-  const data: any[] = [];
-  const fields = spec[dataType].fields;
-  const fieldNames = fields.map((field) => field.name);
-  data.push(fieldNames);
-  result[dataType].forEach((row) => {
-    const rowData: any[] = [];
-    fields.forEach((field) => {
-      rowData.push(row[field.name]);
-    });
-    data.push(rowData);
-  });
-  return data;
-};
+//   const [{analysis}] = useQueries(
+//     [
+//       {
+//         query: buildQueryFromSpec(dataType),
+//         name: 'analysis',
+//       },
+//     ],
+//     [dataType],
+//   );
+//   console.log('state', state);
+//   console.log('result', analysis);
+//   console.log('datatype', dataType);
 
-const AnalysisPage = () => {
-  const [state, setState] = React.useState({});
-  const [data, setData] = React.useState<any[]>([]);
-  const [dataType, setDataType] = React.useState<string>('damage');
+//   useEffect(() => {
+//     if (analysis !== undefined) {
+//       const datarowbyspecname: Record<string, object[]> = {};
+//       datarowbyspecname[dataType] = analysis;
+//       const data2 = QueryResultToData(datarowbyspecname, LOG_SPEC, dataType);
+//       console.log('data', data2);
+//       setData(data2);
+//     }
+//   }, [analysis !== undefined, dataType]);
+//   return (
+//     <div>
+//       <Header
+//         refreshCallback={undefined}
+//         filters={{}}
+//         // eslint-disable-next-line @typescript-eslint/no-empty-function
+//         setFilters={(filters) => {}}
+//       />
+//       <Box
+//         component="div"
+//         sx={{display: 'flex', margin: '50px', flexWrap: 'wrap'}}>
+//         {Object.keys(LOG_SPEC).map((key) => {
+//           let niceName = key.replaceAll('_', ' ');
+//           // cinvert to title case
+//           niceName = niceName.replace(/\w\S*/g, (txt) => {
+//             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+//           });
 
-  const [{analysis}] = useQueries(
-    [
-      {
-        query: buildQueryFromSpec(dataType),
-        name: 'analysis',
-      },
-    ],
-    [dataType],
-  );
-  console.log('state', state);
-  console.log('result', analysis);
-  console.log('datatype', dataType);
+//           // uppercase the first character
+//           niceName = niceName.charAt(0).toUpperCase() + niceName.slice(1);
 
-  useEffect(() => {
-    if (analysis !== undefined) {
-      const datarowbyspecname: Record<string, object[]> = {};
-      datarowbyspecname[dataType] = analysis;
-      const data2 = QueryResultToData(datarowbyspecname, LOG_SPEC, dataType);
-      console.log('data', data2);
-      setData(data2);
-    }
-  }, [analysis !== undefined, dataType]);
-  return (
-    <div>
-      <Header
-        refreshCallback={undefined}
-        filters={{}}
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setFilters={(filters) => {}}
-      />
-      <Box
-        component="div"
-        sx={{display: 'flex', margin: '50px', flexWrap: 'wrap'}}>
-        {Object.keys(LOG_SPEC).map((key) => {
-          let niceName = key.replaceAll('_', ' ');
-          // cinvert to title case
-          niceName = niceName.replace(/\w\S*/g, (txt) => {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-          });
+//           return (
+//             <Button
+//               variant="outlined"
+//               sx={{margin: '10px'}}
+//               onClick={() => setDataType(key)}>
+//               {niceName}
+//             </Button>
+//           );
+//         })}
+//       </Box>
 
-          // uppercase the first character
-          niceName = niceName.charAt(0).toUpperCase() + niceName.slice(1);
+//       <Box
+//         component="div"
+//         sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+//         <PivotTableUI
+//           data={data}
+//           onChange={(s) => setState(s)}
+//           {...state}
+//           renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
+//         />
+//       </Box>
+//     </div>
+//   );
+// };
 
-          return (
-            <Button
-              variant="outlined"
-              sx={{margin: '10px'}}
-              onClick={() => setDataType(key)}>
-              {niceName}
-            </Button>
-          );
-        })}
-      </Box>
-
-      <Box
-        component="div"
-        sx={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-        <PivotTableUI
-          data={data}
-          onChange={(s) => setState(s)}
-          {...state}
-          renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
-        />
-      </Box>
-    </div>
-  );
-};
-
-export default AnalysisPage;
+// export default AnalysisPage;

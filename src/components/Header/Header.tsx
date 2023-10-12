@@ -15,7 +15,6 @@ import {useNavigate} from 'react-router-dom';
 
 import routes from '../../lib/routes';
 import './Header.scss';
-import TeamConfigurator from './TeamConfigurator';
 
 const settings = ['Settings', 'Logout'];
 
@@ -100,16 +99,16 @@ const Header = ({
               sx={{
                 display: {xs: 'block', lg: 'none'},
               }}>
-              <MenuItem>
-                <TeamConfigurator />
-              </MenuItem>
-              {routes.filter((route) => route.name).map((route) => (
-                <MenuItem
-                  onClick={() => handleClickForPage(route.path[0])}
-                  key={route.path[0]}>
-                  <Typography textAlign="center">{route.name}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem>foo</MenuItem>
+              {routes
+                .filter((route) => route.name)
+                .map((route) => (
+                  <MenuItem
+                    onClick={() => handleClickForPage(route.path[0])}
+                    key={route.path[0]}>
+                    <Typography textAlign="center">{route.name}</Typography>
+                  </MenuItem>
+                ))}
             </Menu>
           </Box>
 
@@ -135,48 +134,18 @@ const Header = ({
             component="div"
             sx={{flexGrow: 1, display: {xs: 'none', lg: 'flex'}}}>
             <Box component="div" sx={{display: 'flex', marginLeft: '100px'}}>
-              {routes.filter((route) => route.name).map((route) => (
-                <Button
-                  key={route.path[0]}
-                  onClick={() => handleClickForPage(route.path[0])}
-                  sx={{my: 2, color: 'white', display: 'block'}}>
-                  {route.name}
-                </Button>
-              ))}
-            </Box>
-            <Box component="div" sx={{marginLeft: 'auto', order: 2, my: 2}}>
-              <TeamConfigurator />
+              {routes
+                .filter((route) => route.name)
+                .map((route) => (
+                  <Button
+                    key={route.path[0]}
+                    onClick={() => handleClickForPage(route.path[0])}
+                    sx={{my: 2, color: 'white', display: 'block'}}>
+                    {route.name}
+                  </Button>
+                ))}
             </Box>
           </Box>
-
-          {/* <Box sx={{flexGrow: 0}}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{mt: '45px'}}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}>
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box> */}
         </Toolbar>
       </Container>
     </AppBar>

@@ -10,23 +10,22 @@ import {
 import {createTheme, ThemeProvider} from '@mui/material';
 import {QueryParamProvider} from 'use-query-params';
 import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
-import useQueries from './hooks/useQueries';
 import routes from './lib/routes';
 import {themeDef} from '~/theme';
 import DebugQueries from '~/components/Debug/DebugQueries';
-import {QueryManager} from './lib/data/QueryManager';
-import {QueryManagerContext} from './lib/data/QueryManagerContext';
+
+import {DataProvider} from './lib/data/DataContext';
 
 const theme = createTheme(themeDef);
 
 const App = () => {
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
-      {/* <DebugQueries /> */}
+      <DebugQueries />
       <ThemeProvider theme={theme}>
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>
-            <QueryManagerContext.Provider value={new QueryManager()}>
+            <DataProvider>
               <Routes>
                 {routes.map((route) =>
                   route.path.map((path, i) => (
@@ -42,7 +41,7 @@ const App = () => {
                 {/* <Route path="/map/:mapId" element={<Map />} />
               {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
               </Routes>
-            </QueryManagerContext.Provider>
+            </DataProvider>
           </QueryParamProvider>
         </BrowserRouter>
       </ThemeProvider>

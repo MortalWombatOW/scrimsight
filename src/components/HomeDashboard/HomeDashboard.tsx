@@ -1,12 +1,11 @@
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import React, {useState} from 'react';
-import MapsList from '~/components/MapsList/MapsList';
 import useWindowSize from '../../hooks/useWindowSize';
 import Globals from '../../lib/globals';
 
 import MapInfo from '~/components/MapInfo/MapInfo';
-import PlayByPlay from '../PlayByPlay/PlayByPlay';
+// import PlayByPlay from '../PlayByPlay/PlayByPlay';
 
 const HomeDashboard = () => {
   const {width} = useWindowSize();
@@ -34,14 +33,11 @@ const HomeDashboard = () => {
         flexDirection: 'column',
       }}>
       <div
-        style={{display: 'flex', flexDirection: 'row', marginBottom: '16px'}}>
-        <MapsList
-          onLoaded={() => {}}
-          onMapSelected={(mapId) => {
-            setSelectedId(mapId);
-          }}
-        />
-      </div>
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          marginBottom: '16px',
+        }}></div>
       <div
         style={{
           display: 'flex',
@@ -66,9 +62,10 @@ const HomeDashboard = () => {
         </ToggleButtonGroup>
       </div>
       <div style={{flexGrow: 1, border: '1px solid red'}}>
-        {selectedId && contentComponent === 'timeline' && (
-          <PlayByPlay mapId={selectedId} onLoaded={() => {}} />
-        )}
+        {selectedId &&
+          contentComponent === 'timeline' &&
+          // <PlayByPlay mapId={selectedId} onLoaded={() => {}} />
+          'timeline'}
         {selectedId && contentComponent === 'stats' && (
           <MapInfo
             mapId={selectedId}

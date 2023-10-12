@@ -1,10 +1,8 @@
 import {AppBar, CircularProgress, Toolbar} from '@mui/material';
 import Header from 'components/Header/Header';
 import MapInfo from 'components/MapInfo/MapInfo';
-import PlayByPlay from 'components/PlayByPlay/PlayByPlay';
 import React, {useState} from 'react';
 import {useParams, useSearchParams} from 'react-router-dom';
-import MapsList from '../../components/MapsList/MapsList';
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
 import './Map.scss';
 import {useNavigate} from 'react-router-dom';
@@ -55,7 +53,7 @@ const MapPage = () => {
         setFilters={(filters) => {}}
       />
       <div className="container">
-        {mapId && <PlayByPlay mapId={mapId!} onLoaded={startLoadAnimation} />}
+        {/* {mapId && <PlayByPlay mapId={mapId!} onLoaded={startLoadAnimation} />} */}
       </div>
 
       <div

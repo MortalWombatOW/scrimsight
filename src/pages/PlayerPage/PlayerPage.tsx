@@ -1,9 +1,6 @@
 import React, {useEffect} from 'react';
-import DataTable from 'react-data-table-component';
 import {StringParam, useQueryParam} from 'use-query-params';
-import useQueries from '../../hooks/useQueries';
 import Header from './../../components/Header/Header';
-import PlayerDetails from './PlayerDetails';
 import './PlayerPage.scss';
 
 const PlayerPage = () => {

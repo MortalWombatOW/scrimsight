@@ -4,7 +4,6 @@ import {Cell, Pie, PieChart, Sector, Tooltip} from 'recharts';
 import {DataRow} from '../../lib/data/types';
 import {groupColorClass} from '../../lib/color';
 import './Charts.scss';
-import {QueryManagerContext} from '../../lib/data/QueryManagerContext';
 
 const RADIAN = Math.PI / 180;
 
@@ -57,7 +56,7 @@ const PieChartComponent = ({
 }: {
   height: number;
   width: number;
-  data: DataRow[];
+  data: DataRow[] | undefined;
   title: string;
   formatFn: (value: DataRow) => string;
   dataKey: string;
@@ -65,9 +64,7 @@ const PieChartComponent = ({
   deps: string[];
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const queryManager = useContext(QueryManagerContext);
-  const loading =
-    data === undefined || deps.some((dep) => !queryManager.hasResults(dep));
+  const loading = data === undefined;
 
   const CustomTooltip = ({active, payload, label}) => {
     if (active && payload && payload.length) {

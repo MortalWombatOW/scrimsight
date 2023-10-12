@@ -1,9 +1,6 @@
-import ExplorePage from '~/pages/Explore/Explore';
-import AnalysisPage from '../pages/AnalysisPage/AnalysisPage';
 import Home from '../pages/Home/Home';
 import MapPage from '../pages/Map/MapPage';
 import PlayerPage from '../pages/PlayerPage/PlayerPage';
-import SettingsPage from '../pages/Settings/SettingsPage';
 import SplashPage from '../pages/SplashPage/SplashPage';
 
 interface Route {
@@ -16,11 +13,6 @@ const routes: Route[] = [
   {
     path: ['/'],
     component: SplashPage,
-  },
-  {
-    path: ['/pricing'],
-    component: SplashPage,
-    name: 'Pricing',
   },
   {
     path: ['/dashboard'],
@@ -40,21 +32,6 @@ const routes: Route[] = [
     path: ['/review', '/review/:mapId'],
     component: MapPage,
     name: 'Review Map',
-  },
-  {
-    path: ['/analyze'],
-    component: AnalysisPage,
-    name: 'Analyze',
-  },
-  {
-    path: ['/explore'],
-    component: ExplorePage,
-    name: 'Explorer',
-  },
-  {
-    path: ['/settings'],
-    component: SettingsPage,
-    name: 'Settings',
   },
 ];
 

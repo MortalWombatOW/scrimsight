@@ -1,15 +1,12 @@
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import Grid from '@mui/material/Grid';
 import 'components/MapInfo/MapInfo.scss';
 import {getHeroImage} from 'lib/data/data';
 import {heroNameToNormalized, mapNameToFileName} from 'lib/string';
 import React, {useEffect, useMemo} from 'react';
-import useQueries, {useQuery} from '../../hooks/useQueries';
 import {groupColorClass} from '../../lib/color';
 import {Button, Typography} from '@mui/material';
 import {formatTime} from '~/lib/format';
 import {useNavigate} from 'react-router';
+import {useData, useDataNode} from '../../hooks/useData';
 // import ComparativeTimePlot from '~/components/Chart/ComparativeTimePlot';
 
 const PlayerAndHero = ({
@@ -50,33 +47,13 @@ const MapInfo = ({
 }) => {
   const navigate = useNavigate();
 
-  const [{MapInfo_map: mapWrapped}] = useQueries(
-    [
-      {
-        name: 'MapInfo_map',
-        query: `select \
-        match_start.[Map ID] as [Map ID], \
-        match_start.[Map Name] as [Map Name], \
-        match_start.[Map Type] as [Map Type], \
-        match_start.[Team 1 Name] as [Team 1 Name], \
-        match_start.[Team 2 Name] as [Team 2 Name], \
-        match_end.[Team 1 Score] as [Team 1 Score], \
-        match_end.[Team 2 Score] as [Team 2 Score], \
-        match_end.[Match Time] as [Match Time], \
-        match_end.[Round Number] as [Round Number] \
-        from match_start \
-        inner join match_end on match_end.[Map ID] = match_start.[Map ID] \
-        where match_start.[Map ID] = ${mapId}`,
-      },
-    ],
-    [mapId],
-  );
+  const mapInfo = useDataNode('MapInfo');
 
-  if (!mapWrapped) {
+  if (!mapInfo) {
     return <div>Loading...</div>;
   }
 
-  const map = mapWrapped[0];
+  const map = mapInfo[0];
 
   console.log(map);
 

@@ -74,10 +74,10 @@ export const mapExists = async (mapId) => {
   });
 };
 
-export function storeObjectInDatabase<T extends {id?: number}>(
+export function storeObjectInDatabase<T>(
   object: T,
   storeName: string,
-) {
+): Promise<void> {
   console.log('storeObjectInDatabase', object);
 
   const db = getDB();
@@ -87,7 +87,11 @@ export function storeObjectInDatabase<T extends {id?: number}>(
 
   const store = db.transaction([storeName], 'readwrite').objectStore(storeName);
 
-  store.put(object);
+  return new Promise((resolve, reject) => {
+    const request = store.put(object);
+    request.onerror = () => reject("Couldn't write data");
+    request.onsuccess = () => resolve();
+  });
 }
 
 export function getData(storeName: string): Promise<DataRow[]> {

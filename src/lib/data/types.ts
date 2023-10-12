@@ -1,3 +1,5 @@
+import {type} from 'os';
+
 type FileUpload = {
   fileName: string;
   file?: File;
@@ -131,18 +133,46 @@ type GameStateExtractor = (
   [key: string]: number;
 };
 
-type Query = {
-  name: string;
-  query: string;
-  deps?: (string | object[])[];
-};
-
 type Team = {
   name: string;
   players: string[];
   notes?: string;
   id?: number;
 };
+
+type DataNodeName = string;
+type FieldName = string;
+type NodeState = 'pending' | 'running' | 'done' | 'error';
+
+interface DataNode<OutType> {
+  name: DataNodeName;
+  state: NodeState;
+  output?: OutType[];
+}
+
+interface WriteNode<Type> extends DataNode<void> {
+  data: Type[];
+  outputObjectStore: string;
+}
+
+interface ObjectStoreNode<OutType> extends DataNode<OutType> {
+  objectStore: string;
+}
+
+interface TransformNode<InType, OutType> extends DataNode<OutType> {
+  // function to be applied to each row of data
+  transform: (data: InType) => OutType;
+  source: DataNodeName;
+}
+
+interface JoinNode<OutType> extends DataNode<OutType> {
+  sources: [DataNodeName, FieldName][];
+}
+
+// interface CompositeNode<OutType> extends DataNode<OutType> {
+//   nodes: DataNodeName[];
+//   edges: [DataNodeName, DataNodeName][];
+// }
 
 type DataRow = (string | number | boolean)[];
 
@@ -725,6 +755,270 @@ const LOG_SPEC: LogSpec = {
   },
 };
 
+interface BaseEvent {
+  mapId: number;
+  type: string;
+  matchTime: number;
+}
+
+interface MatchStart extends BaseEvent {
+  mapName: string;
+  mapType: string;
+  team1Name: string;
+  team2Name: string;
+}
+
+interface MatchEnd extends BaseEvent {
+  roundNumber: number;
+  team1Score: number;
+  team2Score: number;
+}
+
+interface RoundStart extends BaseEvent {
+  roundNumber: number;
+  capturingTeam: string;
+  team1Score: number;
+  team2Score: number;
+  objectiveIndex: number;
+}
+
+interface RoundEnd extends BaseEvent {
+  roundNumber: number;
+  capturingTeam: string;
+  team1Score: number;
+  team2Score: number;
+  objectiveIndex: number;
+  controlTeam1Progress: number;
+  controlTeam2Progress: number;
+  matchTimeRemaining: number;
+}
+
+interface SetupComplete extends BaseEvent {
+  roundNumber: number;
+  matchTimeRemaining: number;
+}
+
+interface ObjectiveCaptured extends BaseEvent {
+  roundNumber: number;
+  capturingTeam: string;
+  objectiveIndex: number;
+  controlTeam1Progress: number;
+  controlTeam2Progress: number;
+  matchTimeRemaining: number;
+}
+
+interface PointProgress extends BaseEvent {
+  roundNumber: number;
+  capturingTeam: string;
+  objectiveIndex: number;
+  pointCaptureProgress: number;
+}
+
+interface PayloadProgress extends BaseEvent {
+  roundNumber: number;
+  capturingTeam: string;
+  objectiveIndex: number;
+  payloadCaptureProgress: number;
+}
+
+interface HeroSpawn extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  previousHero: string;
+  heroTimePlayed: number;
+}
+
+interface HeroSwap extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  previousHero: string;
+  heroTimePlayed: number;
+}
+
+interface Ability1Used extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+}
+
+interface Ability2Used extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+}
+
+interface OffensiveAssist extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+}
+
+interface DefensiveAssist extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+}
+
+interface UltimateCharged extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+  ultimateId: number;
+}
+
+interface UltimateStart extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+  ultimateId: number;
+}
+
+interface UltimateEnd extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+  ultimateId: number;
+}
+
+interface Kill extends BaseEvent {
+  attackerTeam: string;
+  attackerName: string;
+  attackerHero: string;
+  victimTeam: string;
+  victimName: string;
+  victimHero: string;
+  eventAbility: string;
+  eventDamage: number;
+  isCriticalHit: boolean;
+  isEnvironmental: boolean;
+}
+
+interface Damage extends BaseEvent {
+  attackerTeam: string;
+  attackerName: string;
+  attackerHero: string;
+  victimTeam: string;
+  victimName: string;
+  victimHero: string;
+  eventAbility: string;
+  eventDamage: number;
+  isCriticalHit: boolean;
+  isEnvironmental: boolean;
+}
+
+interface Healing extends BaseEvent {
+  healerTeam: string;
+  healerName: string;
+  healerHero: string;
+  healeeTeam: string;
+  healeeName: string;
+  healeeHero: string;
+  eventAbility: string;
+  eventHealing: number;
+  isHealthPack: boolean;
+}
+
+interface MercyRez extends BaseEvent {
+  mercyTeam: string;
+  mercyName: string;
+  revivedTeam: string;
+  revivedName: string;
+  revivedHero: string;
+  eventAbility: string;
+}
+
+interface EchoDuplicateStart extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+  ultimateId: number;
+}
+
+interface EchoDuplicateEnd extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  ultimateId: number;
+}
+
+interface DvaDemech extends BaseEvent {
+  attackerTeam: string;
+  attackerName: string;
+  attackerHero: string;
+  victimTeam: string;
+  victimName: string;
+  victimHero: string;
+  eventAbility: string;
+  eventDamage: number;
+  isCriticalHit: boolean;
+  isEnvironmental: boolean;
+}
+
+interface DvaRemech extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  ultimateId: number;
+}
+
+interface RemechCharged extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+  ultimateId: number;
+}
+
+interface PlayerStat extends BaseEvent {
+  roundNumber: number;
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  eliminations: number;
+  finalBlows: number;
+  deaths: number;
+  allDamageDealt: number;
+  barrierDamageDealt: number;
+  heroDamageDealt: number;
+  healingDealt: number;
+  healingReceived: number;
+  selfHealing: number;
+  damageTaken: number;
+  damageBlocked: number;
+  defensiveAssists: number;
+  offensiveAssists: number;
+  ultimatesEarned: number;
+  ultimatesUsed: number;
+  multikillBest: number;
+  multikills: number;
+  soloKills: number;
+  objectiveKills: number;
+  environmentalKills: number;
+  environmentalDeaths: number;
+  criticalHits: number;
+  criticalHitAccuracy: number;
+  scopedAccuracy: number;
+  scopedCriticalHitAccuracy: number;
+  scopedCriticalHitKills: number;
+  shotsFired: number;
+  shotsHit: number;
+  shotsMissed: number;
+  scopedShotsFired: number;
+  scopedShotsHit: number;
+  weaponAccuracy: number;
+  heroTimePlayed: number;
+}
+
 export {
   FileUpload,
   TeamInfo,
@@ -741,7 +1035,12 @@ export {
   ReportComponentStyle,
   GameStateTimeSlice,
   GameStateExtractor,
-  Query,
+  DataNodeName,
+  FieldName,
+  DataNode,
+  ObjectStoreNode,
+  TransformNode,
+  JoinNode,
   Team,
   DataRow,
   DataAndSpecName,
@@ -750,4 +1049,33 @@ export {
   DataSpec,
   FieldSpec,
   LOG_SPEC,
+  BaseEvent,
+  MatchStart,
+  MatchEnd,
+  RoundStart,
+  RoundEnd,
+  SetupComplete,
+  ObjectiveCaptured,
+  PointProgress,
+  PayloadProgress,
+  HeroSpawn,
+  HeroSwap,
+  Ability1Used,
+  Ability2Used,
+  OffensiveAssist,
+  DefensiveAssist,
+  UltimateCharged,
+  UltimateStart,
+  UltimateEnd,
+  Kill,
+  Damage,
+  Healing,
+  MercyRez,
+  EchoDuplicateStart,
+  EchoDuplicateEnd,
+  DvaDemech,
+  DvaRemech,
+  RemechCharged,
+  PlayerStat,
+  WriteNode,
 };
