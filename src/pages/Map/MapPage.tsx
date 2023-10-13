@@ -47,7 +47,6 @@ const MapPage = () => {
   return (
     <div className="MapPage">
       <Header
-        refreshCallback={undefined}
         filters={{}}
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         setFilters={(filters) => {}}

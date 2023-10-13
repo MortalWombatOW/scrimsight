@@ -12,7 +12,6 @@ import {QueryParamProvider} from 'use-query-params';
 import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 import routes from './lib/routes';
 import {themeDef} from '~/theme';
-import DebugQueries from '~/components/Debug/DebugQueries';
 
 import {DataProvider} from './lib/data/DataContext';
 
@@ -25,7 +24,6 @@ const App = () => {
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>
             <DataProvider>
-              <DebugQueries />
               <Routes>
                 {routes.map((route) =>
                   route.path.map((path, i) => (

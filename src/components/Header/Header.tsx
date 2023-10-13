@@ -19,11 +19,9 @@ import './Header.scss';
 const settings = ['Settings', 'Logout'];
 
 const Header = ({
-  refreshCallback,
   filters,
   setFilters,
 }: {
-  refreshCallback: (() => void) | undefined;
   filters: {[key: string]: string[]};
   setFilters: (filters: {[key: string]: string[]}) => void;
 }) => {

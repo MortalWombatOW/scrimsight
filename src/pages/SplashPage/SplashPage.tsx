@@ -19,7 +19,6 @@ const SplashPage = () => {
   return (
     <Box component="div" style={{width: '100%'}}>
       <Header
-        refreshCallback={() => {}}
         filters={{}}
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         setFilters={(filters) => {}}
@@ -84,14 +83,10 @@ const SplashPage = () => {
             marginTop: '50px',
             paddingBottom: '32px',
           }}>
-          <Button
-            variant="contained"
-            color="primary">
+          <Button variant="contained" color="primary">
             Explore example data
           </Button>
-          <Button
-            variant="contained"
-            color="secondary">
+          <Button variant="contained" color="secondary">
             Get started with your data
           </Button>
         </Box>

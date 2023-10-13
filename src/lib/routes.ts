@@ -1,3 +1,4 @@
+import DebugPage from '../pages/Debug/DebugPage';
 import Home from '../pages/Home/Home';
 import MapPage from '../pages/Map/MapPage';
 import PlayerPage from '../pages/PlayerPage/PlayerPage';
@@ -32,6 +33,11 @@ const routes: Route[] = [
     path: ['/review', '/review/:mapId'],
     component: MapPage,
     name: 'Review Map',
+  },
+  {
+    path: ['/debug'],
+    component: DebugPage,
+    name: 'Debug',
   },
 ];
 

@@ -200,6 +200,12 @@ export function isWriteNode(node: DataNode<any>): node is WriteNode<any> {
   return 'outputObjectStore' in node;
 }
 
+export function getLatestExecution(
+  node: DataNode<any>,
+): DataNodeExecution | undefined {
+  return node.metadata?.executions[node.metadata?.executions.length - 1];
+}
+
 type DataRow = (string | number | boolean)[];
 
 type DataAndSpecName = {

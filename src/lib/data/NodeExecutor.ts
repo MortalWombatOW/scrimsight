@@ -14,37 +14,44 @@ import {
 
 import {storeObjectInDatabase, getData} from './database';
 import ComputationGraph from './ComputationGraph';
-import NodeExecutionMetadataFactory from './NodeExecutionMetadataFactory';
 
 class NodeExecutor {
-  private metadataFactory = new NodeExecutionMetadataFactory();
-
   constructor(private graph: ComputationGraph) {}
 
-  private async handleWriteNode(node: WriteNode<any>): Promise<void> {
+  private async handleWriteNode(
+    node: WriteNode<any>,
+    execution: Partial<DataNodeExecution>,
+  ): Promise<void> {
     for (const item of node.data) {
       await storeObjectInDatabase(item, node.outputObjectStore);
     }
-    this.metadataFactory.setOutputRows(node.data.length);
+    execution.outputRows = node.data.length;
   }
 
   private async handleObjectStoreNode(
     node: ObjectStoreNode<any>,
+    execution: Partial<DataNodeExecution>,
   ): Promise<void> {
     node.output = await getData(node.objectStore);
-    this.metadataFactory.setOutputRows(node.output.length);
+    execution.outputRows = node.output.length;
   }
 
-  private handleTransformNode(node: TransformNode<any, any>): void {
+  private handleTransformNode(
+    node: TransformNode<any, any>,
+    execution: Partial<DataNodeExecution>,
+  ): void {
     const sourceNode = this.graph.getNode(node.source);
     if (sourceNode && sourceNode.output) {
       node.output = sourceNode.output.map(node.transform);
-      this.metadataFactory.setInputRows(sourceNode.output.length);
-      this.metadataFactory.setOutputRows(node.output.length);
+      execution.inputRows = sourceNode.output.length;
+      execution.outputRows = node.output.length;
     }
   }
 
-  private handleJoinNode(node: JoinNode<any>): void {
+  private handleJoinNode(
+    node: JoinNode<any>,
+    execution: Partial<DataNodeExecution>,
+  ): void {
     const sourceData: {[name: string]: any[]} = {};
 
     // Fetch the output data for each source node.
@@ -89,32 +96,40 @@ class NodeExecutor {
 
     // Set the joined output as the output of this node.
     node.output = joinedOutput;
+    execution.inputRows = joinedOutput.length;
+    execution.outputRows = joinedOutput.length;
   }
 
   async executeNode(name: DataNodeName): Promise<void> {
     const node = this.graph.getNode(name);
     if (!node) return;
 
-    this.metadataFactory.start();
     node.state = 'running';
-
+    if (!node.metadata) {
+      node.metadata = {
+        executions: [],
+      };
+    }
+    const execution: Partial<DataNodeExecution> = {};
+    const startTime = Date.now();
     try {
       if (isWriteNode(node)) {
-        await this.handleWriteNode(node);
+        await this.handleWriteNode(node, execution);
       } else if (isObjectStoreNode(node)) {
-        await this.handleObjectStoreNode(node);
+        await this.handleObjectStoreNode(node, execution);
       } else if (isTransformNode(node)) {
-        this.handleTransformNode(node);
+        this.handleTransformNode(node, execution);
       } else if (isJoinNode(node)) {
-        this.handleJoinNode(node);
+        this.handleJoinNode(node, execution);
       }
 
       node.state = 'done';
     } catch (error) {
       node.state = 'error';
     }
-
-    this.metadataFactory.finish(node);
+    const endTime = Date.now();
+    execution.duration = endTime - startTime;
+    node.metadata.executions.push(execution as DataNodeExecution);
   }
 }
 

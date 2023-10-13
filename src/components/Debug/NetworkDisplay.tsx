@@ -13,7 +13,33 @@ class NetworkDisplay {
     this.edges = new DataSet([]);
   }
 
-  public initialize(container: HTMLElement, options: any) {
+  public initialize(container: HTMLElement) {
+    const options = {
+      autoResize: true,
+      height: '100%',
+      width: '100%',
+      locale: 'en',
+      layout: {
+        hierarchical: {
+          enabled: true,
+          direction: 'UD',
+          sortMethod: 'directed',
+        },
+      },
+      physics: {
+        barnesHut: {
+          avoidOverlap: 1,
+        },
+      },
+      edges: {
+        arrows: {
+          to: {
+            enabled: true,
+            scaleFactor: 0.5,
+          },
+        },
+      },
+    };
     this.network = new Network(
       container,
       {nodes: this.nodes, edges: this.edges},
@@ -32,6 +58,7 @@ class NetworkDisplay {
     stateColor: string,
     shape: string,
     label: string,
+    opacity: number,
   ) {
     const existingNodeId = this.nodeIdFromName(name);
     if (existingNodeId !== undefined) {
@@ -40,6 +67,7 @@ class NetworkDisplay {
         color: {background: stateColor},
         shape: shape,
         label: label,
+        opacity: opacity,
       });
       return;
     }
@@ -48,6 +76,7 @@ class NetworkDisplay {
       label: label,
       color: {background: stateColor},
       shape: shape,
+      opacity: opacity,
     });
   }
 
@@ -58,7 +87,6 @@ class NetworkDisplay {
     console.log(
       `Adding edge from ${fromName} to ${toName} (${fromId} to ${toId})`,
     );
-    // console.log(this.nodes.get());
 
     if (fromId === undefined || toId === undefined) {
       return;

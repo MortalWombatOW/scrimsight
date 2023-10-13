@@ -6,6 +6,7 @@ import {
   isJoinNode,
   isObjectStoreNode,
   isWriteNode,
+  getLatestExecution,
 } from '../../lib/data/types';
 import NetworkDisplay from './NetworkDisplay';
 
@@ -13,6 +14,7 @@ function getStateColor(node: DataNode<any> | undefined) {
   if (!node) {
     return '#000000';
   }
+
   const state = node.state;
   switch (state) {
     case 'pending':
@@ -58,6 +60,23 @@ function getLabel(node: DataNode<any> | undefined) {
   return lines.join('\n');
 }
 
+function getOpacity(node: DataNode<any> | undefined) {
+  if (!node) {
+    return 0.1;
+  }
+  const execution = getLatestExecution(node);
+  if (!execution) {
+    return 0.3;
+  }
+  const outputRows = execution.outputRows;
+  if (outputRows === 0) {
+    // console.log('opacity', node.name, node);
+    return 0.5;
+  }
+
+  return 1;
+}
+
 function updateNode(
   nodeName: string,
   networkDisplay: NetworkDisplay,
@@ -70,6 +89,7 @@ function updateNode(
     getStateColor(node),
     getShape(node),
     getLabel(node),
+    getOpacity(node),
   );
   dataManager.getEdges(nodeName).forEach(([fromName, toName]) => {
     networkDisplay.setEdge(fromName, toName);
@@ -77,7 +97,7 @@ function updateNode(
   console.log('Updated node', node);
 }
 
-const DebugQueries = () => {
+const DebugNodeGraph = () => {
   const ref = useRef(null);
   const dataManager = useDataManager();
   const networkDisplay = useRef(new NetworkDisplay());
@@ -95,36 +115,10 @@ const DebugQueries = () => {
 
   useEffect(() => {
     const container = ref.current;
-    const options = {
-      autoResize: true,
-      height: '100%',
-      width: '100%',
-      locale: 'en',
-      // layout: {
-      //   hierarchical: {
-      //     enabled: true,
-      //     direction: 'UD',
-      //     sortMethod: 'directed',
-      //   },
-      // },
-      // physics: {
-      //   barnesHut: {
-      //     avoidOverlap: 1,
-      //   },
-      // },
-      edges: {
-        arrows: {
-          to: {
-            enabled: true,
-            scaleFactor: 0.5,
-          },
-        },
-      },
-    };
     if (container === null) {
       return;
     }
-    networkDisplay.current.initialize(container, options);
+    networkDisplay.current.initialize(container);
   }, []);
 
   return (
@@ -139,4 +133,4 @@ const DebugQueries = () => {
   );
 };
 
-export default DebugQueries;
+export default DebugNodeGraph;

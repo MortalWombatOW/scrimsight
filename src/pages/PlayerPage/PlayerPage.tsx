@@ -131,7 +131,6 @@ const PlayerPage = () => {
   return (
     <div>
       <Header
-        refreshCallback={refresh}
         filters={{}}
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         setFilters={(filters) => {}}

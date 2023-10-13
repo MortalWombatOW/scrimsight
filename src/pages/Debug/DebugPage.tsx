@@ -1,8 +1,8 @@
 import React from 'react';
-import HomeDashboard from '../../components/HomeDashboard/HomeDashboard';
-import Header from './../../components/Header/Header';
+import DebugNodeGraph from '../../components/Debug/DebugNodeGraph';
+import Header from '../../components/Header/Header';
 
-const Home = () => {
+const DebugPage = () => {
   return (
     <div style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
       <Header
@@ -10,10 +10,9 @@ const Home = () => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         setFilters={(filters) => {}}
       />
-
-      <HomeDashboard />
+      <DebugNodeGraph />
     </div>
   );
 };
 
-export default Home;
+export default DebugPage;
