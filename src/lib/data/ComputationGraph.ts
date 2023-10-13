@@ -14,6 +14,11 @@ class ComputationGraph {
   private nodes: Map<DataNodeName, DataNode<any>> = new Map();
 
   addNode(node: DataNode<any>): void {
+    if (!node.metadata) {
+      node.metadata = {
+        executions: [],
+      };
+    }
     this.nodes.set(node.name, node);
   }
 

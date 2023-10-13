@@ -1,6 +1,7 @@
 import {DataSet} from 'vis-data/esnext';
 import {Edge, Network, Node} from 'vis-network/esnext';
 import 'vis-network/styles/vis-network.css';
+import {stringHash} from '../../lib/string';
 
 class NetworkDisplay {
   private nodes: DataSet<Node, 'id'>;
@@ -21,12 +22,17 @@ class NetworkDisplay {
   }
 
   private nodeIdFromName(name: string) {
-    const node = this.nodes.get().find((n) => n.label === name);
+    const node = this.nodes.get().find((n) => n.id === stringHash(name));
     if (!node) return undefined;
     return node.id;
   }
 
-  public setNode(name: string, stateColor: string, shape: string) {
+  public setNode(
+    name: string,
+    stateColor: string,
+    shape: string,
+    label: string,
+  ) {
     const existingNodeId = this.nodeIdFromName(name);
     if (existingNodeId !== undefined) {
       this.nodes.update({
@@ -37,9 +43,9 @@ class NetworkDisplay {
       return;
     }
     this.nodes.add({
-      id: this.nodes.length,
-      label: name + 'fooo',
-
+      id: stringHash(name),
+      title: name,
+      label: label,
       color: {background: stateColor},
       shape: shape,
     });

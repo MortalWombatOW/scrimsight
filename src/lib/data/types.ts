@@ -144,10 +144,21 @@ type DataNodeName = string;
 type FieldName = string;
 type NodeState = 'pending' | 'running' | 'done' | 'error';
 
+interface DataNodeExecution {
+  duration: number;
+  inputRows: number;
+  outputRows: number;
+}
+
+interface DataNodeMetadata {
+  executions: DataNodeExecution[];
+}
+
 interface DataNode<OutType> {
   name: DataNodeName;
   state: NodeState;
   output?: OutType[];
+  metadata?: DataNodeMetadata;
 }
 
 interface WriteNode<Type> extends DataNode<void> {
@@ -1093,4 +1104,6 @@ export {
   RemechCharged,
   PlayerStat,
   WriteNode,
+  DataNodeExecution,
+  DataNodeMetadata,
 };

@@ -39,12 +39,23 @@ function getShape(node: DataNode<any> | undefined) {
     return 'triangle';
   }
   if (isObjectStoreNode(node)) {
-    return 'database';
+    return 'ellipse';
   }
   if (isWriteNode(node)) {
     return 'star';
   }
   return 'box';
+}
+
+function getLabel(node: DataNode<any> | undefined) {
+  if (!node) {
+    return 'undefined';
+  }
+  const lines: string[] = [];
+  lines.push(node.name);
+  lines.push(node.state);
+  lines.push(node.metadata?.executions?.length.toString() ?? '0');
+  return lines.join('\n');
 }
 
 const DebugQueries = () => {
@@ -62,6 +73,7 @@ const DebugQueries = () => {
           nodeName,
           getStateColor(node),
           getShape(node),
+          getLabel(node),
         );
         dataManager.getEdges(nodeName).forEach(([fromName, toName]) => {
           console.log('edge', fromName, toName);

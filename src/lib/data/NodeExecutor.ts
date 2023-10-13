@@ -8,30 +8,39 @@ import {
   isJoinNode,
   isObjectStoreNode,
   isWriteNode,
+  DataNodeExecution,
+  DataNode,
 } from './types';
 
 import {storeObjectInDatabase, getData} from './database';
 import ComputationGraph from './ComputationGraph';
+import NodeExecutionMetadataFactory from './NodeExecutionMetadataFactory';
 
 class NodeExecutor {
+  private metadataFactory = new NodeExecutionMetadataFactory();
+
   constructor(private graph: ComputationGraph) {}
 
   private async handleWriteNode(node: WriteNode<any>): Promise<void> {
     for (const item of node.data) {
       await storeObjectInDatabase(item, node.outputObjectStore);
     }
+    this.metadataFactory.setOutputRows(node.data.length);
   }
 
   private async handleObjectStoreNode(
     node: ObjectStoreNode<any>,
   ): Promise<void> {
     node.output = await getData(node.objectStore);
+    this.metadataFactory.setOutputRows(node.output.length);
   }
 
   private handleTransformNode(node: TransformNode<any, any>): void {
     const sourceNode = this.graph.getNode(node.source);
     if (sourceNode && sourceNode.output) {
       node.output = sourceNode.output.map(node.transform);
+      this.metadataFactory.setInputRows(sourceNode.output.length);
+      this.metadataFactory.setOutputRows(node.output.length);
     }
   }
 
@@ -86,6 +95,7 @@ class NodeExecutor {
     const node = this.graph.getNode(name);
     if (!node) return;
 
+    this.metadataFactory.start();
     node.state = 'running';
 
     try {
@@ -105,6 +115,8 @@ class NodeExecutor {
     }
 
     console.log('node', node);
+
+    this.metadataFactory.finish(node);
   }
 }
 
