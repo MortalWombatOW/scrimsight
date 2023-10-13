@@ -114,8 +114,6 @@ class NodeExecutor {
       node.state = 'error';
     }
 
-    console.log('node', node);
-
     this.metadataFactory.finish(node);
   }
 }

@@ -14,11 +14,6 @@ class ComputationGraph {
   private nodes: Map<DataNodeName, DataNode<any>> = new Map();
 
   addNode(node: DataNode<any>): void {
-    if (!node.metadata) {
-      node.metadata = {
-        executions: [],
-      };
-    }
     this.nodes.set(node.name, node);
   }
 
@@ -43,7 +38,7 @@ class ComputationGraph {
       });
     }
     if (isWriteNode(node)) {
-      edges.push([node.name, node.outputObjectStore]);
+      edges.push([node.name, node.outputObjectStore + '_object_store']);
     }
 
     return edges;

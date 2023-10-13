@@ -39,10 +39,10 @@ function getShape(node: DataNode<any> | undefined) {
     return 'triangle';
   }
   if (isObjectStoreNode(node)) {
-    return 'ellipse';
+    return 'box';
   }
   if (isWriteNode(node)) {
-    return 'star';
+    return 'ellipse';
   }
   return 'box';
 }
@@ -58,6 +58,25 @@ function getLabel(node: DataNode<any> | undefined) {
   return lines.join('\n');
 }
 
+function updateNode(
+  nodeName: string,
+  networkDisplay: NetworkDisplay,
+  dataManager: any,
+) {
+  const node = dataManager.getNode(nodeName);
+
+  networkDisplay.setNode(
+    nodeName,
+    getStateColor(node),
+    getShape(node),
+    getLabel(node),
+  );
+  dataManager.getEdges(nodeName).forEach(([fromName, toName]) => {
+    networkDisplay.setEdge(fromName, toName);
+  });
+  console.log('Updated node', node);
+}
+
 const DebugQueries = () => {
   const ref = useRef(null);
   const dataManager = useDataManager();
@@ -67,19 +86,10 @@ const DebugQueries = () => {
 
   useEffect(() => {
     for (const nodeName of nodeNames) {
-      dataManager.subscribe(nodeName, () => {
-        const node = dataManager.getNode(nodeName);
-        networkDisplay.current.setNode(
-          nodeName,
-          getStateColor(node),
-          getShape(node),
-          getLabel(node),
-        );
-        dataManager.getEdges(nodeName).forEach(([fromName, toName]) => {
-          console.log('edge', fromName, toName);
-          networkDisplay.current.setEdge(fromName, toName);
-        });
-      });
+      updateNode(nodeName, networkDisplay.current, dataManager);
+      dataManager.subscribe(nodeName, () =>
+        updateNode(nodeName, networkDisplay.current, dataManager),
+      );
     }
   }, [nodeNames]);
 

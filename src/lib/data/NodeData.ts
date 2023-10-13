@@ -37,166 +37,355 @@ import {
   WriteNode,
 } from './types';
 
-const match_start: ObjectStoreNode<MatchStart> = {
-  name: 'match_start',
+const match_start_object_store: ObjectStoreNode<MatchStart> = {
+  name: 'match_start_object_store',
   state: 'pending',
   objectStore: 'match_start',
 };
 
-const match_end: ObjectStoreNode<MatchEnd> = {
-  name: 'match_end',
+const match_end_object_store: ObjectStoreNode<MatchEnd> = {
+  name: 'match_end_object_store',
   state: 'pending',
   objectStore: 'match_end',
 };
 
-const round_start: ObjectStoreNode<RoundStart> = {
-  name: 'round_start',
+const round_start_object_store: ObjectStoreNode<RoundStart> = {
+  name: 'round_start_object_store',
   state: 'pending',
   objectStore: 'round_start',
 };
 
-const round_end: ObjectStoreNode<RoundEnd> = {
-  name: 'round_end',
+const round_end_object_store: ObjectStoreNode<RoundEnd> = {
+  name: 'round_end_object_store',
   state: 'pending',
   objectStore: 'round_end',
 };
 
-const setup_complete: ObjectStoreNode<SetupComplete> = {
-  name: 'setup_complete',
+const setup_complete_object_store: ObjectStoreNode<SetupComplete> = {
+  name: 'setup_complete_object_store',
   state: 'pending',
   objectStore: 'setup_complete',
 };
 
-const objective_captured: ObjectStoreNode<ObjectiveCaptured> = {
-  name: 'objective_captured',
+const objective_captured_object_store: ObjectStoreNode<ObjectiveCaptured> = {
+  name: 'objective_captured_object_store',
   state: 'pending',
   objectStore: 'objective_captured',
 };
 
-const point_progress: ObjectStoreNode<PointProgress> = {
-  name: 'point_progress',
+const point_progress_object_store: ObjectStoreNode<PointProgress> = {
+  name: 'point_progress_object_store',
   state: 'pending',
   objectStore: 'point_progress',
 };
 
-const payload_progress: ObjectStoreNode<PayloadProgress> = {
-  name: 'payload_progress',
+const payload_progress_object_store: ObjectStoreNode<PayloadProgress> = {
+  name: 'payload_progress_object_store',
   state: 'pending',
   objectStore: 'payload_progress',
 };
 
-const hero_spawn: ObjectStoreNode<HeroSpawn> = {
-  name: 'hero_spawn',
+const hero_spawn_object_store: ObjectStoreNode<HeroSpawn> = {
+  name: 'hero_spawn_object_store',
   state: 'pending',
   objectStore: 'hero_spawn',
 };
 
-const hero_swap: ObjectStoreNode<HeroSwap> = {
-  name: 'hero_swap',
+const hero_swap_object_store: ObjectStoreNode<HeroSwap> = {
+  name: 'hero_swap_object_store',
   state: 'pending',
   objectStore: 'hero_swap',
 };
 
-const ability_1_used: ObjectStoreNode<Ability1Used> = {
-  name: 'ability_1_used',
+const ability_1_used_object_store: ObjectStoreNode<Ability1Used> = {
+  name: 'ability_1_used_object_store',
   state: 'pending',
   objectStore: 'ability_1_used',
 };
 
-const ability_2_used: ObjectStoreNode<Ability2Used> = {
-  name: 'ability_2_used',
+const ability_2_used_object_store: ObjectStoreNode<Ability2Used> = {
+  name: 'ability_2_used_object_store',
   state: 'pending',
   objectStore: 'ability_2_used',
 };
 
-const offensive_assist: ObjectStoreNode<OffensiveAssist> = {
-  name: 'offensive_assist',
+const offensive_assist_object_store: ObjectStoreNode<OffensiveAssist> = {
+  name: 'offensive_assist_object_store',
   state: 'pending',
   objectStore: 'offensive_assist',
 };
 
-const defensive_assist: ObjectStoreNode<DefensiveAssist> = {
-  name: 'defensive_assist',
+const defensive_assist_object_store: ObjectStoreNode<DefensiveAssist> = {
+  name: 'defensive_assist_object_store',
   state: 'pending',
   objectStore: 'defensive_assist',
 };
 
-const ultimate_charged: ObjectStoreNode<UltimateCharged> = {
-  name: 'ultimate_charged',
+const ultimate_charged_object_store: ObjectStoreNode<UltimateCharged> = {
+  name: 'ultimate_charged_object_store',
   state: 'pending',
   objectStore: 'ultimate_charged',
 };
 
-const ultimate_start: ObjectStoreNode<UltimateStart> = {
-  name: 'ultimate_start',
+const ultimate_start_object_store: ObjectStoreNode<UltimateStart> = {
+  name: 'ultimate_start_object_store',
   state: 'pending',
   objectStore: 'ultimate_start',
 };
 
-const ultimate_end: ObjectStoreNode<UltimateEnd> = {
-  name: 'ultimate_end',
+const ultimate_end_object_store: ObjectStoreNode<UltimateEnd> = {
+  name: 'ultimate_end_object_store',
   state: 'pending',
   objectStore: 'ultimate_end',
 };
 
-const kill: ObjectStoreNode<Kill> = {
-  name: 'kill',
+const kill_object_store: ObjectStoreNode<Kill> = {
+  name: 'kill_object_store',
   state: 'pending',
   objectStore: 'kill',
 };
 
-const damage: ObjectStoreNode<Damage> = {
-  name: 'damage',
+const damage_object_store: ObjectStoreNode<Damage> = {
+  name: 'damage_object_store',
   state: 'pending',
   objectStore: 'damage',
 };
 
-const healing: ObjectStoreNode<Healing> = {
-  name: 'healing',
+const healing_object_store: ObjectStoreNode<Healing> = {
+  name: 'healing_object_store',
   state: 'pending',
   objectStore: 'healing',
 };
 
-const mercy_rez: ObjectStoreNode<MercyRez> = {
-  name: 'mercy_rez',
+const mercy_rez_object_store: ObjectStoreNode<MercyRez> = {
+  name: 'mercy_rez_object_store',
   state: 'pending',
   objectStore: 'mercy_rez',
 };
 
-const echo_duplicate_start: ObjectStoreNode<EchoDuplicateStart> = {
-  name: 'echo_duplicate_start',
+const echo_duplicate_start_object_store: ObjectStoreNode<EchoDuplicateStart> = {
+  name: 'echo_duplicate_start_object_store',
   state: 'pending',
   objectStore: 'echo_duplicate_start',
 };
 
-const echo_duplicate_end: ObjectStoreNode<EchoDuplicateEnd> = {
-  name: 'echo_duplicate_end',
+const echo_duplicate_end_object_store: ObjectStoreNode<EchoDuplicateEnd> = {
+  name: 'echo_duplicate_end_object_store',
   state: 'pending',
   objectStore: 'echo_duplicate_end',
 };
 
-const dva_demech: ObjectStoreNode<DvaDemech> = {
-  name: 'dva_demech',
+const dva_demech_object_store: ObjectStoreNode<DvaDemech> = {
+  name: 'dva_demech_object_store',
   state: 'pending',
   objectStore: 'dva_demech',
 };
 
-const dva_remech: ObjectStoreNode<DvaRemech> = {
-  name: 'dva_remech',
+const dva_remech_object_store: ObjectStoreNode<DvaRemech> = {
+  name: 'dva_remech_object_store',
   state: 'pending',
   objectStore: 'dva_remech',
 };
 
-const remech_charged: ObjectStoreNode<RemechCharged> = {
-  name: 'remech_charged',
+const remech_charged_object_store: ObjectStoreNode<RemechCharged> = {
+  name: 'remech_charged_object_store',
   state: 'pending',
   objectStore: 'remech_charged',
 };
 
-const player_stat: ObjectStoreNode<PlayerStat> = {
-  name: 'player_stat',
+const player_stat_object_store: ObjectStoreNode<PlayerStat> = {
+  name: 'player_stat_object_store',
   state: 'pending',
   objectStore: 'player_stat',
+};
+
+const match_start_write_node: WriteNode<MatchStart> = {
+  name: 'match_start_write_node',
+  state: 'pending',
+  outputObjectStore: 'match_start',
+  data: [],
+};
+
+const match_end_write_node: WriteNode<MatchEnd> = {
+  name: 'match_end_write_node',
+  state: 'pending',
+  outputObjectStore: 'match_end',
+  data: [],
+};
+
+const round_start_write_node: WriteNode<RoundStart> = {
+  name: 'round_start_write_node',
+  state: 'pending',
+  outputObjectStore: 'round_start',
+  data: [],
+};
+
+const round_end_write_node: WriteNode<RoundEnd> = {
+  name: 'round_end_write_node',
+  state: 'pending',
+  outputObjectStore: 'round_end',
+  data: [],
+};
+
+const setup_complete_write_node: WriteNode<SetupComplete> = {
+  name: 'setup_complete_write_node',
+  state: 'pending',
+  outputObjectStore: 'setup_complete',
+  data: [],
+};
+
+const objective_captured_write_node: WriteNode<ObjectiveCaptured> = {
+  name: 'objective_captured_write_node',
+  state: 'pending',
+  outputObjectStore: 'objective_captured',
+  data: [],
+};
+
+const point_progress_write_node: WriteNode<PointProgress> = {
+  name: 'point_progress_write_node',
+  state: 'pending',
+  outputObjectStore: 'point_progress',
+  data: [],
+};
+
+const payload_progress_write_node: WriteNode<PayloadProgress> = {
+  name: 'payload_progress_write_node',
+  state: 'pending',
+  outputObjectStore: 'payload_progress',
+  data: [],
+};
+
+const hero_spawn_write_node: WriteNode<HeroSpawn> = {
+  name: 'hero_spawn_write_node',
+  state: 'pending',
+  outputObjectStore: 'hero_spawn',
+  data: [],
+};
+
+const hero_swap_write_node: WriteNode<HeroSwap> = {
+  name: 'hero_swap_write_node',
+  state: 'pending',
+  outputObjectStore: 'hero_swap',
+  data: [],
+};
+
+const ability_1_used_write_node: WriteNode<Ability1Used> = {
+  name: 'ability_1_used_write_node',
+  state: 'pending',
+  outputObjectStore: 'ability_1_used',
+  data: [],
+};
+
+const ability_2_used_write_node: WriteNode<Ability2Used> = {
+  name: 'ability_2_used_write_node',
+  state: 'pending',
+  outputObjectStore: 'ability_2_used',
+  data: [],
+};
+
+const offensive_assist_write_node: WriteNode<OffensiveAssist> = {
+  name: 'offensive_assist_write_node',
+  state: 'pending',
+  outputObjectStore: 'offensive_assist',
+  data: [],
+};
+
+const defensive_assist_write_node: WriteNode<DefensiveAssist> = {
+  name: 'defensive_assist_write_node',
+  state: 'pending',
+  outputObjectStore: 'defensive_assist',
+  data: [],
+};
+
+const ultimate_charged_write_node: WriteNode<UltimateCharged> = {
+  name: 'ultimate_charged_write_node',
+  state: 'pending',
+  outputObjectStore: 'ultimate_charged',
+  data: [],
+};
+
+const ultimate_start_write_node: WriteNode<UltimateStart> = {
+  name: 'ultimate_start_write_node',
+  state: 'pending',
+  outputObjectStore: 'ultimate_start',
+  data: [],
+};
+
+const ultimate_end_write_node: WriteNode<UltimateEnd> = {
+  name: 'ultimate_end_write_node',
+  state: 'pending',
+  outputObjectStore: 'ultimate_end',
+  data: [],
+};
+
+const kill_write_node: WriteNode<Kill> = {
+  name: 'kill_write_node',
+  state: 'pending',
+  outputObjectStore: 'kill',
+  data: [],
+};
+
+const damage_write_node: WriteNode<Damage> = {
+  name: 'damage_write_node',
+  state: 'pending',
+  outputObjectStore: 'damage',
+  data: [],
+};
+
+const healing_write_node: WriteNode<Healing> = {
+  name: 'healing_write_node',
+  state: 'pending',
+  outputObjectStore: 'healing',
+  data: [],
+};
+
+const mercy_rez_write_node: WriteNode<MercyRez> = {
+  name: 'mercy_rez_write_node',
+  state: 'pending',
+  outputObjectStore: 'mercy_rez',
+  data: [],
+};
+
+const echo_duplicate_start_write_node: WriteNode<EchoDuplicateStart> = {
+  name: 'echo_duplicate_start_write_node',
+  state: 'pending',
+  outputObjectStore: 'echo_duplicate_start',
+  data: [],
+};
+
+const echo_duplicate_end_write_node: WriteNode<EchoDuplicateEnd> = {
+  name: 'echo_duplicate_end_write_node',
+  state: 'pending',
+  outputObjectStore: 'echo_duplicate_end',
+  data: [],
+};
+
+const dva_demech_write_node: WriteNode<DvaDemech> = {
+  name: 'dva_demech_write_node',
+  state: 'pending',
+  outputObjectStore: 'dva_demech',
+  data: [],
+};
+
+const dva_remech_write_node: WriteNode<DvaRemech> = {
+  name: 'dva_remech_write_node',
+  state: 'pending',
+  outputObjectStore: 'dva_remech',
+  data: [],
+};
+
+const remech_charged_write_node: WriteNode<RemechCharged> = {
+  name: 'remech_charged_write_node',
+  state: 'pending',
+  outputObjectStore: 'remech_charged',
+  data: [],
+};
+
+const player_stat_write_node: WriteNode<PlayerStat> = {
+  name: 'player_stat_write_node',
+  state: 'pending',
+  outputObjectStore: 'player_stat',
+  data: [],
 };
 
 // Define a type for heroes played by each player
@@ -230,38 +419,67 @@ const heroesPlayedNode: TransformNode<PlayerStat[], HeroesPlayed[]> = {
   name: 'heroes_played',
   state: 'pending',
   transform: computeHeroesPlayed,
-  source: 'player_stat',
+  source: 'player_stat_object_store',
 };
 
 export function loadNodeData(dataManager: DataManager) {
   // object store nodes
-  dataManager.addNode(match_start);
-  dataManager.addNode(match_end);
-  dataManager.addNode(round_start);
-  dataManager.addNode(round_end);
-  dataManager.addNode(setup_complete);
-  dataManager.addNode(objective_captured);
-  dataManager.addNode(point_progress);
-  dataManager.addNode(payload_progress);
-  dataManager.addNode(hero_spawn);
-  dataManager.addNode(hero_swap);
-  dataManager.addNode(ability_1_used);
-  dataManager.addNode(ability_2_used);
-  dataManager.addNode(offensive_assist);
-  dataManager.addNode(defensive_assist);
-  dataManager.addNode(ultimate_charged);
-  dataManager.addNode(ultimate_start);
-  dataManager.addNode(ultimate_end);
-  dataManager.addNode(kill);
-  dataManager.addNode(damage);
-  dataManager.addNode(healing);
-  dataManager.addNode(mercy_rez);
-  dataManager.addNode(echo_duplicate_start);
-  dataManager.addNode(echo_duplicate_end);
-  dataManager.addNode(dva_demech);
-  dataManager.addNode(dva_remech);
-  dataManager.addNode(remech_charged);
-  dataManager.addNode(player_stat);
+  dataManager.addNode(match_start_object_store);
+  dataManager.addNode(match_end_object_store);
+  dataManager.addNode(round_start_object_store);
+  dataManager.addNode(round_end_object_store);
+  dataManager.addNode(setup_complete_object_store);
+  dataManager.addNode(objective_captured_object_store);
+  dataManager.addNode(point_progress_object_store);
+  dataManager.addNode(payload_progress_object_store);
+  dataManager.addNode(hero_spawn_object_store);
+  dataManager.addNode(hero_swap_object_store);
+  dataManager.addNode(ability_1_used_object_store);
+  dataManager.addNode(ability_2_used_object_store);
+  dataManager.addNode(offensive_assist_object_store);
+  dataManager.addNode(defensive_assist_object_store);
+  dataManager.addNode(ultimate_charged_object_store);
+  dataManager.addNode(ultimate_start_object_store);
+  dataManager.addNode(ultimate_end_object_store);
+  dataManager.addNode(kill_object_store);
+  dataManager.addNode(damage_object_store);
+  dataManager.addNode(healing_object_store);
+  dataManager.addNode(mercy_rez_object_store);
+  dataManager.addNode(echo_duplicate_start_object_store);
+  dataManager.addNode(echo_duplicate_end_object_store);
+  dataManager.addNode(dva_demech_object_store);
+  dataManager.addNode(dva_remech_object_store);
+  dataManager.addNode(remech_charged_object_store);
+  dataManager.addNode(player_stat_object_store);
+
+  // write nodes
+  dataManager.addNode(match_start_write_node);
+  dataManager.addNode(match_end_write_node);
+  dataManager.addNode(round_start_write_node);
+  dataManager.addNode(round_end_write_node);
+  dataManager.addNode(setup_complete_write_node);
+  dataManager.addNode(objective_captured_write_node);
+  dataManager.addNode(point_progress_write_node);
+  dataManager.addNode(payload_progress_write_node);
+  dataManager.addNode(hero_spawn_write_node);
+  dataManager.addNode(hero_swap_write_node);
+  dataManager.addNode(ability_1_used_write_node);
+  dataManager.addNode(ability_2_used_write_node);
+  dataManager.addNode(offensive_assist_write_node);
+  dataManager.addNode(defensive_assist_write_node);
+  dataManager.addNode(ultimate_charged_write_node);
+  dataManager.addNode(ultimate_start_write_node);
+  dataManager.addNode(ultimate_end_write_node);
+  dataManager.addNode(kill_write_node);
+  dataManager.addNode(damage_write_node);
+  dataManager.addNode(healing_write_node);
+  dataManager.addNode(mercy_rez_write_node);
+  dataManager.addNode(echo_duplicate_start_write_node);
+  dataManager.addNode(echo_duplicate_end_write_node);
+  dataManager.addNode(dva_demech_write_node);
+  dataManager.addNode(dva_remech_write_node);
+  dataManager.addNode(remech_charged_write_node);
+  dataManager.addNode(player_stat_write_node);
 
   // compute nodes
   dataManager.addNode(heroesPlayedNode);

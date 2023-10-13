@@ -31,10 +31,12 @@ export class DataManager {
         this.pubSub.subscribe(sourceName, () => this.executeNode(node.name));
       });
     } else if (isObjectStoreNode(node)) {
-      // Do nothing
+      this.pubSub.subscribe(node.name as DataNodeName, () =>
+        this.executeNode(node.name + '_write_node'),
+      );
     } else if (isWriteNode(node)) {
       this.pubSub.subscribe(node.name as DataNodeName, () =>
-        this.executeNode(node.outputObjectStore),
+        this.executeNode(node.outputObjectStore + '_object_store'),
       );
     }
   }
@@ -47,7 +49,6 @@ export class DataManager {
   addNode(node: DataNode<any>): void {
     this.graph.addNode(node);
     this.addNodeSubscriptions(node);
-    this.executeNode(node.name);
   }
 
   // Method to execute a node

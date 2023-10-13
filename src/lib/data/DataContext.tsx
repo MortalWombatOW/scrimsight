@@ -7,6 +7,9 @@ const DataContext = React.createContext<DataManager | null>(null);
 const DataProvider = ({children}) => {
   const dataManager = new DataManager();
   loadNodeData(dataManager);
+  dataManager.getNodes().forEach((node) => {
+    dataManager.executeNode(node.name);
+  });
   return (
     <DataContext.Provider value={dataManager}>{children}</DataContext.Provider>
   );

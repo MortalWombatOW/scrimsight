@@ -18,7 +18,7 @@ class NodeExecutionMetadataFactory {
 
   finish(node: DataNode<any>): void {
     this.metadata.duration = Date.now() - this.startTime;
-    if (!node.metadata) {
+    if (!node.metadata || !node.metadata.executions) {
       node.metadata = {
         executions: [],
       };

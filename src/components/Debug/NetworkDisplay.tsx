@@ -39,12 +39,12 @@ class NetworkDisplay {
         id: existingNodeId,
         color: {background: stateColor},
         shape: shape,
+        label: label,
       });
       return;
     }
     this.nodes.add({
       id: stringHash(name),
-      title: name,
       label: label,
       color: {background: stateColor},
       shape: shape,
@@ -55,9 +55,9 @@ class NetworkDisplay {
     const fromId = this.nodeIdFromName(fromName);
     const toId = this.nodeIdFromName(toName);
 
-    // console.log(
-    //   `Adding edge from ${fromName} to ${toName} (${fromId} to ${toId})`,
-    // );
+    console.log(
+      `Adding edge from ${fromName} to ${toName} (${fromId} to ${toId})`,
+    );
     // console.log(this.nodes.get());
 
     if (fromId === undefined || toId === undefined) {
