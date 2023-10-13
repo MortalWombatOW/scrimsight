@@ -5,6 +5,9 @@ import {
   JoinNode,
   ObjectStoreNode,
   WriteNode,
+  isTransformNode,
+  isJoinNode,
+  isWriteNode,
 } from './types';
 
 class ComputationGraph {
@@ -22,21 +25,22 @@ class ComputationGraph {
     return Array.from(this.nodes.values());
   }
 
-  getEdges(): [DataNodeName, DataNodeName][] {
+  getEdges(name: DataNodeName): [DataNodeName, DataNodeName][] {
     const edges: [DataNodeName, DataNodeName][] = [];
-    for (const node of this.getNodes()) {
-      if ('source' in node) {
-        edges.push([(node as TransformNode<any, any>).source, node.name]);
-      } else if ('sources' in node) {
-        for (const [sourceName] of (node as JoinNode<any>).sources) {
-          edges.push([sourceName, node.name]);
-        }
-      } else if ('objectStore' in node) {
-        edges.push([(node as ObjectStoreNode<any>).objectStore, node.name]);
-      } else if ('outputObjectStore' in node) {
-        edges.push([(node as WriteNode<any>).outputObjectStore, node.name]);
-      }
+    const node = this.getNode(name);
+    if (!node) return edges;
+    if (isTransformNode(node)) {
+      edges.push([node.source, node.name]);
     }
+    if (isJoinNode(node)) {
+      node.sources.forEach(([sourceName]) => {
+        edges.push([sourceName, node.name]);
+      });
+    }
+    if (isWriteNode(node)) {
+      edges.push([node.name, node.outputObjectStore]);
+    }
+
     return edges;
   }
 }

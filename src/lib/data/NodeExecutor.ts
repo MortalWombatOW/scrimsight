@@ -1,20 +1,21 @@
 import {
-  DataNode,
   ObjectStoreNode,
   TransformNode,
   JoinNode,
   DataNodeName,
   WriteNode,
+  isTransformNode,
+  isJoinNode,
+  isObjectStoreNode,
+  isWriteNode,
 } from './types';
 
 import {storeObjectInDatabase, getData} from './database';
 import ComputationGraph from './ComputationGraph';
-import PubSub from './PubSub';
 
 class NodeExecutor {
-  constructor(private pubSub: PubSub, graph: ComputationGraph) {
-    this.initializeSubscriptions(graph);
-  }
+  constructor(private graph: ComputationGraph) {}
+
   private async handleWriteNode(node: WriteNode<any>): Promise<void> {
     for (const item of node.data) {
       await storeObjectInDatabase(item, node.outputObjectStore);
@@ -27,25 +28,19 @@ class NodeExecutor {
     node.output = await getData(node.objectStore);
   }
 
-  private handleTransformNode(
-    node: TransformNode<any, any>,
-    computationGraph: ComputationGraph,
-  ): void {
-    const sourceNode = computationGraph.getNode(node.source);
+  private handleTransformNode(node: TransformNode<any, any>): void {
+    const sourceNode = this.graph.getNode(node.source);
     if (sourceNode && sourceNode.output) {
       node.output = sourceNode.output.map(node.transform);
     }
   }
 
-  private handleJoinNode(
-    node: JoinNode<any>,
-    computationGraph: ComputationGraph,
-  ): void {
+  private handleJoinNode(node: JoinNode<any>): void {
     const sourceData: {[name: string]: any[]} = {};
 
     // Fetch the output data for each source node.
     for (const [sourceName] of node.sources) {
-      const sourceNode = computationGraph.getNode(sourceName);
+      const sourceNode = this.graph.getNode(sourceName);
       if (sourceNode && sourceNode.output) {
         sourceData[sourceName] = sourceNode.output;
       } else {
@@ -87,69 +82,29 @@ class NodeExecutor {
     node.output = joinedOutput;
   }
 
-  private initializeSubscriptions(computationGraph: ComputationGraph): void {
-    for (const node of computationGraph.getNodes()) {
-      if ('source' in node) {
-        this.pubSub.subscribe(
-          (node as TransformNode<any, any>).source as DataNodeName,
-          () => this.executeNode(node.name, computationGraph),
-        );
-      } else if ('sources' in node) {
-        ((node as JoinNode<any>).sources as [DataNodeName, string][]).forEach(
-          ([sourceName]) => {
-            this.pubSub.subscribe(sourceName, () =>
-              this.executeNode(node.name, computationGraph),
-            );
-          },
-        );
-      } else if ('objectStore' in node) {
-        this.pubSub.subscribe(
-          (node as ObjectStoreNode<any>).objectStore as DataNodeName,
-          () => this.executeNode(node.name, computationGraph),
-        );
-      } else if ('outputObjectStore' in node) {
-        this.pubSub.subscribe(
-          (node as WriteNode<any>).outputObjectStore as DataNodeName,
-          () => this.executeNode(node.name, computationGraph),
-        );
-      }
-    }
-  }
-
-  async executeNode(
-    name: DataNodeName,
-    computationGraph: ComputationGraph,
-  ): Promise<void> {
-    const node = computationGraph.getNode(name);
+  async executeNode(name: DataNodeName): Promise<void> {
+    const node = this.graph.getNode(name);
     if (!node) return;
 
     node.state = 'running';
 
     try {
-      if ('data' in node && 'objectStore' in node) {
-        console.warn(
-          'if node.output is undefined, then the node is a WriteNode with generic type ???',
-        );
-        await this.handleWriteNode((node as unknown) as WriteNode<any>);
-      } else if ('objectStore' in node) {
-        await this.handleObjectStoreNode(node as ObjectStoreNode<any>);
-      } else if ('transform' in node && 'source' in node) {
-        this.handleTransformNode(
-          (node as unknown) as TransformNode<any, any>,
-          computationGraph,
-        );
-      } else if ('sources' in node) {
-        this.handleJoinNode(
-          (node as unknown) as JoinNode<any>,
-          computationGraph,
-        );
+      if (isWriteNode(node)) {
+        await this.handleWriteNode(node);
+      } else if (isObjectStoreNode(node)) {
+        await this.handleObjectStoreNode(node);
+      } else if (isTransformNode(node)) {
+        this.handleTransformNode(node);
+      } else if (isJoinNode(node)) {
+        this.handleJoinNode(node);
       }
 
       node.state = 'done';
-      this.pubSub.publish(name, node.output);
     } catch (error) {
       node.state = 'error';
     }
+
+    console.log('node', node);
   }
 }
 

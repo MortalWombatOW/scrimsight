@@ -12,4 +12,12 @@ const DataProvider = ({children}) => {
   );
 };
 
-export {DataProvider, DataContext};
+const useDataManager = () => {
+  const dataManager = React.useContext(DataContext);
+  if (!dataManager) {
+    throw new Error('useDataManager must be used within a DataProvider');
+  }
+  return dataManager;
+};
+
+export {DataProvider, DataContext, useDataManager};

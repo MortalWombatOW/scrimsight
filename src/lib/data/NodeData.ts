@@ -34,6 +34,7 @@ import {
   UltimateCharged,
   UltimateEnd,
   UltimateStart,
+  WriteNode,
 } from './types';
 
 const match_start: ObjectStoreNode<MatchStart> = {
@@ -96,16 +97,16 @@ const hero_swap: ObjectStoreNode<HeroSwap> = {
   objectStore: 'hero_swap',
 };
 
-const ability1_used: ObjectStoreNode<Ability1Used> = {
-  name: 'ability1_used',
+const ability_1_used: ObjectStoreNode<Ability1Used> = {
+  name: 'ability_1_used',
   state: 'pending',
-  objectStore: 'ability1_used',
+  objectStore: 'ability_1_used',
 };
 
-const ability2_used: ObjectStoreNode<Ability2Used> = {
-  name: 'ability2_used',
+const ability_2_used: ObjectStoreNode<Ability2Used> = {
+  name: 'ability_2_used',
   state: 'pending',
-  objectStore: 'ability2_used',
+  objectStore: 'ability_2_used',
 };
 
 const offensive_assist: ObjectStoreNode<OffensiveAssist> = {
@@ -244,8 +245,8 @@ export function loadNodeData(dataManager: DataManager) {
   dataManager.addNode(payload_progress);
   dataManager.addNode(hero_spawn);
   dataManager.addNode(hero_swap);
-  dataManager.addNode(ability1_used);
-  dataManager.addNode(ability2_used);
+  dataManager.addNode(ability_1_used);
+  dataManager.addNode(ability_2_used);
   dataManager.addNode(offensive_assist);
   dataManager.addNode(defensive_assist);
   dataManager.addNode(ultimate_charged);

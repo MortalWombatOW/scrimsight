@@ -1,4 +1,4 @@
-type Callback = (data: any) => void;
+type Callback = () => void;
 
 class PubSub {
   private subscribers: {[eventType: string]: Callback[]} = {};
@@ -20,9 +20,9 @@ class PubSub {
   }
 
   // Publish an event to all subscribers
-  publish(eventType: string, data: any): void {
+  notify(eventType: string): void {
     if (!this.subscribers[eventType]) return;
-    this.subscribers[eventType].forEach((callback) => callback(data));
+    this.subscribers[eventType].forEach((callback) => callback());
   }
 }
 

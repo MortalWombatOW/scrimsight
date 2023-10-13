@@ -1,7 +1,14 @@
 import ComputationGraph from './ComputationGraph';
 import NodeExecutor from './NodeExecutor';
 import PubSub from './PubSub';
-import {DataNode, DataNodeName} from './types';
+import {
+  DataNode,
+  DataNodeName,
+  isJoinNode,
+  isObjectStoreNode,
+  isTransformNode,
+  isWriteNode,
+} from './types';
 
 export class DataManager {
   private graph: ComputationGraph;
@@ -11,20 +18,42 @@ export class DataManager {
   constructor() {
     this.pubSub = new PubSub();
     this.graph = new ComputationGraph();
-    this.nodeExecutor = new NodeExecutor(this.pubSub, this.graph);
+    this.nodeExecutor = new NodeExecutor(this.graph);
   }
 
-  // Inside DataManager class
+  private addNodeSubscriptions(node: DataNode<any>): void {
+    if (isTransformNode(node)) {
+      this.pubSub.subscribe(node.source as DataNodeName, () =>
+        this.executeNode(node.name),
+      );
+    } else if (isJoinNode(node)) {
+      (node.sources as [DataNodeName, string][]).forEach(([sourceName]) => {
+        this.pubSub.subscribe(sourceName, () => this.executeNode(node.name));
+      });
+    } else if (isObjectStoreNode(node)) {
+      // Do nothing
+    } else if (isWriteNode(node)) {
+      this.pubSub.subscribe(node.name as DataNodeName, () =>
+        this.executeNode(node.outputObjectStore),
+      );
+    }
+  }
+
+  subscribe(name: DataNodeName, callback: () => void): void {
+    this.pubSub.subscribe(name, callback);
+  }
 
   // Method to add a node
   addNode(node: DataNode<any>): void {
     this.graph.addNode(node);
-    console.log(`Added node ${node.name}`);
+    this.addNodeSubscriptions(node);
+    this.executeNode(node.name);
   }
 
   // Method to execute a node
   async executeNode(name: DataNodeName): Promise<void> {
-    await this.nodeExecutor.executeNode(name, this.graph);
+    await this.nodeExecutor.executeNode(name);
+    this.pubSub.notify(name);
   }
 
   // Method to get node data
@@ -33,11 +62,11 @@ export class DataManager {
     return node ? node : undefined;
   }
 
-  getNodeNames(): DataNodeName[] {
-    return this.graph.getNodes().map((node) => node.name);
+  getNodes(): DataNode<any>[] {
+    return this.graph.getNodes();
   }
 
-  getEdges(): [DataNodeName, DataNodeName][] {
-    return this.graph.getEdges();
+  getEdges(name: DataNodeName): [DataNodeName, DataNodeName][] {
+    return this.graph.getEdges(name);
   }
 }

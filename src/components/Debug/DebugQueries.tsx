@@ -1,17 +1,13 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import {DataSet} from 'vis-data/esnext';
-import {Edge, Network, Node} from 'vis-network/esnext';
-import 'vis-network/styles/vis-network.css';
-import {DataContext} from '../../lib/data/DataContext';
-import {DataNode} from '../../lib/data/types';
-
-// interface NodeData {
-//   id: number;
-//   label: string;
-//   color: {
-//     background: string;
-//   };
-// }
+import {useDataManager} from '../../lib/data/DataContext';
+import {
+  DataNode,
+  isTransformNode,
+  isJoinNode,
+  isObjectStoreNode,
+  isWriteNode,
+} from '../../lib/data/types';
+import NetworkDisplay from './NetworkDisplay';
 
 function getStateColor(node: DataNode<any> | undefined) {
   if (!node) {
@@ -32,25 +28,51 @@ function getStateColor(node: DataNode<any> | undefined) {
   }
 }
 
+function getShape(node: DataNode<any> | undefined) {
+  if (!node) {
+    return 'box';
+  }
+  if (isTransformNode(node)) {
+    return 'box';
+  }
+  if (isJoinNode(node)) {
+    return 'triangle';
+  }
+  if (isObjectStoreNode(node)) {
+    return 'database';
+  }
+  if (isWriteNode(node)) {
+    return 'star';
+  }
+  return 'box';
+}
+
 const DebugQueries = () => {
   const ref = useRef(null);
-  const dataManager = useContext(DataContext);
+  const dataManager = useDataManager();
+  const networkDisplay = useRef(new NetworkDisplay());
 
-  // never change the object reference, only mutate the object
-  const [nodes] = React.useState<DataSet<Node, 'id'>>(new DataSet([]));
-  const [edges] = React.useState<DataSet<Edge, 'id'>>(new DataSet([]));
+  const nodeNames = dataManager.getNodes().map((node) => node.name);
 
-  const nodeIdFromName = (name: string) => {
-    // iterate over all nodes and find the one with the matching name. return the id
-    return nodes.get().find((n) => n.label === name)?.id!;
-  };
+  useEffect(() => {
+    for (const nodeName of nodeNames) {
+      dataManager.subscribe(nodeName, () => {
+        const node = dataManager.getNode(nodeName);
+        networkDisplay.current.setNode(
+          nodeName,
+          getStateColor(node),
+          getShape(node),
+        );
+        dataManager.getEdges(nodeName).forEach(([fromName, toName]) => {
+          console.log('edge', fromName, toName);
+          networkDisplay.current.setEdge(fromName, toName);
+        });
+      });
+    }
+  }, [nodeNames]);
 
   useEffect(() => {
     const container = ref.current;
-    const data = {
-      nodes: nodes,
-      edges: edges,
-    };
     const options = {
       autoResize: true,
       height: '100%',
@@ -80,54 +102,8 @@ const DebugQueries = () => {
     if (container === null) {
       return;
     }
-    new Network(container, data, options);
+    networkDisplay.current.initialize(container, options);
   }, []);
-
-  // updates
-  useEffect(() => {
-    if (dataManager === null) {
-      return;
-    }
-    console.log('updating graph');
-    const queryNames = dataManager.getNodeNames() ?? [];
-
-    // add nodes for queries that aren't in the graph yet
-    const newNodes = queryNames.filter(
-      (name) => !nodes.get().find((n) => n.label === name),
-    );
-    nodes.add(
-      newNodes.map((name, i) => ({
-        id: nodes.length + i,
-        label: name,
-        color: {
-          background: getStateColor(dataManager.getNode(name)),
-        },
-      })),
-    );
-
-    // add edges for queries that aren't in the graph yet
-
-    const newEdges = dataManager
-      .getEdges()
-      .filter(
-        ([name, depName]) =>
-          !edges.get().find((e) => e.to === nodeIdFromName(depName)),
-      )
-      .map(([name, depName]) => ({
-        from: nodeIdFromName(name),
-        to: nodeIdFromName(depName),
-      }));
-    edges.add(newEdges as Edge[]);
-
-    // update colors for nodes that are in the graph
-    queryNames.forEach((name) => {
-      const node = nodes.get(nodeIdFromName(name))!;
-      node.color = {
-        background: getStateColor(dataManager.getNode(name)),
-      };
-      nodes.update(node);
-    });
-  }, [dataManager]);
 
   return (
     <div>

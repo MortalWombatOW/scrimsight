@@ -1,0 +1,71 @@
+import {DataSet} from 'vis-data/esnext';
+import {Edge, Network, Node} from 'vis-network/esnext';
+import 'vis-network/styles/vis-network.css';
+
+class NetworkDisplay {
+  private nodes: DataSet<Node, 'id'>;
+  private edges: DataSet<Edge, 'id'>;
+  private network: Network | null = null;
+
+  constructor() {
+    this.nodes = new DataSet([]);
+    this.edges = new DataSet([]);
+  }
+
+  public initialize(container: HTMLElement, options: any) {
+    this.network = new Network(
+      container,
+      {nodes: this.nodes, edges: this.edges},
+      options,
+    );
+  }
+
+  private nodeIdFromName(name: string) {
+    const node = this.nodes.get().find((n) => n.label === name);
+    if (!node) return undefined;
+    return node.id;
+  }
+
+  public setNode(name: string, stateColor: string, shape: string) {
+    const existingNodeId = this.nodeIdFromName(name);
+    if (existingNodeId !== undefined) {
+      this.nodes.update({
+        id: existingNodeId,
+        color: {background: stateColor},
+        shape: shape,
+      });
+      return;
+    }
+    this.nodes.add({
+      id: this.nodes.length,
+      label: name + 'fooo',
+
+      color: {background: stateColor},
+      shape: shape,
+    });
+  }
+
+  public setEdge(fromName: string, toName: string) {
+    const fromId = this.nodeIdFromName(fromName);
+    const toId = this.nodeIdFromName(toName);
+
+    // console.log(
+    //   `Adding edge from ${fromName} to ${toName} (${fromId} to ${toId})`,
+    // );
+    // console.log(this.nodes.get());
+
+    if (fromId === undefined || toId === undefined) {
+      return;
+    }
+
+    const existingEdge =
+      this.edges.get().find((e) => e.from === fromId && e.to === toId) !==
+      undefined;
+
+    if (existingEdge) return;
+
+    this.edges.add({from: fromId, to: toId});
+  }
+}
+
+export default NetworkDisplay;

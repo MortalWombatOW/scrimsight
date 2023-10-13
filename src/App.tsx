@@ -21,11 +21,11 @@ const theme = createTheme(themeDef);
 const App = () => {
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
-      <DebugQueries />
       <ThemeProvider theme={theme}>
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>
             <DataProvider>
+              <DebugQueries />
               <Routes>
                 {routes.map((route) =>
                   route.path.map((path, i) => (

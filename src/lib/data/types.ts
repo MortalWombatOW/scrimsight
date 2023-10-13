@@ -169,10 +169,25 @@ interface JoinNode<OutType> extends DataNode<OutType> {
   sources: [DataNodeName, FieldName][];
 }
 
-// interface CompositeNode<OutType> extends DataNode<OutType> {
-//   nodes: DataNodeName[];
-//   edges: [DataNodeName, DataNodeName][];
-// }
+export function isObjectStoreNode(
+  node: DataNode<any>,
+): node is ObjectStoreNode<any> {
+  return 'objectStore' in node;
+}
+
+export function isTransformNode(
+  node: DataNode<any>,
+): node is TransformNode<any, any> {
+  return 'transform' in node;
+}
+
+export function isJoinNode(node: DataNode<any>): node is JoinNode<any> {
+  return 'sources' in node;
+}
+
+export function isWriteNode(node: DataNode<any>): node is WriteNode<any> {
+  return 'outputObjectStore' in node;
+}
 
 type DataRow = (string | number | boolean)[];
 
