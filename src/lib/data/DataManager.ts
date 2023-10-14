@@ -70,4 +70,8 @@ export class DataManager {
   getEdges(name: DataNodeName): [DataNodeName, DataNodeName][] {
     return this.graph.getEdges(name);
   }
+
+  toString(): string {
+    return this.graph.toString();
+  }
 }

@@ -15,6 +15,7 @@ import {useNavigate} from 'react-router-dom';
 
 import routes from '../../lib/routes';
 import './Header.scss';
+import Uploader from '../Uploader/Uploader';
 
 const settings = ['Settings', 'Logout'];
 
@@ -143,6 +144,9 @@ const Header = ({
                   </Button>
                 ))}
             </Box>
+          </Box>
+          <Box component="div">
+            <Uploader refreshCallback={() => {}} />
           </Box>
         </Toolbar>
       </Container>

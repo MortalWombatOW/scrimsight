@@ -1,7 +1,15 @@
-import {FileUpload, DataRow, LOG_SPEC, DataAndSpecName} from 'lib/data/types';
+import {
+  FileUpload,
+  DataRow,
+  LOG_SPEC,
+  DataAndSpecName,
+  WriteNode,
+} from 'lib/data/types';
 import {stringHash} from './../string';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
+import {useDataManager} from './DataContext';
+import {DataManager} from './DataManager';
 
 // File Utilities
 const readFileAsync = (file: File): Promise<any> => {
@@ -101,6 +109,7 @@ const parseFile = async (fileUpload: FileUpload) => {
 // Database Utilities
 const saveFile = async (
   fileUpload: FileUpload,
+  dataManager: DataManager,
   setPercent: (n: number) => void,
 ) => {
   if (!fileUpload.events || !fileUpload.mapId) {
@@ -122,21 +131,30 @@ const saveFile = async (
   const percentPerKey = (endPercent - startPercent) / numKeys;
 
   let percent = startPercent;
-  for (const key of Object.keys(LOG_SPEC)) {
-    const eventData = fileUpload.events.find((e) => e.specName === key)?.data;
-    if (!eventData || eventData.length === 0) {
-      console.log('No data for', key);
-      continue;
-    }
 
-    await batch(
-      db,
-      key,
-      eventData.map((p) => ({
-        type: 'add',
-        value: p, // Assuming p is already in the objectified form
-      })),
-    );
+  for (const key of Object.keys(LOG_SPEC)) {
+    // const eventData = fileUpload.events.find((e) => e.specName === key)?.data;
+    // if (!eventData || eventData.length === 0) {
+    //   console.log('No data for', key);
+    //   continue;
+    // }
+
+    // await batch(
+    //   db,
+    //   key,
+    //   eventData.map((p) => ({
+    //     type: 'add',
+    //     value: p, // Assuming p is already in the objectified form
+    //   })),
+    // );
+    // percent += percentPerKey;
+    // setPercent(percent);
+    const node = dataManager.getNode(key + '_write_node') as WriteNode<any>;
+    if (!node) throw new Error(`Node not found: ${key}_write_node`);
+    const data = fileUpload.events.find((e) => e.specName === key)?.data;
+    if (!data) throw new Error(`Data not found for key: ${key}`);
+    node.data = data;
+    await dataManager.executeNode(key + '_write_node');
     percent += percentPerKey;
     setPercent(percent);
   }
@@ -157,6 +175,7 @@ const saveFile = async (
 // Main Upload Function
 const uploadFile = async (
   fileUpload: FileUpload,
+  dataManager: DataManager,
   setPercent: (n: number) => void,
 ) => {
   setPercent(0);
@@ -172,7 +191,7 @@ const uploadFile = async (
     return;
   }
   setPercent(20);
-  await saveFile(fileUpload, setPercent);
+  await saveFile(fileUpload, dataManager, setPercent);
   fileUpload.done = true;
 };
 

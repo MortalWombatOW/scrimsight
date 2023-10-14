@@ -8,6 +8,7 @@ import {
   isTransformNode,
   isJoinNode,
   isWriteNode,
+  isObjectStoreNode,
 } from './types';
 
 class ComputationGraph {
@@ -42,6 +43,26 @@ class ComputationGraph {
     }
 
     return edges;
+  }
+
+  toString(): string {
+    let str = '';
+    this.nodes.forEach((node) => {
+      str += `Node ${node.name}:\n`;
+      if (isTransformNode(node)) {
+        str += `  source: ${node.source}\n`;
+      }
+      if (isJoinNode(node)) {
+        str += `  sources: ${node.sources.map(([name]) => name)}\n`;
+      }
+      if (isObjectStoreNode(node)) {
+        str += `  objectStore: ${node.objectStore}\n`;
+      }
+      if (isWriteNode(node)) {
+        str += `  outputObjectStore: ${node.outputObjectStore}\n`;
+      }
+    });
+    return str;
   }
 }
 

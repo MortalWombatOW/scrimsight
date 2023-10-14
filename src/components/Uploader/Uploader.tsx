@@ -4,16 +4,19 @@ import {Button} from '@mui/material';
 import UploadProgressModal from './UploadProgressModal';
 import {FileUpload} from 'lib/data/types';
 import {uploadFile} from 'lib/data/uploadfile';
+import {DataManager} from '../../lib/data/DataManager';
+import {useDataManager} from '../../lib/data/DataContext';
 
 interface UploaderProps {
   refreshCallback?: () => void;
   uploadFileHandler?: (
     fileUpload: FileUpload,
+    dataManager: DataManager,
     cb: (percent: number) => void,
   ) => Promise<void>;
 }
 
-const useFileUpload = (uploadFileHandler, refreshCallback) => {
+const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
   const [files, setFiles] = useState<FileUpload[]>([]);
   const [filePercents, setFilePercents] = useState<{
     [fileName: string]: number;
@@ -31,6 +34,7 @@ const useFileUpload = (uploadFileHandler, refreshCallback) => {
     for (const fileUpload of fileUploads) {
       await uploadFileHandler(
         fileUpload,
+        dataManager,
         handleFilePerChange(fileUpload.fileName),
       );
     }
@@ -44,8 +48,10 @@ const Uploader: React.FC<UploaderProps> = ({
   uploadFileHandler = uploadFile,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const dataManager = useDataManager();
   const {files, filePercents, startFileUploads} = useFileUpload(
     uploadFileHandler,
+    dataManager,
     refreshCallback,
   );
 

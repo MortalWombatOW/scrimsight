@@ -10,6 +10,7 @@ const DataProvider = ({children}) => {
   dataManager.getNodes().forEach((node) => {
     dataManager.executeNode(node.name);
   });
+  console.log(dataManager.toString());
   return (
     <DataContext.Provider value={dataManager}>{children}</DataContext.Provider>
   );
