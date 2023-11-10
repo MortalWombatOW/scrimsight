@@ -9,6 +9,8 @@ import {
   getLatestExecution,
 } from '../../lib/data/types';
 import NetworkDisplay from './NetworkDisplay';
+import DisplayNode from './DisplayNode';
+import {useDataNode} from '../../hooks/useData';
 
 function getStateColor(node: DataNode<any> | undefined) {
   if (!node) {
@@ -101,13 +103,14 @@ const DebugNodeGraph = () => {
   const ref = useRef(null);
   const dataManager = useDataManager();
   const networkDisplay = useRef(new NetworkDisplay());
+  const node = useDataNode('map_overview_alasql');
 
   const nodeNames = dataManager.getNodes().map((node) => node.name);
 
   useEffect(() => {
     for (const nodeName of nodeNames) {
       updateNode(nodeName, networkDisplay.current, dataManager);
-      dataManager.subscribe(nodeName, () =>
+      dataManager.subscribeFn(nodeName, () =>
         updateNode(nodeName, networkDisplay.current, dataManager),
       );
     }
@@ -129,6 +132,7 @@ const DebugNodeGraph = () => {
           height: 500,
           border: '1px solid lightgray',
         }}></div>
+      <DisplayNode node={node!} />
     </div>
   );
 };

@@ -70,6 +70,12 @@ class ComputationGraph {
     return node.output !== undefined;
   }
 
+  nodeIsRunning(name: DataNodeName): boolean {
+    const node = this.getNode(name);
+    if (!node) throw new Error(`Node ${name} does not exist`);
+    return node.state === 'running';
+  }
+
   getNodesToRun(name: DataNodeName): DataNodeName[] {
     const node = this.getNode(name);
     if (!node) throw new Error(`Node ${name} does not exist`);
@@ -78,7 +84,7 @@ class ComputationGraph {
     if (dependencies.length === 0) return [name];
     // If the node has dependencies, then it should be run only if all of its dependencies have data.
     const dependenciesWithoutData = dependencies.filter(
-      (dep) => !this.nodeHasData(dep),
+      (dep) => !this.nodeHasData(dep) && !this.nodeIsRunning(dep),
     );
     if (dependenciesWithoutData.length === 0) return [name];
     return dependenciesWithoutData.flatMap((dep) => this.getNodesToRun(dep));

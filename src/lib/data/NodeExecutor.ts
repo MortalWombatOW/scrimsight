@@ -103,23 +103,22 @@ class NodeExecutor {
     execution.outputRows = joinedOutput.length;
   }
 
-  private handleAlaSQLNode(
+  private async handleAlaSQLNode(
     node: AlaSQLNode<any>,
     execution: Partial<DataNodeExecution>,
-  ): void {
+  ): Promise<void> {
     const sourceNodes = node.sources.map((sourceName) =>
       this.graph.getNode(sourceName),
     );
     const sourceData = sourceNodes.map((sourceNode) => sourceNode?.output);
 
-    // abort if any source node doesn't have output data
-    if (sourceData.some((data) => !data)) return;
-    // sourceNodes.forEach((sourceNode) => {
-    //   alasql.tables[sourceNode?.name].data = sourceNode?.output;
-    // });
+    sourceNodes.forEach(async (sourceNode) => {
+      await alasql(`CREATE TABLE IF NOT EXISTS ${sourceNode?.name}`);
+    });
 
-    const result = alasql(node.sql);
+    const result = await alasql(node.sql);
     node.output = result;
+    console.log(result);
     execution.inputRows = sourceData.reduce(
       (sum, data) => sum + (data?.length ?? 0),
       0,
@@ -133,6 +132,10 @@ class NodeExecutor {
 
     console.log('Executing node', name);
     node.state = 'running';
+
+    //wait for a second to simulate a long-running task
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     if (!node.metadata) {
       node.metadata = {
         executions: [],
@@ -157,6 +160,7 @@ class NodeExecutor {
     } catch (error) {
       node.state = 'error';
       node.error = error;
+      console.error(error);
     }
     const endTime = Date.now();
     execution.duration = endTime - startTime;

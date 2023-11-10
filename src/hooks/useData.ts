@@ -27,6 +27,15 @@ export const useData = (nodeNames: DataNodeName[]) => {
 };
 
 export const useDataNode = (nodeName: DataNodeName) => {
-  const data = useData([nodeName]);
-  return data[nodeName];
+  const dataManager = useContext(DataContext);
+
+  if (!dataManager) {
+    throw new Error('useDataNode must be used within a GraphProvider');
+  }
+
+  useEffect(() => {
+    dataManager.executeNode(nodeName);
+  }, [nodeName]);
+
+  return dataManager.getNode(nodeName);
 };

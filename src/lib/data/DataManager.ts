@@ -17,37 +17,39 @@ export class DataManager {
   private pubSub: PubSub;
 
   constructor() {
-    this.pubSub = new PubSub();
     this.graph = new ComputationGraph();
     this.nodeExecutor = new NodeExecutor(this.graph);
+    this.pubSub = new PubSub((source) => {
+      console.log(`Notified ${source}`);
+      this.executeNode(source);
+    });
   }
 
   private addNodeSubscriptions(node: DataNode<any>): void {
     if (isTransformNode(node)) {
-      this.pubSub.subscribe(node.source as DataNodeName, () => {
-        this.executeNode(node.name);
-      });
+      this.pubSub.subscribe(node.source as DataNodeName, node.name);
     } else if (isJoinNode(node)) {
       (node.sources as [DataNodeName, string][]).forEach(([sourceName]) => {
-        this.pubSub.subscribe(sourceName, () => {
-          this.executeNode(node.name);
-        });
+        this.pubSub.subscribe(sourceName, node.name);
       });
     } else if (isWriteNode(node)) {
-      this.pubSub.subscribe(node.name as DataNodeName, () => {
-        this.executeNode(node.outputObjectStore + '_object_store');
-      });
+      this.pubSub.subscribe(
+        node.name as DataNodeName,
+        node.outputObjectStore + '_object_store',
+      );
     } else if (isAlaSQLNode(node)) {
       node.sources.forEach((sourceName) => {
-        this.pubSub.subscribe(sourceName as DataNodeName, () => {
-          this.executeNode(node.name);
-        });
+        this.pubSub.subscribe(sourceName as DataNodeName, node.name);
       });
     }
   }
 
-  subscribe(name: DataNodeName, callback: () => void): void {
-    this.pubSub.subscribe(name, callback);
+  subscribeFn(name: DataNodeName, callback: () => void): void {
+    this.pubSub.subscribeFn(name, callback);
+  }
+
+  subscribeAll(callback: () => void): void {
+    this.pubSub.subscribeAll(callback);
   }
 
   // Method to add a node
@@ -65,7 +67,6 @@ export class DataManager {
       await this.nodeExecutor.executeNode(node);
       nodesToNotify.add(node);
     }
-    // nodesToNotify.add(name);
     nodesToNotify.forEach((node) => this.pubSub.notify(node));
     console.log(this.getNode(name)?.output);
   }
