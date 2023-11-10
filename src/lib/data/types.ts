@@ -143,7 +143,7 @@ type Team = {
 
 type DataNodeName = string;
 type FieldName = string;
-type NodeState = 'pending' | 'running' | 'done' | 'error';
+export type NodeState = 'pending' | 'running' | 'done' | 'error';
 
 interface DataNodeExecution {
   duration: number;

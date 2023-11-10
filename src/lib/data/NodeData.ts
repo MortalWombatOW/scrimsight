@@ -38,6 +38,12 @@ import {
   AlaSQLNode,
 } from './types';
 
+const maps_object_store: ObjectStoreNode<any> = {
+  name: 'maps_object_store',
+  state: 'pending',
+  objectStore: 'maps',
+};
+
 const match_start_object_store: ObjectStoreNode<MatchStart> = {
   name: 'match_start_object_store',
   state: 'pending',
@@ -493,20 +499,30 @@ const mapOverviewNode: DataNode<any> =
     state: 'pending',
     sql: `
       SELECT
-          a.mapId,
-          a.mapName,
-          a.team1Name,
-          a.team2Name,
-          b.team1Score,
-          b.team2Score
-      FROM match_start_object_store as a JOIN match_start_object_store as b
-      ON a.mapId = b.mapId
+          match_start.mapId,
+          match_end.mapId,
+          match_start.mapName,
+          match_start.team1Name,
+          match_start.team2Name,
+          match_end.team1Score,
+          match_end.team2Score,
+          maps.name,
+          maps.fileModified
+
+      FROM ? as match_start JOIN ? as match_end 
+      ON match_start.mapId = match_end.mapId 
+      JOIN ? as maps ON match_start.mapId = maps.mapId
       `,
-    sources: ['match_start_object_store', 'match_end_object_store'],
+    sources: [
+      'match_start_object_store',
+      'match_end_object_store',
+      'maps_object_store',
+    ],
   } as AlaSQLNode<any>;
 
 export function loadNodeData(dataManager: DataManager) {
   // object store nodes
+  dataManager.addNode(maps_object_store);
   dataManager.addNode(match_start_object_store);
   dataManager.addNode(match_end_object_store);
   dataManager.addNode(round_start_object_store);

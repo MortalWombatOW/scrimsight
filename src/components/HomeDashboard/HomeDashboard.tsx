@@ -13,6 +13,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
+import MapList from '../MapListV2/MapList';
 // import PlayByPlay from '../PlayByPlay/PlayByPlay';
 
 const MapListItem = ({
@@ -43,7 +44,7 @@ const HomeDashboard = () => {
 
   const team = Globals.getTeam();
 
-  const recentGames = useDataNode('recentGames');
+  const recentGames = useDataNode('map_overview_alasql');
 
   // const isLoading = team === undefined;
 
@@ -57,7 +58,7 @@ const HomeDashboard = () => {
         display: 'flex',
         flexDirection: 'column',
       }}>
-      <List></List>
+      <MapList />
     </div>
   );
 };

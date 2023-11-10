@@ -103,7 +103,8 @@ const DebugNodeGraph = () => {
   const ref = useRef(null);
   const dataManager = useDataManager();
   const networkDisplay = useRef(new NetworkDisplay());
-  const node = useDataNode('map_overview_alasql');
+  const node = useDataNode('match_end_object_store');
+  const node2 = useDataNode('map_overview_alasql');
 
   const nodeNames = dataManager.getNodes().map((node) => node.name);
 
@@ -133,6 +134,7 @@ const DebugNodeGraph = () => {
           border: '1px solid lightgray',
         }}></div>
       <DisplayNode node={node!} />
+      <DisplayNode node={node2!} />
     </div>
   );
 };

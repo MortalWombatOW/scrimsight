@@ -112,11 +112,11 @@ class NodeExecutor {
     );
     const sourceData = sourceNodes.map((sourceNode) => sourceNode?.output);
 
-    sourceNodes.forEach(async (sourceNode) => {
-      await alasql(`CREATE TABLE IF NOT EXISTS ${sourceNode?.name}`);
-    });
+    // sourceNodes.forEach(async (sourceNode) => {
+    //   await alasql(`CREATE TABLE IF NOT EXISTS ${sourceNode?.name}`);
+    // });
 
-    const result = await alasql(node.sql);
+    const result = await alasql(node.sql, sourceData);
     node.output = result;
     console.log(result);
     execution.inputRows = sourceData.reduce(
@@ -134,7 +134,7 @@ class NodeExecutor {
     node.state = 'running';
 
     //wait for a second to simulate a long-running task
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (!node.metadata) {
       node.metadata = {

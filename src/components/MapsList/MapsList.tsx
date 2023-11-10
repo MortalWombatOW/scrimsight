@@ -1,7 +1,5 @@
 // import React, {useEffect, useMemo} from 'react';
-// import {DataRow} from '~/lib/data/types';
-// import useQueries, {useQuery, useResult} from '../../hooks/useQueries';
-// import {groupMapsByDate} from '../../lib/data/data';
+// // import {groupMapsByDate} from '../../lib/data/data';
 // import MapRow from '../MapRow/MapRow';
 // import {Button, Typography} from '@mui/material';
 // import Uploader from '~/components/Uploader/Uploader';
