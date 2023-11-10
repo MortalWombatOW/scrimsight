@@ -9,6 +9,7 @@ import {
   isJoinNode,
   isWriteNode,
   isObjectStoreNode,
+  isAlaSQLNode,
 } from './types';
 
 class ComputationGraph {
@@ -41,14 +42,52 @@ class ComputationGraph {
     if (isWriteNode(node)) {
       edges.push([node.name, node.outputObjectStore + '_object_store']);
     }
+    if (isAlaSQLNode(node)) {
+      node.sources.forEach((sourceName) => edges.push([sourceName, node.name]));
+    }
 
     return edges;
+  }
+
+  getDirectDependencies(name: DataNodeName): DataNodeName[] {
+    const node = this.getNode(name);
+    if (!node) throw new Error(`Node ${name} does not exist`);
+    if (isTransformNode(node)) {
+      return [node.source];
+    }
+    if (isJoinNode(node)) {
+      return node.sources.map(([sourceName]) => sourceName);
+    }
+    if (isAlaSQLNode(node)) {
+      return node.sources;
+    }
+    return [];
+  }
+
+  nodeHasData(name: DataNodeName): boolean {
+    const node = this.getNode(name);
+    if (!node) throw new Error(`Node ${name} does not exist`);
+    return node.output !== undefined;
+  }
+
+  getNodesToRun(name: DataNodeName): DataNodeName[] {
+    const node = this.getNode(name);
+    if (!node) throw new Error(`Node ${name} does not exist`);
+    const dependencies = this.getDirectDependencies(name);
+    // If the node doesn't have any dependencies, then it is a root node and should be run.
+    if (dependencies.length === 0) return [name];
+    // If the node has dependencies, then it should be run only if all of its dependencies have data.
+    const dependenciesWithoutData = dependencies.filter(
+      (dep) => !this.nodeHasData(dep),
+    );
+    if (dependenciesWithoutData.length === 0) return [name];
+    return dependenciesWithoutData.flatMap((dep) => this.getNodesToRun(dep));
   }
 
   toString(): string {
     let str = '';
     this.nodes.forEach((node) => {
-      str += `Node ${node.name}:\n`;
+      str += `${node.name}:\n`;
       if (isTransformNode(node)) {
         str += `  source: ${node.source}\n`;
       }
@@ -60,6 +99,9 @@ class ComputationGraph {
       }
       if (isWriteNode(node)) {
         str += `  outputObjectStore: ${node.outputObjectStore}\n`;
+      }
+      if (isAlaSQLNode(node)) {
+        str += `  sources: ${node.sources}\n`;
       }
     });
     return str;

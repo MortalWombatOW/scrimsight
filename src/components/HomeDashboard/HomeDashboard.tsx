@@ -5,20 +5,45 @@ import useWindowSize from '../../hooks/useWindowSize';
 import Globals from '../../lib/globals';
 
 import MapInfo from '~/components/MapInfo/MapInfo';
+import {useData, useDataNode} from '../../hooks/useData';
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
 // import PlayByPlay from '../PlayByPlay/PlayByPlay';
+
+const MapListItem = ({
+  mapId,
+  selected,
+  onClick,
+}: {
+  mapId: number;
+  selected: boolean;
+  onClick: () => void;
+}) => {
+  return (
+    <ListItem
+      key={mapId}
+      onClick={onClick}
+      selected={selected}
+      style={{paddingLeft: '0px', paddingRight: '0px'}}>
+      <ListItemButton>
+        <ListItemIcon>x</ListItemIcon>
+        <ListItemText primary={mapId} />
+      </ListItemButton>
+    </ListItem>
+  );
+};
 
 const HomeDashboard = () => {
   const {width} = useWindowSize();
 
   const team = Globals.getTeam();
 
-  const [selectedId, setSelectedId] = useState<number | undefined>();
-  const [contentComponent, setContentComponent] = useState<string>('timeline');
-  const contentComponents = {
-    timeline: 'Timeline',
-    stats: 'Statistics',
-    map: 'Map',
-  };
+  const recentGames = useDataNode('recentGames');
 
   // const isLoading = team === undefined;
 
@@ -32,48 +57,7 @@ const HomeDashboard = () => {
         display: 'flex',
         flexDirection: 'column',
       }}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          marginBottom: '16px',
-        }}></div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          marginBottom: '16px',
-        }}>
-        <div style={{flexGrow: 1}}></div>
-        <ToggleButtonGroup
-          value={contentComponent}
-          exclusive
-          onChange={(e, value) => setContentComponent(value)}
-          aria-label="main content type"
-          fullWidth>
-          {Object.keys(contentComponents).map((component) => (
-            <ToggleButton
-              key={component}
-              value={component}
-              aria-label={component}>
-              {contentComponents[component]}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </div>
-      <div style={{flexGrow: 1, border: '1px solid red'}}>
-        {selectedId &&
-          contentComponent === 'timeline' &&
-          // <PlayByPlay mapId={selectedId} onLoaded={() => {}} />
-          'timeline'}
-        {selectedId && contentComponent === 'stats' && (
-          <MapInfo
-            mapId={selectedId}
-            selectedPlayerNames={[]}
-            setSelectedPlayerNames={() => {}}
-          />
-        )}
-      </div>
+      <List></List>
     </div>
   );
 };

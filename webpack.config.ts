@@ -7,6 +7,7 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import Dotenv from 'dotenv-webpack';
 import keysTransformer from 'ts-transformer-keys/transformer';
+
 const webpackConfig = () => ({
   entry: './src/index.tsx',
   ...(process.env.production || !process.env.development
@@ -17,8 +18,8 @@ const webpackConfig = () => ({
     extensions: ['.ts', '.tsx', '.js'],
     plugins: [new TsconfigPathsPlugin({configFile: './tsconfig.json'})],
     fallback: {
-      "stream": require.resolve("stream-browserify"),
-      "assert": require.resolve("assert/")
+      stream: require.resolve('stream-browserify'),
+      assert: require.resolve('assert/'),
     },
   },
   output: {
@@ -41,7 +42,7 @@ const webpackConfig = () => ({
         test: /.(ts|tsx)?$/,
         // loader: 'ts-loader',
         include: path.resolve(__dirname, 'src'),
-       exclude: '/node_modules/',
+        exclude: '/node_modules/',
         use: [
           {
             loader: 'babel-loader',
@@ -94,7 +95,7 @@ const webpackConfig = () => ({
     }),
     new Dotenv({
       path: `./.env.${process.env.NODE_ENV}`,
-    }),
+    })
   ],
 });
 

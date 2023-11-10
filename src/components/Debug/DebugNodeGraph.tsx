@@ -94,7 +94,7 @@ function updateNode(
   dataManager.getEdges(nodeName).forEach(([fromName, toName]) => {
     networkDisplay.setEdge(fromName, toName);
   });
-  console.log('Updated node', node);
+  // console.log('Updated node', node);
 }
 
 const DebugNodeGraph = () => {

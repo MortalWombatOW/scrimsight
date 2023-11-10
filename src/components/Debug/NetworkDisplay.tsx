@@ -84,9 +84,9 @@ class NetworkDisplay {
     const fromId = this.nodeIdFromName(fromName);
     const toId = this.nodeIdFromName(toName);
 
-    console.log(
-      `Adding edge from ${fromName} to ${toName} (${fromId} to ${toId})`,
-    );
+    // console.log(
+    //   `Adding edge from ${fromName} to ${toName} (${fromId} to ${toId})`,
+    // );
 
     if (fromId === undefined || toId === undefined) {
       return;
@@ -97,6 +97,10 @@ class NetworkDisplay {
       undefined;
 
     if (existingEdge) return;
+
+    // console.log(
+    //   `Adding edge from ${fromName} to ${toName} (${fromId} to ${toId})`,
+    // );
 
     this.edges.add({from: fromId, to: toId});
   }

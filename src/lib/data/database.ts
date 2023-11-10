@@ -1,6 +1,6 @@
 import {open} from 'idb-factory';
 import {Team} from './types';
-import {DataRow, LOG_SPEC} from '~/lib/data/types';
+import {LOG_SPEC} from '~/lib/data/types';
 
 //https://github.com/treojs/idb-batch
 
@@ -94,7 +94,7 @@ export function storeObjectInDatabase<T>(
   });
 }
 
-export function getData(storeName: string): Promise<DataRow[]> {
+export function getData(storeName: string): Promise<object[]> {
   const db = getDB();
   if (!db) {
     throw new Error('Database is not open!');

@@ -7,7 +7,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import {DataRow} from '../../lib/data/types';
 const TimeChartComponent = ({
   height,
   width,
@@ -15,7 +14,7 @@ const TimeChartComponent = ({
 }: {
   height: number;
   width: number;
-  data: DataRow[];
+  data: object[];
 }) => {
   return (
     <div>

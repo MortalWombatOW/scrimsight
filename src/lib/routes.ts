@@ -23,7 +23,12 @@ const routes: Route[] = [
   {
     path: ['/player'],
     component: PlayerPage,
-    name: 'Players',
+    name: 'Player Analysis',
+  },
+  {
+    path: ['/team'],
+    component: PlayerPage,
+    name: 'Team Strategy',
   },
   {
     path: ['/map/:mapId'],
@@ -32,7 +37,7 @@ const routes: Route[] = [
   {
     path: ['/review', '/review/:mapId'],
     component: MapPage,
-    name: 'Review Map',
+    name: 'Match Breakdown',
   },
   {
     path: ['/debug'],

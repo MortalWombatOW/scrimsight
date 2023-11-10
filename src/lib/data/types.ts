@@ -1,4 +1,5 @@
 import {type} from 'os';
+import {sources} from 'webpack';
 
 type FileUpload = {
   fileName: string;
@@ -159,6 +160,7 @@ interface DataNode<OutType> {
   state: NodeState;
   output?: OutType[];
   metadata?: DataNodeMetadata;
+  error?: string;
 }
 
 interface WriteNode<Type> extends DataNode<void> {
@@ -180,6 +182,11 @@ interface JoinNode<OutType> extends DataNode<OutType> {
   sources: [DataNodeName, FieldName][];
 }
 
+interface AlaSQLNode<OutType> extends DataNode<OutType> {
+  sql: string;
+  sources: DataNodeName[];
+}
+
 export function isObjectStoreNode(
   node: DataNode<any>,
 ): node is ObjectStoreNode<any> {
@@ -193,11 +200,21 @@ export function isTransformNode(
 }
 
 export function isJoinNode(node: DataNode<any>): node is JoinNode<any> {
-  return 'sources' in node;
+  return (
+    'sources' in node &&
+    Array.isArray((node as JoinNode<any>).sources) &&
+    (node as JoinNode<any>).sources.every(
+      (source) => Array.isArray(source) && source.length === 2,
+    )
+  );
 }
 
 export function isWriteNode(node: DataNode<any>): node is WriteNode<any> {
   return 'outputObjectStore' in node;
+}
+
+export function isAlaSQLNode(node: DataNode<any>): node is AlaSQLNode<any> {
+  return 'sql' in node;
 }
 
 export function getLatestExecution(
@@ -206,15 +223,13 @@ export function getLatestExecution(
   return node.metadata?.executions[node.metadata?.executions.length - 1];
 }
 
-type DataRow = (string | number | boolean)[];
-
 type DataAndSpecName = {
-  data: DataRow[];
+  data: object[];
   specName: string;
 };
 
 type DataRowBySpecName = {
-  [key: string]: DataRow[];
+  [key: string]: object[];
 };
 
 type LogSpec = Record<string, DataSpec>;
@@ -1074,7 +1089,6 @@ export {
   TransformNode,
   JoinNode,
   Team,
-  DataRow,
   DataAndSpecName,
   DataRowBySpecName,
   LogSpec,
@@ -1110,6 +1124,7 @@ export {
   RemechCharged,
   PlayerStat,
   WriteNode,
+  AlaSQLNode,
   DataNodeExecution,
   DataNodeMetadata,
 };

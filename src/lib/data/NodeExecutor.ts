@@ -10,10 +10,13 @@ import {
   isWriteNode,
   DataNodeExecution,
   DataNode,
+  AlaSQLNode,
+  isAlaSQLNode,
 } from './types';
 
 import {storeObjectInDatabase, getData} from './database';
 import ComputationGraph from './ComputationGraph';
+import alasql from 'alasql';
 
 class NodeExecutor {
   constructor(private graph: ComputationGraph) {}
@@ -100,10 +103,35 @@ class NodeExecutor {
     execution.outputRows = joinedOutput.length;
   }
 
+  private handleAlaSQLNode(
+    node: AlaSQLNode<any>,
+    execution: Partial<DataNodeExecution>,
+  ): void {
+    const sourceNodes = node.sources.map((sourceName) =>
+      this.graph.getNode(sourceName),
+    );
+    const sourceData = sourceNodes.map((sourceNode) => sourceNode?.output);
+
+    // abort if any source node doesn't have output data
+    if (sourceData.some((data) => !data)) return;
+    // sourceNodes.forEach((sourceNode) => {
+    //   alasql.tables[sourceNode?.name].data = sourceNode?.output;
+    // });
+
+    const result = alasql(node.sql);
+    node.output = result;
+    execution.inputRows = sourceData.reduce(
+      (sum, data) => sum + (data?.length ?? 0),
+      0,
+    );
+    execution.outputRows = result.length;
+  }
+
   async executeNode(name: DataNodeName): Promise<void> {
     const node = this.graph.getNode(name);
     if (!node) return;
 
+    console.log('Executing node', name);
     node.state = 'running';
     if (!node.metadata) {
       node.metadata = {
@@ -121,11 +149,14 @@ class NodeExecutor {
         this.handleTransformNode(node, execution);
       } else if (isJoinNode(node)) {
         this.handleJoinNode(node, execution);
+      } else if (isAlaSQLNode(node)) {
+        this.handleAlaSQLNode(node, execution);
       }
 
       node.state = 'done';
     } catch (error) {
       node.state = 'error';
+      node.error = error;
     }
     const endTime = Date.now();
     execution.duration = endTime - startTime;

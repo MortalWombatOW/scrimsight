@@ -22,6 +22,7 @@ class PubSub {
   // Publish an event to all subscribers
   notify(eventType: string): void {
     if (!this.subscribers[eventType]) return;
+    console.log(`Notify ${eventType}`);
     this.subscribers[eventType].forEach((callback) => callback());
   }
 }

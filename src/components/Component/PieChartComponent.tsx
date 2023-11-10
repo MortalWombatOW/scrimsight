@@ -1,7 +1,6 @@
 import {CircularProgress} from '@mui/material';
 import React, {useContext, useState} from 'react';
 import {Cell, Pie, PieChart, Sector, Tooltip} from 'recharts';
-import {DataRow} from '../../lib/data/types';
 import {groupColorClass} from '../../lib/color';
 import './Charts.scss';
 
@@ -56,9 +55,9 @@ const PieChartComponent = ({
 }: {
   height: number;
   width: number;
-  data: DataRow[] | undefined;
+  data: object[] | undefined;
   title: string;
-  formatFn: (value: DataRow) => string;
+  formatFn: (value: object) => string;
   dataKey: string;
   colorKey: string;
   deps: string[];

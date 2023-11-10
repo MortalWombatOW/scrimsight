@@ -1,14 +1,7 @@
-import {
-  FileUpload,
-  DataRow,
-  LOG_SPEC,
-  DataAndSpecName,
-  WriteNode,
-} from 'lib/data/types';
+import {FileUpload, LOG_SPEC, DataAndSpecName, WriteNode} from 'lib/data/types';
 import {stringHash} from './../string';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
-import {useDataManager} from './DataContext';
 import {DataManager} from './DataManager';
 
 // File Utilities
@@ -61,7 +54,10 @@ const parseLine = (line: string, mapId: number): DataAndSpecName => {
     throw new Error(`Event spec not found for event type: ${eventType}`);
   }
 
-  const parsedData: DataRow = [mapId, eventType];
+  const parsedData: object = {
+    mapId,
+    type: eventType,
+  };
 
   for (let i = 2; i < values.length; i++) {
     const fieldSpec = eventSpec.fields[i];
@@ -70,7 +66,7 @@ const parseLine = (line: string, mapId: number): DataAndSpecName => {
         `Field spec not found for event type: ${eventType}, field index: ${i}`,
       );
     }
-    parsedData.push(parseFieldValue(values[i], fieldSpec.dataType));
+    parsedData[fieldSpec.key] = parseFieldValue(values[i], fieldSpec.dataType);
   }
 
   return {
