@@ -33,7 +33,7 @@ const MatchCard: React.FC<{match: MatchData}> = ({match}) => {
 };
 
 const MapList = () => {
-  const maps = useDataNode('map_overview_alasql');
+  const maps = useDataNode('map_overview');
   console.log('maps:', maps);
 
   return (

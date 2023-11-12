@@ -402,32 +402,6 @@ interface HeroesPlayed {
   heroes: Set<string>;
 }
 
-// Define the TransformNode
-const heroesPlayedNode: TransformNode<PlayerStat[], HeroesPlayed[]> = {
-  name: 'heroes_played',
-  state: 'pending',
-  transform: (data) => {
-    const heroesPlayedByPlayer: {[key: string]: HeroesPlayed} = {};
-    console.log('heroesPlayedByPlayer');
-    console.log(data);
-    data.forEach((record) => {
-      const key = `${record.playerName}_${record.playerTeam}`;
-      if (!heroesPlayedByPlayer[key]) {
-        heroesPlayedByPlayer[key] = {
-          playerName: record.playerName,
-          playerTeam: record.playerTeam,
-          heroes: new Set(),
-        };
-      }
-      heroesPlayedByPlayer[key].heroes.add(record.playerHero);
-    });
-
-    console.log(heroesPlayedByPlayer);
-    return Object.values(heroesPlayedByPlayer);
-  },
-  source: 'player_stat_object_store',
-};
-
 interface MapOverview {
   mapId: number;
   mapName: string;
@@ -445,59 +419,10 @@ interface MapOverview {
 }
 [];
 
-const mapOverviewNode: DataNode<any> =
-  // {
-  //   name: 'map_overview_join_node',
-  //   state: 'pending',
-  //   sources: [
-  //     ['match_start_object_store', 'mapId'],
-  //     ['match_end_object_store', 'mapId'],
-  //     ['round_start_object_store', 'mapId'],
-  //     ['round_end_object_store', 'mapId'],
-  //   ],
-  // } as JoinNode<any>,
-  // {
-  //   name: 'map_overview_transform_node',
-  //   state: 'pending',
-  //   transform: (data) => {
-  //     const mapOverview: MapOverview = {
-  //       mapId: data[0].mapId,
-  //       mapName: data[0].mapName,
-  //       team1: data[0].team1,
-  //       team2: data[0].team2,
-  //       team1Score: 0,
-  //       team2Score: 0,
-  //       team1Players: [],
-  //       team2Players: [],
-  //       rounds: [],
-  //     };
-  //     data.forEach((record) => {
-  //       if (record.roundNumber) {
-  //         mapOverview.rounds.push({
-  //           roundNumber: record.roundNumber,
-  //           team1Score: record.team1Score,
-  //           team2Score: record.team2Score,
-  //         });
-  //       }
-  //       if (record.team1Score) {
-  //         mapOverview.team1Score = record.team1Score;
-  //       }
-  //       if (record.team2Score) {
-  //         mapOverview.team2Score = record.team2Score;
-  //       }
-  //       if (record.playerTeam === mapOverview.team1) {
-  //         mapOverview.team1Players.push(record.playerName);
-  //       } else if (record.playerTeam === mapOverview.team2) {
-  //         mapOverview.team2Players.push(record.playerName);
-  //       }
-  //     });
-  //     return mapOverview;
-  //   },
-  // } as TransformNode<any, any>,
-  {
-    name: 'map_overview_alasql',
-    state: 'pending',
-    sql: `
+const mapOverviewNode: AlaSQLNode<MapOverview> = {
+  name: 'map_overview',
+  state: 'pending',
+  sql: `
       SELECT
           match_start.mapId,
           match_end.mapId,
@@ -508,81 +433,93 @@ const mapOverviewNode: DataNode<any> =
           match_end.team2Score,
           maps.name,
           maps.fileModified
-
       FROM ? as match_start JOIN ? as match_end 
       ON match_start.mapId = match_end.mapId 
       JOIN ? as maps ON match_start.mapId = maps.mapId
       `,
-    sources: [
-      'match_start_object_store',
-      'match_end_object_store',
-      'maps_object_store',
-    ],
-  } as AlaSQLNode<any>;
+  sources: [
+    'match_start_object_store',
+    'match_end_object_store',
+    'maps_object_store',
+  ],
+} as AlaSQLNode<MapOverview>;
 
-export function loadNodeData(dataManager: DataManager) {
-  // object store nodes
-  dataManager.addNode(maps_object_store);
-  dataManager.addNode(match_start_object_store);
-  dataManager.addNode(match_end_object_store);
-  dataManager.addNode(round_start_object_store);
-  dataManager.addNode(round_end_object_store);
-  dataManager.addNode(setup_complete_object_store);
-  dataManager.addNode(objective_captured_object_store);
-  dataManager.addNode(point_progress_object_store);
-  dataManager.addNode(payload_progress_object_store);
-  dataManager.addNode(hero_spawn_object_store);
-  dataManager.addNode(hero_swap_object_store);
-  dataManager.addNode(ability_1_used_object_store);
-  dataManager.addNode(ability_2_used_object_store);
-  dataManager.addNode(offensive_assist_object_store);
-  dataManager.addNode(defensive_assist_object_store);
-  dataManager.addNode(ultimate_charged_object_store);
-  dataManager.addNode(ultimate_start_object_store);
-  dataManager.addNode(ultimate_end_object_store);
-  dataManager.addNode(kill_object_store);
-  dataManager.addNode(damage_object_store);
-  dataManager.addNode(healing_object_store);
-  dataManager.addNode(mercy_rez_object_store);
-  dataManager.addNode(echo_duplicate_start_object_store);
-  dataManager.addNode(echo_duplicate_end_object_store);
-  dataManager.addNode(dva_demech_object_store);
-  dataManager.addNode(dva_remech_object_store);
-  dataManager.addNode(remech_charged_object_store);
-  dataManager.addNode(player_stat_object_store);
-
-  // write nodes
-  dataManager.addNode(match_start_write_node);
-  dataManager.addNode(match_end_write_node);
-  dataManager.addNode(round_start_write_node);
-  dataManager.addNode(round_end_write_node);
-  dataManager.addNode(setup_complete_write_node);
-  dataManager.addNode(objective_captured_write_node);
-  dataManager.addNode(point_progress_write_node);
-  dataManager.addNode(payload_progress_write_node);
-  dataManager.addNode(hero_spawn_write_node);
-  dataManager.addNode(hero_swap_write_node);
-  dataManager.addNode(ability_1_used_write_node);
-  dataManager.addNode(ability_2_used_write_node);
-  dataManager.addNode(offensive_assist_write_node);
-  dataManager.addNode(defensive_assist_write_node);
-  dataManager.addNode(ultimate_charged_write_node);
-  dataManager.addNode(ultimate_start_write_node);
-  dataManager.addNode(ultimate_end_write_node);
-  dataManager.addNode(kill_write_node);
-  dataManager.addNode(damage_write_node);
-  dataManager.addNode(healing_write_node);
-  dataManager.addNode(mercy_rez_write_node);
-  dataManager.addNode(echo_duplicate_start_write_node);
-  dataManager.addNode(echo_duplicate_end_write_node);
-  dataManager.addNode(dva_demech_write_node);
-  dataManager.addNode(dva_remech_write_node);
-  dataManager.addNode(remech_charged_write_node);
-  dataManager.addNode(player_stat_write_node);
-
-  // compute nodes
-  // dataManager.addNode(heroesPlayedNode);
-  dataManager.addNode(mapOverviewNode);
-
-  // dataManager.executeNode('map_overview_alasql');
+interface PlayerTimePlayed {
+  playerName: string;
+  playerTeam: string;
+  timePlayed: number;
 }
+
+const playerTimePlayedNode: AlaSQLNode<PlayerTimePlayed> = {
+  name: 'player_time_played',
+  state: 'pending',
+  sql: `
+      SELECT
+          player_stat.playerName,
+          player_stat.playerTeam,
+          SUM(player_stat.timePlayed) as timePlayed
+      FROM ? as player_stat
+      GROUP BY player_stat.playerName, player_stat.playerTeam
+      `,
+  sources: ['player_stat_object_store'],
+} as AlaSQLNode<PlayerTimePlayed>;
+
+export default [
+  maps_object_store,
+  match_start_object_store,
+  match_end_object_store,
+  round_start_object_store,
+  round_end_object_store,
+  setup_complete_object_store,
+  objective_captured_object_store,
+  point_progress_object_store,
+  payload_progress_object_store,
+  hero_spawn_object_store,
+  hero_swap_object_store,
+  ability_1_used_object_store,
+  ability_2_used_object_store,
+  offensive_assist_object_store,
+  defensive_assist_object_store,
+  ultimate_charged_object_store,
+  ultimate_start_object_store,
+  ultimate_end_object_store,
+  kill_object_store,
+  damage_object_store,
+  healing_object_store,
+  mercy_rez_object_store,
+  echo_duplicate_start_object_store,
+  echo_duplicate_end_object_store,
+  dva_demech_object_store,
+  dva_remech_object_store,
+  remech_charged_object_store,
+  player_stat_object_store,
+  match_start_write_node,
+  match_end_write_node,
+  round_start_write_node,
+  round_end_write_node,
+  setup_complete_write_node,
+  objective_captured_write_node,
+  point_progress_write_node,
+  payload_progress_write_node,
+  hero_spawn_write_node,
+  hero_swap_write_node,
+  ability_1_used_write_node,
+  ability_2_used_write_node,
+  offensive_assist_write_node,
+  defensive_assist_write_node,
+  ultimate_charged_write_node,
+  ultimate_start_write_node,
+  ultimate_end_write_node,
+  kill_write_node,
+  damage_write_node,
+  healing_write_node,
+  mercy_rez_write_node,
+  echo_duplicate_start_write_node,
+  echo_duplicate_end_write_node,
+  dva_demech_write_node,
+  dva_remech_write_node,
+  remech_charged_write_node,
+  player_stat_write_node,
+  mapOverviewNode,
+  playerTimePlayedNode,
+];

@@ -1,6 +1,6 @@
 import {useEffect, useState, useContext} from 'react';
 import {DataContext} from '../lib/data/DataContext'; // Make sure to import GraphContext
-import {DataNodeName} from '../lib/data/types';
+import {DataNode, DataNodeName} from '../lib/data/types';
 
 export const useData = (nodeNames: DataNodeName[]) => {
   const dataManager = useContext(DataContext);
@@ -26,7 +26,7 @@ export const useData = (nodeNames: DataNodeName[]) => {
   return data;
 };
 
-export const useDataNode = (nodeName: DataNodeName) => {
+export const useDataNode = <T>(nodeName: DataNodeName): DataNode<T> => {
   const dataManager = useContext(DataContext);
 
   if (!dataManager) {
@@ -38,4 +38,10 @@ export const useDataNode = (nodeName: DataNodeName) => {
   }, [nodeName]);
 
   return dataManager.getNode(nodeName);
+};
+
+export const useDataNodeOutput = <T>(nodeName: DataNodeName): T[] => {
+  const node = useDataNode<T>(nodeName);
+
+  return node.output ?? [];
 };

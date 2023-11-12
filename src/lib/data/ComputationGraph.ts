@@ -10,6 +10,7 @@ import {
   isWriteNode,
   isObjectStoreNode,
   isAlaSQLNode,
+  BaseEvent,
 } from './types';
 
 class ComputationGraph {
@@ -19,8 +20,13 @@ class ComputationGraph {
     this.nodes.set(node.name, node);
   }
 
-  getNode(name: DataNodeName): DataNode<any> | undefined {
-    return this.nodes.get(name);
+  hasNode(name: DataNodeName): boolean {
+    return this.nodes.has(name);
+  }
+
+  getNode(name: DataNodeName): DataNode<any> {
+    if (!this.nodes.has(name)) throw new Error(`Node ${name} does not exist`);
+    return this.nodes.get(name)!;
   }
 
   getNodes(): DataNode<any>[] {

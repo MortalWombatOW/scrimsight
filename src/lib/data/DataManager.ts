@@ -53,7 +53,10 @@ export class DataManager {
   }
 
   // Method to add a node
-  addNode(node: DataNode<any>): void {
+  addNode<T>(node: DataNode<T>): void {
+    if (this.graph.hasNode(node.name)) {
+      throw new Error(`Node ${node.name} already exists`);
+    }
     this.graph.addNode(node);
     this.addNodeSubscriptions(node);
   }
@@ -72,8 +75,9 @@ export class DataManager {
   }
 
   // Method to get node data
-  getNode(name: DataNodeName): DataNode<any> | undefined {
-    return this.graph.getNode(name);
+  getNode(name: DataNodeName): typeof node {
+    const node = this.graph.getNode(name);
+    return node;
   }
 
   getNodes(): DataNode<any>[] {

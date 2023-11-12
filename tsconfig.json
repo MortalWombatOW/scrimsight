@@ -39,6 +39,7 @@
   "include": [
     "./src/**/*.ts",
     "./src/**/*.tsx",
+    "./src/**/*.json",
     "webpack.config.ts",
   ]
 }

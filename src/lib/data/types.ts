@@ -1,5 +1,4 @@
-import {type} from 'os';
-import {sources} from 'webpack';
+import {match, P} from 'ts-pattern';
 
 type FileUpload = {
   fileName: string;
@@ -215,6 +214,13 @@ export function isWriteNode(node: DataNode<any>): node is WriteNode<any> {
 
 export function isAlaSQLNode(node: DataNode<any>): node is AlaSQLNode<any> {
   return 'sql' in node;
+}
+
+export function getTypedNodeOutput<T>(
+  node: DataNode<T>,
+): T[] extends typeof node.output ? T[] : never {
+  if (!node.output) throw new Error(`Node ${node.name} has no output`);
+  return node.output;
 }
 
 export function getLatestExecution(
@@ -1064,6 +1070,123 @@ interface PlayerStat extends BaseEvent {
   scopedShotsHit: number;
   weaponAccuracy: number;
   heroTimePlayed: number;
+}
+
+function isMatchStart(event: BaseEvent): event is MatchStart {
+  return event.type === 'match_start';
+}
+
+function isMatchEnd(event: BaseEvent): event is MatchEnd {
+  return event.type === 'match_end';
+}
+
+function isRoundStart(event: BaseEvent): event is RoundStart {
+  return event.type === 'round_start';
+}
+
+function isRoundEnd(event: BaseEvent): event is RoundEnd {
+  return event.type === 'round_end';
+}
+
+function isSetupComplete(event: BaseEvent): event is SetupComplete {
+  return event.type === 'setup_complete';
+}
+
+function isObjectiveCaptured(event: BaseEvent): event is ObjectiveCaptured {
+  return event.type === 'objective_captured';
+}
+
+function isPointProgress(event: BaseEvent): event is PointProgress {
+  return event.type === 'point_progress';
+}
+
+function isPayloadProgress(event: BaseEvent): event is PayloadProgress {
+  return event.type === 'payload_progress';
+}
+
+function isHeroSpawn(event: BaseEvent): event is HeroSpawn {
+  return event.type === 'hero_spawn';
+}
+
+function isHeroSwap(event: BaseEvent): event is HeroSwap {
+  return event.type === 'hero_swap';
+}
+
+function isAbility1Used(event: BaseEvent): event is Ability1Used {
+  return event.type === 'ability_1_used';
+}
+
+function isAbility2Used(event: BaseEvent): event is Ability2Used {
+  return event.type === 'ability_2_used';
+}
+
+function isOffensiveAssist(event: BaseEvent): event is OffensiveAssist {
+  return event.type === 'offensive_assist';
+}
+
+function isDefensiveAssist(event: BaseEvent): event is DefensiveAssist {
+  return event.type === 'defensive_assist';
+}
+
+function isUltimateCharged(event: BaseEvent): event is UltimateCharged {
+  return event.type === 'ultimate_charged';
+}
+
+function isUltimateStart(event: BaseEvent): event is UltimateStart {
+  return event.type === 'ultimate_start';
+}
+
+function isUltimateEnd(event: BaseEvent): event is UltimateEnd {
+  return event.type === 'ultimate_end';
+}
+
+function isKill(event: BaseEvent): event is Kill {
+  return event.type === 'kill';
+}
+
+function isDamage(event: BaseEvent): event is Damage {
+  return event.type === 'damage';
+}
+
+function isHealing(event: BaseEvent): event is Healing {
+  return event.type === 'healing';
+}
+
+function isMercyRez(event: BaseEvent): event is MercyRez {
+  return event.type === 'mercy_rez';
+}
+
+function isEchoDuplicateStart(event: BaseEvent): event is EchoDuplicateStart {
+  return event.type === 'echo_duplicate_start';
+}
+
+function isEchoDuplicateEnd(event: BaseEvent): event is EchoDuplicateEnd {
+  return event.type === 'echo_duplicate_end';
+}
+
+function isDvaDemech(event: BaseEvent): event is DvaDemech {
+  return event.type === 'dva_demech';
+}
+
+function isDvaRemech(event: BaseEvent): event is DvaRemech {
+  return event.type === 'dva_remech';
+}
+
+function isRemechCharged(event: BaseEvent): event is RemechCharged {
+  return event.type === 'remech_charged';
+}
+
+function isPlayerStat(event: BaseEvent): event is PlayerStat {
+  return event.type === 'player_stat';
+}
+
+export function coerceObjects<T extends BaseEvent>(obj: BaseEvent[]): T[] {
+  return obj as T[];
+}
+
+export function getNodeOutput<T>(node: DataNode<T>): T[] {
+  if (!node.output) throw new Error(`Node ${node.name} has no output`);
+  return node.output;
 }
 
 export {

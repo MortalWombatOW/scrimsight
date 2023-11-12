@@ -104,7 +104,7 @@ const DebugNodeGraph = () => {
   const dataManager = useDataManager();
   const networkDisplay = useRef(new NetworkDisplay());
   const node = useDataNode('match_end_object_store');
-  const node2 = useDataNode('map_overview_alasql');
+  const node2 = useDataNode('map_overview');
 
   const nodeNames = dataManager.getNodes().map((node) => node.name);
 

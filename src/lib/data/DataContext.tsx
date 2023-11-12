@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {DataManager} from './DataManager';
-import {loadNodeData} from './NodeData';
+import nodes from './NodeData';
 
 const DataContext = React.createContext<DataManager | null>(null);
 
@@ -11,9 +11,9 @@ const DataProvider = ({children}) => {
   const incrementTick = () => setTick((tick) => tick + 1);
   dataManager.subscribeAll(incrementTick);
 
-  // useEffect(() => {
-  loadNodeData(dataManager);
-  // }, [tick]);
+  for (let node of nodes) {
+    dataManager.addNode(node);
+  }
 
   return (
     <DataContext.Provider value={dataManager}>{children}</DataContext.Provider>

@@ -5,7 +5,7 @@ import useWindowSize from '../../hooks/useWindowSize';
 import Globals from '../../lib/globals';
 
 import MapInfo from '~/components/MapInfo/MapInfo';
-import {useData, useDataNode} from '../../hooks/useData';
+import {useData, useDataNode, useDataNodeOutput} from '../../hooks/useData';
 import {
   List,
   ListItem,
@@ -16,35 +16,15 @@ import {
 import MapList from '../MapListV2/MapList';
 // import PlayByPlay from '../PlayByPlay/PlayByPlay';
 
-const MapListItem = ({
-  mapId,
-  selected,
-  onClick,
-}: {
-  mapId: number;
-  selected: boolean;
-  onClick: () => void;
-}) => {
-  return (
-    <ListItem
-      key={mapId}
-      onClick={onClick}
-      selected={selected}
-      style={{paddingLeft: '0px', paddingRight: '0px'}}>
-      <ListItemButton>
-        <ListItemIcon>x</ListItemIcon>
-        <ListItemText primary={mapId} />
-      </ListItemButton>
-    </ListItem>
-  );
-};
+// const PlayerTimePlayedDisplay = () => {
+//   const node = useDataNode('player_time_played');
 
 const HomeDashboard = () => {
   const {width} = useWindowSize();
 
   const team = Globals.getTeam();
 
-  const recentGames = useDataNode('map_overview_alasql');
+  const recentGames = useDataNodeOutput('player_time_played');
 
   // const isLoading = team === undefined;
 

@@ -15,7 +15,7 @@ const webpackConfig = () => ({
     : {devtool: 'eval-source-map'}),
 
   resolve: {
-    extensions: ['.ts', '.tsx', '.js'],
+    extensions: ['.ts', '.tsx', '.json', '.js'],
     plugins: [new TsconfigPathsPlugin({configFile: './tsconfig.json'})],
     fallback: {
       stream: require.resolve('stream-browserify'),
@@ -39,7 +39,7 @@ const webpackConfig = () => ({
         },
       },
       {
-        test: /.(ts|tsx)?$/,
+        test: /.(ts|tsx|json)?$/,
         // loader: 'ts-loader',
         include: path.resolve(__dirname, 'src'),
         exclude: '/node_modules/',
@@ -49,8 +49,12 @@ const webpackConfig = () => ({
             options: {
               presets: [
                 '@babel/env',
-                // '@babel/preset-typescript',
+                '@babel/preset-typescript',
                 '@babel/react',
+              ],
+              plugins: [
+                '@babel/plugin-syntax-dynamic-import',
+                '@babel/plugin-syntax-import-assertions',
               ],
             },
           },
@@ -72,6 +76,10 @@ const webpackConfig = () => ({
         test: /\.s?css$/,
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
+      //  {
+      //   test: /\.json$/,
+      //   loader: 'json-loader'
+      // }
     ],
   },
   devServer: {
@@ -95,7 +103,7 @@ const webpackConfig = () => ({
     }),
     new Dotenv({
       path: `./.env.${process.env.NODE_ENV}`,
-    })
+    }),
   ],
 });
 
