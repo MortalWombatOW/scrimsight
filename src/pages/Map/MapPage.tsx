@@ -1,12 +1,11 @@
-import {AppBar, CircularProgress, Toolbar} from '@mui/material';
+import {CircularProgress} from '@mui/material';
 import Header from 'components/Header/Header';
-import MapInfo from 'components/MapInfo/MapInfo';
+
 import React, {useState} from 'react';
 import {useParams, useSearchParams} from 'react-router-dom';
-import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight';
+
 import './Map.scss';
 import {useNavigate} from 'react-router-dom';
-import {animated, useSpring, useSpringRef} from 'react-spring';
 import useWindowSize from '../../hooks/useWindowSize';
 
 const MapPage = () => {

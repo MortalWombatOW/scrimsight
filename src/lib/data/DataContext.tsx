@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {DataManager} from './DataManager';
-import nodes from './NodeData';
+import {NODES} from './NodeData';
 
 const DataContext = React.createContext<DataManager | null>(null);
 
@@ -11,7 +11,8 @@ const DataProvider = ({children}) => {
   const incrementTick = () => setTick((tick) => tick + 1);
   dataManager.subscribeAll(incrementTick);
 
-  for (let node of nodes) {
+  for (let node of NODES) {
+    node.state = 'pending';
     dataManager.addNode(node);
   }
 

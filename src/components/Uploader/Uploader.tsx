@@ -68,8 +68,8 @@ const Uploader: React.FC<UploaderProps> = ({
   };
 
   return (
-    <div>
-      <Button variant="contained" component="label" color="secondary">
+    <>
+      <Button variant="outlined" component="label" color="secondary">
         Add maps
         <input
           id="fileinput"
@@ -85,7 +85,7 @@ const Uploader: React.FC<UploaderProps> = ({
         files={files}
         filePercents={filePercents}
       />
-    </div>
+    </>
   );
 };
 

@@ -2,15 +2,14 @@ import React, {useContext, useEffect, useRef} from 'react';
 import {useDataManager} from '../../lib/data/DataContext';
 import {
   DataNode,
-  isTransformNode,
-  isJoinNode,
+  isAlaSQLNode,
   isObjectStoreNode,
   isWriteNode,
-  getLatestExecution,
-} from '../../lib/data/types';
+} from '../../lib/data/DataTypes';
 import NetworkDisplay from './NetworkDisplay';
 import DisplayNode from './DisplayNode';
 import {useDataNode} from '../../hooks/useData';
+import {getLatestExecution} from '../../lib/data/NodeUtils';
 
 function getStateColor(node: DataNode<any> | undefined) {
   if (!node) {
@@ -36,17 +35,14 @@ function getShape(node: DataNode<any> | undefined) {
   if (!node) {
     return 'box';
   }
-  if (isTransformNode(node)) {
-    return 'box';
-  }
-  if (isJoinNode(node)) {
-    return 'triangle';
-  }
   if (isObjectStoreNode(node)) {
-    return 'box';
+    return 'ellipse';
   }
   if (isWriteNode(node)) {
-    return 'ellipse';
+    return 'diamond';
+  }
+  if (isAlaSQLNode(node)) {
+    return 'box';
   }
   return 'box';
 }
@@ -57,7 +53,7 @@ function getLabel(node: DataNode<any> | undefined) {
   }
   const lines: string[] = [];
   lines.push(node.name);
-  lines.push(node.state);
+  lines.push(node.state!);
   lines.push(node.metadata?.executions?.length.toString() ?? '0');
   return lines.join('\n');
 }
@@ -133,8 +129,8 @@ const DebugNodeGraph = () => {
           height: 500,
           border: '1px solid lightgray',
         }}></div>
-      <DisplayNode node={node!} />
-      <DisplayNode node={node2!} />
+      {/* <DisplayNode node={node!} />
+      <DisplayNode node={node2!} /> */}
     </div>
   );
 };

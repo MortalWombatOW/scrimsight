@@ -1,4 +1,4 @@
-import {DataNodeName} from './types';
+import {DataNodeName} from './DataTypes';
 
 class PubSub {
   private listeningNodes: {[source: DataNodeName]: DataNodeName[]} = {};
@@ -11,6 +11,9 @@ class PubSub {
   subscribe(source: DataNodeName, dest: DataNodeName): void {
     if (!this.listeningNodes[source]) {
       this.listeningNodes[source] = [];
+    }
+    if (this.listeningNodes[source].includes(dest)) {
+      return;
     }
     this.listeningNodes[source].push(dest);
   }
@@ -28,7 +31,7 @@ class PubSub {
 
   // Publish an event to all subscribers
   notify(source: DataNodeName): void {
-    console.log(`Notify ${source}`);
+    console.log(`${source} done, running subscribers`);
     this.globalListeners.forEach((fn) => {
       fn();
     });

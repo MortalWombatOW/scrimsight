@@ -4,12 +4,10 @@ import PubSub from './PubSub';
 import {
   DataNode,
   DataNodeName,
-  isJoinNode,
   isObjectStoreNode,
-  isTransformNode,
   isWriteNode,
   isAlaSQLNode,
-} from './types';
+} from './DataTypes';
 
 export class DataManager {
   private graph: ComputationGraph;
@@ -20,19 +18,13 @@ export class DataManager {
     this.graph = new ComputationGraph();
     this.nodeExecutor = new NodeExecutor(this.graph);
     this.pubSub = new PubSub((source) => {
-      console.log(`Notified ${source}`);
+      console.log(`Running ${source} due to dependency update`);
       this.executeNode(source);
     });
   }
 
   private addNodeSubscriptions(node: DataNode<any>): void {
-    if (isTransformNode(node)) {
-      this.pubSub.subscribe(node.source as DataNodeName, node.name);
-    } else if (isJoinNode(node)) {
-      (node.sources as [DataNodeName, string][]).forEach(([sourceName]) => {
-        this.pubSub.subscribe(sourceName, node.name);
-      });
-    } else if (isWriteNode(node)) {
+    if (isWriteNode(node)) {
       this.pubSub.subscribe(
         node.name as DataNodeName,
         node.outputObjectStore + '_object_store',
@@ -63,15 +55,26 @@ export class DataManager {
 
   // Method to execute a node
   async executeNode(name: DataNodeName): Promise<void> {
+    console.group(`DataManager.executeNode(${name})`);
+
     const nodes = this.graph.getNodesToRun(name);
-    console.log('for node ', name, 'nodes to run are', nodes.join(', '));
+    if (nodes.length === 0) {
+      console.log('No nodes to run');
+      console.groupEnd();
+      return;
+    }
+
     const nodesToNotify = new Set<DataNodeName>();
     for (const node of nodes) {
+      this.getNode(node).state = 'running';
       await this.nodeExecutor.executeNode(node);
       nodesToNotify.add(node);
     }
-    nodesToNotify.forEach((node) => this.pubSub.notify(node));
-    console.log(this.getNode(name)?.output);
+    console.groupEnd();
+    setTimeout(() => {
+      nodesToNotify.forEach((node) => this.pubSub.notify(node));
+    }, 1000);
+    // console.log(this.getNode(name)?.output);
   }
 
   // Method to get node data

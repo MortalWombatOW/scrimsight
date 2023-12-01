@@ -7,7 +7,7 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-import {createTheme, ThemeProvider} from '@mui/material';
+import {createTheme, CssBaseline, ThemeProvider} from '@mui/material';
 import {QueryParamProvider} from 'use-query-params';
 import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 import routes from './lib/routes';
@@ -21,6 +21,7 @@ const App = () => {
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
       <ThemeProvider theme={theme}>
+        <CssBaseline />
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>
             <DataProvider>

@@ -1,8 +1,9 @@
-import {FileUpload, LOG_SPEC, DataAndSpecName, WriteNode} from 'lib/data/types';
+import {FileUpload, LOG_SPEC, DataAndSpecName} from 'lib/data/types';
 import {stringHash} from './../string';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
 import {DataManager} from './DataManager';
+import {WriteNode} from './DataTypes';
 
 // File Utilities
 const readFileAsync = (file: File): Promise<any> => {
@@ -45,14 +46,26 @@ const parseFieldValue = (value: string, dataType: string) => {
   }
 };
 
+const parseTimestampString = (timestampStr: string): number => {
+  const timestamp = timestampStr.substring(1, timestampStr.length - 1);
+  const timeParts = timestamp.split(':');
+  const hours = parseInt(timeParts[0]);
+  const minutes = parseInt(timeParts[1]);
+  const seconds = parseInt(timeParts[2]);
+  return hours * 3600 + minutes * 60 + seconds;
+};
+
 const parseLine = (line: string, mapId: number): DataAndSpecName => {
   const values = line.trim().split(',');
+  const timestampStr = values[0];
   const eventType = values[1];
   const eventSpec = LOG_SPEC[eventType];
 
   if (!eventSpec) {
     throw new Error(`Event spec not found for event type: ${eventType}`);
   }
+
+  const timestamp = parseTimestampString(timestampStr);
 
   const parsedData: object = {
     mapId,
@@ -68,6 +81,8 @@ const parseLine = (line: string, mapId: number): DataAndSpecName => {
     }
     parsedData[fieldSpec.key] = parseFieldValue(values[i], fieldSpec.dataType);
   }
+
+  parsedData['matchTime'] = timestamp;
 
   return {
     data: [parsedData],

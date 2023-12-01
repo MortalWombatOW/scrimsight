@@ -98,7 +98,6 @@ const Header = ({
               sx={{
                 display: {xs: 'block', lg: 'none'},
               }}>
-              <MenuItem>foo</MenuItem>
               {routes
                 .filter((route) => route.name)
                 .map((route) => (
@@ -139,7 +138,7 @@ const Header = ({
                   <Button
                     key={route.path[0]}
                     onClick={() => handleClickForPage(route.path[0])}
-                    sx={{my: 2, color: 'white', display: 'block'}}>
+                    sx={{my: 2, mx: 2, color: 'white', display: 'block'}}>
                     {route.name}
                   </Button>
                 ))}

@@ -1,17 +1,12 @@
 import {
   DataNodeName,
   DataNode,
-  TransformNode,
-  JoinNode,
   ObjectStoreNode,
   WriteNode,
-  isTransformNode,
-  isJoinNode,
   isWriteNode,
   isObjectStoreNode,
   isAlaSQLNode,
-  BaseEvent,
-} from './types';
+} from './DataTypes';
 
 class ComputationGraph {
   private nodes: Map<DataNodeName, DataNode<any>> = new Map();
@@ -37,14 +32,6 @@ class ComputationGraph {
     const edges: [DataNodeName, DataNodeName][] = [];
     const node = this.getNode(name);
     if (!node) return edges;
-    if (isTransformNode(node)) {
-      edges.push([node.source, node.name]);
-    }
-    if (isJoinNode(node)) {
-      node.sources.forEach(([sourceName]) => {
-        edges.push([sourceName, node.name]);
-      });
-    }
     if (isWriteNode(node)) {
       edges.push([node.name, node.outputObjectStore + '_object_store']);
     }
@@ -57,13 +44,6 @@ class ComputationGraph {
 
   getDirectDependencies(name: DataNodeName): DataNodeName[] {
     const node = this.getNode(name);
-    if (!node) throw new Error(`Node ${name} does not exist`);
-    if (isTransformNode(node)) {
-      return [node.source];
-    }
-    if (isJoinNode(node)) {
-      return node.sources.map(([sourceName]) => sourceName);
-    }
     if (isAlaSQLNode(node)) {
       return node.sources;
     }
@@ -72,19 +52,16 @@ class ComputationGraph {
 
   nodeHasData(name: DataNodeName): boolean {
     const node = this.getNode(name);
-    if (!node) throw new Error(`Node ${name} does not exist`);
     return node.output !== undefined;
   }
 
   nodeIsRunning(name: DataNodeName): boolean {
     const node = this.getNode(name);
-    if (!node) throw new Error(`Node ${name} does not exist`);
     return node.state === 'running';
   }
 
   getNodesToRun(name: DataNodeName): DataNodeName[] {
-    const node = this.getNode(name);
-    if (!node) throw new Error(`Node ${name} does not exist`);
+    // const node = this.getNode(name);
     const dependencies = this.getDirectDependencies(name);
     // If the node doesn't have any dependencies, then it is a root node and should be run.
     if (dependencies.length === 0) return [name];
@@ -92,20 +69,23 @@ class ComputationGraph {
     const dependenciesWithoutData = dependencies.filter(
       (dep) => !this.nodeHasData(dep) && !this.nodeIsRunning(dep),
     );
-    if (dependenciesWithoutData.length === 0) return [name];
-    return dependenciesWithoutData.flatMap((dep) => this.getNodesToRun(dep));
+    if (dependenciesWithoutData.length > 0) {
+      return [
+        ...new Set(
+          dependenciesWithoutData.flatMap((dep) => this.getNodesToRun(dep)),
+        ),
+      ];
+    }
+    if (!this.nodeIsRunning(name) && !this.nodeHasData(name)) {
+      return [name];
+    }
+    return [];
   }
 
   toString(): string {
     let str = '';
     this.nodes.forEach((node) => {
       str += `${node.name}:\n`;
-      if (isTransformNode(node)) {
-        str += `  source: ${node.source}\n`;
-      }
-      if (isJoinNode(node)) {
-        str += `  sources: ${node.sources.map(([name]) => name)}\n`;
-      }
       if (isObjectStoreNode(node)) {
         str += `  objectStore: ${node.objectStore}\n`;
       }

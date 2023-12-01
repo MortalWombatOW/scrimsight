@@ -2,12 +2,14 @@ import {ThemeOptions} from '@mui/material';
 
 export const themeDef: ThemeOptions = {
   palette: {
-    mode: 'light',
+    mode: 'dark',
     primary: {
-      main: '#32466d',
+      // main: '#32466d',
+      main: '#2190fe',
     },
     secondary: {
-      main: '#BFDBF7',
+      // main: '#BFDBF7',
+      main: '#f9a01a',
       contrastText: '#32466d',
     },
     info: {
@@ -25,7 +27,7 @@ export const themeDef: ThemeOptions = {
     fontFamily: 'Poppins, sans-serif',
     h1: {
       fontSize: 36,
-      fontWeight:  700,
+      fontWeight: 700,
     },
     h2: {
       fontSize: 36,
@@ -73,7 +75,14 @@ export const themeDef: ThemeOptions = {
         },
       },
     },
-    
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+          boxShadow: 'none',
+        },
+      },
+    },
   },
   shape: {
     borderRadius: 8,

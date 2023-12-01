@@ -1,4 +1,3 @@
-import {Grid} from '@mui/material';
 import React from 'react';
 
 const IconAndText = ({
@@ -12,7 +11,7 @@ const IconAndText = ({
     style={{
       display: 'flex',
       alignItems: 'center',
-      flexWrap: 'wrap',
+      whiteSpace: 'nowrap',
     }}>
     {icon}
     <span style={{marginLeft: '0.5em'}}>{text}</span>

@@ -1,15 +1,6 @@
 import React from 'react';
 
-import {
-  AlaSQLNode,
-  DataNode,
-  DataNodeMetadata,
-  JoinNode,
-  NodeState,
-  ObjectStoreNode,
-  TransformNode,
-  WriteNode,
-} from '../../lib/data/types';
+import {DataNode, DataNodeMetadata, NodeState} from '../../lib/data/DataTypes';
 
 import {
   Card,
@@ -75,7 +66,7 @@ function DataNodeComponent<OutType>({node}: DataNodeProps<OutType>) {
     <Card raised>
       <CardContent>
         <Typography variant="h6">{node.name}</Typography>
-        <Chip label={node.state} color={stateColor(node.state)} />
+        <Chip label={node.state} color={stateColor(node.state!)} />
         {node.state === 'running' && <LinearProgress />}
         {node.metadata && (
           <div>
@@ -92,7 +83,6 @@ function DataNodeComponent<OutType>({node}: DataNodeProps<OutType>) {
             Error: {node.error}
           </Typography>
         )}
-        {/* You can further expand this component based on the specific properties of different node types */}
       </CardContent>
     </Card>
   );

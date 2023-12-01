@@ -1,50 +1,127 @@
 import React from 'react';
+import Masonry from '@mui/lab/Masonry';
 import {useDataNode} from '../../hooks/useData';
 import './MapList.scss';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Box,
+  CardMedia,
+  CardHeader,
+  CardActionArea,
+} from '@mui/material';
+import {MapOverview} from '../../lib/data/NodeData';
+import IconAndText from '../Common/IconAndText';
+import {getIcon} from '../Common/RoleIcons';
+import useWindowSize from '../../hooks/useWindowSize';
+import {mapNameToFileName} from '../../lib/string';
+import {useNavigate} from 'react-router-dom';
 
-interface MatchData {
-  mapId: number;
-  mapName: string;
-  team1Name: string;
-  team2Name: string;
-  team1Score: number;
-  team2Score: number;
+interface MapOverviewProps {
+  overview: MapOverview;
 }
 
-const MatchCard: React.FC<{match: MatchData}> = ({match}) => {
+const PlayerListMini = ({
+  players,
+  orientation,
+}: {
+  players: string[];
+  orientation?: 'left' | 'right';
+}) => {
   return (
-    <div className="match-card">
-      <div className="match-header">
-        <h2>{match.mapName}</h2>
-      </div>
-      <div className="match-body">
-        <div className="team-info">
-          <span className="team-name">{match.team1Name}</span>
-          <span className="score">{match.team1Score}</span>
-        </div>
-        <div className="versus">vs</div>
-        <div className="team-info">
-          <span className="team-name">{match.team2Name}</span>
-          <span className="score">{match.team2Score}</span>
-        </div>
-      </div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+      {players.map((player, i) => (
+        <span key={i}>
+          <IconAndText icon={getIcon('damage')} text={player} />
+        </span>
+      ))}
     </div>
+  );
+};
+
+const MapOverviewComponent: React.FC<MapOverviewProps> = ({overview}) => {
+  const navigate = useNavigate();
+  const dayOfWeek = new Date(overview.timestamp).toLocaleDateString('en-US', {
+    weekday: 'long',
+  });
+  return (
+    <Card
+      variant="elevation"
+      onClick={() => navigate(`/map/${overview.mapId}`)}>
+      <CardActionArea>
+        <CardContent sx={{position: 'relative'}}>
+          <Grid container spacing={2}>
+            <Grid item xs="auto">
+              <Typography variant="h4">{overview.team1Name}</Typography>
+            </Grid>
+            <Grid item xs="auto" sx={{ml: 'auto'}}>
+              <Typography variant="h3">
+                {overview.team1Score} : {overview.team2Score}
+              </Typography>
+            </Grid>
+            <Grid item xs="auto" sx={{ml: 'auto'}}>
+              <Typography variant="h3">{overview.team2Name}</Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+        <CardMedia
+          component="img"
+          image={mapNameToFileName(overview.mapName, false)}
+        />
+        <CardContent>
+          <Grid container spacing={2}>
+            <Grid item xs="auto">
+              <PlayerListMini players={overview.team1Players} />
+            </Grid>
+            <Grid item xs="auto" sx={{ml: 'auto'}}>
+              <PlayerListMini players={overview.team2Players} />
+            </Grid>
+          </Grid>
+        </CardContent>
+
+        <CardContent>
+          <Typography variant="h6">
+            {dayOfWeek + ', ' + new Date(overview.timestamp).toLocaleString()}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
   );
 };
 
 const MapList = () => {
   const maps = useDataNode('map_overview');
-  console.log('maps:', maps);
+  const {width} = useWindowSize();
+  const columns = width > 1000 ? 4 : width > 600 ? 2 : 1;
 
   return (
-    <div>
-      <div>Map List</div>
-      <div>
-        {maps?.output?.map((map: any) => (
-          <MatchCard match={map} />
-        ))}
-      </div>
-    </div>
+    <>
+      <Masonry columns={columns} spacing={3} sx={{mx: 0}}>
+        <Card variant="outlined">
+          <CardContent>
+            <Typography variant="h2">Map Databank</Typography>
+            <Typography variant="h6">
+              Click on a map to see more details.
+            </Typography>
+          </CardContent>
+        </Card>
+        {maps && maps.output ? (
+          maps.output.map((map: MapOverview, i: number) => (
+            <div key={i}>
+              <MapOverviewComponent overview={map} />
+            </div>
+          ))
+        ) : (
+          <div>no data</div>
+        )}
+      </Masonry>
+    </>
   );
 };
 

@@ -127,6 +127,8 @@ const heroToRole = {
   Mercy: 'support',
   Moira: 'support',
   Zenyatta: 'support',
+  Rammatra: 'tank',
+  Mauga: 'tank',
 };
 
 export const heroToRoleTable = Object.entries(heroToRole).map(
