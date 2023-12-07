@@ -18,13 +18,17 @@ import {DataProvider} from './lib/data/DataContext';
 const theme = createTheme(themeDef);
 
 const App = () => {
+  const [tick, setTick] = React.useState(0);
+  const incrementTick = () => {
+    setTick((tick) => tick + 1);
+  };
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>
-            <DataProvider>
+            <DataProvider tick={tick} updateCallback={incrementTick}>
               <Routes>
                 {routes.map((route) =>
                   route.path.map((path, i) => (

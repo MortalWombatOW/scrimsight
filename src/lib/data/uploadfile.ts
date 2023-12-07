@@ -160,11 +160,12 @@ const saveFile = async (
     // );
     // percent += percentPerKey;
     // setPercent(percent);
-    const node = dataManager.getNode(key + '_write_node') as WriteNode<any>;
-    if (!node) throw new Error(`Node not found: ${key}_write_node`);
+    const node = dataManager.getNodeOrDie(key + '_write_node') as WriteNode<
+      any
+    >;
     const data = fileUpload.events.find((e) => e.specName === key)?.data;
     if (!data) throw new Error(`Data not found for key: ${key}`);
-    node.data = data;
+    node.addData(data);
     await dataManager.executeNode(key + '_write_node');
     percent += percentPerKey;
     setPercent(percent);

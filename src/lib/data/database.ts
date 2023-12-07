@@ -1,6 +1,5 @@
 import {open} from 'idb-factory';
-import {Team} from './types';
-import {LOG_SPEC} from '~/lib/data/types';
+import {LOG_SPEC, Team} from './types';
 
 //https://github.com/treojs/idb-batch
 
@@ -41,7 +40,7 @@ const onCompleted = (e) => {
 
 export const setupDB = async (callback) => {
   console.log('setupDB');
-  open('scrimsight', 1, onCompleted).then((db) => {
+  return open('scrimsight', 1, onCompleted).then((db) => {
     globalDB = db;
 
     console.log('setupDB done');

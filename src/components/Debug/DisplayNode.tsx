@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {DataNode, DataNodeMetadata, NodeState} from '../../lib/data/DataTypes';
+import {DataNode, DataNodeMetadata} from '../../lib/data/DataTypes';
 
 import {
   Card,
@@ -35,52 +35,33 @@ function DataNodeComponent<OutType>({node}: DataNodeProps<OutType>) {
       <TableBody>
         {metadata.executions.map((execution, index) => (
           <TableRow key={index}>
-            <TableCell>{execution.duration}</TableCell>
-            <TableCell>{execution.inputRows}</TableCell>
-            <TableCell>{execution.outputRows}</TableCell>
+            <TableCell>{execution.getDuration()}</TableCell>
+            <TableCell>{execution.getInputRows()}</TableCell>
+            <TableCell>{execution.getOutputRows()}</TableCell>
           </TableRow>
         ))}
       </TableBody>
     </Table>
   );
 
-  // Function to determine the color of the state chip based on the node state
-  const stateColor = (
-    state: NodeState,
-  ): 'default' | 'warning' | 'info' | 'success' | 'error' => {
-    switch (state) {
-      case 'pending':
-        return 'warning';
-      case 'running':
-        return 'info';
-      case 'done':
-        return 'success';
-      case 'error':
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
-
   return (
     <Card raised>
       <CardContent>
-        <Typography variant="h6">{node.name}</Typography>
-        <Chip label={node.state} color={stateColor(node.state!)} />
-        {node.state === 'running' && <LinearProgress />}
-        {node.metadata && (
+        <Typography variant="h6">{node.getName()}</Typography>
+        {node.isRunning() && <LinearProgress />}
+        {node.getMetadata() && (
           <div>
             <Typography variant="subtitle1">Execution Details:</Typography>
-            {renderExecutions(node.metadata)}
+            {renderExecutions(node.getMetadata()!)}
             <div>
               <Typography variant="subtitle1">Output:</Typography>
-              <pre>{JSON.stringify(node.output, null, 2)}</pre>
+              <pre>{JSON.stringify(node.getOutput(), null, 2)}</pre>
             </div>
           </div>
         )}
-        {node.error && (
+        {node.hasError() && (
           <Typography color="error" variant="body2">
-            Error: {node.error}
+            Error: {node.getError()}
           </Typography>
         )}
       </CardContent>

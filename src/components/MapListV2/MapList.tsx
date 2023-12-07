@@ -99,6 +99,7 @@ const MapList = () => {
   const maps = useDataNode('map_overview');
   const {width} = useWindowSize();
   const columns = width > 1000 ? 4 : width > 600 ? 2 : 1;
+  console.log('MapsList rendering', maps.getOutput());
 
   return (
     <>
@@ -111,8 +112,8 @@ const MapList = () => {
             </Typography>
           </CardContent>
         </Card>
-        {maps && maps.output ? (
-          maps.output.map((map: MapOverview, i: number) => (
+        {maps && maps.getOutput() ? (
+          maps!.getOutput()!.map((map: MapOverview, i: number) => (
             <div key={i}>
               <MapOverviewComponent overview={map} />
             </div>

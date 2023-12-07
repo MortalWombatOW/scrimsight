@@ -1,97 +1,152 @@
-import ComputationGraph from './ComputationGraph';
-import NodeExecutor from './NodeExecutor';
-import PubSub from './PubSub';
-import {
-  DataNode,
-  DataNodeName,
-  isObjectStoreNode,
-  isWriteNode,
-  isAlaSQLNode,
-} from './DataTypes';
+import {DataNode, DataNodeName} from './DataTypes';
 
 export class DataManager {
-  private graph: ComputationGraph;
-  private nodeExecutor: NodeExecutor;
-  private pubSub: PubSub;
+  private nodes: Map<DataNodeName, DataNode<any>>;
+  private changeCallback: () => void;
 
-  constructor() {
-    this.graph = new ComputationGraph();
-    this.nodeExecutor = new NodeExecutor(this.graph);
-    this.pubSub = new PubSub((source) => {
-      console.log(`Running ${source} due to dependency update`);
-      this.executeNode(source);
+  constructor(nodes: DataNode<any>[], changeCallback: () => void) {
+    this.nodes = new Map();
+    nodes.forEach((node) => this.nodes.set(node.getName(), node));
+    this.changeCallback = changeCallback;
+  }
+
+  private nodesDependingOn(name: DataNodeName): DataNodeName[] {
+    const nodes: DataNodeName[] = [];
+    this.nodes.forEach((node) => {
+      if (node.getDependencies().includes(name)) {
+        nodes.push(node.getName());
+      }
     });
+    return nodes;
   }
 
-  private addNodeSubscriptions(node: DataNode<any>): void {
-    if (isWriteNode(node)) {
-      this.pubSub.subscribe(
-        node.name as DataNodeName,
-        node.outputObjectStore + '_object_store',
-      );
-    } else if (isAlaSQLNode(node)) {
-      node.sources.forEach((sourceName) => {
-        this.pubSub.subscribe(sourceName as DataNodeName, node.name);
-      });
-    }
-  }
-
-  subscribeFn(name: DataNodeName, callback: () => void): void {
-    this.pubSub.subscribeFn(name, callback);
-  }
-
-  subscribeAll(callback: () => void): void {
-    this.pubSub.subscribeAll(callback);
-  }
-
-  // Method to add a node
-  addNode<T>(node: DataNode<T>): void {
-    if (this.graph.hasNode(node.name)) {
-      throw new Error(`Node ${node.name} already exists`);
-    }
-    this.graph.addNode(node);
-    this.addNodeSubscriptions(node);
-  }
-
-  // Method to execute a node
   async executeNode(name: DataNodeName): Promise<void> {
     console.group(`DataManager.executeNode(${name})`);
-
-    const nodes = this.graph.getNodesToRun(name);
-    if (nodes.length === 0) {
-      console.log('No nodes to run');
+    const node = this.nodes.get(name);
+    if (!node) {
+      throw new Error(`Node ${name} does not exist`);
+    }
+    if (node.isRunning()) {
+      console.log(`Node ${name} is already running`);
       console.groupEnd();
       return;
     }
+    const dependencies = node.getDependencies();
+    const sourceData = dependencies.map((dep) => {
+      if (!this.nodes.get(dep)?.hasOutput()) {
+        throw new Error(`Dependency ${dep} is empty, skipping ${name}`);
+      }
+      if (this.nodes.get(dep)?.isRunning()) {
+        throw new Error(`Dependency ${dep} is running, skipping ${name}`);
+      }
+      return this.nodes.get(dep)?.getOutput();
+    });
 
-    const nodesToNotify = new Set<DataNodeName>();
-    for (const node of nodes) {
-      this.getNode(node).state = 'running';
-      await this.nodeExecutor.executeNode(node);
-      nodesToNotify.add(node);
+    try {
+      await node.run(sourceData);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      console.log(`Node ${name} finished, data:`, node.getOutput());
+      console.groupEnd();
     }
-    console.groupEnd();
-    setTimeout(() => {
-      nodesToNotify.forEach((node) => this.pubSub.notify(node));
-    }, 1000);
-    // console.log(this.getNode(name)?.output);
   }
 
-  // Method to get node data
-  getNode(name: DataNodeName): typeof node {
-    const node = this.graph.getNode(name);
+  getNodeOrDie(name: DataNodeName): DataNode<any> {
+    const node = this.nodes.get(name);
+    if (!node) {
+      throw new Error(`Node ${name} does not exist`);
+    }
     return node;
   }
 
+  getNextNodeToExecute(): DataNode<any> | undefined {
+    const nodes = this.getNodesToExecute();
+    if (nodes.length === 0) {
+      return undefined;
+    }
+    return nodes[0];
+  }
+
+  getNodesToExecute(): DataNode<any>[] {
+    const visited: string[] = [];
+    const stack: string[] = [];
+
+    for (const node of this.nodes.keys()) {
+      if (!visited.includes(node)) {
+        this.topoSort(node, visited, stack);
+      }
+    }
+
+    return stack
+      .filter(
+        (name) =>
+          this.getNodeOrDie(name).canRun() &&
+          !this.getNodeOrDie(name).isRunning(),
+      )
+      .map((name) => this.getNodeOrDie(name));
+  }
+
+  private topoSort(v: string, visited: string[], stack: string[]): void {
+    if (visited.includes(v)) {
+      return;
+    }
+    visited.push(v);
+    for (const node of this.getNodeOrDie(v).getDependencies()) {
+      if (!visited.includes(node)) {
+        this.topoSort(node, visited, stack);
+      }
+    }
+    stack.push(v);
+  }
+
+  async process(): Promise<void> {
+    // let node: DataNode<any> | undefined;
+    // while ((node = this.getNextNodeToExecute())) {
+    //   console.log('Executing', node.getName());
+    //   await this.executeNode(node.getName());
+    // }
+
+    let nodes = this.getNodesToExecute();
+    while (nodes.length > 0) {
+      for (const node of nodes) {
+        await this.executeNode(node.getName());
+      }
+      nodes = this.getNodesToExecute();
+    }
+
+    // console.log(
+    //   'Nodes executed',
+    //   nodes.map((node) => node.getName()),
+    // );
+    this.changeCallback();
+    // debugger;
+  }
+
+  markNode(name: DataNodeName): void {
+    const node = this.getNodeOrDie(name);
+    node.setNeedsRun(true);
+    const nodes = this.nodesDependingOn(name);
+    nodes.forEach((node) => this.markNode(node));
+  }
+
+  getNodeOutputOrDie(name: DataNodeName): any {
+    const node = this.getNodeOrDie(name);
+    if (!node.hasOutput()) {
+      throw new Error(`Node ${name} has no output`);
+    }
+    return node.getOutput();
+  }
+
   getNodes(): DataNode<any>[] {
-    return this.graph.getNodes();
+    return [...this.nodes.values()];
   }
 
-  getEdges(name: DataNodeName): [DataNodeName, DataNodeName][] {
-    return this.graph.getEdges(name);
-  }
+  // getEdges(name: DataNodeName): [DataNodeName, DataNodeName][] {
+  //   return this.graph.getEdgesCreatedByNode(name);
+  // }
 
-  toString(): string {
-    return this.graph.toString();
-  }
+  // toString(): string {
+  //   return this.graph.toString();
+  // }
 }

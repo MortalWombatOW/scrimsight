@@ -14,8 +14,7 @@ export const useData = (nodeNames: DataNodeName[]) => {
     const fetchData = async () => {
       const newData: {[name: string]: any[] | undefined} = {};
       for (const name of nodeNames) {
-        await dataManager.executeNode(name);
-        newData[name] = dataManager.getNode(name)?.output;
+        newData[name] = dataManager.getNodeOutputOrDie(name);
       }
       setData(newData);
     };
@@ -33,11 +32,8 @@ export const useDataNode = <T>(nodeName: DataNodeName): DataNode<T> => {
     throw new Error('useDataNode must be used within a GraphProvider');
   }
 
-  useEffect(() => {
-    dataManager.executeNode(nodeName);
-  }, [nodeName]);
-
-  return dataManager.getNode(nodeName);
+  console.log('useDataNode', nodeName);
+  return dataManager.getNodeOrDie(nodeName);
 };
 
 export const useDataNodeOutput = <T>(
@@ -46,10 +42,11 @@ export const useDataNodeOutput = <T>(
 ): T[] => {
   const node = useDataNode<T>(nodeName);
 
-  if (Object.keys(filters).length == 0 || !node.output)
-    return node.output || [];
+  if (Object.keys(filters).length == 0 || !node.getOutput()) {
+    return node.getOutput() || [];
+  }
 
-  return node.output.filter((item) => {
+  return node.getOutput()!.filter((item) => {
     for (const key of Object.keys(filters)) {
       if (item[key] !== filters[key]) return false;
     }

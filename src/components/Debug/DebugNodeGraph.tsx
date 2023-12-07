@@ -1,33 +1,26 @@
 import React, {useContext, useEffect, useRef} from 'react';
 import {useDataManager} from '../../lib/data/DataContext';
 import {
+  AlaSQLNode,
   DataNode,
-  isAlaSQLNode,
-  isObjectStoreNode,
-  isWriteNode,
+  ObjectStoreNode,
+  WriteNode,
 } from '../../lib/data/DataTypes';
 import NetworkDisplay from './NetworkDisplay';
 import DisplayNode from './DisplayNode';
 import {useDataNode} from '../../hooks/useData';
-import {getLatestExecution} from '../../lib/data/NodeUtils';
 
 function getStateColor(node: DataNode<any> | undefined) {
   if (!node) {
     return '#000000';
   }
 
-  const state = node.state;
-  switch (state) {
-    case 'pending':
-      return '#f0ad4e';
-    case 'running':
-      return '#5bc0de';
-    case 'done':
-      return '#3c912b';
-    case 'error':
-      return '#af684c';
-    default:
-      return '#000000';
+  if (node.isRunning()) {
+    return '#5bc0de';
+  } else if (node.hasError()) {
+    return '#af684c';
+  } else {
+    return '#3c912b';
   }
 }
 
@@ -35,13 +28,13 @@ function getShape(node: DataNode<any> | undefined) {
   if (!node) {
     return 'box';
   }
-  if (isObjectStoreNode(node)) {
+  if (node instanceof ObjectStoreNode) {
     return 'ellipse';
   }
-  if (isWriteNode(node)) {
+  if (node instanceof WriteNode) {
     return 'diamond';
   }
-  if (isAlaSQLNode(node)) {
+  if (node instanceof AlaSQLNode) {
     return 'box';
   }
   return 'box';
@@ -52,9 +45,8 @@ function getLabel(node: DataNode<any> | undefined) {
     return 'undefined';
   }
   const lines: string[] = [];
-  lines.push(node.name);
-  lines.push(node.state!);
-  lines.push(node.metadata?.executions?.length.toString() ?? '0');
+  lines.push(node.toString());
+  lines.push(node.getMetadata()?.executions?.length.toString() ?? '0');
   return lines.join('\n');
 }
 
@@ -62,12 +54,11 @@ function getOpacity(node: DataNode<any> | undefined) {
   if (!node) {
     return 0.1;
   }
-  const execution = getLatestExecution(node);
+  const execution = node.getLatestExecution();
   if (!execution) {
     return 0.3;
   }
-  const outputRows = execution.outputRows;
-  if (outputRows === 0) {
+  if (execution.getOutputRows() === 0) {
     // console.log('opacity', node.name, node);
     return 0.5;
   }
@@ -102,14 +93,14 @@ const DebugNodeGraph = () => {
   const node = useDataNode('match_end_object_store');
   const node2 = useDataNode('map_overview');
 
-  const nodeNames = dataManager.getNodes().map((node) => node.name);
+  const nodeNames = dataManager.getNodes().map((node) => node.getName());
 
   useEffect(() => {
     for (const nodeName of nodeNames) {
       updateNode(nodeName, networkDisplay.current, dataManager);
-      dataManager.subscribeFn(nodeName, () =>
-        updateNode(nodeName, networkDisplay.current, dataManager),
-      );
+      // dataManager.subscribeFn(nodeName, () =>
+      //   updateNode(nodeName, networkDisplay.current, dataManager),
+      // );
     }
   }, [nodeNames]);
 
