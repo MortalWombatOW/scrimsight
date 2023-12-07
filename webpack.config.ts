@@ -105,6 +105,9 @@ const webpackConfig = () => ({
       path: `./.env.${process.env.NODE_ENV}`,
     }),
   ],
+  optimization: {
+    minimize: true,
+  },
 });
 
 export default webpackConfig;

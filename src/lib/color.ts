@@ -1,4 +1,4 @@
-import {ColorInternal, ColorInternalHSL} from 'lib/data/types';
+import {ColorInternal, ColorInternalHSL} from '../lib/data/types';
 
 const colorgorical12 = [
   '#505f76',

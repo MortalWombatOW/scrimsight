@@ -11,7 +11,7 @@ import {createTheme, CssBaseline, ThemeProvider} from '@mui/material';
 import {QueryParamProvider} from 'use-query-params';
 import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 import routes from './lib/routes';
-import {themeDef} from '~/theme';
+import {themeDef} from './theme';
 
 import {DataProvider} from './lib/data/DataContext';
 

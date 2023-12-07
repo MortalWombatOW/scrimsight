@@ -34,7 +34,6 @@ const MapPage = () => {
   return (
     <div style={{margin: '1em'}}>
       <Header filters={{}} setFilters={() => {}} />
-      <DebugNodeGraph />
       <LayoutContainer
         elements={[
           {
