@@ -3,11 +3,13 @@ import {DataNode, DataNodeName} from './DataTypes';
 export class DataManager {
   private nodes: Map<DataNodeName, DataNode<any>>;
   private changeCallback: () => void;
+  private nodeCallbacks: Map<DataNodeName, () => void>;
 
   constructor(nodes: DataNode<any>[], changeCallback: () => void) {
     this.nodes = new Map();
     nodes.forEach((node) => this.nodes.set(node.getName(), node));
     this.changeCallback = changeCallback;
+    this.nodeCallbacks = new Map();
   }
 
   private nodesDependingOn(name: DataNodeName): DataNodeName[] {
@@ -21,7 +23,7 @@ export class DataManager {
   }
 
   async executeNode(name: DataNodeName): Promise<void> {
-    console.group(`DataManager.executeNode(${name})`);
+    // console.group(`DataManager.executeNode(${name})`);
     const node = this.nodes.get(name);
     if (!node) {
       throw new Error(`Node ${name} does not exist`);
@@ -48,8 +50,15 @@ export class DataManager {
       console.error(e);
     } finally {
       console.log(`Node ${name} finished, data:`, node.getOutput());
-      console.groupEnd();
+      // console.groupEnd();
+      if (this.nodeCallbacks.has(name)) {
+        this.nodeCallbacks.get(name)!();
+      }
     }
+  }
+
+  addNodeCallback(name: DataNodeName, callback: () => void): void {
+    this.nodeCallbacks.set(name, callback);
   }
 
   getNodeOrDie(name: DataNodeName): DataNode<any> {
@@ -119,8 +128,8 @@ export class DataManager {
     //   'Nodes executed',
     //   nodes.map((node) => node.getName()),
     // );
-    this.changeCallback();
-    // debugger;
+
+    // this.changeCallback();
   }
 
   markNode(name: DataNodeName): void {

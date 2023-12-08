@@ -28,14 +28,16 @@ const App = () => {
         <CssBaseline />
         <BrowserRouter basename="/">
           <QueryParamProvider adapter={ReactRouter6Adapter}>
-            <DataProvider tick={tick} updateCallback={incrementTick}>
+            <DataProvider
+              globalTick={tick}
+              updateGlobalCallback={incrementTick}>
               <Routes>
                 {routes.map((route) =>
                   route.path.map((path, i) => (
                     <Route
                       key={path}
                       path={path}
-                      index={i === 0}
+                      index={((i === 0) as unknown) as false}
                       element={<route.component />}
                     />
                   )),

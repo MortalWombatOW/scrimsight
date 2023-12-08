@@ -28,9 +28,15 @@ export const useData = (nodeNames: DataNodeName[]) => {
 export const useDataNode = <T>(nodeName: DataNodeName): DataNode<T> => {
   const dataManager = useContext(DataContext);
 
+  const [tick, setTick] = useState(0);
+
   if (!dataManager) {
     throw new Error('useDataNode must be used within a GraphProvider');
   }
+
+  dataManager.addNodeCallback(nodeName, () => {
+    setTick((tick) => tick + 1);
+  });
 
   console.log('useDataNode', nodeName);
   return dataManager.getNodeOrDie(nodeName);
