@@ -1,5 +1,4 @@
 import React from 'react';
-import Masonry from '@mui/lab/Masonry';
 import {useDataNode} from '../../hooks/useData';
 import './MapList.scss';
 import {
@@ -11,6 +10,7 @@ import {
   CardMedia,
   CardHeader,
   CardActionArea,
+  Button,
 } from '@mui/material';
 import {MapOverview} from '../../lib/data/NodeData';
 import IconAndText from '../Common/IconAndText';
@@ -18,7 +18,8 @@ import {getIcon} from '../Common/RoleIcons';
 import useWindowSize from '../../hooks/useWindowSize';
 import {mapNameToFileName} from '../../lib/string';
 import {useNavigate} from 'react-router-dom';
-
+import PersonIcon from '@mui/icons-material/PersonOutline';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 interface ScrimOverviewProps {
   overviews: MapOverview[];
 }
@@ -38,7 +39,7 @@ const PlayerListMini = ({
       }}>
       {players.map((player, i) => (
         <span key={i}>
-          <IconAndText icon={getIcon('damage')} text={player} />
+          <IconAndText icon={<PersonIcon />} text={player} />
         </span>
       ))}
     </div>
@@ -87,7 +88,11 @@ const ScrimOverview: React.FC<ScrimOverviewProps> = ({overviews}) => {
               onClick={() => navigate(`/map/${overview.mapId}`)}
               sx={{
                 width: 300,
+                height: '100%',
                 borderRadius: '5px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
               }}>
               <div style={{position: 'relative'}}>
                 <CardMedia
@@ -151,10 +156,21 @@ const ScrimOverview: React.FC<ScrimOverviewProps> = ({overviews}) => {
                   </Grid>
                 </Grid>
               </CardContent>
-              <CardContent>
-                <Typography variant="h6">
-                  {new Date(overview.timestamp).toLocaleTimeString()}
-                </Typography>
+              <CardContent sx={{width: '100%'}}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                  component="div">
+                  <Typography variant="h6">
+                    {new Date(overview.timestamp).toLocaleTimeString()}
+                  </Typography>
+                  <Button variant="outlined" color="primary">
+                    View <ArrowForwardIcon sx={{ml: '0.5em'}} />
+                  </Button>
+                </Box>
               </CardContent>
             </CardActionArea>
           </Grid>
