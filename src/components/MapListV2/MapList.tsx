@@ -19,8 +19,8 @@ import useWindowSize from '../../hooks/useWindowSize';
 import {mapNameToFileName} from '../../lib/string';
 import {useNavigate} from 'react-router-dom';
 
-interface MapOverviewProps {
-  overview: MapOverview;
+interface ScrimOverviewProps {
+  overviews: MapOverview[];
 }
 
 const PlayerListMini = ({
@@ -45,83 +45,168 @@ const PlayerListMini = ({
   );
 };
 
-const MapOverviewComponent: React.FC<MapOverviewProps> = ({overview}) => {
+const ScrimOverview: React.FC<ScrimOverviewProps> = ({overviews}) => {
   const navigate = useNavigate();
-  const dayOfWeek = new Date(overview.timestamp).toLocaleDateString('en-US', {
-    weekday: 'long',
-  });
+  const dayOfWeek = new Date(overviews[0].timestamp).toLocaleDateString(
+    'en-US',
+    {
+      weekday: 'long',
+    },
+  );
+  const datetimeStr = new Date(overviews[0].timestamp).toLocaleString();
+  const dateStr = dayOfWeek + ', ' + datetimeStr.split(', ')[0];
+  const team1Name = overviews[0].team1Name;
+  const team2Name = overviews[0].team2Name;
+
   return (
     <Card
       variant="elevation"
-      onClick={() => navigate(`/map/${overview.mapId}`)}>
-      <CardActionArea>
-        <CardContent sx={{position: 'relative'}}>
-          <Grid container spacing={2}>
-            <Grid item xs="auto">
-              <Typography variant="h4">{overview.team1Name}</Typography>
-            </Grid>
-            <Grid item xs="auto" sx={{ml: 'auto'}}>
-              <Typography variant="h3">
-                {overview.team1Score} : {overview.team2Score}
-              </Typography>
-            </Grid>
-            <Grid item xs="auto" sx={{ml: 'auto'}}>
-              <Typography variant="h3">{overview.team2Name}</Typography>
-            </Grid>
+      sx={{
+        minWidth: overviews.length > 2 ? 900 : overviews.length > 1 ? 600 : 300,
+      }}>
+      <CardContent
+        sx={{
+          position: 'relative',
+        }}>
+        <Grid container spacing={2}>
+          <Grid item xs="auto">
+            <Typography variant="h4">
+              {team1Name} vs {team2Name}
+            </Typography>
           </Grid>
-        </CardContent>
-        <CardMedia
-          component="img"
-          image={mapNameToFileName(overview.mapName, false)}
-        />
-        <CardContent>
-          <Grid container spacing={2}>
-            <Grid item xs="auto">
-              <PlayerListMini players={overview.team1Players} />
-            </Grid>
-            <Grid item xs="auto" sx={{ml: 'auto'}}>
-              <PlayerListMini players={overview.team2Players} />
-            </Grid>
+          <Grid item xs="auto" sx={{ml: 'auto'}}>
+            <Typography variant="h6">{dateStr}</Typography>
           </Grid>
-        </CardContent>
+        </Grid>
+      </CardContent>
+      <Grid container spacing={2}>
+        {overviews.map((overview, i) => (
+          <Grid item key={i}>
+            <CardActionArea
+              key={i}
+              onClick={() => navigate(`/map/${overview.mapId}`)}
+              sx={{
+                width: 300,
+                borderRadius: '5px',
+              }}>
+              <div style={{position: 'relative'}}>
+                <CardMedia
+                  component="img"
+                  image={mapNameToFileName(overview.mapName, false)}
+                  sx={{borderRadius: '5px'}}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '0',
+                    left: '0',
+                    width: '100%',
+                    height: '33%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    // justifyContent: 'center',
+                  }}>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                      // mixBlendMode: 'overlay',
+                      ml: 'auto',
+                      padding: '0.5em',
+                    }}>
+                    {overview.mapName}
+                  </Typography>
+                </div>
+              </div>
+              <CardContent>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '1em',
+                  }}
+                  component="div">
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      padding: '0.5em',
+                    }}>
+                    {overview.team1Score === overview.team2Score
+                      ? `Draw ${overview.team1Score} - ${overview.team2Score}`
+                      : overview.team1Score > overview.team2Score
+                      ? team1Name +
+                        ` Win ${overview.team1Score} - ${overview.team2Score}`
+                      : team2Name +
+                        ` Win ${overview.team2Score} - ${overview.team1Score}`}
+                  </Typography>
+                </Box>
 
-        <CardContent>
-          <Typography variant="h6">
-            {dayOfWeek + ', ' + new Date(overview.timestamp).toLocaleString()}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
+                <Grid container spacing={2}>
+                  <Grid item xs="auto">
+                    <PlayerListMini players={overview.team1Players} />
+                  </Grid>
+                  <Grid item xs="auto" sx={{ml: 'auto'}}>
+                    <PlayerListMini players={overview.team2Players} />
+                  </Grid>
+                </Grid>
+              </CardContent>
+              <CardContent>
+                <Typography variant="h6">
+                  {new Date(overview.timestamp).toLocaleTimeString()}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Grid>
+        ))}
+      </Grid>
     </Card>
   );
 };
 
 const MapList = () => {
-  const maps = useDataNode('map_overview');
+  const maps = useDataNode<MapOverview & {scrimId: number}>(
+    'map_overview_with_scrim_id',
+  );
   const {width} = useWindowSize();
   const columns = width > 1000 ? 4 : width > 600 ? 2 : 1;
   console.log('MapsList rendering', maps.getOutput());
 
   return (
     <>
-      <Masonry columns={columns} spacing={3} sx={{mx: 0}}>
-        <Card variant="outlined">
-          <CardContent>
-            <Typography variant="h2">Map Databank</Typography>
-            <Typography variant="h6">
-              Click on a map to see more details.
-            </Typography>
-          </CardContent>
-        </Card>
+      <Grid container spacing={2}>
+        <Grid item>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="h2">Map Databank</Typography>
+              <Typography variant="h6">
+                Click on a map to see more details.
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
         {maps && maps.getOutput() ? (
-          maps!.getOutput()!.map((map: MapOverview, i: number) => (
-            <div key={i}>
-              <MapOverviewComponent overview={map} />
-            </div>
+          Array.from(
+            maps
+              .getOutput()!
+              .reduce(
+                (entryMap, e) =>
+                  entryMap.set(e.scrimId, [
+                    ...(entryMap.get(e.scrimId) || []),
+                    e,
+                  ]),
+                new Map<number, MapOverview[]>(),
+              )
+              .entries(),
+          ).map(([scrimId, overviews]) => (
+            <Grid item key={scrimId}>
+              <ScrimOverview overviews={overviews} />
+            </Grid>
           ))
         ) : (
           <div>no data</div>
         )}
-      </Masonry>
+      </Grid>
     </>
   );
 };

@@ -1,4 +1,10 @@
-import {ObjectStoreNode, WriteNode, AlaSQLNode, DataNode} from './DataTypes';
+import {
+  ObjectStoreNode,
+  WriteNode,
+  AlaSQLNode,
+  DataNode,
+  PartitionNode,
+} from './DataTypes';
 
 interface BaseEvent {
   mapId: number;
@@ -408,6 +414,16 @@ where map_teams.teamName < map_teams2.teamName
       'map_teams_grouped',
     ],
   ),
+  new PartitionNode<MapOverview, {scrimId: string}>(
+    'map_overview_with_scrim_id',
+    'scrimId',
+    (map1: MapOverview, map2: MapOverview) => {
+      return (
+        map1.team1Name !== map2.team1Name || map1.team2Name !== map2.team2Name
+      );
+    },
+    'map_overview',
+  ),
   new AlaSQLNode<PlayerTimePlayed>(
     'player_time_played',
     `
@@ -472,33 +488,6 @@ where map_teams.teamName < map_teams2.teamName
   player_stat.playerHero
   `,
     ['player_stat_object_store'],
-  ),
-  new AlaSQLNode<MapOverview>(
-    'map_overview',
-    `
-      SELECT
-          match_start.mapId,
-          match_end.mapId,
-          match_start.mapName,
-          match_start.team1Name,
-          match_start.team2Name,
-          match_end.team1Score,
-          match_end.team2Score,
-          map_teams.team1Players,
-          map_teams.team2Players,
-          maps.name as fileName,
-          maps.fileModified as timestamp
-      FROM ? as match_start JOIN ? as match_end 
-      ON match_start.mapId = match_end.mapId 
-      JOIN ? as maps ON match_start.mapId = maps.mapId
-      JOIN ? as map_teams ON match_start.mapId = map_teams.mapId
-      `,
-    [
-      'match_start_object_store',
-      'match_end_object_store',
-      'maps_object_store',
-      'map_teams_grouped',
-    ],
   ),
   new AlaSQLNode<PlayerTimePlayed>(
     'player_time_played',
@@ -583,6 +572,7 @@ interface MapTeamsGrouped {
 
 export interface MapOverview {
   mapId: number;
+  scrimId: string;
   mapName: string;
   team1Name: string;
   team2Name: string;

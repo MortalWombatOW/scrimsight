@@ -250,3 +250,68 @@ export class AlaSQLNode<OutType> extends DataNode<OutType> {
     return this.getOutput() !== undefined;
   }
 }
+
+export class PartitionNode<T, PartitionFields> extends DataNode<
+  T & PartitionFields
+> {
+  private partitionKey: keyof PartitionFields;
+  private hasChange: (data1: T, data2: T) => boolean;
+  private source: DataNodeName;
+
+  constructor(
+    name: DataNodeName,
+    partitionKey: keyof PartitionFields,
+    hasChange: (data1: T, data2: T) => boolean,
+    source: DataNodeName,
+  ) {
+    super(name);
+    this.partitionKey = partitionKey;
+    this.hasChange = hasChange;
+    this.source = source;
+  }
+
+  runInner(sourceData?: T[][]): Promise<void> {
+    if (sourceData === undefined) {
+      throw new Error('Source data is undefined');
+    }
+
+    const output: (T & PartitionFields)[] = [];
+    // label the data with the partition key
+    let currentId = 0;
+    for (const [i, data1] of sourceData[0].entries()) {
+      const copy: T & PartitionFields = {
+        ...data1,
+        [this.partitionKey]: currentId,
+      } as T & PartitionFields;
+      console.log(copy);
+      output.push(copy);
+      const data2 = sourceData[0][i + 1];
+      if (data2 === undefined) {
+        break;
+      }
+      if (this.hasChange(data1, data2)) {
+        currentId++;
+      }
+    }
+    console.log(output);
+
+    this.setOutput(output);
+    return Promise.resolve();
+  }
+
+  getDependencies(): DataNodeName[] {
+    return [this.source];
+  }
+
+  toString(): string {
+    return `PartitionNode(${this.name})`;
+  }
+
+  canRun(): boolean {
+    return this.needsRun;
+  }
+
+  public hasOutput(): boolean {
+    return this.getOutput() !== undefined;
+  }
+}
