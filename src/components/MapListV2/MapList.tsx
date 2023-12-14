@@ -15,6 +15,7 @@ import {
   Avatar,
   Icon,
   AvatarGroup,
+  Popover,
 } from '@mui/material';
 import {MapOverview, ScrimPlayers} from '../../lib/data/NodeData';
 import IconAndText from '../Common/IconAndText';
@@ -24,25 +25,100 @@ import {mapNameToFileName} from '../../lib/string';
 import {useNavigate} from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/PersonOutline';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import {getColorgorical} from '../../lib/color';
+import {getColorFor, getColorgorical} from '../../lib/color';
 interface ScrimOverviewProps {
   scrimId: number;
   overviews: MapOverview[];
 }
 
+const PlayerHeroPopover = ({
+  playerName,
+  mapId,
+  hero,
+}: {
+  playerName: string;
+  mapId: number;
+  hero: string;
+}) => {
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
+  return (
+    <div>
+      <Avatar
+        alt={hero}
+        src={`/assets/heroes/${hero
+          .toLowerCase()
+          .replaceAll('.', '')
+          .replaceAll(' ', '')
+          .replaceAll(':', '')
+          .replaceAll('ú', 'u')
+          .replaceAll('ö', 'o')}.png`}
+        sx={{
+          width: 32,
+          height: 32,
+          bgcolor: getColorFor(
+            hero
+              .toLowerCase()
+              .replaceAll('.', '')
+              .replaceAll(' ', '')
+              .replaceAll(':', '')
+              .replaceAll('ú', 'u')
+              .replaceAll('ö', 'o'),
+          ),
+          border: 'none',
+        }}
+        aria-owns={open ? 'mouse-over-popover' : undefined}
+        aria-haspopup="true"
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+        variant="square"
+      />
+      <Popover
+        id="mouse-over-popover"
+        sx={{
+          pointerEvents: 'none',
+        }}
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus>
+        <Typography sx={{p: 1}}>I use Popover.</Typography>
+      </Popover>
+    </div>
+  );
+};
+
 const PlayerListMini = ({
   scrimId,
-  teamName,
+  mapId,
+  showRole,
 }: {
   scrimId: number;
-  teamName: string;
+  mapId: number;
+  showRole: boolean;
 }) => {
   const data = useDataNodeOutput<ScrimPlayers>('scrim_players', {
     scrimId,
-    teamName,
+    mapId,
   });
-
-  console.log('PlayerListMini rendering', data);
 
   return (
     <div
@@ -58,36 +134,53 @@ const PlayerListMini = ({
               display: 'flex',
               alignItems: 'center',
             }}>
-            <AvatarGroup spacing={2} max={10}>
-              <Avatar
-                alt={player.playerName}
+            {/* <AvatarGroup spacing={2} max={10}> */}
+            {showRole && (
+              <CardHeader
                 sx={{
-                  width: 32,
-                  height: 32,
-                  ml: '-0.5em',
-                  bgcolor: getColorgorical(teamName),
-                }}>
-                {getIcon(player.role)}
-              </Avatar>
+                  padding: '0',
+                  mr: '1em',
+                }}
+                avatar={
+                  <Avatar
+                    alt={player.playerName}
+                    sx={{
+                      width: 32,
+                      height: 32,
+
+                      bgcolor: getColorgorical(player.teamName),
+                    }}>
+                    {getIcon(player.role)}
+                  </Avatar>
+                }
+                title={player.playerName}
+                titleTypographyProps={{
+                  variant: 'h6',
+                  sx: {
+                    color: getColorgorical(player.teamName),
+                    fontWeight: 'bold',
+                  },
+                }}
+              />
+            )}
+            <Box
+              component="div"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                width: '100%',
+              }}>
               {player.heroes.map((hero, i) => (
-                <Avatar
+                <PlayerHeroPopover
                   key={i}
-                  alt={hero.hero}
-                  src={`/assets/heroes/${hero.hero
-                    .toLowerCase()
-                    .replaceAll('.', '')
-                    .replaceAll(' ', '')
-                    .replaceAll(':', '')
-                    .replaceAll('ú', 'u')
-                    .replaceAll('ö', 'o')}.png`}
-                  sx={{width: 32, height: 32}}
+                  playerName={player.playerName}
+                  mapId={mapId}
+                  hero={hero.hero}
                 />
               ))}
-            </AvatarGroup>
-
-            <Typography variant="h6" sx={{ml: '0.5em'}}>
-              {player.playerName}
-            </Typography>
+            </Box>
+            {/* </AvatarGroup> */}
           </div>
         ))
       ) : (
@@ -118,6 +211,8 @@ const ScrimOverview: React.FC<ScrimOverviewProps> = ({overviews, scrimId}) => {
       variant="elevation"
       sx={{
         backgroundColor: 'grey.900',
+        height: '100%',
+        justifyContent: 'space-between',
       }}>
       <CardContent
         sx={{
@@ -140,20 +235,7 @@ const ScrimOverview: React.FC<ScrimOverviewProps> = ({overviews, scrimId}) => {
           </Grid>
         </Grid>
       </CardContent>
-      <Grid container spacing={2}>
-        <Grid item xs="auto" sx={{color: team1Color, ml: '1em'}}>
-          <PlayerListMini
-            scrimId={new Number(scrimId).valueOf()}
-            teamName={team1Name}
-          />
-        </Grid>
-        <Grid item xs="auto" sx={{color: team2Color, mr: '1em'}}>
-          <PlayerListMini
-            scrimId={new Number(scrimId).valueOf()}
-            teamName={team2Name}
-          />
-        </Grid>
-      </Grid>
+
       <Grid
         container
         spacing={1}
@@ -170,13 +252,13 @@ const ScrimOverview: React.FC<ScrimOverviewProps> = ({overviews, scrimId}) => {
                 borderRadius: '5px',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
+                justifyContent: 'space-between',
               }}>
               <div style={{position: 'relative'}}>
                 <CardMedia
                   component="img"
                   image={mapNameToFileName(overview.mapName, false)}
-                  sx={{borderRadius: '5px', maxHeight: '100px', width: '200px'}}
+                  sx={{borderRadius: '5px', maxHeight: '150px', width: '200px'}}
                 />
 
                 <div
@@ -266,6 +348,11 @@ const ScrimOverview: React.FC<ScrimOverviewProps> = ({overviews, scrimId}) => {
                   </Box>
                 </div>
               </div>
+              <PlayerListMini
+                scrimId={new Number(scrimId).valueOf()}
+                mapId={overview.mapId}
+                showRole={i === 0}
+              />
             </CardActionArea>
           </Grid>
         ))}
@@ -287,10 +374,28 @@ const MapList = () => {
         <Grid item>
           <Card variant="outlined">
             <CardContent>
-              <Typography variant="h2">Map Databank</Typography>
-              <Typography variant="h6">
+              <Typography variant="h2" sx={{mb: '1em'}}>
+                View scrims
+              </Typography>
+              <Typography variant="body1" sx={{mb: '1em'}}>
                 Click on a map to see more details.
               </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs="auto">
+                  <Typography variant="h4" sx={{mb: '1em'}}>
+                    You've added{' '}
+                    {maps &&
+                      maps.getOutput() &&
+                      maps
+                        .getOutput()!
+                        .map((e) => e.scrimId)
+                        .filter((v, i, a) => a.indexOf(v) === i).length}{' '}
+                    scrims and{' '}
+                    {maps && maps.getOutput() && maps.getOutput()!.length} maps.
+                  </Typography>
+                </Grid>
+                <Grid item xs="auto"></Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Grid>
