@@ -1,19 +1,27 @@
 import {ColorInternal, ColorInternalHSL} from '../lib/data/types';
 
-const colorgorical12 = [
-  '#505f76',
-  '#18857f',
-  '#04451b',
-  '#57832e',
-  '#3b098b',
-  '#465fd8',
-  '#ca2dc5',
-  '#69345e',
-  '#7212ff',
-  '#94721a',
-  '#5a310c',
-  '#dc3c07',
+const colorgorical = [
+  '#78b4c6',
+  '#fd6ca0',
+  '#2cc18e',
+  '#eaa5c3',
+  '#a3c541',
+  '#c87ef8',
+  '#4ed31b',
+  '#fb57f9',
+  '#fd7450',
+  '#7d9af7',
 ];
+
+export const getColorgorical = (str: string): string => {
+  const index =
+    Math.abs(
+      str.split('').reduce((acc, char) => {
+        return acc + char.charCodeAt(0);
+      }, 0),
+    ) % colorgorical.length;
+  return colorgorical[index];
+};
 
 const parseHex = (hex: string): ColorInternal => {
   const r = parseInt(hex.substring(1, 3), 16);
@@ -64,7 +72,7 @@ export const groupColorClass = (group: string): string => {
 
 export const getColorPaletteOfSize = (size: number): string[] => {
   if (size <= 12) {
-    return colorgorical12.slice(0, size);
+    return colorgorical.slice(0, size);
   }
 
   const colors = interpolateColors('#505f76', '#dc3c07', size);
@@ -86,6 +94,7 @@ export const getColorFor = (key: string): string => {
     junkrat: '#ecbd53',
     lucio: '#85c952',
     cassidy: '#ae595c',
+    mauga: '#a37f5c',
     mei: '#6faced',
     mercy: '#ebe8bb',
     moira: '#803c51',
@@ -105,8 +114,6 @@ export const getColorFor = (key: string): string => {
     wreckingball: '#c09e74',
     zarya: '#e77eb6',
     zenyatta: '#ede582',
-    team1: '#566fdd',
-    team2: '#c76756',
   };
   return map[key];
 };

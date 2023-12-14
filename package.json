@@ -67,7 +67,7 @@
     "react-spinners": "^0.13.6",
     "react-spring": "^9.5.5",
     "react-use-draggable-scroll": "^0.4.7",
-    "recharts": "^2.1.14",
+    "recharts": "^2.10.3",
     "sass": "^1.55.0",
     "sass-loader": "^13.3.2",
     "stream-browserify": "^3.0.0",

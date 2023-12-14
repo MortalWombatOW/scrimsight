@@ -7,6 +7,7 @@ import {
   RoundEnd,
   RoundStart,
 } from '../lib/data/NodeData';
+import Timeline from './Timeline';
 
 const OverviewTimeline = ({mapId}: {mapId: number}) => {
   const kills = useDataNodeOutput<Kill>('kill_object_store', {mapId});
@@ -35,23 +36,21 @@ const OverviewTimeline = ({mapId}: {mapId: number}) => {
   const team1Name = matchStarts.length > 0 ? matchStarts[0].team1Name : '';
   const team2Name = matchStarts.length > 0 ? matchStarts[0].team2Name : '';
 
-  const timeToX = (time: number) => {
-    return (time / matchDuration) * width;
-  };
-
-  const xToTime = (x: number) => {
-    return (x / width) * matchDuration;
-  };
-
-  const teamToY = (team: string) => {
-    return team === team1Name ? 0 : height;
-  };
-
-  const yToTeam = (y: number) => {
-    return y < height / 2 ? team1Name : team2Name;
-  };
-
-  return <div style={{position: 'relative', width}}>fsdf</div>;
+  console.log(kills);
+  return (
+    <Timeline
+      lanes={[team1Name, team2Name]}
+      events={kills.map((k) => ({
+        lane: k.attackerTeam,
+        time: k.matchTime,
+        icon: <div>{k.attackerName}</div>,
+      }))}
+      metrics={[]}
+      periods={[]}
+      width={width}
+      heightPerLane={height}
+    />
+  );
 };
 
 export default OverviewTimeline;

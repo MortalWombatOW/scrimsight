@@ -34,7 +34,8 @@ const MapPage = () => {
   return (
     <div style={{margin: '1em'}}>
       <Header filters={{}} setFilters={() => {}} />
-      <LayoutContainer
+      <OverviewTimeline mapId={Number.parseInt(mapId, 10)} />
+      {/* <LayoutContainer
         elements={[
           {
             title: 'Timeline',
@@ -42,7 +43,7 @@ const MapPage = () => {
           },
           ...elements,
         ]}
-      />
+      /> */}
     </div>
   );
 };

@@ -424,6 +424,7 @@ where map_teams.teamName < map_teams2.teamName
     },
     'map_overview',
   ),
+
   new AlaSQLNode<PlayerTimePlayed>(
     'player_time_played',
     `
@@ -553,6 +554,96 @@ where map_teams.teamName < map_teams2.teamName
   player_stat.playerHero
   `,
     ['player_stat_object_store'],
+  ),
+  new AlaSQLNode<ScrimPlayersHeroesRoles>(
+    'scrim_players_heroes_roles',
+    `
+      SELECT 
+        map_overview_with_scrim_id.scrimId,
+        player_stat_formatted.playerTeam as teamName,
+        player_stat_formatted.playerName,
+        ARRAY(CASE 
+          WHEN player_stat_formatted.playerHero = 'Mauga' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'D.Va' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Orisa' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Reinhardt' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Roadhog' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Sigma' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Winston' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Wrecking Ball' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Zarya' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Doomfist' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Junker Queen' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Rammatra' THEN 'tank'
+          WHEN player_stat_formatted.playerHero = 'Ashe' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Bastion' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Cassidy' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Echo' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Genji' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Hanzo' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Junkrat' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Mei' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Pharah' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Reaper' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Soldier: 76' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Sojourn' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Sombra' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Symmetra' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Torbjörn' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Tracer' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Widowmaker' THEN 'damage'
+          WHEN player_stat_formatted.playerHero = 'Ana' THEN 'support'
+          WHEN player_stat_formatted.playerHero = 'Baptiste' THEN 'support'
+          WHEN player_stat_formatted.playerHero = 'Brigitte' THEN 'support'
+          WHEN player_stat_formatted.playerHero = 'Lúcio' THEN 'support'
+          WHEN player_stat_formatted.playerHero = 'Mercy' THEN 'support'
+          WHEN player_stat_formatted.playerHero = 'Moira' THEN 'support'
+          WHEN player_stat_formatted.playerHero = 'Zenyatta' THEN 'support'
+          WHEN player_stat_formatted.playerHero = 'Lifeweaver' THEN 'support'
+          WHEN player_stat_formatted.playerHero = 'Illari' THEN 'support'
+          WHEN player_stat_formatted.playerHero = 'Kiriko' THEN 'support'
+          ELSE 'unknown' 
+        END)->0 as role,
+        player_stat_formatted.playerHero as hero,
+        sum(player_stat_formatted.finalBlows) as finalBlows,
+        sum(player_stat_formatted.deaths) as deaths,
+        sum(player_stat_formatted.heroDamageDealt) as damage,
+        sum(player_stat_formatted.shotsFired) as shotsFired,
+        sum(player_stat_formatted.shotsHit) / sum(player_stat_formatted.shotsFired) as accuracy
+from ? as map_overview_with_scrim_id join ? as player_stat_formatted
+on map_overview_with_scrim_id.mapId = player_stat_formatted.mapId
+group by map_overview_with_scrim_id.scrimId, player_stat_formatted.playerTeam, player_stat_formatted.playerName, player_stat_formatted.playerHero
+having sum(player_stat_formatted.shotsFired) > 0
+order by map_overview_with_scrim_id.scrimId, player_stat_formatted.playerTeam, role desc, player_stat_formatted.playerName
+`,
+    ['map_overview_with_scrim_id', 'player_stat_formatted'],
+  ),
+  new AlaSQLNode<ScrimPlayers>(
+    'scrim_players',
+    `
+      SELECT 
+        scrim_players_heroes_roles.scrimId,
+        scrim_players_heroes_roles.teamName,
+        scrim_players_heroes_roles.playerName,
+        scrim_players_heroes_roles.role,
+        array({
+          hero: scrim_players_heroes_roles.hero,
+          finalBlows: scrim_players_heroes_roles.finalBlows,
+          deaths: scrim_players_heroes_roles.deaths,
+          damage: scrim_players_heroes_roles.damage,
+          accuracy: scrim_players_heroes_roles.accuracy, 
+          shotsFired: scrim_players_heroes_roles.shotsFired
+        }) as heroes
+      from ? as scrim_players_heroes_roles
+      group by scrim_players_heroes_roles.scrimId, scrim_players_heroes_roles.teamName,
+      scrim_players_heroes_roles.playerName, scrim_players_heroes_roles.role
+      order by scrim_players_heroes_roles.scrimId, scrim_players_heroes_roles.teamName, 
+      case when scrim_players_heroes_roles.role = 'tank' then 1 
+      when scrim_players_heroes_roles.role = 'damage' then 2 
+      when scrim_players_heroes_roles.role = 'support' then 3 
+      else 4 end, scrim_players_heroes_roles.playerName
+      `,
+    ['scrim_players_heroes_roles'],
   ),
 ];
 
@@ -582,6 +673,31 @@ export interface MapOverview {
   team2Players: string[];
   timestamp: number;
   fileName: string;
+}
+
+export interface ScrimPlayersHeroesRoles {
+  scrimId: string;
+  teamName: string;
+  playerName: string;
+  role: string;
+  hero: string;
+  finalBlows: number;
+  deaths: number;
+}
+
+export interface ScrimPlayers {
+  scrimId: string;
+  teamName: string;
+  playerName: string;
+  role: string;
+  heroes: {
+    hero: string;
+    finalBlows: number;
+    deaths: number;
+    damage: number;
+    accuracy: number;
+    shotsFired: number;
+  }[];
 }
 
 interface PlayerTimePlayed {

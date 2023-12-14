@@ -296,6 +296,7 @@ export class PartitionNode<T, PartitionFields> extends DataNode<
     console.log(output);
 
     this.setOutput(output);
+    this.getLatestExecution().complete(sourceData[0].length, output.length);
     return Promise.resolve();
   }
 
