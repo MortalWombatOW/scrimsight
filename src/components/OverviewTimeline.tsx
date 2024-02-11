@@ -1,5 +1,5 @@
 import React from 'react';
-import {useDataNodeOutput} from '../hooks/useData';
+import {useDataNodeOutput, useDataNodes} from '../hooks/useData';
 import {
   Kill,
   MatchEnd,
@@ -8,23 +8,56 @@ import {
   RoundStart,
 } from '../lib/data/NodeData';
 import Timeline from './Timeline';
+import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 
 const OverviewTimeline = ({mapId}: {mapId: number}) => {
-  const kills = useDataNodeOutput<Kill>('kill_object_store', {mapId});
-  const matchStarts = useDataNodeOutput<MatchStart>(
-    'match_start_object_store',
-    {mapId},
-  );
-  const matchEnds = useDataNodeOutput<MatchEnd>('match_end_object_store', {
-    mapId,
-  });
-  const roundStarts = useDataNodeOutput<RoundStart>(
-    'round_start_object_store',
-    {mapId},
-  );
-  const roundEnds = useDataNodeOutput<RoundEnd>('round_end_object_store', {
-    mapId,
-  });
+  const {
+    kills_for_overview_timeline: kills,
+    match_start_for_overview_timeline: matchStarts,
+    match_end_for_overview_timeline: matchEnds,
+    round_start_for_overview_timeline: roundStarts,
+    round_end_for_overview_timeline: roundEnds,
+  } = useDataNodes([
+    new AlaSQLNode<Kill>(
+      'kills_for_overview_timeline',
+      `SELECT
+        kill_object_store.*
+      FROM ? AS kill_object_store`,
+      ['kill_object_store'],
+    ),
+    new AlaSQLNode<MatchStart>(
+      'match_start_for_overview_timeline',
+      `SELECT
+        match_start_object_store.*
+      FROM ? AS match_start_object_store`,
+      ['match_start_object_store'],
+    ),
+    new AlaSQLNode<MatchEnd>(
+      'match_end_for_overview_timeline',
+      `SELECT
+        match_end_object_store.*
+      FROM ? AS match_end_object_store`,
+      ['match_end_object_store'],
+    ),
+    new AlaSQLNode<RoundStart>(
+      'round_start_for_overview_timeline',
+      `SELECT
+        round_start_object_store.*
+      FROM ? AS round_start_object_store`,
+      ['round_start_object_store'],
+    ),
+    new AlaSQLNode<RoundEnd>(
+      'round_end_for_overview_timeline',
+      `SELECT
+        round_end_object_store.*
+      FROM ? AS round_end_object_store`,
+      ['round_end_object_store'],
+    ),
+  ]);
+
+  if (!kills || !matchStarts || !matchEnds) {
+    return <div>Loading...</div>;
+  }
 
   const width = 1000;
   const height = 300;

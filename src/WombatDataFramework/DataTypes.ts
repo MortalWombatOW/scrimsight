@@ -1,5 +1,5 @@
 import {node} from 'webpack';
-import {getData, storeObjectInDatabase} from './database';
+import {getData, storeObjectInDatabase} from '../lib/data/database';
 import alasql from 'alasql';
 
 export type DataNodeName = string;

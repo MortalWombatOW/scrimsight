@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useRef} from 'react';
-import {useDataManager} from '../../lib/data/DataContext';
+import {useDataManager} from '../../WombatDataFramework/DataContext';
 import {
   AlaSQLNode,
   DataNode,
   ObjectStoreNode,
   WriteNode,
-} from '../../lib/data/DataTypes';
+} from '../../WombatDataFramework/DataTypes';
 import NetworkDisplay from './NetworkDisplay';
 import DisplayNode from './DisplayNode';
 import {useDataNode} from '../../hooks/useData';

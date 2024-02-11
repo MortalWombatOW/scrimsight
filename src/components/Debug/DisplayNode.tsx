@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {DataNode, DataNodeMetadata} from '../../lib/data/DataTypes';
+import {DataNode, DataNodeMetadata} from '../../WombatDataFramework/DataTypes';
 
 import {
   Card,

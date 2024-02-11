@@ -1,6 +1,6 @@
 import {useEffect, useState, useContext} from 'react';
-import {DataContext} from '../lib/data/DataContext'; // Make sure to import GraphContext
-import {DataNode, DataNodeName} from '../lib/data/DataTypes';
+import {DataContext} from '../WombatDataFramework/DataContext'; // Make sure to import GraphContext
+import {DataNode, DataNodeName} from '../WombatDataFramework/DataTypes';
 
 export const useData = (nodeNames: DataNodeName[]) => {
   const dataManager = useContext(DataContext);
@@ -21,6 +21,42 @@ export const useData = (nodeNames: DataNodeName[]) => {
 
     fetchData();
   }, [nodeNames, dataManager]);
+
+  return data;
+};
+
+export const useDataNodes = (
+  nodes: DataNode<any>[],
+): {[name: string]: any[] | undefined} => {
+  const dataManager = useContext(DataContext);
+  const [data, setData] = useState<{[name: string]: any[] | undefined}>({});
+  const [tick, setTick] = useState(0);
+
+  if (!dataManager) {
+    throw new Error('useDataNodes must be used within a GraphProvider');
+  }
+
+  dataManager.setNodes(nodes);
+  for (const node of nodes) {
+    dataManager.addNodeCallback(node.getName(), () => {
+      setTick((tick) => tick + 1);
+    });
+  }
+  dataManager.process();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const newData: {[name: string]: any[] | undefined} = {};
+      for (const node of nodes) {
+        newData[node.getName()] = dataManager.getNodeOutputOrDie(
+          node.getName(),
+        );
+      }
+      setData(newData);
+    };
+
+    fetchData();
+  }, [nodes, dataManager]);
 
   return data;
 };

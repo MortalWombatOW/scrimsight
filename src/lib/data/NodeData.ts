@@ -4,7 +4,7 @@ import {
   AlaSQLNode,
   DataNode,
   PartitionNode,
-} from './DataTypes';
+} from '../../WombatDataFramework/DataTypes';
 
 interface BaseEvent {
   mapId: number;
@@ -424,7 +424,6 @@ where map_teams.teamName < map_teams2.teamName
     },
     'map_overview',
   ),
-
   new AlaSQLNode<PlayerTimePlayed>(
     'player_time_played',
     `
@@ -500,59 +499,6 @@ where map_teams.teamName < map_teams2.teamName
       FROM ? as player_stat
       GROUP BY player_stat.playerName, player_stat.playerTeam
       `,
-    ['player_stat_object_store'],
-  ),
-  new AlaSQLNode<PlayerStatFormatted>(
-    'player_stat_formatted',
-    `
-  SELECT
-      player_stat.mapId,
-      player_stat.roundNumber,
-      player_stat.playerTeam,
-      player_stat.playerName,
-      player_stat.playerHero,
-      player_stat.eliminations,
-      player_stat.finalBlows,
-      player_stat.deaths,
-      player_stat.allDamageDealt,
-      player_stat.barrierDamageDealt,
-      player_stat.heroDamageDealt,
-      player_stat.healingDealt,
-      player_stat.healingReceived,
-      player_stat.selfHealing,
-      player_stat.damageTaken,
-      player_stat.damageBlocked,
-      player_stat.defensiveAssists,
-      player_stat.offensiveAssists,
-      player_stat.ultimatesEarned,
-      player_stat.ultimatesUsed,
-      player_stat.multikillBest,
-      player_stat.multikills,
-      player_stat.soloKills,
-      player_stat.objectiveKills,
-      player_stat.environmentalKills,
-      player_stat.environmentalDeaths,
-      player_stat.criticalHits,
-      player_stat.criticalHitAccuracy,
-      player_stat.scopedAccuracy,
-      player_stat.scopedCriticalHitAccuracy,
-      player_stat.scopedCriticalHitKills,
-      player_stat.shotsFired,
-      player_stat.shotsHit,
-      player_stat.shotsMissed,
-      player_stat.scopedShotsFired,
-      player_stat.scopedShotsHit,
-      player_stat.weaponAccuracy,
-      player_stat.heroTimePlayed
-  FROM ? as player_stat
-  order by
-  player_stat.mapId,
-  player_stat.roundNumber,
-  player_stat.playerTeam,
-  player_stat.playerName,
-  player_stat.heroTimePlayed desc,
-  player_stat.playerHero
-  `,
     ['player_stat_object_store'],
   ),
   new AlaSQLNode<ScrimPlayersHeroesRoles>(
@@ -560,7 +506,53 @@ where map_teams.teamName < map_teams2.teamName
     `
       SELECT 
         map_overview_with_scrim_id.scrimId,
+        ARRAY(if(map_overview_with_scrim_id.team1Name = player_stat_formatted.playerTeam, 1, 2))->0 as teamNumber,
+
+        ARRAY(CASE 
+          WHEN player_stat_formatted.playerHero = 'Mauga' THEN 1
+          WHEN player_stat_formatted.playerHero = 'D.Va' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Orisa' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Reinhardt' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Roadhog' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Sigma' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Winston' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Wrecking Ball' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Zarya' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Doomfist' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Junker Queen' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Rammatra' THEN 1
+          WHEN player_stat_formatted.playerHero = 'Ashe' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Bastion' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Cassidy' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Echo' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Genji' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Hanzo' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Junkrat' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Mei' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Pharah' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Reaper' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Soldier: 76' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Sojourn' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Sombra' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Symmetra' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Torbjörn' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Tracer' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Widowmaker' THEN 2
+          WHEN player_stat_formatted.playerHero = 'Ana' THEN 3
+          WHEN player_stat_formatted.playerHero = 'Baptiste' THEN 3
+          WHEN player_stat_formatted.playerHero = 'Brigitte' THEN 3
+          WHEN player_stat_formatted.playerHero = 'Lúcio' THEN 3
+          WHEN player_stat_formatted.playerHero = 'Mercy' THEN 3
+          WHEN player_stat_formatted.playerHero = 'Moira' THEN 3
+          WHEN player_stat_formatted.playerHero = 'Zenyatta' THEN 3
+          WHEN player_stat_formatted.playerHero = 'Lifeweaver' THEN 3
+          WHEN player_stat_formatted.playerHero = 'Illari' THEN 3
+          WHEN player_stat_formatted.playerHero = 'Kiriko' THEN 3
+          ELSE 4
+        END)->0 as roleNumber,
+        player_stat_formatted.mapId as mapId,
         player_stat_formatted.playerTeam as teamName,
+        map_overview_with_scrim_id.team1Name as team1Name,
         player_stat_formatted.playerName,
         ARRAY(CASE 
           WHEN player_stat_formatted.playerHero = 'Mauga' THEN 'tank'
@@ -612,38 +604,15 @@ where map_teams.teamName < map_teams2.teamName
         sum(player_stat_formatted.shotsHit) / sum(player_stat_formatted.shotsFired) as accuracy
 from ? as map_overview_with_scrim_id join ? as player_stat_formatted
 on map_overview_with_scrim_id.mapId = player_stat_formatted.mapId
-group by map_overview_with_scrim_id.scrimId, player_stat_formatted.playerTeam, player_stat_formatted.playerName, player_stat_formatted.playerHero
+group by map_overview_with_scrim_id.scrimId,
+player_stat_formatted.mapId,
+player_stat_formatted.playerTeam,
+map_overview_with_scrim_id.team1Name,
+player_stat_formatted.playerName,
+player_stat_formatted.playerHero
 having sum(player_stat_formatted.shotsFired) > 0
-order by map_overview_with_scrim_id.scrimId, player_stat_formatted.playerTeam, role desc, player_stat_formatted.playerName
 `,
     ['map_overview_with_scrim_id', 'player_stat_formatted'],
-  ),
-  new AlaSQLNode<ScrimPlayers>(
-    'scrim_players',
-    `
-      SELECT 
-        scrim_players_heroes_roles.scrimId,
-        scrim_players_heroes_roles.teamName,
-        scrim_players_heroes_roles.playerName,
-        scrim_players_heroes_roles.role,
-        array({
-          hero: scrim_players_heroes_roles.hero,
-          finalBlows: scrim_players_heroes_roles.finalBlows,
-          deaths: scrim_players_heroes_roles.deaths,
-          damage: scrim_players_heroes_roles.damage,
-          accuracy: scrim_players_heroes_roles.accuracy, 
-          shotsFired: scrim_players_heroes_roles.shotsFired
-        }) as heroes
-      from ? as scrim_players_heroes_roles
-      group by scrim_players_heroes_roles.scrimId, scrim_players_heroes_roles.teamName,
-      scrim_players_heroes_roles.playerName, scrim_players_heroes_roles.role
-      order by scrim_players_heroes_roles.scrimId, scrim_players_heroes_roles.teamName, 
-      case when scrim_players_heroes_roles.role = 'tank' then 1 
-      when scrim_players_heroes_roles.role = 'damage' then 2 
-      when scrim_players_heroes_roles.role = 'support' then 3 
-      else 4 end, scrim_players_heroes_roles.playerName
-      `,
-    ['scrim_players_heroes_roles'],
   ),
 ];
 
@@ -686,10 +655,13 @@ export interface ScrimPlayersHeroesRoles {
 }
 
 export interface ScrimPlayers {
-  scrimId: string;
+  scrimId: number;
+  mapId: number;
   teamName: string;
+  teamNumber: number;
   playerName: string;
   role: string;
+  roleNumber: number;
   heroes: {
     hero: string;
     finalBlows: number;

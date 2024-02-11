@@ -4,8 +4,8 @@ import {Button} from '@mui/material';
 import UploadProgressModal from './UploadProgressModal';
 import {FileUpload} from 'lib/data/types';
 import {uploadFile} from 'lib/data/uploadfile';
-import {DataManager} from '../../lib/data/DataManager';
-import {useDataManager} from '../../lib/data/DataContext';
+import {DataManager} from '../../WombatDataFramework/DataManager';
+import {useDataManager} from '../../WombatDataFramework/DataContext';
 
 interface UploaderProps {
   refreshCallback?: () => void;

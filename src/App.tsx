@@ -13,13 +13,14 @@ import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 import routes from './lib/routes';
 import {themeDef} from './theme';
 
-import {DataProvider} from './lib/data/DataContext';
+import {DataProvider} from './WombatDataFramework/DataContext';
 
 const theme = createTheme(themeDef);
 
 const App = () => {
   const [tick, setTick] = React.useState(0);
   const incrementTick = () => {
+    console.log('apptick', tick);
     setTick((tick) => tick + 1);
   };
   return (
@@ -37,7 +38,7 @@ const App = () => {
                     <Route
                       key={path}
                       path={path}
-                      index={((i === 0) as unknown) as false}
+                      index={(i === 0) as unknown as false}
                       element={<route.component />}
                     />
                   )),

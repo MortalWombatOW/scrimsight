@@ -5,9 +5,8 @@ export class DataManager {
   private changeCallback: () => void;
   private nodeCallbacks: Map<DataNodeName, () => void>;
 
-  constructor(nodes: DataNode<any>[], changeCallback: () => void) {
+  constructor(changeCallback: () => void) {
     this.nodes = new Map();
-    nodes.forEach((node) => this.nodes.set(node.getName(), node));
     this.changeCallback = changeCallback;
     this.nodeCallbacks = new Map();
   }
@@ -54,6 +53,16 @@ export class DataManager {
       if (this.nodeCallbacks.has(name)) {
         this.nodeCallbacks.get(name)!();
       }
+    }
+  }
+
+  setNode(node: DataNode<any>): void {
+    this.nodes.set(node.getName(), node);
+  }
+
+  setNodes(nodes: DataNode<any>[]): void {
+    for (const node of nodes) {
+      this.setNode(node);
     }
   }
 

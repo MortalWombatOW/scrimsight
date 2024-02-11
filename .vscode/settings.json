@@ -2,8 +2,7 @@
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true
-    // "eslint.executeAutofix": true
+    "source.fixAll": "explicit"
   },
   "files.eol": "\n",
   "typescript.preferences.importModuleSpecifier": "relative",

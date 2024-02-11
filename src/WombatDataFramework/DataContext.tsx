@@ -1,17 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {DataManager} from './DataManager';
-import {NODES} from './NodeData';
+import {NODES} from '../lib/data/NodeData';
 
 const DataContext = React.createContext<DataManager | null>(null);
 
 const DataProvider = ({children, globalTick, updateGlobalCallback}) => {
-  const dataManager = useState(
-    () => new DataManager(NODES, updateGlobalCallback),
-  )[0];
-
+  const dataManager = useState(() => new DataManager(updateGlobalCallback))[0];
+  dataManager.setNodes(NODES);
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Processing data, tick = ', globalTick);
       await dataManager.process();
     };
 
