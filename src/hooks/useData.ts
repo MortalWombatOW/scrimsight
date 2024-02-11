@@ -36,27 +36,31 @@ export const useDataNodes = (
     throw new Error('useDataNodes must be used within a GraphProvider');
   }
 
-  dataManager.setNodes(nodes);
-  for (const node of nodes) {
-    dataManager.addNodeCallback(node.getName(), () => {
-      setTick((tick) => tick + 1);
-    });
-  }
-  dataManager.process();
+  useEffect(() => {
+    dataManager.setNodes(nodes);
+    for (const node of nodes) {
+      dataManager.addNodeCallback(node.getName(), () => {
+        setTick((tick) => tick + 1);
+      });
+    }
+    dataManager.process();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       const newData: {[name: string]: any[] | undefined} = {};
       for (const node of nodes) {
-        newData[node.getName()] = dataManager.getNodeOutputOrDie(
-          node.getName(),
-        );
+        newData[node.getName()] = dataManager
+          .getNodeOrDie(node.getName())
+          .getOutput();
       }
       setData(newData);
     };
 
     fetchData();
-  }, [nodes, dataManager]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick]);
 
   return data;
 };

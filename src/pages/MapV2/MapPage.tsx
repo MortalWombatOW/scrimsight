@@ -94,13 +94,13 @@ const MapPage = () => {
   return (
     <div style={{margin: '1em'}}>
       <Header filters={{}} setFilters={() => {}} />
-      <OverviewTimeline mapId={Number.parseInt(mapId, 10)} />
+      {/* <OverviewTimeline mapId={Number.parseInt(mapId, 10)} /> */}
       <LayoutContainer
         elements={[
-          {
-            title: 'Timeline',
-            content: <OverviewTimeline mapId={Number.parseInt(mapId, 10)} />,
-          },
+          // {
+          //   title: 'Timeline',
+          //   content: <OverviewTimeline mapId={Number.parseInt(mapId, 10)} />,
+          // },
           ...elements,
         ]}
       />

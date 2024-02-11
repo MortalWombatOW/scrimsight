@@ -53,7 +53,15 @@ const Header = ({
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar
+          disableGutters
+          sx={{
+            borderBottom: '2px solid transparent',
+            borderImage:
+              'linear-gradient(90deg,hsl(0deg 0% 7%) 0%,hsl(231deg 40% 46%) 25%,hsl(311deg 24% 53%) 50%,hsl(9deg 38% 43%) 75%,hsl(0deg 0% 7%) 100%)',
+            borderImageSlice: 1,
+            marginBottom: '16px',
+          }}>
           <Typography
             variant="h3"
             noWrap

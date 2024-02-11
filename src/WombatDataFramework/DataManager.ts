@@ -51,12 +51,16 @@ export class DataManager {
       console.log(`Node ${name} finished, data:`, node.getOutput());
       // console.groupEnd();
       if (this.nodeCallbacks.has(name)) {
+        console.log(`Executing callback for ${name}`);
         this.nodeCallbacks.get(name)!();
       }
     }
   }
 
   setNode(node: DataNode<any>): void {
+    if (this.nodes.has(node.getName())) {
+      return;
+    }
     this.nodes.set(node.getName(), node);
   }
 
