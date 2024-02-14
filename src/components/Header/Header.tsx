@@ -75,6 +75,7 @@ const Header = ({
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
+              fontSize: '25px',
             }}>
             scrimsight
           </Typography>

@@ -29,6 +29,11 @@ const onCompleted = (e) => {
     autoIncrement: true,
   }).createIndex('id', 'id', {unique: true});
 
+  db.createObjectStore('vods', {
+    keyPath: 'id',
+    autoIncrement: true,
+  }).createIndex('mapId', 'mapId', {unique: false});
+
   Object.keys(LOG_SPEC).forEach((key) => {
     db.createObjectStore(key, {
       keyPath: 'id',

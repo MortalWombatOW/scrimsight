@@ -8,6 +8,9 @@ import OverviewTimeline from '../../components/OverviewTimeline';
 import DebugNodeGraph from '../../components/Debug/DebugNodeGraph';
 import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../../hooks/useData';
+import MapPlayerTable from '../../components/MapPlayerTable';
+import MapSummary from '../../components/MapSummary';
+import {Container} from '@mui/material';
 
 const MapPage = () => {
   const {player_stat_formatted} = useDataNodes([
@@ -67,43 +70,22 @@ const MapPage = () => {
   const params = useParams<{mapId: string}>();
   const mapId: string = params.mapId!;
 
-  // const stats = useDataNodeOutput<PlayerStatFormatted>(
-  //   'player_stat_formatted',
-  // ).filter((stat) => stat.mapId === Number.parseInt(mapId, 10));
-
-  console.log('player_stat_formatted', player_stat_formatted);
   if (player_stat_formatted === undefined) {
     return <div>Loading...</div>;
   }
 
   console.log(mapId, player_stat_formatted);
 
-  const elements = player_stat_formatted.map((stat) => ({
-    title: stat.playerName,
-    content: (
-      <div>
-        <div>{stat.playerHero}</div>
-        <div>{stat.eliminations}</div>
-        <div>{stat.deaths}</div>
-        <div>{stat.allDamageDealt}</div>
-        <div>{stat.healingDealt}</div>
-      </div>
-    ),
-  }));
-
   return (
     <div style={{margin: '1em'}}>
       <Header filters={{}} setFilters={() => {}} />
-      {/* <OverviewTimeline mapId={Number.parseInt(mapId, 10)} /> */}
-      <LayoutContainer
-        elements={[
-          // {
-          //   title: 'Timeline',
-          //   content: <OverviewTimeline mapId={Number.parseInt(mapId, 10)} />,
-          // },
-          ...elements,
-        ]}
-      />
+      <Container maxWidth="xl">
+        <MapSummary mapId={Number.parseInt(mapId, 10)} />
+
+        <MapPlayerTable mapId={Number.parseInt(mapId, 10)} />
+
+        {/* <OverviewTimeline mapId={Number.parseInt(mapId, 10)} /> */}
+      </Container>
     </div>
   );
 };
