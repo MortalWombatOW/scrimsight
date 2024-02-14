@@ -114,6 +114,12 @@ export const getColorFor = (key: string): string => {
     wreckingball: '#c09e74',
     zarya: '#e77eb6',
     zenyatta: '#ede582',
+    illari: '#f3d19c',
+    junkerqueen: '#7c8f7b',
+    rammatra: '#be736e',
+    lifeweaver: '#F0A3A5',
+    kiriko: '#ed93c7',
+    sojourn: '#815049',
   };
   return map[key] || 'red';
 };

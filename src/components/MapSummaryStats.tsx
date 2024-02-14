@@ -2,9 +2,61 @@ import {Box, Grid, Typography} from '@mui/material';
 import React from 'react';
 import {useDataNodes} from '../hooks/useData';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {PieChart} from '@mui/x-charts/PieChart';
+import {PieChart, pieArcLabelClasses} from '@mui/x-charts/PieChart';
 import {getColorgorical} from '../lib/color';
 import {useDrawingArea} from '@mui/x-charts/hooks';
+
+const StatPieChart = ({data, label}: {data: any; label: string}) => {
+  return (
+    <PieChart
+      series={[
+        {
+          data,
+          arcLabel: (d) => `${Math.floor(d.value).toLocaleString()}`,
+          innerRadius: 30,
+          outerRadius: 60,
+          paddingAngle: 2,
+          cornerRadius: 5,
+          startAngle: -120,
+          endAngle: 120,
+          cx: 100,
+          cy: 100,
+          valueFormatter: (d) => d.value.toLocaleString(),
+          highlightScope: {
+            faded: `global`,
+            highlighted: `item`,
+          },
+          faded: {
+            innerRadius: 30,
+            additionalRadius: -5,
+          },
+        },
+      ]}
+      sx={{
+        [`& .${pieArcLabelClasses.root}`]: {
+          fill: 'white',
+          fontWeight: 'bold',
+          textShadow:
+            '-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000',
+        },
+      }}
+      slotProps={{legend: {hidden: true}}}
+      height={200}
+      width={200}>
+      <text
+        x={107}
+        y={150}
+        textAnchor="middle"
+        dominantBaseline="central"
+        style={{
+          fontSize: 20,
+          fill: 'white',
+        }}>
+        {label}
+      </text>
+    </PieChart>
+  );
+};
 
 const MapSummaryStats = ({mapId}: {mapId: number}) => {
   const data = useDataNodes([
@@ -48,12 +100,12 @@ const MapSummaryStats = ({mapId}: {mapId: number}) => {
   );
   const pieKillsData = [
     {
-      name: team1.playerTeam,
+      label: team1.playerTeam,
       color: getColorgorical(team1.playerTeam),
       value: team1.finalBlows,
     },
     {
-      name: team2.playerTeam,
+      label: team2.playerTeam,
       color: getColorgorical(team2.playerTeam),
       value: team2.finalBlows,
     },
@@ -61,12 +113,12 @@ const MapSummaryStats = ({mapId}: {mapId: number}) => {
 
   const pieDmgData = [
     {
-      name: team1.playerTeam,
+      label: team1.playerTeam,
       color: getColorgorical(team1.playerTeam),
       value: team1.allDamageDealt,
     },
     {
-      name: team2.playerTeam,
+      label: team2.playerTeam,
       color: getColorgorical(team2.playerTeam),
       value: team2.allDamageDealt,
     },
@@ -74,12 +126,12 @@ const MapSummaryStats = ({mapId}: {mapId: number}) => {
 
   const pieHealingData = [
     {
-      name: team1.playerTeam,
+      label: team1.playerTeam,
       color: getColorgorical(team1.playerTeam),
       value: team1.healingDealt,
     },
     {
-      name: team2.playerTeam,
+      label: team2.playerTeam,
       color: getColorgorical(team2.playerTeam),
       value: team2.healingDealt,
     },
@@ -93,82 +145,13 @@ const MapSummaryStats = ({mapId}: {mapId: number}) => {
       alignItems={'center'}
       justifyContent={'center'}>
       <Grid item xs={4}>
-        <PieChart
-          series={[
-            {
-              data: pieKillsData,
-              arcLabel: (d) => `${d.value}`,
-              innerRadius: 30,
-              outerRadius: 60,
-              paddingAngle: 2,
-              cornerRadius: 5,
-              startAngle: -120,
-              endAngle: 120,
-              cx: 100,
-              cy: 100,
-              highlightScope: {
-                faded: `global`,
-                highlighted: `item`,
-              },
-              faded: {innerRadius: 30, additionalRadius: -10},
-            },
-          ]}
-          height={200}
-          width={200}
-        />
-        <Typography variant="h6">Final Blows</Typography>
+        <StatPieChart data={pieKillsData} label="Kills" />
       </Grid>
       <Grid item xs={4}>
-        <PieChart
-          series={[
-            {
-              data: pieDmgData,
-              arcLabel: (d) => `${d.value.toLocaleString()}`,
-              innerRadius: 30,
-              outerRadius: 60,
-              paddingAngle: 2,
-              cornerRadius: 5,
-              startAngle: -120,
-              endAngle: 120,
-              cx: 100,
-              cy: 100,
-              highlightScope: {
-                faded: `global`,
-                highlighted: `item`,
-              },
-              faded: {innerRadius: 30, additionalRadius: -10},
-            },
-          ]}
-          height={200}
-          width={200}
-        />
-        <Typography variant="h6"> Damage Dealt</Typography>
+        <StatPieChart data={pieDmgData} label="Damage" />
       </Grid>
       <Grid item xs={4}>
-        <PieChart
-          series={[
-            {
-              data: pieHealingData,
-              arcLabel: (d) => `${d.value.toLocaleString()}`,
-              innerRadius: 30,
-              outerRadius: 60,
-              paddingAngle: 2,
-              cornerRadius: 5,
-              startAngle: -120,
-              endAngle: 120,
-              cx: 100,
-              cy: 100,
-              highlightScope: {
-                faded: `global`,
-                highlighted: `item`,
-              },
-              faded: {innerRadius: 30, additionalRadius: -10},
-            },
-          ]}
-          height={200}
-          width={200}
-        />
-        <Typography variant="h6">Healing</Typography>
+        <StatPieChart data={pieHealingData} label="Healing" />
       </Grid>
     </Grid>
   );

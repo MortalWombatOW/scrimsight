@@ -47,11 +47,8 @@ export const getPlayer = (
   return 'todo';
 };
 
-export const getHeroImage = (
-  heroName: string,
-  rounded: boolean = true,
-): string =>
-  `/assets/heroes/${rounded && 'rounded/'}${heroNameToNormalized(
+export const getHeroImage = (heroName: string, rounded = true): string =>
+  `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(
     heroName,
   )}.png`;
 
@@ -129,6 +126,11 @@ const heroToRole = {
   Zenyatta: 'support',
   Rammatra: 'tank',
   Mauga: 'tank',
+  Sojourn: 'damage',
+  Kiriko: 'support',
+  'Junker Queen': 'tank',
+  Lifeweaver: 'support',
+  Illari: 'support',
 };
 
 export const heroToRoleTable = Object.entries(heroToRole).map(
@@ -140,6 +142,10 @@ export const heroToRoleTable = Object.entries(heroToRole).map(
 
 export const getRoleFromHero = (hero: string): string => {
   return heroToRole[hero] || 'new hero alert??';
+};
+
+export const getRankForRole = (role: string): number => {
+  return role === 'tank' ? 1 : role === 'damage' ? 2 : 3;
 };
 
 export const timeWindowRollingAverage = (
