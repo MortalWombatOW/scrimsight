@@ -4,6 +4,7 @@ import {Grid} from '@mui/material';
 import MapScorecard from './MapScorecard';
 import MapImage from './MapImage';
 import MapSummaryStats from './MapSummaryStats';
+import MapRoster from './MapRoster';
 
 const MapSummary = ({mapId}: {mapId: number}) => {
   return (
@@ -16,7 +17,7 @@ const MapSummary = ({mapId}: {mapId: number}) => {
         }}>
         <Grid item xs={6}>
           <MapScorecard mapId={mapId} />
-          <MapSummaryStats mapId={mapId} />
+          <MapRoster mapId={mapId} />
         </Grid>
         <Grid item xs={6}>
           <MapImage mapId={mapId} />

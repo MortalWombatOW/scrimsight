@@ -45,7 +45,7 @@ export const useDataNodes = (
     }
     dataManager.process();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [JSON.stringify(nodes)]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,7 +60,7 @@ export const useDataNodes = (
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tick]);
+  }, [tick, JSON.stringify(nodes)]);
 
   return data;
 };

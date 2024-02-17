@@ -5,20 +5,26 @@ const IconAndText = ({
   text,
   backgroundColor,
   textBorder,
+  padding,
+  borderRadius,
 }: {
   icon: React.ReactElement;
   text: string;
   backgroundColor?: string;
   textBorder?: boolean;
+  padding?: string;
+  borderRadius?: string;
 }) => (
   <div
     style={{
       display: 'flex',
       alignItems: 'center',
       whiteSpace: 'nowrap',
-      borderRadius: '5px',
-      backgroundColor,
-      padding: '0.5em',
+      borderRadius: borderRadius || '5px',
+      ...(backgroundColor ? {backgroundColor} : {}),
+      padding: padding || '0.5em',
+      // dont be wider than the text
+      maxWidth: 'fit-content',
     }}>
     {icon}
     <span

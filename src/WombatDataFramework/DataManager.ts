@@ -59,8 +59,10 @@ export class DataManager {
 
   setNode(node: DataNode<any>): void {
     if (this.nodes.has(node.getName())) {
+      console.log(`Node ${node.getName()} already exists`);
       return;
     }
+    console.log(`Adding node ${node.getName()}`);
     this.nodes.set(node.getName(), node);
   }
 

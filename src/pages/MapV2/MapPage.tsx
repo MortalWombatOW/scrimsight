@@ -10,71 +10,36 @@ import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../../hooks/useData';
 import MapPlayerTable from '../../components/MapPlayerTable';
 import MapSummary from '../../components/MapSummary';
-import {Container} from '@mui/material';
+import {Container, Tab, Tabs} from '@mui/material';
+import MapSummaryStats from '../../components/MapSummaryStats';
+import MapTimeline from '../../components/MapTimeline';
 
 const MapPage = () => {
-  const {player_stat_formatted} = useDataNodes([
+  const params = useParams<{mapId: string}>();
+  const mapId: string = params.mapId!;
+  const [selectedRound, setSelectedRound] = useState<number>(0);
+
+  const data = useDataNodes([
     new AlaSQLNode<PlayerStatFormatted>(
-      'player_stat_formatted',
+      'MapPage_map_rounds_' + mapId,
       `SELECT
-        player_stat.mapId,
-        player_stat.roundNumber,
-        player_stat.playerTeam,
-        player_stat.playerName,
-        player_stat.playerHero,
-        player_stat.eliminations,
-        player_stat.finalBlows,
-        player_stat.deaths,
-        player_stat.allDamageDealt,
-        player_stat.barrierDamageDealt,
-        player_stat.heroDamageDealt,
-        player_stat.healingDealt,
-        player_stat.healingReceived,
-        player_stat.selfHealing,
-        player_stat.damageTaken,
-        player_stat.damageBlocked,
-        player_stat.defensiveAssists,
-        player_stat.offensiveAssists,
-        player_stat.ultimatesEarned,
-        player_stat.ultimatesUsed,
-        player_stat.multikillBest,
-        player_stat.multikills,
-        player_stat.soloKills,
-        player_stat.objectiveKills,
-        player_stat.environmentalKills,
-        player_stat.environmentalDeaths,
-        player_stat.criticalHits,
-        player_stat.criticalHitAccuracy,
-        player_stat.scopedAccuracy,
-        player_stat.scopedCriticalHitAccuracy,
-        player_stat.scopedCriticalHitKills,
-        player_stat.shotsFired,
-        player_stat.shotsHit,
-        player_stat.shotsMissed,
-        player_stat.scopedShotsFired,
-        player_stat.scopedShotsHit,
-        player_stat.weaponAccuracy,
-        player_stat.heroTimePlayed
-      FROM ? AS player_stat
-      ORDER BY
-        player_stat.mapId,
-        player_stat.roundNumber,
-        player_stat.playerTeam,
-        player_stat.playerName,
-        player_stat.heroTimePlayed desc,
-        player_stat.playerHero`,
-      ['player_stat_object_store'],
+       array(round_start.roundNumber) as roundNumbers
+      FROM ? AS round_start
+      WHERE
+        round_start.mapId = ${mapId}
+       `,
+      ['round_start_object_store'],
     ),
   ]);
 
-  const params = useParams<{mapId: string}>();
-  const mapId: string = params.mapId!;
+  const roundsData = data['MapPage_map_rounds_' + mapId];
 
-  if (player_stat_formatted === undefined) {
+  if (roundsData === undefined) {
     return <div>Loading...</div>;
   }
 
-  console.log(mapId, player_stat_formatted);
+  const rounds = roundsData[0].roundNumbers as number[];
+  const multipleRounds = rounds.length > 1;
 
   return (
     <div style={{margin: '1em'}}>
@@ -82,9 +47,30 @@ const MapPage = () => {
       <Container maxWidth="xl">
         <MapSummary mapId={Number.parseInt(mapId, 10)} />
 
-        <MapPlayerTable mapId={Number.parseInt(mapId, 10)} />
+        <Tabs
+          value={selectedRound}
+          onChange={(event, newValue) => setSelectedRound(newValue)}
+          aria-label="basic tabs example">
+          <Tab label="Whole Map" value={0} />
+          {multipleRounds &&
+            rounds.map((round) => (
+              <Tab key={round} label={`Round ${round}`} value={round} />
+            ))}
+        </Tabs>
+        <MapSummaryStats
+          mapId={Number.parseInt(mapId, 10)}
+          roundId={selectedRound}
+        />
 
-        {/* <OverviewTimeline mapId={Number.parseInt(mapId, 10)} /> */}
+        <MapPlayerTable
+          mapId={Number.parseInt(mapId, 10)}
+          roundId={selectedRound}
+        />
+
+        <MapTimeline
+          mapId={Number.parseInt(mapId, 10)}
+          roundId={selectedRound}
+        />
       </Container>
     </div>
   );

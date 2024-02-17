@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect} from 'react';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../hooks/useData';
 
@@ -30,10 +31,10 @@ function FormattedTableCell({children}: {children?: React.ReactNode}) {
   );
 }
 
-const MapPlayerTable = ({mapId}: {mapId: number}) => {
+const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   const data = useDataNodes([
     new AlaSQLNode(
-      'player_map_stats_' + mapId,
+      'MapPlayerTable_stats_' + mapId + '_' + roundId,
       `SELECT
         player_stat.playerTeam,
         player_stat.playerName,
@@ -48,11 +49,11 @@ const MapPlayerTable = ({mapId}: {mapId: number}) => {
       FROM ? AS player_stat
       WHERE
         player_stat.mapId = ${mapId}
+        ${roundId > 0 ? `AND player_stat.roundNumber = ${roundId}` : ''}
       GROUP BY
         player_stat.playerTeam,
         player_stat.playerName,
         player_stat.playerName + '_' + player_stat.playerTeam
-
       ORDER BY
         player_stat.playerTeam,
         player_stat.playerName
@@ -60,9 +61,8 @@ const MapPlayerTable = ({mapId}: {mapId: number}) => {
       ['player_stat_object_store'],
     ),
     new AlaSQLNode(
-      'map_duration_' + mapId,
+      'MapPlayerTable_map_duration_' + mapId + '_' + roundId,
       `SELECT
-
         sum(round_end.matchTime - round_start.matchTime) as duration
       FROM
         ? AS round_start
@@ -73,11 +73,12 @@ const MapPlayerTable = ({mapId}: {mapId: number}) => {
           AND round_start.roundNumber = round_end.roundNumber
       WHERE
         round_start.mapId = ${mapId}
+        ${roundId > 0 ? `AND round_start.roundNumber = ${roundId}` : ''}
       `,
       ['round_start_object_store', 'round_end_object_store'],
     ),
     new AlaSQLNode(
-      'MapPlayerTable_map_teams_' + mapId,
+      'MapPlayerTable_team_order_' + mapId,
       `SELECT
         match_start.team1Name,
         match_start.team2Name
@@ -89,51 +90,63 @@ const MapPlayerTable = ({mapId}: {mapId: number}) => {
     ),
   ]);
 
-  const player_map_stats = data['player_map_stats_' + mapId];
-  const map_duration = data['map_duration_' + mapId];
-  const map_teams = data['MapPlayerTable_map_teams_' + mapId];
+  const player_map_stats =
+    data['MapPlayerTable_stats_' + mapId + '_' + roundId];
+  const map_duration =
+    data['MapPlayerTable_map_duration_' + mapId + '_' + roundId];
+  const map_teams = data['MapPlayerTable_team_order_' + mapId];
 
-  if (!player_map_stats || !map_duration || !map_teams) {
-    return <div>Loading...</div>;
-  }
+  const [player_stats_timed, setPlayerStatsTimed] = React.useState<any[]>([]);
 
-  console.log('player_map_stats', player_map_stats);
-  console.log('map_duration', map_duration);
-
-  const durationMins = map_duration[0].duration / 60;
-
-  const player_stats_timed = player_map_stats.map((player: any) => {
-    const role = getRoleFromHero(player.playerHeroes[0]);
-    return {
-      ...player,
-      role: role,
-      roleRank: getRankForRole(role),
-      teamRank: player.playerTeam === map_teams[0].team1Name ? 1 : 2,
-      eliminationsPerTen: (player.eliminations / durationMins) * 10,
-      finalBlowsPerTen: (player.finalBlows / durationMins) * 10,
-      deathsPerTen: (player.deaths / durationMins) * 10,
-      objectiveKillsPerTen: (player.objectiveKills / durationMins) * 10,
-      allDamageDealtPerTen: (player.allDamageDealt / durationMins) * 10,
-      healingDealtPerTen: (player.healingDealt / durationMins) * 10,
-    };
-  });
-
-  // sort by roleRank, then by team
-  player_stats_timed.sort((a: any, b: any) => {
-    if (a.teamRank < b.teamRank) {
-      return -1;
+  useEffect(() => {
+    if (!player_map_stats || !map_duration || !map_teams) {
+      return;
     }
-    if (a.teamRank > b.teamRank) {
-      return 1;
-    }
-    if (a.roleRank < b.roleRank) {
-      return -1;
-    }
-    if (a.roleRank > b.roleRank) {
-      return 1;
-    }
-    return 0;
-  });
+
+    // console.log('player_map_stats', player_map_stats);
+    // console.log('map_duration', map_duration);
+
+    const durationMins = map_duration[0].duration / 60;
+
+    const player_stats_timed_ = player_map_stats.map((player: any) => {
+      const role = getRoleFromHero(player.playerHeroes[0]);
+      return {
+        ...player,
+        role: role,
+        roleRank: getRankForRole(role),
+        teamRank: player.playerTeam === map_teams[0].team1Name ? 1 : 2,
+        eliminationsPerTen: (player.eliminations / durationMins) * 10,
+        finalBlowsPerTen: (player.finalBlows / durationMins) * 10,
+        deathsPerTen: (player.deaths / durationMins) * 10,
+        objectiveKillsPerTen: (player.objectiveKills / durationMins) * 10,
+        allDamageDealtPerTen: (player.allDamageDealt / durationMins) * 10,
+        healingDealtPerTen: (player.healingDealt / durationMins) * 10,
+      };
+    });
+
+    // sort by roleRank, then by team
+    player_stats_timed_.sort((a: any, b: any) => {
+      if (a.teamRank < b.teamRank) {
+        return -1;
+      }
+      if (a.teamRank > b.teamRank) {
+        return 1;
+      }
+      if (a.roleRank < b.roleRank) {
+        return -1;
+      }
+      if (a.roleRank > b.roleRank) {
+        return 1;
+      }
+      return 0;
+    });
+
+    setPlayerStatsTimed(player_stats_timed_);
+  }, [
+    JSON.stringify(player_map_stats),
+    JSON.stringify(map_duration),
+    JSON.stringify(map_teams),
+  ]);
 
   return (
     <div>
@@ -164,27 +177,34 @@ const MapPlayerTable = ({mapId}: {mapId: number}) => {
                     icon={getIcon(player.role)}
                     text={player.playerName}
                     backgroundColor={getColorgorical(player.playerTeam)}
+                    textBorder={true}
                   />
                 </FormattedTableCell>
                 <FormattedTableCell>
-                  {Array.from(new Set(player.playerHeroes)).map(
-                    (hero: string) => (
-                      <IconAndText
-                        key={hero}
-                        icon={
-                          <Avatar
-                            src={getHeroImage(hero, false)}
-                            sx={{width: 24, height: 24}}
+                  <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                    {Array.from(new Set(player.playerHeroes)).map(
+                      (hero: string) => (
+                        <li key={hero}>
+                          <IconAndText
+                            icon={
+                              <Avatar
+                                src={getHeroImage(hero, false)}
+                                sx={{width: 24, height: 24}}
+                              />
+                            }
+                            text={hero}
+                            textBorder={true}
+                            backgroundColor={getColorFor(
+                              heroNameToNormalized(hero),
+                            )}
+                            // no padding on top, bottom, left, but not right
+                            padding="0 0.5em 0 0"
+                            borderRadius="12px"
                           />
-                        }
-                        text={hero}
-                        textBorder={true}
-                        backgroundColor={getColorFor(
-                          heroNameToNormalized(hero),
-                        )}
-                      />
-                    ),
-                  )}
+                        </li>
+                      ),
+                    )}
+                  </ul>
                 </FormattedTableCell>
                 <FormattedTableCell>
                   {player.finalBlows} / {player.deaths} / {player.eliminations}

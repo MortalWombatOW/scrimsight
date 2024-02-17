@@ -13,7 +13,10 @@ const colorgorical = [
   '#fb57f9',
 ];
 
-export const getColorgorical = (str: string): string => {
+export const getColorgorical = (str: string | null | undefined): string => {
+  if (!str) {
+    return 'white';
+  }
   const index =
     Math.abs(
       str.split('').reduce((acc, char) => {

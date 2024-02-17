@@ -33,7 +33,7 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
     return <div>Loading...</div>;
   }
 
-  console.log('map_scorecard', map_scorecard);
+  // console.log('map_scorecard', map_scorecard);
 
   const {team1Name, team2Name, mapName, mapType, team1Score, team2Score} =
     map_scorecard[0];
