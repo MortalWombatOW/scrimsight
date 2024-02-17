@@ -1,48 +1,63 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 
-import {Grid, Paper, Typography} from '@mui/material';
+import {Paper, Slider} from '@mui/material';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../hooks/useData';
 import {getColorFor, getColorgorical} from '../lib/color';
 import {getRoleFromHero, getRankForRole} from '../lib/data/data';
-import IconAndText from './Common/IconAndText';
-import {
-  DamageIconSvg,
-  TankIconSvg,
-  getIcon,
-  getSvgIcon,
-} from './Common/RoleIcons';
-import DangerousIcon from '@mui/icons-material/Dangerous';
+import {getSvgIcon} from './Common/RoleIcons';
 import {heroNameToNormalized} from '../lib/string';
 import usePlayerLives from '../hooks/usePlayerLives';
 import useMapTimes from '../hooks/useMapTimes';
+import useMapRosters from '../hooks/useMapRosters';
+
+const SvgWrapText = ({
+  x,
+  y,
+  color,
+  size,
+  children,
+}: {
+  x: number;
+  y: number;
+  color: string;
+  size: number;
+  children: React.ReactNode;
+}) => {
+  const [offsetY, setOffsetY] = useState(0);
+  const ref = React.useRef<HTMLParagraphElement | null>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      const height = ref.current.clientHeight;
+      setOffsetY(height / 2);
+    }
+  }, [JSON.stringify(children), size]);
+
+  return (
+    <g transform={`translate(${x}, ${y - offsetY})`}>
+      <foreignObject
+        width="80"
+        height="50"
+        requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+        <p
+          ref={ref}
+          style={{
+            color,
+            fontSize: size,
+            lineHeight: 0.9,
+            margin: 0,
+          }}>
+          {children}
+        </p>
+      </foreignObject>
+    </g>
+  );
+};
 
 const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   const data = useDataNodes([
-    new AlaSQLNode(
-      'MapTimeline_players_' + mapId,
-      `SELECT
-        player_stat.playerTeam,
-        match_start.team1Name,
-        player_stat.playerName,
-        player_stat.playerName + '_' + player_stat.playerTeam as id,
-        ARRAY(player_stat.playerHero) as playerHeroes
-      FROM ? AS player_stat
-      JOIN
-      ? AS match_start
-      ON
-        player_stat.mapId = match_start.mapId
-      WHERE
-        player_stat.mapId = ${mapId}
-      GROUP BY
-        player_stat.playerTeam,
-        match_start.team1Name,
-        player_stat.playerName,
-        player_stat.playerName + '_' + player_stat.playerTeam
-      `,
-      ['player_stat_object_store', 'match_start_object_store'],
-    ),
     new AlaSQLNode(
       'MapTimeline_kills_' + mapId + '_' + roundId,
       `SELECT
@@ -55,63 +70,68 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     ),
   ]);
 
-  const mapRosterRawData = data['MapTimeline_players_' + mapId];
   const kills = data['MapTimeline_kills_' + mapId + '_' + roundId];
 
   // holds the players for columns
-  const [players, setPlayers] = useState<object[]>([]);
+  const [players, setPlayers] = useState<
+    {
+      playerName: string;
+      playerTeam: string;
+      role: string;
+    }[]
+  >([]);
+
+  const roster = useMapRosters(mapId);
+
+  console.log('roster', roster);
 
   useEffect(() => {
-    if (!mapRosterRawData) {
+    if (!roster) {
       return;
     }
 
-    const rosterWithRoles = mapRosterRawData.map((player: object) => {
-      const role = getRoleFromHero(player['playerHeroes'][0]);
-      const roleRank = getRankForRole(role);
+    const players = [
+      ...roster.team1.roster.map((player) => ({
+        playerName: player.name,
+        playerTeam: roster.team1.name,
+        role: player.role,
+      })),
+      ...roster.team2.roster.map((player) => ({
+        playerName: player.name,
+        playerTeam: roster.team2.name,
+        role: player.role,
+      })),
+    ];
 
-      return {
-        playerTeam: player['playerTeam'],
-        isTeam1: player['playerTeam'] === player['team1Name'],
-        playerName: player['playerName'],
-        role,
-        roleRank,
-      };
-    });
+    setPlayers(players);
+  }, [JSON.stringify(roster)]);
 
-    // order is  team1 in reverse role order, then team2 in role order
-    rosterWithRoles.sort((a: any, b: any) => {
-      if (a.isTeam1 && b.isTeam1) {
-        return b.roleRank - a.roleRank;
-      }
-      if (!a.isTeam1 && !b.isTeam1) {
-        return a.roleRank - b.roleRank;
-      }
-      return a.isTeam1 ? -1 : 1;
-    });
-
-    setPlayers(rosterWithRoles);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(mapRosterRawData)]);
-
-  const [killsByPlayer, setKillsByPlayer] = useState<{
-    [name: string]: object[];
-  }>({});
+  console.log('players', players);
 
   const {startTime, endTime} = useMapTimes(mapId)?.[roundId] || {
     startTime: 0,
     endTime: 0,
   };
-  const height = 3000;
+  const [pixelsPerSecond, setPixelsPerSecond] = useState(5);
+  const height = (endTime - startTime) * pixelsPerSecond;
   const width = 1000;
   const xPadding = 50;
   const topPadding = 50;
+  const bottomPadding = 50;
   const timeToY = (time: number, startTime: number, endTime: number) => {
-    return ((time - startTime) / (endTime - startTime)) * height + topPadding;
+    return (
+      ((time - startTime) / (endTime - startTime)) *
+        (height - topPadding - bottomPadding) +
+      topPadding
+    );
   };
   const columnIdxToX = (idx: number) => {
     return (idx / players.length) * width + xPadding;
   };
+
+  const [killsByPlayer, setKillsByPlayer] = useState<{
+    [name: string]: object[];
+  }>({});
 
   useEffect(() => {
     if (!kills) {
@@ -136,21 +156,17 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
 
   return (
     <Paper sx={{padding: '1em', borderRadius: '5px', marginTop: '1em'}}>
-      {/* <Grid container>
-        <Grid item xs={2}>
-          <Typography variant="h6">Timeline</Typography>
-        </Grid>
-        {players.map((player: any) => (
-          <Grid item xs={1} key={player.attackerName}>
-            <Typography variant="body2">
-              <IconAndText
-                icon={getIcon(player.role)}
-                text={player.playerName}
-              />
-            </Typography>
-          </Grid>
-        ))} */}
-      {/* </Grid> */}
+      {/* <Slider
+        value={pixelsPerSecond}
+        onChange={(e, newValue) => {
+          setPixelsPerSecond(newValue as number);
+        }}
+        min={0.1}
+        max={10}
+        step={0.1}
+        valueLabelDisplay="auto"
+        valueLabelFormat={(value) => `${value} px/s`}
+      /> */}
       <svg width="100%" height={100}>
         {players.map((player: any, i: number) => (
           <g key={player.playerName}>
@@ -170,14 +186,6 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         <svg width="100%" height={height}>
           {players.map((player: any, i: number) => (
             <g key={player.playerName}>
-              {/* <line
-                key={player.playerName}
-                x1={columnIdxToX(i)}
-                y1={0}
-                x2={columnIdxToX(i)}
-                y2={height}
-                style={{stroke: getColorgorical(player.playerTeam)}}
-              /> */}
               {playerLives[player.playerName] &&
                 playerLives[player.playerName].map((life: any) => (
                   <g key={`${life.playerName}_${life.startTime}`}>
@@ -188,35 +196,13 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                       fill={getColorFor(heroNameToNormalized(life.playerHero))}
                     />
 
-                    {/* <text
-                      x={columnIdxToX(i)}
+                    <SvgWrapText
+                      x={columnIdxToX(i) + 10}
                       y={timeToY(life.startTime, startTime, endTime)}
-                      textAnchor="start"
-                      fill={getColorFor(heroNameToNormalized(life.playerHero))}
-                      fontSize={10}
-                      dx={10}
-                      dy={2.5}> */}
-                    <g
-                      transform={`translate(${columnIdxToX(i) + 10}, ${
-                        timeToY(life.startTime, startTime, endTime) - 13
-                      })`}>
-                      <foreignObject
-                        width="80"
-                        height="50"
-                        requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
-                        <p
-                          style={{
-                            color: getColorFor(
-                              heroNameToNormalized(life.playerHero),
-                            ),
-                            fontSize: 10,
-                            lineHeight: 0.9,
-                          }}>
-                          {life.startMessage}
-                        </p>
-                      </foreignObject>
-                      {/* </text> */}
-                    </g>
+                      color={getColorFor(heroNameToNormalized(life.playerHero))}
+                      size={10}>
+                      {life.startMessage}
+                    </SvgWrapText>
                     <line
                       x1={columnIdxToX(i) - 5}
                       y1={timeToY(life.endTime, startTime, endTime)}
@@ -228,16 +214,14 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                         ),
                       }}
                     />
-                    <text
-                      x={columnIdxToX(i)}
+
+                    <SvgWrapText
+                      x={columnIdxToX(i) + 10}
                       y={timeToY(life.endTime, startTime, endTime)}
-                      textAnchor="start"
-                      fill={getColorFor(heroNameToNormalized(life.playerHero))}
-                      fontSize={10}
-                      dx={10}
-                      dy={2.5}>
+                      color={getColorFor(heroNameToNormalized(life.playerHero))}
+                      size={10}>
                       {life.endMessage}
-                    </text>
+                    </SvgWrapText>
 
                     <line
                       x1={columnIdxToX(i)}
@@ -269,6 +253,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                     fontSize={10}
                     dx={10}
                     dy={2.5}>
+                    Killed
                     {kill.victimName}
                   </text>
                 </g>
