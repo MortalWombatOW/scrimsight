@@ -5,13 +5,16 @@ import {useDataNodes} from './useData';
 
 const useMapTimes = (
   mapId: number,
-): {
-  startTime: number;
-  endTime: number;
-}[] => {
+  prefix: string,
+):
+  | {
+      startTime: number;
+      endTime: number;
+    }[]
+  | null => {
   const data = useDataNodes([
     new AlaSQLNode(
-      'UseMapTimes_match_time_' + mapId,
+      prefix + 'UseMapTimes_match_time_' + mapId,
       `SELECT
         match_start.matchTime as startTime,
         match_end.matchTime as endTime
@@ -26,7 +29,7 @@ const useMapTimes = (
       ['match_start_object_store', 'match_end_object_store'],
     ),
     new AlaSQLNode(
-      'UseMapTimes_round_times_' + mapId,
+      prefix + 'UseMapTimes_round_times_' + mapId,
       `SELECT
         round_start.roundNumber,
         round_start.matchTime as startTime,
@@ -36,6 +39,7 @@ const useMapTimes = (
       ? AS round_start
       ON
         round_start.mapId = round_end.mapId
+      AND round_start.roundNumber = round_end.roundNumber
       WHERE
         round_start.mapId = ${mapId}
       ORDER BY
@@ -45,16 +49,17 @@ const useMapTimes = (
     ),
   ]);
 
-  const matchTimes = data['UseMapTimes_match_time_' + mapId];
-  const roundTimes = data['UseMapTimes_round_times_' + mapId];
+  const matchTimes = data[prefix + 'UseMapTimes_match_time_' + mapId];
+  const roundTimes = data[prefix + 'UseMapTimes_round_times_' + mapId];
 
   // zero index is the whole match, other indexes are the rounds
   const [mapTimes, setMapTimes] = useState<
-    {
-      startTime: number;
-      endTime: number;
-    }[]
-  >([]);
+    | {
+        startTime: number;
+        endTime: number;
+      }[]
+    | null
+  >(null);
 
   useEffect(() => {
     if (!matchTimes || !roundTimes) {
@@ -79,7 +84,7 @@ const useMapTimes = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(matchTimes), JSON.stringify(roundTimes)]);
 
-  console.log('mapTimes', mapTimes);
+  // console.log('mapTimes', mapTimes);
 
   return mapTimes;
 };

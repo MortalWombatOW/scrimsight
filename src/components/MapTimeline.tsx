@@ -11,6 +11,8 @@ import {heroNameToNormalized} from '../lib/string';
 import usePlayerLives from '../hooks/usePlayerLives';
 import useMapTimes from '../hooks/useMapTimes';
 import useMapRosters from '../hooks/useMapRosters';
+import useGlobalMapEvents from '../hooks/useGlobalMapEvents';
+import usePlayerEvents from '../hooks/usePlayerEvents';
 
 const SvgWrapText = ({
   x,
@@ -57,20 +59,7 @@ const SvgWrapText = ({
 };
 
 const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
-  const data = useDataNodes([
-    new AlaSQLNode(
-      'MapTimeline_kills_' + mapId + '_' + roundId,
-      `SELECT
-        kill_object_store.*
-      FROM ? AS kill_object_store
-      WHERE
-        kill_object_store.mapId = ${mapId}
-      `,
-      ['kill_object_store'],
-    ),
-  ]);
-
-  const kills = data['MapTimeline_kills_' + mapId + '_' + roundId];
+  const mapEvents = useGlobalMapEvents(mapId);
 
   // holds the players for columns
   const [players, setPlayers] = useState<
@@ -106,15 +95,23 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     setPlayers(players);
   }, [JSON.stringify(roster)]);
 
-  console.log('players', players);
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  const [width, setWidth] = useState(0);
 
-  const {startTime, endTime} = useMapTimes(mapId)?.[roundId] || {
+  useEffect(() => {
+    if (ref.current) {
+      setWidth(ref.current.clientWidth);
+    }
+  }, [JSON.stringify(players)]);
+
+  const {startTime, endTime} = useMapTimes(mapId, 'MapTimeline_')?.[
+    roundId
+  ] || {
     startTime: 0,
     endTime: 0,
   };
   const [pixelsPerSecond, setPixelsPerSecond] = useState(5);
   const height = (endTime - startTime) * pixelsPerSecond;
-  const width = 1000;
   const xPadding = 50;
   const topPadding = 50;
   const bottomPadding = 50;
@@ -126,36 +123,24 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     );
   };
   const columnIdxToX = (idx: number) => {
-    return (idx / players.length) * width + xPadding;
+    return (
+      ((idx + 1) / (players.length + 1)) * (width - 2 * xPadding) + xPadding
+    );
   };
 
   const [killsByPlayer, setKillsByPlayer] = useState<{
     [name: string]: object[];
   }>({});
 
-  useEffect(() => {
-    if (!kills) {
-      return;
-    }
-
-    const killsByPlayer_ = {};
-
-    for (const kill of kills) {
-      if (!killsByPlayer_[kill.attackerName]) {
-        killsByPlayer_[kill.attackerName] = [];
-      }
-      killsByPlayer_[kill.attackerName].push(kill);
-    }
-
-    setKillsByPlayer(killsByPlayer_);
-  }, [JSON.stringify(kills)]);
-
-  // console.log('killsByPlayer', killsByPlayer);
+  console.log('killsByPlayer', killsByPlayer);
 
   const playerLives = usePlayerLives(mapId, roundId);
+  const playerEvents = usePlayerEvents(mapId);
 
   return (
-    <Paper sx={{padding: '1em', borderRadius: '5px', marginTop: '1em'}}>
+    <Paper
+      sx={{padding: '1em', borderRadius: '5px', marginTop: '1em'}}
+      ref={ref}>
       {/* <Slider
         value={pixelsPerSecond}
         onChange={(e, newValue) => {
@@ -174,6 +159,15 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
             <text x={columnIdxToX(i)} y={50} textAnchor="middle" fill="white">
               {player.playerName}
             </text>
+            <text
+              x={columnIdxToX(i)}
+              y={50}
+              textAnchor="middle"
+              fill={getColorgorical(player.playerTeam)}
+              fontSize={10}
+              dy={15}>
+              {player.playerTeam}
+            </text>
           </g>
         ))}
       </svg>
@@ -184,6 +178,28 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           overflowX: 'hidden',
         }}>
         <svg width="100%" height={height}>
+          {mapEvents &&
+            mapEvents.map((event: any) => (
+              <g key={event.matchTime}>
+                <line
+                  x1={100}
+                  y1={timeToY(event.matchTime, startTime, endTime)}
+                  x2={width}
+                  y2={timeToY(event.matchTime, startTime, endTime)}
+                  style={{
+                    stroke: 'white',
+                    strokeDasharray: '5,5',
+                  }}
+                />
+                <SvgWrapText
+                  x={10}
+                  y={timeToY(event.matchTime, startTime, endTime)}
+                  color="white"
+                  size={10}>
+                  {event.eventMessage}
+                </SvgWrapText>
+              </g>
+            ))}
           {players.map((player: any, i: number) => (
             <g key={player.playerName}>
               {playerLives[player.playerName] &&
@@ -237,27 +253,27 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                   </g>
                 ))}
 
-              {killsByPlayer[player.playerName].map((kill: any) => (
-                <g key={kill.id}>
-                  <circle
-                    cx={columnIdxToX(i)}
-                    cy={timeToY(kill.matchTime, startTime, endTime)}
-                    r={5}
-                    fill={getColorgorical(player.playerTeam)}
-                  />
-                  <text
-                    x={columnIdxToX(i)}
-                    y={timeToY(kill.matchTime, startTime, endTime)}
-                    textAnchor="start"
-                    fill="white"
-                    fontSize={10}
-                    dx={10}
-                    dy={2.5}>
-                    Killed
-                    {kill.victimName}
-                  </text>
-                </g>
-              ))}
+              {playerEvents?.[player.playerName] &&
+                playerEvents[player.playerName].map((event: any) => (
+                  <g key={`${event.eventMessage}_${event.matchTime}`}>
+                    <circle
+                      cx={columnIdxToX(i)}
+                      cy={timeToY(event.matchTime, startTime, endTime)}
+                      r={5}
+                      fill={getColorgorical(player.playerTeam)}
+                    />
+                    <text
+                      x={columnIdxToX(i)}
+                      y={timeToY(event.matchTime, startTime, endTime)}
+                      textAnchor="start"
+                      fill="white"
+                      fontSize={10}
+                      dx={10}
+                      dy={2.5}>
+                      {event.eventMessage}
+                    </text>
+                  </g>
+                ))}
             </g>
           ))}
         </svg>

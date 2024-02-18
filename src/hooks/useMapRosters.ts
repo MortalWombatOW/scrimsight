@@ -66,6 +66,7 @@ const useMapRosters = (
 
       return {
         ...player,
+        isTeam1: player['playerTeam'] === mapRosterRawData[0].team1Name,
         role,
         roleRank,
       };
