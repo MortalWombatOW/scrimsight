@@ -13,6 +13,9 @@ import useMapTimes from '../hooks/useMapTimes';
 import useMapRosters from '../hooks/useMapRosters';
 import useGlobalMapEvents from '../hooks/useGlobalMapEvents';
 import usePlayerEvents from '../hooks/usePlayerEvents';
+import {format, formatTime} from '../lib/format';
+import useAdjustedText, {AABBs} from '../hooks/useAdjustedText';
+import useLegibleTextSvg from '../hooks/useLegibleTextSvg';
 
 const SvgWrapText = ({
   x,
@@ -27,24 +30,14 @@ const SvgWrapText = ({
   size: number;
   children: React.ReactNode;
 }) => {
-  const [offsetY, setOffsetY] = useState(0);
-  const ref = React.useRef<HTMLParagraphElement | null>(null);
-
-  useEffect(() => {
-    if (ref.current) {
-      const height = ref.current.clientHeight;
-      setOffsetY(height / 2);
-    }
-  }, [JSON.stringify(children), size]);
-
   return (
-    <g transform={`translate(${x}, ${y - offsetY})`}>
+    <g className="svg-wrap-text-group" data-x={x} data-y={y}>
       <foreignObject
         width="80"
-        height="50"
+        height={50}
         requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
         <p
-          ref={ref}
+          className="svg-foreign-object"
           style={{
             color,
             fontSize: size,
@@ -95,8 +88,8 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     setPlayers(players);
   }, [JSON.stringify(roster)]);
 
-  const ref = React.useRef<HTMLDivElement | null>(null);
-  const [width, setWidth] = useState(0);
+  const ref = React.useRef<SVGSVGElement | null>(null);
+  const [width, setWidth] = useState(1000);
 
   useEffect(() => {
     if (ref.current) {
@@ -113,34 +106,195 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   const [pixelsPerSecond, setPixelsPerSecond] = useState(5);
   const height = (endTime - startTime) * pixelsPerSecond;
   const xPadding = 50;
-  const topPadding = 50;
+  const topPadding = 10;
   const bottomPadding = 50;
+  const axisWidth = 50;
+  const [majorTickInterval, minorTickInterval] = [60, 10];
+  const numMajorTicks = Math.floor((endTime - startTime) / majorTickInterval);
+  const numMinorTicks = Math.floor((endTime - startTime) / minorTickInterval);
   const timeToY = (time: number, startTime: number, endTime: number) => {
-    return (
+    return Math.floor(
       ((time - startTime) / (endTime - startTime)) *
         (height - topPadding - bottomPadding) +
-      topPadding
+        topPadding,
     );
   };
   const columnIdxToX = (idx: number) => {
-    return (
-      ((idx + 1) / (players.length + 1)) * (width - 2 * xPadding) + xPadding
+    return Math.floor(
+      ((idx + 1) / (players.length + 1)) * (width - 2 * xPadding - axisWidth) +
+        xPadding +
+        axisWidth,
     );
   };
-
-  const [killsByPlayer, setKillsByPlayer] = useState<{
-    [name: string]: object[];
-  }>({});
-
-  console.log('killsByPlayer', killsByPlayer);
 
   const playerLives = usePlayerLives(mapId, roundId);
   const playerEvents = usePlayerEvents(mapId);
 
+  // const [textAABBs, setTextAABBs] = useState<AABBs>([]);
+
+  // console.log('textAABBs', textAABBs);
+
+  // useEffect(() => {
+  //   if (!ref.current) {
+  //     return;
+  //   }
+
+  //   const svg = ref.current;
+
+  //   console.log('updating textAABBs');
+  //   const textNodes = svg.querySelectorAll('text');
+
+  //   const newAABBs: AABBs = [];
+
+  //   textNodes.forEach((textNode, i) => {
+  //     const bbox = textNode.getBBox();
+  //     if (textNode.textContent === null) {
+  //       return;
+  //     }
+  //     console.log('textNode.textContent', textNode.textContent);
+  //     newAABBs.push({
+  //       elementTag: 'text',
+  //       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  //       matchText: textNode.textContent!,
+  //       id: 'text_' + i,
+  //       x: bbox.x,
+  //       y: bbox.y,
+  //       width: bbox.width,
+  //       height: bbox.height,
+  //     });
+  //   });
+
+  //   const pNodes = Array.from(svg.getElementsByTagName('g'));
+  //   console.log('pNodes', pNodes);
+  //   const filteredPNodes = pNodes.filter((el) =>
+  //     el.classList.contains('svg-wrap-text-group'),
+  //   ) as SVGGElement[];
+  //   console.log('fpNodes', filteredPNodes);
+  //   filteredPNodes.forEach((pNode, i) => {
+  //     if (!pNode) {
+  //       return;
+  //     }
+  //     if (!pNode.innerHTML || pNode.innerHTML === '') {
+  //       return;
+  //     }
+  //     // console.log('pNode.innerHTML', pNode.innerHTML);
+  //     const bbox = pNode.getBBox();
+  //     const bboxWidth = bbox.width;
+  //     const bboxHeight = bbox.height;
+
+  //     const transform = pNode.getAttribute('transform');
+  //     if (!transform) {
+  //       return;
+  //     }
+  //     const x = parseFloat(
+  //       transform?.split('(')[1].split(',')[0].replace(')', ''),
+  //     );
+  //     const y = parseFloat(
+  //       transform?.split('(')[1].split(',')[1].replace(')', ''),
+  //     );
+  //     console.log(
+  //       'x',
+  //       x,
+  //       'y',
+  //       y,
+  //       'bboxWidth',
+  //       bboxWidth,
+  //       'bboxHeight',
+  //       bboxHeight,
+  //     );
+
+  //     newAABBs.push({
+  //       elementTag: 'g',
+  //       matchText: pNode.getElementsByTagName('p')[0].innerHTML,
+  //       id: 'g_' + i,
+  //       x: x,
+  //       y: y,
+  //       width: bboxWidth,
+  //       height: bboxHeight,
+  //     });
+  //   });
+
+  //   setTextAABBs(newAABBs);
+  // }, [
+  //   JSON.stringify(
+  //     Array.from(ref.current?.getElementsByTagName('text') || []).map(
+  //       (el) => el.innerHTML,
+  //     ),
+  //   ),
+  //   JSON.stringify(
+  //     Array.from(ref.current?.getElementsByTagName('g') || [])
+  //       .filter((el) => el.classList.contains('svg-wrap-text-group'))
+  //       .map((el) => el.getElementsByTagName('p')[0].innerHTML),
+  //   ),
+  // ]);
+
+  // const textNodesAdjusted = useAdjustedText(textAABBs);
+  // console.log(
+  //   'textNodes before',
+  //   textAABBs.length,
+  //   'after',
+  //   textNodesAdjusted.length,
+  // );
+
+  // const diffs = textAABBs.filter(
+  //   (aabb, i) =>
+  //     aabb.x !== textNodesAdjusted[i].x || aabb.y !== textNodesAdjusted[i].y,
+  // );
+
+  // console.log('diffs', diffs);
+
+  // // console.log('textAABBs', textAABBs, 'textNodesAdjusted', textNodesAdjusted);
+  // useEffect(() => {
+  //   console.log('textNodesAdjusted', diffs);
+  //   for (const [i, aabb] of Object.entries(diffs)) {
+  //     const node = Array.from(
+  //       document.getElementsByTagName(aabb.elementTag),
+  //     ).find((el) => el.innerHTML.includes(aabb.matchText));
+  //     if (!node) {
+  //       console.log('node not found', aabb.elementTag, aabb.matchText);
+  //       continue;
+  //     }
+
+  //     if (aabb.elementTag === 'text') {
+  //       const beforeX = node.getAttribute('x');
+  //       const beforeY = node.getAttribute('y');
+  //       node.setAttribute('x', aabb.x.toString());
+  //       node.setAttribute('y', aabb.y.toString());
+  //       console.log(
+  //         'text moved',
+  //         aabb.matchText,
+  //         'from',
+  //         beforeX,
+  //         beforeY,
+  //         'to',
+  //         aabb.x,
+  //         aabb.y,
+  //       );
+  //     }
+  //     if (aabb.elementTag === 'g') {
+  //       const beforeTransform = node.getAttribute('transform');
+  //       node.setAttribute('transform', `translate(${aabb.x}, ${aabb.y})`);
+  //       console.log(
+  //         'g moved',
+  //         aabb.matchText,
+  //         'from',
+  //         beforeTransform,
+  //         'to',
+  //         `translate(${aabb.x}, ${aabb.y})`,
+  //       );
+  //     }
+  //   }
+  // }, [JSON.stringify(diffs)]);
+
+  const loaded = !!players && !!mapEvents && !!playerLives && !!playerEvents;
+
+  console.log('loaded', loaded);
+
+  const iters = useLegibleTextSvg(ref, loaded);
+  console.log('iters', iters);
+
   return (
-    <Paper
-      sx={{padding: '1em', borderRadius: '5px', marginTop: '1em'}}
-      ref={ref}>
+    <Paper sx={{padding: '1em', borderRadius: '5px', marginTop: '1em'}}>
       {/* <Slider
         value={pixelsPerSecond}
         onChange={(e, newValue) => {
@@ -153,6 +307,21 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         valueLabelFormat={(value) => `${value} px/s`}
       /> */}
       <svg width="100%" height={100}>
+        {/* draw aabbs */}
+
+        {/* {textNodesAdjusted.map((aabb) => (
+          <rect
+            key={aabb.id}
+            x={aabb.x}
+            y={aabb.y}
+            width={aabb.width}
+            height={aabb.height}
+            fill="none"
+            stroke="blue"
+            strokeWidth={1}
+          />
+        ))} */}
+
         {players.map((player: any, i: number) => (
           <g key={player.playerName}>
             {getSvgIcon(player.role, columnIdxToX(i), 25)}
@@ -161,11 +330,10 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
             </text>
             <text
               x={columnIdxToX(i)}
-              y={50}
+              y={67}
               textAnchor="middle"
               fill={getColorgorical(player.playerTeam)}
-              fontSize={10}
-              dy={15}>
+              fontSize={10}>
               {player.playerTeam}
             </text>
           </g>
@@ -177,10 +345,60 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           overflowY: 'auto',
           overflowX: 'hidden',
         }}>
-        <svg width="100%" height={height}>
+        <svg width="100%" height={height} ref={ref}>
+          <line
+            x1={xPadding + axisWidth}
+            y1={topPadding}
+            x2={xPadding + axisWidth}
+            y2={height - bottomPadding}
+            style={{
+              stroke: 'white',
+            }}
+          />
+          {Array.from({length: numMajorTicks + 1}).map((_, i) => {
+            const time = startTime + i * majorTickInterval;
+            return (
+              <g key={time}>
+                <line
+                  x1={xPadding + axisWidth - 5}
+                  y1={timeToY(time, startTime, endTime)}
+                  x2={xPadding + axisWidth + 5}
+                  y2={timeToY(time, startTime, endTime)}
+                  style={{
+                    stroke: 'white',
+                  }}
+                />
+                <text
+                  x={xPadding + axisWidth - 10}
+                  y={timeToY(time, startTime, endTime)}
+                  textAnchor="end"
+                  fill="white"
+                  fontSize={10}
+                  dy={3}>
+                  {formatTime(time)}
+                </text>
+              </g>
+            );
+          })}
+          {Array.from({length: numMinorTicks + 1}).map((_, i) => {
+            const time = startTime + i * minorTickInterval;
+            return (
+              <g key={time}>
+                <line
+                  x1={xPadding + axisWidth - 2.5}
+                  y1={timeToY(time, startTime, endTime)}
+                  x2={xPadding + axisWidth + 2.5}
+                  y2={timeToY(time, startTime, endTime)}
+                  style={{
+                    stroke: 'white',
+                  }}
+                />
+              </g>
+            );
+          })}
           {mapEvents &&
-            mapEvents.map((event: any) => (
-              <g key={event.matchTime}>
+            mapEvents.map((event: any, i: number) => (
+              <g key={event.matchTime + event.eventMessage + i}>
                 <line
                   x1={100}
                   y1={timeToY(event.matchTime, startTime, endTime)}
@@ -212,13 +430,17 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                       fill={getColorFor(heroNameToNormalized(life.playerHero))}
                     />
 
-                    <SvgWrapText
-                      x={columnIdxToX(i) + 10}
-                      y={timeToY(life.startTime, startTime, endTime)}
-                      color={getColorFor(heroNameToNormalized(life.playerHero))}
-                      size={10}>
-                      {life.startMessage}
-                    </SvgWrapText>
+                    {life.startMessage && (
+                      <SvgWrapText
+                        x={columnIdxToX(i) + 10}
+                        y={timeToY(life.startTime, startTime, endTime)}
+                        color={getColorFor(
+                          heroNameToNormalized(life.playerHero),
+                        )}
+                        size={10}>
+                        {life.startMessage}
+                      </SvgWrapText>
+                    )}
                     <line
                       x1={columnIdxToX(i) - 5}
                       y1={timeToY(life.endTime, startTime, endTime)}
@@ -231,13 +453,17 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                       }}
                     />
 
-                    <SvgWrapText
-                      x={columnIdxToX(i) + 10}
-                      y={timeToY(life.endTime, startTime, endTime)}
-                      color={getColorFor(heroNameToNormalized(life.playerHero))}
-                      size={10}>
-                      {life.endMessage}
-                    </SvgWrapText>
+                    {life.endMessage && (
+                      <SvgWrapText
+                        x={columnIdxToX(i) + 10}
+                        y={timeToY(life.endTime, startTime, endTime)}
+                        color={getColorFor(
+                          heroNameToNormalized(life.playerHero),
+                        )}
+                        size={10}>
+                        {life.endMessage}
+                      </SvgWrapText>
+                    )}
 
                     <line
                       x1={columnIdxToX(i)}
@@ -254,24 +480,23 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                 ))}
 
               {playerEvents?.[player.playerName] &&
-                playerEvents[player.playerName].map((event: any) => (
-                  <g key={`${event.eventMessage}_${event.matchTime}`}>
+                playerEvents[player.playerName].map((event: any, j: number) => (
+                  <g key={`${event.eventMessage}_${event.matchTime}_${j}`}>
                     <circle
                       cx={columnIdxToX(i)}
                       cy={timeToY(event.matchTime, startTime, endTime)}
                       r={5}
                       fill={getColorgorical(player.playerTeam)}
                     />
-                    <text
-                      x={columnIdxToX(i)}
-                      y={timeToY(event.matchTime, startTime, endTime)}
-                      textAnchor="start"
-                      fill="white"
-                      fontSize={10}
-                      dx={10}
-                      dy={2.5}>
-                      {event.eventMessage}
-                    </text>
+                    {event.eventMessage && (
+                      <SvgWrapText
+                        x={columnIdxToX(i) + 10}
+                        y={timeToY(event.matchTime, startTime, endTime)}
+                        color={'white'}
+                        size={10}>
+                        {event.eventMessage}
+                      </SvgWrapText>
+                    )}
                   </g>
                 ))}
             </g>

@@ -60,26 +60,29 @@ const useGlobalMapEvents = (
       return;
     }
 
-    const mapEvents = [
-      {
-        matchTime: matchTimes[0].startTime,
-        eventMessage: 'Match Start',
-      },
-      {
-        matchTime: matchTimes[0].endTime,
-        eventMessage: 'Match End',
-      },
+    const mapEvents: {
+      matchTime: number;
+      eventMessage: string;
+    }[] = [
+      // {
+      //   matchTime: matchTimes[0].startTime,
+      //   eventMessage: 'Match Start',
+      // },
+      // {
+      //   matchTime: matchTimes[0].endTime,
+      //   eventMessage: 'Match End',
+      // },
     ];
 
     for (const [index, round] of matchTimes.slice(1).entries()) {
       mapEvents.push({
         matchTime: round.startTime,
-        eventMessage: `Round ${index} start`,
+        eventMessage: `Round ${index + 1} start`,
       });
 
       mapEvents.push({
         matchTime: round.endTime,
-        eventMessage: `Round ${index} end`,
+        eventMessage: `Round ${index + 1} end`,
       });
     }
 

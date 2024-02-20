@@ -4,9 +4,25 @@ import React, {useEffect, useState} from 'react';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {useDataNodes} from './useData';
 
+type PlayerEventType =
+  | 'kill'
+  | 'defensiveAssist'
+  | 'offensiveAssist'
+  | 'comboAssist'
+  | 'ultimateCharged'
+  | 'ultimateStart'
+  | 'ultimateEnd'
+  | 'remechCharged'
+  | 'mercyRez'
+  | 'dvaDemech'
+  | 'dvaRemech';
+
 type PlayerEvent = {
+  player: string;
   matchTime: number;
   eventMessage: string;
+  eventType: PlayerEventType;
+  hero?: string;
 };
 
 type PlayerEvents = {
@@ -150,11 +166,7 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
     }
 
     // offensive and defensive assists can happen at the same time, so we need to merge them
-    const mergedAssists: {
-      player: string;
-      matchTime: number;
-      eventMessage: string;
-    }[] = [];
+    const mergedAssists: PlayerEvent[] = [];
 
     let offIdx = 0;
     let defIdx = 0;
@@ -169,6 +181,7 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
           player: offensiveAssists[offIdx].playerName,
           matchTime: offensiveAssists[offIdx].matchTime,
           eventMessage: 'Offensive Assist',
+          eventType: 'offensiveAssist' as PlayerEventType,
         });
 
         offIdx++;
@@ -179,6 +192,7 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
           player: defensiveAssists[defIdx].playerName,
           matchTime: defensiveAssists[defIdx].matchTime,
           eventMessage: 'Defensive Assist',
+          eventType: 'defensiveAssist' as PlayerEventType,
         });
         defIdx++;
       } else {
@@ -186,58 +200,69 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
           player: offensiveAssists[offIdx].playerName,
           matchTime: offensiveAssists[offIdx].matchTime,
           eventMessage: 'Combo Assist',
+          eventType: 'comboAssist' as PlayerEventType,
         });
         offIdx++;
         defIdx++;
       }
     }
 
-    const playerEvents = [
+    const playerEvents: PlayerEvent[] = [
       ...kills.map((kill: any) => ({
-        player: kill.attackerName,
-        matchTime: kill.matchTime,
+        player: kill.attackerName as string,
+        matchTime: kill.matchTime as number,
         eventMessage: `Killed ${kill.victimName}`,
+        eventType: 'kill' as PlayerEventType,
+        hero: kill.victimHero as string,
       })),
       ...mergedAssists,
-
       ...ultimateCharged.map((charge: any) => ({
         player: charge.playerName,
         matchTime: charge.matchTime,
         eventMessage: 'Ultimate Charged',
+        eventType: 'ultimateCharged' as PlayerEventType,
       })),
 
       ...ultimateStart.map((start: any) => ({
         player: start.playerName,
         matchTime: start.matchTime,
         eventMessage: 'Ultimate Used',
+        eventType: 'ultimateStart' as PlayerEventType,
       })),
 
       ...ultimateEnd.map((end: any) => ({
         player: end.playerName,
         matchTime: end.matchTime,
         eventMessage: 'Ultimate Ended',
+        eventType: 'ultimateEnd' as PlayerEventType,
       })),
 
       ...remechCharged.map((charge: any) => ({
         player: charge.playerName,
         matchTime: charge.matchTime,
         eventMessage: 'Remech Charged',
+        eventType: 'remechCharged' as PlayerEventType,
       })),
       ...mercyRez.map((rez: any) => ({
         player: rez.mercyName,
         matchTime: rez.matchTime,
-        // revivedHero is actually the name of the player who was revived
+        // TODO revivedHero is actually the name of the player who was revived
         eventMessage: 'Revived ' + rez.revivedHero,
+        eventType: 'mercyRez' as PlayerEventType,
+        // TODO revivedTeam is actually the name of the hero who was revived
+        hero: rez.revivedTeam,
       })),
       ...dvaDemech.map((demech: any) => ({
         player: demech.playerName,
         matchTime: demech.matchTime,
         eventMessage: 'Demeched',
+        eventType: 'dvaDemech' as PlayerEventType,
       })),
       ...dvaRemech.map((remech: any) => ({
         player: remech.playerName,
         matchTime: remech.matchTime,
         eventMessage: 'Remeched',
+        eventType: 'dvaRemech' as PlayerEventType,
       })),
     ];
 
