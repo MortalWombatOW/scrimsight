@@ -59,6 +59,80 @@ const getOriginalCoords = (el: SVGGraphicsElement) => {
   throw new Error('Unknown tag');
 };
 
+const doCollisionResolution = (elements: SVGGraphicsElement[]): void => {
+  // then, check for collisions
+  const maxIterations = 100;
+  let iterations = 0;
+  while (true) {
+    iterations++;
+    if (iterations > maxIterations) {
+      console.error('Too many iterations');
+      break;
+    }
+    const collisions: [number, number][] = [];
+    for (let i = 0; i < elements.length; i++) {
+      for (let j = 0; j < elements.length; j++) {
+        const aabb1 = getBBox(elements[i]);
+        const aabb2 = getBBox(elements[j]);
+        if (aabb1 === aabb2) {
+          continue;
+        }
+        if (i >= j) {
+          continue;
+        }
+        if (
+          aabb1.x + aabb1.width > aabb2.x &&
+          aabb1.x < aabb2.x + aabb2.width &&
+          aabb1.y + aabb1.height > aabb2.y &&
+          aabb1.y < aabb2.y + aabb2.height
+        ) {
+          collisions.push([i, j]);
+        }
+      }
+    }
+
+    console.log('collisions', collisions);
+    if (collisions.length === 0) {
+      break;
+    }
+
+    // console.log('bboxes', bboxes);
+
+    // go through each collision and resolve it by moving the later element vertically
+    for (const [i, j] of collisions) {
+      const el1 = elements[i];
+      const el2 = elements[j];
+      const aabb1 = getBBox(el1);
+      const aabb2 = getBBox(el2);
+
+      const {normal, depth} = getCollisionData(el1, el2);
+      const dy = normal === 'y' ? depth / 2 : 0;
+
+      if (el1.tagName === 'text') {
+        el1.setAttribute('y', (aabb1.y - dy).toFixed(0));
+      }
+      if (el1.tagName === 'g') {
+        el1.setAttribute(
+          'transform',
+          `translate(${aabb1.x.toFixed(0)}, ${(aabb1.y - dy).toFixed(0)})`,
+        );
+      }
+      if (el2.tagName === 'text') {
+        el2.setAttribute('y', (aabb2.y + dy).toFixed(0));
+      }
+      if (el2.tagName === 'g') {
+        el2.setAttribute(
+          'transform',
+          `translate(${aabb2.x.toFixed(0)}, ${(aabb2.y + dy).toFixed(0)})`,
+        );
+      }
+
+      // el2.classList.add(`collided-${dy.toFixed(0)}`);
+      // console.log('resolved', el1, el2);
+    }
+  }
+};
+
 const getCollisionData = (
   el1: SVGGraphicsElement,
   el2: SVGGraphicsElement,
@@ -111,8 +185,8 @@ const useLegibleTextSvg = (
     const elements = [...textElements, ...gElements];
 
     elements.sort((a, b) => {
-      const aY = getBBox(a).y;
-      const bY = getBBox(b).y;
+      const aY = getBBox(a).x;
+      const bY = getBBox(b).x;
       return aY - bY;
     });
 
@@ -131,77 +205,40 @@ const useLegibleTextSvg = (
       // el.classList.add(`height-${aabb.height}`);
     }
 
-    // then, check for collisions
-    const maxIterations = 10;
-    let iterations = 0;
-    while (true) {
-      iterations++;
-      if (iterations > maxIterations) {
-        console.error('Too many iterations');
-        break;
+    // optimization: partition elements by x position
+    const partitionedElements: SVGGraphicsElement[][] = [];
+    let currentPartition: SVGGraphicsElement[] = [];
+    let lastX = -1;
+    for (const el of elements) {
+      const x = getBBox(el).x;
+      if (x !== lastX) {
+        if (currentPartition.length > 0) {
+          partitionedElements.push(currentPartition);
+        }
+        currentPartition = [el];
+      } else {
+        currentPartition.push(el);
       }
-      const collisions: [number, number][] = [];
-      for (let i = 0; i < elements.length; i++) {
-        for (let j = 0; j < elements.length; j++) {
-          const aabb1 = getBBox(elements[i]);
-          const aabb2 = getBBox(elements[j]);
-          if (aabb1 === aabb2) {
-            continue;
-          }
-          if (i >= j) {
-            continue;
-          }
-          if (
-            aabb1.x + aabb1.width > aabb2.x &&
-            aabb1.x < aabb2.x + aabb2.width &&
-            aabb1.y + aabb1.height > aabb2.y &&
-            aabb1.y < aabb2.y + aabb2.height
-          ) {
-            collisions.push([i, j]);
-          }
-        }
-      }
-
-      console.log('collisions', collisions);
-      if (collisions.length === 0) {
-        break;
-      }
-
-      // console.log('bboxes', bboxes);
-
-      // go through each collision and resolve it by moving the later element vertically
-      for (const [i, j] of collisions) {
-        const el1 = elements[i];
-        const el2 = elements[j];
-        const aabb1 = getBBox(el1);
-        const aabb2 = getBBox(el2);
-
-        const {normal, depth} = getCollisionData(el1, el2);
-        const dy = normal === 'y' ? depth / 2 : 0;
-
-        if (el1.tagName === 'text') {
-          el1.setAttribute('y', (aabb1.y - dy).toFixed(0));
-        }
-        if (el1.tagName === 'g') {
-          el1.setAttribute(
-            'transform',
-            `translate(${aabb1.x.toFixed(0)}, ${(aabb1.y - dy).toFixed(0)})`,
-          );
-        }
-        if (el2.tagName === 'text') {
-          el2.setAttribute('y', (aabb2.y + dy).toFixed(0));
-        }
-        if (el2.tagName === 'g') {
-          el2.setAttribute(
-            'transform',
-            `translate(${aabb2.x.toFixed(0)}, ${(aabb2.y + dy).toFixed(0)})`,
-          );
-        }
-
-        // el2.classList.add(`collided-${dy.toFixed(0)}`);
-        // console.log('resolved', el1, el2);
-      }
+      lastX = x;
     }
+    if (currentPartition.length > 0) {
+      partitionedElements.push(currentPartition);
+    }
+
+    // sort each partition by y position
+    for (const partition of partitionedElements) {
+      partition.sort((a, b) => {
+        const aY = getBBox(a).y;
+        const bY = getBBox(b).y;
+        return aY - bY;
+      });
+    }
+
+    for (const partition of partitionedElements) {
+      console.log('partition', partition);
+      doCollisionResolution(partition);
+    }
+
     setTick((tick) => tick + 1);
   }, [ref?.current, loaded]);
 

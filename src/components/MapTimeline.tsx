@@ -43,6 +43,7 @@ const SvgWrapText = ({
             fontSize: size,
             lineHeight: 0.9,
             margin: 0,
+            paddingBottom: '5px',
           }}>
           {children}
         </p>
@@ -432,7 +433,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
 
                     {life.startMessage && (
                       <SvgWrapText
-                        x={columnIdxToX(i) + 10}
+                        x={columnIdxToX(i) + 7}
                         y={timeToY(life.startTime, startTime, endTime)}
                         color={getColorFor(
                           heroNameToNormalized(life.playerHero),
@@ -455,7 +456,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
 
                     {life.endMessage && (
                       <SvgWrapText
-                        x={columnIdxToX(i) + 10}
+                        x={columnIdxToX(i) + 7}
                         y={timeToY(life.endTime, startTime, endTime)}
                         color={getColorFor(
                           heroNameToNormalized(life.playerHero),
@@ -490,7 +491,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                     />
                     {event.eventMessage && (
                       <SvgWrapText
-                        x={columnIdxToX(i) + 10}
+                        x={columnIdxToX(i) + 7}
                         y={timeToY(event.matchTime, startTime, endTime)}
                         color={'white'}
                         size={10}>
