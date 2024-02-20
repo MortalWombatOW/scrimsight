@@ -64,14 +64,14 @@ const useGlobalMapEvents = (
       matchTime: number;
       eventMessage: string;
     }[] = [
-      // {
-      //   matchTime: matchTimes[0].startTime,
-      //   eventMessage: 'Match Start',
-      // },
-      // {
-      //   matchTime: matchTimes[0].endTime,
-      //   eventMessage: 'Match End',
-      // },
+      {
+        matchTime: matchTimes[0].startTime,
+        eventMessage: 'Match Start',
+      },
+      {
+        matchTime: matchTimes[0].endTime,
+        eventMessage: 'Match End',
+      },
     ];
 
     for (const [index, round] of matchTimes.slice(1).entries()) {

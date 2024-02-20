@@ -16,6 +16,7 @@ import usePlayerEvents from '../hooks/usePlayerEvents';
 import {format, formatTime} from '../lib/format';
 import useAdjustedText, {AABBs} from '../hooks/useAdjustedText';
 import useLegibleTextSvg from '../hooks/useLegibleTextSvg';
+import useTeamfights from '../hooks/useTeamfights';
 
 const SvgWrapText = ({
   x,
@@ -64,7 +65,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     }[]
   >([]);
 
-  const roster = useMapRosters(mapId);
+  const roster = useMapRosters(mapId, 'MapTimeline_');
 
   console.log('roster', roster);
 
@@ -109,7 +110,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   const xPadding = 50;
   const topPadding = 10;
   const bottomPadding = 50;
-  const axisWidth = 50;
+  const axisWidth = 75;
   const [majorTickInterval, minorTickInterval] = [60, 10];
   const numMajorTicks = Math.floor((endTime - startTime) / majorTickInterval);
   const numMinorTicks = Math.floor((endTime - startTime) / minorTickInterval);
@@ -131,168 +132,16 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   const playerLives = usePlayerLives(mapId, roundId);
   const playerEvents = usePlayerEvents(mapId);
 
-  // const [textAABBs, setTextAABBs] = useState<AABBs>([]);
-
-  // console.log('textAABBs', textAABBs);
-
-  // useEffect(() => {
-  //   if (!ref.current) {
-  //     return;
-  //   }
-
-  //   const svg = ref.current;
-
-  //   console.log('updating textAABBs');
-  //   const textNodes = svg.querySelectorAll('text');
-
-  //   const newAABBs: AABBs = [];
-
-  //   textNodes.forEach((textNode, i) => {
-  //     const bbox = textNode.getBBox();
-  //     if (textNode.textContent === null) {
-  //       return;
-  //     }
-  //     console.log('textNode.textContent', textNode.textContent);
-  //     newAABBs.push({
-  //       elementTag: 'text',
-  //       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //       matchText: textNode.textContent!,
-  //       id: 'text_' + i,
-  //       x: bbox.x,
-  //       y: bbox.y,
-  //       width: bbox.width,
-  //       height: bbox.height,
-  //     });
-  //   });
-
-  //   const pNodes = Array.from(svg.getElementsByTagName('g'));
-  //   console.log('pNodes', pNodes);
-  //   const filteredPNodes = pNodes.filter((el) =>
-  //     el.classList.contains('svg-wrap-text-group'),
-  //   ) as SVGGElement[];
-  //   console.log('fpNodes', filteredPNodes);
-  //   filteredPNodes.forEach((pNode, i) => {
-  //     if (!pNode) {
-  //       return;
-  //     }
-  //     if (!pNode.innerHTML || pNode.innerHTML === '') {
-  //       return;
-  //     }
-  //     // console.log('pNode.innerHTML', pNode.innerHTML);
-  //     const bbox = pNode.getBBox();
-  //     const bboxWidth = bbox.width;
-  //     const bboxHeight = bbox.height;
-
-  //     const transform = pNode.getAttribute('transform');
-  //     if (!transform) {
-  //       return;
-  //     }
-  //     const x = parseFloat(
-  //       transform?.split('(')[1].split(',')[0].replace(')', ''),
-  //     );
-  //     const y = parseFloat(
-  //       transform?.split('(')[1].split(',')[1].replace(')', ''),
-  //     );
-  //     console.log(
-  //       'x',
-  //       x,
-  //       'y',
-  //       y,
-  //       'bboxWidth',
-  //       bboxWidth,
-  //       'bboxHeight',
-  //       bboxHeight,
-  //     );
-
-  //     newAABBs.push({
-  //       elementTag: 'g',
-  //       matchText: pNode.getElementsByTagName('p')[0].innerHTML,
-  //       id: 'g_' + i,
-  //       x: x,
-  //       y: y,
-  //       width: bboxWidth,
-  //       height: bboxHeight,
-  //     });
-  //   });
-
-  //   setTextAABBs(newAABBs);
-  // }, [
-  //   JSON.stringify(
-  //     Array.from(ref.current?.getElementsByTagName('text') || []).map(
-  //       (el) => el.innerHTML,
-  //     ),
-  //   ),
-  //   JSON.stringify(
-  //     Array.from(ref.current?.getElementsByTagName('g') || [])
-  //       .filter((el) => el.classList.contains('svg-wrap-text-group'))
-  //       .map((el) => el.getElementsByTagName('p')[0].innerHTML),
-  //   ),
-  // ]);
-
-  // const textNodesAdjusted = useAdjustedText(textAABBs);
-  // console.log(
-  //   'textNodes before',
-  //   textAABBs.length,
-  //   'after',
-  //   textNodesAdjusted.length,
-  // );
-
-  // const diffs = textAABBs.filter(
-  //   (aabb, i) =>
-  //     aabb.x !== textNodesAdjusted[i].x || aabb.y !== textNodesAdjusted[i].y,
-  // );
-
-  // console.log('diffs', diffs);
-
-  // // console.log('textAABBs', textAABBs, 'textNodesAdjusted', textNodesAdjusted);
-  // useEffect(() => {
-  //   console.log('textNodesAdjusted', diffs);
-  //   for (const [i, aabb] of Object.entries(diffs)) {
-  //     const node = Array.from(
-  //       document.getElementsByTagName(aabb.elementTag),
-  //     ).find((el) => el.innerHTML.includes(aabb.matchText));
-  //     if (!node) {
-  //       console.log('node not found', aabb.elementTag, aabb.matchText);
-  //       continue;
-  //     }
-
-  //     if (aabb.elementTag === 'text') {
-  //       const beforeX = node.getAttribute('x');
-  //       const beforeY = node.getAttribute('y');
-  //       node.setAttribute('x', aabb.x.toString());
-  //       node.setAttribute('y', aabb.y.toString());
-  //       console.log(
-  //         'text moved',
-  //         aabb.matchText,
-  //         'from',
-  //         beforeX,
-  //         beforeY,
-  //         'to',
-  //         aabb.x,
-  //         aabb.y,
-  //       );
-  //     }
-  //     if (aabb.elementTag === 'g') {
-  //       const beforeTransform = node.getAttribute('transform');
-  //       node.setAttribute('transform', `translate(${aabb.x}, ${aabb.y})`);
-  //       console.log(
-  //         'g moved',
-  //         aabb.matchText,
-  //         'from',
-  //         beforeTransform,
-  //         'to',
-  //         `translate(${aabb.x}, ${aabb.y})`,
-  //       );
-  //     }
-  //   }
-  // }, [JSON.stringify(diffs)]);
-
   const loaded = !!players && !!mapEvents && !!playerLives && !!playerEvents;
 
   console.log('loaded', loaded);
 
   const iters = useLegibleTextSvg(ref, loaded);
   console.log('iters', iters);
+
+  const teamfights = useTeamfights(mapId);
+
+  console.log('teamfights', teamfights);
 
   return (
     <Paper sx={{padding: '1em', borderRadius: '5px', marginTop: '1em'}}>
@@ -397,11 +246,62 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
               </g>
             );
           })}
+          {teamfights &&
+            teamfights.map((teamfight: any, i: number) => (
+              <g key={teamfight.start + teamfight.end + i}>
+                <rect
+                  x={xPadding + axisWidth}
+                  y={timeToY(teamfight.start, startTime, endTime)}
+                  width={width - xPadding - axisWidth}
+                  height={
+                    timeToY(teamfight.end, startTime, endTime) -
+                    timeToY(teamfight.start, startTime, endTime)
+                  }
+                  fill={getColorgorical(teamfight.winningTeam)}
+                  fillOpacity={0.2}
+                />
+
+                <text
+                  x={xPadding + axisWidth - 5}
+                  y={timeToY(teamfight.start, startTime, endTime)}
+                  textAnchor="end"
+                  fill={getColorgorical(teamfight.winningTeam)}
+                  fontSize={10}
+                  dy={3}>
+                  {formatTime(teamfight.start)}
+                </text>
+                <text
+                  x={xPadding + axisWidth - 5}
+                  y={timeToY(teamfight.end, startTime, endTime)}
+                  textAnchor="end"
+                  fill={getColorgorical(teamfight.winningTeam)}
+                  fontSize={10}
+                  dy={3}>
+                  {formatTime(teamfight.end)}
+                </text>
+                <SvgWrapText
+                  x={10}
+                  y={timeToY(
+                    (teamfight.start + teamfight.end) / 2,
+                    startTime,
+                    endTime,
+                  )}
+                  color={getColorgorical(teamfight.winningTeam)}
+                  size={10}>
+                  Teamfight {i + 1} -{teamfight.winningTeam} win <br />
+                  {teamfight.team1Kills} kills - {teamfight.team2Kills} kills
+                  <br />
+                  {teamfight.team1Ultimates.length} ults -{' '}
+                  {teamfight.team2Ultimates.length} ults
+                  <br />
+                </SvgWrapText>
+              </g>
+            ))}
           {mapEvents &&
             mapEvents.map((event: any, i: number) => (
               <g key={event.matchTime + event.eventMessage + i}>
                 <line
-                  x1={100}
+                  x1={xPadding + axisWidth}
                   y1={timeToY(event.matchTime, startTime, endTime)}
                   x2={width}
                   y2={timeToY(event.matchTime, startTime, endTime)}

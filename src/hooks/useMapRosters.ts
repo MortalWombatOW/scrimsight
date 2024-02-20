@@ -16,13 +16,14 @@ type Team = {
 
 const useMapRosters = (
   mapId: number,
+  prefix: string,
 ): {
   team1: Team;
   team2: Team;
 } | null => {
   const data = useDataNodes([
     new AlaSQLNode(
-      'UseMapRosters_players_' + mapId,
+      prefix + 'UseMapRosters_players_' + mapId,
       `SELECT
         player_stat.playerTeam,
         match_start.team1Name,
@@ -51,7 +52,7 @@ const useMapRosters = (
     team2: Team;
   } | null>(null);
 
-  const mapRosterRawData = data['UseMapRosters_players_' + mapId];
+  const mapRosterRawData = data[prefix + 'UseMapRosters_players_' + mapId];
 
   console.log('mapRosterRawData', data);
 
