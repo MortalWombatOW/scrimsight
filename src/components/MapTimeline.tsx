@@ -18,6 +18,7 @@ import useAdjustedText, {AABBs} from '../hooks/useAdjustedText';
 import useLegibleTextSvg from '../hooks/useLegibleTextSvg';
 import useTeamfights from '../hooks/useTeamfights';
 import useUltimateTimes from '../hooks/useUltimateTimes';
+import {Svg} from '@react-three/drei';
 
 const SvgWrapText = ({
   x,
@@ -54,6 +55,41 @@ const SvgWrapText = ({
   );
 };
 
+const SvgArcBetween = ({
+  x1,
+  y1,
+  x2,
+  y2,
+  color,
+  width,
+}: {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  color: string;
+  width: number;
+}) => {
+  const k = 40;
+  const n = 5;
+  const i = 1;
+  const cx = (x1 + x2) / 2;
+  const cy = (y1 + y2) / 2;
+  const dx = (x2 - x1) / 2;
+  const dy = (y2 - y1) / 2;
+  const dd = Math.sqrt(dx * dx + dy * dy);
+  const ex = cx + (dy / dd) * k * (i - (n - 1) / 2);
+  const ey = cy - (dx / dd) * k * (i - (n - 1) / 2);
+  return (
+    <path
+      d={'M' + x1 + ' ' + y1 + 'Q' + ex + ' ' + ey + ' ' + x2 + ' ' + y2}
+      fill="none"
+      stroke={color}
+      strokeWidth={width}
+    />
+  );
+};
+
 const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   const mapEvents = useGlobalMapEvents(mapId);
 
@@ -75,8 +111,12 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       return;
     }
 
+    const reversedTeam1 = roster.team1.roster.map(
+      (_, i) => roster.team1.roster[roster.team1.roster.length - 1 - i],
+    );
+
     const players = [
-      ...roster.team1.roster.map((player) => ({
+      ...reversedTeam1.map((player) => ({
         playerName: player.name,
         playerTeam: roster.team1.name,
         role: player.role,
@@ -417,6 +457,20 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                       r={5}
                       fill={getColorgorical(player.playerTeam)}
                     />
+                    {event.targetPlayer && (
+                      <SvgArcBetween
+                        x1={columnIdxToX(i)}
+                        y1={timeToY(event.matchTime, startTime, endTime)}
+                        x2={columnIdxToX(
+                          players.findIndex(
+                            (p) => p.playerName === event.targetPlayer,
+                          ),
+                        )}
+                        y2={timeToY(event.matchTime, startTime, endTime)}
+                        color={getColorgorical(player.playerTeam)}
+                        width={2}
+                      />
+                    )}
                     {event.eventMessage && (
                       <SvgWrapText
                         x={columnIdxToX(i) + 7}

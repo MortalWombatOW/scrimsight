@@ -62,7 +62,9 @@ const useMapRosters = (
     }
 
     const rosterWithRoles = mapRosterRawData.map((player: object) => {
-      const role = getRoleFromHero(player['playerHeroes'][0]);
+      const role = getRoleFromHero(
+        player['playerHeroes'][player['playerHeroes'].length - 1],
+      );
       const roleRank = getRankForRole(role);
 
       return {
@@ -72,6 +74,8 @@ const useMapRosters = (
         roleRank,
       };
     });
+
+    rosterWithRoles.sort((a: any, b: any) => a.roleRank - b.roleRank);
 
     const team1 = rosterWithRoles
       .filter((player: any) => player.isTeam1)
@@ -90,8 +94,8 @@ const useMapRosters = (
         };
       });
 
-    team1.sort((a: any, b: any) => a.roleRank - b.roleRank);
-    team2.sort((a: any, b: any) => a.roleRank - b.roleRank);
+    // console.log('team1', team1);
+    // console.log('team2', team2);
 
     setOutput({
       team1: {

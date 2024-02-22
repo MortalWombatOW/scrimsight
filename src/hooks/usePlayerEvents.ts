@@ -23,6 +23,7 @@ type PlayerEvent = {
   eventMessage: string;
   eventType: PlayerEventType;
   hero?: string;
+  targetPlayer?: string;
 };
 
 type PlayerEvents = {
@@ -214,6 +215,7 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
         eventMessage: `Killed ${kill.victimName}`,
         eventType: 'kill' as PlayerEventType,
         hero: kill.victimHero as string,
+        targetPlayer: kill.victimName as string,
       })),
       ...mergedAssists,
       // ...ultimateCharged.map((charge: any) => ({
@@ -251,6 +253,7 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
         eventType: 'mercyRez' as PlayerEventType,
         // TODO revivedTeam is actually the name of the hero who was revived
         hero: rez.revivedTeam,
+        targetPlayer: rez.revivedHero,
       })),
       ...dvaDemech.map((demech: any) => ({
         player: demech.playerName,
