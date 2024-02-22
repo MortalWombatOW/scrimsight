@@ -90,6 +90,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
         endTime: number;
         startMessage?: string;
         endMessage?: string;
+        violentEnd: boolean;
       }[];
     } = {};
 
@@ -101,6 +102,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
         endTime: number;
         startMessage?: string;
         endMessage?: string;
+        violentEnd: boolean;
       };
     } = {};
     let killIdx = 0;
@@ -175,6 +177,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
           startTime: life.endTime + 10,
           endTime: 0,
           startMessage: '',
+          violentEnd: false,
         };
       }
 
@@ -183,6 +186,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
           currentPlayerLives[nextKill.victimName].endTime = nextKill.matchTime;
           currentPlayerLives[nextKill.victimName].endMessage =
             'Killed by ' + nextKill.attackerName;
+          currentPlayerLives[nextKill.victimName].violentEnd = true;
           if (!playerLives_[nextKill.victimName]) {
             playerLives_[nextKill.victimName] = [];
           }
@@ -216,6 +220,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
             startTime: nextHeroSpawn.matchTime,
             endTime: 0,
             startMessage: startMessage + startMessageNewHero,
+            violentEnd: false,
           };
           // console.log(
           //   'hero spawn',
@@ -228,6 +233,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
         if (currentPlayerLives[nextHeroSwap.playerName]) {
           currentPlayerLives[nextHeroSwap.playerName].endTime =
             nextHeroSwap.matchTime;
+          currentPlayerLives[nextHeroSwap.playerName].violentEnd = false;
           if (!playerLives_[nextHeroSwap.playerName]) {
             playerLives_[nextHeroSwap.playerName] = [];
           }
@@ -242,6 +248,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
             startTime: nextHeroSwap.matchTime,
             endTime: 0,
             startMessage: 'Swapped to ' + nextHeroSwap.playerHero,
+            violentEnd: false,
           };
         } else {
           console.error('hero swap with no spawn', nextHeroSwap);
@@ -260,6 +267,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
             startTime: nextMercyResurrect.matchTime,
             endTime: 0,
             startMessage: 'Revived by ' + nextMercyResurrect.mercyName,
+            violentEnd: false,
           };
           // console.log(
           //   'rez',
@@ -276,6 +284,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
           if (currentPlayerLives[playerName]) {
             currentPlayerLives[playerName].endTime = nextRoundEnd.matchTime;
             currentPlayerLives[playerName].endMessage = '';
+            currentPlayerLives[playerName].violentEnd = false;
             if (!playerLives_[playerName]) {
               playerLives_[playerName] = [];
             }

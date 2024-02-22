@@ -395,7 +395,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                     <circle
                       cx={columnIdxToX(i)}
                       cy={timeToY(life.startTime, startTime, endTime)}
-                      r={5}
+                      r={3}
                       fill={getColorFor(heroNameToNormalized(life.playerHero))}
                     />
 
@@ -410,17 +410,44 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                         {life.startMessage}
                       </SvgWrapText>
                     )}
-                    <line
-                      x1={columnIdxToX(i) - 5}
-                      y1={timeToY(life.endTime, startTime, endTime)}
-                      x2={columnIdxToX(i) + 5}
-                      y2={timeToY(life.endTime, startTime, endTime)}
-                      style={{
-                        stroke: getColorFor(
-                          heroNameToNormalized(life.playerHero),
-                        ),
-                      }}
-                    />
+                    {life.violentEnd ? (
+                      <>
+                        <line
+                          x1={columnIdxToX(i) - 5}
+                          y1={timeToY(life.endTime, startTime, endTime) - 5}
+                          x2={columnIdxToX(i) + 5}
+                          y2={timeToY(life.endTime, startTime, endTime) + 5}
+                          style={{
+                            stroke: getColorFor(
+                              heroNameToNormalized(life.playerHero),
+                            ),
+                          }}
+                        />
+                        <line
+                          x1={columnIdxToX(i) + 5}
+                          y1={timeToY(life.endTime, startTime, endTime) - 5}
+                          x2={columnIdxToX(i) - 5}
+                          y2={timeToY(life.endTime, startTime, endTime) + 5}
+                          style={{
+                            stroke: getColorFor(
+                              heroNameToNormalized(life.playerHero),
+                            ),
+                          }}
+                        />
+                      </>
+                    ) : (
+                      <line
+                        x1={columnIdxToX(i) - 2}
+                        y1={timeToY(life.endTime, startTime, endTime)}
+                        x2={columnIdxToX(i) + 2}
+                        y2={timeToY(life.endTime, startTime, endTime)}
+                        style={{
+                          stroke: getColorFor(
+                            heroNameToNormalized(life.playerHero),
+                          ),
+                        }}
+                      />
+                    )}
 
                     {life.endMessage && (
                       <SvgWrapText
@@ -455,7 +482,12 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                       cx={columnIdxToX(i)}
                       cy={timeToY(event.matchTime, startTime, endTime)}
                       r={5}
-                      fill={getColorgorical(player.playerTeam)}
+                      fill={
+                        event.eventType === 'kill'
+                          ? getColorgorical(player.playerTeam)
+                          : 'transparent'
+                      }
+                      stroke={getColorgorical(player.playerTeam)}
                     />
                     {event.targetPlayer && (
                       <SvgArcBetween
