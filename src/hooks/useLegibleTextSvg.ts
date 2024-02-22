@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 
-const getBBox = (el: SVGGraphicsElement) => {
+const getBBox = (
+  el: SVGGraphicsElement,
+): {x: number; y: number; width: number; height: number} => {
   if (el.tagName === 'text') {
     return el.getBBox();
   }
@@ -14,8 +16,7 @@ const getBBox = (el: SVGGraphicsElement) => {
       throw new Error('No p element found');
     }
 
-    const height = pElement.getBoundingClientRect().height;
-    const width = pElement.getBoundingClientRect().width;
+    const {width, height} = pElement.getBoundingClientRect();
     const transform = el.getAttribute('transform');
     if (!transform) {
       const orig = getOriginalCoords(el);
@@ -59,7 +60,13 @@ const getOriginalCoords = (el: SVGGraphicsElement) => {
   throw new Error('Unknown tag');
 };
 
-const doCollisionResolution = (elements: SVGGraphicsElement[]): void => {
+const doCollisionResolution = (
+  elements: SVGGraphicsElement[],
+  xMin: number,
+  yMin: number,
+  xMax: number,
+  yMax: number,
+): void => {
   // then, check for collisions
   const maxIterations = 100;
   let iterations = 0;
@@ -91,7 +98,7 @@ const doCollisionResolution = (elements: SVGGraphicsElement[]): void => {
       }
     }
 
-    console.log('collisions', collisions);
+    // console.log('collisions', collisions);
     if (collisions.length === 0) {
       break;
     }
@@ -129,6 +136,58 @@ const doCollisionResolution = (elements: SVGGraphicsElement[]): void => {
 
       // el2.classList.add(`collided-${dy.toFixed(0)}`);
       // console.log('resolved', el1, el2);
+    }
+
+    for (const el of elements) {
+      const aabb = getBBox(el);
+      if (aabb.x < xMin) {
+        if (el.tagName === 'text') {
+          el.setAttribute('x', xMin.toFixed(0));
+        }
+        if (el.tagName === 'g') {
+          el.setAttribute(
+            'transform',
+            `translate(${xMin.toFixed(0)}, ${aabb.y.toFixed(0)})`,
+          );
+        }
+      }
+      if (aabb.y < yMin) {
+        if (el.tagName === 'text') {
+          el.setAttribute('y', yMin.toFixed(0));
+        }
+        if (el.tagName === 'g') {
+          el.setAttribute(
+            'transform',
+            `translate(${aabb.x.toFixed(0)}, ${yMin.toFixed(0)})`,
+          );
+        }
+      }
+      if (aabb.x + aabb.width > xMax) {
+        if (el.tagName === 'text') {
+          el.setAttribute('x', (xMax - aabb.width).toFixed(0));
+        }
+        if (el.tagName === 'g') {
+          el.setAttribute(
+            'transform',
+            `translate(${(xMax - aabb.width).toFixed(0)}, ${aabb.y.toFixed(
+              0,
+            )})`,
+          );
+        }
+      }
+      if (aabb.y + aabb.height > yMax) {
+        if (el.tagName === 'text') {
+          el.setAttribute('y', (yMax - aabb.height).toFixed(0));
+        }
+        if (el.tagName === 'g') {
+          el.setAttribute(
+            'transform',
+            `translate(${aabb.x.toFixed(0)}, ${(yMax - aabb.height).toFixed(
+              0,
+            )})`,
+          );
+        }
+      }
     }
   }
 };
@@ -172,6 +231,12 @@ const useLegibleTextSvg = (
     if (!ref?.current) {
       return;
     }
+
+    const xmin = ref.current.viewBox.baseVal.x;
+    const ymin = ref.current.viewBox.baseVal.y;
+    const width = ref.current.viewBox.baseVal.width;
+    const height = ref.current.viewBox.baseVal.height;
+
     const textElements = Array.from(
       ref.current?.getElementsByTagName('text') || [],
     );
@@ -236,7 +301,7 @@ const useLegibleTextSvg = (
 
     for (const partition of partitionedElements) {
       console.log('partition', partition);
-      doCollisionResolution(partition);
+      doCollisionResolution(partition, xmin, ymin, xmin + width, ymin + height);
     }
 
     setTick((tick) => tick + 1);

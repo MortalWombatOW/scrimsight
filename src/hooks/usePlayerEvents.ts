@@ -63,36 +63,36 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
       `,
       ['defensive_assist_object_store'],
     ),
-    new AlaSQLNode(
-      'UsePlayerEvents_ultimate_charged_' + mapId,
-      `SELECT
-        ultimate_charged.*
-      FROM ? AS ultimate_charged
-      WHERE
-        ultimate_charged.mapId = ${mapId}
-      `,
-      ['ultimate_charged_object_store'],
-    ),
-    new AlaSQLNode(
-      'UsePlayerEvents_ultimate_start_' + mapId,
-      `SELECT
-        ultimate_start.*
-      FROM ? AS ultimate_start
-      WHERE
-        ultimate_start.mapId = ${mapId}
-      `,
-      ['ultimate_start_object_store'],
-    ),
-    new AlaSQLNode(
-      'UsePlayerEvents_ultimate_end_' + mapId,
-      `SELECT
-        ultimate_end.*
-      FROM ? AS ultimate_end
-      WHERE
-        ultimate_end.mapId = ${mapId}
-      `,
-      ['ultimate_end_object_store'],
-    ),
+    // new AlaSQLNode(
+    //   'UsePlayerEvents_ultimate_charged_' + mapId,
+    //   `SELECT
+    //     ultimate_charged.*
+    //   FROM ? AS ultimate_charged
+    //   WHERE
+    //     ultimate_charged.mapId = ${mapId}
+    //   `,
+    //   ['ultimate_charged_object_store'],
+    // ),
+    // new AlaSQLNode(
+    //   'UsePlayerEvents_ultimate_start_' + mapId,
+    //   `SELECT
+    //     ultimate_start.*
+    //   FROM ? AS ultimate_start
+    //   WHERE
+    //     ultimate_start.mapId = ${mapId}
+    //   `,
+    //   ['ultimate_start_object_store'],
+    // ),
+    // new AlaSQLNode(
+    //   'UsePlayerEvents_ultimate_end_' + mapId,
+    //   `SELECT
+    //     ultimate_end.*
+    //   FROM ? AS ultimate_end
+    //   WHERE
+    //     ultimate_end.mapId = ${mapId}
+    //   `,
+    //   ['ultimate_end_object_store'],
+    // ),
 
     new AlaSQLNode(
       'UsePlayerEvents_remech_charged_' + mapId,
@@ -139,9 +139,9 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
   const kills = data['UsePlayerEvents_kills_' + mapId];
   const offensiveAssists = data['UsePlayerEvents_offensive_assists_' + mapId];
   const defensiveAssists = data['UsePlayerEvents_defensive_assists_' + mapId];
-  const ultimateCharged = data['UsePlayerEvents_ultimate_charged_' + mapId];
-  const ultimateStart = data['UsePlayerEvents_ultimate_start_' + mapId];
-  const ultimateEnd = data['UsePlayerEvents_ultimate_end_' + mapId];
+  // const ultimateCharged = data['UsePlayerEvents_ultimate_charged_' + mapId];
+  // const ultimateStart = data['UsePlayerEvents_ultimate_start_' + mapId];
+  // const ultimateEnd = data['UsePlayerEvents_ultimate_end_' + mapId];
   const remechCharged = data['UsePlayerEvents_remech_charged_' + mapId];
   const mercyRez = data['UsePlayerEvents_mercy_rez_' + mapId];
   const dvaDemech = data['UsePlayerEvents_dva_demech_' + mapId];
@@ -154,9 +154,9 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
       !kills ||
       !offensiveAssists ||
       !defensiveAssists ||
-      !ultimateCharged ||
-      !ultimateStart ||
-      !ultimateEnd ||
+      // !ultimateCharged ||
+      // !ultimateStart ||
+      // !ultimateEnd ||
       !remechCharged ||
       !mercyRez ||
       !dvaDemech ||
@@ -216,26 +216,26 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
         hero: kill.victimHero as string,
       })),
       ...mergedAssists,
-      ...ultimateCharged.map((charge: any) => ({
-        player: charge.playerName,
-        matchTime: charge.matchTime,
-        eventMessage: 'Ultimate Charged',
-        eventType: 'ultimateCharged' as PlayerEventType,
-      })),
+      // ...ultimateCharged.map((charge: any) => ({
+      //   player: charge.playerName,
+      //   matchTime: charge.matchTime,
+      //   eventMessage: 'Ultimate Charged',
+      //   eventType: 'ultimateCharged' as PlayerEventType,
+      // })),
 
-      ...ultimateStart.map((start: any) => ({
-        player: start.playerName,
-        matchTime: start.matchTime,
-        eventMessage: 'Ultimate Used',
-        eventType: 'ultimateStart' as PlayerEventType,
-      })),
+      // ...ultimateStart.map((start: any) => ({
+      //   player: start.playerName,
+      //   matchTime: start.matchTime,
+      //   eventMessage: 'Ultimate Used',
+      //   eventType: 'ultimateStart' as PlayerEventType,
+      // })),
 
-      ...ultimateEnd.map((end: any) => ({
-        player: end.playerName,
-        matchTime: end.matchTime,
-        eventMessage: 'Ultimate Ended',
-        eventType: 'ultimateEnd' as PlayerEventType,
-      })),
+      // ...ultimateEnd.map((end: any) => ({
+      //   player: end.playerName,
+      //   matchTime: end.matchTime,
+      //   eventMessage: 'Ultimate Ended',
+      //   eventType: 'ultimateEnd' as PlayerEventType,
+      // })),
 
       ...remechCharged.map((charge: any) => ({
         player: charge.playerName,
@@ -283,9 +283,9 @@ const usePlayerEvents = (mapId: number): PlayerEvents | null => {
     JSON.stringify(kills),
     JSON.stringify(offensiveAssists),
     JSON.stringify(defensiveAssists),
-    JSON.stringify(ultimateCharged),
-    JSON.stringify(ultimateStart),
-    JSON.stringify(ultimateEnd),
+    // JSON.stringify(ultimateCharged),
+    // JSON.stringify(ultimateStart),
+    // JSON.stringify(ultimateEnd),
     JSON.stringify(remechCharged),
     JSON.stringify(mercyRez),
     JSON.stringify(dvaDemech),

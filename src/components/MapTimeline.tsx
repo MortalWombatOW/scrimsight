@@ -17,6 +17,7 @@ import {format, formatTime} from '../lib/format';
 import useAdjustedText, {AABBs} from '../hooks/useAdjustedText';
 import useLegibleTextSvg from '../hooks/useLegibleTextSvg';
 import useTeamfights from '../hooks/useTeamfights';
+import useUltimateTimes from '../hooks/useUltimateTimes';
 
 const SvgWrapText = ({
   x,
@@ -131,8 +132,12 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
 
   const playerLives = usePlayerLives(mapId, roundId);
   const playerEvents = usePlayerEvents(mapId);
+  const ultTimes = useUltimateTimes(mapId);
 
-  const loaded = !!players && !!mapEvents && !!playerLives && !!playerEvents;
+  console.log('ultTimes', ultTimes);
+
+  const loaded =
+    !!players && !!mapEvents && !!playerLives && !!playerEvents && !!ultTimes;
 
   console.log('loaded', loaded);
 
@@ -157,7 +162,15 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         valueLabelFormat={(value) => `${value} px/s`}
       /> */}
       <svg width="100%" height={100}>
-        {/* draw aabbs */}
+        <defs>
+          <linearGradient id="grad1" x1="0%" x2="100%" y1="0%" y2="0%">
+            <stop offset="0%" stopColor="transparent" />
+            <stop offset="25%" stopColor="#7deefd" />
+            <stop offset="50%" stopColor="white" />
+            <stop offset="75%" stopColor="#7deefd" />
+            <stop offset="100%" stopColor="transparent" />
+          </linearGradient>
+        </defs>
 
         {/* {textNodesAdjusted.map((aabb) => (
           <rect
@@ -195,14 +208,18 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           overflowY: 'auto',
           overflowX: 'hidden',
         }}>
-        <svg width="100%" height={height} ref={ref}>
+        <svg
+          width="100%"
+          height={height}
+          ref={ref}
+          viewBox={`0 0 ${width} ${height}`}>
           <line
             x1={xPadding + axisWidth}
             y1={topPadding}
             x2={xPadding + axisWidth}
             y2={height - bottomPadding}
             style={{
-              stroke: 'white',
+              stroke: '#cccccc',
             }}
           />
           {Array.from({length: numMajorTicks + 1}).map((_, i) => {
@@ -215,14 +232,14 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                   x2={xPadding + axisWidth + 5}
                   y2={timeToY(time, startTime, endTime)}
                   style={{
-                    stroke: 'white',
+                    stroke: '#cccccc',
                   }}
                 />
                 <text
                   x={xPadding + axisWidth - 10}
                   y={timeToY(time, startTime, endTime)}
                   textAnchor="end"
-                  fill="white"
+                  fill="#cccccc"
                   fontSize={10}
                   dy={3}>
                   {formatTime(time)}
@@ -240,7 +257,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                   x2={xPadding + axisWidth + 2.5}
                   y2={timeToY(time, startTime, endTime)}
                   style={{
-                    stroke: 'white',
+                    stroke: '#cccccc',
                   }}
                 />
               </g>
@@ -250,12 +267,13 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
             teamfights.map((teamfight: any, i: number) => (
               <g key={teamfight.start + teamfight.end + i}>
                 <rect
-                  x={xPadding + axisWidth}
-                  y={timeToY(teamfight.start, startTime, endTime)}
-                  width={width - xPadding - axisWidth}
+                  x={0}
+                  y={timeToY(teamfight.start, startTime, endTime) - 5}
+                  width={xPadding + axisWidth}
                   height={
                     timeToY(teamfight.end, startTime, endTime) -
-                    timeToY(teamfight.start, startTime, endTime)
+                    timeToY(teamfight.start, startTime, endTime) +
+                    10
                   }
                   fill={getColorgorical(teamfight.winningTeam)}
                   fillOpacity={0.2}
@@ -288,12 +306,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                   )}
                   color={getColorgorical(teamfight.winningTeam)}
                   size={10}>
-                  Teamfight {i + 1} -{teamfight.winningTeam} win <br />
-                  {teamfight.team1Kills} kills - {teamfight.team2Kills} kills
-                  <br />
-                  {teamfight.team1Ultimates.length} ults -{' '}
-                  {teamfight.team2Ultimates.length} ults
-                  <br />
+                  Teamfight {i + 1} - {teamfight.winningTeam} win
                 </SvgWrapText>
               </g>
             ))}
@@ -301,13 +314,13 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
             mapEvents.map((event: any, i: number) => (
               <g key={event.matchTime + event.eventMessage + i}>
                 <line
-                  x1={xPadding + axisWidth}
+                  x1={xPadding + axisWidth - 5}
                   y1={timeToY(event.matchTime, startTime, endTime)}
-                  x2={width}
+                  x2={xPadding + axisWidth + 5}
                   y2={timeToY(event.matchTime, startTime, endTime)}
                   style={{
                     stroke: 'white',
-                    strokeDasharray: '5,5',
+                    // strokeDasharray: '5,5',
                   }}
                 />
                 <SvgWrapText
@@ -321,6 +334,21 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
             ))}
           {players.map((player: any, i: number) => (
             <g key={player.playerName}>
+              {ultTimes
+                ?.filter((ult: any) => ult.playerName === player.playerName)
+                .map((ult: any, j: number) => (
+                  <rect
+                    key={`${ult.playerName}_${ult.chargedTime}_${j}`}
+                    x={columnIdxToX(i) - 4}
+                    y={timeToY(ult.chargedTime, startTime, endTime)}
+                    width={8}
+                    height={
+                      timeToY(ult.usedTime, startTime, endTime) -
+                      timeToY(ult.chargedTime, startTime, endTime)
+                    }
+                    fill="url(#grad1)"
+                  />
+                ))}
               {playerLives[player.playerName] &&
                 playerLives[player.playerName].map((life: any) => (
                   <g key={`${life.playerName}_${life.startTime}`}>

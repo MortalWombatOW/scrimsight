@@ -9,9 +9,6 @@ type Teamfight = {
   // timestamps
   start: number;
   end: number;
-  // hero ultimates used
-  team1Ultimates: string[];
-  team2Ultimates: string[];
   // number of kills
   team1Kills: number;
   team2Kills: number;
@@ -78,15 +75,13 @@ const useTeamfights = (mapId: number): Teamfight[] | null => {
         currentTeamfight = {
           start: kill.matchTime,
           end: kill.matchTime,
-          team1Ultimates: [],
-          team2Ultimates: [],
           team1Kills: 0,
           team2Kills: 0,
           winningTeam: '',
         };
       }
 
-      if (kill.matchTime - currentTeamfight.end < 10) {
+      if (kill.matchTime - currentTeamfight.end < 20) {
         currentTeamfight.end = kill.matchTime;
 
         if (kill.playerTeam === team1Name) {
@@ -107,23 +102,6 @@ const useTeamfights = (mapId: number): Teamfight[] | null => {
     }
 
     console.log('teamfights', teamfights);
-
-    // add ultimate usage to teamfights
-    // by looping through teamfights and adding ultimates used in the time frame
-    for (const fight of teamfights) {
-      for (const ultimate of ultimateStart) {
-        if (
-          ultimate.matchTime >= fight.start &&
-          ultimate.matchTime <= fight.end
-        ) {
-          if (ultimate.playerTeam === team1Name) {
-            fight.team1Ultimates.push(ultimate.playerHero);
-          } else {
-            fight.team2Ultimates.push(ultimate.playerHero);
-          }
-        }
-      }
-    }
 
     setTeamfights(teamfights);
   }, [
