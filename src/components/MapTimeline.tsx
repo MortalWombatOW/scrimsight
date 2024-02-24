@@ -104,7 +104,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
 
   const roster = useMapRosters(mapId, 'MapTimeline_');
 
-  console.log('roster', roster);
+  // console.log('roster', roster);
 
   useEffect(() => {
     if (!roster) {
@@ -174,19 +174,19 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   const playerEvents = usePlayerEvents(mapId);
   const ultTimes = useUltimateTimes(mapId);
 
-  console.log('ultTimes', ultTimes);
+  // console.log('ultTimes', ultTimes);
 
   const loaded =
     !!players && !!mapEvents && !!playerLives && !!playerEvents && !!ultTimes;
 
-  console.log('loaded', loaded);
+  // console.log('loaded', loaded);
 
   const iters = useLegibleTextSvg(ref, loaded);
-  console.log('iters', iters);
+  // console.log('iters', iters);
 
-  const teamfights = useTeamfights(mapId);
+  const teamfights = useTeamfights(mapId, 'MapTimeline_');
 
-  console.log('teamfights', teamfights);
+  // console.log('teamfights', teamfights);
 
   return (
     <Paper sx={{padding: '1em', borderRadius: '5px', marginTop: '1em'}}>

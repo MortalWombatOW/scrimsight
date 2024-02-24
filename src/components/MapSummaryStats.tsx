@@ -69,9 +69,13 @@ const StatPieChart = ({data, label}: {data: any; label: string}) => {
 const MapSummaryStats = ({
   mapId,
   roundId,
+  startTime,
+  endTime,
 }: {
   mapId: number;
   roundId: number;
+  startTime: number;
+  endTime: number;
 }) => {
   const data = useDataNodes([
     new AlaSQLNode(
@@ -125,6 +129,8 @@ const MapSummaryStats = ({
         AND round_end.roundNumber = ${roundId}
         AND kill.matchTime >= round_start.matchTime
         AND kill.matchTime <= round_end.matchTime
+        AND kill.matchTime >= ${startTime}
+        AND kill.matchTime <= ${endTime}
         `
             : ''
         }
@@ -149,8 +155,6 @@ const MapSummaryStats = ({
   // shared data
   const [team1, setTeam1] = useState<object | null>(null);
   const [team2, setTeam2] = useState<object | null>(null);
-  const [startTime, setStartTime] = useState<number>(0);
-  const [endTime, setEndTime] = useState<number>(0);
 
   // for pie chart
   const [pieKillsData, setPieKillsData] = useState<any>([]);
@@ -250,8 +254,6 @@ const MapSummaryStats = ({
       {length: endTime_ - startTime_ + 1},
       (_, i) => i + startTime_,
     );
-    setStartTime(startTime_);
-    setEndTime(endTime_);
     setXAxisData(xAxisData_);
     // console.log('xAxisData_', xAxisData_);
     // console.log('startTime_', startTime_);

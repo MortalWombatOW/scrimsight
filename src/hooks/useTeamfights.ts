@@ -16,11 +16,11 @@ type Teamfight = {
   winningTeam: string;
 };
 
-const useTeamfights = (mapId: number): Teamfight[] | null => {
+const useTeamfights = (mapId: number, prefix: string): Teamfight[] | null => {
   // kills, offensive assists, defensive assists, ultimate charged, ultimate started, ultimate ended, remech charged, mercy rez, dva demech, dva remech,
   const data = useDataNodes([
     new AlaSQLNode(
-      'UsePlayerEvents_kills_' + mapId,
+      prefix + 'useTeamfights_kills_' + mapId,
       `SELECT
         kill.*
       FROM ? AS kill
@@ -31,7 +31,7 @@ const useTeamfights = (mapId: number): Teamfight[] | null => {
     ),
 
     new AlaSQLNode(
-      'UsePlayerEvents_ultimate_start_' + mapId,
+      prefix + 'useTeamfights_ultimate_start_' + mapId,
       `SELECT
         ultimate_start.*
       FROM ? AS ultimate_start
@@ -42,66 +42,78 @@ const useTeamfights = (mapId: number): Teamfight[] | null => {
     ),
   ]);
 
-  const kills = data['UsePlayerEvents_kills_' + mapId];
-  const ultimateStart = data['UsePlayerEvents_ultimate_start_' + mapId];
+  const kills = data[prefix + 'useTeamfights_kills_' + mapId];
+  const ultimateStart = data[prefix + 'useTeamfights_ultimate_start_' + mapId];
 
-  const roster = useMapRosters(mapId, 'UseTeamfights_');
+  console.log('kills', prefix, kills);
+  console.log('ultimateStart', prefix, ultimateStart);
+
+  const roster = useMapRosters(mapId, prefix + 'useTeamfights_');
   const team1Name = roster?.team1.name;
   const team2Name = roster?.team2.name;
 
   const [teamfights, setTeamfights] = useState<Teamfight[] | null>(null);
+  const interFightMinInterval = 15;
 
   // A teamfight lasts from the first kill to the last kill, whereafter there are no kills for 10 seconds.
   // The winning team is the team with the most kills.
 
   useEffect(() => {
     if (!kills || !ultimateStart || !roster || !team1Name || !team2Name) {
+      console.log(
+        'returning',
+        kills,
+        ultimateStart,
+        roster,
+        team1Name,
+        team2Name,
+      );
       return;
     }
 
+    // first, create a teamfight for each kill event
     const teamfights: Teamfight[] = [];
-
-    let currentTeamfight: Teamfight | null = null;
-
-    let killIdx = 0;
-
-    // Loop through all the kills
-    // If the kill is within 10 seconds of the last kill, add it to the current teamfight
-    // If it's not, start a new teamfight
-    while (killIdx < kills.length) {
-      const kill = kills[killIdx];
-
-      if (currentTeamfight === null) {
-        currentTeamfight = {
-          start: kill.matchTime,
-          end: kill.matchTime,
-          team1Kills: 0,
-          team2Kills: 0,
-          winningTeam: '',
-        };
-      }
-
-      if (kill.matchTime - currentTeamfight.end < 20) {
-        currentTeamfight.end = kill.matchTime;
-
-        if (kill.playerTeam === team1Name) {
-          currentTeamfight.team1Kills++;
-        } else {
-          currentTeamfight.team2Kills++;
-        }
+    for (const kill of kills) {
+      const teamfight: Teamfight = {
+        start: kill.matchTime,
+        end: kill.matchTime,
+        team1Kills: 0,
+        team2Kills: 0,
+        winningTeam: '',
+      };
+      if (kill.attackerTeam === team1Name) {
+        teamfight.team1Kills = 1;
       } else {
-        currentTeamfight.winningTeam =
-          currentTeamfight.team1Kills > currentTeamfight.team2Kills
-            ? team1Name
-            : team2Name;
-        teamfights.push(currentTeamfight);
-        currentTeamfight = null;
+        teamfight.team2Kills = 1;
       }
-
-      killIdx++;
+      teamfights.push(teamfight);
     }
 
-    console.log('teamfights', teamfights);
+    // then, merge teamfights that are within 10 seconds of each other
+    let i = 0;
+    while (i < teamfights.length - 1) {
+      const currentFight = teamfights[i];
+      const nextFight = teamfights[i + 1];
+      if (nextFight.start - currentFight.end < interFightMinInterval) {
+        currentFight.end = nextFight.end;
+        currentFight.team1Kills += nextFight.team1Kills;
+        currentFight.team2Kills += nextFight.team2Kills;
+        teamfights.splice(i + 1, 1);
+      } else {
+        i++;
+      }
+    }
+
+    // finally, determine the winning team for each teamfight
+    for (const teamfight of teamfights) {
+      if (teamfight.team1Kills > teamfight.team2Kills) {
+        teamfight.winningTeam = team1Name;
+      } else if (teamfight.team2Kills > teamfight.team1Kills) {
+        teamfight.winningTeam = team2Name;
+      } else {
+        teamfight.winningTeam = 'Draw';
+      }
+    }
 
     setTeamfights(teamfights);
   }, [
@@ -109,6 +121,8 @@ const useTeamfights = (mapId: number): Teamfight[] | null => {
     JSON.stringify(ultimateStart),
     JSON.stringify(roster),
   ]);
+
+  console.log('teamfights', prefix, teamfights);
 
   return teamfights;
 };

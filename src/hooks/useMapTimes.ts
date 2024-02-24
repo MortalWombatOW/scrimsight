@@ -33,7 +33,8 @@ const useMapTimes = (
       `SELECT
         round_start.roundNumber,
         round_start.matchTime as startTime,
-        round_end.matchTime as endTime
+        round_end.matchTime as endTime,
+        round_end.capturingTeam
       FROM ? AS round_end
       JOIN
       ? AS round_start
@@ -57,6 +58,7 @@ const useMapTimes = (
     | {
         startTime: number;
         endTime: number;
+        winningTeam?: string;
       }[]
     | null
   >(null);
@@ -75,6 +77,7 @@ const useMapTimes = (
         return {
           startTime: round.startTime,
           endTime: round.endTime,
+          capturingTeam: round.capturingTeam,
         };
       }),
     ];

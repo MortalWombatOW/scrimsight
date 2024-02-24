@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import {useParams} from 'react-router-dom';
 import {PlayerStatFormatted} from '../../lib/data/NodeData';
@@ -16,17 +16,37 @@ import {
   useQueryParam,
   withDefault,
 } from 'use-query-params';
+import useMapTimes from '../../hooks/useMapTimes';
 
 const MapPage = () => {
   const params = useParams<{mapId: string}>();
   const mapId: string = params.mapId!;
 
-  const [round, setRound] = useQueryParam('round', withDefault(NumberParam, 0));
+  const mapTimes = useMapTimes(Number.parseInt(mapId, 10), 'MapPage_');
+
   // view - 'overview', 'players', 'timeline'
   const [view, setView] = useQueryParam(
     'view',
     withDefault(StringParam, 'overview'),
   );
+
+  const [round, setRound] = useQueryParam('round', withDefault(NumberParam, 0));
+
+  const [startTime, setStartTime] = useQueryParam(
+    'startTime',
+    withDefault(NumberParam, 0),
+  );
+  const [endTime, setEndTime] = useQueryParam(
+    'endTime',
+    withDefault(NumberParam, 9999),
+  );
+
+  useEffect(() => {
+    if (mapTimes) {
+      setStartTime(mapTimes[round].startTime);
+      setEndTime(mapTimes[round].endTime);
+    }
+  }, [mapTimes, round]);
 
   const data = useDataNodes([
     new AlaSQLNode<PlayerStatFormatted>(
@@ -69,7 +89,12 @@ const MapPage = () => {
             ))}
         </Tabs>
         {view === 'overview' && (
-          <MapSummaryStats mapId={Number.parseInt(mapId, 10)} roundId={round} />
+          <MapSummaryStats
+            mapId={Number.parseInt(mapId, 10)}
+            roundId={round}
+            startTime={startTime}
+            endTime={endTime}
+          />
         )}
         {view === 'players' && (
           <MapPlayerTable mapId={Number.parseInt(mapId, 10)} roundId={round} />
