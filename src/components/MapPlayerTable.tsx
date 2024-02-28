@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect} from 'react';
+import React, {ReactNode, useEffect} from 'react';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../hooks/useData';
 
@@ -13,6 +13,8 @@ import {
   TableBody,
   Avatar,
   Typography,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import {getHeroImage, getRankForRole, getRoleFromHero} from '../lib/data/data';
 import IconAndText from './Common/IconAndText';
@@ -20,15 +22,91 @@ import {getIcon} from './Common/RoleIcons';
 import {getColorFor, getColorgorical} from '../lib/color';
 import {heroNameToNormalized} from '../lib/string';
 
-function FormattedTableCell({children}: {children?: React.ReactNode}) {
+type PlayerStat = {
+  name: string;
+  abbreviation: string;
+  description: string;
+  alignRight: boolean;
+  accessor: (player: any, per10Mode: boolean) => string | number;
+  formatter: (value: string | number, player: any) => ReactNode;
+};
+
+function FormattedTableCell({
+  sx,
+  children,
+}: {
+  sx?: any;
+  children?: React.ReactNode;
+}) {
   return (
     <TableCell
       sx={{
         borderLeft: 'none',
         borderRight: 'none',
+        ...sx,
       }}>
       {children}
     </TableCell>
+  );
+}
+
+function MetricCell({
+  metric,
+  submetric,
+  submetricDesc,
+  alignedRight,
+}: {
+  metric: string;
+  alignedRight?: boolean;
+  submetric?: string;
+
+  submetricDesc?: string;
+}) {
+  return (
+    <FormattedTableCell sx={alignedRight ? {textAlign: 'right'} : {}}>
+      {metric}
+      {submetric && (
+        <Typography
+          variant="caption"
+          sx={{color: 'text.secondary', display: 'block'}}>
+          {submetric} {submetricDesc}
+        </Typography>
+      )}
+    </FormattedTableCell>
+  );
+}
+
+function PlayerHeroesList({playerHeroes}) {
+  return (
+    <>
+      {/* <ul
+      style={{
+        listStyle: 'none',
+        padding: 0,
+        margin: 0,
+      }}> */}
+      {Array.from(new Set(playerHeroes)).map((hero: string) => (
+        <span key={hero}>
+          <IconAndText
+            icon={
+              <Avatar
+                src={getHeroImage(hero, false)}
+                sx={{
+                  width: 24,
+                  height: 24,
+                }}
+              />
+            }
+            text={hero}
+            textBorder={true}
+            backgroundColor={getColorFor(heroNameToNormalized(hero))} // no padding on top, bottom, left, but not right
+            padding="2px"
+            borderRadius="14px"
+            dynamic
+          />
+        </span>
+      ))}
+    </>
   );
 }
 
@@ -45,8 +123,19 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         SUM(player_stat.finalBlows) as finalBlows,
         SUM(player_stat.deaths) as deaths,
         SUM(player_stat.objectiveKills) as objectiveKills,
-        SUM(player_stat.allDamageDealt) as allDamageDealt,
-        SUM(player_stat.healingDealt) as healingDealt
+        FLOOR(SUM(player_stat.allDamageDealt)) as allDamageDealt,
+        FLOOR(SUM(player_stat.heroDamageDealt)) as heroDamageDealt,
+        FLOOR(SUM(player_stat.barrierDamageDealt)) as barrierDamageDealt,
+        FLOOR(SUM(player_stat.healingDealt)) as healingDealt,
+        FLOOR(SUM(player_stat.damageBlocked)) as damageBlocked,
+        FLOOR(SUM(player_stat.damageReceived)) as damageReceived,
+        FLOOR(SUM(player_stat.healingReceived)) as healingReceived,
+        SUM(player_stat.shotsFired) as shotsFired,
+        SUM(player_stat.shotsHit) as shotsHit,
+        SUM(player_stat.shotsMissed) as shotsMissed,
+        SUM(player_stat.criticalHits) as criticalHits,
+        SUM(player_stat.offensiveAssists) as offensiveAssists,
+        SUM(player_stat.defensiveAssists) as defensiveAssists
       FROM ? AS player_stat
       WHERE
         player_stat.mapId = ${mapId}
@@ -110,7 +199,9 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     const durationMins = map_duration[0].duration / 60;
 
     const player_stats_timed_ = player_map_stats.map((player: any) => {
-      const role = getRoleFromHero(player.playerHeroes[0]);
+      const role = getRoleFromHero(
+        player.playerHeroes[player.playerHeroes.length - 1],
+      );
       return {
         ...player,
         role: role,
@@ -120,8 +211,31 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         finalBlowsPerTen: (player.finalBlows / durationMins) * 10,
         deathsPerTen: (player.deaths / durationMins) * 10,
         objectiveKillsPerTen: (player.objectiveKills / durationMins) * 10,
-        allDamageDealtPerTen: (player.allDamageDealt / durationMins) * 10,
-        healingDealtPerTen: (player.healingDealt / durationMins) * 10,
+        allDamageDealtPerTen: Math.floor(
+          (player.allDamageDealt / durationMins) * 10,
+        ),
+        heroDamageDealtPerTen: Math.floor(
+          (player.heroDamageDealt / durationMins) * 10,
+        ),
+        barrierDamageDealtPerTen: Math.floor(
+          (player.barrierDamageDealt / durationMins) * 10,
+        ),
+        healingDealtPerTen: Math.floor(
+          (player.healingDealt / durationMins) * 10,
+        ),
+        damageBlockedPerTen: Math.floor(
+          (player.damageBlocked / durationMins) * 10,
+        ),
+        damageReceivedPerTen: Math.floor(
+          (player.damageReceived / durationMins) * 10,
+        ),
+        healingReceivedPerTen: Math.floor(
+          (player.healingReceived / durationMins) * 10,
+        ),
+        accuracy:
+          player.shotsFired > 0 ? player.shotsHit / player.shotsFired : 0,
+        criticalHitRate:
+          player.shotsFired > 0 ? player.criticalHits / player.shotsHit : 0,
       };
     });
 
@@ -149,109 +263,224 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     JSON.stringify(map_teams),
   ]);
 
+  const [per10Mode, setPer10Mode] = React.useState(false);
+  const [smallHeader, setSmallHeader] = React.useState(false);
+
+  const defaultFormatter = (value: string | number, player: any) => (
+    <MetricCell
+      metric={
+        typeof value === 'string'
+          ? value
+          : value > 50
+          ? value.toLocaleString()
+          : value.toFixed(2)
+      }
+      alignedRight
+    />
+  );
+
+  const playerMetrics: PlayerStat[] = [
+    {
+      name: 'Player',
+      abbreviation: 'Player',
+      description: 'The name of the player',
+      alignRight: false,
+      accessor: (player: any, per10Mode: boolean) => player.playerName,
+      formatter: (value: string, player: any) => (
+        <FormattedTableCell>
+          <IconAndText
+            icon={getIcon(player.role)}
+            text={value}
+            backgroundColor={getColorgorical(player.playerTeam)}
+            textBorder={true}
+          />
+        </FormattedTableCell>
+      ),
+    },
+    {
+      name: 'Heroes Played',
+      alignRight: false,
+      abbreviation: 'Heroes',
+      description: 'The heroes the player played this map',
+      accessor: (player: any, per10Mode: boolean) => player.playerHeroes,
+      formatter: (value: string, player: any) => (
+        <FormattedTableCell>
+          <div style={{display: 'flex', flexWrap: 'wrap'}}>
+            <PlayerHeroesList playerHeroes={player.playerHeroes} />
+          </div>
+        </FormattedTableCell>
+      ),
+    },
+    {
+      name: 'Kills',
+      abbreviation: 'K',
+      description: 'The number of kills the player had this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        per10Mode
+          ? player.finalBlowsPerTen.toFixed(2)
+          : player.finalBlows.toFixed(0),
+      formatter: defaultFormatter,
+    },
+    {
+      name: 'Eliminations',
+      abbreviation: 'E',
+      description: 'The number of eliminations the player had this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        per10Mode
+          ? player.eliminationsPerTen.toFixed(2)
+          : player.eliminations.toFixed(0),
+      formatter: defaultFormatter,
+    },
+    {
+      name: 'Deaths',
+      abbreviation: 'D',
+      description: 'The number of deaths the player had this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        per10Mode ? player.deathsPerTen.toFixed(2) : player.deaths.toFixed(0),
+      formatter: defaultFormatter,
+    },
+    {
+      name: 'Kill / Death Ratio',
+      abbreviation: 'KDR',
+      description: 'The ratio of kills to deaths the player had this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        player.deaths > 0
+          ? player.finalBlows / player.deaths
+          : player.finalBlows > 0
+          ? 'Infinity'
+          : 0,
+      formatter: defaultFormatter,
+    },
+    {
+      name: 'Damage Dealt',
+      abbreviation: 'DMG',
+      description: 'The amount of damage the player dealt this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        per10Mode ? player.allDamageDealtPerTen : player.allDamageDealt,
+      formatter: defaultFormatter,
+    },
+    {
+      name: 'Healing Dealt',
+      abbreviation: 'H',
+      description: 'The amount of healing the player did this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        per10Mode ? player.healingDealtPerTen : player.healingDealt,
+      formatter: defaultFormatter,
+    },
+    {
+      name: 'Damage Mitigated',
+      abbreviation: 'MIT',
+      description: 'The amount of damage the player blocked this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        per10Mode ? player.damageBlockedPerTen : player.damageBlocked,
+      formatter: defaultFormatter,
+    },
+    {
+      name: 'Assists',
+      abbreviation: 'A',
+      description: 'The number of assists the player had this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        player.offensiveAssists + player.defensiveAssists,
+      formatter: defaultFormatter,
+    },
+    {
+      name: 'Offensive Assists',
+      abbreviation: 'OA',
+      description: 'The number of assists the player had this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) => player.offensiveAssists,
+      formatter: defaultFormatter,
+    },
+    {
+      name: 'Defensive Assists',
+      abbreviation: 'DA',
+      description: 'The number of assists the player had this map',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) => player.defensiveAssists,
+      formatter: defaultFormatter,
+    },
+
+    {
+      name: 'Accuracy',
+      abbreviation: 'Acc',
+      description: 'Shots hit / shots fired',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        player.shotsFired > 0
+          ? ((player.shotsHit / player.shotsFired) * 100).toFixed(0) + '%'
+          : '0',
+      formatter: defaultFormatter,
+    },
+
+    {
+      name: 'Critical Hit Rate',
+      abbreviation: 'CR',
+      description: 'Critical hits / shots hit',
+      alignRight: true,
+      accessor: (player: any, per10Mode: boolean) =>
+        player.shotsFired > 0
+          ? ((player.criticalHits / player.shotsHit) * 100).toFixed(0) + '%'
+          : '0',
+      formatter: defaultFormatter,
+    },
+  ];
+
   return (
     <div>
       <TableContainer component={Paper} sx={{padding: '1em'}}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={per10Mode}
+              onChange={() => setPer10Mode(!per10Mode)}
+            />
+          }
+          label={
+            <Typography variant="caption">
+              Show averages per 10 minutes
+            </Typography>
+          }
+        />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={smallHeader}
+              onChange={() => setSmallHeader(!smallHeader)}
+            />
+          }
+          label={<Typography variant="caption">Condense header</Typography>}
+        />
+
         <Table size="small">
           <TableHead>
             <TableRow sx={{fontWeight: 'bold'}}>
-              <FormattedTableCell>Player</FormattedTableCell>
-              <FormattedTableCell>Heroes</FormattedTableCell>
-              <FormattedTableCell>K / D / A</FormattedTableCell>
-              <FormattedTableCell>Objective Kills</FormattedTableCell>
-              <FormattedTableCell>Damage</FormattedTableCell>
-              <FormattedTableCell>Healing</FormattedTableCell>
-              <FormattedTableCell>Final Blows/10m</FormattedTableCell>
-              <FormattedTableCell>Deaths/10m</FormattedTableCell>
-              <FormattedTableCell>Elims/10m</FormattedTableCell>
-              <FormattedTableCell>Objective Elims/10m</FormattedTableCell>
+              {playerMetrics.map((metric) => (
+                <FormattedTableCell
+                  key={metric.name}
+                  sx={{
+                    textAlign: metric.alignRight ? 'right' : 'left',
+                  }}>
+                  <Typography variant="h5">
+                    {smallHeader ? metric.abbreviation : metric.name}
+                  </Typography>
+                </FormattedTableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {player_stats_timed.map((player: any) => (
               <TableRow key={player.id}>
-                <FormattedTableCell>
-                  <IconAndText
-                    icon={getIcon(player.role)}
-                    text={player.playerName}
-                    backgroundColor={getColorgorical(player.playerTeam)}
-                    textBorder={true}
-                  />
-                </FormattedTableCell>
-                <FormattedTableCell>
-                  <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-                    {Array.from(new Set(player.playerHeroes)).map(
-                      (hero: string) => (
-                        <li key={hero}>
-                          <IconAndText
-                            icon={
-                              <Avatar
-                                src={getHeroImage(hero, false)}
-                                sx={{width: 24, height: 24}}
-                              />
-                            }
-                            text={hero}
-                            textBorder={true}
-                            backgroundColor={getColorFor(
-                              heroNameToNormalized(hero),
-                            )}
-                            // no padding on top, bottom, left, but not right
-                            padding="0 0.5em 0 0"
-                            borderRadius="12px"
-                          />
-                        </li>
-                      ),
-                    )}
-                  </ul>
-                </FormattedTableCell>
-                <FormattedTableCell>
-                  {player.finalBlows} / {player.deaths} / {player.eliminations}
-                  <Typography
-                    variant="caption"
-                    sx={{color: 'text.secondary', display: 'block'}}>
-                    {player.deaths === 0
-                      ? '∞'
-                      : (player.finalBlows / player.deaths).toFixed(2)}{' '}
-                    KDR
-                  </Typography>
-                </FormattedTableCell>
-
-                <FormattedTableCell>{player.objectiveKills}</FormattedTableCell>
-                <FormattedTableCell>
-                  {Math.floor(player.allDamageDealt).toLocaleString()}
-                  <Typography
-                    variant="caption"
-                    sx={{color: 'text.secondary', display: 'block'}}>
-                    {Math.floor(player.allDamageDealtPerTen).toLocaleString()} /
-                    10 min
-                  </Typography>
-                </FormattedTableCell>
-
-                <FormattedTableCell>
-                  {player.healingDealt > 0
-                    ? Math.floor(player.healingDealt).toLocaleString()
-                    : '-'}
-                  <Typography
-                    variant="caption"
-                    sx={{color: 'text.secondary', display: 'block'}}>
-                    {player.healingDealtPerTen > 0
-                      ? Math.floor(player.healingDealtPerTen).toLocaleString()
-                      : '-'}
-                    / 10 min
-                  </Typography>
-                </FormattedTableCell>
-                <FormattedTableCell>
-                  {player.finalBlowsPerTen.toFixed(2)}
-                </FormattedTableCell>
-                <FormattedTableCell>
-                  {player.deathsPerTen.toFixed(2)}
-                </FormattedTableCell>
-                <FormattedTableCell>
-                  {player.eliminationsPerTen.toFixed(2)}
-                </FormattedTableCell>
-                <FormattedTableCell>
-                  {player.objectiveKillsPerTen.toFixed(2)}
-                </FormattedTableCell>
+                {playerMetrics.map((metric) =>
+                  metric.formatter(metric.accessor(player, per10Mode), player),
+                )}
               </TableRow>
             ))}
           </TableBody>
