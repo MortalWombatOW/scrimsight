@@ -15,6 +15,7 @@ import {
   Typography,
   Switch,
   FormControlLabel,
+  Button,
 } from '@mui/material';
 import {getHeroImage, getRankForRole, getRoleFromHero} from '../lib/data/data';
 import IconAndText from './Common/IconAndText';
@@ -45,7 +46,7 @@ function FormattedTableCell({
         borderRight: 'none',
         ...sx,
       }}>
-      {children}
+      <div style={{paddingRight: '8px'}}>{children}</div>
     </TableCell>
   );
 }
@@ -86,7 +87,10 @@ function PlayerHeroesList({playerHeroes}) {
         margin: 0,
       }}> */}
       {Array.from(new Set(playerHeroes)).map((hero: string) => (
-        <span key={hero}>
+        <span
+          key={hero}
+          //  style={{width: 28, overflowX: 'visible'}}
+        >
           <IconAndText
             icon={
               <Avatar
@@ -239,22 +243,22 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       };
     });
 
-    // sort by roleRank, then by team
-    player_stats_timed_.sort((a: any, b: any) => {
-      if (a.teamRank < b.teamRank) {
-        return -1;
-      }
-      if (a.teamRank > b.teamRank) {
-        return 1;
-      }
-      if (a.roleRank < b.roleRank) {
-        return -1;
-      }
-      if (a.roleRank > b.roleRank) {
-        return 1;
-      }
-      return 0;
-    });
+    // // sort by roleRank, then by team
+    // player_stats_timed_.sort((a: any, b: any) => {
+    //   if (a.teamRank < b.teamRank) {
+    //     return -1;
+    //   }
+    //   if (a.teamRank > b.teamRank) {
+    //     return 1;
+    //   }
+    //   if (a.roleRank < b.roleRank) {
+    //     return -1;
+    //   }
+    //   if (a.roleRank > b.roleRank) {
+    //     return 1;
+    //   }
+    //   return 0;
+    // });
 
     setPlayerStatsTimed(player_stats_timed_);
   }, [
@@ -262,6 +266,47 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     JSON.stringify(map_duration),
     JSON.stringify(map_teams),
   ]);
+
+  const [sortedData, setSortedData] = React.useState<any[]>([]);
+  const [sortBy, setSortBy] = React.useState<string>('K');
+  const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('desc');
+
+  useEffect(() => {
+    if (player_stats_timed.length === 0) {
+      return;
+    }
+
+    const metric: PlayerStat | undefined = playerMetrics.find(
+      (metric) => metric.abbreviation === sortBy,
+    );
+
+    if (!metric) {
+      return;
+    }
+
+    console.error('sorting by', sortBy, sortOrder);
+
+    const newData = [...player_stats_timed];
+
+    newData.sort((a: any, b: any) => {
+      const a_ = metric?.accessor(a, per10Mode);
+      const b_ = metric?.accessor(b, per10Mode);
+
+      if (typeof a_ === 'string' && typeof b_ === 'string') {
+        return sortOrder === 'asc'
+          ? a_.localeCompare(b_)
+          : b_.localeCompare(a_);
+      }
+
+      if (typeof a_ === 'number' && typeof b_ === 'number') {
+        return sortOrder === 'asc' ? a_ - b_ : b_ - a_;
+      }
+
+      return 0;
+    });
+
+    setSortedData(newData);
+  }, [sortBy, sortOrder, JSON.stringify(player_stats_timed)]);
 
   const [per10Mode, setPer10Mode] = React.useState(false);
   const [smallHeader, setSmallHeader] = React.useState(false);
@@ -272,7 +317,9 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         typeof value === 'string'
           ? value
           : value > 50
-          ? value.toLocaleString()
+          ? Math.floor(value).toLocaleString()
+          : Math.floor(value) == value
+          ? value.toFixed(0)
           : value.toFixed(2)
       }
       alignedRight
@@ -281,19 +328,53 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
 
   const playerMetrics: PlayerStat[] = [
     {
-      name: 'Player',
+      name: 'Role',
+      abbreviation: 'Role',
+      description: 'The role of the player',
+      alignRight: false,
+      accessor: (player: any, per10Mode: boolean) =>
+        getRankForRole(player.role),
+      formatter: (value: string, player: any) => (
+        <FormattedTableCell>
+          <span style={{fontSize: '1.5em'}}>{getIcon(player.role)}</span>
+        </FormattedTableCell>
+      ),
+    },
+    {
+      name: 'Team Name',
+      abbreviation: 'Team',
+      description: 'The team the player is on',
+      alignRight: false,
+      accessor: (player: any, per10Mode: boolean) => player.playerTeam,
+      formatter: (value: string, player: any) => (
+        <FormattedTableCell>
+          <span
+            style={{
+              backgroundColor: getColorgorical(value),
+              padding: '0.5em',
+              borderRadius: '5px',
+              textShadow: '0 0 5px black',
+            }}>
+            {value}
+          </span>
+        </FormattedTableCell>
+      ),
+    },
+    {
+      name: 'Player Name',
       abbreviation: 'Player',
       description: 'The name of the player',
       alignRight: false,
       accessor: (player: any, per10Mode: boolean) => player.playerName,
       formatter: (value: string, player: any) => (
         <FormattedTableCell>
-          <IconAndText
+          {/* <IconAndText
             icon={getIcon(player.role)}
             text={value}
             backgroundColor={getColorgorical(player.playerTeam)}
             textBorder={true}
-          />
+          /> */}
+          {value}
         </FormattedTableCell>
       ),
     },
@@ -317,9 +398,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       description: 'The number of kills the player had this map',
       alignRight: true,
       accessor: (player: any, per10Mode: boolean) =>
-        per10Mode
-          ? player.finalBlowsPerTen.toFixed(2)
-          : player.finalBlows.toFixed(0),
+        per10Mode ? player.finalBlowsPerTen : player.finalBlows,
       formatter: defaultFormatter,
     },
     {
@@ -328,9 +407,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       description: 'The number of eliminations the player had this map',
       alignRight: true,
       accessor: (player: any, per10Mode: boolean) =>
-        per10Mode
-          ? player.eliminationsPerTen.toFixed(2)
-          : player.eliminations.toFixed(0),
+        per10Mode ? player.eliminationsPerTen : player.eliminations,
       formatter: defaultFormatter,
     },
     {
@@ -339,7 +416,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       description: 'The number of deaths the player had this map',
       alignRight: true,
       accessor: (player: any, per10Mode: boolean) =>
-        per10Mode ? player.deathsPerTen.toFixed(2) : player.deaths.toFixed(0),
+        per10Mode ? player.deathsPerTen : player.deaths,
       formatter: defaultFormatter,
     },
     {
@@ -351,7 +428,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         player.deaths > 0
           ? player.finalBlows / player.deaths
           : player.finalBlows > 0
-          ? 'Infinity'
+          ? '∞'
           : 0,
       formatter: defaultFormatter,
     },
@@ -414,10 +491,15 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       description: 'Shots hit / shots fired',
       alignRight: true,
       accessor: (player: any, per10Mode: boolean) =>
-        player.shotsFired > 0
-          ? ((player.shotsHit / player.shotsFired) * 100).toFixed(0) + '%'
-          : '0',
-      formatter: defaultFormatter,
+        player.shotsFired > 0 ? (player.shotsHit / player.shotsFired) * 100 : 0,
+      formatter: (value: string | number, player: any) => (
+        <MetricCell
+          metric={(value as number).toFixed(0) + '%'}
+          submetric={player.shotsHit}
+          submetricDesc="hits"
+          alignedRight
+        />
+      ),
     },
 
     {
@@ -426,10 +508,15 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       description: 'Critical hits / shots hit',
       alignRight: true,
       accessor: (player: any, per10Mode: boolean) =>
-        player.shotsFired > 0
-          ? ((player.criticalHits / player.shotsHit) * 100).toFixed(0) + '%'
-          : '0',
-      formatter: defaultFormatter,
+        player.shotsHit > 0 ? (player.criticalHits / player.shotsHit) * 100 : 0,
+      formatter: (value: string | number, player: any) => (
+        <MetricCell
+          metric={(value as number).toFixed(0) + '%'}
+          submetric={player.criticalHits}
+          submetricDesc="crits"
+          alignedRight
+        />
+      ),
     },
   ];
 
@@ -463,20 +550,44 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           <TableHead>
             <TableRow sx={{fontWeight: 'bold'}}>
               {playerMetrics.map((metric) => (
-                <FormattedTableCell
+                <TableCell
                   key={metric.name}
                   sx={{
                     textAlign: metric.alignRight ? 'right' : 'left',
+                    borderLeft: 'none',
+                    borderRight: 'none',
                   }}>
-                  <Typography variant="h5">
-                    {smallHeader ? metric.abbreviation : metric.name}
-                  </Typography>
-                </FormattedTableCell>
+                  <Button
+                    // variant="outlined"
+                    sx={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      color: 'inherit',
+                      ...(metric.alignRight
+                        ? {justifyContent: 'right'}
+                        : {justifyContent: 'left'}),
+                      ...(sortBy === metric.abbreviation
+                        ? {backgroundColor: 'rgb(50, 59, 108)'}
+                        : {}),
+                    }}
+                    onClick={() => {
+                      if (sortBy === metric.abbreviation) {
+                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                      } else {
+                        setSortBy(metric.abbreviation);
+                        setSortOrder('desc');
+                      }
+                    }}>
+                    <Typography variant="h5">
+                      {smallHeader ? metric.abbreviation : metric.name}
+                    </Typography>
+                  </Button>
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {player_stats_timed.map((player: any) => (
+            {sortedData.map((player: any) => (
               <TableRow key={player.id}>
                 {playerMetrics.map((metric) =>
                   metric.formatter(metric.accessor(player, per10Mode), player),
