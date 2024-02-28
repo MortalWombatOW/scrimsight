@@ -4,9 +4,8 @@ import {useDataNodes} from '../hooks/useData';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {Grid, Paper, Typography} from '@mui/material';
 import {getColorgorical} from '../lib/color';
-import useTeamfights from '../hooks/useTeamfights';
-import useMapTimes from '../hooks/useMapTimes';
-import useAdjustedText from '../hooks/useAdjustedText';
+import useTeamfights from '../hooks/data/useTeamfights';
+import useMapTimes from '../hooks/data/useMapTimes';
 import useLegibleTextSvg from '../hooks/useLegibleTextSvg';
 
 const getElementWidth = (element: SVGSVGElement) => {
@@ -50,6 +49,7 @@ const generateTeamfightBBoxesForRound = (
       height: 100,
     };
   });
+  console.error('teamfightWinners', teamfightWinners);
   return tfBBoxes;
 };
 
@@ -92,8 +92,8 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
   const map_scorecard = data['map_scorecard_' + mapId];
   const round_results = data['MapScorecard_round_results_' + mapId];
 
-  const teamfights = useTeamfights(mapId, 'MapScorecard_');
-  const mapTimes = useMapTimes(mapId, 'MapScorecard_');
+  const teamfights = useTeamfights(mapId);
+  const mapTimes = useMapTimes(mapId);
 
   // if (!map_scorecard) {
   //   return <div>Loading...</div>;
@@ -233,12 +233,13 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
         ref={ref}
         viewBox={`0 0 ${width || 100} 300`}>
         <g>
-          <rect x="0" y="0" width="100%" height="100" fill={winnerColor} />
+          {/* <rect x="0" y="0" width="100%" height="100" fill={winnerColor} /> */}
           <text
             x="50%"
             y="40"
             textAnchor="middle"
             dominantBaseline="middle"
+            fill={winnerColor}
             fontSize={20}>
             {mapInfo?.winner}
           </text>
@@ -247,6 +248,7 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
             y="60"
             textAnchor="middle"
             dominantBaseline="middle"
+            fill="white"
             fontSize={15}>
             Map Winner
           </text>
@@ -261,18 +263,19 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
               const roundBBox = roundBBoxes[i];
               return (
                 <g key={i}>
-                  <rect
+                  {/* <rect
                     x={roundBBox.x}
                     y={roundBBox.y}
                     width={roundBBox.width}
                     height={roundBBox.height}
                     fill={getColorgorical(winner)}
-                  />
+                  /> */}
                   <text
                     x={roundBBox.x + roundBBox.width / 2}
                     y={roundBBox.y + roundBBox.height / 2}
                     textAnchor="middle"
                     dominantBaseline="middle"
+                    fill={getColorgorical(winner)}
                     fontSize={18}>
                     {winner}
                   </text>
@@ -281,6 +284,7 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
                     y={roundBBox.y + roundBBox.height / 2 + 20}
                     textAnchor="middle"
                     dominantBaseline="middle"
+                    fill={'white'}
                     fontSize={12}>
                     Round {roundNumber} Winner
                   </text>
@@ -296,27 +300,29 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
               return tfBBox.map((tf, i) => {
                 return (
                   <g key={i}>
-                    <rect
+                    {/* <rect
                       x={tf.x}
                       y={tf.y}
                       width={tf.width}
                       height={tf.height}
                       fill={getColorgorical(teamfightWinners[i].winner)}
-                    />
+                    /> */}
                     <text
                       x={tf.x + tf.width / 2}
                       y={tf.y + tf.height / 2}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      fontSize={18}>
+                      fill={getColorgorical(teamfightWinners[i].winner)}
+                      fontSize={12}>
                       {teamfightWinners[i].winner}
                     </text>
                     <text
                       x={tf.x + tf.width / 2}
                       y={tf.y + tf.height / 2 + 20}
                       textAnchor="middle"
+                      fill={'white'}
                       dominantBaseline="middle"
-                      fontSize={12}>
+                      fontSize={10}>
                       TF {i + 1}
                     </text>
                   </g>

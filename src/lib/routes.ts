@@ -8,27 +8,30 @@ interface Route {
   path: string[];
   component: () => JSX.Element;
   name?: string;
+  hidden?: boolean;
 }
 
 const routes: Route[] = [
   {
     path: ['/'],
-    component: Home,
+    component: SplashPage,
   },
-  // {
-  //   path: ['/dashboard'],
-  //   component: Home,
-  //   name: 'Dashboard',
-  // },
   {
-    path: ['/map', '/map/:mapId'],
+    path: ['/map'],
+    component: Home,
+    name: 'View Scrims',
+  },
+  {
+    path: ['/map/:mapId'],
     component: MapPage,
     name: 'View Maps',
+    hidden: true,
   },
   {
     path: ['/player/:playerId'],
     component: PlayerPage,
     name: 'View Players',
+    hidden: true,
   },
   // {
   //   path: ['/team'],

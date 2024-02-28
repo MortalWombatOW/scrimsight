@@ -12,6 +12,7 @@ import {
   TableCell,
   TableBody,
   Avatar,
+  Typography,
 } from '@mui/material';
 import {getHeroImage, getRankForRole, getRoleFromHero} from '../lib/data/data';
 import IconAndText from './Common/IconAndText';
@@ -157,7 +158,6 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
               <FormattedTableCell>Player</FormattedTableCell>
               <FormattedTableCell>Heroes</FormattedTableCell>
               <FormattedTableCell>K / D / A</FormattedTableCell>
-              <FormattedTableCell>KDR</FormattedTableCell>
               <FormattedTableCell>Objective Kills</FormattedTableCell>
               <FormattedTableCell>Damage</FormattedTableCell>
               <FormattedTableCell>Healing</FormattedTableCell>
@@ -165,8 +165,6 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
               <FormattedTableCell>Deaths/10m</FormattedTableCell>
               <FormattedTableCell>Elims/10m</FormattedTableCell>
               <FormattedTableCell>Objective Elims/10m</FormattedTableCell>
-              <FormattedTableCell>Damage/10m</FormattedTableCell>
-              <FormattedTableCell>Healing/10m</FormattedTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -208,21 +206,39 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                 </FormattedTableCell>
                 <FormattedTableCell>
                   {player.finalBlows} / {player.deaths} / {player.eliminations}
+                  <Typography
+                    variant="caption"
+                    sx={{color: 'text.secondary', display: 'block'}}>
+                    {player.deaths === 0
+                      ? '∞'
+                      : (player.finalBlows / player.deaths).toFixed(2)}{' '}
+                    KDR
+                  </Typography>
                 </FormattedTableCell>
-                <FormattedTableCell>
-                  {player.deaths === 0
-                    ? '∞'
-                    : (player.finalBlows / player.deaths).toFixed(2)}
-                </FormattedTableCell>
+
                 <FormattedTableCell>{player.objectiveKills}</FormattedTableCell>
                 <FormattedTableCell>
                   {Math.floor(player.allDamageDealt).toLocaleString()}
+                  <Typography
+                    variant="caption"
+                    sx={{color: 'text.secondary', display: 'block'}}>
+                    {Math.floor(player.allDamageDealtPerTen).toLocaleString()} /
+                    10 min
+                  </Typography>
                 </FormattedTableCell>
 
                 <FormattedTableCell>
                   {player.healingDealt > 0
                     ? Math.floor(player.healingDealt).toLocaleString()
                     : '-'}
+                  <Typography
+                    variant="caption"
+                    sx={{color: 'text.secondary', display: 'block'}}>
+                    {player.healingDealtPerTen > 0
+                      ? Math.floor(player.healingDealtPerTen).toLocaleString()
+                      : '-'}
+                    / 10 min
+                  </Typography>
                 </FormattedTableCell>
                 <FormattedTableCell>
                   {player.finalBlowsPerTen.toFixed(2)}
@@ -235,15 +251,6 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                 </FormattedTableCell>
                 <FormattedTableCell>
                   {player.objectiveKillsPerTen.toFixed(2)}
-                </FormattedTableCell>
-
-                <FormattedTableCell>
-                  {Math.floor(player.allDamageDealtPerTen).toLocaleString()}
-                </FormattedTableCell>
-                <FormattedTableCell>
-                  {player.healingDealtPerTen > 0
-                    ? Math.floor(player.healingDealtPerTen).toLocaleString()
-                    : '-'}
                 </FormattedTableCell>
               </TableRow>
             ))}

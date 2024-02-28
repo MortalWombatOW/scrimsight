@@ -16,13 +16,13 @@ import {
   useQueryParam,
   withDefault,
 } from 'use-query-params';
-import useMapTimes from '../../hooks/useMapTimes';
+import useMapTimes from '../../hooks/data/useMapTimes';
 
 const MapPage = () => {
   const params = useParams<{mapId: string}>();
   const mapId: string = params.mapId!;
 
-  const mapTimes = useMapTimes(Number.parseInt(mapId, 10), 'MapPage_');
+  const mapTimes = useMapTimes(Number.parseInt(mapId, 10));
 
   // view - 'overview', 'players', 'timeline'
   const [view, setView] = useQueryParam(

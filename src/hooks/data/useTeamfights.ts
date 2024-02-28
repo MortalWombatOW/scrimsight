@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {useDataNodes} from './useData';
+import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../useData';
 import useMapRosters from './useMapRosters';
+import useUUID from '../useUUID';
 
 type Teamfight = {
   // timestamps
@@ -16,11 +17,11 @@ type Teamfight = {
   winningTeam: string;
 };
 
-const useTeamfights = (mapId: number, prefix: string): Teamfight[] | null => {
-  // kills, offensive assists, defensive assists, ultimate charged, ultimate started, ultimate ended, remech charged, mercy rez, dva demech, dva remech,
+const useTeamfights = (mapId: number): Teamfight[] | null => {
+  const uuid = useUUID();
   const data = useDataNodes([
     new AlaSQLNode(
-      prefix + 'useTeamfights_kills_' + mapId,
+      'useTeamfights_kills_' + mapId + '_' + uuid,
       `SELECT
         kill.*
       FROM ? AS kill
@@ -31,7 +32,7 @@ const useTeamfights = (mapId: number, prefix: string): Teamfight[] | null => {
     ),
 
     new AlaSQLNode(
-      prefix + 'useTeamfights_ultimate_start_' + mapId,
+      'useTeamfights_ultimate_start_' + mapId + '_' + uuid,
       `SELECT
         ultimate_start.*
       FROM ? AS ultimate_start
@@ -42,18 +43,19 @@ const useTeamfights = (mapId: number, prefix: string): Teamfight[] | null => {
     ),
   ]);
 
-  const kills = data[prefix + 'useTeamfights_kills_' + mapId];
-  const ultimateStart = data[prefix + 'useTeamfights_ultimate_start_' + mapId];
+  const kills = data['useTeamfights_kills_' + mapId + '_' + uuid];
+  const ultimateStart =
+    data['useTeamfights_ultimate_start_' + mapId + '_' + uuid];
 
-  console.log('kills', prefix, kills);
-  console.log('ultimateStart', prefix, ultimateStart);
+  console.log('kills', kills);
+  console.log('ultimateStart', ultimateStart);
 
-  const roster = useMapRosters(mapId, prefix + 'useTeamfights_');
+  const roster = useMapRosters(mapId);
   const team1Name = roster?.team1.name;
   const team2Name = roster?.team2.name;
 
   const [teamfights, setTeamfights] = useState<Teamfight[] | null>(null);
-  const interFightMinInterval = 15;
+  const interFightMinInterval = 30;
 
   // A teamfight lasts from the first kill to the last kill, whereafter there are no kills for 10 seconds.
   // The winning team is the team with the most kills.
@@ -122,7 +124,7 @@ const useTeamfights = (mapId: number, prefix: string): Teamfight[] | null => {
     JSON.stringify(roster),
   ]);
 
-  console.log('teamfights', prefix, teamfights);
+  console.log('teamfights', teamfights);
 
   return teamfights;
 };

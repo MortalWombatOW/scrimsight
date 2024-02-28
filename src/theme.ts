@@ -24,7 +24,7 @@ export const themeDef: ThemeOptions = {
     },
   },
   typography: {
-    fontFamily: 'Poppins, sans-serif',
+    fontFamily: 'Sintony',
     h1: {
       fontSize: 36,
       fontWeight: 700,

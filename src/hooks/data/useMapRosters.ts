@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {useDataNodes} from './useData';
-import {getRoleFromHero, getRankForRole} from '../lib/data/data';
+import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../useData';
+import {getRoleFromHero, getRankForRole} from '../../lib/data/data';
+import useUUID from '../useUUID';
 
 type Roster = {
   name: string;
@@ -16,14 +17,14 @@ type Team = {
 
 const useMapRosters = (
   mapId: number,
-  prefix: string,
 ): {
   team1: Team;
   team2: Team;
 } | null => {
+  const uuid = useUUID();
   const data = useDataNodes([
     new AlaSQLNode(
-      prefix + 'UseMapRosters_players_' + mapId,
+      'UseMapRosters_players_' + mapId + '_' + uuid,
       `SELECT
         player_stat.playerTeam,
         match_start.team1Name,
@@ -52,7 +53,7 @@ const useMapRosters = (
     team2: Team;
   } | null>(null);
 
-  const mapRosterRawData = data[prefix + 'UseMapRosters_players_' + mapId];
+  const mapRosterRawData = data['UseMapRosters_players_' + mapId + '_' + uuid];
 
   console.log('mapRosterRawData', data);
 

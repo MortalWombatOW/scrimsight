@@ -1,24 +1,29 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 
-import {Paper, Slider} from '@mui/material';
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {useDataNodes} from '../hooks/useData';
+import {
+  Button,
+  Grid,
+  MenuItem,
+  Paper,
+  Select,
+  Slider,
+  Typography,
+} from '@mui/material';
 import {getColorFor, getColorgorical} from '../lib/color';
-import {getRoleFromHero, getRankForRole} from '../lib/data/data';
 import {getSvgIcon} from './Common/RoleIcons';
 import {heroNameToNormalized} from '../lib/string';
-import usePlayerLives from '../hooks/usePlayerLives';
-import useMapTimes from '../hooks/useMapTimes';
-import useMapRosters from '../hooks/useMapRosters';
-import useGlobalMapEvents from '../hooks/useGlobalMapEvents';
-import usePlayerEvents from '../hooks/usePlayerEvents';
+import usePlayerLives from '../hooks/data/usePlayerLives';
+import useMapTimes from '../hooks/data/useMapTimes';
+import useMapRosters from '../hooks/data/useMapRosters';
+import useGlobalMapEvents from '../hooks/data/useGlobalMapEvents';
+import usePlayerEvents, {PlayerEvents} from '../hooks/data/usePlayerEvents';
 import {format, formatTime} from '../lib/format';
-import useAdjustedText, {AABBs} from '../hooks/useAdjustedText';
 import useLegibleTextSvg from '../hooks/useLegibleTextSvg';
-import useTeamfights from '../hooks/useTeamfights';
-import useUltimateTimes from '../hooks/useUltimateTimes';
-import {Svg} from '@react-three/drei';
+import useTeamfights from '../hooks/data/useTeamfights';
+import useUltimateTimes from '../hooks/data/useUltimateTimes';
+import {getHeroImage} from '../lib/data/data';
 
 const SvgWrapText = ({
   x,
@@ -34,7 +39,11 @@ const SvgWrapText = ({
   children: React.ReactNode;
 }) => {
   return (
-    <g className="svg-wrap-text-group" data-x={x} data-y={y}>
+    <g
+      className="svg-wrap-text-group"
+      data-x={x}
+      data-y={y}
+      transform={`translate(${x},${y})`}>
       <foreignObject
         width="80"
         height={50}
@@ -90,6 +99,105 @@ const SvgArcBetween = ({
   );
 };
 
+function TimelineControls(props) {
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={3}>
+        <Typography id="range-slider" gutterBottom>
+          Playback
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => props.setPlaying(!props.playing)}
+          sx={{
+            marginRight: '1em',
+            backgroundColor: props.playing ? '#985249' : '#4f9d69',
+          }}
+          disabled={!props.loaded}>
+          {props.playing ? 'Pause' : 'Play'}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            props.setStartTimeFilter(props.startTime!);
+            props.setEndTimeFilter(props.startTime! + 60 * 3);
+          }}
+          disabled={!props.loaded}
+          sx={{
+            backgroundColor: 'rgb(50, 59, 108)',
+          }}>
+          Reset
+        </Button>
+        <Select
+          value={props.ticksPerFrame}
+          onChange={(e) => props.setTicksPerFrame(e.target.value)}
+          label="Playback Speed">
+          <MenuItem value={1}>1x</MenuItem>
+          <MenuItem value={2}>2x</MenuItem>
+          <MenuItem value={5}>5x</MenuItem>
+          <MenuItem value={10}>10x</MenuItem>
+          <MenuItem value={15}>15x</MenuItem>
+        </Select>
+      </Grid>
+      <Grid item xs={6}>
+        <Typography id="range-slider" gutterBottom>
+          Time Range
+        </Typography>
+        <Slider
+          value={[props.startTimeFilter, props.endTimeFilter]}
+          onChange={(_, newValue) => {
+            props.setStartTimeFilter(newValue[0]);
+            props.setEndTimeFilter(newValue[1]);
+          }}
+          min={props.startTime || 0}
+          max={props.endTime || 9999}
+          step={1}
+          valueLabelDisplay="auto"
+          valueLabelFormat={(value) => formatTime(value)}
+          sx={{
+            color: 'rgb(50, 59, 108)',
+            padding: '0',
+            width: '500px',
+          }}
+        />
+        <svg width="500px" height={50}>
+          <rect
+            x={0}
+            y={0}
+            width={(props.startTimeFilter / props.endTime) * 100 + '%'}
+            height={50}
+            fill="rgba(50, 59, 108, 0.5)"
+          />
+          <rect
+            x={(props.endTimeFilter / props.endTime) * 100 + '%'}
+            y={0}
+            width={9999}
+            height={50}
+            fill="rgba(50, 59, 108, 0.5)"
+          />
+          {props.kills.map(
+            (kill: any, i: number) => (
+              console.log('kill', kill),
+              (
+                <rect
+                  key={kill.matchTime + i}
+                  x={(kill.matchTime / props.endTime) * 100 + '%'}
+                  y={0}
+                  width={2}
+                  height={50}
+                  fill={getColorgorical(kill.team)}
+                />
+              )
+            ),
+          )}
+        </svg>
+      </Grid>
+    </Grid>
+  );
+}
+
 const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   const mapEvents = useGlobalMapEvents(mapId);
 
@@ -102,7 +210,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     }[]
   >([]);
 
-  const roster = useMapRosters(mapId, 'MapTimeline_');
+  const roster = useMapRosters(mapId);
 
   // console.log('roster', roster);
 
@@ -140,24 +248,33 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     }
   }, [JSON.stringify(players)]);
 
-  const {startTime, endTime} = useMapTimes(mapId, 'MapTimeline_')?.[
-    roundId
-  ] || {
-    startTime: 0,
-    endTime: 0,
+  const {startTime, endTime} = useMapTimes(mapId)?.[roundId] || {
+    startTime: null,
+    endTime: null,
   };
   const [pixelsPerSecond, setPixelsPerSecond] = useState(5);
-  const height = (endTime - startTime) * pixelsPerSecond;
+  // const height = (endTime - startTime) * pixelsPerSecond;
+  const height = 900;
+
   const xPadding = 50;
   const topPadding = 10;
   const bottomPadding = 50;
   const axisWidth = 75;
   const [majorTickInterval, minorTickInterval] = [60, 10];
-  const numMajorTicks = Math.floor((endTime - startTime) / majorTickInterval);
-  const numMinorTicks = Math.floor((endTime - startTime) / minorTickInterval);
-  const timeToY = (time: number, startTime: number, endTime: number) => {
+
+  const [startTimeFilter, setStartTimeFilter] = useState(0);
+  const [endTimeFilter, setEndTimeFilter] = useState(9999);
+  const numMajorTicks = Math.floor(
+    (endTimeFilter - startTimeFilter) / majorTickInterval,
+  );
+  const numMinorTicks = Math.floor(
+    (endTimeFilter - startTimeFilter) / minorTickInterval,
+  );
+  const timeToY = (time: number) => {
     return Math.floor(
-      ((time - startTime) / (endTime - startTime)) *
+      ((Math.max(Math.min(time, endTimeFilter), startTimeFilter) -
+        startTimeFilter) /
+        (endTimeFilter - startTimeFilter)) *
         (height - topPadding - bottomPadding) +
         topPadding,
     );
@@ -171,7 +288,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   };
 
   const playerLives = usePlayerLives(mapId, roundId);
-  const playerEvents = usePlayerEvents(mapId);
+  const playerEvents: PlayerEvents | null = usePlayerEvents(mapId);
   const ultTimes = useUltimateTimes(mapId);
 
   // console.log('ultTimes', ultTimes);
@@ -181,26 +298,108 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
 
   // console.log('loaded', loaded);
 
-  const iters = useLegibleTextSvg(ref, loaded);
-  // console.log('iters', iters);
-
-  const teamfights = useTeamfights(mapId, 'MapTimeline_');
+  const teamfights = useTeamfights(mapId);
 
   // console.log('teamfights', teamfights);
 
+  useEffect(() => {
+    if (startTime === null || endTime === null) {
+      return;
+    }
+    if (endTimeFilter > endTime) {
+      setEndTimeFilter(endTime);
+    }
+    if (startTimeFilter < startTime) {
+      setStartTimeFilter(startTime);
+    }
+    if (startTimeFilter > endTimeFilter) {
+      setStartTimeFilter(endTimeFilter);
+    }
+  }, [endTime, startTime, endTimeFilter, startTimeFilter]);
+
+  useEffect(() => {
+    if (startTime === null) {
+      return;
+    }
+
+    setStartTimeFilter(startTime);
+    setEndTimeFilter(startTime + 60 * 3);
+  }, [startTime]);
+
+  const eventFilter = (event: any) => {
+    if (startTimeFilter > endTimeFilter) {
+      return false;
+    }
+    return (
+      event.matchTime >= startTimeFilter && event.matchTime <= endTimeFilter
+    );
+  };
+
+  const iters = useLegibleTextSvg(ref, [
+    loaded,
+    startTimeFilter,
+    endTimeFilter,
+  ]);
+  // console.log('iters', iters);
+
+  const [ticksPerSecond, setTicksPerSecond] = useState(1);
+  const [ticksPerFrame, setTicksPerFrame] = useState(5);
+  const [playing, setPlaying] = useState(false);
+
+  useEffect(() => {
+    console.log('playing', playing);
+    if (
+      playing &&
+      startTimeFilter !== null &&
+      endTimeFilter !== null &&
+      startTime !== null &&
+      endTime
+    ) {
+      console.log('playing', playing);
+      const interval = setInterval(() => {
+        setStartTimeFilter((time) => {
+          if (time === null) {
+            return startTimeFilter;
+          }
+
+          return time + ticksPerFrame;
+        });
+        setEndTimeFilter((time) => {
+          if (time === null) {
+            return endTimeFilter;
+          }
+          if (time >= endTime) {
+            setPlaying(false);
+            return endTime;
+          }
+          console.log('time', time);
+          return time + ticksPerFrame;
+        });
+      }, 1000 / ticksPerSecond);
+      return () => clearInterval(interval);
+    }
+  }, [playing, startTimeFilter, endTimeFilter, ticksPerSecond]);
+
   return (
     <Paper sx={{padding: '1em', borderRadius: '5px', marginTop: '1em'}}>
-      {/* <Slider
-        value={pixelsPerSecond}
-        onChange={(e, newValue) => {
-          setPixelsPerSecond(newValue as number);
-        }}
-        min={0.1}
-        max={10}
-        step={0.1}
-        valueLabelDisplay="auto"
-        valueLabelFormat={(value) => `${value} px/s`}
-      /> */}
+      <TimelineControls
+        startTime={startTime}
+        endTime={endTime}
+        ticksPerFrame={ticksPerFrame}
+        setTicksPerFrame={setTicksPerFrame}
+        startTimeFilter={startTimeFilter}
+        setStartTimeFilter={setStartTimeFilter}
+        endTimeFilter={endTimeFilter}
+        setEndTimeFilter={setEndTimeFilter}
+        loaded={loaded}
+        playing={playing}
+        setPlaying={setPlaying}
+        kills={
+          Object.values(playerEvents || {})
+            .flat()
+            .filter((e) => e.eventType === 'kill') || []
+        }
+      />
       <svg width="100%" height={100}>
         <defs>
           <linearGradient id="grad1" x1="0%" x2="100%" y1="0%" y2="0%">
@@ -212,23 +411,16 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           </linearGradient>
         </defs>
 
-        {/* {textNodesAdjusted.map((aabb) => (
-          <rect
-            key={aabb.id}
-            x={aabb.x}
-            y={aabb.y}
-            width={aabb.width}
-            height={aabb.height}
-            fill="none"
-            stroke="blue"
-            strokeWidth={1}
-          />
-        ))} */}
-
         {players.map((player: any, i: number) => (
           <g key={player.playerName}>
             {getSvgIcon(player.role, columnIdxToX(i), 25)}
-            <text x={columnIdxToX(i)} y={50} textAnchor="middle" fill="white">
+            <text
+              x={columnIdxToX(i)}
+              y={50}
+              textAnchor="middle"
+              fill="white"
+              data-x={columnIdxToX(i)}
+              data-y={50}>
               {player.playerName}
             </text>
             <text
@@ -236,7 +428,9 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
               y={67}
               textAnchor="middle"
               fill={getColorgorical(player.playerTeam)}
-              fontSize={10}>
+              fontSize={10}
+              data-x={columnIdxToX(i)}
+              data-y={67}>
               {player.playerTeam}
             </text>
           </g>
@@ -263,39 +457,37 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
             }}
           />
           {Array.from({length: numMajorTicks + 1}).map((_, i) => {
-            const time = startTime + i * majorTickInterval;
+            const time = startTimeFilter + i * majorTickInterval;
             return (
               <g key={time}>
                 <line
                   x1={xPadding + axisWidth - 5}
-                  y1={timeToY(time, startTime, endTime)}
+                  y1={timeToY(time)}
                   x2={xPadding + axisWidth + 5}
-                  y2={timeToY(time, startTime, endTime)}
+                  y2={timeToY(time)}
                   style={{
                     stroke: '#cccccc',
                   }}
                 />
-                <text
+                <SvgWrapText
                   x={xPadding + axisWidth - 10}
-                  y={timeToY(time, startTime, endTime)}
-                  textAnchor="end"
-                  fill="#cccccc"
-                  fontSize={10}
-                  dy={3}>
+                  y={timeToY(time)}
+                  color="white"
+                  size={10}>
                   {formatTime(time)}
-                </text>
+                </SvgWrapText>
               </g>
             );
           })}
           {Array.from({length: numMinorTicks + 1}).map((_, i) => {
-            const time = startTime + i * minorTickInterval;
+            const time = startTimeFilter + i * minorTickInterval;
             return (
               <g key={time}>
                 <line
                   x1={xPadding + axisWidth - 2.5}
-                  y1={timeToY(time, startTime, endTime)}
+                  y1={timeToY(time)}
                   x2={xPadding + axisWidth + 2.5}
-                  y2={timeToY(time, startTime, endTime)}
+                  y2={timeToY(time)}
                   style={{
                     stroke: '#cccccc',
                   }}
@@ -304,60 +496,66 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
             );
           })}
           {teamfights &&
-            teamfights.map((teamfight: any, i: number) => (
-              <g key={teamfight.start + teamfight.end + i}>
-                <rect
-                  x={0}
-                  y={timeToY(teamfight.start, startTime, endTime) - 5}
-                  width={xPadding + axisWidth}
-                  height={
-                    timeToY(teamfight.end, startTime, endTime) -
-                    timeToY(teamfight.start, startTime, endTime) +
-                    10
-                  }
-                  fill={getColorgorical(teamfight.winningTeam)}
-                  fillOpacity={0.2}
-                />
+            teamfights
+              .filter((teamfight: any) => {
+                return (
+                  teamfight.start >= startTimeFilter &&
+                  teamfight.end <= endTimeFilter
+                );
+              })
 
-                <text
-                  x={xPadding + axisWidth - 5}
-                  y={timeToY(teamfight.start, startTime, endTime)}
-                  textAnchor="end"
-                  fill={getColorgorical(teamfight.winningTeam)}
-                  fontSize={10}
-                  dy={3}>
-                  {formatTime(teamfight.start)}
-                </text>
-                <text
-                  x={xPadding + axisWidth - 5}
-                  y={timeToY(teamfight.end, startTime, endTime)}
-                  textAnchor="end"
-                  fill={getColorgorical(teamfight.winningTeam)}
-                  fontSize={10}
-                  dy={3}>
-                  {formatTime(teamfight.end)}
-                </text>
-                <SvgWrapText
-                  x={10}
-                  y={timeToY(
-                    (teamfight.start + teamfight.end) / 2,
-                    startTime,
-                    endTime,
-                  )}
-                  color={getColorgorical(teamfight.winningTeam)}
-                  size={10}>
-                  Teamfight {i + 1} - {teamfight.winningTeam} win
-                </SvgWrapText>
-              </g>
-            ))}
+              .map((teamfight: any, i: number) => (
+                <g key={teamfight.start + teamfight.end + i}>
+                  <rect
+                    x={0}
+                    y={timeToY(teamfight.start) - 5}
+                    width={xPadding + axisWidth}
+                    height={
+                      timeToY(teamfight.end) - timeToY(teamfight.start) + 10
+                    }
+                    fill={getColorgorical(teamfight.winningTeam)}
+                    fillOpacity={0.2}
+                  />
+
+                  <text
+                    x={xPadding + axisWidth - 5}
+                    y={timeToY(teamfight.start)}
+                    textAnchor="end"
+                    fill={getColorgorical(teamfight.winningTeam)}
+                    fontSize={10}
+                    dy={3}
+                    data-x={xPadding + axisWidth - 5}
+                    data-y={timeToY(teamfight.start)}>
+                    {formatTime(teamfight.start)}
+                  </text>
+                  <text
+                    x={xPadding + axisWidth - 5}
+                    y={timeToY(teamfight.end)}
+                    textAnchor="end"
+                    fill={getColorgorical(teamfight.winningTeam)}
+                    fontSize={10}
+                    dy={3}
+                    data-x={xPadding + axisWidth - 5}
+                    data-y={timeToY(teamfight.end)}>
+                    {formatTime(teamfight.end)}
+                  </text>
+                  <SvgWrapText
+                    x={10}
+                    y={timeToY((teamfight.start + teamfight.end) / 2)}
+                    color={getColorgorical(teamfight.winningTeam)}
+                    size={10}>
+                    Teamfight {i + 1} - {teamfight.winningTeam} win
+                  </SvgWrapText>
+                </g>
+              ))}
           {mapEvents &&
-            mapEvents.map((event: any, i: number) => (
+            mapEvents.filter(eventFilter).map((event: any, i: number) => (
               <g key={event.matchTime + event.eventMessage + i}>
                 <line
                   x1={xPadding + axisWidth - 5}
-                  y1={timeToY(event.matchTime, startTime, endTime)}
+                  y1={timeToY(event.matchTime)}
                   x2={xPadding + axisWidth + 5}
-                  y2={timeToY(event.matchTime, startTime, endTime)}
+                  y2={timeToY(event.matchTime)}
                   style={{
                     stroke: 'white',
                     // strokeDasharray: '5,5',
@@ -365,7 +563,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                 />
                 <SvgWrapText
                   x={10}
-                  y={timeToY(event.matchTime, startTime, endTime)}
+                  y={timeToY(event.matchTime)}
                   color="white"
                   size={10}>
                   {event.eventMessage}
@@ -375,145 +573,165 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           {players.map((player: any, i: number) => (
             <g key={player.playerName}>
               {ultTimes
+                ?.filter(
+                  (ult: any) =>
+                    ult.usedTime >= startTimeFilter &&
+                    ult.chargedTime <= endTimeFilter,
+                )
                 ?.filter((ult: any) => ult.playerName === player.playerName)
                 .map((ult: any, j: number) => (
                   <rect
                     key={`${ult.playerName}_${ult.chargedTime}_${j}`}
                     x={columnIdxToX(i) - 4}
-                    y={timeToY(ult.chargedTime, startTime, endTime)}
+                    y={timeToY(ult.chargedTime)}
                     width={8}
-                    height={
-                      timeToY(ult.usedTime, startTime, endTime) -
-                      timeToY(ult.chargedTime, startTime, endTime)
-                    }
+                    height={timeToY(ult.usedTime) - timeToY(ult.chargedTime)}
                     fill="url(#grad1)"
                   />
                 ))}
               {playerLives[player.playerName] &&
-                playerLives[player.playerName].map((life: any) => (
-                  <g key={`${life.playerName}_${life.startTime}`}>
-                    <circle
-                      cx={columnIdxToX(i)}
-                      cy={timeToY(life.startTime, startTime, endTime)}
-                      r={3}
-                      fill={getColorFor(heroNameToNormalized(life.playerHero))}
-                    />
-
-                    {life.startMessage && (
-                      <SvgWrapText
-                        x={columnIdxToX(i) + 7}
-                        y={timeToY(life.startTime, startTime, endTime)}
-                        color={getColorFor(
+                playerLives[player.playerName]
+                  .filter(
+                    (life: any) =>
+                      life.endTime >= startTimeFilter &&
+                      life.startTime <= endTimeFilter,
+                  )
+                  .map((life: any) => (
+                    <g key={`${life.playerName}_${life.startTime}`}>
+                      <circle
+                        cx={columnIdxToX(i)}
+                        cy={timeToY(life.startTime)}
+                        r={16}
+                        fill={getColorFor(
                           heroNameToNormalized(life.playerHero),
                         )}
-                        size={10}>
-                        {life.startMessage}
-                      </SvgWrapText>
-                    )}
-                    {life.violentEnd ? (
-                      <>
+                      />
+
+                      {life.startMessage && (
+                        <SvgWrapText
+                          x={columnIdxToX(i) + 20}
+                          y={timeToY(life.startTime)}
+                          color={getColorFor(
+                            heroNameToNormalized(life.playerHero),
+                          )}
+                          size={10}>
+                          {life.startMessage}
+                        </SvgWrapText>
+                      )}
+                      {life.violentEnd ? (
+                        <>
+                          <line
+                            x1={columnIdxToX(i) - 5}
+                            y1={timeToY(life.endTime) - 5}
+                            x2={columnIdxToX(i) + 5}
+                            y2={timeToY(life.endTime) + 5}
+                            style={{
+                              stroke: getColorFor(
+                                heroNameToNormalized(life.playerHero),
+                              ),
+                            }}
+                          />
+                          <line
+                            x1={columnIdxToX(i) + 5}
+                            y1={timeToY(life.endTime) - 5}
+                            x2={columnIdxToX(i) - 5}
+                            y2={timeToY(life.endTime) + 5}
+                            style={{
+                              stroke: getColorFor(
+                                heroNameToNormalized(life.playerHero),
+                              ),
+                            }}
+                          />
+                        </>
+                      ) : (
                         <line
-                          x1={columnIdxToX(i) - 5}
-                          y1={timeToY(life.endTime, startTime, endTime) - 5}
-                          x2={columnIdxToX(i) + 5}
-                          y2={timeToY(life.endTime, startTime, endTime) + 5}
+                          x1={columnIdxToX(i) - 2}
+                          y1={timeToY(life.endTime)}
+                          x2={columnIdxToX(i) + 2}
+                          y2={timeToY(life.endTime)}
                           style={{
                             stroke: getColorFor(
                               heroNameToNormalized(life.playerHero),
                             ),
                           }}
                         />
-                        <line
-                          x1={columnIdxToX(i) + 5}
-                          y1={timeToY(life.endTime, startTime, endTime) - 5}
-                          x2={columnIdxToX(i) - 5}
-                          y2={timeToY(life.endTime, startTime, endTime) + 5}
-                          style={{
-                            stroke: getColorFor(
-                              heroNameToNormalized(life.playerHero),
-                            ),
-                          }}
-                        />
-                      </>
-                    ) : (
+                      )}
+                      {life.endMessage && (
+                        <SvgWrapText
+                          x={columnIdxToX(i) + 7}
+                          y={timeToY(life.endTime)}
+                          color={getColorFor(
+                            heroNameToNormalized(life.playerHero),
+                          )}
+                          size={10}>
+                          {life.endMessage}
+                        </SvgWrapText>
+                      )}
                       <line
-                        x1={columnIdxToX(i) - 2}
-                        y1={timeToY(life.endTime, startTime, endTime)}
-                        x2={columnIdxToX(i) + 2}
-                        y2={timeToY(life.endTime, startTime, endTime)}
+                        x1={columnIdxToX(i)}
+                        y1={timeToY(life.startTime)}
+                        x2={columnIdxToX(i)}
+                        y2={timeToY(life.endTime)}
                         style={{
                           stroke: getColorFor(
                             heroNameToNormalized(life.playerHero),
                           ),
                         }}
                       />
-                    )}
-
-                    {life.endMessage && (
-                      <SvgWrapText
-                        x={columnIdxToX(i) + 7}
-                        y={timeToY(life.endTime, startTime, endTime)}
-                        color={getColorFor(
-                          heroNameToNormalized(life.playerHero),
-                        )}
-                        size={10}>
-                        {life.endMessage}
-                      </SvgWrapText>
-                    )}
-
-                    <line
-                      x1={columnIdxToX(i)}
-                      y1={timeToY(life.startTime, startTime, endTime)}
-                      x2={columnIdxToX(i)}
-                      y2={timeToY(life.endTime, startTime, endTime)}
-                      style={{
-                        stroke: getColorFor(
-                          heroNameToNormalized(life.playerHero),
-                        ),
-                      }}
-                    />
-                  </g>
-                ))}
+                      <image
+                        clipPath="inset(0% round 15px)"
+                        x={columnIdxToX(i) - 15}
+                        y={timeToY(life.startTime) - 15}
+                        width={30}
+                        height={30}
+                        href={getHeroImage(life.playerHero)}
+                      />
+                    </g>
+                  ))}
 
               {playerEvents?.[player.playerName] &&
-                playerEvents[player.playerName].map((event: any, j: number) => (
-                  <g key={`${event.eventMessage}_${event.matchTime}_${j}`}>
-                    <circle
-                      cx={columnIdxToX(i)}
-                      cy={timeToY(event.matchTime, startTime, endTime)}
-                      r={5}
-                      fill={
-                        event.eventType === 'kill'
-                          ? getColorgorical(player.playerTeam)
-                          : 'transparent'
-                      }
-                      stroke={getColorgorical(player.playerTeam)}
-                    />
-                    {event.targetPlayer && (
-                      <SvgArcBetween
-                        x1={columnIdxToX(i)}
-                        y1={timeToY(event.matchTime, startTime, endTime)}
-                        x2={columnIdxToX(
-                          players.findIndex(
-                            (p) => p.playerName === event.targetPlayer,
-                          ),
+                playerEvents[player.playerName]
+                  .filter(eventFilter)
+                  .map((event: any, j: number) => {
+                    return (
+                      <g key={`${event.eventMessage}_${event.matchTime}_${j}`}>
+                        <circle
+                          cx={columnIdxToX(i)}
+                          cy={timeToY(event.matchTime)}
+                          r={5}
+                          fill={
+                            event.eventType === 'kill'
+                              ? getColorgorical(player.playerTeam)
+                              : 'transparent'
+                          }
+                          stroke={getColorgorical(player.playerTeam)}
+                        />
+                        {event.targetPlayer && (
+                          <SvgArcBetween
+                            x1={columnIdxToX(i)}
+                            y1={timeToY(event.matchTime)}
+                            x2={columnIdxToX(
+                              players.findIndex(
+                                (p) => p.playerName === event.targetPlayer,
+                              ),
+                            )}
+                            y2={timeToY(event.matchTime)}
+                            color={getColorgorical(player.playerTeam)}
+                            width={2}
+                          />
                         )}
-                        y2={timeToY(event.matchTime, startTime, endTime)}
-                        color={getColorgorical(player.playerTeam)}
-                        width={2}
-                      />
-                    )}
-                    {event.eventMessage && (
-                      <SvgWrapText
-                        x={columnIdxToX(i) + 7}
-                        y={timeToY(event.matchTime, startTime, endTime)}
-                        color={'white'}
-                        size={10}>
-                        {event.eventMessage}
-                      </SvgWrapText>
-                    )}
-                  </g>
-                ))}
+                        {event.eventMessage && (
+                          <SvgWrapText
+                            x={columnIdxToX(i) + 7}
+                            y={timeToY(event.matchTime)}
+                            color={'white'}
+                            size={10}>
+                            {event.eventMessage}
+                          </SvgWrapText>
+                        )}
+                      </g>
+                    );
+                  })}
             </g>
           ))}
         </svg>

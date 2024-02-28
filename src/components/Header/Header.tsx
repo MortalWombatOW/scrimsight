@@ -108,7 +108,7 @@ const Header = ({
                 display: {xs: 'block', lg: 'none'},
               }}>
               {routes
-                .filter((route) => route.name)
+                .filter((route) => route.name && !route.hidden)
                 .map((route) => (
                   <MenuItem
                     onClick={() => handleClickForPage(route.path[0])}
@@ -142,7 +142,7 @@ const Header = ({
             sx={{flexGrow: 1, display: {xs: 'none', lg: 'flex'}}}>
             <Box component="div" sx={{display: 'flex', marginLeft: '100px'}}>
               {routes
-                .filter((route) => route.name)
+                .filter((route) => route.name && !route.hidden)
                 .map((route) => (
                   <Button
                     key={route.path[0]}

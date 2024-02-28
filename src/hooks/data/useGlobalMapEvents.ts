@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 
-import {useDataNodes} from './useData';
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../useData';
+import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import useMapTimes from './useMapTimes';
+import useUUID from '../useUUID';
 
 const useGlobalMapEvents = (
   mapId: number,
@@ -13,11 +14,13 @@ const useGlobalMapEvents = (
       eventMessage: string;
     }[]
   | null => {
+  const uuid = useUUID();
+
   // This hook is used to get the global map events for a specific map.
   // setup complete, objective captured,
   const data = useDataNodes([
     new AlaSQLNode(
-      'UseGlobalMapEvents_setup_complete_' + mapId,
+      'UseGlobalMapEvents_setup_complete_' + mapId + '_' + uuid,
       `SELECT
         setup_complete.matchTime,
         'Setup Complete' as eventMessage
@@ -28,7 +31,7 @@ const useGlobalMapEvents = (
       ['setup_complete_object_store'],
     ),
     new AlaSQLNode(
-      'UseGlobalMapEvents_objective_captured_' + mapId,
+      'UseGlobalMapEvents_objective_captured_' + mapId + '_' + uuid,
       `SELECT
         objective_captured.*
         FROM ? AS objective_captured
@@ -39,13 +42,14 @@ const useGlobalMapEvents = (
     ),
   ]);
 
-  const setupComplete = data['UseGlobalMapEvents_setup_complete_' + mapId];
+  const setupComplete =
+    data['UseGlobalMapEvents_setup_complete_' + mapId + '_' + uuid];
   const objectiveCaptured =
-    data['UseGlobalMapEvents_objective_captured_' + mapId];
+    data['UseGlobalMapEvents_objective_captured_' + mapId + '_' + uuid];
 
   // match start, match end, round start, round end
   // first index is the match start and end, other indexes are the rounds
-  const matchTimes = useMapTimes(mapId, 'UseGlobalMapEvents_');
+  const matchTimes = useMapTimes(mapId);
 
   const [events, setEvents] = useState<
     | {

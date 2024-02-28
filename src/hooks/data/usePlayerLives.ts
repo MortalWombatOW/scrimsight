@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {useDataNodes} from './useData';
+import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../useData';
+import useUUID from '../useUUID';
 
 const usePlayerLives = (mapId: number, roundId: number) => {
+  const uuid = useUUID();
   const data = useDataNodes([
     new AlaSQLNode(
-      'UsePlayerLives_kills_' + mapId + '_' + roundId,
+      'UsePlayerLives_kills_' + mapId + '_' + roundId + '_' + uuid,
       `SELECT
         kill_object_store.*
       FROM ? AS kill_object_store
@@ -16,7 +18,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
       ['kill_object_store'],
     ),
     new AlaSQLNode(
-      'UsePlayerLives_hero_spawns_' + mapId + '_' + roundId,
+      'UsePlayerLives_hero_spawns_' + mapId + '_' + roundId + '_' + uuid,
       `SELECT
         hero_spawn.*
       FROM ? AS hero_spawn
@@ -26,7 +28,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
       ['hero_spawn_object_store'],
     ),
     new AlaSQLNode(
-      'UsePlayerLives_hero_swaps_' + mapId + '_' + roundId,
+      'UsePlayerLives_hero_swaps_' + mapId + '_' + roundId + '_' + uuid,
       `SELECT 
         hero_swap.*
       FROM ? AS hero_swap
@@ -36,7 +38,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
       ['hero_swap_object_store'],
     ),
     new AlaSQLNode(
-      'UsePlayerLives_mercy_resurrects_' + mapId + '_' + roundId,
+      'UsePlayerLives_mercy_resurrects_' + mapId + '_' + roundId + '_' + uuid,
       `SELECT
         mercy_rez.*
       FROM ? AS mercy_rez
@@ -46,7 +48,7 @@ const usePlayerLives = (mapId: number, roundId: number) => {
       ['mercy_rez_object_store'],
     ),
     new AlaSQLNode(
-      'UsePlayerLives_round_end_' + mapId + '_' + roundId,
+      'UsePlayerLives_round_end_' + mapId + '_' + roundId + '_' + uuid,
       `SELECT
         round_end.*
       FROM ? AS round_end
@@ -57,13 +59,18 @@ const usePlayerLives = (mapId: number, roundId: number) => {
     ),
   ]);
 
-  const kills = data['UsePlayerLives_kills_' + mapId + '_' + roundId];
+  const kills =
+    data['UsePlayerLives_kills_' + mapId + '_' + roundId + '_' + uuid];
   const heroSpawns =
-    data['UsePlayerLives_hero_spawns_' + mapId + '_' + roundId];
-  const heroSwaps = data['UsePlayerLives_hero_swaps_' + mapId + '_' + roundId];
+    data['UsePlayerLives_hero_spawns_' + mapId + '_' + roundId + '_' + uuid];
+  const heroSwaps =
+    data['UsePlayerLives_hero_swaps_' + mapId + '_' + roundId + '_' + uuid];
   const mercyResurrects =
-    data['UsePlayerLives_mercy_resurrects_' + mapId + '_' + roundId];
-  const roundEnd = data['UsePlayerLives_round_end_' + mapId + '_' + roundId];
+    data[
+      'UsePlayerLives_mercy_resurrects_' + mapId + '_' + roundId + '_' + uuid
+    ];
+  const roundEnd =
+    data['UsePlayerLives_round_end_' + mapId + '_' + roundId + '_' + uuid];
 
   const [playerLives, setPlayerLives] = useState<{
     [name: string]: {

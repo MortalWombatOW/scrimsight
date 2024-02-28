@@ -1,20 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {useDataNodes} from './useData';
+import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../useData';
+import useUUID from '../useUUID';
 
 const useMapTimes = (
   mapId: number,
-  prefix: string,
 ):
   | {
       startTime: number;
       endTime: number;
     }[]
   | null => {
+  const uuid = useUUID();
   const data = useDataNodes([
     new AlaSQLNode(
-      prefix + 'UseMapTimes_match_time_' + mapId,
+      'UseMapTimes_match_time_' + mapId + '_' + uuid,
       `SELECT
         match_start.matchTime as startTime,
         match_end.matchTime as endTime
@@ -29,7 +30,7 @@ const useMapTimes = (
       ['match_start_object_store', 'match_end_object_store'],
     ),
     new AlaSQLNode(
-      prefix + 'UseMapTimes_round_times_' + mapId,
+      'UseMapTimes_round_times_' + mapId + '_' + uuid,
       `SELECT
         round_start.roundNumber,
         round_start.matchTime as startTime,
@@ -50,8 +51,8 @@ const useMapTimes = (
     ),
   ]);
 
-  const matchTimes = data[prefix + 'UseMapTimes_match_time_' + mapId];
-  const roundTimes = data[prefix + 'UseMapTimes_round_times_' + mapId];
+  const matchTimes = data['UseMapTimes_match_time_' + mapId + '_' + uuid];
+  const roundTimes = data['UseMapTimes_round_times_' + mapId + '_' + uuid];
 
   // zero index is the whole match, other indexes are the rounds
   const [mapTimes, setMapTimes] = useState<

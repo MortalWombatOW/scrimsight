@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {useDataNodes} from './useData';
+import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../useData';
 import useMapTimes from './useMapTimes';
 
 type PlayerUltimate = {
@@ -40,7 +40,7 @@ const useUltimateTimes = (mapId: number): PlayerUltimate[] | null => {
     ),
   ]);
 
-  const mapTimes = useMapTimes(mapId, 'UseUltimateTimes_');
+  const mapTimes = useMapTimes(mapId);
   const ultimateCharged = data['UseUltimateTimes_ultimate_charged_' + mapId];
   const ultimateUsed = data['UseUltimateTimes_ultimate_start_' + mapId];
   const [output, setOutput] = useState<PlayerUltimate[] | null>(null);

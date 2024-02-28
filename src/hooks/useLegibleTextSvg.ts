@@ -51,24 +51,16 @@ const getBBox = (el: SVGGraphicsElement): BBox => {
 };
 
 const getOriginalCoords = (el: SVGGraphicsElement) => {
-  if (el.tagName === 'text') {
-    return {
-      x: parseFloat(el.getAttribute('x') || '0'),
-      y: parseFloat(el.getAttribute('y') || '0'),
-    };
+  const dataX = el.getAttribute('data-x');
+  const dataY = el.getAttribute('data-y');
+  if (!dataX || !dataY) {
+    throw new Error('No data-x or data-y');
   }
-  if (el.tagName === 'g') {
-    const dataX = el.getAttribute('data-x');
-    const dataY = el.getAttribute('data-y');
-    if (!dataX || !dataY) {
-      throw new Error('No data-x or data-y found');
-    }
-    return {
-      x: parseFloat(dataX),
-      y: parseFloat(dataY),
-    };
-  }
-  throw new Error('Unknown tag');
+
+  return {
+    x: parseFloat(dataX),
+    y: parseFloat(dataY),
+  };
 };
 
 const doCollisionResolution = (
@@ -167,7 +159,7 @@ const getCollisionData = (
 
 const useLegibleTextSvg = (
   ref: React.RefObject<SVGSVGElement> | null,
-  loaded: boolean,
+  dependencies: any[] = [],
 ): number => {
   // This hook is used to make sure that text elements in an SVG are not overlapping.
 
@@ -191,6 +183,10 @@ const useLegibleTextSvg = (
       ref.current?.getElementsByTagName('g') || [],
     ).filter((el) => el.classList.contains('svg-wrap-text-group'));
 
+    const svgElement = ref.current;
+    // set display none
+    // svgElement.style.display = 'none';
+
     // console.log('elements', textElements, gElements);
 
     const elements: ElementLifted[] = [...textElements, ...gElements].map(
@@ -209,10 +205,10 @@ const useLegibleTextSvg = (
       const orig = el.originalCoords;
       const newY = orig.y - aabb.height / 2;
 
-      if (el.el.tagName === 'g') {
-        el.bbox.y = newY;
-        // console.log('adjusted', newTransform, el.getAttribute('transform'));
-      }
+      el.bbox.y = newY;
+
+      // console.log('adjusted', newTransform, el.getAttribute('transform'));
+
       // el.classList.add(`adjusted-${newY}`);
       // el.classList.add(`height-${aabb.height}`);
     }
@@ -268,8 +264,10 @@ const useLegibleTextSvg = (
       }
     }
 
+    // svgElement.style.display = 'block';
+
     setTick((tick) => tick + 1);
-  }, [ref?.current, loaded]);
+  }, [ref?.current, ...dependencies]);
 
   return tick;
 };

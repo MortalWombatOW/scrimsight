@@ -25,7 +25,7 @@ const PlayerListMini = ({
 
   const data = useDataNodes([
     new AlaSQLNode<ScrimPlayers>(
-      'scrim_players',
+      'scrim_players' + scrimId + mapId,
       `
       SELECT 
         scrim_players_heroes_roles.scrimId,
@@ -44,6 +44,7 @@ const PlayerListMini = ({
           shotsFired: scrim_players_heroes_roles.shotsFired
         }) as heroes
       from ? as scrim_players_heroes_roles
+      where scrim_players_heroes_roles.mapId = ${mapId}
       group by scrim_players_heroes_roles.scrimId,
       scrim_players_heroes_roles.mapId,
       scrim_players_heroes_roles.teamName,
@@ -56,7 +57,7 @@ const PlayerListMini = ({
       `,
       ['scrim_players_heroes_roles'],
     ),
-  ] as AlaSQLNode<ScrimPlayers>[])[`scrim_players`];
+  ] as AlaSQLNode<ScrimPlayers>[])[`scrim_players${scrimId}${mapId}`];
 
   if (data === undefined) {
     return <div>Loading...</div>;
