@@ -2,45 +2,45 @@ import {Box, Button, Popover, Typography} from '@mui/material';
 import React from 'react';
 import {getColorgorical} from '../../lib/color';
 import {heroNameToNormalized} from '../../lib/string';
+import {ColorKey} from '../../theme';
 
 const IconAndText = ({
+  variant,
   icon,
   text,
-  backgroundColor,
-  textBorder,
   padding,
   borderRadius,
   dynamic,
+  colorKey,
 }: {
+  variant?: 'contained' | 'outlined' | 'text';
   icon: React.ReactElement;
   text: string;
-  backgroundColor?: string;
-  textBorder?: boolean;
   padding?: string;
   borderRadius?: string;
   dynamic?: boolean;
+  colorKey: ColorKey;
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   return (
     <>
       <Button
-        variant="contained"
+        variant={variant || 'contained'}
         onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
         onMouseLeave={() => setAnchorEl(null)}
-        color={'lucio'}
+        color={colorKey}
+        startIcon={dynamic ? undefined : icon}
         style={{
           display: 'flex',
           alignItems: 'center',
           whiteSpace: 'nowrap',
           borderRadius: borderRadius || '5px',
-          // ...(backgroundColor ? {backgroundColor} : {}),
           padding: padding || '0.5em',
           lineHeight: '1.5em',
-          // dont be wider than the text
           maxWidth: 'fit-content',
         }}>
-        {icon}
+        {dynamic && icon}
         {!dynamic && (
           <Typography sx={{paddingLeft: 2, fontWeight: 'bold'}}>
             {text}
@@ -67,12 +67,8 @@ const IconAndText = ({
           <Typography
             sx={{
               p: 1,
-              ...(backgroundColor
-                ? {
-                    backgroundColor,
-                    textShadow: '0 0 5px black',
-                  }
-                : {}),
+              backgroundColor: colorKey + '.main',
+              color: colorKey + '.contrastText',
             }}>
             {text}
           </Typography>

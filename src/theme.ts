@@ -10,6 +10,17 @@ const heroColorsTheme = Object.entries(heroColors).reduce(
   {},
 );
 
+export type ColorKey =
+  | keyof typeof heroColors
+  | 'team1'
+  | 'team2'
+  | 'primary'
+  | 'secondary'
+  | 'info'
+  | 'warning'
+  | 'error'
+  | 'success';
+
 export const themeDef: ThemeOptions = {
   palette: {
     mode: 'dark',
@@ -88,6 +99,7 @@ export const themeDef: ThemeOptions = {
           '&:hover': {
             boxShadow: 'none',
           },
+          minWidth: 'fit-content',
         },
       },
     },

@@ -97,6 +97,7 @@ const MapRoster = ({mapId}: {mapId: number}) => {
                 return (
                   <li key={player.playerName}>
                     <IconAndText
+                      variant="text"
                       icon={
                         <span
                           style={{
@@ -107,6 +108,7 @@ const MapRoster = ({mapId}: {mapId: number}) => {
                         </span>
                       }
                       text={player.playerName}
+                      colorKey="team1"
                     />
                   </li>
                 );
@@ -130,6 +132,7 @@ const MapRoster = ({mapId}: {mapId: number}) => {
                 return (
                   <li key={player.playerName}>
                     <IconAndText
+                      variant="text"
                       icon={
                         <span
                           style={{
@@ -140,6 +143,7 @@ const MapRoster = ({mapId}: {mapId: number}) => {
                         </span>
                       }
                       text={player.playerName}
+                      colorKey="team2"
                     />
                   </li>
                 );

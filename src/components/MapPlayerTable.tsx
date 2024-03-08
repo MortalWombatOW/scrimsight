@@ -28,6 +28,7 @@ import {
   interpolateColors,
 } from '../lib/color';
 import {heroNameToNormalized} from '../lib/string';
+import {ColorKey} from '../theme';
 
 type PlayerStat = {
   name: string;
@@ -41,15 +42,18 @@ type PlayerStat = {
 function FormattedTableCell({
   sx,
   children,
+  colorKey,
 }: {
   sx?: any;
   children?: React.ReactNode;
+  colorKey: ColorKey;
 }) {
   return (
     <TableCell
       sx={{
         borderLeft: 'none',
         borderRight: 'none',
+        borderBottomColor: `${colorKey}.dark`,
         ...sx,
       }}>
       <div style={{paddingRight: '8px'}}>{children}</div>
@@ -62,15 +66,18 @@ function MetricCell({
   submetric,
   submetricDesc,
   alignedRight,
+  colorKey,
 }: {
   metric: string;
   alignedRight?: boolean;
   submetric?: string;
-
   submetricDesc?: string;
+  colorKey: ColorKey;
 }) {
   return (
-    <FormattedTableCell sx={alignedRight ? {textAlign: 'right'} : {}}>
+    <FormattedTableCell
+      sx={alignedRight ? {textAlign: 'right'} : {}}
+      colorKey={colorKey}>
       {metric}
       {submetric && (
         <Typography
@@ -98,6 +105,7 @@ function PlayerHeroesList({playerHeroes}) {
           //  style={{width: 28, overflowX: 'visible'}}
         >
           <IconAndText
+            variant="contained"
             icon={
               <Avatar
                 src={getHeroImage(hero, false)}
@@ -108,11 +116,10 @@ function PlayerHeroesList({playerHeroes}) {
               />
             }
             text={hero}
-            textBorder={true}
-            backgroundColor={getColorForHero(heroNameToNormalized(hero))} // no padding on top, bottom, left, but not right
             padding="2px"
             borderRadius="14px"
             dynamic
+            colorKey={heroNameToNormalized(hero) as ColorKey}
           />
         </span>
       ))}
@@ -217,6 +224,8 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         role: role,
         roleRank: getRankForRole(role),
         teamRank: player.playerTeam === map_teams[0].team1Name ? 1 : 2,
+        colorKey:
+          player.playerTeam === map_teams[0].team1Name ? 'team1' : 'team2',
         eliminationsPerTen: (player.eliminations / durationMins) * 10,
         finalBlowsPerTen: (player.finalBlows / durationMins) * 10,
         deathsPerTen: (player.deaths / durationMins) * 10,
@@ -328,6 +337,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           ? value.toFixed(0)
           : value.toFixed(2)
       }
+      colorKey={player.colorKey}
       alignedRight
     />
   );
@@ -341,8 +351,14 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       accessor: (player: any, per10Mode: boolean) =>
         getRankForRole(player.role),
       formatter: (value: string, player: any) => (
-        <FormattedTableCell>
-          <span style={{fontSize: '1.5em'}}>{getIcon(player.role)}</span>
+        <FormattedTableCell colorKey={player.colorKey}>
+          <Typography
+            sx={{
+              fontSize: '1.5em',
+              color: `${player.colorKey}.main`,
+            }}>
+            {getIcon(player.role)}
+          </Typography>
         </FormattedTableCell>
       ),
     },
@@ -353,16 +369,10 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       alignRight: false,
       accessor: (player: any, per10Mode: boolean) => player.playerTeam,
       formatter: (value: string, player: any) => (
-        <FormattedTableCell>
-          <span
-            style={{
-              backgroundColor: getColorgorical(value),
-              padding: '0.5em',
-              borderRadius: '5px',
-              textShadow: '0 0 5px black',
-            }}>
+        <FormattedTableCell colorKey={player.colorKey}>
+          <Typography variant="h6" sx={{color: `${player.colorKey}.light`}}>
             {value}
-          </span>
+          </Typography>
         </FormattedTableCell>
       ),
     },
@@ -373,7 +383,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       alignRight: false,
       accessor: (player: any, per10Mode: boolean) => player.playerName,
       formatter: (value: string, player: any) => (
-        <FormattedTableCell>
+        <FormattedTableCell colorKey={player.colorKey}>
           {/* <IconAndText
             icon={getIcon(player.role)}
             text={value}
@@ -391,7 +401,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       description: 'The heroes the player played this map',
       accessor: (player: any, per10Mode: boolean) => player.playerHeroes,
       formatter: (value: string, player: any) => (
-        <FormattedTableCell>
+        <FormattedTableCell colorKey={player.colorKey}>
           <div style={{display: 'flex', flexWrap: 'wrap'}}>
             <PlayerHeroesList playerHeroes={player.playerHeroes} />
           </div>
@@ -504,6 +514,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           submetric={player.shotsHit}
           submetricDesc="hits"
           alignedRight
+          colorKey={player.colorKey}
         />
       ),
     },
@@ -521,6 +532,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           submetric={player.criticalHits}
           submetricDesc="crits"
           alignedRight
+          colorKey={player.colorKey}
         />
       ),
     },
@@ -608,15 +620,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           </TableHead>
           <TableBody>
             {sortedData.map((player: any) => (
-              <TableRow
-                key={player.id}
-                sx={{
-                  backgroundColor: interpolateColors(
-                    getColorgorical(player.playerTeam),
-                    '#333333',
-                    20,
-                  )[18],
-                }}>
+              <TableRow key={player.id}>
                 {playerMetrics
                   .filter((metric) =>
                     enabledMetrics.includes(metric.abbreviation),

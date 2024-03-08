@@ -10,8 +10,8 @@ interface MuiThemeColor {
 export const generateThemeColor = (base: string): MuiThemeColor => {
   return {
     main: alpha(base, 0.7),
-    light: alpha(base, 0.5),
-    dark: alpha(base, 0.9),
+    light: alpha(base, 0.9),
+    dark: alpha(base, 0.5),
     contrastText:
       getContrastRatio(alpha(base, 0.7), '#000') >= 4.5 ? '#000' : '#fff',
   };

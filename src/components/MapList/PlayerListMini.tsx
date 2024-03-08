@@ -179,7 +179,7 @@ const PlayerListMini = ({
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          <IconAndText icon={<PersonIcon />} text="No Data" />
+          loading
         </div>
       )}
     </div>
