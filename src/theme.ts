@@ -14,22 +14,29 @@ export const themeDef: ThemeOptions = {
   palette: {
     mode: 'dark',
     contrastThreshold: 4.5,
-    primary: generateThemeColor('#fdad00'),
-    secondary: generateThemeColor('#db5a20'),
-    info: generateThemeColor('#ffd586'),
-    error: generateThemeColor('#CC3F0C'),
-    success: generateThemeColor('#9A6D38'),
-    custom: generateThemeColor('#ff0000'),
+    // The primary color is used for primary interface elements like buttons and tabs.
+    primary: generateThemeColor('#18d3e6'),
+    // The secondary color is used for secondary interface elements like input fields and progress bars.
+    secondary: generateThemeColor('#db7f67'),
+    // The info color is used for neutral information like helper text.
+    info: generateThemeColor('#CEABB1'),
+    // The warning color is used for warning messages.
+    warning: generateThemeColor('#f39c28'),
+    // The error color is used for notifications requiring immediate user action.
+    error: generateThemeColor('#e00040'),
+    // The success color is used for indicating success.
+    success: generateThemeColor('#7dc95e'),
+
     ...heroColorsTheme,
     team1: generateThemeColor('#78b4c6'),
     team2: generateThemeColor('#fd6ca0'),
 
     background: {
-      default: '#100E13',
-      paper: '#100E13',
+      default: '#001A28',
+      paper: '#001A28',
     },
     text: {
-      primary: '#ffffff',
+      primary: '#e9e6dc',
     },
   },
   typography: {

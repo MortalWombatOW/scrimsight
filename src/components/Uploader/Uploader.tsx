@@ -69,7 +69,7 @@ const Uploader: React.FC<UploaderProps> = ({
 
   return (
     <>
-      <Button variant="outlined" component="label" color="secondary">
+      <Button variant="contained" component="label" color="primary">
         Add maps
         <input
           id="fileinput"
