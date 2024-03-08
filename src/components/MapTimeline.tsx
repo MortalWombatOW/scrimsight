@@ -11,7 +11,7 @@ import {
   Slider,
   Typography,
 } from '@mui/material';
-import {getColorFor, getColorgorical} from '../lib/color';
+import {getColorForHero, getColorgorical} from '../lib/color';
 import {getSvgIcon} from './Common/RoleIcons';
 import {heroNameToNormalized} from '../lib/string';
 import usePlayerLives from '../hooks/data/usePlayerLives';
@@ -602,7 +602,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                         cx={columnIdxToX(i)}
                         cy={timeToY(life.startTime)}
                         r={16}
-                        fill={getColorFor(
+                        fill={getColorForHero(
                           heroNameToNormalized(life.playerHero),
                         )}
                       />
@@ -611,7 +611,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                         <SvgWrapText
                           x={columnIdxToX(i) + 20}
                           y={timeToY(life.startTime)}
-                          color={getColorFor(
+                          color={getColorForHero(
                             heroNameToNormalized(life.playerHero),
                           )}
                           size={10}>
@@ -626,7 +626,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                             x2={columnIdxToX(i) + 5}
                             y2={timeToY(life.endTime) + 5}
                             style={{
-                              stroke: getColorFor(
+                              stroke: getColorForHero(
                                 heroNameToNormalized(life.playerHero),
                               ),
                             }}
@@ -637,7 +637,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                             x2={columnIdxToX(i) - 5}
                             y2={timeToY(life.endTime) + 5}
                             style={{
-                              stroke: getColorFor(
+                              stroke: getColorForHero(
                                 heroNameToNormalized(life.playerHero),
                               ),
                             }}
@@ -650,7 +650,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                           x2={columnIdxToX(i) + 2}
                           y2={timeToY(life.endTime)}
                           style={{
-                            stroke: getColorFor(
+                            stroke: getColorForHero(
                               heroNameToNormalized(life.playerHero),
                             ),
                           }}
@@ -660,7 +660,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                         <SvgWrapText
                           x={columnIdxToX(i) + 7}
                           y={timeToY(life.endTime)}
-                          color={getColorFor(
+                          color={getColorForHero(
                             heroNameToNormalized(life.playerHero),
                           )}
                           size={10}>
@@ -673,7 +673,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                         x2={columnIdxToX(i)}
                         y2={timeToY(life.endTime)}
                         style={{
-                          stroke: getColorFor(
+                          stroke: getColorForHero(
                             heroNameToNormalized(life.playerHero),
                           ),
                         }}

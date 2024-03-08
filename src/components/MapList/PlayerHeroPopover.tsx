@@ -1,6 +1,6 @@
 import {Avatar, Popover, Typography} from '@mui/material';
 import React from 'react';
-import {getColorFor} from '../../lib/color';
+import {getColorForHero} from '../../lib/color';
 
 const PlayerHeroPopover = ({
   playerName,
@@ -37,7 +37,7 @@ const PlayerHeroPopover = ({
         sx={{
           width: 32,
           height: 32,
-          bgcolor: getColorFor(
+          bgcolor: getColorForHero(
             hero
               .toLowerCase()
               .replaceAll('.', '')

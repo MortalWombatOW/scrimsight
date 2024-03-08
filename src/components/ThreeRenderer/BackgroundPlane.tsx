@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo} from 'react';
 import * as THREE from 'three';
-import {getColorFor} from '../../lib/color';
+import {getColorForHero} from '../../lib/color';
 import {
   colorPlaneFlat,
   colorPlaneForMapControl,
@@ -36,7 +36,7 @@ export function BackgroundPlane(props: BackgroundPlaneProps) {
   const playerTeam = (name: string): 1 | 2 =>
     Globals.getTeam()?.players.includes(name) ? 1 : 2;
   const playerColor = (name: string): string =>
-    getColorFor(playerTeam(name) === 1 ? 'team1' : 'team2');
+    getColorForHero(playerTeam(name) === 1 ? 'team1' : 'team2');
 
   useEffect(() => {
     if (layerMode === 'default') {

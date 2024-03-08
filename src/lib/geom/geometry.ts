@@ -1,12 +1,12 @@
 import * as THREE from 'three';
-import {getColorFor} from '../color';
+import {getColorForHero} from '../color';
 import {MapEntity, RenderState} from '../data/types';
 
 function positionsForBucket(
   positions: THREE.Vector3[],
   x: number,
   z: number,
-  radius: number = 0.5,
+  radius = 0.5,
 ): THREE.Vector3[] {
   // return positions that are within .5 units of the given x/z
   return positions.filter(
@@ -116,7 +116,7 @@ export function colorPlaneForMapControl(
   geometry: THREE.BufferGeometry,
   team1Positions: THREE.Vector3[],
   team2Positions: THREE.Vector3[],
-  smooth: boolean = true,
+  smooth = true,
 ) {
   console.log('colorPlaneForMapControl', team1Positions, team2Positions);
   // color the area around each player based on their team
@@ -133,8 +133,8 @@ export function colorPlaneForMapControl(
     );
   }
 
-  const team1Color = new THREE.Color(getColorFor('team1'));
-  const team2Color = new THREE.Color(getColorFor('team2'));
+  const team1Color = new THREE.Color(getColorForHero('team1'));
+  const team2Color = new THREE.Color(getColorForHero('team2'));
 
   const colorAttribute = geometry.getAttribute('color');
   const colorArray = colorAttribute.array as number[];

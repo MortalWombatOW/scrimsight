@@ -14,8 +14,48 @@ import routes from './lib/routes';
 import {themeDef} from './theme';
 
 import {DataProvider} from './WombatDataFramework/DataContext';
+import {generateThemeColor} from './lib/palette';
+import {TeamContextProvider} from './context/TeamContextProvider';
+import {getColorgorical} from './lib/color';
+import {TeamContext} from './context/TeamContext';
 
-const theme = createTheme(themeDef);
+function ThemedRoutes(props) {
+  const {team1Name, team2Name} = React.useContext(TeamContext);
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        ...themeDef,
+        palette: {
+          ...themeDef.palette,
+          team1: generateThemeColor(getColorgorical(team1Name)),
+          team2: generateThemeColor(getColorgorical(team2Name)),
+        },
+      }),
+    [team1Name, team2Name],
+  );
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Routes>
+        {routes.map((route) =>
+          route.path.map((path, i) => (
+            <Route
+              key={path}
+              path={path}
+              index={(i === (0 as unknown)) as false}
+              element={<route.component />}
+            />
+          )),
+        )}
+
+        {/* <Route path="/map/:mapId" element={<Map />} />
+      {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
+      </Routes>
+    </ThemeProvider>
+  );
+}
 
 const App = () => {
   const [tick, setTick] = React.useState(0);
@@ -23,34 +63,20 @@ const App = () => {
     console.log('apptick', tick);
     setTick((tick) => tick + 1);
   };
+
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <BrowserRouter basename="/">
-          <QueryParamProvider adapter={ReactRouter6Adapter}>
+      <BrowserRouter basename="/">
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <TeamContextProvider>
             <DataProvider
               globalTick={tick}
               updateGlobalCallback={incrementTick}>
-              <Routes>
-                {routes.map((route) =>
-                  route.path.map((path, i) => (
-                    <Route
-                      key={path}
-                      path={path}
-                      index={(i === 0) as unknown as false}
-                      element={<route.component />}
-                    />
-                  )),
-                )}
-
-                {/* <Route path="/map/:mapId" element={<Map />} />
-              {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
-              </Routes>
+              <ThemedRoutes />
             </DataProvider>
-          </QueryParamProvider>
-        </BrowserRouter>
-      </ThemeProvider>
+          </TeamContextProvider>
+        </QueryParamProvider>
+      </BrowserRouter>
     </div>
   );
 };

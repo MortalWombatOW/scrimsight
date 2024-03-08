@@ -1,26 +1,35 @@
-import {ThemeOptions} from '@mui/material';
+import {ThemeOptions} from '@mui/material/styles';
+import {generateThemeColor} from './lib/palette';
+import {heroColors} from './lib/color';
+
+const heroColorsTheme = Object.entries(heroColors).reduce(
+  (acc, [key, value]) => {
+    acc[key] = generateThemeColor(value);
+    return acc;
+  },
+  {},
+);
 
 export const themeDef: ThemeOptions = {
   palette: {
     mode: 'dark',
-    primary: {
-      // main: '#32466d',
-      main: '#2190fe',
+    contrastThreshold: 4.5,
+    primary: generateThemeColor('#fdad00'),
+    secondary: generateThemeColor('#db5a20'),
+    info: generateThemeColor('#ffd586'),
+    error: generateThemeColor('#CC3F0C'),
+    success: generateThemeColor('#9A6D38'),
+    custom: generateThemeColor('#ff0000'),
+    ...heroColorsTheme,
+    team1: generateThemeColor('#78b4c6'),
+    team2: generateThemeColor('#fd6ca0'),
+
+    background: {
+      default: '#100E13',
+      paper: '#100E13',
     },
-    secondary: {
-      // main: '#BFDBF7',
-      main: '#f9a01a',
-      contrastText: '#32466d',
-    },
-    info: {
-      main: '#ffd586',
-      contrastText: 'rgba(57,40,12,0.87)',
-    },
-    error: {
-      main: '#BA1200',
-    },
-    success: {
-      main: '#659157',
+    text: {
+      primary: '#ffffff',
     },
   },
   typography: {

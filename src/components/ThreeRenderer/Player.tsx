@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {useFrame} from '@react-three/fiber';
 import * as THREE from 'three';
 import {getHeroImage} from '../../lib/data/data';
-import {getColorFor} from '../../lib/color';
+import {getColorForHero} from '../../lib/color';
 import {SpriteText2D, textAlign} from 'three-text2d';
 interface PlayerProps {
   name: string;
@@ -223,7 +223,7 @@ export const Player = ({
         namePosition,
         namePositionTop,
         camera,
-        getColorFor(team === 1 ? 'team1' : 'team2'),
+        getColorForHero(team === 1 ? 'team1' : 'team2'),
       );
     }
   });
@@ -235,14 +235,14 @@ export const Player = ({
         <capsuleGeometry attach="geometry" args={[pillRadius, 0.7, 8, 32]} />
         <meshLambertMaterial
           attach="material"
-          color={health > 0 ? getColorFor(lastHero) : 0x000000}
+          color={health > 0 ? getColorForHero(lastHero) : 0x000000}
         />
       </mesh>
       <mesh scale={[1.25, 1.25, 1.25]}>
         <capsuleGeometry attach="geometry" args={[pillRadius, 0.7, 8, 32]} />
         <meshBasicMaterial
           attach="material"
-          color={getColorFor(team === 1 ? 'team1' : 'team2')}
+          color={getColorForHero(team === 1 ? 'team1' : 'team2')}
           side={THREE.BackSide}
         />
       </mesh>

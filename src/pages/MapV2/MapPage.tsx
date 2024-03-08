@@ -17,6 +17,7 @@ import {
   withDefault,
 } from 'use-query-params';
 import useMapTimes from '../../hooks/data/useMapTimes';
+import {TeamContext} from '../../context/TeamContext';
 
 const MapPage = () => {
   const params = useParams<{mapId: string}>();
@@ -59,9 +60,32 @@ const MapPage = () => {
        `,
       ['round_start_object_store'],
     ),
+    new AlaSQLNode(
+      'MapPage_map_teams_' + mapId,
+      `SELECT
+        team1Name,
+        team2Name
+      FROM ? AS match_start
+      WHERE
+        match_start.mapId = ${mapId}
+      `,
+      ['match_start_object_store'],
+    ),
   ]);
 
   const roundsData = data['MapPage_map_rounds_' + mapId];
+  const teamsData = data['MapPage_map_teams_' + mapId];
+
+  const {setTeamNames} = React.useContext(TeamContext);
+
+  useEffect(() => {
+    console.error('teamsData', teamsData);
+    if (teamsData === undefined) {
+      return;
+    }
+    setTeamNames(teamsData[0].team1Name, teamsData[0].team2Name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(teamsData)]);
 
   if (roundsData === undefined) {
     return <div>Loading...</div>;

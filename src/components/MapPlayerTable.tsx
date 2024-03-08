@@ -2,7 +2,7 @@
 import React, {ReactNode, useEffect} from 'react';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../hooks/useData';
-
+import TuneIcon from '@mui/icons-material/Tune';
 import {
   TableContainer,
   Paper,
@@ -16,11 +16,17 @@ import {
   Switch,
   FormControlLabel,
   Button,
+  Popover,
+  Grid,
 } from '@mui/material';
 import {getHeroImage, getRankForRole, getRoleFromHero} from '../lib/data/data';
 import IconAndText from './Common/IconAndText';
 import {getIcon} from './Common/RoleIcons';
-import {getColorFor, getColorgorical} from '../lib/color';
+import {
+  getColorForHero,
+  getColorgorical,
+  interpolateColors,
+} from '../lib/color';
 import {heroNameToNormalized} from '../lib/string';
 
 type PlayerStat = {
@@ -103,7 +109,7 @@ function PlayerHeroesList({playerHeroes}) {
             }
             text={hero}
             textBorder={true}
-            backgroundColor={getColorFor(heroNameToNormalized(hero))} // no padding on top, bottom, left, but not right
+            backgroundColor={getColorForHero(heroNameToNormalized(hero))} // no padding on top, bottom, left, but not right
             padding="2px"
             borderRadius="14px"
             dynamic
@@ -520,9 +526,147 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     },
   ];
 
+  const defaultMetrics = [
+    'Role',
+    'Team',
+    'Player',
+    'Heroes',
+    'K',
+    'E',
+    'D',
+    'DMG',
+    'H',
+    'MIT',
+  ];
+
+  const [enabledMetrics, setEnabledMetrics] =
+    React.useState<string[]>(defaultMetrics);
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null,
+  );
+
   return (
-    <div>
-      <TableContainer component={Paper} sx={{padding: '1em'}}>
+    <Paper sx={{padding: '1em', paddingTop: '1.5em'}}>
+      <Grid container>
+        <Grid item xs={11}>
+          <Typography variant="h4">Player Stats</Typography>
+        </Grid>
+        <Grid item xs={1}>
+          <Button
+            color="team1"
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            sx={{float: 'right'}}>
+            <TuneIcon />
+          </Button>
+        </Grid>
+      </Grid>
+      <TableContainer>
+        <Table size="small">
+          <TableHead>
+            <TableRow sx={{fontWeight: 'bold'}}>
+              {playerMetrics
+                .filter((metric) =>
+                  enabledMetrics.includes(metric.abbreviation),
+                )
+                .map((metric) => (
+                  <TableCell
+                    key={metric.name}
+                    sx={{
+                      textAlign: metric.alignRight ? 'right' : 'left',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                    }}>
+                    <Button
+                      // variant="outlined"
+                      sx={{
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        color: 'inherit',
+                        ...(metric.alignRight
+                          ? {justifyContent: 'right'}
+                          : {justifyContent: 'left'}),
+                        ...(sortBy === metric.abbreviation
+                          ? {backgroundColor: 'rgb(50, 59, 108)'}
+                          : {}),
+                      }}
+                      onClick={() => {
+                        if (sortBy === metric.abbreviation) {
+                          setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                        } else {
+                          setSortBy(metric.abbreviation);
+                          setSortOrder('desc');
+                        }
+                      }}>
+                      <Typography variant="h5">
+                        {smallHeader ? metric.abbreviation : metric.name}
+                      </Typography>
+                    </Button>
+                  </TableCell>
+                ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedData.map((player: any) => (
+              <TableRow
+                key={player.id}
+                sx={{
+                  backgroundColor: interpolateColors(
+                    getColorgorical(player.playerTeam),
+                    '#333333',
+                    20,
+                  )[18],
+                }}>
+                {playerMetrics
+                  .filter((metric) =>
+                    enabledMetrics.includes(metric.abbreviation),
+                  )
+                  .map((metric) =>
+                    metric.formatter(
+                      metric.accessor(player, per10Mode),
+                      player,
+                    ),
+                  )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}>
+        <Typography variant="h6">Select Metrics</Typography>
+        <Grid container>
+          {playerMetrics.map((metric) => (
+            <Grid item key={metric.name}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={enabledMetrics.includes(metric.abbreviation)}
+                    onChange={() =>
+                      setEnabledMetrics((prev) =>
+                        prev.includes(metric.abbreviation)
+                          ? prev.filter((m) => m !== metric.abbreviation)
+                          : [...prev, metric.abbreviation],
+                      )
+                    }
+                  />
+                }
+                label={metric.name}
+              />
+            </Grid>
+          ))}
+        </Grid>
+
         <FormControlLabel
           control={
             <Switch
@@ -545,59 +689,8 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           }
           label={<Typography variant="caption">Condense header</Typography>}
         />
-
-        <Table size="small">
-          <TableHead>
-            <TableRow sx={{fontWeight: 'bold'}}>
-              {playerMetrics.map((metric) => (
-                <TableCell
-                  key={metric.name}
-                  sx={{
-                    textAlign: metric.alignRight ? 'right' : 'left',
-                    borderLeft: 'none',
-                    borderRight: 'none',
-                  }}>
-                  <Button
-                    // variant="outlined"
-                    sx={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      color: 'inherit',
-                      ...(metric.alignRight
-                        ? {justifyContent: 'right'}
-                        : {justifyContent: 'left'}),
-                      ...(sortBy === metric.abbreviation
-                        ? {backgroundColor: 'rgb(50, 59, 108)'}
-                        : {}),
-                    }}
-                    onClick={() => {
-                      if (sortBy === metric.abbreviation) {
-                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-                      } else {
-                        setSortBy(metric.abbreviation);
-                        setSortOrder('desc');
-                      }
-                    }}>
-                    <Typography variant="h5">
-                      {smallHeader ? metric.abbreviation : metric.name}
-                    </Typography>
-                  </Button>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sortedData.map((player: any) => (
-              <TableRow key={player.id}>
-                {playerMetrics.map((metric) =>
-                  metric.formatter(metric.accessor(player, per10Mode), player),
-                )}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
+      </Popover>
+    </Paper>
   );
 };
 

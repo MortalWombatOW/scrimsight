@@ -83,7 +83,6 @@ const MapRoster = ({mapId}: {mapId: number}) => {
       <Grid container spacing={2}>
         <Grid item xs={6}>
           <Paper
-            variant="outlined"
             sx={{
               padding: '1em',
               borderColor: getColorgorical(team1Roster[0]?.['playerTeam']),
@@ -98,7 +97,15 @@ const MapRoster = ({mapId}: {mapId: number}) => {
                 return (
                   <li key={player.playerName}>
                     <IconAndText
-                      icon={getIcon(player.role)}
+                      icon={
+                        <span
+                          style={{
+                            color: getColorgorical(player.playerTeam),
+                            paddingTop: 4,
+                          }}>
+                          {getIcon(player.role)}
+                        </span>
+                      }
                       text={player.playerName}
                     />
                   </li>
@@ -109,7 +116,6 @@ const MapRoster = ({mapId}: {mapId: number}) => {
         </Grid>
         <Grid item xs={6}>
           <Paper
-            variant="outlined"
             sx={{
               padding: '1em',
               borderColor: getColorgorical(team2Roster[0]?.['playerTeam']),
@@ -124,7 +130,15 @@ const MapRoster = ({mapId}: {mapId: number}) => {
                 return (
                   <li key={player.playerName}>
                     <IconAndText
-                      icon={getIcon(player.role)}
+                      icon={
+                        <span
+                          style={{
+                            color: getColorgorical(player.playerTeam),
+                            paddingTop: 4,
+                          }}>
+                          {getIcon(player.role)}
+                        </span>
+                      }
                       text={player.playerName}
                     />
                   </li>

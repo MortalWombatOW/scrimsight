@@ -217,7 +217,7 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
   // useLegibleTextSvg(ref, !!roundBBoxes && !!tfBBoxes);
 
   return (
-    <Paper variant="outlined" sx={{padding: '1em', borderColor: winnerColor}}>
+    <Paper sx={{padding: '1em', borderColor: winnerColor}}>
       <Typography variant="h2">{mapInfo?.mapName}</Typography>
       <Typography variant="h5">{mapInfo?.mapType}</Typography>
       <Typography variant="h3">

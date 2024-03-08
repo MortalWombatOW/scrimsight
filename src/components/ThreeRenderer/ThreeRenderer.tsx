@@ -33,7 +33,7 @@ import {
   PlayerCurve,
   setCurveBaseColor,
 } from '../../lib/geom/geometry';
-import {getColorFor} from '../../lib/color';
+import {getColorForHero} from '../../lib/color';
 import {CameraControls} from './CameraControls';
 import Controls, {CameraFollowMode, LayerMode} from './Controls';
 const BOUND_FIT_OPTIONS = {
@@ -143,9 +143,10 @@ const ThreeRenderer = ({width, height, entities, onLoaded}: ZoomIProps) => {
   const realSecondsPerTick = 1 / (ticksPerGameSecond * playbackSpeed);
 
   // time state
-  const [startTime, endTime] = useMemo(() => getTimeBounds(entities), [
-    entities.length,
-  ]);
+  const [startTime, endTime] = useMemo(
+    () => getTimeBounds(entities),
+    [entities.length],
+  );
 
   const tickToTime = (tick: number) => {
     return startTime + tick / ticksPerGameSecond;
@@ -189,9 +190,10 @@ const ThreeRenderer = ({width, height, entities, onLoaded}: ZoomIProps) => {
   }, [playing, realSecondsPerTick]);
 
   const playerEntities = entities.filter((e) => e.entityType === 'player');
-  const playerNames = useMemo(() => playerEntities.map((entity) => entity.id), [
-    playerEntities,
-  ]);
+  const playerNames = useMemo(
+    () => playerEntities.map((entity) => entity.id),
+    [playerEntities],
+  );
 
   const bounds = useMemo(() => {
     const bounds_ = new THREE.Box3();
@@ -218,24 +220,22 @@ const ThreeRenderer = ({width, height, entities, onLoaded}: ZoomIProps) => {
     return curves;
   }, []);
 
-  const currentPlayerCurve: Record<
-    string,
-    PlayerCurve | undefined
-  > = useMemo(() => {
-    const curves: Record<string, PlayerCurve | undefined> = {};
-    for (const player of playerNames) {
-      const playerCurve: PlayerCurve | undefined = playerCurves[player].find(
-        (curve: PlayerCurve) =>
-          curve.startTime <= currentGameTime &&
-          curve.endTime >= currentGameTime,
-      );
-      if (!playerCurve) {
-        continue;
+  const currentPlayerCurve: Record<string, PlayerCurve | undefined> =
+    useMemo(() => {
+      const curves: Record<string, PlayerCurve | undefined> = {};
+      for (const player of playerNames) {
+        const playerCurve: PlayerCurve | undefined = playerCurves[player].find(
+          (curve: PlayerCurve) =>
+            curve.startTime <= currentGameTime &&
+            curve.endTime >= currentGameTime,
+        );
+        if (!playerCurve) {
+          continue;
+        }
+        curves[player] = playerCurve;
       }
-      curves[player] = playerCurve;
-    }
-    return curves;
-  }, [currentGameTime]);
+      return curves;
+    }, [currentGameTime]);
 
   const playerPositions: Record<string, THREE.Vector3> = useMemo(() => {
     const positions: Record<string, THREE.Vector3> = {};
@@ -297,7 +297,7 @@ const ThreeRenderer = ({width, height, entities, onLoaded}: ZoomIProps) => {
         setCurveBaseColor(
           curve.curve,
           new THREE.Color(
-            getColorFor(playerTeam(player) === 1 ? 'team1' : 'team2'),
+            getColorForHero(playerTeam(player) === 1 ? 'team1' : 'team2'),
           ),
         );
         highlightCurveAroundPercent(curve.curve, percentForCurve, (dist) =>
