@@ -561,7 +561,11 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
   );
 
   return (
-    <Paper sx={{padding: '1em', paddingTop: '1.5em'}}>
+    <Paper
+      sx={{
+        padding: '1em',
+        paddingTop: '1.5em',
+      }}>
       <Grid container>
         <Grid item xs={11}>
           <Typography variant="h4" color="info">
@@ -609,8 +613,17 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                           ? {fontWeight: 'bold'}
                           : {}),
                       }}
+                      startIcon={
+                        sortBy === metric.abbreviation && metric.alignRight ? (
+                          sortOrder === 'asc' ? (
+                            <ArrowDropUpIcon />
+                          ) : (
+                            <ArrowDropDownIcon />
+                          )
+                        ) : undefined
+                      }
                       endIcon={
-                        sortBy === metric.abbreviation ? (
+                        sortBy === metric.abbreviation && !metric.alignRight ? (
                           sortOrder === 'asc' ? (
                             <ArrowDropUpIcon />
                           ) : (
@@ -656,9 +669,6 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
-        sx={{
-          width: '800px',
-        }}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',
@@ -667,51 +677,85 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           vertical: 'top',
           horizontal: 'right',
         }}>
-        <Typography variant="h6">Select Metrics</Typography>
-        <Grid container>
-          {playerMetrics.map((metric) => (
-            <Grid item key={metric.name} xs={3}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={enabledMetrics.includes(metric.abbreviation)}
-                    onChange={() =>
-                      setEnabledMetrics((prev) =>
-                        prev.includes(metric.abbreviation)
-                          ? prev.filter((m) => m !== metric.abbreviation)
-                          : [...prev, metric.abbreviation],
-                      )
-                    }
-                  />
-                }
-                label={metric.name}
-              />
-            </Grid>
-          ))}
-        </Grid>
+        <Paper
+          sx={{
+            padding: '1em',
+            border: 1,
+            borderRadius: '10px',
+            borderColor: 'secondary.main',
+          }}>
+          <Typography
+            variant="h6"
+            sx={{marginBottom: '1em', color: 'info.main'}}>
+            Select Metrics
+          </Typography>
+          <Grid container sx={{maxWidth: '750px', marginBottom: '1em'}}>
+            {playerMetrics.map((metric) => (
+              <Grid item key={metric.name} xs={2}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={enabledMetrics.includes(metric.abbreviation)}
+                      onChange={() =>
+                        setEnabledMetrics((prev) =>
+                          prev.includes(metric.abbreviation)
+                            ? prev.filter((m) => m !== metric.abbreviation)
+                            : [...prev, metric.abbreviation],
+                        )
+                      }
+                    />
+                  }
+                  label={
+                    <Typography variant="caption">
+                      {smallHeader ? metric.abbreviation : metric.name}
+                    </Typography>
+                  }
+                  labelPlacement="top"
+                  sx={{
+                    // color: 'info.main',
+                    fontSize: '0.8em',
+                    margin: 0,
+                    padding: 0,
+                  }}
+                />
+              </Grid>
+            ))}
+          </Grid>
 
-        <FormControlLabel
-          control={
-            <Switch
-              checked={per10Mode}
-              onChange={() => setPer10Mode(!per10Mode)}
-            />
-          }
-          label={
-            <Typography variant="caption">
-              Show averages per 10 minutes
-            </Typography>
-          }
-        />
-        <FormControlLabel
-          control={
-            <Switch
-              checked={smallHeader}
-              onChange={() => setSmallHeader(!smallHeader)}
-            />
-          }
-          label={<Typography variant="caption">Condense header</Typography>}
-        />
+          <Button
+            variant="contained"
+            sx={{marginRight: '2em'}}
+            onClick={() => setEnabledMetrics(defaultMetrics)}>
+            Reset Metrics
+          </Button>
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={per10Mode}
+                onChange={() => setPer10Mode(!per10Mode)}
+              />
+            }
+            label={
+              <Typography variant="caption" color="info">
+                Show averages per 10 minutes
+              </Typography>
+            }
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={smallHeader}
+                onChange={() => setSmallHeader(!smallHeader)}
+              />
+            }
+            label={
+              <Typography variant="caption" color="info">
+                Condense header
+              </Typography>
+            }
+          />
+        </Paper>
       </Popover>
     </Paper>
   );
