@@ -3,6 +3,8 @@ import React, {ReactNode, useEffect} from 'react';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../hooks/useData';
 import TuneIcon from '@mui/icons-material/Tune';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {
   TableContainer,
   Paper,
@@ -56,7 +58,7 @@ function FormattedTableCell({
         borderBottomColor: `${colorKey}.dark`,
         ...sx,
       }}>
-      <div style={{paddingRight: '8px'}}>{children}</div>
+      <div style={{paddingRight: '8px', paddingLeft: '8px'}}>{children}</div>
     </TableCell>
   );
 }
@@ -355,7 +357,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           <Typography
             sx={{
               fontSize: '1.5em',
-              color: `${player.colorKey}.main`,
+              color: `${player.colorKey}.light`,
             }}>
             {getIcon(player.role)}
           </Typography>
@@ -562,11 +564,13 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     <Paper sx={{padding: '1em', paddingTop: '1.5em'}}>
       <Grid container>
         <Grid item xs={11}>
-          <Typography variant="h4">Player Stats</Typography>
+          <Typography variant="h4" color="info">
+            Player Stats
+          </Typography>
         </Grid>
         <Grid item xs={1}>
           <Button
-            color="team1"
+            color="secondary"
             onClick={(e) => setAnchorEl(e.currentTarget)}
             sx={{float: 'right'}}>
             <TuneIcon />
@@ -588,20 +592,32 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
                       textAlign: metric.alignRight ? 'right' : 'left',
                       borderLeft: 'none',
                       borderRight: 'none',
+                      borderTop: 'none',
+                      borderBottomColor: 'info.dark',
                     }}>
                     <Button
-                      // variant="outlined"
+                      variant="text"
+                      color="info"
                       sx={{
-                        backgroundColor: 'transparent',
-                        border: 'none',
-                        color: 'inherit',
+                        // backgroundColor: 'transparent',
+                        // border: 'none',
+                        // color: 'inherit',
                         ...(metric.alignRight
                           ? {justifyContent: 'right'}
                           : {justifyContent: 'left'}),
                         ...(sortBy === metric.abbreviation
-                          ? {backgroundColor: 'rgb(50, 59, 108)'}
+                          ? {fontWeight: 'bold'}
                           : {}),
                       }}
+                      endIcon={
+                        sortBy === metric.abbreviation ? (
+                          sortOrder === 'asc' ? (
+                            <ArrowDropUpIcon />
+                          ) : (
+                            <ArrowDropDownIcon />
+                          )
+                        ) : undefined
+                      }
                       onClick={() => {
                         if (sortBy === metric.abbreviation) {
                           setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -640,6 +656,9 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
+        sx={{
+          width: '800px',
+        }}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right',
@@ -651,7 +670,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
         <Typography variant="h6">Select Metrics</Typography>
         <Grid container>
           {playerMetrics.map((metric) => (
-            <Grid item key={metric.name}>
+            <Grid item key={metric.name} xs={3}>
               <FormControlLabel
                 control={
                   <Switch

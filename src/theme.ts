@@ -43,8 +43,8 @@ export const themeDef: ThemeOptions = {
     team2: generateThemeColor('#fd6ca0'),
 
     background: {
-      default: '#001A28',
-      paper: '#001A28',
+      default: '#000505',
+      paper: '#000505',
     },
     text: {
       primary: '#e9e6dc',
