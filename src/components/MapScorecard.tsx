@@ -21,36 +21,32 @@ type BBox = {
 };
 
 const generateRoundBBoxes = (totalWidth: number, roundWinners: string[]) => {
+  // calculate the width of each round
   const roundWidth = Math.floor(totalWidth / roundWinners.length);
-  const roundBBoxes = roundWinners.map((_, i) => {
-    return {
-      x: roundWidth * i,
-      y: 100,
-      width: roundWidth,
-      height: 100,
-    };
-  });
-  console.error('roundWinners', roundWinners);
-  console.error('roundBBoxes', roundBBoxes);
+
+  // map each roundWinner to its respective bounding box
+  const roundBBoxes = roundWinners.map((_, i) => ({
+    x: roundWidth * i,
+    y: 100, // constant y value
+    width: roundWidth,
+    height: 100, // constant height value
+  }));
+
   return roundBBoxes;
 };
 
 const generateTeamfightBBoxesForRound = (
   roundBBox: BBox,
   teamfightWinners: string[],
-) => {
-  const tfsPerRound = teamfightWinners.length;
-  const tfWidth = roundBBox.width / tfsPerRound;
-  const tfBBoxes = teamfightWinners.map((_, i) => {
-    return {
-      x: roundBBox.x + tfWidth * i,
-      y: 200,
-      width: tfWidth,
-      height: 100,
-    };
-  });
-  console.error('teamfightWinners', teamfightWinners);
-  return tfBBoxes;
+): BBox[] => {
+  const tfWidth = roundBBox.width / teamfightWinners.length;
+
+  return teamfightWinners.map((_, i) => ({
+    x: roundBBox.x + tfWidth * i,
+    y: 200,
+    width: tfWidth,
+    height: 100,
+  }));
 };
 
 const MapScorecard = ({mapId}: {mapId: number}) => {
@@ -95,10 +91,6 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
   const teamfights = useTeamfights(mapId);
   const mapTimes = useMapTimes(mapId);
 
-  // if (!map_scorecard) {
-  //   return <div>Loading...</div>;
-  // }
-
   const [roundWinners, setRoundWinners] = React.useState<string[]>([]);
   const [teamfightWinners, setTeamfightWinners] = React.useState<
     {
@@ -141,7 +133,6 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
     console.error('not returning', teamfights, mapTimes);
     // set the round id for each teamfight as the round containing the teamfight start time
     const teamfightWinners_ = teamfights.map((tf: any) => {
-      // debugger;
       const roundNumber =
         mapTimes
           .slice(1)
@@ -157,21 +148,11 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(teamfights), JSON.stringify(mapTimes)]);
 
-  // console.log('round_results', round_results);
-  // console.log('mapTimes', mapTimes);
-  // console.log('teamfights', teamfights);
-
-  console.log('map_scorecard', map_scorecard);
-  console.log('roundWinners', roundWinners);
-  console.log('teamfightWinners', teamfightWinners);
-
-  // console.log('map_scorecard', map_scorecard);
   const mapInfo = map_scorecard?.[0];
 
   const team1Color = getColorgorical(mapInfo?.team1Name);
   const team2Color = getColorgorical(mapInfo?.team2Name);
   const winnerColor = getColorgorical(mapInfo?.winner);
-  const rectPadding = 10;
 
   const ref = React.useRef<SVGSVGElement | null>(null);
   const [roundBBoxes, setRoundBBoxes] = React.useState<BBox[] | null>(null);
@@ -214,8 +195,6 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
     ref.current,
   ]);
 
-  // useLegibleTextSvg(ref, !!roundBBoxes && !!tfBBoxes);
-
   return (
     <Paper sx={{padding: '1em', borderColor: winnerColor}}>
       <Typography variant="h2">{mapInfo?.mapName}</Typography>
@@ -233,7 +212,6 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
         ref={ref}
         viewBox={`0 0 ${width || 100} 300`}>
         <g>
-          {/* <rect x="0" y="0" width="100%" height="100" fill={winnerColor} /> */}
           <text
             x="50%"
             y="40"
@@ -258,18 +236,10 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
             roundBBoxes &&
             roundBBoxes.length > 0 &&
             roundWinners?.map((winner, i) => {
-              // debugger;
               const roundNumber = i + 1;
               const roundBBox = roundBBoxes[i];
               return (
                 <g key={i}>
-                  {/* <rect
-                    x={roundBBox.x}
-                    y={roundBBox.y}
-                    width={roundBBox.width}
-                    height={roundBBox.height}
-                    fill={getColorgorical(winner)}
-                  /> */}
                   <text
                     x={roundBBox.x + roundBBox.width / 2}
                     y={roundBBox.y + roundBBox.height / 2}
@@ -300,13 +270,6 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
               return tfBBox.map((tf, i) => {
                 return (
                   <g key={i}>
-                    {/* <rect
-                      x={tf.x}
-                      y={tf.y}
-                      width={tf.width}
-                      height={tf.height}
-                      fill={getColorgorical(teamfightWinners[i].winner)}
-                    /> */}
                     <text
                       x={tf.x + tf.width / 2}
                       y={tf.y + tf.height / 2}

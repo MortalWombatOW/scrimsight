@@ -86,10 +86,13 @@ const MapRoster = ({mapId}: {mapId: number}) => {
             sx={{
               padding: '1em',
               borderColor: getColorgorical(team1Roster[0]?.['playerTeam']),
+              // center content
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            <Typography
-              variant="h3"
-              sx={{color: getColorgorical(team1Roster[0]?.['playerTeam'])}}>
+            <Typography variant="h3" sx={{color: 'team1.main'}}>
               {team1Roster[0]?.['playerTeam']}
             </Typography>
             <ul style={{listStyle: 'none'}}>
@@ -101,7 +104,6 @@ const MapRoster = ({mapId}: {mapId: number}) => {
                       icon={
                         <span
                           style={{
-                            color: getColorgorical(player.playerTeam),
                             paddingTop: 4,
                           }}>
                           {getIcon(player.role)}
@@ -121,10 +123,13 @@ const MapRoster = ({mapId}: {mapId: number}) => {
             sx={{
               padding: '1em',
               borderColor: getColorgorical(team2Roster[0]?.['playerTeam']),
+              // center content
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            <Typography
-              variant="h3"
-              sx={{color: getColorgorical(team2Roster[0]?.['playerTeam'])}}>
+            <Typography variant="h3" sx={{color: 'team2.main'}}>
               {team2Roster[0]?.['playerTeam']}
             </Typography>
             <ul style={{listStyle: 'none'}}>
@@ -136,7 +141,6 @@ const MapRoster = ({mapId}: {mapId: number}) => {
                       icon={
                         <span
                           style={{
-                            color: getColorgorical(player.playerTeam),
                             paddingTop: 4,
                           }}>
                           {getIcon(player.role)}

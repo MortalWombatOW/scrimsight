@@ -568,7 +568,7 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       }}>
       <Grid container>
         <Grid item xs={11}>
-          <Typography variant="h4" color="info">
+          <Typography variant="h4" sx={{color: 'info.main'}}>
             Player Stats
           </Typography>
         </Grid>
