@@ -3,15 +3,15 @@ import React, {useEffect, useState} from 'react';
 import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../useData';
 import useUUID from '../useUUID';
+import {useMapContext} from '../../context/MapContext';
 
-const useMapTimes = (
-  mapId: number,
-):
+const useMapTimes = ():
   | {
       startTime: number;
       endTime: number;
     }[]
   | null => {
+  const {mapId} = useMapContext();
   const uuid = useUUID();
   const data = useDataNodes([
     new AlaSQLNode(
@@ -65,7 +65,7 @@ const useMapTimes = (
   >(null);
 
   useEffect(() => {
-    if (!matchTimes || !roundTimes) {
+    if (!matchTimes || !roundTimes || matchTimes.length === 0) {
       return;
     }
 

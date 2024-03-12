@@ -5,6 +5,7 @@ import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../useData';
 import useMapRosters from './useMapRosters';
 import useUUID from '../useUUID';
+import {useMapContext} from '../../context/MapContext';
 
 type Teamfight = {
   // timestamps
@@ -17,7 +18,8 @@ type Teamfight = {
   winningTeam: string;
 };
 
-const useTeamfights = (mapId: number): Teamfight[] | null => {
+const useTeamfights = (): Teamfight[] | null => {
+  const {mapId} = useMapContext();
   const uuid = useUUID();
   const data = useDataNodes([
     new AlaSQLNode(
@@ -50,7 +52,7 @@ const useTeamfights = (mapId: number): Teamfight[] | null => {
   console.log('kills', kills);
   console.log('ultimateStart', ultimateStart);
 
-  const roster = useMapRosters(mapId);
+  const roster = useMapRosters();
   const team1Name = roster?.team1.name;
   const team2Name = roster?.team2.name;
 

@@ -51,9 +51,16 @@ export const useDataNodes = (
     const fetchData = async () => {
       const newData: {[name: string]: any[] | undefined} = {};
       for (const node of nodes) {
-        newData[node.getName()] = dataManager
-          .getNodeOrDie(node.getName())
-          .getOutput();
+        const nodeOutput = dataManager.getNodeOrDie(node.getName()).getOutput();
+        if (nodeOutput !== undefined) {
+          newData[node.getName()] = nodeOutput;
+        } else {
+          //delete all data if one node is not ready
+          for (const node of nodes) {
+            newData[node.getName()] = undefined;
+          }
+          break;
+        }
       }
       setData(newData);
     };

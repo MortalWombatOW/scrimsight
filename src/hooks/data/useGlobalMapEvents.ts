@@ -5,15 +5,15 @@ import {useDataNodes} from '../useData';
 import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import useMapTimes from './useMapTimes';
 import useUUID from '../useUUID';
+import {useMapContext} from '../../context/MapContext';
 
-const useGlobalMapEvents = (
-  mapId: number,
-):
+const useGlobalMapEvents = ():
   | {
       matchTime: number;
       eventMessage: string;
     }[]
   | null => {
+  const {mapId} = useMapContext();
   const uuid = useUUID();
 
   // This hook is used to get the global map events for a specific map.
@@ -49,7 +49,7 @@ const useGlobalMapEvents = (
 
   // match start, match end, round start, round end
   // first index is the match start and end, other indexes are the rounds
-  const matchTimes = useMapTimes(mapId);
+  const matchTimes = useMapTimes();
 
   const [events, setEvents] = useState<
     | {

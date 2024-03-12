@@ -89,9 +89,9 @@ function TimelineControls({
 }: {
   playing: boolean;
   loaded: boolean;
-  startTime: number;
+  startTime: number | null;
   startTimeFilter: number;
-  endTime: number;
+  endTime: number | null;
   endTimeFilter: number;
   ticksPerFrame: number;
   setPlaying: (playing: boolean) => void;

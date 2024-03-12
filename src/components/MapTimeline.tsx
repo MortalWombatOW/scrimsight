@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
@@ -19,9 +20,11 @@ import {getHeroImage} from '../lib/data/data';
 import SvgArcBetween from './SvgArcBetween';
 import SvgWrapText from './SvgWrapText';
 import TimelineControls from './TimelineControls';
+import {useMapContext} from '../context/MapContext';
 
-const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
-  const mapEvents = useGlobalMapEvents(mapId);
+const MapTimeline = () => {
+  const {mapId} = useMapContext();
+  const mapEvents = useGlobalMapEvents();
 
   // holds the players for columns
   const [players, setPlayers] = useState<
@@ -32,7 +35,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     }[]
   >([]);
 
-  const roster = useMapRosters(mapId);
+  const roster = useMapRosters();
 
   // console.log('roster', roster);
 
@@ -70,7 +73,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     }
   }, [JSON.stringify(players)]);
 
-  const {startTime, endTime} = useMapTimes(mapId)?.[roundId] || {
+  const {startTime, endTime} = useMapTimes()?.[0] || {
     startTime: null,
     endTime: null,
   };
@@ -109,9 +112,9 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
     );
   };
 
-  const playerLives = usePlayerLives(mapId, roundId);
-  const playerEvents: PlayerEvents | null = usePlayerEvents(mapId);
-  const ultTimes = useUltimateTimes(mapId);
+  const playerLives = usePlayerLives();
+  const playerEvents: PlayerEvents | null = usePlayerEvents();
+  const ultTimes = useUltimateTimes();
 
   // console.log('ultTimes', ultTimes);
 
@@ -120,7 +123,7 @@ const MapTimeline = ({mapId, roundId}: {mapId: number; roundId: number}) => {
 
   // console.log('loaded', loaded);
 
-  const teamfights = useTeamfights(mapId);
+  const teamfights = useTeamfights();
 
   // console.log('teamfights', teamfights);
 

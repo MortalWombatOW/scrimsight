@@ -3,8 +3,10 @@ import React, {useEffect, useState} from 'react';
 import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../useData';
 import useUUID from '../useUUID';
+import {useMapContext} from '../../context/MapContext';
 
-const usePlayerLives = (mapId: number, roundId: number) => {
+const usePlayerLives = () => {
+  const {mapId, roundId} = useMapContext();
   const uuid = useUUID();
   const data = useDataNodes([
     new AlaSQLNode(

@@ -12,7 +12,7 @@ const DraggableTimeWindow = ({
 }: {
   startTimeFilter: number;
   setStartTimeFilter: (time: number | ((time: number) => number)) => void;
-  endTime: number;
+  endTime: number | null;
   endTimeFilter: number;
   setEndTimeFilter: (time: number | ((time: number) => number)) => void;
 }) => {
@@ -52,7 +52,8 @@ const DraggableTimeWindow = ({
       !ref.current.parentElement ||
       !dragging ||
       y === null ||
-      clickOffsetY === null
+      clickOffsetY === null ||
+      endTime === null
     )
       return;
     const containerRect = ref.current.parentElement.getBoundingClientRect();
@@ -76,6 +77,8 @@ const DraggableTimeWindow = ({
     console.log(`startTimeFilter`, startTimeFilter);
     console.log(`endTimeFilter`, endTimeFilter);
   }, [dragging, y, clickOffsetY, ref, setStartTimeFilter, setEndTimeFilter]);
+
+  if (endTime === null) return null;
 
   return (
     <Button

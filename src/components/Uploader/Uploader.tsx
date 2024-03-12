@@ -44,7 +44,8 @@ const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
 };
 
 const Uploader: React.FC<UploaderProps> = ({
-  refreshCallback,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  refreshCallback = () => {},
   uploadFileHandler = uploadFile,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);

@@ -6,7 +6,7 @@ import MapImage from './MapImage';
 import MapSummaryStats from './MapSummaryStats';
 import MapRoster from './MapRoster';
 
-const MapSummary = ({mapId}: {mapId: number}) => {
+const MapSummary = () => {
   return (
     <div>
       <Grid
@@ -16,11 +16,11 @@ const MapSummary = ({mapId}: {mapId: number}) => {
           mb: '1em',
         }}>
         <Grid item xs={6}>
-          <MapScorecard mapId={mapId} />
-          <MapRoster mapId={mapId} />
+          <MapScorecard />
+          <MapRoster />
         </Grid>
         <Grid item xs={6}>
-          <MapImage mapId={mapId} />
+          <MapImage />
         </Grid>
       </Grid>
     </div>

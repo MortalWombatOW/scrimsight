@@ -1,5 +1,6 @@
-import {Box, Grid, Typography} from '@mui/material';
-import React, {useEffect, useState} from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {Grid} from '@mui/material';
+import React, {useContext, useEffect, useState} from 'react';
 import {useDataNodes} from '../hooks/useData';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {PieChart, pieArcLabelClasses} from '@mui/x-charts/PieChart';
@@ -12,7 +13,7 @@ import {ChartsXAxis} from '@mui/x-charts/ChartsXAxis';
 import {ChartsYAxis} from '@mui/x-charts/ChartsYAxis';
 import {ChartsAxisHighlight} from '@mui/x-charts/ChartsAxisHighlight';
 import {ChartsTooltip} from '@mui/x-charts/ChartsTooltip';
-import {ChartsReferenceLine} from '@mui/x-charts/ChartsReferenceLine';
+import {useMapContext} from '../context/MapContext';
 
 const StatPieChart = ({data, label}: {data: any; label: string}) => {
   return (
@@ -66,17 +67,9 @@ const StatPieChart = ({data, label}: {data: any; label: string}) => {
   );
 };
 
-const MapSummaryStats = ({
-  mapId,
-  roundId,
-  startTime,
-  endTime,
-}: {
-  mapId: number;
-  roundId: number;
-  startTime: number;
-  endTime: number;
-}) => {
+const MapSummaryStats = () => {
+  const {mapId, roundId, timeWindow} = useMapContext();
+  const [startTime, endTime] = timeWindow || [0, 9999];
   const data = useDataNodes([
     new AlaSQLNode(
       'MapSummaryStats_team_stats' + mapId + '_' + roundId,
@@ -93,7 +86,11 @@ const MapSummaryStats = ({
         player_stat.mapId = match_start.mapId
       WHERE
         player_stat.mapId = ${mapId}
-        ${roundId > 0 ? `AND player_stat.roundNumber = ${roundId}` : ''}
+        ${
+          roundId && roundId > 0
+            ? `AND player_stat.roundNumber = ${roundId}`
+            : ''
+        }
       GROUP BY
         player_stat.playerTeam,
         match_start.team1Name,
@@ -109,7 +106,7 @@ const MapSummaryStats = ({
         count(*) as kills
       FROM ? AS kill
       ${
-        roundId > 0
+        roundId && roundId > 0
           ? `
       JOIN ? AS round_start
       ON
@@ -123,7 +120,7 @@ const MapSummaryStats = ({
       WHERE
         kill.mapId = ${mapId}
         ${
-          roundId > 0
+          roundId && roundId > 0
             ? `
         AND round_start.roundNumber = ${roundId}
         AND round_end.roundNumber = ${roundId}

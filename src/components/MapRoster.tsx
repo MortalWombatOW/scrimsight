@@ -6,8 +6,10 @@ import {Grid, Paper, Typography} from '@mui/material';
 import {getColorgorical} from '../lib/color';
 import IconAndText from './Common/IconAndText';
 import {getIcon} from './Common/RoleIcons';
+import {useMapContext} from '../context/MapContext';
 
-const MapRoster = ({mapId}: {mapId: number}) => {
+const MapRoster = () => {
+  const {mapId} = useMapContext();
   const data = useDataNodes([
     new AlaSQLNode(
       'MapRoster_players_' + mapId,

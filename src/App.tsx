@@ -10,7 +10,7 @@ import {
 import {createTheme, CssBaseline, ThemeProvider} from '@mui/material';
 import {QueryParamProvider} from 'use-query-params';
 import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
-import routes from './lib/routes';
+import routes, {ScrimsightRoute} from './lib/routes';
 import {themeDef} from './theme';
 
 import {DataProvider} from './WombatDataFramework/DataContext';
@@ -18,6 +18,19 @@ import {generateThemeColor} from './lib/palette';
 import {TeamContextProvider} from './context/TeamContextProvider';
 import {getColorgorical} from './lib/color';
 import {TeamContext} from './context/TeamContext';
+
+const ContextualizedRoute = ({
+  route,
+}: {
+  route: ScrimsightRoute;
+}): JSX.Element => {
+  let el: JSX.Element = React.createElement(route.component, {});
+  for (const context of route.contexts || []) {
+    el = React.createElement(context, undefined, el);
+  }
+  console.log('el', el);
+  return el;
+};
 
 function ThemedRoutes(props) {
   const {team1Name, team2Name} = React.useContext(TeamContext);
@@ -45,7 +58,7 @@ function ThemedRoutes(props) {
               key={path}
               path={path}
               index={(i === (0 as unknown)) as false}
-              element={<route.component />}
+              element={<ContextualizedRoute route={route} />}
             />
           )),
         )}

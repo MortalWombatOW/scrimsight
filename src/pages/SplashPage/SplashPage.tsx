@@ -1,16 +1,6 @@
-import {
-  Container,
-  Box,
-  Card,
-  CardActionArea,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Typography,
-  Button,
-} from '@mui/material';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import {Box, Typography, Button} from '@mui/material';
 import React from 'react';
-import {Link} from 'react-router-dom';
 import ImageCard from '../../components/Card/ImageCard';
 import Header from '../../components/Header/Header';
 import SplashRow from './SplashRow';
@@ -18,11 +8,7 @@ import SplashRow from './SplashRow';
 const SplashPage = () => {
   return (
     <Box component="div" style={{width: '100%'}}>
-      <Header
-        filters={{}}
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setFilters={(filters) => {}}
-      />
+      <Header />
       <ImageCard
         width="100%"
         src="/assets/splash.png"

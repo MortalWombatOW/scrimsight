@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {DataManager} from './DataManager';
 import {AlaSQLNode, ObjectStoreNode, WriteNode} from './DataTypes';
 

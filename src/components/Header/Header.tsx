@@ -17,15 +17,7 @@ import routes from '../../lib/routes';
 import './Header.scss';
 import Uploader from '../Uploader/Uploader';
 
-const settings = ['Settings', 'Logout'];
-
-const Header = ({
-  filters,
-  setFilters,
-}: {
-  filters: {[key: string]: string[]};
-  setFilters: (filters: {[key: string]: string[]}) => void;
-}) => {
+const Header = () => {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -154,7 +146,7 @@ const Header = ({
             </Box>
           </Box>
           <Box component="div">
-            <Uploader refreshCallback={() => {}} />
+            <Uploader />
           </Box>
         </Toolbar>
       </Container>

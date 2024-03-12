@@ -5,11 +5,7 @@ import Header from './../../components/Header/Header';
 const Home = () => {
   return (
     <div style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
-      <Header
-        filters={{}}
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setFilters={(filters) => {}}
-      />
+      <Header />
 
       <HomeDashboard />
     </div>

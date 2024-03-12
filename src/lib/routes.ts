@@ -1,17 +1,20 @@
+import React from 'react';
 import DebugPage from '../pages/Debug/DebugPage';
 import Home from '../pages/Home/Home';
-import MapPage from '../pages/MapV2/MapPage';
+import MapPage from '../pages/Map/MapPage';
 import PlayerPage from '../pages/PlayerPage/PlayerPage';
 import SplashPage from '../pages/SplashPage/SplashPage';
+import {MapContextProvider} from '../context/MapContext';
 
-interface Route {
+export interface ScrimsightRoute {
   path: string[];
   component: () => JSX.Element;
   name?: string;
   hidden?: boolean;
+  contexts?: ((props: {children: React.ReactNode}) => JSX.Element)[];
 }
 
-const routes: Route[] = [
+const routes: ScrimsightRoute[] = [
   {
     path: ['/'],
     component: SplashPage,
@@ -26,6 +29,7 @@ const routes: Route[] = [
     component: MapPage,
     name: 'View Maps',
     hidden: true,
+    contexts: [MapContextProvider],
   },
   {
     path: ['/player/:playerId'],

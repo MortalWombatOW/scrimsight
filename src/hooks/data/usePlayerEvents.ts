@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../useData';
 import useUUID from '../useUUID';
+import {useMapContext} from '../../context/MapContext';
 
 type PlayerEventType =
   | 'kill'
@@ -32,7 +33,8 @@ export type PlayerEvents = {
   [key: string]: PlayerEvent[];
 };
 
-const usePlayerEvents = (mapId: number): PlayerEvents | null => {
+const usePlayerEvents = (): PlayerEvents | null => {
+  const {mapId} = useMapContext();
   const uuid = useUUID();
   const data = useDataNodes([
     new AlaSQLNode(

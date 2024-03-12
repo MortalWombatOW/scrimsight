@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {ReactNode, useEffect} from 'react';
+import React, {ReactNode, useContext, useEffect} from 'react';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../hooks/useData';
 import TuneIcon from '@mui/icons-material/Tune';
@@ -24,13 +26,9 @@ import {
 import {getHeroImage, getRankForRole, getRoleFromHero} from '../lib/data/data';
 import IconAndText from './Common/IconAndText';
 import {getIcon} from './Common/RoleIcons';
-import {
-  getColorForHero,
-  getColorgorical,
-  interpolateColors,
-} from '../lib/color';
 import {heroNameToNormalized} from '../lib/string';
 import {ColorKey} from '../theme';
+import {useMapContext} from '../context/MapContext';
 
 type PlayerStat = {
   name: string;
@@ -129,7 +127,8 @@ function PlayerHeroesList({playerHeroes}) {
   );
 }
 
-const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
+const MapPlayerTable = () => {
+  const {mapId, roundId} = useMapContext();
   const data = useDataNodes([
     new AlaSQLNode(
       'MapPlayerTable_stats_' + mapId + '_' + roundId,
@@ -158,7 +157,11 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
       FROM ? AS player_stat
       WHERE
         player_stat.mapId = ${mapId}
-        ${roundId > 0 ? `AND player_stat.roundNumber = ${roundId}` : ''}
+        ${
+          roundId && roundId > 0
+            ? `AND player_stat.roundNumber = ${roundId}`
+            : ''
+        }
       GROUP BY
         player_stat.playerTeam,
         player_stat.playerName,
@@ -182,7 +185,11 @@ const MapPlayerTable = ({mapId, roundId}: {mapId: number; roundId: number}) => {
           AND round_start.roundNumber = round_end.roundNumber
       WHERE
         round_start.mapId = ${mapId}
-        ${roundId > 0 ? `AND round_start.roundNumber = ${roundId}` : ''}
+        ${
+          roundId && roundId > 0
+            ? `AND round_start.roundNumber = ${roundId}`
+            : ''
+        }
       `,
       ['round_start_object_store', 'round_end_object_store'],
     ),

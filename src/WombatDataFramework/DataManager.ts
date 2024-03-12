@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {DataNode, DataNodeName} from './DataTypes';
 
 export class DataManager {

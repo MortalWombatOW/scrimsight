@@ -6,7 +6,7 @@ import {Grid, Paper, Typography} from '@mui/material';
 import {getColorgorical} from '../lib/color';
 import useTeamfights from '../hooks/data/useTeamfights';
 import useMapTimes from '../hooks/data/useMapTimes';
-import useLegibleTextSvg from '../hooks/useLegibleTextSvg';
+import {useMapContext} from '../context/MapContext';
 
 const getElementWidth = (element: SVGSVGElement) => {
   const rect = element.getBoundingClientRect();
@@ -49,7 +49,9 @@ const generateTeamfightBBoxesForRound = (
   }));
 };
 
-const MapScorecard = ({mapId}: {mapId: number}) => {
+const MapScorecard = () => {
+  const {mapId} = useMapContext();
+
   const data = useDataNodes([
     new AlaSQLNode(
       'map_scorecard_' + mapId,
@@ -88,8 +90,8 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
   const map_scorecard = data['map_scorecard_' + mapId];
   const round_results = data['MapScorecard_round_results_' + mapId];
 
-  const teamfights = useTeamfights(mapId);
-  const mapTimes = useMapTimes(mapId);
+  const teamfights = useTeamfights();
+  const mapTimes = useMapTimes();
 
   const [roundWinners, setRoundWinners] = React.useState<string[]>([]);
   const [teamfightWinners, setTeamfightWinners] = React.useState<
@@ -100,7 +102,9 @@ const MapScorecard = ({mapId}: {mapId: number}) => {
   >([]);
 
   React.useEffect(() => {
-    if (!round_results || !map_scorecard) return;
+    if (!round_results || !map_scorecard || map_scorecard.length === 0) {
+      return;
+    }
 
     const team1Name = map_scorecard[0].team1Name;
     const team2Name = map_scorecard[0].team2Name;

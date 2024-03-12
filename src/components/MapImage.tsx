@@ -2,8 +2,10 @@ import React from 'react';
 import {useDataNodes} from '../hooks/useData';
 import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
 import {mapNameToFileName} from '../lib/string';
+import {useMapContext} from '../context/MapContext';
 
-const MapImage = ({mapId}: {mapId: number}) => {
+const MapImage = () => {
+  const {mapId} = useMapContext();
   const data = useDataNodes([
     new AlaSQLNode(
       'map_image_' + mapId,
@@ -19,7 +21,7 @@ const MapImage = ({mapId}: {mapId: number}) => {
 
   const overview = data['map_image_' + mapId];
 
-  if (!overview) {
+  if (!overview || overview.length === 0) {
     return <div>Loading...</div>;
   }
 

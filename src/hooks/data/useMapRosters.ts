@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, {useEffect, useState} from 'react';
 
 import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../useData';
 import {getRoleFromHero, getRankForRole} from '../../lib/data/data';
 import useUUID from '../useUUID';
+import {useMapContext} from '../../context/MapContext';
 
 type Roster = {
   name: string;
@@ -15,12 +17,11 @@ type Team = {
   roster: Roster;
 };
 
-const useMapRosters = (
-  mapId: number,
-): {
+const useMapRosters = (): {
   team1: Team;
   team2: Team;
 } | null => {
+  const {mapId} = useMapContext();
   const uuid = useUUID();
   const data = useDataNodes([
     new AlaSQLNode(
@@ -58,7 +59,7 @@ const useMapRosters = (
   console.log('mapRosterRawData', data);
 
   useEffect(() => {
-    if (!mapRosterRawData) {
+    if (!mapRosterRawData || mapRosterRawData.length === 0) {
       return;
     }
 

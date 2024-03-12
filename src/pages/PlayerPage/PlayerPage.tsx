@@ -36,20 +36,12 @@ const PlayerPage = () => {
 
   // console.log('heroData', heroData);
 
-  const refresh = () => {};
-
   const [selectedPlayer, setSelectedPlayer] = useQueryParam('p', StringParam);
 
   return (
     <div>
-      <Header
-        filters={{}}
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setFilters={(filters) => {}}
-      />
-      <div className="Playerpage-container">
-        
-      </div>
+      <Header />
+      <div className="Playerpage-container"></div>
     </div>
   );
 };
