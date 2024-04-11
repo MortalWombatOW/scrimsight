@@ -5,20 +5,20 @@ import {PlayerStatFormatted} from '../../lib/data/NodeData';
 import Header from '../../components/Header/Header';
 import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../../hooks/useData';
-import MapPlayerTable from '../../components/MapPlayerTable';
-import MapSummary from '../../components/MapSummary';
+import MapPlayerTable from './components/MapPlayerTable';
+import MapSummary from './components/MapSummary';
 import {Button, Container, Tab, Tabs} from '@mui/material';
-import MapSummaryStats from '../../components/MapSummaryStats';
-import MapTimeline from '../../components/MapTimeline';
+import MapSummaryStats from './components/MapSummaryStats';
+import MapTimeline from './components/MapTimeline';
 import {
   NumberParam,
   StringParam,
   useQueryParam,
   withDefault,
 } from 'use-query-params';
-import useMapTimes from '../../hooks/data/useMapTimes';
+import useMapTimes from './hooks/useMapTimes';
 import {TeamContext} from '../../context/TeamContext';
-import {useMapContext} from '../../context/MapContext';
+import {useMapContext} from './context/MapContext';
 
 const MapPage = () => {
   const params = useParams<{mapId: string}>();
@@ -26,12 +26,9 @@ const MapPage = () => {
 
   const {mapId, setMapId} = useMapContext();
 
-  console.error('mapIdParam', mapIdParam);
-
   useEffect(() => {
-    console.error('setting mapIdParam', mapIdParam);
     setMapId(Number.parseInt(mapIdParam, 10));
-  }, [mapIdParam, setMapId]);
+  }, [mapIdParam]);
 
   const mapTimes = useMapTimes();
 

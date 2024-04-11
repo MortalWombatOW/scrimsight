@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {ReactNode, useContext, useEffect} from 'react';
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {useDataNodes} from '../hooks/useData';
+import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../../../hooks/useData';
 import TuneIcon from '@mui/icons-material/Tune';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -23,11 +23,15 @@ import {
   Popover,
   Grid,
 } from '@mui/material';
-import {getHeroImage, getRankForRole, getRoleFromHero} from '../lib/data/data';
-import IconAndText from './Common/IconAndText';
-import {getIcon} from './Common/RoleIcons';
-import {heroNameToNormalized} from '../lib/string';
-import {ColorKey} from '../theme';
+import {
+  getHeroImage,
+  getRankForRole,
+  getRoleFromHero,
+} from '../../../lib/data/data';
+import IconAndText from '../../../components/Common/IconAndText';
+import {getIcon} from '../../../components/Common/RoleIcons';
+import {heroNameToNormalized} from '../../../lib/string';
+import {ColorKey} from '../../../theme';
 import {useMapContext} from '../context/MapContext';
 
 type PlayerStat = {

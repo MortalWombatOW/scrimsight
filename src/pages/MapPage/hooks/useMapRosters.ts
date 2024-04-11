@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, {useEffect, useState} from 'react';
 
-import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
-import {useDataNodes} from '../useData';
-import {getRoleFromHero, getRankForRole} from '../../lib/data/data';
-import useUUID from '../useUUID';
-import {useMapContext} from '../../context/MapContext';
+import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../../../hooks/useData';
+import {getRoleFromHero, getRankForRole} from '../../../lib/data/data';
+import useUUID from '../../../hooks/useUUID';
+import {useMapContext} from '../context/MapContext';
 
 type Roster = {
   name: string;

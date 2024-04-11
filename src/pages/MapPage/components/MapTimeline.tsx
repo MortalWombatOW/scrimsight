@@ -4,26 +4,25 @@
 import React, {useEffect, useState} from 'react';
 
 import {Grid, Paper} from '@mui/material';
-import {getColorForHero, getColorgorical} from '../lib/color';
-import {getSvgIcon} from './Common/RoleIcons';
-import {heroNameToNormalized} from '../lib/string';
-import usePlayerLives from '../hooks/data/usePlayerLives';
-import useMapTimes from '../hooks/data/useMapTimes';
-import useMapRosters from '../hooks/data/useMapRosters';
-import useGlobalMapEvents from '../hooks/data/useGlobalMapEvents';
-import usePlayerEvents, {PlayerEvents} from '../hooks/data/usePlayerEvents';
-import {formatTime} from '../lib/format';
-import useLegibleTextSvg from '../hooks/useLegibleTextSvg';
-import useTeamfights from '../hooks/data/useTeamfights';
-import useUltimateTimes from '../hooks/data/useUltimateTimes';
-import {getHeroImage} from '../lib/data/data';
+import {getColorForHero, getColorgorical} from '../../../lib/color';
+import {getSvgIcon} from '../../../components/Common/RoleIcons';
+import {heroNameToNormalized} from '../../../lib/string';
+import usePlayerLives from '../../../hooks/data/usePlayerLives';
+import useMapTimes from '../hooks/useMapTimes';
+import useMapRosters from '../hooks/useMapRosters';
+import useGlobalMapEvents from '../hooks/useGlobalMapEvents';
+import usePlayerEvents, {PlayerEvents} from '../hooks/usePlayerEvents';
+import {formatTime} from '../../../lib/format';
+import useLegibleTextSvg from '../../../hooks/useLegibleTextSvg';
+import useTeamfights from '../hooks/useTeamfights';
+import useUltimateTimes from '../hooks/useUltimateTimes';
+import {getHeroImage} from '../../../lib/data/data';
 import SvgArcBetween from './SvgArcBetween';
 import SvgWrapText from './SvgWrapText';
 import TimelineControls from './TimelineControls';
 import {useMapContext} from '../context/MapContext';
 
 const MapTimeline = () => {
-  const {mapId} = useMapContext();
   const mapEvents = useGlobalMapEvents();
 
   // holds the players for columns
@@ -77,8 +76,7 @@ const MapTimeline = () => {
     startTime: null,
     endTime: null,
   };
-  const [pixelsPerSecond, setPixelsPerSecond] = useState(5);
-  // const height = (endTime - startTime) * pixelsPerSecond;
+
   const height = 900;
 
   const xPadding = 50;
@@ -167,60 +165,16 @@ const MapTimeline = () => {
   ]);
   // console.log('iters', iters);
 
-  const [ticksPerSecond, setTicksPerSecond] = useState(1);
-  const [ticksPerFrame, setTicksPerFrame] = useState(5);
-  const [playing, setPlaying] = useState(false);
-
-  useEffect(() => {
-    console.log('playing', playing);
-    if (
-      playing &&
-      startTimeFilter !== null &&
-      endTimeFilter !== null &&
-      startTime !== null &&
-      endTime
-    ) {
-      console.log('playing', playing);
-      const interval = setInterval(() => {
-        setStartTimeFilter((time) => {
-          if (time === null) {
-            return startTimeFilter;
-          }
-
-          return time + ticksPerFrame;
-        });
-        setEndTimeFilter((time) => {
-          if (time === null) {
-            return endTimeFilter;
-          }
-          if (time >= endTime) {
-            setPlaying(false);
-            return endTime;
-          }
-          console.log('time', time);
-          return time + ticksPerFrame;
-        });
-      }, 1000 / ticksPerSecond);
-      return () => clearInterval(interval);
-    }
-  }, [playing, startTimeFilter, endTimeFilter, ticksPerSecond]);
-
   return (
     <Paper sx={{padding: '1em', borderRadius: '5px', marginTop: '1em'}}>
       <Grid container spacing={2}>
         <Grid item xs={1}>
           <TimelineControls
-            startTime={startTime}
             endTime={endTime}
-            ticksPerFrame={ticksPerFrame}
-            setTicksPerFrame={setTicksPerFrame}
             startTimeFilter={startTimeFilter}
             setStartTimeFilter={setStartTimeFilter}
             endTimeFilter={endTimeFilter}
             setEndTimeFilter={setEndTimeFilter}
-            loaded={loaded}
-            playing={playing}
-            setPlaying={setPlaying}
             kills={
               Object.values(playerEvents || {})
                 .flat()

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import useMousePosition from '../hooks/useMousePosition';
+import useMousePosition from '../../../hooks/useMousePosition';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import Button from '@mui/material/Button';
 

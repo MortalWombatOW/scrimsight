@@ -54,11 +54,11 @@ const MapList = () => {
 
   return (
     <Grid container spacing={5}>
-      <Grid item>
+      {/* <Grid item>
         <MapListCard>
           <MapListHeader maps={mapOutput} />
         </MapListCard>
-      </Grid>
+      </Grid> */}
       {mapOutput ? (
         Array.from(scrimMap.entries()).map(([scrimId, overviews]) => (
           <Grid item key={scrimId}>

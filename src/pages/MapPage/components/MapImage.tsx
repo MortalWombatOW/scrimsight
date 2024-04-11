@@ -1,7 +1,7 @@
 import React from 'react';
-import {useDataNodes} from '../hooks/useData';
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {mapNameToFileName} from '../lib/string';
+import {useDataNodes} from '../../../hooks/useData';
+import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {mapNameToFileName} from '../../../lib/string';
 import {useMapContext} from '../context/MapContext';
 
 const MapImage = () => {

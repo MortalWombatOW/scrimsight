@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect} from 'react';
-import {useDataNodes} from '../hooks/useData';
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../../../hooks/useData';
+import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
 import {Grid, Paper, Typography} from '@mui/material';
-import {getColorgorical} from '../lib/color';
-import useTeamfights from '../hooks/data/useTeamfights';
-import useMapTimes from '../hooks/data/useMapTimes';
+import {getColorgorical} from '../../../lib/color';
+import useTeamfights from '../hooks/useTeamfights';
+import useMapTimes from '../hooks/useMapTimes';
 import {useMapContext} from '../context/MapContext';
 
 const getElementWidth = (element: SVGSVGElement) => {

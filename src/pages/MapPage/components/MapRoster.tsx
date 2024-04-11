@@ -1,12 +1,13 @@
 import React from 'react';
-import {AlaSQLNode} from '../WombatDataFramework/DataTypes';
-import {useDataNodes} from '../hooks/useData';
-import {getRoleFromHero, getRankForRole} from '../lib/data/data';
+import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../../../hooks/useData';
+import {getRoleFromHero, getRankForRole} from '../../../lib/data/data';
 import {Grid, Paper, Typography} from '@mui/material';
-import {getColorgorical} from '../lib/color';
-import IconAndText from './Common/IconAndText';
-import {getIcon} from './Common/RoleIcons';
+import {getColorgorical} from '../../../lib/color';
+import IconAndText from '../../../components/Common/IconAndText';
+import {getIcon} from '../../../components/Common/RoleIcons';
 import {useMapContext} from '../context/MapContext';
+import {useNavigate} from 'react-router-dom';
 
 const MapRoster = () => {
   const {mapId} = useMapContext();
@@ -77,6 +78,8 @@ const MapRoster = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(mapRosterRawData)]);
 
+  const navigate = useNavigate();
+
   console.log('team1Roster', team1Roster);
   console.log('team2Roster', team2Roster);
 
@@ -113,6 +116,9 @@ const MapRoster = () => {
                       }
                       text={player.playerName}
                       colorKey="team1"
+                      onClick={() => {
+                        navigate(`/player/${player.playerName}`);
+                      }}
                     />
                   </li>
                 );
@@ -150,6 +156,9 @@ const MapRoster = () => {
                       }
                       text={player.playerName}
                       colorKey="team2"
+                      onClick={() => {
+                        navigate(`/player/${player.playerName}`);
+                      }}
                     />
                   </li>
                 );

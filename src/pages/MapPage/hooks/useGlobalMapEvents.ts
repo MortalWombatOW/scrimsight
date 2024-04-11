@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 
-import {useDataNodes} from '../useData';
-import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../../../hooks/useData';
+import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
 import useMapTimes from './useMapTimes';
-import useUUID from '../useUUID';
-import {useMapContext} from '../../context/MapContext';
+import useUUID from '../../../hooks/useUUID';
+import {useMapContext} from '../context/MapContext';
 
 const useGlobalMapEvents = ():
   | {

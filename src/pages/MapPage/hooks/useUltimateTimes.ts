@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
-import {useDataNodes} from '../useData';
+import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../../../hooks/useData';
 import useMapTimes from './useMapTimes';
-import {useMapContext} from '../../context/MapContext';
+import {useMapContext} from '../context/MapContext';
 
 type PlayerUltimate = {
   playerName: string;

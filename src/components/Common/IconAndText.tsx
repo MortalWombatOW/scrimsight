@@ -12,6 +12,7 @@ const IconAndText = ({
   borderRadius,
   dynamic,
   colorKey,
+  onClick,
 }: {
   variant?: 'contained' | 'outlined' | 'text';
   icon: React.ReactElement;
@@ -20,6 +21,7 @@ const IconAndText = ({
   borderRadius?: string;
   dynamic?: boolean;
   colorKey: ColorKey;
+  onClick?: () => void;
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -29,6 +31,7 @@ const IconAndText = ({
         variant={variant || 'contained'}
         onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
         onMouseLeave={() => setAnchorEl(null)}
+        onClick={onClick}
         color={colorKey}
         startIcon={dynamic ? undefined : icon}
         style={{

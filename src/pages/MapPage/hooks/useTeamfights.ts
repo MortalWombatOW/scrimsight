@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 
-import {AlaSQLNode} from '../../WombatDataFramework/DataTypes';
-import {useDataNodes} from '../useData';
+import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {useDataNodes} from '../../../hooks/useData';
 import useMapRosters from './useMapRosters';
-import useUUID from '../useUUID';
-import {useMapContext} from '../../context/MapContext';
+import useUUID from '../../../hooks/useUUID';
+import {useMapContext} from '../context/MapContext';
 
 type Teamfight = {
   // timestamps
