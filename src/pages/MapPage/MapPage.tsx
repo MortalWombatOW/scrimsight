@@ -19,15 +19,21 @@ import {
 import useMapTimes from './hooks/useMapTimes';
 import {TeamContext} from '../../context/TeamContext';
 import {useMapContext} from './context/MapContext';
+import {useFilterContext} from '../../context/FilterContextProvider';
+import DataComponent from '../../components/DataComponent';
+import DataTable from '../../components/data/DataTable';
+import DataHeader from '../../components/data/DataHeader';
 
 const MapPage = () => {
   const params = useParams<{mapId: string}>();
   const mapIdParam: string = params.mapId!;
 
   const {mapId, setMapId} = useMapContext();
+  const filterContext = useFilterContext();
 
   useEffect(() => {
     setMapId(Number.parseInt(mapIdParam, 10));
+    filterContext.set('mapId', Number.parseInt(mapIdParam, 10));
   }, [mapIdParam]);
 
   const mapTimes = useMapTimes();
@@ -58,30 +64,33 @@ const MapPage = () => {
 
   const data = useDataNodes([
     new AlaSQLNode<PlayerStatFormatted>(
-      'MapPage_map_rounds_' + mapId,
+      'MapPage_map_rounds',
       `SELECT
-       array(round_start.roundNumber) as roundNumbers
+        mapId,
+        array(round_start.roundNumber) as roundNumbers
       FROM ? AS round_start
-      WHERE
-        round_start.mapId = ${mapId}
+      GROUP BY mapId
        `,
       ['round_start_object_store'],
     ),
     new AlaSQLNode(
-      'MapPage_map_teams_' + mapId,
+      'MapPage_map_teams',
       `SELECT
+        mapId,
         team1Name,
         team2Name
       FROM ? AS match_start
-      WHERE
-        match_start.mapId = ${mapId}
       `,
       ['match_start_object_store'],
     ),
   ]);
 
-  const roundsData = data['MapPage_map_rounds_' + mapId];
-  const teamsData = data['MapPage_map_teams_' + mapId];
+  const roundsData = data['MapPage_map_rounds']?.filter((d) =>
+    filterContext.matches(d),
+  );
+  const teamsData = data['MapPage_map_teams']?.filter((d) =>
+    filterContext.matches(d),
+  );
 
   const {setTeamNames} = React.useContext(TeamContext);
 
@@ -105,8 +114,51 @@ const MapPage = () => {
     <div style={{margin: '1em'}}>
       <Header />
       <Container maxWidth="xl">
+        <DataComponent
+          fields={[
+            {
+              id: 'mapId',
+              displayName: 'Map ID',
+              type: 'categorical',
+            },
+            {
+              id: 'team1Name',
+              displayName: 'Team 1',
+              type: 'categorical',
+            },
+            {
+              id: 'team2Name',
+              displayName: 'Team 2',
+              type: 'categorical',
+            },
+          ]}>
+          <DataHeader
+            titleTemplate="{{team1Name}} vs {{team2Name}}"
+            subtitleTemplate="Map {{mapId}}"
+          />
+          <DataTable />
+        </DataComponent>
+        <DataComponent
+          fields={[
+            {
+              id: 'mapId',
+              displayName: 'Map ID',
+              type: 'categorical',
+            },
+            {
+              id: 'team1Name',
+              displayName: 'Team 1',
+              type: 'categorical',
+            },
+            {
+              id: 'team2Name',
+              displayName: 'Team 2',
+              type: 'categorical',
+            },
+          ]}>
+          <DataTable />
+        </DataComponent>
         <MapSummary />
-
         <Tabs value={view} onChange={(event, newValue) => setView(newValue)}>
           <Tab label="Overview" value="overview" />
           <Tab label="Players" value="players" />
@@ -121,7 +173,6 @@ const MapPage = () => {
         </Tabs>
         {view === 'overview' && <MapSummaryStats />}
         {view === 'players' && <MapPlayerTable />}
-
         {view === 'timeline' && <MapTimeline />}
       </Container>
     </div>

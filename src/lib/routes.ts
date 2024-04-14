@@ -6,6 +6,7 @@ import PlayerPage from '../pages/PlayerPage/PlayerPage';
 import SplashPage from '../pages/SplashPage/SplashPage';
 import {MapContextProvider} from '../pages/MapPage/context/MapContext';
 import {PlayerContextProvider} from '../pages/PlayerPage/context/PlayerContext';
+import {FilterContextProvider} from '../context/FilterContextProvider';
 
 export interface ScrimsightRoute {
   path: string[];
@@ -30,13 +31,13 @@ const routes: ScrimsightRoute[] = [
     component: MapPage,
     name: 'View Maps',
     hidden: true,
-    contexts: [MapContextProvider],
+    contexts: [MapContextProvider, FilterContextProvider],
   },
   {
     path: ['/player/:playerName'],
     component: PlayerPage,
     name: 'View Players',
-    contexts: [PlayerContextProvider],
+    contexts: [PlayerContextProvider, FilterContextProvider],
   },
   // {
   //   path: ['/team'],
