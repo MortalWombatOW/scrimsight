@@ -7,7 +7,7 @@ import {Box, Container, Paper, Typography} from '@mui/material';
 import {useParams} from 'react-router-dom';
 import {formatTime} from '../../lib/format';
 import {heroNameToNormalized} from '../../lib/string';
-import {getHeroImage} from '../../lib/data/data';
+import {getHeroImage} from '../../lib/data/hero';
 import IconAndText from '../../components/Common/IconAndText';
 import {ColorKey} from '../../theme';
 

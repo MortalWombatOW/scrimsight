@@ -40,9 +40,6 @@ const SplashRow = ({
           backgroundColor: backgroundColor,
           color: textColor,
           padding: '50px',
-          paddingBottom: '100px',
-          borderBottomLeftRadius: '50% 20%',
-          borderBottomRightRadius: '50% 20%',
         }}
         className={className}>
         <Grid container>

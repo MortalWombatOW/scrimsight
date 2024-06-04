@@ -16,7 +16,7 @@ import {formatTime} from '../../../lib/format';
 import useLegibleTextSvg from '../../../hooks/useLegibleTextSvg';
 import useTeamfights from '../hooks/useTeamfights';
 import useUltimateTimes from '../hooks/useUltimateTimes';
-import {getHeroImage} from '../../../lib/data/data';
+import {getHeroImage} from '../../../lib/data/hero';
 import SvgArcBetween from './SvgArcBetween';
 import SvgWrapText from './SvgWrapText';
 import TimelineControls from './TimelineControls';

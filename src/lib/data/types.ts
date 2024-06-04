@@ -54,45 +54,6 @@ type RenderState = {
   };
 };
 
-enum ReportComponentType {
-  default,
-  debug,
-  table,
-  map,
-  timeChart,
-  barChart,
-  embed,
-  matrix,
-}
-
-enum ReportComponentStyle {
-  default,
-  emphasized,
-  topLine,
-}
-
-type ReportComponent = {
-  type: ReportComponentType;
-  // metric: Metric; TODO change to query?
-  style: ReportComponentStyle;
-};
-
-type ReportControl = {
-  type: ReportControlType;
-};
-
-enum ReportControlType {
-  metric,
-  map,
-  player,
-}
-
-type Report = {
-  title: string;
-  controls: ReportControl[];
-  // metricGroups: ReportMetricGroup[]; TODO
-};
-
 type GameStateTimeSlice = {
   mapId: number;
   timestamp: number;
@@ -116,9 +77,7 @@ type GameStateTimeSlice = {
   }[];
 };
 
-type GameStateExtractor = (
-  slice: GameStateTimeSlice,
-) => {
+type GameStateExtractor = (slice: GameStateTimeSlice) => {
   [key: string]: number;
 };
 
@@ -716,12 +675,6 @@ export {
   ColorInternalHSL,
   MapEntity,
   RenderState,
-  Report,
-  ReportComponent,
-  ReportControl,
-  ReportComponentType,
-  ReportControlType,
-  ReportComponentStyle,
   GameStateTimeSlice,
   GameStateExtractor,
   Team,

@@ -59,8 +59,6 @@ const SplashPage = () => {
           component="div"
           style={{
             width: '100%',
-            borderBottomLeftRadius: '50% 32%',
-            borderBottomRightRadius: '50% 32%',
             backgroundColor: '#f3f3f3',
             display: 'flex',
             paddingLeft: '50px',

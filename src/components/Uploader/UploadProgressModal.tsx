@@ -2,7 +2,7 @@ import {Modal, Box, IconButton} from '@mui/material';
 import React from 'react';
 import {FileUpload} from '../../lib/data/types';
 import CloseIcon from '@mui/icons-material/Close';
-import StatusIcon from '../Common/StatusIcon';
+import StatusIcon from './StatusIcon';
 
 interface UploadProgressModalProps {
   isOpen: boolean;

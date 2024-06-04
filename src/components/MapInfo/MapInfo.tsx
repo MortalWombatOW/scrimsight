@@ -1,7 +1,6 @@
 import 'components/MapInfo/MapInfo.scss';
-import {getHeroImage} from 'lib/data/data';
-import {heroNameToNormalized, mapNameToFileName} from 'lib/string';
-import React, {useEffect, useMemo} from 'react';
+import {getHeroImage} from 'lib/data/hero';
+import React from 'react';
 import {groupColorClass} from '../../lib/color';
 import {Button, Typography} from '@mui/material';
 import {formatTime} from '~/lib/format';

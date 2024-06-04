@@ -144,22 +144,6 @@ const saveFile = async (
   let percent = startPercent;
 
   for (const key of Object.keys(LOG_SPEC)) {
-    // const eventData = fileUpload.events.find((e) => e.specName === key)?.data;
-    // if (!eventData || eventData.length === 0) {
-    //   console.log('No data for', key);
-    //   continue;
-    // }
-
-    // await batch(
-    //   db,
-    //   key,
-    //   eventData.map((p) => ({
-    //     type: 'add',
-    //     value: p, // Assuming p is already in the objectified form
-    //   })),
-    // );
-    // percent += percentPerKey;
-    // setPercent(percent);
     const node = dataManager.getNodeOrDie(
       key + '_write_node',
     ) as WriteNode<any>;

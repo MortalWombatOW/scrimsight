@@ -1,7 +1,7 @@
 import React from 'react';
 import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../../../hooks/useData';
-import {getRoleFromHero, getRankForRole} from '../../../lib/data/data';
+import {getRoleFromHero, getRankForRole} from '../../../lib/data/hero';
 import {Grid, Paper, Typography} from '@mui/material';
 import {getColorgorical} from '../../../lib/color';
 import IconAndText from '../../../components/Common/IconAndText';

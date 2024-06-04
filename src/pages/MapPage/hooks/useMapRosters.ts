@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 
 import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../../../hooks/useData';
-import {getRoleFromHero, getRankForRole} from '../../../lib/data/data';
+import {getRoleFromHero, getRankForRole} from '../../../lib/data/hero';
 import useUUID from '../../../hooks/useUUID';
 import {useMapContext} from '../context/MapContext';
 

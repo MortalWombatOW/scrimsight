@@ -27,7 +27,7 @@ import {
   getHeroImage,
   getRankForRole,
   getRoleFromHero,
-} from '../../../lib/data/data';
+} from '../../../lib/data/hero';
 import IconAndText from '../../../components/Common/IconAndText';
 import {getIcon} from '../../../components/Common/RoleIcons';
 import {heroNameToNormalized} from '../../../lib/string';
