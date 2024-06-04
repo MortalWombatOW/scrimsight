@@ -17,7 +17,7 @@ export const DataDisplayContextProvider = ({
   console.log('DataDisplayContextProvider', fields, data);
 
   const contextValue: DataDisplayContextState = {
-    fields: fields,
+    fields: fields.filter((field) => !field.hidden),
     data: data || [],
   };
 

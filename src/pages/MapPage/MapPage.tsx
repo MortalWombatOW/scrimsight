@@ -131,33 +131,18 @@ const MapPage = () => {
               displayName: 'Team 2',
               type: 'categorical',
             },
+            {
+              id: 'mapName',
+              displayName: 'Map Name',
+              type: 'categorical',
+            },
           ]}>
           <DataHeader
             titleTemplate="{{team1Name}} vs {{team2Name}}"
             subtitleTemplate="Map {{mapId}}"
           />
-          <DataTable />
         </DataComponent>
-        <DataComponent
-          fields={[
-            {
-              id: 'mapId',
-              displayName: 'Map ID',
-              type: 'categorical',
-            },
-            {
-              id: 'team1Name',
-              displayName: 'Team 1',
-              type: 'categorical',
-            },
-            {
-              id: 'team2Name',
-              displayName: 'Team 2',
-              type: 'categorical',
-            },
-          ]}>
-          <DataTable />
-        </DataComponent>
+
         <MapSummary />
         <Tabs value={view} onChange={(event, newValue) => setView(newValue)}>
           <Tab label="Overview" value="overview" />

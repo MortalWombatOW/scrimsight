@@ -31,7 +31,9 @@ const DataComponent = (props: DataComponentProps) => {
     <QueryInputContextProvider>
       <QueryOutputContextProvider>
         <DataDisplayContextProvider>
-          <ContextualizedDataComponent {...props} />
+          <ContextualizedDataComponent fields={props.fields}>
+            {props.children}
+          </ContextualizedDataComponent>
         </DataDisplayContextProvider>
       </QueryOutputContextProvider>
     </QueryInputContextProvider>
