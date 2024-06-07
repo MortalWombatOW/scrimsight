@@ -8,11 +8,11 @@ interface MetricFramework {
   isDirectMeasure: boolean; // if false, the measurement is a proxy for the goal
   isStyleMeasure: boolean; // if true, the measurement is a proxy for the style
   opportunityAdjusted: boolean; // if true, the measurement is scaled by the number of opportunities
-  blindSpots?: string;
+  disclaimer?: string;
   higherIsBetter: boolean;
 }
 
-const metrics = [
+const metrics: MetricFramework[] = [
   {
     name: 'Damage',
     description: 'Total damage dealt to enemies',
@@ -21,7 +21,7 @@ const metrics = [
     isDirectMeasure: true,
     isStyleMeasure: false,
     opportunityAdjusted: false,
-    blindSpots: 'damage blocked by shields',
+    disclaimer: 'Does not consider damage blocked by shields',
     higherIsBetter: true,
   },
   {
@@ -40,7 +40,6 @@ const metrics = [
     rationale: 'experience with the team',
     abbreviation: 'Maps',
     isDirectMeasure: true,
-
     isStyleMeasure: false,
     opportunityAdjusted: false,
     higherIsBetter: true,
@@ -72,7 +71,6 @@ const metrics = [
     rationale:
       "This metric is used to measure a player's ability to stay alive in a game while also eliminating as many opponents as possible.",
     abbreviation: 'Elims/deaths',
-
     isDirectMeasure: true,
     isStyleMeasure: false,
     opportunityAdjusted: true,

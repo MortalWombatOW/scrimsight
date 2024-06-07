@@ -6,6 +6,7 @@ import {stringHash} from '../../lib/string';
 class NetworkDisplay {
   private nodes: DataSet<Node, 'id'>;
   private edges: DataSet<Edge, 'id'>;
+  private nodeIdToName: Map<number, string> = new Map();
   private network: Network | null = null;
 
   constructor() {
@@ -13,7 +14,10 @@ class NetworkDisplay {
     this.edges = new DataSet([]);
   }
 
-  public initialize(container: HTMLElement) {
+  public initialize(
+    container: HTMLElement,
+    setSelectedNodeId: (node: string | null) => void,
+  ) {
     const options = {
       autoResize: true,
       height: '100%',
@@ -27,7 +31,10 @@ class NetworkDisplay {
         },
       },
       physics: {
-        barnesHut: {
+        // barnesHut: {
+        //   avoidOverlap: 1,
+        // },
+        hierarchicalRepulsion: {
           avoidOverlap: 1,
         },
       },
@@ -45,6 +52,11 @@ class NetworkDisplay {
       {nodes: this.nodes, edges: this.edges},
       options,
     );
+    this.network.on('click', (params) => {
+      if (params.nodes.length > 0) {
+        setSelectedNodeId(this.nodeIdToName.get(params.nodes[0]) || null);
+      }
+    });
   }
 
   private nodeIdFromName(name: string) {
@@ -73,20 +85,17 @@ class NetworkDisplay {
     }
     this.nodes.add({
       id: stringHash(name),
-      label: label,
       color: {background: stateColor},
       shape: shape,
+      label: label,
       opacity: opacity,
     });
+    this.nodeIdToName.set(stringHash(name), name);
   }
 
   public setEdge(fromName: string, toName: string) {
     const fromId = this.nodeIdFromName(fromName);
     const toId = this.nodeIdFromName(toName);
-
-    // console.log(
-    //   `Adding edge from ${fromName} to ${toName} (${fromId} to ${toId})`,
-    // );
 
     if (fromId === undefined || toId === undefined) {
       return;
@@ -97,10 +106,6 @@ class NetworkDisplay {
       undefined;
 
     if (existingEdge) return;
-
-    // console.log(
-    //   `Adding edge from ${fromName} to ${toName} (${fromId} to ${toId})`,
-    // );
 
     this.edges.add({from: fromId, to: toId});
   }

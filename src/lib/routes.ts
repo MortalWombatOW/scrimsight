@@ -1,5 +1,4 @@
 import React from 'react';
-import DebugPage from '../pages/Debug/DebugPage';
 import Home from '../pages/Home/Home';
 import MapPage from '../pages/MapPage/MapPage';
 import PlayerPage from '../pages/PlayerPage/PlayerPage';
@@ -7,6 +6,7 @@ import SplashPage from '../pages/SplashPage/SplashPage';
 import {MapContextProvider} from '../pages/MapPage/context/MapContext';
 import {PlayerContextProvider} from '../pages/PlayerPage/context/PlayerContext';
 import {FilterContextProvider} from '../context/FilterContextProvider';
+import QueriesPage from '../pages/QueriesPage/QueriesPage';
 
 export interface ScrimsightRoute {
   path: string[];
@@ -24,20 +24,24 @@ const routes: ScrimsightRoute[] = [
   {
     path: ['/map'],
     component: Home,
-    name: 'View Scrims',
+    name: 'Maps',
   },
   {
     path: ['/map/:mapId'],
     component: MapPage,
-    name: 'View Maps',
     hidden: true,
     contexts: [MapContextProvider, FilterContextProvider],
   },
   {
     path: ['/player/:playerName'],
     component: PlayerPage,
-    name: 'View Players',
+    name: 'Players',
     contexts: [PlayerContextProvider, FilterContextProvider],
+  },
+  {
+    path: ['/queries'],
+    component: QueriesPage,
+    name: 'Queries',
   },
   // {
   //   path: ['/team'],

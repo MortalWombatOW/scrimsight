@@ -1,14 +1,8 @@
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useDataManager} from '../../WombatDataFramework/DataContext';
-import {
-  AlaSQLNode,
-  DataNode,
-  ObjectStoreNode,
-  WriteNode,
-} from '../../WombatDataFramework/DataTypes';
+import {DataNode} from '../../WombatDataFramework/DataTypes';
 import NetworkDisplay from './NetworkDisplay';
-import DisplayNode from './DisplayNode';
-import {useDataNode} from '../../hooks/useData';
+import {DataManager} from '../../WombatDataFramework/DataManager';
 
 function getStateColor(node: DataNode<any> | undefined) {
   if (!node) {
@@ -25,18 +19,6 @@ function getStateColor(node: DataNode<any> | undefined) {
 }
 
 function getShape(node: DataNode<any> | undefined) {
-  if (!node) {
-    return 'box';
-  }
-  if (node instanceof ObjectStoreNode) {
-    return 'ellipse';
-  }
-  if (node instanceof WriteNode) {
-    return 'diamond';
-  }
-  if (node instanceof AlaSQLNode) {
-    return 'box';
-  }
   return 'box';
 }
 
@@ -51,17 +33,17 @@ function getLabel(node: DataNode<any> | undefined) {
 }
 
 function getOpacity(node: DataNode<any> | undefined) {
-  if (!node) {
-    return 0.1;
-  }
-  const execution = node.getLatestExecution();
-  if (!execution) {
-    return 0.3;
-  }
-  if (execution.getOutputRows() === 0) {
-    // console.log('opacity', node.name, node);
-    return 0.5;
-  }
+  // if (!node) {
+  //   return 0.1;
+  // }
+  // const execution = node.getExecutionCount();
+  // if (execution === 0) {
+  //   return 0.3;
+  // }
+  // if (!node.hasOutput()) {
+  //   // console.log('opacity', node.name, node);
+  //   return 0.5;
+  // }
 
   return 1;
 }
@@ -69,9 +51,9 @@ function getOpacity(node: DataNode<any> | undefined) {
 function updateNode(
   nodeName: string,
   networkDisplay: NetworkDisplay,
-  dataManager: any,
+  dataManager: DataManager,
 ) {
-  const node = dataManager.getNode(nodeName);
+  const node = dataManager.getNodeOrDie(nodeName);
 
   networkDisplay.setNode(
     nodeName,
@@ -80,20 +62,25 @@ function updateNode(
     getLabel(node),
     getOpacity(node),
   );
-  dataManager.getEdges(nodeName).forEach(([fromName, toName]) => {
-    networkDisplay.setEdge(fromName, toName);
+  dataManager.nodesDependingOn(nodeName).forEach((fromName) => {
+    networkDisplay.setEdge(nodeName, fromName);
   });
   // console.log('Updated node', node);
 }
 
-const DebugNodeGraph = () => {
+interface QueryGraphProps {
+  width: number;
+  height: number;
+  setSelectedNode: (node: string) => void;
+}
+
+const QueryGraph = ({width, height, setSelectedNode}: QueryGraphProps) => {
   const ref = useRef(null);
   const dataManager = useDataManager();
   const networkDisplay = useRef(new NetworkDisplay());
-  const node = useDataNode('match_end_object_store');
-  const node2 = useDataNode('map_overview');
 
   const nodeNames = dataManager.getNodes().map((node) => node.getName());
+  console.log('Node names', nodeNames);
 
   useEffect(() => {
     for (const nodeName of nodeNames) {
@@ -109,7 +96,7 @@ const DebugNodeGraph = () => {
     if (container === null) {
       return;
     }
-    networkDisplay.current.initialize(container);
+    networkDisplay.current.initialize(container, setSelectedNode);
   }, []);
 
   return (
@@ -117,13 +104,11 @@ const DebugNodeGraph = () => {
       <div
         ref={ref}
         style={{
-          height: 500,
-          border: '1px solid lightgray',
+          height,
+          width,
         }}></div>
-      {/* <DisplayNode node={node!} />
-      <DisplayNode node={node2!} /> */}
     </div>
   );
 };
 
-export default DebugNodeGraph;
+export default QueryGraph;

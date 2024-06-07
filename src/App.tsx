@@ -18,6 +18,7 @@ import {generateThemeColor} from './lib/palette';
 import {TeamContextProvider} from './context/TeamContextProvider';
 import {getColorgorical} from './lib/color';
 import {TeamContext} from './context/TeamContext';
+import Header from './components/Header/Header';
 
 const ContextualizedRoute = ({
   route,
@@ -51,6 +52,7 @@ function ThemedRoutes(props) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <Header />
       <Routes>
         {routes.map((route) =>
           route.path.map((path, i) => (

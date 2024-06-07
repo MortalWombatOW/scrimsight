@@ -2,33 +2,8 @@ import React from 'react';
 import {useDataNode} from '../../hooks/useData';
 import useWindowSize from '../../hooks/useWindowSize';
 import ScrimOverview from './ScrimOverview';
-import {Card, CardContent, Typography, Grid} from '@mui/material';
+import {Grid} from '@mui/material';
 import {MapOverview} from '../../lib/data/NodeData';
-
-const MapListCard = ({children}) => (
-  <Card variant="outlined">
-    <CardContent>{children}</CardContent>
-  </Card>
-);
-
-const MapListHeader = ({maps}) => {
-  const uniqueScrims = maps ? new Set(maps.map((e) => e.scrimId)).size : 0;
-  const totalMaps = maps ? maps.length : 0;
-
-  return (
-    <>
-      <Typography variant="h2" sx={{mb: '1em'}}>
-        View scrims
-      </Typography>
-      <Typography variant="body1" sx={{mb: '1em'}}>
-        Click on a map to see more details.
-      </Typography>
-      <Typography variant="h4" sx={{mb: '1em'}}>
-        You've added {uniqueScrims} scrims and {totalMaps} maps.
-      </Typography>
-    </>
-  );
-};
 
 const MapList = () => {
   const maps = useDataNode<MapOverview & {scrimId: number}>(

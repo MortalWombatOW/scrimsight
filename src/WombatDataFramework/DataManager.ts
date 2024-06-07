@@ -12,7 +12,7 @@ export class DataManager {
     this.nodeCallbacks = new Map();
   }
 
-  private nodesDependingOn(name: DataNodeName): DataNodeName[] {
+  public nodesDependingOn(name: DataNodeName): DataNodeName[] {
     const nodes: DataNodeName[] = [];
     this.nodes.forEach((node) => {
       if (node.getDependencies().includes(name)) {
