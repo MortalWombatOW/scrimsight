@@ -1,10 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 
-import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {AlaSQLNode, FilterNode} from '../../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../../../hooks/useData';
 import useUUID from '../../../hooks/useUUID';
 import {useMapContext} from '../context/MapContext';
+import {
+  DvaDemech,
+  DvaRemech,
+  Kill,
+  MercyRez,
+  OffensiveAssist,
+  RemechCharged,
+} from '../../../lib/data/NodeData';
 
 type PlayerEventType =
   | 'kill'
@@ -37,107 +45,121 @@ const usePlayerEvents = (): PlayerEvents | null => {
   const {mapId} = useMapContext();
   const uuid = useUUID();
   const data = useDataNodes([
-    new AlaSQLNode(
+    new FilterNode<Kill>(
       'UsePlayerEvents_kills_' + mapId + '_' + uuid,
-      `SELECT
-        kill.*
-      FROM ? AS kill
-      WHERE
-        kill.mapId = ${mapId}
-      `,
-      ['kill_object_store'],
+      'Kills in Map',
+      'mapId',
+      mapId,
+      'kill_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'attackerName',
+        'attackerTeam',
+        'attackerHero',
+        'victimName',
+        'victimTeam',
+        'victimHero',
+        'eventAbility',
+        'eventDamage',
+        'isCriticalHit',
+        'isEnvironmental',
+      ],
     ),
-    new AlaSQLNode(
+    new FilterNode<OffensiveAssist>(
       'UsePlayerEvents_offensive_assists_' + mapId + '_' + uuid,
-      `SELECT
-        offensive_assist.*
-      FROM ? AS offensive_assist
-      WHERE
-        offensive_assist.mapId = ${mapId}
-      `,
-      ['offensive_assist_object_store'],
+      'Offensive Assists in Map',
+      'mapId',
+      mapId,
+      'offensive_assist_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'playerName',
+        'playerTeam',
+        'playerHero',
+        'heroDuplicated',
+      ],
     ),
-    new AlaSQLNode(
+    new FilterNode<OffensiveAssist>(
       'UsePlayerEvents_defensive_assists_' + mapId + '_' + uuid,
-      `SELECT
-
-        defensive_assist.*
-      FROM ? AS defensive_assist
-      WHERE
-        defensive_assist.mapId = ${mapId}
-      `,
-      ['defensive_assist_object_store'],
+      'Defensive Assists in Map',
+      'mapId',
+      mapId,
+      'defensive_assist_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'playerName',
+        'playerTeam',
+        'playerHero',
+        'heroDuplicated',
+      ],
     ),
-    // new AlaSQLNode(
-    //   'UsePlayerEvents_ultimate_charged_' + mapId,
-    //   `SELECT
-    //     ultimate_charged.*
-    //   FROM ? AS ultimate_charged
-    //   WHERE
-    //     ultimate_charged.mapId = ${mapId}
-    //   `,
-    //   ['ultimate_charged_object_store'],
-    // ),
-    // new AlaSQLNode(
-    //   'UsePlayerEvents_ultimate_start_' + mapId,
-    //   `SELECT
-    //     ultimate_start.*
-    //   FROM ? AS ultimate_start
-    //   WHERE
-    //     ultimate_start.mapId = ${mapId}
-    //   `,
-    //   ['ultimate_start_object_store'],
-    // ),
-    // new AlaSQLNode(
-    //   'UsePlayerEvents_ultimate_end_' + mapId,
-    //   `SELECT
-    //     ultimate_end.*
-    //   FROM ? AS ultimate_end
-    //   WHERE
-    //     ultimate_end.mapId = ${mapId}
-    //   `,
-    //   ['ultimate_end_object_store'],
-    // ),
-
-    new AlaSQLNode(
+    new FilterNode<RemechCharged>(
       'UsePlayerEvents_remech_charged_' + mapId + '_' + uuid,
-      `SELECT
-        remech_charged.*
-      FROM ? AS remech_charged
-      WHERE
-        remech_charged.mapId = ${mapId}
-      `,
-      ['remech_charged_object_store'],
+      'Remech Charged in Map',
+      'mapId',
+      mapId,
+      'remech_charged_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'playerName',
+        'playerTeam',
+        'playerHero',
+        'heroDuplicated',
+      ],
     ),
-    new AlaSQLNode(
+    new FilterNode<MercyRez>(
       'UsePlayerEvents_mercy_rez_' + mapId + '_' + uuid,
-      `SELECT
-        mercy_rez.*
-      FROM ? AS mercy_rez
-      WHERE
-        mercy_rez.mapId = ${mapId}
-      `,
-      ['mercy_rez_object_store'],
+      'Mercy Rez in Map',
+      'mapId',
+      mapId,
+      'mercy_rez_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'mercyName',
+        'mercyTeam',
+        'revivedHero',
+        'revivedTeam',
+      ],
     ),
-    new AlaSQLNode(
+    new FilterNode<DvaDemech>(
       'UsePlayerEvents_dva_demech_' + mapId + '_' + uuid,
-      `SELECT
-        dva_demech.*
-      FROM ? AS dva_demech
-      WHERE
-        dva_demech.mapId = ${mapId}
-      `,
-      ['dva_demech_object_store'],
+      'Dva Demech in Map',
+      'mapId',
+      mapId,
+      'dva_demech_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'attackerName',
+        'attackerTeam',
+        'attackerHero',
+        'victimName',
+        'victimTeam',
+        'victimHero',
+        'eventAbility',
+        'eventDamage',
+        'isCriticalHit',
+        'isEnvironmental',
+      ],
     ),
-    new AlaSQLNode(
+    new FilterNode<DvaRemech>(
       'UsePlayerEvents_dva_remech_' + mapId + '_' + uuid,
-      `SELECT
-        dva_remech.*
-      FROM ? AS dva_remech
-      WHERE
-        dva_remech.mapId = ${mapId}
-      `,
-      ['dva_remech_object_store'],
+      'Dva Remech in Map',
+      'mapId',
+      mapId,
+      'dva_remech_object_store',
+      ['mapId', 'type', 'matchTime', 'playerName', 'playerHero', 'playerTeam'],
     ),
   ]);
 

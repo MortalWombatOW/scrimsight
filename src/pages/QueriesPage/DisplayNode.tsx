@@ -15,13 +15,11 @@ import {
   TableRow,
 } from '@mui/material';
 
-// Props definition for the DataNodeComponent
-interface DataNodeProps<OutType> {
-  node: DataNode<OutType>;
+interface DataNodeProps {
+  node: DataNode<object>;
 }
 
-// The DataNodeComponent itself
-function DataNodeComponent<OutType>({node}: DataNodeProps<OutType>) {
+function DisplayNode({node}: DataNodeProps) {
   // Helper function to render execution statistics
   const renderExecutions = (metadata: DataNodeMetadata) => (
     <Table size="small">
@@ -44,10 +42,13 @@ function DataNodeComponent<OutType>({node}: DataNodeProps<OutType>) {
     </Table>
   );
 
+  const columns: string[] = node.getColumns();
+  const rows: object[] = node.getOutput() || [];
+
   return (
-    <Card raised>
+    <Card>
       <CardContent>
-        <Typography variant="h6">{node.getName()}</Typography>
+        <Typography variant="h3">{node.getName()}</Typography>
         {node.isRunning() && <LinearProgress />}
         {node.getMetadata() && (
           <div>
@@ -55,7 +56,24 @@ function DataNodeComponent<OutType>({node}: DataNodeProps<OutType>) {
             {renderExecutions(node.getMetadata()!)}
             <div>
               <Typography variant="subtitle1">Output:</Typography>
-              <pre>{JSON.stringify(node.getOutput(), null, 2)}</pre>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    {columns.map((column, index) => (
+                      <TableCell key={index}>{column}</TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rows.map((row, index) => (
+                    <TableRow key={index}>
+                      {columns.map((column, index) => (
+                        <TableCell key={index}>{row[column]}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </div>
         )}
@@ -69,4 +87,4 @@ function DataNodeComponent<OutType>({node}: DataNodeProps<OutType>) {
   );
 }
 
-export default DataNodeComponent;
+export default DisplayNode;

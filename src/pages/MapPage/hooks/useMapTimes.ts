@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {AlaSQLNode, FilterNode} from '../../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../../../hooks/useData';
 import useUUID from '../../../hooks/useUUID';
 import {useMapContext} from '../context/MapContext';
@@ -14,8 +14,9 @@ const useMapTimes = ():
   const {mapId} = useMapContext();
   const uuid = useUUID();
   const data = useDataNodes([
-    new AlaSQLNode(
+    new AlaSQLNode<{startTime: number; endTime: number}>(
       'UseMapTimes_match_time_' + mapId + '_' + uuid,
+      'Map Start and End Times',
       `SELECT
         match_start.matchTime as startTime,
         match_end.matchTime as endTime
@@ -28,9 +29,16 @@ const useMapTimes = ():
         match_start.mapId = ${mapId}
       `,
       ['match_start_object_store', 'match_end_object_store'],
+      ['startTime', 'endTime'],
     ),
-    new AlaSQLNode(
+    new AlaSQLNode<{
+      roundNumber: number;
+      startTime: number;
+      endTime: number;
+      capturingTeam: string;
+    }>(
       'UseMapTimes_round_times_' + mapId + '_' + uuid,
+      'Round Start and End Times',
       `SELECT
         round_start.roundNumber,
         round_start.matchTime as startTime,
@@ -48,6 +56,7 @@ const useMapTimes = ():
         round_start.roundNumber
       `,
       ['round_end_object_store', 'round_start_object_store'],
+      ['roundNumber', 'startTime', 'endTime', 'capturingTeam'],
     ),
   ]);
 

@@ -23,6 +23,7 @@ const usePlayerInfo = (): PlayerDescription | null => {
   const data = useDataNodes([
     new AlaSQLNode(
       'usePlayerInfo_' + playerName + '_' + uuid,
+      'Use Player Info',
       `SELECT
         player_stat.playerName,
         player_stat.playerTeam,
@@ -33,6 +34,7 @@ const usePlayerInfo = (): PlayerDescription | null => {
         player_stat.playerName = '${playerName}'
       `,
       ['player_stat_object_store'],
+      ['playerName', 'playerTeam', 'playerHero', 'mapId'],
     ),
   ]);
 

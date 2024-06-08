@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 
-import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {AlaSQLNode, FilterNode} from '../../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../../../hooks/useData';
 import useMapRosters from './useMapRosters';
 import useUUID from '../../../hooks/useUUID';
 import {useMapContext} from '../context/MapContext';
+import {Kill, UltimateStart} from '../../../lib/data/NodeData';
 
 type Teamfight = {
   // timestamps
@@ -22,26 +23,44 @@ const useTeamfights = (): Teamfight[] | null => {
   const {mapId} = useMapContext();
   const uuid = useUUID();
   const data = useDataNodes([
-    new AlaSQLNode(
+    new FilterNode<Kill>(
       'useTeamfights_kills_' + mapId + '_' + uuid,
-      `SELECT
-        kill.*
-      FROM ? AS kill
-      WHERE
-        kill.mapId = ${mapId}
-      `,
-      ['kill_object_store'],
+      'Kills in Map',
+      'mapId',
+      mapId,
+      'kill_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'attackerName',
+        'attackerTeam',
+        'attackerHero',
+        'victimName',
+        'victimTeam',
+        'victimHero',
+        'eventAbility',
+        'eventDamage',
+        'isCriticalHit',
+        'isEnvironmental',
+      ],
     ),
-
-    new AlaSQLNode(
+    new FilterNode<UltimateStart>(
       'useTeamfights_ultimate_start_' + mapId + '_' + uuid,
-      `SELECT
-        ultimate_start.*
-      FROM ? AS ultimate_start
-      WHERE
-        ultimate_start.mapId = ${mapId}
-      `,
-      ['ultimate_start_object_store'],
+      'Ultimate Start Times',
+      'mapId',
+      mapId,
+      'ultimate_start_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'playerTeam',
+        'playerName',
+        'playerHero',
+        'heroDuplicated',
+        'ultimateId',
+      ],
     ),
   ]);
 

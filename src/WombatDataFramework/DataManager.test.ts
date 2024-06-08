@@ -6,7 +6,15 @@ describe('DataManager', () => {
   test('should add a node to the graph and execute it', async () => {
     const dm = new DataManager(() => {});
 
-    dm.setNode(new AlaSQLNode<{num: number}>('a', 'SELECT 1 as num', []));
+    dm.setNode(
+      new AlaSQLNode<{num: number}>(
+        'a',
+        'Node A',
+        'SELECT 1 as num',
+        [],
+        ['num'],
+      ),
+    );
 
     expect(dm.getNodeOrDie('a').isRunning()).toBe(false);
     expect(dm.getNodeOrDie('a').hasError()).toBe(false);
@@ -29,8 +37,20 @@ describe('DataManager', () => {
     const dm = new DataManager(() => {});
 
     dm.setNodes([
-      new AlaSQLNode<{num: number}>('a', 'SELECT 1 as num', []),
-      new AlaSQLNode<{num: number}>('b', 'SELECT * FROM ?', ['a']),
+      new AlaSQLNode<{num: number}>(
+        'a',
+        'Node A',
+        'SELECT 1 as num',
+        [],
+        ['num'],
+      ),
+      new AlaSQLNode<{num: number}>(
+        'b',
+        'Node B',
+        'SELECT * FROM ?',
+        ['a'],
+        ['num'],
+      ),
     ]);
 
     await dm.process();
@@ -44,18 +64,24 @@ describe('DataManager', () => {
     dm.setNodes([
       new AlaSQLNode<{id: number; num: number}>(
         'a',
+        'Node A',
         'SELECT 1 as id, 2 as num',
         [],
+        ['id', 'num'],
       ),
       new AlaSQLNode<{id: number; str: number}>(
         'b',
+        'Node B',
         'SELECT 1 as id,  "test" as str',
         [],
+        ['id', 'str'],
       ),
       new AlaSQLNode<{id: number; num: number; str: number}>(
         'c',
+        'Node C',
         'SELECT * FROM ? as a JOIN ? as b ON a.id = b.id',
         ['a', 'b'],
+        ['id', 'num', 'str'],
       ),
     ]);
 
@@ -70,8 +96,20 @@ describe('DataManager', () => {
     const dm = new DataManager(() => {});
 
     dm.setNodes([
-      new AlaSQLNode<{num: number}>('a', 'SELECT 1 as num', []),
-      new AlaSQLNode<{num: number}>('b', 'SELECT * FROM ?', ['a']),
+      new AlaSQLNode<{num: number}>(
+        'a',
+        'Node A',
+        'SELECT 1 as num',
+        [],
+        ['num'],
+      ),
+      new AlaSQLNode<{num: number}>(
+        'b',
+        'Node B',
+        'SELECT * FROM ?',
+        ['a'],
+        ['num'],
+      ),
     ]);
 
     expect(dm.getNodesToExecute().map((node) => node.getName())).toEqual([
@@ -101,9 +139,27 @@ describe('DataManager', () => {
     const dm = new DataManager(() => {});
 
     dm.setNodes([
-      new AlaSQLNode<{num: number}>('c', 'SELECT * FROM ?', ['b']),
-      new AlaSQLNode<{num: number}>('b', 'SELECT * FROM ?', ['a']),
-      new AlaSQLNode<{num: number}>('a', 'SELECT 1 as num', []),
+      new AlaSQLNode<{num: number}>(
+        'c',
+        'Node C',
+        'SELECT * FROM ?',
+        ['b'],
+        ['num'],
+      ),
+      new AlaSQLNode<{num: number}>(
+        'b',
+        'Node B',
+        'SELECT * FROM ?',
+        ['a'],
+        ['num'],
+      ),
+      new AlaSQLNode<{num: number}>(
+        'a',
+        'Node A',
+        'SELECT 1 as num',
+        [],
+        ['num'],
+      ),
     ]);
 
     expect(dm.getNodesToExecute().map((node) => node.getName())).toEqual([

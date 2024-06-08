@@ -26,6 +26,7 @@ const PlayerListMini = ({
   const data = useDataNodes([
     new AlaSQLNode<ScrimPlayers>(
       'scrim_players' + scrimId + mapId,
+      'Scrim Players',
       `
       SELECT 
         scrim_players_heroes_roles.scrimId,
@@ -56,6 +57,16 @@ const PlayerListMini = ({
       scrim_players_heroes_roles.roleNumber
       `,
       ['scrim_players_heroes_roles'],
+      [
+        'scrimId',
+        'mapId',
+        'teamName',
+        'teamNumber',
+        'playerName',
+        'role',
+        'roleNumber',
+        'heroes',
+      ],
     ),
   ] as AlaSQLNode<ScrimPlayers>[])[`scrim_players${scrimId}${mapId}`];
 

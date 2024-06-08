@@ -473,8 +473,9 @@ const usePlayerLivesBase = (config: UsePlayerLivesBaseConfig) => {
   const uuid = useUUID();
 
   const data = useDataNodes([
-    new AlaSQLNode(
+    new AlaSQLNode<Kill>(
       `UsePlayerLives_kills_${mapId}_${playerName}_${uuid}`,
+      'Kills in Map',
       `SELECT
         kill_object_store.*
       FROM ? AS kill_object_store
@@ -486,9 +487,25 @@ const usePlayerLivesBase = (config: UsePlayerLivesBaseConfig) => {
         kill_object_store.matchTime ASC
       `,
       ['kill_object_store'],
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'attackerName',
+        'attackerTeam',
+        'attackerHero',
+        'victimName',
+        'victimTeam',
+        'victimHero',
+        'eventAbility',
+        'eventDamage',
+        'isCriticalHit',
+        'isEnvironmental',
+      ],
     ),
-    new AlaSQLNode(
+    new AlaSQLNode<HeroSpawn>(
       `UsePlayerLives_hero_spawns_${mapId}_${playerName}_${uuid}`,
+      'Hero Spawns in Map',
       `SELECT
       hero_spawn.*
       FROM ? AS hero_spawn
@@ -500,9 +517,11 @@ const usePlayerLivesBase = (config: UsePlayerLivesBaseConfig) => {
         hero_spawn.matchTime ASC
       `,
       ['hero_spawn_object_store'],
+      ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero'],
     ),
-    new AlaSQLNode(
+    new AlaSQLNode<HeroSwap>(
       `UsePlayerLives_hero_swaps_${mapId}_${playerName}_${uuid}`,
+      'Hero Swaps in Map',
       `SELECT 
       hero_swap.*
       FROM ? AS hero_swap
@@ -514,9 +533,19 @@ const usePlayerLivesBase = (config: UsePlayerLivesBaseConfig) => {
         hero_swap.matchTime ASC
       `,
       ['hero_swap_object_store'],
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'playerTeam',
+        'playerName',
+        'playerHero',
+        'previousHero',
+      ],
     ),
-    new AlaSQLNode(
+    new AlaSQLNode<MercyRez>(
       `UsePlayerLives_mercy_resurrects_${mapId}_${playerName}_${uuid}`,
+      'Mercy Resurrects in Map',
       `SELECT
       mercy_rez.*
       FROM ? AS mercy_rez
@@ -528,9 +557,19 @@ const usePlayerLivesBase = (config: UsePlayerLivesBaseConfig) => {
         mercy_rez.matchTime ASC
       `,
       ['mercy_rez_object_store'],
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'mercyName',
+        'mercyTeam',
+        'revivedHero',
+        'mercyName',
+      ],
     ),
-    new AlaSQLNode(
+    new AlaSQLNode<RoundEnd>(
       `UsePlayerLives_round_end_${mapId}_${playerName}_${uuid}`,
+      'Round Ends in Map',
       `SELECT
       round_end.*
       FROM ? AS round_end
@@ -541,6 +580,19 @@ const usePlayerLivesBase = (config: UsePlayerLivesBaseConfig) => {
         round_end.matchTime ASC
       `,
       ['round_end_object_store'],
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'roundNumber',
+        'capturingTeam',
+        'team1Score',
+        'team2Score',
+        'objectiveIndex',
+        'controlTeam1Progress',
+        'controlTeam2Progress',
+        'matchTimeRemaining',
+      ],
     ),
   ]);
 

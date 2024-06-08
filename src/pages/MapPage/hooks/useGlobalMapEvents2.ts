@@ -2,11 +2,12 @@
 import React, {useEffect, useState} from 'react';
 
 import {useDataNodes} from '../../../hooks/useData';
-import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {AlaSQLNode, FilterNode} from '../../../WombatDataFramework/DataTypes';
 import useMapTimes from './useMapTimes';
 import useUUID from '../../../hooks/useUUID';
 import {useMapContext} from '../context/MapContext';
 import {useFilterContext} from '../../../context/FilterContextProvider';
+import {ObjectiveCaptured} from '../../../lib/data/NodeData';
 
 const useGlobalMapEvents2 = (): {
   matchStartTime: number | null;
@@ -24,8 +25,9 @@ const useGlobalMapEvents2 = (): {
   const uuid = useUUID();
 
   const data = useDataNodes([
-    new AlaSQLNode(
+    new AlaSQLNode<{matchTime: number; eventMessage: string}>(
       'UseGlobalMapEvents_setup_complete_' + mapId + '_' + uuid,
+      'Setup Complete',
       `SELECT
         setup_complete.matchTime,
         'Setup Complete' as eventMessage
@@ -34,16 +36,25 @@ const useGlobalMapEvents2 = (): {
         setup_complete.mapId = ${mapId}
       `,
       ['setup_complete_object_store'],
+      ['matchTime', 'eventMessage'],
     ),
-    new AlaSQLNode(
+    new FilterNode<ObjectiveCaptured>(
       'UseGlobalMapEvents_objective_captured_' + mapId + '_' + uuid,
-      `SELECT
-        objective_captured.*
-        FROM ? AS objective_captured
-      WHERE
-        objective_captured.mapId = ${mapId}
-      `,
-      ['objective_captured_object_store'],
+      'Objective Captured',
+      'mapId',
+      mapId,
+      'objective_captured_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'roundNumber',
+        'capturingTeam',
+        'objectiveIndex',
+        'controlTeam1Progress',
+        'controlTeam2Progress',
+        'matchTimeRemaining',
+      ],
     ),
   ]);
 

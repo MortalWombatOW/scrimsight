@@ -55,7 +55,9 @@ class NetworkDisplay {
     this.network.on('click', (params) => {
       if (params.nodes.length > 0) {
         setSelectedNodeId(this.nodeIdToName.get(params.nodes[0]) || null);
+        return;
       }
+      setSelectedNodeId(null);
     });
   }
 

@@ -12,8 +12,15 @@ import {useNavigate} from 'react-router-dom';
 const MapRoster = () => {
   const {mapId} = useMapContext();
   const data = useDataNodes([
-    new AlaSQLNode(
+    new AlaSQLNode<{
+      playerTeam: string;
+      team1Name: string;
+      playerName: string;
+      id: string;
+      playerHeroes: string[];
+    }>(
       'MapRoster_players_' + mapId,
+      'Players in Map',
       `SELECT
         player_stat.playerTeam,
         match_start.team1Name,
@@ -34,6 +41,7 @@ const MapRoster = () => {
         player_stat.playerName + '_' + player_stat.playerTeam
       `,
       ['player_stat_object_store', 'match_start_object_store'],
+      ['playerTeam', 'team1Name', 'playerName', 'id', 'playerHeroes'],
     ),
   ]);
 

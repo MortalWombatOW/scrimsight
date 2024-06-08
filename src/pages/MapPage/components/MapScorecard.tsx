@@ -53,8 +53,17 @@ const MapScorecard = () => {
   const {mapId} = useMapContext();
 
   const data = useDataNodes([
-    new AlaSQLNode(
+    new AlaSQLNode<{
+      team1Name: string;
+      team2Name: string;
+      mapName: string;
+      mapType: string;
+      team1Score: number;
+      team2Score: number;
+      winner: string;
+    }>(
       'map_scorecard_' + mapId,
+      'Map Scorecard',
       `SELECT
         match_start.team1Name,
         match_start.team2Name,
@@ -72,9 +81,23 @@ const MapScorecard = () => {
         match_start.mapId = ${mapId}
       `,
       ['match_start_object_store', 'match_end_object_store'],
+      [
+        'team1Name',
+        'team2Name',
+        'mapName',
+        'mapType',
+        'team1Score',
+        'team2Score',
+        'winner',
+      ],
     ),
-    new AlaSQLNode(
+    new AlaSQLNode<{
+      team1Score: number;
+      team2Score: number;
+      roundNumber: number;
+    }>(
       'MapScorecard_round_results_' + mapId,
+      'Map Scorecard Round Results',
       `SELECT
         round_end.team1Score,
         round_end.team2Score,
@@ -84,6 +107,7 @@ const MapScorecard = () => {
         round_end.mapId = ${mapId}
       `,
       ['round_end_object_store'],
+      ['team1Score', 'team2Score', 'roundNumber'],
     ),
   ]);
 

@@ -72,7 +72,9 @@ export const useDataNodes = (
   return data;
 };
 
-export const useDataNode = <T>(nodeName: DataNodeName): DataNode<T> => {
+export const useDataNode = <T extends object>(
+  nodeName: DataNodeName,
+): DataNode<T> => {
   const dataManager = useContext(DataContext);
 
   const [tick, setTick] = useState(0);
@@ -89,7 +91,7 @@ export const useDataNode = <T>(nodeName: DataNodeName): DataNode<T> => {
   return dataManager.getNodeOrDie(nodeName);
 };
 
-export const useDataNodeOutput = <T>(
+export const useDataNodeOutput = <T extends object>(
   nodeName: DataNodeName,
   filters: object = {},
 ): T[] => {

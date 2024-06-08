@@ -63,8 +63,9 @@ const MapPage = () => {
   }, [mapTimes, round]);
 
   const data = useDataNodes([
-    new AlaSQLNode<PlayerStatFormatted>(
+    new AlaSQLNode(
       'MapPage_map_rounds',
+      'Map Rounds',
       `SELECT
         mapId,
         array(round_start.roundNumber) as roundNumbers
@@ -72,9 +73,11 @@ const MapPage = () => {
       GROUP BY mapId
        `,
       ['round_start_object_store'],
+      ['mapId', 'roundNumbers'],
     ),
     new AlaSQLNode(
       'MapPage_map_teams',
+      'Map Teams',
       `SELECT
         mapId,
         team1Name,
@@ -82,6 +85,7 @@ const MapPage = () => {
       FROM ? AS match_start
       `,
       ['match_start_object_store'],
+      ['mapId', 'team1Name', 'team2Name'],
     ),
   ]);
 

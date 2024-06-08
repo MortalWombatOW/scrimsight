@@ -19,8 +19,16 @@ const MapSummaryStats = () => {
   const {mapId, roundId, timeWindow} = useMapContext();
   const [startTime, endTime] = timeWindow || [0, 9999];
   const data = useDataNodes([
-    new AlaSQLNode(
+    new AlaSQLNode<{
+      playerTeam: string;
+      team1Name: string;
+      team2Name: string;
+      finalBlows: number;
+      allDamageDealt: number;
+      healingDealt: number;
+    }>(
       'MapSummaryStats_team_stats' + mapId + '_' + roundId,
+      'Team Stats',
       `SELECT
         player_stat.playerTeam,
         match_start.team1Name,
@@ -45,9 +53,18 @@ const MapSummaryStats = () => {
         match_start.team2Name
       `,
       ['player_stat_object_store', 'match_start_object_store'],
+      [
+        'playerTeam',
+        'team1Name',
+        'team2Name',
+        'finalBlows',
+        'allDamageDealt',
+        'healingDealt',
+      ],
     ),
-    new AlaSQLNode(
+    new AlaSQLNode<{matchTime: number; attackerTeam: string; kills: number}>(
       'MapSummaryStats__kills_by_time_' + mapId + '_' + roundId,
+      'Kills by Time',
       `SELECT
         kill.matchTime,
         kill.attackerTeam,
@@ -88,6 +105,7 @@ const MapSummaryStats = () => {
         'round_start_object_store',
         'round_end_object_store',
       ],
+      ['matchTime', 'attackerTeam', 'kills'],
     ),
   ]);
 

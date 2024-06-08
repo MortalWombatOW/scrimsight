@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {AlaSQLNode} from '../../../WombatDataFramework/DataTypes';
+import {AlaSQLNode, FilterNode} from '../../../WombatDataFramework/DataTypes';
 import {useDataNodes} from '../../../hooks/useData';
 import useMapTimes from './useMapTimes';
 import {useMapContext} from '../context/MapContext';
+import {UltimateCharged, UltimateStart} from '../../../lib/data/NodeData';
 
 type PlayerUltimate = {
   playerName: string;
@@ -13,33 +14,42 @@ type PlayerUltimate = {
   chargedTime: number;
   usedTime: number | null;
 };
-
 const useUltimateTimes = (): PlayerUltimate[] | null => {
   const {mapId} = useMapContext();
   const data = useDataNodes([
-    new AlaSQLNode(
+    new FilterNode<UltimateCharged>(
       'UseUltimateTimes_ultimate_charged_' + mapId,
-      `SELECT
-        ultimate_charged.*
-      FROM ? AS ultimate_charged
-      WHERE
-        ultimate_charged.mapId = ${mapId}
-      ORDER BY
-        ultimate_charged.matchTime
-      `,
-      ['ultimate_charged_object_store'],
+      'Ultimate Charged Times',
+      'mapId',
+      mapId,
+      'ultimate_charged_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'playerTeam',
+        'playerName',
+        'playerHero',
+        'heroDuplicated',
+        'ultimateId',
+      ],
     ),
-    new AlaSQLNode(
+    new FilterNode<UltimateStart>(
       'UseUltimateTimes_ultimate_start_' + mapId,
-      `SELECT
-        ultimate_start.*
-      FROM ? AS ultimate_start
-      WHERE
-        ultimate_start.mapId = ${mapId}
-      ORDER BY
-        ultimate_start.matchTime
-      `,
-      ['ultimate_start_object_store'],
+      'Ultimate Start Times',
+      'mapId',
+      mapId,
+      'ultimate_start_object_store',
+      [
+        'mapId',
+        'type',
+        'matchTime',
+        'playerTeam',
+        'playerName',
+        'playerHero',
+        'heroDuplicated',
+        'ultimateId',
+      ],
     ),
   ]);
 

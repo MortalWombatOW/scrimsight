@@ -24,8 +24,15 @@ const useMapRosters = (): {
   const {mapId} = useMapContext();
   const uuid = useUUID();
   const data = useDataNodes([
-    new AlaSQLNode(
+    new AlaSQLNode<{
+      playerTeam: string;
+      team1Name: string;
+      team2Name: string;
+      playerName: string;
+      playerHeroes: string[];
+    }>(
       'UseMapRosters_players_' + mapId + '_' + uuid,
+      'Players in Map',
       `SELECT
         player_stat.playerTeam,
         match_start.team1Name,
@@ -46,6 +53,7 @@ const useMapRosters = (): {
         player_stat.playerTeam
       `,
       ['player_stat_object_store', 'match_start_object_store'],
+      ['playerTeam', 'team1Name', 'team2Name', 'playerName', 'playerHeroes'],
     ),
   ]);
 

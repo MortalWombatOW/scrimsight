@@ -4,7 +4,7 @@ import {
   QueryOutputContext,
 } from './QueryOutputContext';
 import {QueryInputContext} from './QueryInputContext';
-import {useDataForFields} from '../hooks/useDataForFields';
+// import {useDataForFields} from '../hooks/useDataForFields';
 import {FilterContext} from './FilterContext';
 
 export const QueryOutputContextProvider = ({
@@ -16,9 +16,11 @@ export const QueryOutputContextProvider = ({
   const {matches} = React.useContext(FilterContext);
   console.log('QueryOutputContextProvider', fields);
 
-  const data = (useDataForFields(fields.map((field) => field.id)) || []).filter(
-    matches,
-  );
+  // const data = (useDataForFields(fields.map((field) => field.id)) || []).filter(
+  //   matches,
+  // );
+
+  const data = [];
 
   const contextValue: QueryOutputContextState = {
     data: data || [],

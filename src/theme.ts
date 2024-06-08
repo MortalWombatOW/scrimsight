@@ -75,11 +75,11 @@ export const themeDef: ThemeOptions = {
     },
     subtitle1: {
       fontSize: 16,
-      color: 'rgba(0, 0, 0, 0.54)',
+      // color: 'rgba(0, 0, 0, 0.54)',
     },
     subtitle2: {
       fontSize: 12,
-      color: 'rgba(0, 0, 0, 0.54)',
+      // color: 'rgba(0, 0, 0, 0.54)',
     },
     body1: {
       fontSize: 16,

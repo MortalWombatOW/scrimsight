@@ -134,8 +134,31 @@ function PlayerHeroesList({playerHeroes}) {
 const MapPlayerTable = () => {
   const {mapId, roundId} = useMapContext();
   const data = useDataNodes([
-    new AlaSQLNode(
+    new AlaSQLNode<{
+      playerTeam: string;
+      playerName: string;
+      id: string;
+      playerHeroes: string[];
+      eliminations: number;
+      finalBlows: number;
+      deaths: number;
+      objectiveKills: number;
+      allDamageDealt: number;
+      heroDamageDealt: number;
+      barrierDamageDealt: number;
+      healingDealt: number;
+      damageBlocked: number;
+      damageReceived: number;
+      healingReceived: number;
+      shotsFired: number;
+      shotsHit: number;
+      shotsMissed: number;
+      criticalHits: number;
+      offensiveAssists: number;
+      defensiveAssists: number;
+    }>(
       'MapPlayerTable_stats_' + mapId + '_' + roundId,
+      'Player Stats',
       `SELECT
         player_stat.playerTeam,
         player_stat.playerName,
@@ -175,9 +198,35 @@ const MapPlayerTable = () => {
         player_stat.playerName
       `,
       ['player_stat_object_store'],
+      [
+        'playerTeam',
+        'playerName',
+        'id',
+        'playerHeroes',
+        'eliminations',
+        'finalBlows',
+        'deaths',
+        'objectiveKills',
+        'allDamageDealt',
+        'heroDamageDealt',
+        'barrierDamageDealt',
+        'healingDealt',
+        'damageBlocked',
+        'damageReceived',
+        'healingReceived',
+        'shotsFired',
+        'shotsHit',
+        'shotsMissed',
+        'criticalHits',
+        'offensiveAssists',
+        'defensiveAssists',
+      ],
     ),
-    new AlaSQLNode(
+    new AlaSQLNode<{
+      duration: number;
+    }>(
       'MapPlayerTable_map_duration_' + mapId + '_' + roundId,
+      'Map Duration',
       `SELECT
         sum(round_end.matchTime - round_start.matchTime) as duration
       FROM
@@ -196,9 +245,14 @@ const MapPlayerTable = () => {
         }
       `,
       ['round_start_object_store', 'round_end_object_store'],
+      ['duration'],
     ),
-    new AlaSQLNode(
+    new AlaSQLNode<{
+      team1Name: string;
+      team2Name: string;
+    }>(
       'MapPlayerTable_team_order_' + mapId,
+      'Team Order',
       `SELECT
         match_start.team1Name,
         match_start.team2Name
@@ -207,6 +261,7 @@ const MapPlayerTable = () => {
         match_start.mapId = ${mapId}
       `,
       ['match_start_object_store'],
+      ['team1Name', 'team2Name'],
     ),
   ]);
 
