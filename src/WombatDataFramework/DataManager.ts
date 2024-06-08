@@ -58,12 +58,53 @@ export class DataManager {
     }
   }
 
+  checkForCycles(): void {
+    const visited: DataNodeName[] = [];
+    const stack: DataNodeName[] = [];
+
+    for (const node of this.nodes.keys()) {
+      if (!visited.includes(node)) {
+        if (this.isCyclic(node, visited, stack)) {
+          throw new Error('Cycle detected');
+        }
+      }
+    }
+  }
+
+  isCyclic(
+    v: DataNodeName,
+    visited: DataNodeName[],
+    stack: DataNodeName[],
+  ): boolean {
+    if (stack.includes(v)) {
+      return true;
+    }
+    if (visited.includes(v)) {
+      return false;
+    }
+    visited.push(v);
+    stack.push(v);
+
+    const node = this.nodes.get(v);
+    if (!node) {
+      throw new Error(`Node ${v} does not exist`);
+    }
+    for (const node of this.nodesDependingOn(v)) {
+      if (this.isCyclic(node, visited, stack)) {
+        return true;
+      }
+    }
+    stack.pop();
+    return false;
+  }
+
   setNode(node: DataNode<any>): void {
     if (this.nodes.has(node.getName())) {
       console.log(`Node ${node.getName()} already exists`);
       return;
     }
     console.log(`Adding node ${node.getName()}`);
+    this.checkForCycles();
     this.nodes.set(node.getName(), node);
   }
 

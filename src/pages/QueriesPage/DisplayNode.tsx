@@ -1,6 +1,10 @@
 import React from 'react';
 
-import {DataNode, DataNodeMetadata} from '../../WombatDataFramework/DataTypes';
+import {
+  DataColumn,
+  DataNode,
+  DataNodeMetadata,
+} from '../../WombatDataFramework/DataTypes';
 
 import {
   Card,
@@ -14,6 +18,8 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+
+import './DisplayNode.scss';
 
 interface DataNodeProps {
   node: DataNode<object>;
@@ -42,7 +48,7 @@ function DisplayNode({node}: DataNodeProps) {
     </Table>
   );
 
-  const columns: string[] = node.getColumns();
+  const columns: DataColumn<object>[] = node.getColumns();
   const rows: object[] = node.getOutput() || [];
 
   return (
@@ -60,7 +66,14 @@ function DisplayNode({node}: DataNodeProps) {
                 <TableHead>
                   <TableRow>
                     {columns.map((column, index) => (
-                      <TableCell key={index}>{column}</TableCell>
+                      <TableCell
+                        key={index}
+                        className={column.missingData ? 'missing-data' : ''}>
+                        {column.name}{' '}
+                        {column.missingData && (
+                          <Chip label="Missing Data" color="secondary" />
+                        )}
+                      </TableCell>
                     ))}
                   </TableRow>
                 </TableHead>
@@ -68,7 +81,7 @@ function DisplayNode({node}: DataNodeProps) {
                   {rows.map((row, index) => (
                     <TableRow key={index}>
                       {columns.map((column, index) => (
-                        <TableCell key={index}>{row[column]}</TableCell>
+                        <TableCell key={index}>{row[column.name]}</TableCell>
                       ))}
                     </TableRow>
                   ))}

@@ -48,6 +48,15 @@ function getOpacity(node: DataNode<any> | undefined) {
   return 1;
 }
 
+function getSize(node: DataNode<any> | undefined) {
+  if (!node || !node?.getOutput() || node.getOutput()!.length === 0) {
+    return 10;
+  }
+  // scales up to max 30 logarithmically with the number of rows
+
+  return Math.min(30, 10 + Math.log(node.getOutput()!.length));
+}
+
 function updateNode(
   nodeName: string,
   networkDisplay: NetworkDisplay,
@@ -61,6 +70,7 @@ function updateNode(
     getShape(node),
     getLabel(node),
     getOpacity(node),
+    getSize(node),
   );
   dataManager.nodesDependingOn(nodeName).forEach((fromName) => {
     networkDisplay.setEdge(nodeName, fromName);

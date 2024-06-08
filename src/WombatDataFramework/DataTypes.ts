@@ -64,11 +64,16 @@ export interface DataNodeMetadata {
   executions: DataNodeExecution[];
 }
 
+export interface DataColumn<T extends object> {
+  name: keyof T;
+  missingData: boolean;
+}
+
 // This represents a node in the computation graph.
 export abstract class DataNode<OutType extends object> {
   protected name: DataNodeName;
   protected displayName: string;
-  protected columns: (keyof OutType)[];
+  protected columns: DataColumn<OutType>[];
   private output?: OutType[];
   protected metadata?: DataNodeMetadata;
   protected needsRun: boolean;
@@ -79,7 +84,10 @@ export abstract class DataNode<OutType extends object> {
   ) {
     this.name = name;
     this.displayName = displayName;
-    this.columns = columns;
+    this.columns = columns.map((column) => ({
+      name: column,
+      missingData: false,
+    }));
     this.needsRun = true;
   }
   public getName(): DataNodeName {
@@ -88,7 +96,7 @@ export abstract class DataNode<OutType extends object> {
   public getDisplayName(): string {
     return this.displayName;
   }
-  public getColumns(): (keyof OutType)[] {
+  public getColumns(): DataColumn<OutType>[] {
     return this.columns;
   }
   public getOutput(): OutType[] | undefined {
@@ -169,7 +177,7 @@ export abstract class DataNode<OutType extends object> {
       return;
     }
     for (const item of this.output) {
-      for (const column of this.columns) {
+      for (const column of this.getColumns().map((column) => column.name)) {
         if (item[column] === undefined) {
           throw new Error(
             `Column ${String(column)} is undefined for item ${item}`,
@@ -177,12 +185,24 @@ export abstract class DataNode<OutType extends object> {
         }
       }
       for (const field in item) {
-        if (!this.columns.includes(field as keyof OutType)) {
+        if (!this.columns.some((column) => column.name === field)) {
           throw new Error(
             `Field ${field} is not defined in columns for item ${item}`,
           );
         }
       }
+    }
+
+    this.labelColumnsMissingData();
+  }
+  private labelColumnsMissingData(): void {
+    if (this.output === undefined || this.output.length === 0) {
+      return;
+    }
+    for (const column of this.columns) {
+      column.missingData = this.output.some(
+        (item) => item[column.name] === undefined,
+      );
     }
   }
 }

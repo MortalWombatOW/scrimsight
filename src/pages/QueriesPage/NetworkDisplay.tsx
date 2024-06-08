@@ -38,6 +38,9 @@ class NetworkDisplay {
           avoidOverlap: 1,
         },
       },
+      nodes: {
+        widthConstraint: 100,
+      },
       edges: {
         arrows: {
           to: {
@@ -73,6 +76,7 @@ class NetworkDisplay {
     shape: string,
     label: string,
     opacity: number,
+    size: number,
   ) {
     const existingNodeId = this.nodeIdFromName(name);
     if (existingNodeId !== undefined) {
@@ -82,6 +86,12 @@ class NetworkDisplay {
         shape: shape,
         label: label,
         opacity: opacity,
+        // value: size,
+        scaling: {
+          label: {
+            enabled: true,
+          },
+        },
       });
       return;
     }
