@@ -167,12 +167,6 @@ export class DataManager {
   }
 
   async process(): Promise<void> {
-    // let node: DataNode<any> | undefined;
-    // while ((node = this.getNextNodeToExecute())) {
-    //   console.log('Executing', node.getName());
-    //   await this.executeNode(node.getName());
-    // }
-
     let nodes = this.getNodesToExecute();
     while (nodes.length > 0) {
       for (const node of nodes) {
@@ -180,13 +174,6 @@ export class DataManager {
       }
       nodes = this.getNodesToExecute();
     }
-
-    // console.log(
-    //   'Nodes executed',
-    //   nodes.map((node) => node.getName()),
-    // );
-
-    // this.changeCallback();
   }
 
   markNode(name: DataNodeName): void {
@@ -207,12 +194,4 @@ export class DataManager {
   getNodes(): DataNode<any>[] {
     return [...this.nodes.values()];
   }
-
-  // getEdges(name: DataNodeName): [DataNodeName, DataNodeName][] {
-  //   return this.graph.getEdgesCreatedByNode(name);
-  // }
-
-  // toString(): string {
-  //   return this.graph.toString();
-  // }
 }

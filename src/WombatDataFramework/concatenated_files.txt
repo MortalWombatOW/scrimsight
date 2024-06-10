@@ -1,3 +1,4 @@
+## DataTypes.ts
 import {node} from 'webpack';
 import {getData, storeObjectInDatabase} from '../lib/data/database';
 import alasql from 'alasql';
@@ -549,3 +550,415 @@ export class JoinNode<T1 extends object, T2 extends object> extends DataNode<
     return this.getOutput() !== undefined;
   }
 }
+
+## DataManager.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {DataNode, DataNodeName} from './DataTypes';
+
+export class DataManager {
+  private nodes: Map<DataNodeName, DataNode<any>>;
+  private changeCallback: () => void;
+  private nodeCallbacks: Map<DataNodeName, () => void>;
+
+  constructor(changeCallback: () => void) {
+    this.nodes = new Map();
+    this.changeCallback = changeCallback;
+    this.nodeCallbacks = new Map();
+  }
+
+  public nodesDependingOn(name: DataNodeName): DataNodeName[] {
+    const nodes: DataNodeName[] = [];
+    this.nodes.forEach((node) => {
+      if (node.getDependencies().includes(name)) {
+        nodes.push(node.getName());
+      }
+    });
+    return nodes;
+  }
+
+  async executeNode(name: DataNodeName): Promise<void> {
+    // console.group(`DataManager.executeNode(${name})`);
+    const node = this.nodes.get(name);
+    if (!node) {
+      throw new Error(`Node ${name} does not exist`);
+    }
+    if (node.isRunning()) {
+      console.log(`Node ${name} is already running`);
+      console.groupEnd();
+      return;
+    }
+    const dependencies = node.getDependencies();
+    const sourceData = dependencies.map((dep) => {
+      if (!this.nodes.get(dep)?.hasOutput()) {
+        throw new Error(`Dependency ${dep} is empty, skipping ${name}`);
+      }
+      if (this.nodes.get(dep)?.isRunning()) {
+        throw new Error(`Dependency ${dep} is running, skipping ${name}`);
+      }
+      return this.nodes.get(dep)?.getOutput();
+    });
+
+    try {
+      await node.run(sourceData);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      console.log(`Node ${name} finished, data:`, node.getOutput());
+      // console.groupEnd();
+      if (this.nodeCallbacks.has(name)) {
+        console.log(`Executing callback for ${name}`);
+        this.nodeCallbacks.get(name)!();
+      }
+    }
+  }
+
+  checkForCycles(): void {
+    const visited: DataNodeName[] = [];
+    const stack: DataNodeName[] = [];
+
+    for (const node of this.nodes.keys()) {
+      if (!visited.includes(node)) {
+        if (this.isCyclic(node, visited, stack)) {
+          throw new Error('Cycle detected');
+        }
+      }
+    }
+  }
+
+  isCyclic(
+    v: DataNodeName,
+    visited: DataNodeName[],
+    stack: DataNodeName[],
+  ): boolean {
+    if (stack.includes(v)) {
+      return true;
+    }
+    if (visited.includes(v)) {
+      return false;
+    }
+    visited.push(v);
+    stack.push(v);
+
+    const node = this.nodes.get(v);
+    if (!node) {
+      throw new Error(`Node ${v} does not exist`);
+    }
+    for (const node of this.nodesDependingOn(v)) {
+      if (this.isCyclic(node, visited, stack)) {
+        return true;
+      }
+    }
+    stack.pop();
+    return false;
+  }
+
+  setNode(node: DataNode<any>): void {
+    if (this.nodes.has(node.getName())) {
+      console.log(`Node ${node.getName()} already exists`);
+      return;
+    }
+    console.log(`Adding node ${node.getName()}`);
+    this.checkForCycles();
+    this.nodes.set(node.getName(), node);
+  }
+
+  setNodes(nodes: DataNode<any>[]): void {
+    for (const node of nodes) {
+      this.setNode(node);
+    }
+  }
+
+  addNodeCallback(name: DataNodeName, callback: () => void): void {
+    this.nodeCallbacks.set(name, callback);
+  }
+
+  getNodeOrDie(name: DataNodeName): DataNode<any> {
+    const node = this.nodes.get(name);
+    if (!node) {
+      throw new Error(`Node ${name} does not exist`);
+    }
+    return node;
+  }
+
+  getNextNodeToExecute(): DataNode<any> | undefined {
+    const nodes = this.getNodesToExecute();
+    if (nodes.length === 0) {
+      return undefined;
+    }
+    return nodes[0];
+  }
+
+  getNodesToExecute(): DataNode<any>[] {
+    const visited: string[] = [];
+    const stack: string[] = [];
+
+    for (const node of this.nodes.keys()) {
+      if (!visited.includes(node)) {
+        this.topoSort(node, visited, stack);
+      }
+    }
+
+    return stack
+      .filter(
+        (name) =>
+          this.getNodeOrDie(name).canRun() &&
+          !this.getNodeOrDie(name).isRunning(),
+      )
+      .map((name) => this.getNodeOrDie(name));
+  }
+
+  private topoSort(v: string, visited: string[], stack: string[]): void {
+    if (visited.includes(v)) {
+      return;
+    }
+    visited.push(v);
+    for (const node of this.getNodeOrDie(v).getDependencies()) {
+      if (!visited.includes(node)) {
+        this.topoSort(node, visited, stack);
+      }
+    }
+    stack.push(v);
+  }
+
+  async process(): Promise<void> {
+    let nodes = this.getNodesToExecute();
+    while (nodes.length > 0) {
+      for (const node of nodes) {
+        await this.executeNode(node.getName());
+      }
+      nodes = this.getNodesToExecute();
+    }
+  }
+
+  markNode(name: DataNodeName): void {
+    const node = this.getNodeOrDie(name);
+    node.setNeedsRun(true);
+    const nodes = this.nodesDependingOn(name);
+    nodes.forEach((node) => this.markNode(node));
+  }
+
+  getNodeOutputOrDie(name: DataNodeName): any {
+    const node = this.getNodeOrDie(name);
+    if (!node.hasOutput()) {
+      throw new Error(`Node ${name} has no output`);
+    }
+    return node.getOutput();
+  }
+
+  getNodes(): DataNode<any>[] {
+    return [...this.nodes.values()];
+  }
+}
+
+## DataManager.test.ts
+/* eslint-disable @typescript-eslint/no-empty-function */
+import {DataManager} from './DataManager';
+import {AlaSQLNode, ObjectStoreNode, WriteNode} from './DataTypes';
+
+describe('DataManager', () => {
+  test('should add a node to the graph and execute it', async () => {
+    const dm = new DataManager(() => {});
+
+    dm.setNode(
+      new AlaSQLNode<{num: number}>(
+        'a',
+        'Node A',
+        'SELECT 1 as num',
+        [],
+        ['num'],
+      ),
+    );
+
+    expect(dm.getNodeOrDie('a').isRunning()).toBe(false);
+    expect(dm.getNodeOrDie('a').hasError()).toBe(false);
+    expect(dm.getNodeOrDie('a').hasOutput()).toBe(false);
+
+    await dm.executeNode('a');
+
+    const output = dm.getNodeOutputOrDie('a');
+    expect(output[0].num).toBe(1);
+
+    const execution = dm.getNodeOrDie('a').getLatestExecution();
+    expect(execution.getCompleted()).toBe(true);
+    expect(execution.getError()).toBe(undefined);
+    expect(execution.getDuration()).toBeGreaterThan(0);
+    expect(execution.getInputRows()).toBe(0);
+    expect(execution.getOutputRows()).toBe(1);
+  });
+
+  test('basic data flow', async () => {
+    const dm = new DataManager(() => {});
+
+    dm.setNodes([
+      new AlaSQLNode<{num: number}>(
+        'a',
+        'Node A',
+        'SELECT 1 as num',
+        [],
+        ['num'],
+      ),
+      new AlaSQLNode<{num: number}>(
+        'b',
+        'Node B',
+        'SELECT * FROM ?',
+        ['a'],
+        ['num'],
+      ),
+    ]);
+
+    await dm.process();
+
+    expect(dm.getNodeOrDie('b').getOutput()).toEqual([{num: 1}]);
+  });
+
+  test('basic data flow with multiple inputs', async () => {
+    const dm = new DataManager(() => {});
+
+    dm.setNodes([
+      new AlaSQLNode<{id: number; num: number}>(
+        'a',
+        'Node A',
+        'SELECT 1 as id, 2 as num',
+        [],
+        ['id', 'num'],
+      ),
+      new AlaSQLNode<{id: number; str: number}>(
+        'b',
+        'Node B',
+        'SELECT 1 as id,  "test" as str',
+        [],
+        ['id', 'str'],
+      ),
+      new AlaSQLNode<{id: number; num: number; str: number}>(
+        'c',
+        'Node C',
+        'SELECT * FROM ? as a JOIN ? as b ON a.id = b.id',
+        ['a', 'b'],
+        ['id', 'num', 'str'],
+      ),
+    ]);
+
+    expect(dm.getNodesToExecute().length).toBe(3);
+    await dm.process();
+    expect(dm.getNodesToExecute().length).toBe(0);
+
+    expect(dm.getNodeOutputOrDie('c')).toEqual([{id: 1, num: 2, str: 'test'}]);
+  });
+
+  test('change propagation', async () => {
+    const dm = new DataManager(() => {});
+
+    dm.setNodes([
+      new AlaSQLNode<{num: number}>(
+        'a',
+        'Node A',
+        'SELECT 1 as num',
+        [],
+        ['num'],
+      ),
+      new AlaSQLNode<{num: number}>(
+        'b',
+        'Node B',
+        'SELECT * FROM ?',
+        ['a'],
+        ['num'],
+      ),
+    ]);
+
+    expect(dm.getNodesToExecute().map((node) => node.getName())).toEqual([
+      'a',
+      'b',
+    ]);
+    await dm.process();
+    expect(dm.getNodesToExecute().map((node) => node.getName())).toEqual([]);
+
+    expect(dm.getNodeOrDie('b').getOutput()).toEqual([{num: 1}]);
+
+    (dm.getNodeOrDie('a') as AlaSQLNode<{num: number}>).changeSql(
+      'SELECT 2 as num',
+    );
+    dm.markNode('a');
+
+    expect(dm.getNodesToExecute().map((node) => node.getName())).toEqual([
+      'a',
+      'b',
+    ]);
+    await dm.process();
+
+    expect(dm.getNodeOrDie('b').getOutput()).toEqual([{num: 2}]);
+  });
+
+  test('topological sort', async () => {
+    const dm = new DataManager(() => {});
+
+    dm.setNodes([
+      new AlaSQLNode<{num: number}>(
+        'c',
+        'Node C',
+        'SELECT * FROM ?',
+        ['b'],
+        ['num'],
+      ),
+      new AlaSQLNode<{num: number}>(
+        'b',
+        'Node B',
+        'SELECT * FROM ?',
+        ['a'],
+        ['num'],
+      ),
+      new AlaSQLNode<{num: number}>(
+        'a',
+        'Node A',
+        'SELECT 1 as num',
+        [],
+        ['num'],
+      ),
+    ]);
+
+    expect(dm.getNodesToExecute().map((node) => node.getName())).toEqual([
+      'a',
+      'b',
+      'c',
+    ]);
+    await dm.process();
+    expect(dm.getNodesToExecute().map((node) => node.getName())).toEqual([]);
+
+    expect(dm.getNodeOrDie('c').getOutput()).toEqual([{num: 1}]);
+  });
+});
+
+## DataContext.tsx
+import React, {useContext, useEffect, useState} from 'react';
+import {DataManager} from './DataManager';
+import {NODES} from '../lib/data/NodeData';
+
+const DataContext = React.createContext<DataManager | null>(null);
+
+const DataProvider = ({children, globalTick, updateGlobalCallback}) => {
+  const dataManager = useState(() => new DataManager(updateGlobalCallback))[0];
+  dataManager.setNodes(NODES);
+  useEffect(() => {
+    const fetchData = async () => {
+      await dataManager.process();
+    };
+
+    fetchData();
+  }, [dataManager]);
+
+  console.log('Rendering data, tick = ', globalTick);
+
+  return (
+    <DataContext.Provider value={dataManager}>{children}</DataContext.Provider>
+  );
+};
+
+const useDataManager = () => {
+  const dataManager = useContext(DataContext);
+  if (!dataManager) {
+    throw new Error('useDataManager must be used within a DataProvider');
+  }
+  return dataManager;
+};
+
+export {DataProvider, DataContext, useDataManager};
+

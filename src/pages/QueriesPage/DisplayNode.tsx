@@ -1,11 +1,4 @@
 import React from 'react';
-
-import {
-  DataColumn,
-  DataNode,
-  DataNodeMetadata,
-} from '../../WombatDataFramework/DataTypes';
-
 import {
   Card,
   Typography,
@@ -18,7 +11,11 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-
+import {
+  DataNode,
+  DataNodeMetadata,
+  DataColumn,
+} from '../../WombatDataFramework/DataTypes';
 import './DisplayNode.scss';
 
 interface DataNodeProps {
@@ -26,10 +23,20 @@ interface DataNodeProps {
 }
 
 function DisplayNode({node}: DataNodeProps) {
-  // Helper function to render execution statistics
-  const renderExecutions = (metadata: DataNodeMetadata) => (
+  const columns: DataColumn<object>[] = node.getColumns();
+  const rows: object[] = node.getOutput() || [];
+  const metadata: DataNodeMetadata | undefined = node.getMetadata();
+
+  // --- Functional Components ---
+
+  const Executions = () => (
     <Table size="small">
       <TableHead>
+        <TableRow>
+          <TableCell colSpan={columns.length}>
+            <Typography variant="subtitle1">Query execution history</Typography>
+          </TableCell>
+        </TableRow>
         <TableRow>
           <TableCell>Duration (ms)</TableCell>
           <TableCell>Input Rows</TableCell>
@@ -37,7 +44,7 @@ function DisplayNode({node}: DataNodeProps) {
         </TableRow>
       </TableHead>
       <TableBody>
-        {metadata.executions.map((execution, index) => (
+        {metadata!.executions.map((execution, index) => (
           <TableRow key={index}>
             <TableCell>{execution.getDuration()}</TableCell>
             <TableCell>{execution.getInputRows()}</TableCell>
@@ -48,48 +55,57 @@ function DisplayNode({node}: DataNodeProps) {
     </Table>
   );
 
-  const columns: DataColumn<object>[] = node.getColumns();
-  const rows: object[] = node.getOutput() || [];
+  const QueryOutput = () => (
+    <Table size="small">
+      <TableHead>
+        <TableRow>
+          <TableCell colSpan={columns.length} className="query-output">
+            <Typography variant="subtitle1">Query output</Typography>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          {columns.map((column, index) => (
+            <TableCell
+              key={index}
+              className={column.missingData ? 'missing-data' : ''}>
+              {column.name}{' '}
+              {column.missingData && (
+                <Chip label="Missing Data" color="secondary" />
+              )}
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows.map((row, index) => (
+          <TableRow key={index}>
+            {columns.map((column, index) => (
+              <TableCell key={index}>{row[column.name]}</TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+
+  // --- Main Component Render ---
 
   return (
     <Card>
       <CardContent>
-        <Typography variant="h3">{node.getName()}</Typography>
+        <Typography variant="h3">{node.getDisplayName()}</Typography>
+        <Typography variant="body1">ID: {node.getName()}</Typography>
+        <Typography variant="body1">{node.getDescription()}</Typography>
+
         {node.isRunning() && <LinearProgress />}
-        {node.getMetadata() && (
+
+        {metadata && (
           <div>
-            <Typography variant="subtitle1">Execution Details:</Typography>
-            {renderExecutions(node.getMetadata()!)}
-            <div>
-              <Typography variant="subtitle1">Output:</Typography>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    {columns.map((column, index) => (
-                      <TableCell
-                        key={index}
-                        className={column.missingData ? 'missing-data' : ''}>
-                        {column.name}{' '}
-                        {column.missingData && (
-                          <Chip label="Missing Data" color="secondary" />
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row, index) => (
-                    <TableRow key={index}>
-                      {columns.map((column, index) => (
-                        <TableCell key={index}>{row[column.name]}</TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <Executions />
+            <QueryOutput />
           </div>
         )}
+
         {node.hasError() && (
           <Typography color="error" variant="body2">
             Error: {node.getError()}
