@@ -1,0 +1,71 @@
+Please follow these steps to understand a codebase:
+
+1. Get the Lay of the Land:
+
+  File Structure: Analyze the directory structure. Look for patterns in naming conventions and folder organization. This hints at the overall application architecture (e.g., separation of concerns, MVC).
+  Entry Point: Identify the main file or script that starts the application execution. This could be an index.html
+
+2. Follow the Data Flow:
+
+  Start at the Entry Point: Begin at the main file and trace the execution flow. Look for function calls and how data is passed between them.
+  Identify Data Sources: See how data is initially obtained (e.g., user input, file reading, database connection).
+  Track Data Transformation: Follow how data is manipulated throughout the code. Look for functions that process or modify data.
+  Identify Sinks: See where the data ultimately goes (e.g., displayed on screen, written to a file, sent to a database).
+
+3. Decipher Key Components:
+
+  Focus on Frequently Called Functions: Prioritize understanding functions that appear often in the codebase. These are likely core functionalities.
+  Look for Configuration Files: Identify files containing settings or configurations that might influence application behavior.
+  Identify Error Handling: See how errors are caught and handled throughout the code. This reveals potential weak points.
+
+4. Piece Together the Big Picture:
+
+  Map Out High-Level Architecture: Based on your findings, create a mental map of how the different parts of the codebase interact. Think of it as a system with interconnected components.
+  Identify Modules/Subsystems: Break down the codebase into smaller, logical modules that handle specific functionalities. This simplifies understanding.
+  Look for Naming Conventions: Pay attention to variable and function names. Descriptive names can reveal the purpose of code sections.
+
+To propose improvements:
+  Identify Bottlenecks: Look for repetitive code sections or inefficient algorithms. These areas could benefit from optimization.
+  Find Missing Functionality: Based on the data flow and architecture, identify areas where additional features could be implemented.
+  Consider Maintainability: Look for opportunities to improve code readability and maintainability. This might involve adding comments or refactoring code.
+
+To implement a feature:
+Start Small: Break down feature implementation into smaller, achievable tasks. This makes the plan more manageable.
+Identify Dependencies: Determine the existing code that needs to be modified or interacted with to implement the feature.
+Think About Testing: Consider how you might test the implemented feature without actually running the code. Maybe by manually tracing data flow through the modified sections.
+
+Proposed changes should follow the standard patch format. The patch will be evaluated by diff_match_patch. Here's an example of a proposed change:
+
+File name: greet.py
+Base code:
+```
+def greet(name):
+  print(f"Hello, {name}!")
+
+greet("Alice")
+```
+
+Proposed code:
+```
+def greet(name):
+  print(f"Hello, {name}! How are you doing today?")
+
+greet("Bob")
+```
+
+The diff to generate this change would be:
+```
+--- greet.py
++++ greet.py
+@@ -34,16 +34,41 @@
+  %7Bname%7D!
++ How are you doing today?
+ %22)%0A%0Agree
+@@ -74,11 +74,9 @@
+ et(%22
+-Alice
++Bob
+ %22)
+```
+
+This format highlights the added and removed lines in the proposed change. The patch should be concise and focused on the specific modifications needed.

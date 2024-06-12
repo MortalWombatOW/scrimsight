@@ -825,7 +825,7 @@ describe('DataManager', () => {
       new AlaSQLNode<{id: number; str: number}>(
         'b',
         'Node B',
-        'SELECT 1 as id,  "test" as str',
+        'SELECT 1 as id,  2 as str',
         [],
         ['id', 'str'],
       ),
@@ -842,7 +842,7 @@ describe('DataManager', () => {
     await dm.process();
     expect(dm.getNodesToExecute().length).toBe(0);
 
-    expect(dm.getNodeOutputOrDie('c')).toEqual([{id: 1, num: 2, str: 'test'}]);
+    expect(dm.getNodeOutputOrDie('c')).toEqual([{id: 1, num: 2, str: 2}]);
   });
 
   test('change propagation', async () => {

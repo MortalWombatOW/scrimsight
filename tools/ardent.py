@@ -1,149 +1,184 @@
 import os
 import time
 import argparse
-import shutil
+import difflib
+import re
+import json
 
 import google.generativeai as genai
+import diff_match_patch as dmp_module
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
-def upload_to_gemini(path, mime_type=None):
-  """Uploads the given file to Gemini.
 
-  See https://ai.google.dev/gemini-api/docs/prompting_with_media
-  """
-  file = genai.upload_file(path, mime_type=mime_type)
-  print(f"Uploaded file '{file.display_name}' as: {file.uri}")
-  return file
+def upload_to_gemini(path, mime_type=None):
+    file = genai.upload_file(path, mime_type=mime_type)
+    print(f"Uploaded file '{file.display_name}' as: {file.uri}")
+    return file
+
 
 def wait_for_files_active(files):
-  """Waits for the given files to be active.
+    print("Waiting for file processing...")
+    for name in (file.name for file in files):
+        file = genai.get_file(name)
+        while file.state.name == "PROCESSING":
+            print(".", end="", flush=True)
+            time.sleep(10)
+            file = genai.get_file(name)
+        if file.state.name != "ACTIVE":
+            raise Exception(f"File {file.name} failed to process")
+    print("...all files ready")
+    print()
 
-  Some files uploaded to the Gemini API need to be processed before they can be
-  used as prompt inputs. The status can be seen by querying the file's "state"
-  field.
-
-  This implementation uses a simple blocking polling loop. Production code
-  should probably employ a more sophisticated approach.
-  """
-  print("Waiting for file processing...")
-  for name in (file.name for file in files):
-    file = genai.get_file(name)
-    while file.state.name == "PROCESSING":
-      print(".", end="", flush=True)
-      time.sleep(10)
-      file = genai.get_file(name)
-    if file.state.name != "ACTIVE":
-      raise Exception(f"File {file.name} failed to process")
-  print("...all files ready")
-  print()
 
 def concatenate_text_files(directory):
-  """Concatenates all text files in a directory recursively.
+    """Concatenates all text files in a directory recursively.
 
-  Args:
-    directory: The path to the directory.
+    Args:
+      directory: The path to the directory.
 
-  Returns:
-    The path to the concatenated file.
-  """
-  concatenated_file_path = os.path.join(directory, "concatenated_files.txt")
-  with open(concatenated_file_path, "w") as outfile:
-    for root, _, files in os.walk(directory):
-      for file in files:
-        if file.endswith(".ts") or file.endswith(".tsx") or file.endswith(".html") or file.endswith(".scss"):
-          filepath = os.path.join(root, file)
-          with open(filepath, "r") as infile:
-            outfile.write(f"## {file}\n")
-            outfile.write(infile.read())
-            outfile.write("\n")
-  return concatenated_file_path
+    Returns:
+      The path to the concatenated file.
+    """
+    concatenated_file_path = os.path.join(directory, "concatenated_files.txt")
+    with open(concatenated_file_path, "w") as outfile:
+        for root, _, files in os.walk(directory):
+            for file in files:
+                if (
+                    file.endswith(".ts")
+                    or file.endswith(".tsx")
+                    or file.endswith(".html")
+                    or file.endswith(".scss")
+                ):
+                    filepath = os.path.join(root, file)
+                    with open(filepath, "r") as infile:
+                        outfile.write(f"## {file}\n")
+                        outfile.write(infile.read())
+                        outfile.write("\n")
+    return concatenated_file_path
+
+
+def generate_diff(original_file_path, modified_file_path):
+    """Generates a diff between two files.
+
+    Args:
+      original_file_path: The path to the original file.
+      modified_file_path: The path to the modified file.
+
+    Returns:
+      A string containing the diff.
+    """
+    with open(original_file_path, "r") as original_file, open(
+        modified_file_path, "r"
+    ) as modified_file:
+        original_lines = original_file.readlines()
+        modified_lines = modified_file.readlines()
+        diff = difflib.ndiff(original_lines, modified_lines)
+        return "\n".join(diff)
+
+
+def save_changed_files(changed_files, directory):
+    """Saves the changed files to the specified directory.
+
+    Args:
+      changed_files: A dictionary of changed files.
+      directory: The path to the directory where files will be saved.
+    """
+    for filename, content in changed_files.items():
+        with open(os.path.join(directory, filename), "w") as f:
+            f.write(content)
+
 
 def main():
-  parser = argparse.ArgumentParser(description="Upload a file or directory to Gemini and interact with it.")
-  parser.add_argument("path", help="Path to a file or directory.")
-  args = parser.parse_args()
+    text1 = """def greet(name):
+  print(f"Hello, {name}!")
 
-  path = args.path
+greet("Alice")"""
+    text2 = """def greet(name):
+  print(f"Hello, {name}! How are you doing today?")
 
-  # Create the model
-  # See https://ai.google.dev/api/python/google/generativeai/GenerativeModel
-  generation_config = {
-    "temperature": 0,
-    "top_p": 0.95,
-    "top_k": 64,
-    "max_output_tokens": 8192,
-    "response_mime_type": "text/plain",
-  }
+greet("Bob")"""
+    dmp = dmp_module.diff_match_patch()
+    diff = dmp.diff_main(text1, text2)
+    dmp.diff_cleanupSemantic(diff)
+    patches = dmp.patch_make(text1, diff)
+    patch_text = dmp.patch_toText(patches)
+    print(patch_text)
 
-  model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    generation_config=generation_config,
-    # safety_settings = Adjust safety settings
-    # See https://ai.google.dev/gemini-api/docs/safety-settings
-    system_instruction="""Please follow these steps to understand a codebase:
+    parser = argparse.ArgumentParser(
+        description="Upload a file or directory to Gemini and interact with it."
+    )
+    parser.add_argument("path", help="Path to a file or directory.")
+    args = parser.parse_args()
 
-1. Get the Lay of the Land:
+    path = args.path
 
-  File Structure: Analyze the directory structure. Look for patterns in naming conventions and folder organization. This hints at the overall application architecture (e.g., separation of concerns, MVC).
-  Entry Point: Identify the main file or script that starts the application execution. This could be an index.html
+    generation_config = {
+        "temperature": 0,
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 100000,
+        "response_mime_type": "text/plain",
+    }
 
-2. Follow the Data Flow:
+    # Load the prompt from the file
+    with open("./tools/ardent_prompt.txt", "r") as f:
+        prompt = f.read()
 
-  Start at the Entry Point: Begin at the main file and trace the execution flow. Look for function calls and how data is passed between them.
-  Identify Data Sources: See how data is initially obtained (e.g., user input, file reading, database connection).
-  Track Data Transformation: Follow how data is manipulated throughout the code. Look for functions that process or modify data.
-  Identify Sinks: See where the data ultimately goes (e.g., displayed on screen, written to a file, sent to a database).
+    model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        generation_config=generation_config,
+        system_instruction=prompt,
+    )
 
-3. Decipher Key Components:
+    if os.path.isdir(path):
+        concatenated_file_path = concatenate_text_files(path)
+        file = upload_to_gemini(concatenated_file_path, mime_type="text/plain")
+        # os.remove(os.path.join(path, "concatenated_files.txt"))
+    else:
+        file = upload_to_gemini(path)
 
-  Focus on Frequently Called Functions: Prioritize understanding functions that appear often in the codebase. These are likely core functionalities.
-  Look for Configuration Files: Identify files containing settings or configurations that might influence application behavior.
-  Identify Error Handling: See how errors are caught and handled throughout the code. This reveals potential weak points.
+    wait_for_files_active([file])
 
-4. Piece Together the Big Picture:
+    chat_session = model.start_chat(
+        history=[
+            {
+                "role": "user",
+                "parts": [
+                    file,
+                ],
+            },
+        ]
+    )
 
-  Map Out High-Level Architecture: Based on your findings, create a mental map of how the different parts of the codebase interact. Think of it as a system with interconnected components.
-  Identify Modules/Subsystems: Break down the codebase into smaller, logical modules that handle specific functionalities. This simplifies understanding.
-  Look for Naming Conventions: Pay attention to variable and function names. Descriptive names can reveal the purpose of code sections.
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == "exit":
+            break
+        response = chat_session.send_message(user_input)
 
-To propose improvements:
-  Identify Bottlenecks: Look for repetitive code sections or inefficient algorithms. These areas could benefit from optimization.
-  Find Missing Functionality: Based on the data flow and architecture, identify areas where additional features could be implemented.
-  Consider Maintainability: Look for opportunities to improve code readability and maintainability. This might involve adding comments or refactoring code.
+        # # Collect responses until a complete JSON is received
+        # max_retries = 10
+        # full_response = ""
+        # for _ in range(max_retries):
+        #     full_response += response.text
+        #     print(f"Received response: {response.text}")
+        #     try:
+        #         response_json = json.loads(full_response)
+        #         break  # Successfully parsed, exit the loop
+        #     except json.JSONDecodeError:
+        #         print("Partial response received. Waiting for more...")
+        #         response = chat_session.send_message("continue")
 
-To implement a feature:
-Start Small: Break down feature implementation into smaller, achievable tasks. This makes the plan more manageable.
-Identify Dependencies: Determine the existing code that needs to be modified or interacted with to implement the feature.
-Think About Testing: Consider how you might test the implemented feature without actually running the code. Maybe by manually tracing data flow through the modified sections."""
-  )
+        # Output the message
+        print(f"Gemini: {response.text}")
 
-  if os.path.isdir(path):
-    concatenated_file_path = concatenate_text_files(path)
-    file = upload_to_gemini(concatenated_file_path, mime_type="text/plain")
-    # os.remove(os.path.join(path, "concatenated_files.txt"))
-  else:
-    file = upload_to_gemini(path)
+        # # Extract and save changed files
+        # changed_files = response_json.get("changed_files")
+        # if changed_files:
+        #     save_changed_files(changed_files, path)
+        #     print(f"Saved changed files to {path}")
 
-  wait_for_files_active([file])
-
-  chat_session = model.start_chat(
-    history=[
-      {
-        "role": "user",
-        "parts": [
-          file,
-        ],
-      },
-    ]
-  )
-
-  while True:
-    user_input = input("You: ")
-    if user_input.lower() == "exit":
-      break
-    response = chat_session.send_message(user_input)
-    print(f"Gemini: {response.text}")
 
 if __name__ == "__main__":
-  main()
+    main()
