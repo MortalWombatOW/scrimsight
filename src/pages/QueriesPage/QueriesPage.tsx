@@ -7,18 +7,18 @@ import {useDataManager} from '../../WombatDataFramework/DataContext';
 const QueriesPage = () => {
   const size = useWindowSize();
   const [selectedNode, setSelectedNode] = React.useState<string | null>(null);
-  const dataManager = useDataManager();
+  const [tick, setTick] = React.useState<number>(0); // eslint-disable-line no-unused-vars
+  const dataManager = useDataManager([
+    'QueriesPage',
+    () => {
+      setTick((tick) => tick + 1);
+    },
+  ]);
 
   return (
     <div>
-      <QueryGraph
-        width={size.width}
-        height={selectedNode ? 500 : size.height - 87}
-        setSelectedNode={setSelectedNode}
-      />
-      {selectedNode && (
-        <DisplayNode node={dataManager.getNodeOrDie(selectedNode)} />
-      )}
+      <QueryGraph width={size.width} height={selectedNode ? 500 : size.height - 87} setSelectedNode={setSelectedNode} />
+      {selectedNode && <DisplayNode node={dataManager.getNodeOrDie(selectedNode)} />}
     </div>
   );
 };

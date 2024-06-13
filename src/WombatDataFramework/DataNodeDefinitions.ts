@@ -673,8 +673,8 @@ export const OBJECT_STORE_NODES: ObjectStoreNodeInit[] = [
     'isEnvironmental',
   ]),
   makeObjectStoreNodeInit('maps_object_store', 'Maps', 'maps', ['mapId', 'name', 'fileModified']),
-  makeObjectStoreNodeInit('match_end_object_store', 'Match End', 'match_end', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score']),
-  makeObjectStoreNodeInit('match_start_object_store', 'Match Start', 'match_start', ['mapId', 'type', 'matchTime', 'team1Name', 'team2Name']),
+  makeObjectStoreNodeInit('match_end_object_store', 'Match End', 'match_end', ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score']),
+  makeObjectStoreNodeInit('match_start_object_store', 'Match Start', 'match_start', ['mapId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name']),
   makeObjectStoreNodeInit('mercy_rez_object_store', 'Mercy Rez', 'mercy_rez', ['mapId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility']),
   makeObjectStoreNodeInit('objective_captured_object_store', 'Objective Captured', 'objective_captured', [
     'mapId',
@@ -768,20 +768,23 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     'Ultimate Events',
     `
   SELECT
-    charged.mapId,
-    charged.playerName,
-    charged.playerTeam,
-    charged.playerHero,
-    charged.ultimateId,
-    charged.matchTime as ultimateChargedTime,
-    start.matchTime as ultimateStartTime,
-    end.matchTime as ultimateEndTime,
-    start.matchTime - charged.matchTime as ultimateHoldTime
-  FROM ? as charged
-  JOIN ? as start
-  ON charged.mapId = start.mapId AND charged.playerName = start.playerName AND charged.playerTeam = start.playerTeam AND charged.playerHero = start.playerHero AND charged.ultimateId = start.ultimateId AND charged.matchTime <= start.matchTime
-  JOIN ? as end
-  ON charged.mapId = end.mapId AND charged.playerName = end.playerName AND charged.playerTeam = end.playerTeam AND charged.playerHero = end.playerHero AND charged.ultimateId = end.ultimateId AND start.matchTime <= end.matchTime
+    ult_charged.mapId,
+    ult_charged.playerName,
+    ult_charged.playerTeam,
+    ult_charged.playerHero,
+    ult_charged.ultimateId,
+    ult_charged.matchTime as ultimateChargedTime,
+    ult_start.matchTime as ultimateStartTime,
+    ult_end.matchTime as ultimateEndTime,
+    ult_start.matchTime - ult_charged.matchTime as ultimateHoldTime
+  FROM ? as ult_charged
+  JOIN ? as ult_start
+  ON ult_charged.mapId = ult_start.mapId AND ult_charged.playerName = ult_start.playerName AND ult_charged.playerTeam = ult_start.playerTeam
+  AND ult_charged.playerHero = ult_start.playerHero AND ult_charged.ultimateId = ult_start.ultimateId AND ult_charged.matchTime <= ult_start.matchTime
+  JOIN ? as ult_end
+  ON ult_charged.mapId = ult_end.mapId AND ult_charged.playerName = ult_end.playerName AND ult_charged.playerTeam = ult_end.playerTeam
+  AND ult_charged.playerHero = ult_end.playerHero AND ult_charged.ultimateId = ult_end.ultimateId AND ult_start.matchTime <= ult_end.matchTime
+  ORDER BY ult_charged.mapId, ult_charged.playerName, ult_charged.matchTime
   `,
     ['ultimate_charged_object_store', 'ultimate_start_object_store', 'ultimate_end_object_store'],
     ['mapId', 'playerName', 'playerTeam', 'playerHero', 'ultimateId', 'ultimateChargedTime', 'ultimateStartTime', 'ultimateEndTime', 'ultimateHoldTime'],

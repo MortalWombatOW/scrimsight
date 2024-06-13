@@ -73,7 +73,7 @@ function DisplayNode({node}: DataNodeProps) {
       <CardContent>
         <Typography variant="h3">{node.getDisplayName()}</Typography>
         <Typography variant="body1">ID: {node.getName()}</Typography>
-        <Typography variant="body1">{node.getDescription()}</Typography>
+        <pre>{node.getDescription()}</pre>
 
         {node.isRunning() && <LinearProgress />}
 

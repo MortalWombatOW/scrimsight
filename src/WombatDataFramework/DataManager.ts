@@ -4,16 +4,21 @@ import {AlaSQLNode, AlaSQLNodeInit, DataNode, DataNodeName, FilterNode, FilterNo
 
 export class DataManager {
   private nodes: Map<DataNodeName, DataNode<any>>;
-  private changeCallback: () => void;
+  private globalCallbacks: Map<string, () => void>;
   private nodeCallbacks: Map<DataNodeName, () => void>;
 
   private columns: Map<string, DataColumn>;
 
   constructor(changeCallback: () => void) {
     this.nodes = new Map();
-    this.changeCallback = changeCallback;
+    this.globalCallbacks = new Map();
+    this.globalCallbacks.set('globalChange', changeCallback);
     this.nodeCallbacks = new Map();
     this.columns = new Map();
+  }
+
+  public registerGlobalCallback(callback: [string, () => void]): void {
+    this.globalCallbacks.set(callback[0], callback[1]);
   }
 
   public registerColumn(column: DataColumn): void {
@@ -69,6 +74,7 @@ export class DataManager {
       console.error(e);
     } finally {
       console.log(`Node ${name} finished, data:`, node.getOutput());
+      this.globalCallbacks.forEach((callback) => callback());
       const callback = this.nodeCallbacks.get(name);
       if (callback !== undefined) {
         console.log(`Executing callback for ${name}`);

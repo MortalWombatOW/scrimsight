@@ -1,7 +1,7 @@
 import {getData, storeObjectInDatabase} from '../lib/data/database';
 import alasql from 'alasql';
 import {DataColumn, DataColumnType} from './DataColumn';
-
+import {format} from 'sql-formatter';
 export type DataNodeName = string;
 
 export interface DataNodeExecutionInProgress {
@@ -15,10 +15,10 @@ export interface DataNodeExecution extends DataNodeExecutionInProgress {
   error?: string;
 }
 
-const startExecution = (): DataNodeExecutionInProgress => {
+const startExecution = (inputRows: number): DataNodeExecutionInProgress => {
   return {
     startTime: Date.now(),
-    inputRows: 0,
+    inputRows,
   };
 };
 
@@ -106,7 +106,7 @@ export abstract class DataNode<OutType extends object> {
       throw new Error('Execution already in progress');
     }
     this.setNeedsRun(false);
-    this.executionInProgress = startExecution();
+    this.executionInProgress = startExecution(sourceData?.length ?? 0);
     try {
       await this.runInner(sourceData);
       this.validateData();
@@ -145,7 +145,7 @@ export abstract class DataNode<OutType extends object> {
     for (const item of this.output) {
       for (const column of this.getColumns().map((column) => column.name)) {
         if (item[column] === undefined) {
-          throw new Error(`Column ${String(column)} is undefined for item ${item}`);
+          throw new Error(`Column ${String(column)} is undefined for item ${JSON.stringify(item)}`);
         }
       }
       for (const field in item) {
@@ -154,7 +154,7 @@ export abstract class DataNode<OutType extends object> {
           continue;
         }
         if (!this.columns.some((column) => column.name === field)) {
-          throw new Error(`Field ${field} is not defined in columns for item ${item}`);
+          throw new Error(`Field ${field} is not defined in columns for item ${JSON.stringify(item)}`);
         }
       }
     }
@@ -233,7 +233,7 @@ export class ObjectStoreNode<OutType extends object> extends DataNode<OutType> {
     return this.needsRun;
   }
   public hasOutput(): boolean {
-    return this.getOutput() !== undefined;
+    return this.getOutput() !== undefined && this.getOutput()!.length > 0;
   }
   public getDescription(): string {
     return `Reads data from the ${this.objectStore} object store.`;
@@ -271,10 +271,11 @@ export class AlaSQLNode<OutType extends object> extends DataNode<OutType> {
     this.sql = sql;
   }
   public hasOutput(): boolean {
-    return this.getOutput() !== undefined;
+    return this.getOutput() !== undefined && this.getOutput()!.length > 0;
   }
   public getDescription(): string {
-    return `Executes the following AlaSQL query: ${this.sql}`;
+    console.log('format', format(this.sql, {language: 'sql'}));
+    return `${format(this.sql, {language: 'sql'})}`;
   }
 }
 

@@ -11,11 +11,15 @@ function getStateColor(node: DataNode<any> | undefined) {
 
   if (node.isRunning()) {
     return '#5bc0de';
-  } else if (node.hasError()) {
-    return '#af684c';
-  } else {
-    return '#3c912b';
   }
+  if (node.hasError()) {
+    return '#af684c';
+  }
+  if (!node.hasOutput()) {
+    return '#999999';
+  }
+
+  return '#3c912b';
 }
 
 function getShape(node: DataNode<any> | undefined) {
@@ -27,8 +31,7 @@ function getLabel(node: DataNode<any> | undefined) {
     return 'undefined';
   }
   const lines: string[] = [];
-  lines.push(node.toString());
-  lines.push(node.getExecutionCount().toString());
+  lines.push(node.getDisplayName());
   return lines.join('\n');
 }
 

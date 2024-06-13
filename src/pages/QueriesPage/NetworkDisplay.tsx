@@ -14,10 +14,7 @@ class NetworkDisplay {
     this.edges = new DataSet([]);
   }
 
-  public initialize(
-    container: HTMLElement,
-    setSelectedNodeId: (node: string | null) => void,
-  ) {
+  public initialize(container: HTMLElement, setSelectedNodeId: (node: string | null) => void) {
     const options = {
       autoResize: true,
       height: '100%',
@@ -50,11 +47,7 @@ class NetworkDisplay {
         },
       },
     };
-    this.network = new Network(
-      container,
-      {nodes: this.nodes, edges: this.edges},
-      options,
-    );
+    this.network = new Network(container, {nodes: this.nodes, edges: this.edges}, options);
     this.network.on('click', (params) => {
       if (params.nodes.length > 0) {
         setSelectedNodeId(this.nodeIdToName.get(params.nodes[0]) || null);
@@ -70,14 +63,7 @@ class NetworkDisplay {
     return node.id;
   }
 
-  public setNode(
-    name: string,
-    stateColor: string,
-    shape: string,
-    label: string,
-    opacity: number,
-    size: number,
-  ) {
+  public setNode(name: string, stateColor: string, shape: string, label: string, opacity: number, size: number) {
     const existingNodeId = this.nodeIdFromName(name);
     if (existingNodeId !== undefined) {
       this.nodes.update({
@@ -113,9 +99,7 @@ class NetworkDisplay {
       return;
     }
 
-    const existingEdge =
-      this.edges.get().find((e) => e.from === fromId && e.to === toId) !==
-      undefined;
+    const existingEdge = this.edges.get().find((e) => e.from === fromId && e.to === toId) !== undefined;
 
     if (existingEdge) return;
 
