@@ -4,5 +4,7 @@
   "bracketSpacing": false,
   "jsxBracketSameLine": true,
   "trailingComma": "all",
-  "allowParens": "avoid"
+  "allowParens": "avoid",
+  "maxLineLength": 225,
+  "printWidth": 225
 }

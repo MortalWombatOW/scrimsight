@@ -1,11 +1,6 @@
 import React from 'react';
 import Home from '../pages/Home/Home';
-import MapPage from '../pages/MapPage/MapPage';
-import PlayerPage from '../pages/PlayerPage/PlayerPage';
 import SplashPage from '../pages/SplashPage/SplashPage';
-import {MapContextProvider} from '../pages/MapPage/context/MapContext';
-import {PlayerContextProvider} from '../pages/PlayerPage/context/PlayerContext';
-import {FilterContextProvider} from '../context/FilterContextProvider';
 import QueriesPage from '../pages/QueriesPage/QueriesPage';
 
 export interface ScrimsightRoute {
@@ -26,18 +21,16 @@ const routes: ScrimsightRoute[] = [
     component: Home,
     name: 'Maps',
   },
-  {
-    path: ['/map/:mapId'],
-    component: MapPage,
-    hidden: true,
-    contexts: [MapContextProvider, FilterContextProvider],
-  },
-  {
-    path: ['/player/:playerName'],
-    component: PlayerPage,
-    name: 'Players',
-    contexts: [PlayerContextProvider, FilterContextProvider],
-  },
+  // {
+  //   path: ['/map/:mapId'],
+  //   component: MapPage,
+  //   hidden: true,
+  // },
+  // {
+  //   path: ['/player/:playerName'],
+  //   component: PlayerPage,
+  //   name: 'Players',
+  // },
   {
     path: ['/queries'],
     component: QueriesPage,

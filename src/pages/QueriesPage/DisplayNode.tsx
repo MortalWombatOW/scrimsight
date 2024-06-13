@@ -1,31 +1,16 @@
 import React from 'react';
-import {
-  Card,
-  Typography,
-  Chip,
-  CardContent,
-  LinearProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from '@mui/material';
-import {
-  DataNode,
-  DataNodeMetadata,
-  DataColumn,
-} from '../../WombatDataFramework/DataTypes';
+import {Card, Typography, Chip, CardContent, LinearProgress, Table, TableBody, TableCell, TableHead, TableRow} from '@mui/material';
+import {DataNode} from '../../WombatDataFramework/DataNode';
 import './DisplayNode.scss';
+import {DataColumn} from '../../WombatDataFramework/DataColumn';
 
 interface DataNodeProps {
   node: DataNode<object>;
 }
 
 function DisplayNode({node}: DataNodeProps) {
-  const columns: DataColumn<object>[] = node.getColumns();
+  const columns: DataColumn[] = node.getColumns();
   const rows: object[] = node.getOutput() || [];
-  const metadata: DataNodeMetadata | undefined = node.getMetadata();
 
   // --- Functional Components ---
 
@@ -44,11 +29,11 @@ function DisplayNode({node}: DataNodeProps) {
         </TableRow>
       </TableHead>
       <TableBody>
-        {metadata!.executions.map((execution, index) => (
+        {node.getExecutions().map((execution, index) => (
           <TableRow key={index}>
-            <TableCell>{execution.getDuration()}</TableCell>
-            <TableCell>{execution.getInputRows()}</TableCell>
-            <TableCell>{execution.getOutputRows()}</TableCell>
+            <TableCell>{execution.endTime - execution.startTime}</TableCell>
+            <TableCell>{execution.inputRows}</TableCell>
+            <TableCell>{execution.outputRows}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -65,14 +50,7 @@ function DisplayNode({node}: DataNodeProps) {
         </TableRow>
         <TableRow>
           {columns.map((column, index) => (
-            <TableCell
-              key={index}
-              className={column.missingData ? 'missing-data' : ''}>
-              {column.name}{' '}
-              {column.missingData && (
-                <Chip label="Missing Data" color="secondary" />
-              )}
-            </TableCell>
+            <TableCell key={index}>{column.name} </TableCell>
           ))}
         </TableRow>
       </TableHead>
@@ -99,12 +77,8 @@ function DisplayNode({node}: DataNodeProps) {
 
         {node.isRunning() && <LinearProgress />}
 
-        {metadata && (
-          <div>
-            <Executions />
-            <QueryOutput />
-          </div>
-        )}
+        <Executions />
+        <QueryOutput />
 
         {node.hasError() && (
           <Typography color="error" variant="body2">

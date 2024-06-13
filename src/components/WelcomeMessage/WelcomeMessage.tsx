@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Typography,
-} from '@mui/material';
+import {Card, CardContent, CardActions, Button, Typography} from '@mui/material';
 import React from 'react';
 
 const WelcomeMessage = () => {
@@ -17,10 +11,8 @@ const WelcomeMessage = () => {
         <CardContent>
           <Typography variant="h5">Welcome to Scrimsight!</Typography>
           <Typography variant="body1">
-            Scrimsight is a tool for competive Overwatch teams to analyze their
-            scrims and improve their play. To get started, you can either
-            explore using example data, or create your own team and start
-            analyzing your own scrims.
+            Scrimsight is a tool for competive Overwatch teams to analyze their scrims and improve their play. To get started, you can either explore using example data, or create your own team and start analyzing your own
+            scrims.
           </Typography>
         </CardContent>
         <CardActions>

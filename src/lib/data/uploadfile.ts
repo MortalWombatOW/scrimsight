@@ -3,7 +3,7 @@ import {stringHash} from './../string';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
 import {DataManager} from '../../WombatDataFramework/DataManager';
-import {WriteNode} from '../../WombatDataFramework/DataTypes';
+import {WriteNode} from '../../WombatDataFramework/DataNode';
 
 // File Utilities
 const readFileAsync = (file: File): Promise<any> => {

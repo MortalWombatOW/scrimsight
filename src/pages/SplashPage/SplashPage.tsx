@@ -8,7 +8,6 @@ import SplashRow from './SplashRow';
 const SplashPage = () => {
   return (
     <Box component="div" style={{width: '100%'}}>
-      <Header />
       <ImageCard
         width="100%"
         src="/assets/splash.png"
@@ -41,11 +40,8 @@ const SplashPage = () => {
             Do you manage or coach a competitive Overwatch team?
           </Typography>
           <Typography variant="body1" style={{marginBottom: '20px'}}>
-            Scrimsight takes the guesswork out of analyzing your team's
-            performance. With detailed statistics and replay features, you can
-            quickly identify and communicate the issues that are holding your
-            team back and make better-informed decisions to supercharge your
-            team. Use Scrimsight to find the keys to victory for your team!
+            Scrimsight takes the guesswork out of analyzing your team's performance. With detailed statistics and replay features, you can quickly identify and communicate the issues that are holding your team back and make
+            better-informed decisions to supercharge your team. Use Scrimsight to find the keys to victory for your team!
           </Typography>
         </Box>
       </Box>
@@ -133,9 +129,7 @@ const SplashPage = () => {
           justifyContent: 'center',
           padding: '20px',
         }}>
-        <Typography variant="body1">
-          Terms of Service | Privacy Policy | © 2022 Andrew Gleeson
-        </Typography>
+        <Typography variant="body1">Terms of Service | Privacy Policy | © 2022 Andrew Gleeson</Typography>
       </Box>
     </Box>
   );

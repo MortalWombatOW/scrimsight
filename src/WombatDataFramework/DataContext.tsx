@@ -1,12 +1,25 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {DataManager} from './DataManager';
-import {NODES} from '../lib/data/NodeData';
+import {DATA_COLUMNS} from './DataColumn';
+import {WRITE_NODES, OBJECT_STORE_NODES, ALASQL_NODES} from './DataNodeDefinitions';
 
 const DataContext = React.createContext<DataManager | null>(null);
 
 const DataProvider = ({children, globalTick, updateGlobalCallback}) => {
   const dataManager = useState(() => new DataManager(updateGlobalCallback))[0];
-  dataManager.setNodes(NODES);
+  for (const column of DATA_COLUMNS) {
+    dataManager.registerColumn(column);
+  }
+  for (const node of WRITE_NODES) {
+    dataManager.addWriteNode(node);
+  }
+  for (const node of OBJECT_STORE_NODES) {
+    dataManager.addObjectStoreNode(node);
+  }
+  for (const node of ALASQL_NODES) {
+    dataManager.addAlaSQLNode(node);
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       await dataManager.process();
@@ -17,9 +30,7 @@ const DataProvider = ({children, globalTick, updateGlobalCallback}) => {
 
   console.log('Rendering data, tick = ', globalTick);
 
-  return (
-    <DataContext.Provider value={dataManager}>{children}</DataContext.Provider>
-  );
+  return <DataContext.Provider value={dataManager}>{children}</DataContext.Provider>;
 };
 
 const useDataManager = () => {

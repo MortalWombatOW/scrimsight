@@ -16,23 +16,9 @@ let globalDB: IDBDatabase | undefined;
 
 const onCompleted = (e) => {
   const db = e.target.result;
-  db.createObjectStore('maps', {keyPath: 'mapId'}).createIndex(
-    'mapId',
-    'mapId',
-    {
-      unique: true,
-    },
-  );
-
-  db.createObjectStore('teams', {
-    keyPath: 'id',
-    autoIncrement: true,
-  }).createIndex('id', 'id', {unique: true});
-
-  db.createObjectStore('vods', {
-    keyPath: 'id',
-    autoIncrement: true,
-  }).createIndex('mapId', 'mapId', {unique: false});
+  db.createObjectStore('maps', {keyPath: 'mapId'}).createIndex('mapId', 'mapId', {
+    unique: true,
+  });
 
   Object.keys(LOG_SPEC).forEach((key) => {
     db.createObjectStore(key, {
@@ -78,10 +64,7 @@ export const mapExists = async (mapId) => {
   });
 };
 
-export function storeObjectInDatabase<T>(
-  object: T,
-  storeName: string,
-): Promise<void> {
+export function storeObjectInDatabase<T>(object: T, storeName: string): Promise<void> {
   console.log('storeObjectInDatabase', object);
 
   const db = getDB();
@@ -105,9 +88,7 @@ export function getData(storeName: string): Promise<object[]> {
   }
 
   return new Promise((resolve, reject) => {
-    const store = db
-      .transaction([storeName], 'readonly')
-      .objectStore(storeName);
+    const store = db.transaction([storeName], 'readonly').objectStore(storeName);
     const req = store.getAll();
     req.onsuccess = () => {
       resolve(req.result);

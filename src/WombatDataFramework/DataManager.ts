@@ -1,15 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {DataNode, DataNodeName} from './DataTypes';
+import {DataColumn} from './DataColumn';
+import {AlaSQLNode, AlaSQLNodeInit, DataNode, DataNodeName, FilterNode, FilterNodeInit, ObjectStoreNode, ObjectStoreNodeInit, WriteNode, WriteNodeInit} from './DataNode';
 
 export class DataManager {
   private nodes: Map<DataNodeName, DataNode<any>>;
   private changeCallback: () => void;
   private nodeCallbacks: Map<DataNodeName, () => void>;
 
+  private columns: Map<string, DataColumn>;
+
   constructor(changeCallback: () => void) {
     this.nodes = new Map();
     this.changeCallback = changeCallback;
     this.nodeCallbacks = new Map();
+    this.columns = new Map();
+  }
+
+  public registerColumn(column: DataColumn): void {
+    if (this.columns.has(column.name)) {
+      throw new Error(`Column ${column.name} already exists`);
+    }
+    this.columns.set(column.name, column);
+  }
+
+  public getColumn(name: string): DataColumn {
+    const column = this.columns.get(name);
+    if (!column) {
+      throw new Error(`Column ${name} does not exist`);
+    }
+    return column;
   }
 
   public nodesDependingOn(name: DataNodeName): DataNodeName[] {
@@ -50,15 +69,15 @@ export class DataManager {
       console.error(e);
     } finally {
       console.log(`Node ${name} finished, data:`, node.getOutput());
-      // console.groupEnd();
-      if (this.nodeCallbacks.has(name)) {
+      const callback = this.nodeCallbacks.get(name);
+      if (callback !== undefined) {
         console.log(`Executing callback for ${name}`);
-        this.nodeCallbacks.get(name)!();
+        callback();
       }
     }
   }
 
-  checkForCycles(): void {
+  private checkForCycles(): void {
     const visited: DataNodeName[] = [];
     const stack: DataNodeName[] = [];
 
@@ -71,11 +90,7 @@ export class DataManager {
     }
   }
 
-  isCyclic(
-    v: DataNodeName,
-    visited: DataNodeName[],
-    stack: DataNodeName[],
-  ): boolean {
+  private isCyclic(v: DataNodeName, visited: DataNodeName[], stack: DataNodeName[]): boolean {
     if (stack.includes(v)) {
       return true;
     }
@@ -98,7 +113,34 @@ export class DataManager {
     return false;
   }
 
-  setNode(node: DataNode<any>): void {
+  public addWriteNode(init: WriteNodeInit): void {
+    this.setNode(new WriteNode(init.name, init.displayName, init.objectStore));
+  }
+
+  public addObjectStoreNode(init: ObjectStoreNodeInit): void {
+    this.setNode(
+      new ObjectStoreNode(
+        init.name,
+        init.displayName,
+        init.objectStore,
+        init.columnNames.map((name) => this.getColumn(name)),
+      ),
+    );
+  }
+
+  public addAlaSQLNode(init: AlaSQLNodeInit): void {
+    this.setNode(
+      new AlaSQLNode(
+        init.name,
+        init.displayName,
+        init.sql,
+        init.sources,
+        init.columnNames.map((name) => this.getColumn(name)),
+      ),
+    );
+  }
+
+  private setNode(node: DataNode<any>): void {
     if (this.nodes.has(node.getName())) {
       console.log(`Node ${node.getName()} already exists`);
       return;
@@ -108,33 +150,11 @@ export class DataManager {
     this.nodes.set(node.getName(), node);
   }
 
-  setNodes(nodes: DataNode<any>[]): void {
-    for (const node of nodes) {
-      this.setNode(node);
-    }
-  }
-
-  addNodeCallback(name: DataNodeName, callback: () => void): void {
+  public addNodeCallback(name: DataNodeName, callback: () => void): void {
     this.nodeCallbacks.set(name, callback);
   }
 
-  getNodeOrDie(name: DataNodeName): DataNode<any> {
-    const node = this.nodes.get(name);
-    if (!node) {
-      throw new Error(`Node ${name} does not exist`);
-    }
-    return node;
-  }
-
-  getNextNodeToExecute(): DataNode<any> | undefined {
-    const nodes = this.getNodesToExecute();
-    if (nodes.length === 0) {
-      return undefined;
-    }
-    return nodes[0];
-  }
-
-  getNodesToExecute(): DataNode<any>[] {
+  public getNodesToExecute(): DataNode<any>[] {
     const visited: string[] = [];
     const stack: string[] = [];
 
@@ -144,13 +164,7 @@ export class DataManager {
       }
     }
 
-    return stack
-      .filter(
-        (name) =>
-          this.getNodeOrDie(name).canRun() &&
-          !this.getNodeOrDie(name).isRunning(),
-      )
-      .map((name) => this.getNodeOrDie(name));
+    return stack.filter((name) => this.getNodeOrDie(name).canRun() && !this.getNodeOrDie(name).isRunning()).map((name) => this.getNodeOrDie(name));
   }
 
   private topoSort(v: string, visited: string[], stack: string[]): void {
@@ -166,7 +180,7 @@ export class DataManager {
     stack.push(v);
   }
 
-  async process(): Promise<void> {
+  public async process(): Promise<void> {
     let nodes = this.getNodesToExecute();
     while (nodes.length > 0) {
       for (const node of nodes) {
@@ -176,14 +190,22 @@ export class DataManager {
     }
   }
 
-  markNode(name: DataNodeName): void {
+  public markNode(name: DataNodeName): void {
     const node = this.getNodeOrDie(name);
     node.setNeedsRun(true);
     const nodes = this.nodesDependingOn(name);
     nodes.forEach((node) => this.markNode(node));
   }
 
-  getNodeOutputOrDie(name: DataNodeName): any {
+  public getNodeOrDie(name: DataNodeName): DataNode<any> {
+    const node = this.nodes.get(name);
+    if (!node) {
+      throw new Error(`Node ${name} does not exist`);
+    }
+    return node;
+  }
+
+  public getNodeOutputOrDie(name: DataNodeName): any {
     const node = this.getNodeOrDie(name);
     if (!node.hasOutput()) {
       throw new Error(`Node ${name} has no output`);
@@ -191,7 +213,7 @@ export class DataManager {
     return node.getOutput();
   }
 
-  getNodes(): DataNode<any>[] {
-    return [...this.nodes.values()];
+  public getNodeNames(): DataNodeName[] {
+    return [...this.nodes.keys()];
   }
 }

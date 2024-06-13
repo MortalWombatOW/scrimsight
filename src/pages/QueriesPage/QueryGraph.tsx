@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {useDataManager} from '../../WombatDataFramework/DataContext';
-import {DataNode} from '../../WombatDataFramework/DataTypes';
+import {DataNode} from '../../WombatDataFramework/DataNode';
 import NetworkDisplay from './NetworkDisplay';
 import {DataManager} from '../../WombatDataFramework/DataManager';
 
@@ -28,7 +28,7 @@ function getLabel(node: DataNode<any> | undefined) {
   }
   const lines: string[] = [];
   lines.push(node.toString());
-  lines.push(node.getMetadata()?.executions?.length.toString() ?? '0');
+  lines.push(node.getExecutionCount().toString());
   return lines.join('\n');
 }
 
@@ -57,21 +57,10 @@ function getSize(node: DataNode<any> | undefined) {
   return Math.min(30, 10 + Math.log(node.getOutput()!.length));
 }
 
-function updateNode(
-  nodeName: string,
-  networkDisplay: NetworkDisplay,
-  dataManager: DataManager,
-) {
+function updateNode(nodeName: string, networkDisplay: NetworkDisplay, dataManager: DataManager) {
   const node = dataManager.getNodeOrDie(nodeName);
 
-  networkDisplay.setNode(
-    nodeName,
-    getStateColor(node),
-    getShape(node),
-    getLabel(node),
-    getOpacity(node),
-    getSize(node),
-  );
+  networkDisplay.setNode(nodeName, getStateColor(node), getShape(node), getLabel(node), getOpacity(node), getSize(node));
   dataManager.nodesDependingOn(nodeName).forEach((fromName) => {
     networkDisplay.setEdge(nodeName, fromName);
   });
@@ -89,7 +78,7 @@ const QueryGraph = ({width, height, setSelectedNode}: QueryGraphProps) => {
   const dataManager = useDataManager();
   const networkDisplay = useRef(new NetworkDisplay());
 
-  const nodeNames = dataManager.getNodes().map((node) => node.getName());
+  const nodeNames = dataManager.getNodeNames();
   console.log('Node names', nodeNames);
 
   useEffect(() => {

@@ -1,21 +1,6 @@
 import React from 'react';
-import {
-  Legend,
-  ResponsiveContainer,
-  ScatterChart,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
-const TimeChartComponent = ({
-  height,
-  width,
-  data,
-}: {
-  height: number;
-  width: number;
-  data: object[];
-}) => {
+import {Legend, ResponsiveContainer, ScatterChart, Tooltip, XAxis, YAxis} from 'recharts';
+const TimeChartComponent = ({height, width, data}: {height: number; width: number; data: object[]}) => {
   return (
     <div>
       <ResponsiveContainer width="100%" height={height}>

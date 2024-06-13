@@ -1,18 +1,7 @@
 import React from 'react';
 import {BarChart, Legend, ResponsiveContainer, Tooltip, XAxis} from 'recharts';
 
-const BarChartComponent = ({
-  height,
-  width,
-  data,
-  setSortBy,
-}: {
-  height: number;
-  width: number;
-  data: object[];
-  sortBy: string;
-  setSortBy: (sortBy: string) => void;
-}) => {
+const BarChartComponent = ({height, width, data, setSortBy}: {height: number; width: number; data: object[]; sortBy: string; setSortBy: (sortBy: string) => void}) => {
   console.log('BarChartComponent');
   return (
     <div>
@@ -40,12 +29,7 @@ const BarChartComponent = ({
               return value.toLocaleString();
             }}
           />
-          <Legend
-            align="right"
-            layout="vertical"
-            verticalAlign="top"
-            onClick={(e) => setSortBy(e.dataKey)}
-          />
+          <Legend align="right" layout="vertical" verticalAlign="top" onClick={(e) => setSortBy(e.dataKey)} />
           {/* {metric.values.map((value) => (
             <Bar
               key={value}

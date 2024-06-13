@@ -1,30 +1,18 @@
 import {Location} from 'history';
 import React, {useMemo} from 'react';
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
-import {createTheme, CssBaseline, ThemeProvider} from '@mui/material';
+import {BrowserRouter, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
+import {CssBaseline, ThemeProvider, createTheme} from '@mui/material';
 import {QueryParamProvider} from 'use-query-params';
 import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
 import routes, {ScrimsightRoute} from './lib/routes';
 import {themeDef} from './theme';
 
 import {DataProvider} from './WombatDataFramework/DataContext';
-import {generateThemeColor} from './lib/palette';
-import {TeamContextProvider} from './context/TeamContextProvider';
-import {getColorgorical} from './lib/color';
-import {TeamContext} from './context/TeamContext';
 import Header from './components/Header/Header';
+import {getColorgorical} from './lib/color';
+import {generateThemeColor} from './lib/palette';
 
-const ContextualizedRoute = ({
-  route,
-}: {
-  route: ScrimsightRoute;
-}): JSX.Element => {
+const ContextualizedRoute = ({route}: {route: ScrimsightRoute}): JSX.Element => {
   let el: JSX.Element = React.createElement(route.component, {});
   for (const context of route.contexts || []) {
     el = React.createElement(context, undefined, el);
@@ -34,36 +22,21 @@ const ContextualizedRoute = ({
 };
 
 function ThemedRoutes(props) {
-  const {team1Name, team2Name} = React.useContext(TeamContext);
-
-  const theme = useMemo(
-    () =>
-      createTheme({
-        ...themeDef,
-        palette: {
-          ...themeDef.palette,
-          team1: generateThemeColor(getColorgorical(team1Name)),
-          team2: generateThemeColor(getColorgorical(team2Name)),
-        },
-      }),
-    [team1Name, team2Name],
-  );
+  const theme = createTheme({
+    ...themeDef,
+    palette: {
+      ...themeDef.palette,
+      team1: generateThemeColor(getColorgorical('Team 1')),
+      team2: generateThemeColor(getColorgorical('Team 2')),
+    },
+  });
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Header />
       <Routes>
-        {routes.map((route) =>
-          route.path.map((path, i) => (
-            <Route
-              key={path}
-              path={path}
-              index={(i === (0 as unknown)) as false}
-              element={<ContextualizedRoute route={route} />}
-            />
-          )),
-        )}
+        {routes.map((route) => route.path.map((path, i) => <Route key={path} path={path} index={(i === (0 as unknown)) as false} element={<ContextualizedRoute route={route} />} />))}
 
         {/* <Route path="/map/:mapId" element={<Map />} />
       {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
@@ -83,13 +56,9 @@ const App = () => {
     <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
       <BrowserRouter basename="/">
         <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <TeamContextProvider>
-            <DataProvider
-              globalTick={tick}
-              updateGlobalCallback={incrementTick}>
-              <ThemedRoutes />
-            </DataProvider>
-          </TeamContextProvider>
+          <DataProvider globalTick={tick} updateGlobalCallback={incrementTick}>
+            <ThemedRoutes />
+          </DataProvider>
         </QueryParamProvider>
       </BrowserRouter>
     </div>
