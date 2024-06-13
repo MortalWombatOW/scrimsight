@@ -25,6 +25,8 @@ class NetworkDisplay {
           enabled: true,
           direction: 'UD',
           sortMethod: 'directed',
+          blockShifting: true,
+          shakeTowards: 'roots',
         },
       },
       physics: {
@@ -33,6 +35,7 @@ class NetworkDisplay {
         // },
         hierarchicalRepulsion: {
           avoidOverlap: 1,
+          centralGravity: 0.5,
         },
       },
       nodes: {

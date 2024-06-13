@@ -101,12 +101,14 @@ export abstract class DataNode<OutType extends object> {
     this.needsRun = needsRun;
   }
 
-  public async run(sourceData?: any[]): Promise<void> {
+  public async run(sourceData?: any[][]): Promise<void> {
     if (this.executionInProgress !== undefined) {
       throw new Error('Execution already in progress');
     }
     this.setNeedsRun(false);
-    this.executionInProgress = startExecution(sourceData?.length ?? 0);
+    const sourceDataLength = sourceData ? sourceData.reduce((acc, data) => acc + data.length, 0) : 0;
+    this.executionInProgress = startExecution(sourceDataLength);
+    console.log(`Running ${this.name}`, sourceData);
     try {
       await this.runInner(sourceData);
       this.validateData();

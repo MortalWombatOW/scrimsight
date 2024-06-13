@@ -59,13 +59,10 @@ export class DataManager {
     }
     const dependencies = node.getDependencies();
     const sourceData = dependencies.map((dep) => {
-      if (!this.nodes.get(dep)?.hasOutput()) {
-        throw new Error(`Dependency ${dep} is empty, skipping ${name}`);
-      }
       if (this.nodes.get(dep)?.isRunning()) {
         throw new Error(`Dependency ${dep} is running, skipping ${name}`);
       }
-      return this.nodes.get(dep)?.getOutput();
+      return this.nodes.get(dep)?.getOutput() || [];
     });
 
     try {

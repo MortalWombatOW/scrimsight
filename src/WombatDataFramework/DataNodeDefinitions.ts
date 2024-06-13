@@ -789,6 +789,245 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     ['ultimate_charged_object_store', 'ultimate_start_object_store', 'ultimate_end_object_store'],
     ['mapId', 'playerName', 'playerTeam', 'playerHero', 'ultimateId', 'ultimateChargedTime', 'ultimateStartTime', 'ultimateEndTime', 'ultimateHoldTime'],
   ),
+  makeAlaSQLNodeInit(
+    'map_times',
+    'Map Times',
+    `SELECT
+      match_start.mapId,
+      match_start.matchTime as mapStartTime,
+      match_end.matchTime as mapEndTime,
+      SUM(round.roundDuration) as mapDuration
+    FROM ? as match_start
+    JOIN ? as match_end
+    ON match_start.mapId = match_end.mapId
+    JOIN ? as round
+    ON match_start.mapId = round.mapId
+    GROUP BY match_start.mapId, match_start.matchTime, match_end.matchTime
+    ORDER BY match_start.mapId, match_start.matchTime
+    `,
+    ['match_start_object_store', 'match_end_object_store', 'round_times'],
+    ['mapId', 'mapStartTime', 'mapEndTime', 'mapDuration'],
+  ),
+  makeAlaSQLNodeInit(
+    'round_times',
+    'Round Times',
+    `SELECT
+      round_start.mapId,
+      round_start.roundNumber,
+      round_start.matchTime as roundStartTime,
+      setup_complete.matchTime as roundSetupCompleteTime,
+      round_end.matchTime as roundEndTime,
+      round_end.matchTime - setup_complete.matchTime as roundDuration
+    FROM ? as round_start
+    JOIN ? as round_end
+    ON round_start.mapId = round_end.mapId AND round_start.roundNumber = round_end.roundNumber
+    JOIN ? as setup_complete
+    ON round_start.mapId = setup_complete.mapId AND round_start.roundNumber = setup_complete.roundNumber
+    ORDER BY round_start.mapId, round_start.roundNumber
+    `,
+    ['round_start_object_store', 'round_end_object_store', 'setup_complete_object_store'],
+    ['mapId', 'roundNumber', 'roundStartTime', 'roundEndTime', 'roundDuration', 'roundSetupCompleteTime'],
+  ),
+  makeAlaSQLNodeInit(
+    'player_events',
+    'Player Events',
+    `
+    SELECT * FROM (
+    SELECT
+      defensive_assist.mapId,
+      defensive_assist.playerName,
+      defensive_assist.matchTime as playerEventTime,
+      'Defensive Assist' as playerEventType
+    FROM ? as defensive_assist
+    UNION ALL
+    SELECT
+      offensive_assist.mapId,
+      offensive_assist.playerName,
+      offensive_assist.matchTime as playerEventTime,
+      'Offensive Assist' as playerEventType
+    FROM ? as offensive_assist
+    UNION ALL
+    SELECT
+      echo_duplicate_start.mapId,
+      echo_duplicate_start.playerName,
+      echo_duplicate_start.matchTime as playerEventTime,
+      'Duplicate Start' as playerEventType
+    FROM ? as echo_duplicate_start
+    UNION ALL
+    SELECT
+      echo_duplicate_end.mapId,
+      echo_duplicate_end.playerName,
+      echo_duplicate_end.matchTime as playerEventTime,
+      'Duplicate End' as playerEventType
+    FROM ? as echo_duplicate_end
+    UNION ALL
+    SELECT
+      hero_spawn.mapId,
+      hero_spawn.playerName,
+      hero_spawn.matchTime as playerEventTime,
+      'Spawn' as playerEventType
+    FROM ? as hero_spawn
+    UNION ALL
+    SELECT
+      hero_swap.mapId,
+      hero_swap.playerName,
+      hero_swap.matchTime as playerEventTime,
+      'Swap' as playerEventType
+    FROM ? as hero_swap
+    UNION ALL
+    SELECT
+      ultimate_charged.mapId,
+      ultimate_charged.playerName,
+      ultimate_charged.matchTime as playerEventTime,
+      'Ultimate Charged' as playerEventType
+    FROM ? as ultimate_charged
+    UNION ALL
+    SELECT
+      ultimate_start.mapId,
+      ultimate_start.playerName,
+      ultimate_start.matchTime as playerEventTime,
+      'Ultimate Start' as playerEventType
+    FROM ? as ultimate_start
+    UNION ALL
+    SELECT
+      ultimate_end.mapId,
+      ultimate_end.playerName,
+      ultimate_end.matchTime as playerEventTime,
+      'Ultimate End' as playerEventType
+    FROM ? as ultimate_end
+    UNION ALL
+    SELECT
+      ability_1_used.mapId,
+      ability_1_used.playerName,
+      ability_1_used.matchTime as playerEventTime,
+      'Ability 1 Used' as playerEventType
+    FROM ? as ability_1_used
+    UNION ALL
+    SELECT
+      ability_2_used.mapId,
+      ability_2_used.playerName,
+      ability_2_used.matchTime as playerEventTime,
+      'Ability 2 Used' as playerEventType
+    FROM ? as ability_2_used
+    )
+    ORDER BY mapId, playerName, playerEventTime
+    `,
+    [
+      'defensive_assist_object_store',
+      'offensive_assist_object_store',
+      'echo_duplicate_start_object_store',
+      'echo_duplicate_end_object_store',
+      'hero_spawn_object_store',
+      'hero_swap_object_store',
+      'ultimate_charged_object_store',
+      'ultimate_start_object_store',
+      'ultimate_end_object_store',
+      'ability_1_used_object_store',
+      'ability_2_used_object_store',
+    ],
+    ['mapId', 'playerName', 'playerEventTime', 'playerEventType'],
+  ),
+  makeAlaSQLNodeInit(
+    'player_interaction_events',
+    'Player Interaction Events',
+    `
+    SELECT * FROM (
+      SELECT
+        mercy_rez.mapId,
+        mercy_rez.revivedName as playerName,
+        mercy_rez.mercyName as otherPlayerName,
+        mercy_rez.matchTime as playerInteractionEventTime,
+        'Resurrected' as playerInteractionEventType
+      FROM ? as mercy_rez
+      UNION ALL
+      SELECT
+        mercy_rez.mapId,
+        mercy_rez.mercyName as playerName,
+        mercy_rez.revivedName as otherPlayerName,
+        mercy_rez.matchTime as playerInteractionEventTime,
+        'Resurrected Player' as playerInteractionEventType
+      FROM ? as mercy_rez
+      UNION ALL
+      SELECT
+        dva_demech.mapId,
+        dva_demech.victimName as playerName,
+        dva_demech.attackerName as otherPlayerName,
+        dva_demech.matchTime as playerInteractionEventTime,
+        'Demeched' as playerInteractionEventType
+      FROM ? as dva_demech
+      UNION ALL
+      SELECT
+        dva_remech.mapId,
+        dva_remech.playerName as playerName,
+        dva_remech.playerName as otherPlayerName,
+        dva_remech.matchTime as playerInteractionEventTime,
+        'Remeched' as playerInteractionEventType
+      FROM ? as dva_remech
+      UNION ALL
+      SELECT
+        kill.mapId,
+        kill.attackerName as playerName,
+        kill.victimName as otherPlayerName,
+        kill.matchTime as playerInteractionEventTime,
+        'Killed player' as playerInteractionEventType
+      FROM ? as kill
+      UNION ALL
+      SELECT
+        kill.mapId,
+        kill.victimName as playerName,
+        kill.attackerName as otherPlayerName,
+        kill.matchTime as playerInteractionEventTime,
+        'Died' as playerInteractionEventType
+      FROM ? as kill
+      UNION ALL
+      SELECT
+        damage.mapId,
+        damage.attackerName as playerName,
+        damage.victimName as otherPlayerName,
+        damage.matchTime as playerInteractionEventTime,
+        'Dealt Damage' as playerInteractionEventType
+      FROM ? as damage
+      UNION ALL
+      SELECT
+        damage.mapId,
+        damage.victimName as playerName,
+        damage.attackerName as otherPlayerName,
+        damage.matchTime as playerInteractionEventTime,
+        'Recieved Damaged' as playerInteractionEventType
+      FROM ? as damage
+      UNION ALL
+      SELECT
+        healing.mapId,
+        healing.healerName as playerName,
+        healing.healeeName as otherPlayerName,
+        healing.matchTime as playerInteractionEventTime,
+        'Dealt Healing' as playerInteractionEventType
+      FROM ? as healing
+      UNION ALL
+      SELECT
+        healing.mapId,
+        healing.healeeName as playerName,
+        healing.healerName as otherPlayerName,
+        healing.matchTime as playerInteractionEventTime,
+        'Recieved Healing' as playerInteractionEventType
+      FROM ? as healing
+    )
+    ORDER BY mapId, playerName, playerInteractionEventTime
+    `,
+    [
+      'mercy_rez_object_store',
+      'mercy_rez_object_store',
+      'dva_demech_object_store',
+      'dva_remech_object_store',
+      'kill_object_store',
+      'kill_object_store',
+      'damage_object_store',
+      'damage_object_store',
+      'healing_object_store',
+      'healing_object_store',
+    ],
+    ['mapId', 'playerName', 'otherPlayerName', 'playerInteractionEventTime', 'playerInteractionEventType'],
+  ),
 ];
 
 // interface MapTeams {
