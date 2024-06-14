@@ -5,7 +5,6 @@ import Header from './../../components/Header/Header';
 const Home = () => {
   return (
     <div style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
-      <Header />
       <HomeDashboard />
     </div>
   );

@@ -2,7 +2,7 @@ import {useEffect, useState, useContext} from 'react';
 import {DataContext} from '../WombatDataFramework/DataContext'; // Make sure to import GraphContext
 import {DataNode, DataNodeName} from '../WombatDataFramework/DataNode';
 
-export const useDataNode = <T extends object>(nodeName: DataNodeName): DataNode<T> => {
+export const useDataNode = <T extends object>(nodeName: DataNodeName): DataNode<T> | undefined => {
   const dataManager = useContext(DataContext);
 
   const [tick, setTick] = useState(0);
@@ -16,11 +16,15 @@ export const useDataNode = <T extends object>(nodeName: DataNodeName): DataNode<
   });
 
   console.log('useDataNode', nodeName);
-  return dataManager.getNodeOrDie(nodeName);
+  return dataManager.getNode(nodeName);
 };
 
 export const useDataNodeOutput = <T extends object>(nodeName: DataNodeName, filters: object = {}): T[] => {
   const node = useDataNode<T>(nodeName);
+
+  if (!node) {
+    return [];
+  }
 
   if (Object.keys(filters).length == 0 || !node.getOutput()) {
     return node.getOutput() || [];

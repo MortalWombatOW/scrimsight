@@ -1,6 +1,6 @@
-export type DataColumnTypeInput = 'string' | 'number' | 'boolean' | 'list of strings';
+export type DataColumnTypeInput = 'string' | 'number' | 'boolean';
 
-export type DataColumnType = string | number | boolean | string[];
+export type DataColumnType = string | number | boolean;
 
 export type DataColumnUnits = 'none' | 's' | 'hp' | 'ult%' | 'cap%' | 'acc%' | 'count';
 

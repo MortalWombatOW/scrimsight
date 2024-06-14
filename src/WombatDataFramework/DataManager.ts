@@ -200,6 +200,10 @@ export class DataManager {
     nodes.forEach((node) => this.markNode(node));
   }
 
+  public getNode(name: DataNodeName): DataNode<any> | undefined {
+    return this.nodes.get(name);
+  }
+
   public getNodeOrDie(name: DataNodeName): DataNode<any> {
     const node = this.nodes.get(name);
     if (!node) {
