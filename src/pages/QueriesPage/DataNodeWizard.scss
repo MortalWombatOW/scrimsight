@@ -1,0 +1,19 @@
+.shared-column.MuiTableCell-body {
+  font-weight: bold;
+}
+
+.data-node-selector {
+  margin: 10px 0;
+
+  // .MuiFormLabel-root {
+  //   left: 10px;
+  // }
+
+  .MuiOutlinedInput-root {
+    margin-left: 0;
+  }
+
+  .data-node-selector-input>.MuiInputBase-root {
+    height: fit-content;
+  }
+}

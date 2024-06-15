@@ -44,6 +44,7 @@ export interface DataNodeInit {
 }
 
 export abstract class DataNode<OutType extends object> {
+  private type: 'WriteNode' | 'ObjectStoreNode' | 'AlaSQLNode' | 'FilterNode';
   protected name: DataNodeName;
   protected displayName: string;
   protected columns: DataColumn[];
@@ -52,10 +53,11 @@ export abstract class DataNode<OutType extends object> {
   protected executions: DataNodeExecution[] = [];
   protected needsRun = true;
 
-  constructor(name: DataNodeName, displayName: string, columns: DataColumn[]) {
+  constructor(name: DataNodeName, displayName: string, columns: DataColumn[], type: 'WriteNode' | 'ObjectStoreNode' | 'AlaSQLNode' | 'FilterNode') {
     this.name = name;
     this.displayName = displayName;
     this.columns = columns;
+    this.type = type;
   }
 
   public getName(): DataNodeName {
@@ -64,6 +66,10 @@ export abstract class DataNode<OutType extends object> {
 
   public getDisplayName(): string {
     return this.displayName;
+  }
+
+  public getType(): 'WriteNode' | 'ObjectStoreNode' | 'AlaSQLNode' | 'FilterNode' {
+    return this.type;
   }
 
   public getColumns(): DataColumn[] {
@@ -172,7 +178,7 @@ export class WriteNode<Type extends object> extends DataNode<Record<string, neve
   private data: Type[] = [];
   private objectStore: string;
   constructor(name: DataNodeName, displayName: string, objectStore: string) {
-    super(name, displayName, []);
+    super(name, displayName, [], 'WriteNode');
     this.objectStore = objectStore;
   }
 
@@ -214,7 +220,7 @@ export class ObjectStoreNode<OutType extends object> extends DataNode<OutType> {
   private objectStore: string;
 
   constructor(name: DataNodeName, displayName: string, objectStore: string, columns: DataColumn[]) {
-    super(name, displayName, columns);
+    super(name, displayName, columns, 'ObjectStoreNode');
     this.objectStore = objectStore;
   }
 
@@ -252,7 +258,7 @@ export class AlaSQLNode<OutType extends object> extends DataNode<OutType> {
   private sql: string;
   private sources: DataNodeName[];
   constructor(name: DataNodeName, displayName: string, sql: string, sources: DataNodeName[], columns: DataColumn[]) {
-    super(name, displayName, columns);
+    super(name, displayName, columns, 'AlaSQLNode');
     this.sql = sql;
     this.sources = sources;
   }
@@ -288,12 +294,12 @@ export interface FilterNodeInit extends DataNodeInit {
 }
 
 export class FilterNode<T extends object> extends DataNode<T> {
-  private filterKey: keyof T;
+  private filterKey: string;
   private filterValue: DataColumnType;
   private source: DataNodeName;
 
-  constructor(name: DataNodeName, displayName: string, filterKey: keyof T, filterValue: DataColumnType, source: DataNodeName, columns: DataColumn[]) {
-    super(name, displayName, columns);
+  constructor(name: DataNodeName, displayName: string, filterKey: string, filterValue: DataColumnType, source: DataNodeName, columns: DataColumn[]) {
+    super(name, displayName, columns, 'FilterNode');
     this.filterKey = filterKey;
     this.filterValue = filterValue;
     this.source = source;

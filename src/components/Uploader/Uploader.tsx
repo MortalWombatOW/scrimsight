@@ -4,16 +4,12 @@ import {Button} from '@mui/material';
 import UploadProgressModal from './UploadProgressModal';
 import {FileUpload} from 'lib/data/types';
 import {uploadFile} from 'lib/data/uploadfile';
-import {DataManager} from '../../WombatDataFramework/DataManager';
+import DataManager from '../../WombatDataFramework/DataManager';
 import {useDataManager} from '../../WombatDataFramework/DataContext';
 
 interface UploaderProps {
   refreshCallback?: () => void;
-  uploadFileHandler?: (
-    fileUpload: FileUpload,
-    dataManager: DataManager,
-    cb: (percent: number) => void,
-  ) => Promise<void>;
+  uploadFileHandler?: (fileUpload: FileUpload, dataManager: DataManager, cb: (percent: number) => void) => Promise<void>;
 }
 
 const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
@@ -32,11 +28,7 @@ const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
   const startFileUploads = async (fileUploads: FileUpload[]) => {
     setFiles((files) => [...files, ...fileUploads]);
     for (const fileUpload of fileUploads) {
-      await uploadFileHandler(
-        fileUpload,
-        dataManager,
-        handleFilePerChange(fileUpload.fileName),
-      );
+      await uploadFileHandler(fileUpload, dataManager, handleFilePerChange(fileUpload.fileName));
     }
   };
 
@@ -50,20 +42,14 @@ const Uploader: React.FC<UploaderProps> = ({
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const dataManager = useDataManager();
-  const {files, filePercents, startFileUploads} = useFileUpload(
-    uploadFileHandler,
-    dataManager,
-    refreshCallback,
-  );
+  const {files, filePercents, startFileUploads} = useFileUpload(uploadFileHandler, dataManager, refreshCallback);
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    const filesToUpload: FileUpload[] = Array.from(e.target.files).map(
-      (file) => ({
-        file,
-        fileName: file.name,
-      }),
-    );
+    const filesToUpload: FileUpload[] = Array.from(e.target.files).map((file) => ({
+      file,
+      fileName: file.name,
+    }));
     startFileUploads(filesToUpload);
     setModalOpen(true);
   };
@@ -72,20 +58,9 @@ const Uploader: React.FC<UploaderProps> = ({
     <>
       <Button variant="contained" component="label" color="primary">
         Add maps
-        <input
-          id="fileinput"
-          type="file"
-          onChange={onInputChange}
-          hidden
-          multiple
-        />
+        <input id="fileinput" type="file" onChange={onInputChange} hidden multiple />
       </Button>
-      <UploadProgressModal
-        isOpen={modalOpen}
-        setIsOpen={setModalOpen}
-        files={files}
-        filePercents={filePercents}
-      />
+      <UploadProgressModal isOpen={modalOpen} setIsOpen={setModalOpen} files={files} filePercents={filePercents} />
     </>
   );
 };

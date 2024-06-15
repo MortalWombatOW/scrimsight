@@ -2,7 +2,7 @@ import {FileUpload, LOG_SPEC, DataAndSpecName} from 'lib/data/types';
 import {stringHash} from './../string';
 import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
-import {DataManager} from '../../WombatDataFramework/DataManager';
+import DataManager from '../../WombatDataFramework/DataManager';
 import {WriteNode} from '../../WombatDataFramework/DataNode';
 
 // File Utilities
@@ -75,9 +75,7 @@ const parseLine = (line: string, mapId: number): DataAndSpecName => {
   for (let i = 2; i < values.length; i++) {
     const fieldSpec = eventSpec.fields[i];
     if (!fieldSpec) {
-      throw new Error(
-        `Field spec not found for event type: ${eventType}, field index: ${i}`,
-      );
+      throw new Error(`Field spec not found for event type: ${eventType}, field index: ${i}`);
     }
     parsedData[fieldSpec.key] = parseFieldValue(values[i], fieldSpec.dataType);
   }
@@ -99,9 +97,7 @@ const parseFile = async (fileUpload: FileUpload) => {
   const data = fileUpload.data;
   const hash = stringHash(data);
   const lines = data.split('\n').filter((l) => l.length > 0);
-  const parsedData: DataAndSpecName[] = lines.map((line) =>
-    parseLine(line, hash),
-  );
+  const parsedData: DataAndSpecName[] = lines.map((line) => parseLine(line, hash));
 
   // Group by specName
   const groupedData: DataAndSpecName[] = [];
@@ -118,11 +114,7 @@ const parseFile = async (fileUpload: FileUpload) => {
 };
 
 // Database Utilities
-const saveFile = async (
-  fileUpload: FileUpload,
-  dataManager: DataManager,
-  setPercent: (n: number) => void,
-) => {
+const saveFile = async (fileUpload: FileUpload, dataManager: DataManager, setPercent: (n: number) => void) => {
   if (!fileUpload.events || !fileUpload.mapId) {
     console.error('No parsed data');
     return;
@@ -144,9 +136,7 @@ const saveFile = async (
   let percent = startPercent;
 
   for (const key of Object.keys(LOG_SPEC)) {
-    const node = dataManager.getNodeOrDie(
-      key + '_write_node',
-    ) as WriteNode<any>;
+    const node = dataManager.getNodeOrDie(key + '_write_node') as WriteNode<any>;
     const data = fileUpload.events.find((e) => e.specName === key)?.data;
     if (!data) throw new Error(`Data not found for key: ${key}`);
     node.addData(data);
@@ -169,11 +159,7 @@ const saveFile = async (
 };
 
 // Main Upload Function
-const uploadFile = async (
-  fileUpload: FileUpload,
-  dataManager: DataManager,
-  setPercent: (n: number) => void,
-) => {
+const uploadFile = async (fileUpload: FileUpload, dataManager: DataManager, setPercent: (n: number) => void) => {
   setPercent(0);
   await loadFile(fileUpload);
   if (fileUpload.error) {

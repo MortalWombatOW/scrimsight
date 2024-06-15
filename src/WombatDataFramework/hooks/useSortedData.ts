@@ -19,6 +19,12 @@ const useSortedData = <T>(data: T[], columns: DataColumn[]): SortedData<T> => {
       setSortDirection('asc');
     }
   };
+  // if columns changes, reset sortColumn and sortDirection
+  React.useEffect(() => {
+    setSortColumn(undefined);
+    setSortDirection(undefined);
+  }, [JSON.stringify(columns)]);
+
   const sortedData = useMemo(() => {
     if (sortColumn === undefined) {
       return data;

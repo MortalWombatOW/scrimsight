@@ -3,7 +3,9 @@ import QueryGraph from './QueryGraph';
 import useWindowSize from '../../hooks/useWindowSize';
 import DisplayNode from './DisplayNode';
 import {useDataManager} from '../../WombatDataFramework/DataContext';
-
+import {Card, CardContent} from '@mui/material';
+import DataNodeWizard from './DataNodeWizard';
+import {useResizeDetector} from 'react-resize-detector';
 const QueriesPage = () => {
   const size = useWindowSize();
   const [selectedNode, setSelectedNode] = React.useState<string | null>(null);
@@ -15,10 +17,14 @@ const QueriesPage = () => {
     },
   ]);
 
+  console.log('Size', size.width, size.height);
+
   return (
     <div>
-      <QueryGraph width={size.width} height={selectedNode ? 500 : size.height - 87} setSelectedNode={setSelectedNode} />
-      {selectedNode && <DisplayNode node={dataManager.getNodeOrDie(selectedNode)} />}
+      <QueryGraph width={size.width || 1000} height={500} selectedNode={selectedNode} setSelectedNode={setSelectedNode} />
+      <Card>
+        <CardContent>{selectedNode ? <DisplayNode node={dataManager.getNodeOrDie(selectedNode)} /> : <DataNodeWizard />}</CardContent>
+      </Card>
     </div>
   );
 };

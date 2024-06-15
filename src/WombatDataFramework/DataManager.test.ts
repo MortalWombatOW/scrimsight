@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {DataColumn} from './DataColumn';
-import {DataManager} from './DataManager';
+import DataManager from './DataManager';
+import DataNodeFactory from './DataNodeFactory';
 import {AlaSQLNode, DataNodeExecution, ObjectStoreNode, WriteNode} from './DataNode';
 
 const idColumn: DataColumn = {name: 'id', displayName: 'ID', dataType: 'number', units: 'none', description: 'An ID', formatter: (value) => String(value), comparator: (a, b) => (a as number) - (b as number)};
@@ -10,15 +11,19 @@ const strColumn: DataColumn = {name: 'str', displayName: 'Str', dataType: 'strin
 describe('DataManager', () => {
   test('should add a node to the graph and execute it', async () => {
     const dm = new DataManager(() => {});
+    const factory = new DataNodeFactory(dm);
 
     dm.registerColumn(numColumn);
-    dm.addAlaSQLNode({
-      name: 'a',
-      displayName: 'A',
-      sql: 'SELECT 1 as num',
-      sources: [],
-      columnNames: ['num'],
-    });
+
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'a',
+        displayName: 'A',
+        sql: 'SELECT 1 as num',
+        sources: [],
+        columnNames: ['num'],
+      }),
+    );
 
     expect(dm.getNodeOrDie('a').isRunning()).toBe(false);
     expect(dm.getNodeOrDie('a').hasError()).toBe(false);
@@ -39,20 +44,25 @@ describe('DataManager', () => {
   test('basic data flow', async () => {
     const dm = new DataManager(() => {});
     dm.registerColumn(numColumn);
-    dm.addAlaSQLNode({
-      name: 'a',
-      displayName: 'Node A',
-      sql: 'SELECT 1 as num',
-      sources: [],
-      columnNames: ['num'],
-    });
-    dm.addAlaSQLNode({
-      name: 'b',
-      displayName: 'Node B',
-      sql: 'SELECT * FROM ?',
-      sources: ['a'],
-      columnNames: ['num'],
-    });
+    const factory = new DataNodeFactory(dm);
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'a',
+        displayName: 'Node A',
+        sql: 'SELECT 1 as num',
+        sources: [],
+        columnNames: ['num'],
+      }),
+    );
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'b',
+        displayName: 'Node B',
+        sql: 'SELECT * FROM ?',
+        sources: ['a'],
+        columnNames: ['num'],
+      }),
+    );
 
     await dm.process();
 
@@ -64,30 +74,37 @@ describe('DataManager', () => {
     dm.registerColumn(idColumn);
     dm.registerColumn(numColumn);
     dm.registerColumn(strColumn);
+    const factory = new DataNodeFactory(dm);
 
-    dm.addAlaSQLNode({
-      name: 'a',
-      displayName: 'Node A',
-      sql: 'SELECT 1 as id, 2 as num',
-      sources: [],
-      columnNames: ['id', 'num'],
-    });
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'a',
+        displayName: 'Node A',
+        sql: 'SELECT 1 as id, 2 as num',
+        sources: [],
+        columnNames: ['id', 'num'],
+      }),
+    );
 
-    dm.addAlaSQLNode({
-      name: 'b',
-      displayName: 'Node B',
-      sql: 'SELECT 1 as id, "str" as str',
-      sources: [],
-      columnNames: ['id', 'str'],
-    });
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'b',
+        displayName: 'Node B',
+        sql: 'SELECT 1 as id, "str" as str',
+        sources: [],
+        columnNames: ['id', 'str'],
+      }),
+    );
 
-    dm.addAlaSQLNode({
-      name: 'c',
-      displayName: 'Node C',
-      sql: 'SELECT * FROM ? as a JOIN ? as b ON a.id = b.id',
-      sources: ['a', 'b'],
-      columnNames: ['id', 'num', 'str'],
-    });
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'c',
+        displayName: 'Node C',
+        sql: 'SELECT * FROM ? as a JOIN ? as b ON a.id = b.id',
+        sources: ['a', 'b'],
+        columnNames: ['id', 'num', 'str'],
+      }),
+    );
 
     expect(dm.getNodesToExecute().length).toBe(3);
     await dm.process();
@@ -99,21 +116,26 @@ describe('DataManager', () => {
   test('change propagation', async () => {
     const dm = new DataManager(() => {});
     dm.registerColumn(numColumn);
+    const factory = new DataNodeFactory(dm);
 
-    dm.addAlaSQLNode({
-      name: 'a',
-      displayName: 'Node A',
-      sql: 'SELECT 1 as num',
-      sources: [],
-      columnNames: ['num'],
-    });
-    dm.addAlaSQLNode({
-      name: 'b',
-      displayName: 'Node B',
-      sql: 'SELECT * FROM ?',
-      sources: ['a'],
-      columnNames: ['num'],
-    });
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'a',
+        displayName: 'Node A',
+        sql: 'SELECT 1 as num',
+        sources: [],
+        columnNames: ['num'],
+      }),
+    );
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'b',
+        displayName: 'Node B',
+        sql: 'SELECT * FROM ?',
+        sources: ['a'],
+        columnNames: ['num'],
+      }),
+    );
 
     expect(dm.getNodesToExecute().map((node) => node.getName())).toEqual(['a', 'b']);
     await dm.process();
@@ -133,28 +155,35 @@ describe('DataManager', () => {
   test('topological sort', async () => {
     const dm = new DataManager(() => {});
     dm.registerColumn(numColumn);
+    const factory = new DataNodeFactory(dm);
 
-    dm.addAlaSQLNode({
-      name: 'c',
-      displayName: 'Node C',
-      sql: 'SELECT * FROM ?',
-      sources: ['b'],
-      columnNames: ['num'],
-    });
-    dm.addAlaSQLNode({
-      name: 'b',
-      displayName: 'Node B',
-      sql: 'SELECT * FROM ?',
-      sources: ['a'],
-      columnNames: ['num'],
-    });
-    dm.addAlaSQLNode({
-      name: 'a',
-      displayName: 'Node A',
-      sql: 'SELECT 1 as num',
-      sources: [],
-      columnNames: ['num'],
-    });
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'c',
+        displayName: 'Node C',
+        sql: 'SELECT * FROM ?',
+        sources: ['b'],
+        columnNames: ['num'],
+      }),
+    );
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'b',
+        displayName: 'Node B',
+        sql: 'SELECT * FROM ?',
+        sources: ['a'],
+        columnNames: ['num'],
+      }),
+    );
+    dm.registerNode(
+      factory.makeAlaSQLNode({
+        name: 'a',
+        displayName: 'Node A',
+        sql: 'SELECT 1 as num',
+        sources: [],
+        columnNames: ['num'],
+      }),
+    );
 
     expect(dm.getNodesToExecute().map((node) => node.getName())).toEqual(['a', 'b', 'c']);
     await dm.process();

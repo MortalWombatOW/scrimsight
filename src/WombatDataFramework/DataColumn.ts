@@ -1,14 +1,15 @@
+import {format} from '../lib/format';
+import {DataUnit, DataBasicUnit, DataRatioUnit} from './DataUnits';
+
 export type DataColumnTypeInput = 'string' | 'number' | 'boolean';
 
 export type DataColumnType = string | number | boolean;
-
-export type DataColumnUnits = 'none' | 's' | 'hp' | 'ult%' | 'cap%' | 'acc%' | 'count';
 
 export interface DataColumn {
   name: string;
   displayName: string;
   description: string;
-  units: string;
+  units: DataUnit;
   dataType: DataColumnTypeInput;
   formatter: (data: DataColumnType) => string;
   comparator: (a: DataColumnType, b: DataColumnType) => number;
@@ -18,7 +19,7 @@ function makeDataColumn(
   name: string,
   displayName: string,
   description: string,
-  units: DataColumnUnits,
+  units: DataUnit,
   dataType: DataColumnTypeInput,
   formatter: (data: DataColumnType) => string,
   comparator: (a: DataColumnType, b: DataColumnType) => number,
@@ -34,11 +35,15 @@ function makeDataColumn(
   };
 }
 
+function makeRatioUnits(numerator: DataBasicUnit, denominator: DataBasicUnit): DataRatioUnit {
+  return {numerator, denominator};
+}
+
 // common formatters and comparators
 const stringFormatter = (data: DataColumnType) => data.toString();
 const stringComparator = (a: DataColumnType, b: DataColumnType) => a.toString().localeCompare(b.toString());
 
-const numberFormatter = (data: DataColumnType) => data.toString();
+const numberFormatter = (data: DataColumnType) => format(data as number);
 const percentFormatter = (data: DataColumnType) => `${data}%`;
 const numberComparator = (a: DataColumnType, b: DataColumnType) => (a as number) - (b as number);
 
@@ -54,6 +59,42 @@ const booleanComparator = (a: DataColumnType, b: DataColumnType) => {
 };
 
 export const DATA_COLUMNS: DataColumn[] = [
+  makeDataColumn('eliminationsPer10', 'Eliminations Per 10 Minutes', 'The number of eliminations per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('deathsPer10', 'Deaths Per 10 Minutes', 'The number of deaths per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('damagePer10', 'Damage Per 10 Minutes', 'The amount of damage dealt per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('healingPer10', 'Healing Per 10 Minutes', 'The amount of healing dealt per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('finalBlowsPer10', 'Final Blows Per 10 Minutes', 'The number of final blows per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('allDamagePer10', 'All Damage Dealt Per 10 Minutes', 'The total amount of damage dealt per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('selfHealingPer10', 'Self Healing Per 10 Minutes', 'The amount of self healing per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('damageTakenPer10', 'Damage Taken Per 10 Minutes', 'The amount of damage taken per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('damageBlockedPer10', 'Damage Blocked Per 10 Minutes', 'The amount of damage blocked per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('defensiveAssistsPer10', 'Defensive Assists Per 10 Minutes', 'The number of defensive assists per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('offensiveAssistsPer10', 'Offensive Assists Per 10 Minutes', 'The number of offensive assists per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimatesEarnedPer10', 'Ultimates Earned Per 10 Minutes', 'The number of ultimates earned per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimatesUsedPer10', 'Ultimates Used Per 10 Minutes', 'The number of ultimates used per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('multikillsPer10', 'Multikills Per 10 Minutes', 'The number of multikills per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('soloKillsPer10', 'Solo Kills Per 10 Minutes', 'The number of solo kills per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('objectiveKillsPer10', 'Objective Kills Per 10 Minutes', 'The number of objective kills per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('environmentalKillsPer10', 'Environmental Kills Per 10 Minutes', 'The number of environmental kills per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('environmentalDeathsPer10', 'Environmental Deaths Per 10 Minutes', 'The number of environmental deaths per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('criticalHitsPer10', 'Critical Hits Per 10 Minutes', 'The number of critical hits per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn(
+    'scopedCriticalHitKillsPer10',
+    'Scoped Critical Hit Kills Per 10 Minutes',
+    'The number of scoped critical hits kills per 10 minutes.',
+    makeRatioUnits('count', '10m'),
+    'number',
+    numberFormatter,
+    numberComparator,
+  ),
+  makeDataColumn('scopedShotsFiredPer10', 'Scoped Shots Fired Per 10 Minutes', 'The number of scoped shots fired per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('scopedShotsHitPer10', 'Scoped Shots Hit Per 10 Minutes', 'The number of scoped shots hit per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('shotsFiredPer10', 'Shots Fired Per 10 Minutes', 'The number of shots fired per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('shotsHitPer10', 'Shots Hit Per 10 Minutes', 'The number of shots hit per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('shotsMissedPer10', 'Shots Missed Per 10 Minutes', 'The number of shots missed per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('barrierDamageDealtPer10', 'Barrier Damage Dealt Per 10 Minutes', 'The amount of damage dealt to the barrier per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('heroDamagePer10', 'Hero Damage Dealt Per 10 Minutes', 'The amount of damage dealt to heroes per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('healingReceivedPer10', 'Healing Received Per 10 Minutes', 'The amount of healing received per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
   makeDataColumn('playerInteractionEventTime', 'Player Interaction Event Time', 'The time the player interaction event occurred.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('playerInteractionEventType', 'Player Interaction Event Type', 'The type of the player interaction event.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('otherPlayerName', 'Other Player Name', 'The name of the other player.', 'none', 'string', stringFormatter, stringComparator),
@@ -101,7 +142,7 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('isHealthPack', 'Is Health Pack', 'Whether the healing was from a health pack.', 'none', 'boolean', booleanFormatter, booleanComparator),
   makeDataColumn('mapDuration', 'Map Duration', 'The duration of the map.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('mapEndTime', 'Map End Time', 'The time the map ended.', 's', 'number', numberFormatter, numberComparator),
-  makeDataColumn('mapId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'number', numberFormatter, numberComparator),
+  makeDataColumn('mapId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'string', stringFormatter, numberComparator),
   makeDataColumn('mapName', 'Map Name', 'The name of the map.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mapStartTime', 'Map Start Time', 'The time the map started.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('mapType', 'Map Type', 'The type of the map.', 'none', 'string', stringFormatter, stringComparator),

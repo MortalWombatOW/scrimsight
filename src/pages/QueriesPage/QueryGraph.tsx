@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import {useDataManager} from '../../WombatDataFramework/DataContext';
 import {DataNode} from '../../WombatDataFramework/DataNode';
 import NetworkDisplay from './NetworkDisplay';
-import {DataManager} from '../../WombatDataFramework/DataManager';
+import DataManager from '../../WombatDataFramework/DataManager';
 
 function getStateColor(node: DataNode<any> | undefined) {
   if (!node) {
@@ -73,32 +73,45 @@ function updateNode(nodeName: string, networkDisplay: NetworkDisplay, dataManage
 interface QueryGraphProps {
   width: number;
   height: number;
+  selectedNode: string | null;
   setSelectedNode: (node: string) => void;
 }
 
-const QueryGraph = ({width, height, setSelectedNode}: QueryGraphProps) => {
+const QueryGraph = ({width, height, selectedNode, setSelectedNode}: QueryGraphProps) => {
   const ref = useRef(null);
   const dataManager = useDataManager();
   const networkDisplay = useRef(new NetworkDisplay());
 
+  const [tick, setTick] = React.useState<number>(0);
+  const incrementTick = () => setTick((tick) => tick + 1);
+  dataManager.registerGlobalCallback(['QueryGraph', incrementTick]);
   const nodeNames = dataManager.getNodeNames();
   console.log('Node names', nodeNames);
 
   useEffect(() => {
     for (const nodeName of nodeNames) {
       updateNode(nodeName, networkDisplay.current, dataManager);
-      // dataManager.subscribeFn(nodeName, () =>
-      //   updateNode(nodeName, networkDisplay.current, dataManager),
-      // );
     }
-  }, [nodeNames]);
+    networkDisplay.current.stabilize();
+    networkDisplay.current.fit(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(nodeNames), tick]);
+
+  useEffect(() => {
+    if (selectedNode) {
+      console.log('Focusing on node', selectedNode);
+      networkDisplay.current.focusNode(selectedNode);
+    } else {
+      networkDisplay.current.fit(true);
+    }
+  }, [selectedNode]);
 
   useEffect(() => {
     const container = ref.current;
     if (container === null) {
       return;
     }
-    networkDisplay.current.initialize(container, setSelectedNode);
+    networkDisplay.current.initialize(container, selectedNode, setSelectedNode);
   }, []);
 
   return (

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useDataNodeOutput} from '../../hooks/useData';
+import {useDataNode, useDataNodeOutput} from '../../hooks/useData';
 import {DataNodeName} from '../DataNode';
 import {LinearProgress} from '@mui/material';
 import {DataColumn, DataColumnType} from '../DataColumn';
@@ -17,22 +17,30 @@ interface DataFetcherProps {
   renderContent: (dataResult: DataResult<object>) => React.ReactNode;
 }
 
-const DataFetcher: React.FC<DataFetcherProps> = ({nodeName, filters = {}, renderContent}) => {
+const DataFetcher: React.FC<DataFetcherProps> = ({nodeName, renderContent}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dataResult, setDataResult] = useState<DataResult<object> | null>(null);
 
   const dataManager = useDataManager();
-  const data = useDataNodeOutput(nodeName, filters);
+  const node = useDataNode(nodeName);
+
+  const data = node?.getOutput() || [];
+  const columns = node?.getColumns() || [];
 
   useEffect(() => {
     setLoading(false);
 
     setDataResult({
       data,
-      columns: data.length > 0 ? Object.keys(data[0]).map((columnName) => dataManager.getColumn(columnName)) : [],
+      columns,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(data)]);
+
+  if (node === undefined) {
+    //punt if node is not found
+    return null;
+  }
 
   return (
     <>

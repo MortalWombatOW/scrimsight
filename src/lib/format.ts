@@ -5,10 +5,7 @@ export const safeDivide = (a: number | string, b: number | string) => {
   return (a as number) / (b as number);
 };
 
-export const format = (
-  val: number | string | undefined,
-  decimals: number = 2,
-) => {
+export const format = (val: number | string | undefined, decimals = 2) => {
   if (typeof val === 'string' || val === undefined) {
     return val;
   }
@@ -28,7 +25,5 @@ export const formatTime = (val: number | string | undefined) => {
   const hours = Math.floor(val / 3600);
   const minutes = Math.floor((val % 3600) / 60);
   const seconds = Math.floor(val % 60);
-  return `${hours > 0 ? hours + 'h ' : ''}${minutes > 0 ? minutes + 'm ' : ''}${
-    seconds > 0 ? seconds + 's' : ''
-  }`;
+  return `${hours > 0 ? hours + 'h ' : ''}${minutes > 0 ? minutes + 'm ' : ''}${seconds > 0 ? seconds + 's' : ''}`;
 };

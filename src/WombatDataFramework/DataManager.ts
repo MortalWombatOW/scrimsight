@@ -2,7 +2,7 @@
 import {DataColumn} from './DataColumn';
 import {AlaSQLNode, AlaSQLNodeInit, DataNode, DataNodeName, FilterNode, FilterNodeInit, ObjectStoreNode, ObjectStoreNodeInit, WriteNode, WriteNodeInit} from './DataNode';
 
-export class DataManager {
+class DataManager {
   private nodes: Map<DataNodeName, DataNode<any>>;
   private globalCallbacks: Map<string, () => void>;
   private nodeCallbacks: Map<DataNodeName, () => void>;
@@ -34,6 +34,13 @@ export class DataManager {
       throw new Error(`Column ${name} does not exist`);
     }
     return column;
+  }
+
+  public getNodeList(onlyOutputNodes?: boolean): DataNode<any>[] {
+    if (onlyOutputNodes) {
+      return Array.from(this.nodes.values()).filter((node) => node.getType() !== 'WriteNode');
+    }
+    return Array.from(this.nodes.values());
   }
 
   public nodesDependingOn(name: DataNodeName): DataNodeName[] {
@@ -116,34 +123,7 @@ export class DataManager {
     return false;
   }
 
-  public addWriteNode(init: WriteNodeInit): void {
-    this.setNode(new WriteNode(init.name, init.displayName, init.objectStore));
-  }
-
-  public addObjectStoreNode(init: ObjectStoreNodeInit): void {
-    this.setNode(
-      new ObjectStoreNode(
-        init.name,
-        init.displayName,
-        init.objectStore,
-        init.columnNames.map((name) => this.getColumn(name)),
-      ),
-    );
-  }
-
-  public addAlaSQLNode(init: AlaSQLNodeInit): void {
-    this.setNode(
-      new AlaSQLNode(
-        init.name,
-        init.displayName,
-        init.sql,
-        init.sources,
-        init.columnNames.map((name) => this.getColumn(name)),
-      ),
-    );
-  }
-
-  private setNode(node: DataNode<any>): void {
+  public registerNode(node: DataNode<any>): void {
     if (this.nodes.has(node.getName())) {
       console.log(`Node ${node.getName()} already exists`);
       return;
@@ -224,3 +204,5 @@ export class DataManager {
     return [...this.nodes.keys()];
   }
 }
+
+export default DataManager;

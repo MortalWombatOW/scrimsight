@@ -14,9 +14,9 @@ class NetworkDisplay {
     this.edges = new DataSet([]);
   }
 
-  public initialize(container: HTMLElement, setSelectedNodeId: (node: string | null) => void) {
+  public initialize(container: HTMLElement, selectedNodeId: string | null, setSelectedNodeId: (node: string | null) => void) {
     const options = {
-      autoResize: true,
+      // autoResize: true,
       height: '100%',
       width: '100%',
       locale: 'en',
@@ -42,6 +42,12 @@ class NetworkDisplay {
         widthConstraint: 100,
       },
       edges: {
+        smooth: {
+          enabled: true,
+          type: 'vertical',
+          roundness: 0.3,
+          forceDirection: 'none',
+        },
         arrows: {
           to: {
             enabled: true,
@@ -107,6 +113,26 @@ class NetworkDisplay {
     if (existingEdge) return;
 
     this.edges.add({from: fromId, to: toId});
+  }
+
+  public stabilize() {
+    if (this.network) {
+      this.network.stabilize();
+    }
+  }
+
+  public fit(smooth: boolean) {
+    if (this.network) {
+      this.network.fit({animation: smooth});
+    }
+  }
+
+  public focusNode(name: string) {
+    const nodeId = this.nodeIdFromName(name);
+    if (nodeId === undefined) return;
+    if (this.network) {
+      this.network.fit({nodes: [nodeId], animation: true});
+    }
   }
 }
 

@@ -1,8 +1,10 @@
 import React from 'react';
-import {Card, Typography, Chip, CardContent, LinearProgress, Table, TableBody, TableCell, TableHead, TableRow} from '@mui/material';
+import {Card, Typography, CardContent, LinearProgress, Table, TableBody, TableCell, TableHead, TableRow} from '@mui/material';
 import {DataNode} from '../../WombatDataFramework/DataNode';
 import './DisplayNode.scss';
 import {DataColumn} from '../../WombatDataFramework/DataColumn';
+import DataFetcher from '../../WombatDataFramework/components/DataFetcher';
+import DataTable from '../../WombatDataFramework/components/DataTable';
 
 interface DataNodeProps {
   node: DataNode<object>;
@@ -11,8 +13,6 @@ interface DataNodeProps {
 function DisplayNode({node}: DataNodeProps) {
   const columns: DataColumn[] = node.getColumns();
   const rows: object[] = node.getOutput() || [];
-
-  // --- Functional Components ---
 
   const Executions = () => (
     <Table size="small">
@@ -40,53 +40,23 @@ function DisplayNode({node}: DataNodeProps) {
     </Table>
   );
 
-  const QueryOutput = () => (
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell colSpan={columns.length} className="query-output">
-            <Typography variant="subtitle1">Query output</Typography>
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          {columns.map((column, index) => (
-            <TableCell key={index}>{column.name} </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {rows.map((row, index) => (
-          <TableRow key={index}>
-            {columns.map((column, index) => (
-              <TableCell key={index}>{row[column.name]}</TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-
-  // --- Main Component Render ---
-
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h3">{node.getDisplayName()}</Typography>
-        <Typography variant="body1">ID: {node.getName()}</Typography>
-        <pre>{node.getDescription()}</pre>
+    <>
+      <Typography variant="h3">{node.getDisplayName()}</Typography>
+      <Typography variant="body1">ID: {node.getName()}</Typography>
+      <pre>{node.getDescription()}</pre>
 
-        {node.isRunning() && <LinearProgress />}
+      {node.isRunning() && <LinearProgress />}
 
-        <Executions />
-        <QueryOutput />
+      <Executions />
+      <DataFetcher nodeName={node.getName()} renderContent={(dataResult) => <DataTable dataResult={dataResult} />} />
 
-        {node.hasError() && (
-          <Typography color="error" variant="body2">
-            Error: {node.getError()}
-          </Typography>
-        )}
-      </CardContent>
-    </Card>
+      {node.hasError() && (
+        <Typography color="error" variant="body2">
+          Error: {node.getError()}
+        </Typography>
+      )}
+    </>
   );
 }
 
