@@ -9,6 +9,7 @@ $value in $colors {
     // text-shadow: 0px 0px 2px $dark;
     color: fade-out(black, 0.3);
   }
+
   .#{$key}-text {
     color: $value;
   }
@@ -25,6 +26,7 @@ $value in $colors {
   line.#{$key} {
     stroke: $value;
   }
+
   text.#{$key} {
     fill: $value;
     stroke: $value;
@@ -32,23 +34,28 @@ $value in $colors {
 }
 
 @keyframes load-anim {
-    0% {
-        transform: scaleX(0);
-        transform-origin: bottom left;
-    }
-    100% {
-       transform: scaleX(1);
-       transform-origin: bottom left;
-    }
+  0% {
+    transform: scaleX(0);
+    transform-origin: bottom left;
+  }
+
+  100% {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
 }
 
 .typingtext {
-  overflow: hidden; /* Ensures the content is not revealed until the animation */
-  white-space: nowrap; /* Keeps the content on a single line */
-  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
-  letter-spacing: .15em; /* Adjust as needed */
-  animation: 
-    typing 3.5s steps(100, end),  blink-caret .75s step-end infinite;
+  overflow: hidden;
+  /* Ensures the content is not revealed until the animation */
+  white-space: nowrap;
+  /* Keeps the content on a single line */
+  margin: 0 auto;
+  /* Gives that scrolling effect as the typing happens */
+  letter-spacing: .15em;
+  /* Adjust as needed */
+  animation:
+    typing 3.5s steps(100, end), blink-caret .75s step-end infinite;
 }
 
 .hover-underline-animation {
@@ -97,8 +104,23 @@ $value in $colors {
 
 /* The typing effect */
 @keyframes typing {
-  from { width: 0 }
-  to { width: 100% }
+  from {
+    width: 0
+  }
+
+  to {
+    width: 100%
+  }
+}
+
+.MuiInputBase-root {
+  height: fit-content !important;
+  min-width: 150px;
+  width: fit-content !important;
+}
+
+.MuiButton-root {
+  width: fit-content !important;
 }
 
 /* The typewriter cursor effect */
