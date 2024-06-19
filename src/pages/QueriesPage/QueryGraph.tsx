@@ -63,6 +63,8 @@ function getSize(node: DataNode<any> | undefined) {
 function updateNode(nodeName: string, networkDisplay: NetworkDisplay, dataManager: DataManager) {
   const node = dataManager.getNodeOrDie(nodeName);
 
+  console.log('Updating node', nodeName, node);
+
   networkDisplay.setNode(nodeName, getStateColor(node), getShape(node), getLabel(node), getOpacity(node), getSize(node));
   dataManager.nodesDependingOn(nodeName).forEach((fromName) => {
     networkDisplay.setEdge(nodeName, fromName);

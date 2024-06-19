@@ -2,3 +2,40 @@
   font-size: 20px;
   line-height: 56px;
 }
+
+.query-builder-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 20px;
+  padding: 20px;
+
+  .query-builder-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    &>.query-builder-form-group {
+      &>.MuiTypography-root {
+        margin-bottom: 10px;
+      }
+
+      .query-builder-join-on {
+        padding-left: 20px;
+      }
+    }
+  }
+
+  .query-builder-preview {
+    .query-builder-errors {
+      li {
+        padding-left: 0;
+      }
+    }
+  }
+}
+
+.MuiFormControl-root>label {
+  margin-left: 8px;
+}

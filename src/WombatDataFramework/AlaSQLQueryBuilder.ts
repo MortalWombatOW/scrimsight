@@ -1,5 +1,3 @@
-import {format} from 'sql-formatter';
-
 export interface Column {
   source: string;
   name: string;
@@ -197,7 +195,21 @@ class AlaSQLQueryBuilder implements AlaSQLQueryBuilderInterface {
     const groupByClause = this.buildGroupByClause();
     const orderByClause = this.buildOrderByClause();
 
-    return format(`SELECT ${selectClause} ${fromClause} ${whereClause} ${groupByClause} ${orderByClause}`.trim());
+    let query = `SELECT ${selectClause} ${fromClause}`;
+
+    if (whereClause) {
+      query += ` ${whereClause}`;
+    }
+
+    if (groupByClause) {
+      query += ` ${groupByClause}`;
+    }
+
+    if (orderByClause) {
+      query += ` ${orderByClause}`;
+    }
+
+    return query;
   }
 
   private buildSelectClause(): string {
@@ -209,7 +221,11 @@ class AlaSQLQueryBuilder implements AlaSQLQueryBuilderInterface {
       const onConditions = join.onConditions.map((condition) => `${condition.leftColumn.source}.${condition.leftColumn.name} ${condition.operator} ${condition.rightColumn.source}.${condition.rightColumn.name}`).join(' AND ');
       return `${join.joinType} ? AS ${join.nodeName} ON ${onConditions}`;
     });
-    return `FROM ? AS ${this.sourceNode} ${joins.join(' ')}`;
+    let clause = `FROM ? AS ${this.sourceNode}`;
+    if (joins.length > 0) {
+      clause += ' ' + joins.join(' ');
+    }
+    return clause;
   }
 
   private buildWhereClause(): string {

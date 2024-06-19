@@ -4,8 +4,8 @@ module.exports = {
   testEnvironment: 'node',
   transform: {
     '^.+\\.tsx?$': [
-      "@swc/jest",
-      "^.+\\.scss$": 'jest-scss-transform',
+      '@swc/jest',
+      // "^.+\\.scss$": 'jest-scss-transform',
     ],
   },
 };

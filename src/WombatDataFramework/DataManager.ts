@@ -125,12 +125,13 @@ class DataManager {
 
   public registerNode(node: DataNode<any>): void {
     if (this.nodes.has(node.getName())) {
-      console.log(`Node ${node.getName()} already exists`);
-      return;
+      throw new Error(`Node ${node.getName()} already exists`);
     }
-    console.log(`Adding node ${node.getName()}`);
+
     this.checkForCycles();
     this.nodes.set(node.getName(), node);
+    console.log(`Node ${node.getName()} registered`);
+    this.globalCallbacks.forEach((callback) => callback());
   }
 
   public addNodeCallback(name: DataNodeName, callback: () => void): void {

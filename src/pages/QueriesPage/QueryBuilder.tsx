@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {ChangeEvent, useEffect, useMemo, useState} from 'react';
 import {FormControl, InputLabel, MenuItem, Select, TextField, Box, Button, List, ListItem, ListItemText, IconButton, Typography, Card, CardContent, CardActions} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -22,14 +22,229 @@ import {
 import {useDataManager} from '../../WombatDataFramework/DataContext';
 import {DataNodeName} from '../../WombatDataFramework/DataNode';
 import useQueryBuilder from '../../WombatDataFramework/hooks/useQueryBuilder';
-import {SelectChangeEvent} from '@mui/material/Select';
 import DataNodeFactory from '../../WombatDataFramework/DataNodeFactory';
 import {DataColumn} from '../../WombatDataFramework/DataColumn';
+import {format} from 'sql-formatter';
+
 import './QueryBuilder.scss';
 
 interface QueryBuilderColumn {
   source: DataNodeName;
   column: DataColumn;
+}
+
+function JoinClauseBuilder(props) {
+  return (
+    <div className="query-builder-form-group">
+      <Typography variant="h3">Join Nodes</Typography>
+      <List>
+        {props.joinNodes.map((joinNode, index) => (
+          <ListItem key={index}>
+            <ListItemText primary={joinNode.nodeName} />
+            <IconButton edge="end" aria-label="delete" onClick={() => props.handleRemoveJoinNode(index)}>
+              <DeleteIcon />
+            </IconButton>
+            <Typography variant="body2" className="query-builder-join-on">
+              ON
+            </Typography>
+            <List>
+              {joinNode.conditions.map((condition, conditionIndex) => (
+                <ListItem key={conditionIndex}>
+                  <TextField
+                    select
+                    value={condition.leftColumn.name}
+                    onChange={(e) => {
+                      const newJoinNodes = [...props.joinNodes];
+                      newJoinNodes[index].conditions[conditionIndex].leftColumn = column(condition.leftColumn.source, e.target.value);
+                      props.setJoinNodes(newJoinNodes);
+                    }}>
+                    {props.availableColumns
+                      .filter((qbColumn) => qbColumn.source === condition.leftColumn.source)
+                      .map((qbColumn) => (
+                        <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
+                          {`${qbColumn.source}.${qbColumn.column.name}`}
+                        </MenuItem>
+                      ))}
+                  </TextField>
+                  <TextField
+                    select
+                    value={condition.operator}
+                    onChange={(e) => {
+                      const newJoinNodes = [...props.joinNodes];
+                      newJoinNodes[index].conditions[conditionIndex].operator = e.target.value as '=' | '!=' | '>' | '<' | '>=' | '<=';
+                      props.setJoinNodes(newJoinNodes);
+                    }}>
+                    <MenuItem value={'='}>is</MenuItem>
+                    <MenuItem value={'!='}>is not</MenuItem>
+                    <MenuItem value={'>'}>is greater than</MenuItem>
+                    <MenuItem value={'<'}>is less than</MenuItem>
+                    <MenuItem value={'>='}>is at least</MenuItem>
+                    <MenuItem value={'<='}>is at most</MenuItem>
+                  </TextField>
+                  <TextField
+                    select
+                    value={condition.rightColumn.name}
+                    onChange={(e) => {
+                      const newJoinNodes = [...props.joinNodes];
+                      newJoinNodes[index].conditions[conditionIndex].rightColumn = column(condition.rightColumn.source, e.target.value);
+                      props.setJoinNodes(newJoinNodes);
+                    }}>
+                    {props.availableColumns
+                      .filter((qbColumn) => qbColumn.source === condition.rightColumn.source)
+                      .map((qbColumn) => (
+                        <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
+                          {`${qbColumn.source}.${qbColumn.column.name}`}
+                        </MenuItem>
+                      ))}
+                  </TextField>
+                  <IconButton edge="end" aria-label="delete" onClick={() => props.handleRemoveJoinCondition(index, conditionIndex)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItem>
+              ))}
+            </List>
+
+            <Button variant="outlined" startIcon={<AddIcon />} onClick={() => props.handleAddJoinCondition(index)}>
+              Add Join Condition
+            </Button>
+          </ListItem>
+        ))}
+      </List>
+
+      <TextField select id="join-node-select" value={''} onChange={(e) => props.handleAddJoinNode(e.target.value as DataNodeName)} label="Join Node">
+        {props.joinableNodes.map((nodeName) => (
+          <MenuItem key={nodeName} value={nodeName}>
+            {nodeName}
+          </MenuItem>
+        ))}
+      </TextField>
+    </div>
+  );
+}
+
+function SelectClauseBuilder(props) {
+  return (
+    <div className="query-builder-form-group">
+      <Typography variant="h3">Select Expressions</Typography>
+      <List>
+        {props.selectExpressions.map((selectExpression, index) => (
+          <ListItem key={index}>
+            <SelectExpressionBuilder
+              expression={selectExpression}
+              onChange={(newExpression) => {
+                const newSelectExpressions = [...props.selectExpressions];
+                newSelectExpressions[index] = newExpression;
+                props.setSelectExpressions(newSelectExpressions);
+              }}
+              availableColumns={props.availableColumns}
+              getSource={props.getSource}
+            />
+            <IconButton edge="end" aria-label="delete" onClick={() => props.handleRemoveSelectExpression(index)}>
+              <DeleteIcon />
+            </IconButton>
+          </ListItem>
+        ))}
+      </List>
+      <Button variant="outlined" startIcon={<AddIcon />} onClick={props.handleAddSelectExpression}>
+        Add Select Expression
+      </Button>
+    </div>
+  );
+}
+
+function WhereClauseBuilder(props) {
+  return (
+    <div className="query-builder-form-group">
+      <Typography variant="h3">Where Conditions</Typography>
+      <List>
+        {props.whereConditions.map((whereCondition, index) => (
+          <ListItem key={index}>
+            <WhereConditionBuilder
+              condition={whereCondition}
+              onChange={(newCondition) => {
+                const newWhereConditions = [...props.whereConditions];
+                newWhereConditions[index] = newCondition;
+                props.setWhereConditions(newWhereConditions);
+              }}
+              availableColumns={props.availableColumns}
+            />
+            <IconButton edge="end" aria-label="delete" onClick={() => props.handleRemoveWhereCondition(index)}>
+              <DeleteIcon />
+            </IconButton>
+          </ListItem>
+        ))}
+      </List>
+      <Button variant="outlined" startIcon={<AddIcon />} onClick={props.handleAddWhereCondition}>
+        Add Where Condition
+      </Button>
+    </div>
+  );
+}
+
+function GroupByClauseBuilder(props) {
+  return (
+    <div className="query-builder-form-group">
+      <Typography variant="h3">Group By Columns</Typography>
+      <List>
+        {props.groupByColumns.map((groupByColumn, index) => (
+          <ListItem key={index}>
+            <TextField
+              select
+              value={groupByColumn.column.name}
+              onChange={(e) => {
+                const newGroupByColumns = [...props.groupByColumns];
+                newGroupByColumns[index] = {
+                  source: groupByColumn.source,
+                  column: props.availableColumns.find((c) => c.column.name === e.target.value)?.column as DataColumn,
+                };
+                props.setGroupByColumns(newGroupByColumns);
+              }}>
+              {props.availableColumns.map((qbColumn) => (
+                <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
+                  {`${qbColumn.source}.${qbColumn.column.name}`}
+                </MenuItem>
+              ))}
+            </TextField>
+            <IconButton edge="end" aria-label="delete" onClick={() => props.handleRemoveGroupByColumn(index)}>
+              <DeleteIcon />
+            </IconButton>
+          </ListItem>
+        ))}
+      </List>
+      <Button variant="outlined" startIcon={<AddIcon />} onClick={props.handleAddGroupByColumn}>
+        Add Group By Column
+      </Button>
+    </div>
+  );
+}
+
+function OrderByClauseBuilder(props) {
+  return (
+    <div className="query-builder-form-group">
+      <Typography variant="h3">Order By Columns</Typography>
+      <List>
+        {props.orderByColumns.map((orderByColumn, index) => (
+          <ListItem key={index}>
+            <OrderByConditionBuilder
+              condition={orderByColumn}
+              onChange={(newCondition) => {
+                const newOrderByColumns = [...props.orderByColumns];
+                newOrderByColumns[index] = newCondition;
+                props.setOrderByColumns(newOrderByColumns);
+              }}
+              availableColumns={props.availableColumns}
+            />
+            <IconButton edge="end" aria-label="delete" onClick={() => props.handleRemoveOrderByColumn(index)}>
+              <DeleteIcon />
+            </IconButton>
+          </ListItem>
+        ))}
+      </List>
+      <Button variant="outlined" startIcon={<AddIcon />} onClick={props.handleAddOrderByColumn}>
+        Add Order By Column
+      </Button>
+    </div>
+  );
 }
 
 const QueryBuilder: React.FC = () => {
@@ -47,15 +262,6 @@ const QueryBuilder: React.FC = () => {
   const [queryString, setQueryString] = useState<string>(build());
   const [errors, setErrors] = useState<string[]>(findErrors());
 
-  console.log('Query Builder Render');
-
-  console.log('Selected Source Node', selectedSourceNode);
-  console.log('Join Nodes', joinNodes);
-  console.log('Select Expressions', selectExpressions);
-  console.log('Where Conditions', whereConditions);
-  console.log('Group By Columns', groupByColumns);
-  console.log('Order By Columns', orderByColumns);
-
   useEffect(() => {
     reset();
     if (!selectedSourceNode) {
@@ -68,7 +274,16 @@ const QueryBuilder: React.FC = () => {
     groupBy(groupByColumns.map((qbColumn) => column(qbColumn.source, qbColumn.column.name))); // Extract column objects for groupBy
     orderBy(orderByColumns); // Pass directly as it's already structured
 
-    setQueryString(build());
+    const query = build();
+    let formatted: string;
+    try {
+      formatted = format(query);
+    } catch (e) {
+      formatted = query;
+    }
+
+    setQueryString(formatted);
+
     setErrors(findErrors());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(selectedSourceNode), JSON.stringify(joinNodes), JSON.stringify(selectExpressions), JSON.stringify(whereConditions), JSON.stringify(groupByColumns), JSON.stringify(orderByColumns)]);
@@ -76,14 +291,9 @@ const QueryBuilder: React.FC = () => {
   // Track available columns for selection
   const [availableColumns, setAvailableColumns] = useState<QueryBuilderColumn[]>([]);
 
-  console.log('Available Columns', availableColumns);
-
-  const handleSourceNodeChange = (event: SelectChangeEvent<string>) => {
+  const handleSourceNodeChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newSourceNode = event.target.value as DataNodeName;
     setSelectedSourceNode(newSourceNode);
-
-    console.log('Source Node', newSourceNode);
-    console.log('Columns', dataManager.getNodeOrDie(newSourceNode).getColumns());
 
     // Update available columns when source node changes
     setAvailableColumns((availableColumns) => [
@@ -173,235 +383,123 @@ const QueryBuilder: React.FC = () => {
   const handleSubmit = () => {
     // TODO: Implement query building and execution logic
     // For now, just log the query
-    console.log(build());
+    const node = factory.makeAlaSQLNode({
+      name: 'TODO_name',
+      displayName: 'TODO_displayName',
+      sql: queryString,
+      sources: [selectedSourceNode!, ...joinNodes.map((node) => node.nodeName)],
+      columnNames: selectExpressions.map((expr) => (expr.type === 'basic' ? expr.column.name : expr.type === 'rename' ? expr.name : 'TODO')),
+    });
+    dataManager.registerNode(node);
+    dataManager.executeNode(node.getName());
+    //reset
+    setSelectedSourceNode(undefined);
+    setJoinNodes([]);
+    setSelectExpressions([]);
+    setWhereConditions([]);
+    setGroupByColumns([]);
+    setOrderByColumns([]);
+    setAvailableColumns([]);
+    setQueryString('');
+    setErrors([]);
   };
 
   const nodeNames = dataManager.getNodeNames().filter((nodeName) => dataManager.getNodeOrDie(nodeName).getColumns().length > 0);
   const joinableNodes = selectedSourceNode ? factory.getJoinableNodes([selectedSourceNode, ...joinNodes.map((node) => node.nodeName)]) : [];
 
   return (
-    <Box sx={{display: 'flex', flexDirection: 'column', gap: 2}} id="query-builder">
-      <Typography variant="h2">Query Builder</Typography>
-      <FormControl fullWidth>
-        <InputLabel id="source-node-select-label">Source Node</InputLabel>
-        <Select labelId="source-node-select-label" id="source-node-select" value={selectedSourceNode || ''} onChange={handleSourceNodeChange}>
-          {nodeNames.map((nodeName) => (
-            <MenuItem key={nodeName} value={nodeName}>
-              {nodeName}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {selectedSourceNode && (
-        <>
-          <Typography variant="h3">Join Nodes</Typography>
-          <List>
-            {joinNodes.map((joinNode, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={joinNode.nodeName} />
-                <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveJoinNode(index)}>
-                  <DeleteIcon />
-                </IconButton>
-                <List>
-                  {joinNode.conditions.map((condition, conditionIndex) => (
-                    <ListItem key={conditionIndex}>
-                      <Select
-                        value={condition.leftColumn.name}
-                        onChange={(e) => {
-                          const newJoinNodes = [...joinNodes];
-                          newJoinNodes[index].conditions[conditionIndex].leftColumn = column(condition.leftColumn.source, e.target.value);
-                          setJoinNodes(newJoinNodes);
-                        }}>
-                        {availableColumns
-                          .filter((qbColumn) => qbColumn.source === condition.leftColumn.source)
-                          .map((qbColumn) => (
-                            <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
-                              {`${qbColumn.source}.${qbColumn.column.name}`}
-                            </MenuItem>
-                          ))}
-                      </Select>
-                      <Select
-                        value={condition.operator}
-                        onChange={(e) => {
-                          const newJoinNodes = [...joinNodes];
-                          newJoinNodes[index].conditions[conditionIndex].operator = e.target.value as '=' | '!=' | '>' | '<' | '>=' | '<=';
-                          setJoinNodes(newJoinNodes);
-                        }}>
-                        <MenuItem value={'='}>is</MenuItem>
-                        <MenuItem value={'!='}>is not</MenuItem>
-                        <MenuItem value={'>'}>is greater than</MenuItem>
-                        <MenuItem value={'<'}>is less than</MenuItem>
-                        <MenuItem value={'>='}>is at least</MenuItem>
-                        <MenuItem value={'<='}>is at most</MenuItem>
-                      </Select>
-                      <Select
-                        value={condition.rightColumn.name}
-                        onChange={(e) => {
-                          const newJoinNodes = [...joinNodes];
-                          newJoinNodes[index].conditions[conditionIndex].rightColumn = column(condition.rightColumn.source, e.target.value);
-                          setJoinNodes(newJoinNodes);
-                        }}>
-                        {availableColumns
-                          .filter((qbColumn) => qbColumn.source === condition.rightColumn.source)
-                          .map((qbColumn) => (
-                            <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
-                              {`${qbColumn.source}.${qbColumn.column.name}`}
-                            </MenuItem>
-                          ))}
-                      </Select>
-                      <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveJoinCondition(index, conditionIndex)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItem>
-                  ))}
-                </List>
-                <Button variant="outlined" startIcon={<AddIcon />} onClick={() => handleAddJoinCondition(index)}>
-                  Add Join Condition
-                </Button>
-              </ListItem>
-            ))}
-          </List>
-          <FormControl fullWidth>
-            <InputLabel id="join-node-select-label">Join Node</InputLabel>
-            <Select labelId="join-node-select-label" id="join-node-select" value={''} onChange={(e) => handleAddJoinNode(e.target.value as DataNodeName)}>
-              {joinableNodes.map((nodeName) => (
+    <div>
+      <Typography variant="h2" data-testid="query-builder-title" gutterBottom>
+        Query Builder
+      </Typography>
+      <div className="query-builder-container">
+        <div className="query-builder-form">
+          <div className="query-builder-form-group">
+            <Typography variant="h3">Select Source Node</Typography>
+            <TextField select id="source-node-select" value={selectedSourceNode || ''} onChange={handleSourceNodeChange} label="Source Node">
+              {nodeNames.map((nodeName) => (
                 <MenuItem key={nodeName} value={nodeName}>
                   {nodeName}
                 </MenuItem>
               ))}
-            </Select>
-          </FormControl>
+            </TextField>
+          </div>
 
-          <Typography variant="h3">Select Expressions</Typography>
-          <List>
-            {selectExpressions.map((selectExpression, index) => (
-              <ListItem key={index}>
-                <Card variant="outlined">
-                  <CardContent>
-                    <SelectExpressionBuilder
-                      expression={selectExpression}
-                      onChange={(newExpression) => {
-                        const newSelectExpressions = [...selectExpressions];
-                        newSelectExpressions[index] = newExpression;
-                        setSelectExpressions(newSelectExpressions);
-                      }}
-                      availableColumns={availableColumns}
-                      getSource={getSource}
-                    />
-                    <pre>{buildSelectExpression(selectExpression)}</pre>
-                  </CardContent>
-                  <CardActions>
-                    <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveSelectExpression(index)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </CardActions>
-                </Card>
-              </ListItem>
-            ))}
-          </List>
-          <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddSelectExpression}>
-            Add Select Expression
+          {selectedSourceNode && (
+            <>
+              <JoinClauseBuilder
+                joinNodes={joinNodes}
+                setJoinNodes={setJoinNodes}
+                availableColumns={availableColumns}
+                handleAddJoinNode={handleAddJoinNode}
+                handleRemoveJoinNode={handleRemoveJoinNode}
+                handleAddJoinCondition={handleAddJoinCondition}
+                handleRemoveJoinCondition={handleRemoveJoinCondition}
+                joinableNodes={joinableNodes}
+              />
+
+              <SelectClauseBuilder
+                getSource={getSource}
+                selectExpressions={selectExpressions}
+                setSelectExpressions={setSelectExpressions}
+                availableColumns={availableColumns}
+                handleAddSelectExpression={handleAddSelectExpression}
+                handleRemoveSelectExpression={handleRemoveSelectExpression}
+              />
+              <WhereClauseBuilder
+                whereConditions={whereConditions}
+                setWhereConditions={setWhereConditions}
+                availableColumns={availableColumns}
+                handleAddWhereCondition={handleAddWhereCondition}
+                handleRemoveWhereCondition={handleRemoveWhereCondition}
+              />
+              <GroupByClauseBuilder
+                groupByColumns={groupByColumns}
+                setGroupByColumns={setGroupByColumns}
+                availableColumns={availableColumns}
+                handleAddGroupByColumn={handleAddGroupByColumn}
+                handleRemoveGroupByColumn={handleRemoveGroupByColumn}
+              />
+
+              <OrderByClauseBuilder
+                orderByColumns={orderByColumns}
+                setOrderByColumns={setOrderByColumns}
+                availableColumns={availableColumns}
+                handleAddOrderByColumn={handleAddOrderByColumn}
+                handleRemoveOrderByColumn={handleRemoveOrderByColumn}
+              />
+            </>
+          )}
+
+          <Button variant="contained" onClick={handleSubmit} disabled={errors.length > 0}>
+            Submit Query
           </Button>
+        </div>
+        <div className="query-builder-preview">
+          {selectedSourceNode && errors.length === 0 && (
+            <>
+              <Typography variant="h3">Query String</Typography>
+              <pre data-testid="query-string">{queryString}</pre>
+            </>
+          )}
 
-          <Typography variant="h3">Where Conditions</Typography>
-          <List>
-            {whereConditions.map((whereCondition, index) => (
-              <ListItem key={index}>
-                <WhereConditionBuilder
-                  condition={whereCondition}
-                  onChange={(newCondition) => {
-                    const newWhereConditions = [...whereConditions];
-                    newWhereConditions[index] = newCondition;
-                    setWhereConditions(newWhereConditions);
-                  }}
-                  availableColumns={availableColumns}
-                />
-                <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveWhereCondition(index)}>
-                  <DeleteIcon />
-                </IconButton>
-              </ListItem>
-            ))}
-          </List>
-          <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddWhereCondition}>
-            Add Where Condition
-          </Button>
-
-          {/* Updated GroupBy Section */}
-          <Typography variant="h3">Group By Columns</Typography>
-          <List>
-            {groupByColumns.map((groupByColumn, index) => (
-              <ListItem key={index}>
-                <Select
-                  value={groupByColumn.column.name}
-                  onChange={(e) => {
-                    const newGroupByColumns = [...groupByColumns];
-                    newGroupByColumns[index] = {source: groupByColumn.source, column: availableColumns.find((c) => c.column.name === e.target.value)?.column as DataColumn};
-                    setGroupByColumns(newGroupByColumns);
-                  }}>
-                  {availableColumns.map((qbColumn) => (
-                    <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
-                      {`${qbColumn.source}.${qbColumn.column.name}`}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveGroupByColumn(index)}>
-                  <DeleteIcon />
-                </IconButton>
-              </ListItem>
-            ))}
-          </List>
-          <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddGroupByColumn}>
-            Add Group By Column
-          </Button>
-
-          {/* Updated OrderBy Section */}
-          <Typography variant="h3">Order By Columns</Typography>
-          <List>
-            {orderByColumns.map((orderByColumn, index) => (
-              <ListItem key={index}>
-                <OrderByConditionBuilder
-                  condition={orderByColumn}
-                  onChange={(newCondition) => {
-                    const newOrderByColumns = [...orderByColumns];
-                    newOrderByColumns[index] = newCondition;
-                    setOrderByColumns(newOrderByColumns);
-                  }}
-                  availableColumns={availableColumns}
-                />
-                <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveOrderByColumn(index)}>
-                  <DeleteIcon />
-                </IconButton>
-              </ListItem>
-            ))}
-          </List>
-          <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddOrderByColumn}>
-            Add Order By Column
-          </Button>
-
-          <Typography variant="h3">Query</Typography>
-
-          <pre>{queryString}</pre>
-        </>
-      )}
-
-      {errors.length > 0 && (
-        <Typography variant="h3" color="error">
-          Errors
-        </Typography>
-      )}
-      <List>
-        {errors.map((error) => (
-          <ListItem key={error}>
-            <ListItemText primary={error} primaryTypographyProps={{color: 'error'}} />
-          </ListItem>
-        ))}
-      </List>
-
-      <Button variant="contained" onClick={handleSubmit} disabled={errors.length > 0}>
-        Submit Query
-      </Button>
-    </Box>
+          {errors.length > 0 && (
+            <div className="query-builder-errors">
+              <Typography variant="h3" color="error">
+                Errors
+              </Typography>
+              <List>
+                {errors.map((error) => (
+                  <ListItem key={error}>
+                    <ListItemText primary={error} primaryTypographyProps={{color: 'error'}} />
+                  </ListItem>
+                ))}
+              </List>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -435,7 +533,7 @@ const SelectExpressionBuilder: React.FC<{
     onChange(newExpression);
   };
 
-  const handleExpressionTypeChange = (event: SelectChangeEvent<string>) => {
+  const handleExpressionTypeChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setExpressionType(event.target.value);
 
     // Reset dependent states when expression type changes
@@ -448,7 +546,7 @@ const SelectExpressionBuilder: React.FC<{
     setExpressionRename('');
   };
 
-  const handleExpressionColumnChange = (event: SelectChangeEvent<string>) => {
+  const handleExpressionColumnChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedColumn = availableColumns.find((column) => column.column.name === event.target.value);
     if (selectedColumn) {
       setExpressionColumn(selectedColumn);
@@ -459,11 +557,11 @@ const SelectExpressionBuilder: React.FC<{
     setExpressionColumnExpression(newExpression);
   };
 
-  const handleExpressionAggregateChange = (event: SelectChangeEvent<string>) => {
+  const handleExpressionAggregateChange = (event: ChangeEvent<HTMLInputElement>) => {
     setExpressionAggregate(event.target.value);
   };
 
-  const handleExpressionOperatorChange = (event: SelectChangeEvent<string>) => {
+  const handleExpressionOperatorChange = (event: ChangeEvent<HTMLInputElement>) => {
     setExpressionOperator(event.target.value);
   };
 
@@ -475,11 +573,11 @@ const SelectExpressionBuilder: React.FC<{
     setExpressionRight(newExpression);
   };
 
-  const handleExpressionConstantChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExpressionConstantChange = (event: ChangeEvent<HTMLInputElement>) => {
     setExpressionConstant(event.target.value);
   };
 
-  const handleExpressionRenameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExpressionRenameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setExpressionRename(event.target.value);
   };
 
@@ -518,33 +616,33 @@ const SelectExpressionBuilder: React.FC<{
 
   return (
     <Box sx={{display: 'flex', flexDirection: 'row', gap: 1}}>
-      <Select value={expressionType} onChange={handleExpressionTypeChange}>
+      <TextField select value={expressionType} onChange={handleExpressionTypeChange} label="Expression Type">
         <MenuItem value={'basic'}>Column</MenuItem>
         <MenuItem value={'aggregate'}>Aggregate</MenuItem>
         <MenuItem value={'arithmetic'}>Arithmetic</MenuItem>
         <MenuItem value={'constant'}>Constant</MenuItem>
         <MenuItem value={'rename'}>Rename</MenuItem>
-      </Select>
+      </TextField>
 
       {expressionType === 'basic' && (
-        <Select value={expressionColumn?.column.name || ''} onChange={handleExpressionColumnChange}>
+        <TextField select value={expressionColumn?.column.name || ''} onChange={handleExpressionColumnChange} label="Column">
           {availableColumns.map((qbColumn) => (
             <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
               {`${qbColumn.source}.${qbColumn.column.name}`}
             </MenuItem>
           ))}
-        </Select>
+        </TextField>
       )}
 
       {expressionType === 'aggregate' && (
         <>
-          <Select value={expressionAggregate} onChange={handleExpressionAggregateChange}>
+          <TextField select value={expressionAggregate} onChange={handleExpressionAggregateChange} label="Aggregate">
             <MenuItem value={'SUM'}>SUM</MenuItem>
             <MenuItem value={'AVG'}>AVG</MenuItem>
             <MenuItem value={'COUNT'}>COUNT</MenuItem>
             <MenuItem value={'MAX'}>MAX</MenuItem>
             <MenuItem value={'MIN'}>MIN</MenuItem>
-          </Select>
+          </TextField>
           <Typography className="select-expression-text" variant="body1">
             (
           </Typography>
@@ -557,12 +655,12 @@ const SelectExpressionBuilder: React.FC<{
 
       {expressionType === 'arithmetic' && (
         <>
-          <Select value={expressionOperator} onChange={handleExpressionOperatorChange}>
+          <TextField select value={expressionOperator} onChange={handleExpressionOperatorChange} label="Operator">
             <MenuItem value={'+'}>+</MenuItem>
             <MenuItem value={'-'}>-</MenuItem>
             <MenuItem value={'*'}>*</MenuItem>
             <MenuItem value={'/'}>/</MenuItem>
-          </Select>
+          </TextField>
           <Typography className="select-expression-text" variant="body1">
             (
           </Typography>
@@ -596,7 +694,7 @@ const WhereConditionBuilder: React.FC<{condition: WhereCondition; onChange: (con
 
   return (
     <Box sx={{display: 'flex', gap: 2}}>
-      <Select value={condition.leftColumn.name} onChange={(e) => handleChange({...condition, leftColumn: column(condition.leftColumn.source, e.target.value)})}>
+      <TextField select value={condition.leftColumn.name} onChange={(e) => handleChange({...condition, leftColumn: column(condition.leftColumn.source, e.target.value)})} label="Column">
         {availableColumns
           .filter((qbColumn) => qbColumn.source === condition.leftColumn.source)
           .map((qbColumn) => (
@@ -604,16 +702,16 @@ const WhereConditionBuilder: React.FC<{condition: WhereCondition; onChange: (con
               {`${qbColumn.source}.${qbColumn.column.name}`}
             </MenuItem>
           ))}
-      </Select>
-      <Select value={condition.operator} onChange={(e) => handleChange({...condition, operator: e.target.value as '=' | '!=' | '>' | '<' | '>=' | '<='})}>
+      </TextField>
+      <TextField select value={condition.operator} onChange={(e) => handleChange({...condition, operator: e.target.value as '=' | '!=' | '>' | '<' | '>=' | '<='})} label="Operator">
         <MenuItem value={'='}>is</MenuItem>
         <MenuItem value={'!='}>is not</MenuItem>
         <MenuItem value={'>'}>is greater than</MenuItem>
         <MenuItem value={'<'}>is less than</MenuItem>
         <MenuItem value={'>='}>is at least</MenuItem>
         <MenuItem value={'<='}>is at most</MenuItem>
-      </Select>
-      <TextField value={condition.rightValue} onChange={(e) => handleChange({...condition, rightValue: e.target.value})} />
+      </TextField>
+      <TextField value={condition.rightValue} onChange={(e) => handleChange({...condition, rightValue: e.target.value})} label="Value" />
     </Box>
   );
 };
@@ -625,17 +723,17 @@ const OrderByConditionBuilder: React.FC<{condition: OrderByCondition; onChange: 
 
   return (
     <Box sx={{display: 'flex', gap: 2}}>
-      <Select value={condition.column.name} onChange={(e) => handleChange({...condition, column: column(condition.column.source, e.target.value)})}>
+      <TextField select value={condition.column.name} onChange={(e) => handleChange({...condition, column: column(condition.column.source, e.target.value)})} label="Column">
         {availableColumns.map((qbColumn) => (
           <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
             {`${qbColumn.source}.${qbColumn.column.name}`}
           </MenuItem>
         ))}
-      </Select>
-      <Select value={condition.direction} onChange={(e) => handleChange({...condition, direction: e.target.value as 'ASC' | 'DESC'})}>
+      </TextField>
+      <TextField select value={condition.direction} onChange={(e) => handleChange({...condition, direction: e.target.value as 'ASC' | 'DESC'})} label="Direction">
         <MenuItem value={'ASC'}>ASC</MenuItem>
         <MenuItem value={'DESC'}>DESC</MenuItem>
-      </Select>
+      </TextField>
     </Box>
   );
 };
