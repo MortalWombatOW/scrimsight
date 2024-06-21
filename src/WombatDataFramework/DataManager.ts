@@ -36,6 +36,31 @@ class DataManager {
     return column;
   }
 
+  public getColumnsForNodes(nodes: DataNodeName[]): DataColumn[] {
+    const columns: DataColumn[] = [];
+    nodes.forEach((node) => {
+      this.getNodeOrDie(node)
+        .getColumns()
+        .forEach((column) => {
+          if (!columns.find((c) => c.name === column.name)) {
+            columns.push(column);
+          }
+        });
+    });
+
+    return columns;
+  }
+
+  public getNodesForColumn(column: DataColumn): DataNodeName[] {
+    const nodes: DataNodeName[] = [];
+    this.nodes.forEach((node) => {
+      if (node.getColumns().find((c) => c.name === column.name)) {
+        nodes.push(node.getName());
+      }
+    });
+    return nodes;
+  }
+
   public getNodeList(onlyOutputNodes?: boolean): DataNode<any>[] {
     if (onlyOutputNodes) {
       return Array.from(this.nodes.values()).filter((node) => node.getType() !== 'WriteNode');

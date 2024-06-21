@@ -1,32 +1,17 @@
-import React, {ChangeEvent, useEffect, useMemo, useState} from 'react';
-import {FormControl, InputLabel, MenuItem, Select, TextField, Box, Button, List, ListItem, ListItemText, IconButton, Typography, Card, CardContent, CardActions} from '@mui/material';
+import React, {ChangeEvent, useEffect, useState} from 'react';
+import {MenuItem, TextField, Box, Button, List, ListItem, ListItemText, IconButton, Typography} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import {
-  SelectExpression,
-  basicExpr,
-  column,
-  aggregateExpr,
-  renameExpr,
-  arithmeticExpr,
-  constantExpr,
-  JoinCondition,
-  WhereCondition,
-  OrderByCondition,
-  SelectAggregateExpression,
-  SelectArithmeticExpression,
-  SelectBasicExpression,
-  SelectConstantExpression,
-  buildSelectExpression,
-} from '../../WombatDataFramework/AlaSQLQueryBuilder';
-import {useDataManager} from '../../WombatDataFramework/DataContext';
-import {DataNodeName} from '../../WombatDataFramework/DataNode';
-import useQueryBuilder from '../../WombatDataFramework/hooks/useQueryBuilder';
-import DataNodeFactory from '../../WombatDataFramework/DataNodeFactory';
-import {DataColumn} from '../../WombatDataFramework/DataColumn';
+import {SelectExpression, basicExpr, column, JoinCondition, WhereCondition, OrderByCondition} from '../../../WombatDataFramework/AlaSQLQueryBuilder';
+import {useDataManager} from '../../../WombatDataFramework/DataContext';
+import {DataNodeName} from '../../../WombatDataFramework/DataNode';
+import useQueryBuilder from '../../../WombatDataFramework/hooks/useQueryBuilder';
+import DataNodeFactory from '../../../WombatDataFramework/DataNodeFactory';
+import {DataColumn} from '../../../WombatDataFramework/DataColumn';
 import {format} from 'sql-formatter';
 
 import './QueryBuilder.scss';
+import SelectExpressionBuilder from './SelectConditionBuilder/SelectConditionBuilder';
 
 interface QueryBuilderColumn {
   source: DataNodeName;
@@ -262,6 +247,9 @@ const QueryBuilder: React.FC = () => {
   const [queryString, setQueryString] = useState<string>(build());
   const [errors, setErrors] = useState<string[]>(findErrors());
 
+  // New state for node name
+  const [nodeName, setNodeName] = useState('');
+
   useEffect(() => {
     reset();
     if (!selectedSourceNode) {
@@ -381,11 +369,14 @@ const QueryBuilder: React.FC = () => {
   };
 
   const handleSubmit = () => {
+    // Generate node name based on input field
+    const generatedNodeName = nodeName.toLowerCase().replace(/\s+/g, '_');
+
     // TODO: Implement query building and execution logic
     // For now, just log the query
     const node = factory.makeAlaSQLNode({
-      name: 'TODO_name',
-      displayName: 'TODO_displayName',
+      name: generatedNodeName, // Use generated node name
+      displayName: nodeName, // Use display name from input
       sql: queryString,
       sources: [selectedSourceNode!, ...joinNodes.map((node) => node.nodeName)],
       columnNames: selectExpressions.map((expr) => (expr.type === 'basic' ? expr.column.name : expr.type === 'rename' ? expr.name : 'TODO')),
@@ -402,6 +393,7 @@ const QueryBuilder: React.FC = () => {
     setAvailableColumns([]);
     setQueryString('');
     setErrors([]);
+    setNodeName(''); // Reset node name input
   };
 
   const nodeNames = dataManager.getNodeNames().filter((nodeName) => dataManager.getNodeOrDie(nodeName).getColumns().length > 0);
@@ -414,6 +406,9 @@ const QueryBuilder: React.FC = () => {
       </Typography>
       <div className="query-builder-container">
         <div className="query-builder-form">
+          <div className="query-builder-form-group">
+            <TextField label="Node Name" value={nodeName} onChange={(e) => setNodeName(e.target.value)} />
+          </div>
           <div className="query-builder-form-group">
             <Typography variant="h3">Select Source Node</Typography>
             <TextField select id="source-node-select" value={selectedSourceNode || ''} onChange={handleSourceNodeChange} label="Source Node">
@@ -500,190 +495,6 @@ const QueryBuilder: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-const SelectExpressionBuilder: React.FC<{
-  expression: SelectExpression | null;
-  onChange: (expression: SelectExpression) => void;
-  availableColumns: QueryBuilderColumn[];
-  getSource: () => DataNodeName | undefined; // Add getSource prop
-}> = ({expression, onChange, availableColumns, getSource}) => {
-  const dataManager = useDataManager();
-  const defaultExpression: SelectExpression = {
-    type: 'basic',
-    column: column(getSource()!, dataManager.getNodeOrDie(getSource()!).getColumns()[0].name),
-  };
-
-  const expressionOrDefault = expression || defaultExpression;
-
-  const [expressionType, setExpressionType] = useState<string>(expressionOrDefault.type);
-  const [expressionColumn, setExpressionColumn] = useState<QueryBuilderColumn>(
-    expressionOrDefault.type === 'basic' ? availableColumns.find((c) => c.column.name === expressionOrDefault.column.name) || availableColumns[0] : availableColumns[0],
-  );
-  const [expressionColumnExpression, setExpressionColumnExpression] = useState<SelectExpression>(expressionOrDefault.type === 'basic' ? expressionOrDefault : defaultExpression);
-  const [expressionAggregate, setExpressionAggregate] = useState<string>(expressionOrDefault.type === 'aggregate' ? expressionOrDefault.aggregate : 'SUM');
-  const [expressionOperator, setExpressionOperator] = useState<string>(expressionOrDefault.type === 'arithmetic' ? expressionOrDefault.operator : '+');
-  const [expressionLeft, setExpressionLeft] = useState<SelectExpression>(expressionOrDefault.type === 'arithmetic' ? expressionOrDefault.left : defaultExpression);
-  const [expressionRight, setExpressionRight] = useState<SelectExpression>(expressionOrDefault.type === 'arithmetic' ? expressionOrDefault.right : defaultExpression);
-  const [expressionConstant, setExpressionConstant] = useState<string | number>(expressionOrDefault.type === 'constant' ? expressionOrDefault.value : '');
-  const [expressionRename, setExpressionRename] = useState<string>(expressionOrDefault.type === 'rename' ? expressionOrDefault.name : '');
-
-  const handleChange = (newExpression: SelectExpression) => {
-    onChange(newExpression);
-  };
-
-  const handleExpressionTypeChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setExpressionType(event.target.value);
-
-    // Reset dependent states when expression type changes
-    setExpressionColumn(availableColumns[0]);
-    setExpressionAggregate('SUM');
-    setExpressionOperator('+');
-    setExpressionLeft(defaultExpression);
-    setExpressionRight(defaultExpression);
-    setExpressionConstant('');
-    setExpressionRename('');
-  };
-
-  const handleExpressionColumnChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedColumn = availableColumns.find((column) => column.column.name === event.target.value);
-    if (selectedColumn) {
-      setExpressionColumn(selectedColumn);
-    }
-  };
-
-  const handleExpressionColumnExpressionChange = (newExpression: SelectExpression) => {
-    setExpressionColumnExpression(newExpression);
-  };
-
-  const handleExpressionAggregateChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setExpressionAggregate(event.target.value);
-  };
-
-  const handleExpressionOperatorChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setExpressionOperator(event.target.value);
-  };
-
-  const handleExpressionLeftChange = (newExpression: SelectExpression) => {
-    setExpressionLeft(newExpression);
-  };
-
-  const handleExpressionRightChange = (newExpression: SelectExpression) => {
-    setExpressionRight(newExpression);
-  };
-
-  const handleExpressionConstantChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setExpressionConstant(event.target.value);
-  };
-
-  const handleExpressionRenameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setExpressionRename(event.target.value);
-  };
-
-  const buildExpression = (): SelectExpression => {
-    switch (expressionType) {
-      case 'basic':
-        if (!expressionColumn) {
-          throw new Error('Expression column is null');
-        }
-        return basicExpr(column(expressionColumn.source, expressionColumn.column.name));
-      case 'aggregate':
-        if (!expressionColumn) {
-          throw new Error('Expression column is null');
-        }
-        return aggregateExpr(expressionAggregate as 'SUM' | 'AVG' | 'COUNT' | 'MAX' | 'MIN', expressionColumnExpression as SelectBasicExpression | SelectArithmeticExpression);
-      case 'arithmetic':
-        return arithmeticExpr(
-          expressionOperator as '+' | '-' | '*' | '/',
-          expressionLeft as SelectBasicExpression | SelectAggregateExpression | SelectArithmeticExpression | SelectConstantExpression,
-          expressionRight as SelectBasicExpression | SelectAggregateExpression | SelectArithmeticExpression | SelectConstantExpression,
-        );
-      case 'constant':
-        return constantExpr(expressionConstant);
-      case 'rename':
-        return renameExpr(expressionLeft as SelectBasicExpression | SelectAggregateExpression | SelectArithmeticExpression | SelectConstantExpression, expressionRename);
-      default:
-        throw new Error('Unknown expression type');
-    }
-  };
-
-  useEffect(() => {
-    const newExpression = buildExpression();
-    handleChange(newExpression);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expressionType, expressionColumn, expressionAggregate, expressionOperator, expressionLeft, expressionRight, expressionConstant, expressionRename, expressionColumnExpression]);
-
-  return (
-    <Box sx={{display: 'flex', flexDirection: 'row', gap: 1}}>
-      <TextField select value={expressionType} onChange={handleExpressionTypeChange} label="Expression Type">
-        <MenuItem value={'basic'}>Column</MenuItem>
-        <MenuItem value={'aggregate'}>Aggregate</MenuItem>
-        <MenuItem value={'arithmetic'}>Arithmetic</MenuItem>
-        <MenuItem value={'constant'}>Constant</MenuItem>
-        <MenuItem value={'rename'}>Rename</MenuItem>
-      </TextField>
-
-      {expressionType === 'basic' && (
-        <TextField select value={expressionColumn?.column.name || ''} onChange={handleExpressionColumnChange} label="Column">
-          {availableColumns.map((qbColumn) => (
-            <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
-              {`${qbColumn.source}.${qbColumn.column.name}`}
-            </MenuItem>
-          ))}
-        </TextField>
-      )}
-
-      {expressionType === 'aggregate' && (
-        <>
-          <TextField select value={expressionAggregate} onChange={handleExpressionAggregateChange} label="Aggregate">
-            <MenuItem value={'SUM'}>SUM</MenuItem>
-            <MenuItem value={'AVG'}>AVG</MenuItem>
-            <MenuItem value={'COUNT'}>COUNT</MenuItem>
-            <MenuItem value={'MAX'}>MAX</MenuItem>
-            <MenuItem value={'MIN'}>MIN</MenuItem>
-          </TextField>
-          <Typography className="select-expression-text" variant="body1">
-            (
-          </Typography>
-          <SelectExpressionBuilder expression={expressionColumnExpression} onChange={handleExpressionColumnExpressionChange} availableColumns={availableColumns} getSource={getSource} />
-          <Typography className="select-expression-text" variant="body1">
-            )
-          </Typography>
-        </>
-      )}
-
-      {expressionType === 'arithmetic' && (
-        <>
-          <TextField select value={expressionOperator} onChange={handleExpressionOperatorChange} label="Operator">
-            <MenuItem value={'+'}>+</MenuItem>
-            <MenuItem value={'-'}>-</MenuItem>
-            <MenuItem value={'*'}>*</MenuItem>
-            <MenuItem value={'/'}>/</MenuItem>
-          </TextField>
-          <Typography className="select-expression-text" variant="body1">
-            (
-          </Typography>
-          <SelectExpressionBuilder expression={expressionLeft} onChange={handleExpressionLeftChange} availableColumns={availableColumns} getSource={getSource} />
-          <Typography className="select-expression-text" variant="body1">
-            {expressionOperator}
-          </Typography>
-          <SelectExpressionBuilder expression={expressionRight} onChange={handleExpressionRightChange} availableColumns={availableColumns} getSource={getSource} />
-          <Typography className="select-expression-text" variant="body1">
-            )
-          </Typography>
-        </>
-      )}
-
-      {expressionType === 'constant' && <TextField value={expressionConstant} onChange={handleExpressionConstantChange} />}
-
-      {expressionType === 'rename' && (
-        <>
-          <SelectExpressionBuilder expression={expressionLeft} onChange={handleExpressionLeftChange} availableColumns={availableColumns} getSource={getSource} />
-          <TextField value={expressionRename} onChange={handleExpressionRenameChange} label="AS" />
-        </>
-      )}
-    </Box>
   );
 };
 

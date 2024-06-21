@@ -4,7 +4,7 @@ import useWindowSize from '../../hooks/useWindowSize';
 import DisplayNode from './DisplayNode';
 import {useDataManager} from '../../WombatDataFramework/DataContext';
 import {Card, CardContent} from '@mui/material';
-import QueryBuilder from './QueryBuilder';
+import QueryBuilder from './QueryBuilder/QueryBuilder';
 const QueriesPage = () => {
   const size = useWindowSize();
   const [selectedNode, setSelectedNode] = React.useState<string | null>(null);
