@@ -36,7 +36,7 @@ function objectDeepEquals<T extends object>(a: T, b: T): boolean {
 
 function deepEquals<T>(a: T, b: T): boolean {
   if (Array.isArray(a) && Array.isArray(b)) {
-    return arrayDeepEquals(a, b);
+    return arrayDeepEquals(a as T[], b as T[]);
   }
 
   if (typeof a === 'object' && typeof b === 'object') {
