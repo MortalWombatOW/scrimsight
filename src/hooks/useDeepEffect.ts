@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 
-function arrayDeepEquals<T extends any[]>(a: T, b: T): boolean {
+function arrayDeepEquals<T extends unknown[]>(a: T, b: T): boolean {
   if (a.length !== b.length) {
     return false;
   }
@@ -15,6 +15,9 @@ function arrayDeepEquals<T extends any[]>(a: T, b: T): boolean {
 }
 
 function objectDeepEquals<T extends object>(a: T, b: T): boolean {
+  if (a === null || b === null) {
+    return a === b;
+  }
   const aKeys = Object.keys(a);
   const bKeys = Object.keys(b);
 
@@ -37,24 +40,28 @@ function deepEquals<T>(a: T, b: T): boolean {
   }
 
   if (typeof a === 'object' && typeof b === 'object') {
-    return objectDeepEquals(a, b);
+    return objectDeepEquals(a as object, b as object);
   }
 
   return a === b;
 }
 
 export function useDeepEffect(setup: () => void, deps: unknown[]): void {
-  const prevDeps = React.useRef<unknown[]>([]);
+  const prevDeps = useRef<unknown[]>();
 
-  if (!deepEquals(prevDeps.current, deps)) {
-    setup();
-    prevDeps.current = deps;
-  }
+  useEffect(() => {
+    if (!deepEquals(prevDeps.current, deps)) {
+      console.log('useDeepEffect', deps);
+      setup();
+      prevDeps.current = deps;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
 }
 
 export function useDeepMemo<T>(factory: () => T, deps: unknown[]): T {
-  const prevDeps = React.useRef<unknown[]>([]);
-  const prevValue = React.useRef<T>();
+  const prevDeps = useRef<unknown[]>([]);
+  const prevValue = useRef<T>();
 
   if (prevValue.current === undefined || !deepEquals(prevDeps.current, deps)) {
     prevValue.current = factory();

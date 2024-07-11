@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {useDataNode, useDataNodeOutput} from '../../hooks/useData';
+import React, {useState} from 'react';
+import {useDataNode} from '../../hooks/useData';
 import {DataNodeName} from '../DataNode';
 import {LinearProgress} from '@mui/material';
 import {DataColumn, DataColumnType} from '../DataColumn';
 import {useDataManager} from '../DataContext';
+import {useDeepEffect} from '../../hooks/useDeepEffect';
 
 export interface DataResult<T> {
   data: T[];
@@ -21,13 +22,12 @@ const DataFetcher: React.FC<DataFetcherProps> = ({nodeName, renderContent}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dataResult, setDataResult] = useState<DataResult<object> | null>(null);
 
-  const dataManager = useDataManager();
   const node = useDataNode(nodeName);
 
   const data = node?.getOutput() || [];
   const columns = node?.getColumns() || [];
 
-  useEffect(() => {
+  useDeepEffect(() => {
     setLoading(false);
 
     setDataResult({
@@ -35,7 +35,7 @@ const DataFetcher: React.FC<DataFetcherProps> = ({nodeName, renderContent}) => {
       columns,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(data)]);
+  }, [data]);
 
   if (node === undefined) {
     //punt if node is not found

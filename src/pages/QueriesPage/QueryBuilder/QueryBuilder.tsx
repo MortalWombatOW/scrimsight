@@ -1,5 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
-import {MenuItem, TextField, Box, Button, List, ListItem, ListItemText, IconButton, Typography} from '@mui/material';
+import React, {ChangeEvent, useState, useEffect} from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import {SelectExpression, basicExpr, column, JoinCondition, WhereCondition, OrderByCondition} from '../../../WombatDataFramework/AlaSQLQueryBuilder';
@@ -8,10 +7,15 @@ import {DataNodeName} from '../../../WombatDataFramework/DataNode';
 import useQueryBuilder from '../../../WombatDataFramework/hooks/useQueryBuilder';
 import DataNodeFactory from '../../../WombatDataFramework/DataNodeFactory';
 import {DataColumn} from '../../../WombatDataFramework/DataColumn';
+import {MenuItem, TextField, Box, Button, List, ListItem, ListItemText, IconButton, Typography, ButtonGroup} from '../../../WombatUI/WombatUI';
 import {format} from 'sql-formatter';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import CheckIcon from '@mui/icons-material/Check';
 
 import './QueryBuilder.scss';
 import SelectExpressionBuilder from './SelectConditionBuilder/SelectConditionBuilder';
+import {useDeepEffect} from '../../../hooks/useDeepEffect';
+import {ListItemAvatar} from '@mui/material';
 
 interface QueryBuilderColumn {
   source: DataNodeName;
@@ -21,7 +25,7 @@ interface QueryBuilderColumn {
 function JoinClauseBuilder(props) {
   return (
     <div className="query-builder-form-group">
-      <Typography variant="h3">Join Nodes</Typography>
+      {/* <Typography variant="h3">Join Nodes</Typography> */}
       <List>
         {props.joinNodes.map((joinNode, index) => (
           <ListItem key={index}>
@@ -37,6 +41,7 @@ function JoinClauseBuilder(props) {
                 <ListItem key={conditionIndex}>
                   <TextField
                     select
+                    size="small"
                     value={condition.leftColumn.name}
                     onChange={(e) => {
                       const newJoinNodes = [...props.joinNodes];
@@ -53,6 +58,7 @@ function JoinClauseBuilder(props) {
                   </TextField>
                   <TextField
                     select
+                    size="small"
                     value={condition.operator}
                     onChange={(e) => {
                       const newJoinNodes = [...props.joinNodes];
@@ -68,6 +74,7 @@ function JoinClauseBuilder(props) {
                   </TextField>
                   <TextField
                     select
+                    size="small"
                     value={condition.rightColumn.name}
                     onChange={(e) => {
                       const newJoinNodes = [...props.joinNodes];
@@ -96,7 +103,7 @@ function JoinClauseBuilder(props) {
         ))}
       </List>
 
-      <TextField select id="join-node-select" value={''} onChange={(e) => props.handleAddJoinNode(e.target.value as DataNodeName)} label="Join Node">
+      <TextField select size="small" id="join-node-select" value={''} onChange={(e) => props.handleAddJoinNode(e.target.value as DataNodeName)} label="Join Node">
         {props.joinableNodes.map((nodeName) => (
           <MenuItem key={nodeName} value={nodeName}>
             {nodeName}
@@ -107,32 +114,36 @@ function JoinClauseBuilder(props) {
   );
 }
 
-function SelectClauseBuilder(props) {
+function SelectClauseBuilder({nodes, selectExpressions, setSelectExpressions}) {
+  const [isRequestingOutput, setIsRequestingOutput] = useState<boolean>(false);
+  const [isRequestingReset, setIsRequestingReset] = useState<boolean>(false);
+  const [isValidExpression, setIsValidExpression] = useState<boolean>(false);
+
   return (
     <div className="query-builder-form-group">
-      <Typography variant="h3">Select Expressions</Typography>
-      <List>
-        {props.selectExpressions.map((selectExpression, index) => (
-          <ListItem key={index}>
-            <SelectExpressionBuilder
-              expression={selectExpression}
-              onChange={(newExpression) => {
-                const newSelectExpressions = [...props.selectExpressions];
-                newSelectExpressions[index] = newExpression;
-                props.setSelectExpressions(newSelectExpressions);
-              }}
-              availableColumns={props.availableColumns}
-              getSource={props.getSource}
-            />
-            <IconButton edge="end" aria-label="delete" onClick={() => props.handleRemoveSelectExpression(index)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItem>
-        ))}
-      </List>
-      <Button variant="outlined" startIcon={<AddIcon />} onClick={props.handleAddSelectExpression}>
-        Add Select Expression
-      </Button>
+      {/* <Typography variant="h3">Select Expressions</Typography> */}
+      <div className="query-builder-select-expressions">
+        <SelectExpressionBuilder
+          outputExpression={(newExpression) => {
+            const newSelectExpressions = [...selectExpressions, newExpression];
+            setSelectExpressions(newSelectExpressions);
+          }}
+          nodes={nodes}
+          isRequestingOutput={isRequestingOutput}
+          setIsRequestingOutput={setIsRequestingOutput}
+          isRequestingReset={isRequestingReset}
+          setIsRequestingReset={setIsRequestingReset}
+          setIsValidExpression={setIsValidExpression}
+        />
+        <ButtonGroup>
+          <Button variant="outlined" onClick={() => setIsRequestingReset(true)} disabled={isRequestingOutput || isRequestingReset}>
+            <RestartAltIcon />
+          </Button>
+          <Button variant="outlined" onClick={() => setIsRequestingOutput(true)} disabled={isRequestingOutput || isRequestingReset || !isValidExpression}>
+            <CheckIcon />
+          </Button>
+        </ButtonGroup>
+      </div>
     </div>
   );
 }
@@ -140,7 +151,7 @@ function SelectClauseBuilder(props) {
 function WhereClauseBuilder(props) {
   return (
     <div className="query-builder-form-group">
-      <Typography variant="h3">Where Conditions</Typography>
+      {/* <Typography variant="h3">Where Conditions</Typography> */}
       <List>
         {props.whereConditions.map((whereCondition, index) => (
           <ListItem key={index}>
@@ -169,12 +180,13 @@ function WhereClauseBuilder(props) {
 function GroupByClauseBuilder(props) {
   return (
     <div className="query-builder-form-group">
-      <Typography variant="h3">Group By Columns</Typography>
+      {/* <Typography variant="h3">Group By Columns</Typography> */}
       <List>
         {props.groupByColumns.map((groupByColumn, index) => (
           <ListItem key={index}>
             <TextField
               select
+              size="small"
               value={groupByColumn.column.name}
               onChange={(e) => {
                 const newGroupByColumns = [...props.groupByColumns];
@@ -206,7 +218,7 @@ function GroupByClauseBuilder(props) {
 function OrderByClauseBuilder(props) {
   return (
     <div className="query-builder-form-group">
-      <Typography variant="h3">Order By Columns</Typography>
+      {/* <Typography variant="h3">Order By Columns</Typography> */}
       <List>
         {props.orderByColumns.map((orderByColumn, index) => (
           <ListItem key={index}>
@@ -433,14 +445,7 @@ const QueryBuilder: React.FC = () => {
                 joinableNodes={joinableNodes}
               />
 
-              <SelectClauseBuilder
-                getSource={getSource}
-                selectExpressions={selectExpressions}
-                setSelectExpressions={setSelectExpressions}
-                availableColumns={availableColumns}
-                handleAddSelectExpression={handleAddSelectExpression}
-                handleRemoveSelectExpression={handleRemoveSelectExpression}
-              />
+              <SelectClauseBuilder nodes={[selectedSourceNode, ...joinNodes.map((node) => node.nodeName)]} selectExpressions={selectExpressions} setSelectExpressions={setSelectExpressions} />
               <WhereClauseBuilder
                 whereConditions={whereConditions}
                 setWhereConditions={setWhereConditions}
@@ -505,7 +510,7 @@ const WhereConditionBuilder: React.FC<{condition: WhereCondition; onChange: (con
 
   return (
     <Box sx={{display: 'flex', gap: 2}}>
-      <TextField select value={condition.leftColumn.name} onChange={(e) => handleChange({...condition, leftColumn: column(condition.leftColumn.source, e.target.value)})} label="Column">
+      <TextField select size="small" value={condition.leftColumn.name} onChange={(e) => handleChange({...condition, leftColumn: column(condition.leftColumn.source, e.target.value)})} label="Column">
         {availableColumns
           .filter((qbColumn) => qbColumn.source === condition.leftColumn.source)
           .map((qbColumn) => (
@@ -514,7 +519,7 @@ const WhereConditionBuilder: React.FC<{condition: WhereCondition; onChange: (con
             </MenuItem>
           ))}
       </TextField>
-      <TextField select value={condition.operator} onChange={(e) => handleChange({...condition, operator: e.target.value as '=' | '!=' | '>' | '<' | '>=' | '<='})} label="Operator">
+      <TextField select size="small" value={condition.operator} onChange={(e) => handleChange({...condition, operator: e.target.value as '=' | '!=' | '>' | '<' | '>=' | '<='})} label="Operator">
         <MenuItem value={'='}>is</MenuItem>
         <MenuItem value={'!='}>is not</MenuItem>
         <MenuItem value={'>'}>is greater than</MenuItem>
@@ -522,7 +527,7 @@ const WhereConditionBuilder: React.FC<{condition: WhereCondition; onChange: (con
         <MenuItem value={'>='}>is at least</MenuItem>
         <MenuItem value={'<='}>is at most</MenuItem>
       </TextField>
-      <TextField value={condition.rightValue} onChange={(e) => handleChange({...condition, rightValue: e.target.value})} label="Value" />
+      <TextField size="small" value={condition.rightValue} onChange={(e) => handleChange({...condition, rightValue: e.target.value})} label="Value" />
     </Box>
   );
 };
@@ -534,14 +539,14 @@ const OrderByConditionBuilder: React.FC<{condition: OrderByCondition; onChange: 
 
   return (
     <Box sx={{display: 'flex', gap: 2}}>
-      <TextField select value={condition.column.name} onChange={(e) => handleChange({...condition, column: column(condition.column.source, e.target.value)})} label="Column">
+      <TextField select size="small" value={condition.column.name} onChange={(e) => handleChange({...condition, column: column(condition.column.source, e.target.value)})} label="Column">
         {availableColumns.map((qbColumn) => (
           <MenuItem key={qbColumn.column.name} value={qbColumn.column.name}>
             {`${qbColumn.source}.${qbColumn.column.name}`}
           </MenuItem>
         ))}
       </TextField>
-      <TextField select value={condition.direction} onChange={(e) => handleChange({...condition, direction: e.target.value as 'ASC' | 'DESC'})} label="Direction">
+      <TextField select size="small" value={condition.direction} onChange={(e) => handleChange({...condition, direction: e.target.value as 'ASC' | 'DESC'})} label="Direction">
         <MenuItem value={'ASC'}>ASC</MenuItem>
         <MenuItem value={'DESC'}>DESC</MenuItem>
       </TextField>

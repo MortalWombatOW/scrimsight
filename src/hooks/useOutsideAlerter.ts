@@ -1,7 +1,7 @@
-import {useEffect} from 'react';
+import {useDeepEffect} from './useDeepEffect';
 
 function useOutsideAlerter(ref, callback) {
-  useEffect(() => {
+  useDeepEffect(() => {
     /**
      * Alert if clicked on outside of element
      */

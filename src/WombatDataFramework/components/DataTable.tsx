@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React from 'react';
 import {DataResult} from './DataFetcher';
 import {DataColumn, DataColumnType} from '../DataColumn';
 import {Button, Table, TableBody, TableCell, TableFooter, TableHead, TablePagination, TableRow, TableSortLabel, Tooltip, Typography} from '@mui/material';

@@ -17,7 +17,7 @@ export interface SelectBasicExpression {
 export interface SelectAggregateExpression {
   type: 'aggregate';
   aggregate: 'SUM' | 'AVG' | 'COUNT' | 'MAX' | 'MIN';
-  column: SelectBasicExpression | SelectArithmeticExpression;
+  expression: SelectBasicExpression | SelectArithmeticExpression;
 }
 
 export interface SelectConstantExpression {
@@ -50,8 +50,8 @@ export function basicExpr(column: Column): SelectBasicExpression {
   return {type: 'basic', column};
 }
 
-export function aggregateExpr(aggregate: 'SUM' | 'AVG' | 'COUNT' | 'MAX' | 'MIN', column: SelectBasicExpression | SelectArithmeticExpression): SelectAggregateExpression {
-  return {type: 'aggregate', aggregate, column};
+export function aggregateExpr(aggregate: 'SUM' | 'AVG' | 'COUNT' | 'MAX' | 'MIN', expression: SelectBasicExpression | SelectArithmeticExpression): SelectAggregateExpression {
+  return {type: 'aggregate', aggregate, expression};
 }
 
 export function constantExpr(value: string | number): SelectConstantExpression {
@@ -114,7 +114,7 @@ export function buildSelectExpression(expression: SelectExpression): string {
     return `${expression.column.source}.${expression.column.name}`;
   }
   if (expression.type === 'aggregate') {
-    return `${expression.aggregate}(${buildSelectExpression(expression.column)})`;
+    return `${expression.aggregate}(${buildSelectExpression(expression.expression)})`;
   }
   if (expression.type === 'constant') {
     if (typeof expression.value === 'string') {

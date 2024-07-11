@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
+import React, {MutableRefObject, useRef} from 'react';
 import {useDraggable} from 'react-use-draggable-scroll';
 
 const CardCarousel = (props) => {
@@ -20,8 +20,9 @@ const CardCarousel = (props) => {
         overflowX: 'hidden',
         padding: '10px 0',
       }}>
-      {...children.map((child) => (
+      {...children.map((child, i) => (
         <div
+          key={i}
           style={{
             marginRight: childSpacing,
           }}>

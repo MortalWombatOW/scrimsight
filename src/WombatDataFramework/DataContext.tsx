@@ -1,8 +1,9 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useRef} from 'react';
 import DataManager from './DataManager';
 import DataNodeFactory from './DataNodeFactory';
 import {DATA_COLUMNS} from './DataColumn';
 import {WRITE_NODES, OBJECT_STORE_NODES, ALASQL_NODES} from './DataNodeDefinitions';
+import {useDeepEffect} from '../hooks/useDeepEffect';
 
 const DataContext = React.createContext<DataManager | null>(null);
 
@@ -13,7 +14,7 @@ const DataProvider = ({children, globalTick, updateGlobalCallback}) => {
   const factoryRef = useRef(new DataNodeFactory(dataManager));
   const factory = factoryRef.current;
 
-  useEffect(() => {
+  useDeepEffect(() => {
     for (const column of DATA_COLUMNS) {
       dataManager.registerColumn(column);
     }

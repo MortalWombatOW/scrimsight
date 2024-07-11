@@ -1,4 +1,4 @@
-import {useEffect, useState, useContext} from 'react';
+import {useState, useContext} from 'react';
 import {DataContext} from '../WombatDataFramework/DataContext'; // Make sure to import GraphContext
 import {DataNode, DataNodeName} from '../WombatDataFramework/DataNode';
 

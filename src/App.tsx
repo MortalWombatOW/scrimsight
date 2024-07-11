@@ -1,5 +1,5 @@
 import {Location} from 'history';
-import React, {useMemo} from 'react';
+import React from 'react';
 import {BrowserRouter, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import {CssBaseline, ThemeProvider, createTheme} from '@mui/material';
 import {QueryParamProvider} from 'use-query-params';
@@ -11,6 +11,7 @@ import {DataProvider} from './WombatDataFramework/DataContext';
 import Header from './components/Header/Header';
 import {getColorgorical} from './lib/color';
 import {generateThemeColor} from './lib/palette';
+import {useDeepMemo} from './hooks/useDeepEffect';
 
 const ContextualizedRoute = ({route}: {route: ScrimsightRoute}): JSX.Element => {
   let el: JSX.Element = React.createElement(route.component, {});
@@ -69,7 +70,7 @@ const RouteAdapter: React.FC = ({children}: {children}) => {
   const reactRouterNavigate = useNavigate();
   const reactRouterlocation = useLocation();
 
-  const adaptedHistory = useMemo(
+  const adaptedHistory = useDeepMemo(
     () => ({
       // can disable eslint for parts here, location.state can be anything
       replace(location: Location) {

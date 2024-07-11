@@ -1,8 +1,9 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import {useDataManager} from '../../WombatDataFramework/DataContext';
 import {DataNode} from '../../WombatDataFramework/DataNode';
 import NetworkDisplay from './NetworkDisplay';
 import DataManager from '../../WombatDataFramework/DataManager';
+import {useDeepEffect} from '../../hooks/useDeepEffect';
 
 function getStateColor(node: DataNode<any> | undefined) {
   if (!node) {
@@ -90,16 +91,16 @@ const QueryGraph = ({width, height, selectedNode, setSelectedNode}: QueryGraphPr
   const nodeNames = dataManager.getNodeNames();
   console.log('Node names', nodeNames);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     for (const nodeName of nodeNames) {
       updateNode(nodeName, networkDisplay.current, dataManager);
     }
     networkDisplay.current.stabilize();
     networkDisplay.current.fit(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(nodeNames), tick]);
+  }, [nodeNames, tick]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (selectedNode) {
       console.log('Focusing on node', selectedNode);
       networkDisplay.current.focusNode(selectedNode);
@@ -108,8 +109,10 @@ const QueryGraph = ({width, height, selectedNode, setSelectedNode}: QueryGraphPr
     }
   }, [selectedNode]);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     const container = ref.current;
+    console.log('initializing network display');
+
     if (container === null) {
       return;
     }

@@ -8,9 +8,9 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
 import QueryBuilder from './QueryBuilder';
-import DataManager from '../../WombatDataFramework/DataManager';
-import DataNodeFactory from '../../WombatDataFramework/DataNodeFactory';
-import {DataColumn} from '../../WombatDataFramework/DataColumn';
+import DataManager from '../../../WombatDataFramework/DataManager';
+import DataNodeFactory from '../../../WombatDataFramework/DataNodeFactory';
+import {DataColumn} from '../../../WombatDataFramework/DataColumn';
 
 const mockDataManager = new DataManager(() => {});
 const factory = new DataNodeFactory(mockDataManager);

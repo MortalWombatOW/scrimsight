@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
+import {useDeepEffect} from './useDeepEffect';
 
 type BBox = {
   x: number;
@@ -63,13 +64,7 @@ const getOriginalCoords = (el: SVGGraphicsElement) => {
   };
 };
 
-const doCollisionResolution = (
-  elements: ElementLifted[],
-  xMin: number,
-  yMin: number,
-  xMax: number,
-  yMax: number,
-): void => {
+const doCollisionResolution = (elements: ElementLifted[], xMin: number, yMin: number, xMax: number, yMax: number): void => {
   // then, check for collisions
   const maxIterations = 100;
   let iterations = 0;
@@ -90,12 +85,7 @@ const doCollisionResolution = (
         if (i >= j) {
           continue;
         }
-        if (
-          aabb1.x + aabb1.width > aabb2.x &&
-          aabb1.x < aabb2.x + aabb2.width &&
-          aabb1.y + aabb1.height > aabb2.y &&
-          aabb1.y < aabb2.y + aabb2.height
-        ) {
+        if (aabb1.x + aabb1.width > aabb2.x && aabb1.x < aabb2.x + aabb2.width && aabb1.y + aabb1.height > aabb2.y && aabb1.y < aabb2.y + aabb2.height) {
           collisions.push([i, j]);
         }
       }
@@ -142,9 +132,7 @@ const getCollisionData = (
   // const xOverlap =
   //   Math.min(aabb1.x + aabb1.width, aabb2.x + aabb2.width) -
   //   Math.max(aabb1.x, aabb2.x);
-  const yOverlap =
-    Math.min(aabb1.y + aabb1.height, aabb2.y + aabb2.height) -
-    Math.max(aabb1.y, aabb2.y);
+  const yOverlap = Math.min(aabb1.y + aabb1.height, aabb2.y + aabb2.height) - Math.max(aabb1.y, aabb2.y);
   // if (xOverlap > yOverlap) {
   //   return {
   //     normal: 'x',
@@ -157,15 +145,12 @@ const getCollisionData = (
   };
 };
 
-const useLegibleTextSvg = (
-  ref: React.RefObject<SVGSVGElement> | null,
-  dependencies: any[] = [],
-): number => {
+const useLegibleTextSvg = (ref: React.RefObject<SVGSVGElement> | null, dependencies: any[] = []): number => {
   // This hook is used to make sure that text elements in an SVG are not overlapping.
 
   const [tick, setTick] = useState(0);
 
-  useEffect(() => {
+  useDeepEffect(() => {
     if (!ref?.current) {
       return;
     }
@@ -175,13 +160,9 @@ const useLegibleTextSvg = (
     const width = ref.current.viewBox.baseVal.width;
     const height = ref.current.viewBox.baseVal.height;
 
-    const textElements = Array.from(
-      ref.current?.getElementsByTagName('text') || [],
-    );
+    const textElements = Array.from(ref.current?.getElementsByTagName('text') || []);
 
-    const gElements = Array.from(
-      ref.current?.getElementsByTagName('g') || [],
-    ).filter((el) => el.classList.contains('svg-wrap-text-group'));
+    const gElements = Array.from(ref.current?.getElementsByTagName('g') || []).filter((el) => el.classList.contains('svg-wrap-text-group'));
 
     const svgElement = ref.current;
     // set display none
@@ -189,15 +170,13 @@ const useLegibleTextSvg = (
 
     // console.log('elements', textElements, gElements);
 
-    const elements: ElementLifted[] = [...textElements, ...gElements].map(
-      (el) => {
-        return {
-          el,
-          originalCoords: getOriginalCoords(el),
-          bbox: getBBox(el),
-        };
-      },
-    );
+    const elements: ElementLifted[] = [...textElements, ...gElements].map((el) => {
+      return {
+        el,
+        originalCoords: getOriginalCoords(el),
+        bbox: getBBox(el),
+      };
+    });
 
     //first, get the height of the g elements and adjust them upwards 1/2 of the height
     for (const el of elements) {
@@ -256,10 +235,7 @@ const useLegibleTextSvg = (
           el.el.setAttribute('y', y.toFixed(0));
         }
         if (el.el.tagName === 'g') {
-          el.el.setAttribute(
-            'transform',
-            `translate(${x.toFixed(0)}, ${y.toFixed(0)})`,
-          );
+          el.el.setAttribute('transform', `translate(${x.toFixed(0)}, ${y.toFixed(0)})`);
         }
       }
     }

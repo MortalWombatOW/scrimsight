@@ -1,7 +1,9 @@
-import React from 'react';
+import {useState} from 'react';
+import {useDeepEffect} from './useDeepEffect';
+
 const useMousePosition = () => {
-  const [mousePosition, setMousePosition] = React.useState({x: null, y: null});
-  React.useEffect(() => {
+  const [mousePosition, setMousePosition] = useState({x: null, y: null});
+  useDeepEffect(() => {
     const updateMousePosition = (ev) => {
       setMousePosition({x: ev.clientX, y: ev.clientY});
     };

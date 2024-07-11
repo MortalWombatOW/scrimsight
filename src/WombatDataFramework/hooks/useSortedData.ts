@@ -1,5 +1,6 @@
-import React, {useMemo} from 'react';
+import React from 'react';
 import {DataColumn} from '../DataColumn';
+import {useDeepEffect, useDeepMemo} from '../../hooks/useDeepEffect';
 
 interface SortedData<T> {
   sortedData: T[];
@@ -20,12 +21,12 @@ const useSortedData = <T>(data: T[], columns: DataColumn[]): SortedData<T> => {
     }
   };
   // if columns changes, reset sortColumn and sortDirection
-  React.useEffect(() => {
+  useDeepEffect(() => {
     setSortColumn(undefined);
     setSortDirection(undefined);
-  }, [JSON.stringify(columns)]);
+  }, [columns]);
 
-  const sortedData = useMemo(() => {
+  const sortedData = useDeepMemo(() => {
     if (sortColumn === undefined) {
       return data;
     }
@@ -40,7 +41,7 @@ const useSortedData = <T>(data: T[], columns: DataColumn[]): SortedData<T> => {
         return c.comparator(b[sortColumn], a[sortColumn]);
       }
     });
-  }, [JSON.stringify(data), sortColumn, sortDirection]);
+  }, [data, sortColumn, sortDirection]);
 
   return {sortedData, sortColumn, sortDirection, onSortSelection};
 };

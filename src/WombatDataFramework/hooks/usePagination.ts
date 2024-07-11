@@ -1,4 +1,5 @@
-import React, {useMemo} from 'react';
+import React, {useState} from 'react';
+import {useDeepMemo} from '../../hooks/useDeepEffect';
 
 interface Pagination<T> {
   pageData: T[];
@@ -9,10 +10,10 @@ interface Pagination<T> {
 }
 
 const usePagination = <T>(data: T[]): Pagination<T> => {
-  const [page, setPage] = React.useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState<number>(10);
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
 
-  const pageData = useMemo(() => data.slice(page * rowsPerPage, (page + 1) * rowsPerPage), [JSON.stringify(data), page, rowsPerPage]);
+  const pageData = useDeepMemo(() => data.slice(page * rowsPerPage, (page + 1) * rowsPerPage), [JSON.stringify(data), page, rowsPerPage]);
 
   return {pageData, rowsPerPage, page, setRowsPerPage, setPage};
 };
