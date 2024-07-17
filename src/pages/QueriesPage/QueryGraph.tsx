@@ -4,6 +4,7 @@ import {DataNode} from '../../WombatDataFramework/DataNode';
 import NetworkDisplay from './NetworkDisplay';
 import DataManager from '../../WombatDataFramework/DataManager';
 import {useDeepEffect} from '../../hooks/useDeepEffect';
+import {stringHash} from '../../lib/string';
 
 function getStateColor(node: DataNode<any> | undefined) {
   if (!node) {
@@ -64,10 +65,11 @@ function getSize(node: DataNode<any> | undefined) {
 function updateNode(nodeName: string, networkDisplay: NetworkDisplay, dataManager: DataManager) {
   const node = dataManager.getNodeOrDie(nodeName);
 
-  console.log('Updating node', nodeName, node);
+  console.log('Updating node', nodeName, node, stringHash(nodeName));
 
   networkDisplay.setNode(nodeName, getStateColor(node), getShape(node), getLabel(node), getOpacity(node), getSize(node));
   dataManager.nodesDependingOn(nodeName).forEach((fromName) => {
+    console.log('Updating edge', nodeName, fromName);
     networkDisplay.setEdge(nodeName, fromName);
   });
   // console.log('Updated node', node);

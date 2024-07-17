@@ -59,24 +59,25 @@ class NetworkDisplay {
     this.network = new Network(container, {nodes: this.nodes, edges: this.edges}, options);
     this.network.on('click', (params) => {
       if (params.nodes.length > 0) {
-        setSelectedNodeId(this.nodeIdToName.get(params.nodes[0]) || null);
+        const nodeId = params.nodes[0];
+        const nodeName = this.nodeIdToName.get(nodeId);
+        if (nodeName) {
+          setSelectedNodeId(nodeName);
+        }
+        console.log('click', nodeId, nodeName);
+        console.log(JSON.stringify(this.nodeIdToName));
+
         return;
       }
       setSelectedNodeId(null);
     });
   }
 
-  private nodeIdFromName(name: string) {
-    const node = this.nodes.get().find((n) => n.id === stringHash(name));
-    if (!node) return undefined;
-    return node.id;
-  }
-
   public setNode(name: string, stateColor: string, shape: string, label: string, opacity: number, size: number) {
-    const existingNodeId = this.nodeIdFromName(name);
-    if (existingNodeId !== undefined) {
+    const nodeId = stringHash(name);
+    if (this.nodeIdToName.has(nodeId)) {
       this.nodes.update({
-        id: existingNodeId,
+        id: nodeId,
         color: {background: stateColor},
         shape: shape,
         label: label,
@@ -91,20 +92,22 @@ class NetworkDisplay {
       return;
     }
     this.nodes.add({
-      id: stringHash(name),
+      id: nodeId,
       color: {background: stateColor},
       shape: shape,
       label: label,
       opacity: opacity,
     });
     this.nodeIdToName.set(stringHash(name), name);
+    console.log('nodeIdToName', JSON.stringify(this.nodeIdToName));
   }
 
   public setEdge(fromName: string, toName: string) {
-    const fromId = this.nodeIdFromName(fromName);
-    const toId = this.nodeIdFromName(toName);
+    const fromId = stringHash(fromName);
+    const toId = stringHash(toName);
 
-    if (fromId === undefined || toId === undefined) {
+    if (!this.nodeIdToName.has(fromId) || !this.nodeIdToName.has(toId)) {
+      console.log('setEdge', fromName, toName, 'not found');
       return;
     }
 
@@ -128,10 +131,8 @@ class NetworkDisplay {
   }
 
   public focusNode(name: string) {
-    const nodeId = this.nodeIdFromName(name);
-    if (nodeId === undefined) return;
     if (this.network) {
-      this.network.fit({nodes: [nodeId], animation: true});
+      this.network.fit({nodes: [stringHash(name)], animation: true});
     }
   }
 }
