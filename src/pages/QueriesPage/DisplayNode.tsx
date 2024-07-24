@@ -44,7 +44,6 @@ function DisplayNode({node}: DataNodeProps) {
     <>
       <Typography variant="h3">{node.getDisplayName()}</Typography>
       <Typography variant="body1">ID: {node.getName()}</Typography>
-      <pre>{node.getDescription()}</pre>
 
       {node.isRunning() && <LinearProgress />}
 
@@ -56,6 +55,8 @@ function DisplayNode({node}: DataNodeProps) {
           Error: {node.getError()}
         </Typography>
       )}
+
+      <pre>{node.getDescription()}</pre>
     </>
   );
 }

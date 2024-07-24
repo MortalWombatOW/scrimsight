@@ -264,6 +264,178 @@ export interface PlayerStat extends BaseEvent {
   heroTimePlayed: number;
 }
 
+const playerStatFragment = `
+      SUM(player_stat.eliminations) as eliminations,
+      SUM(player_stat.finalBlows) as finalBlows,
+      SUM(player_stat.deaths) as deaths,
+      IF(SUM(player_stat.deaths) = 0, 0, SUM(player_stat.finalBlows) / SUM(player_stat.deaths)) as finalBlowsPerDeaths,
+      IF(SUM(player_stat.damageTaken) = 0, 0, SUM(player_stat.damageTaken) / SUM(player_stat.deaths)) as damageTakenPerDeaths,
+      IF(SUM(player_stat.allDamageDealt) = 0, 0, SUM(player_stat.allDamageDealt) / SUM(player_stat.damageTaken)) as allDamageDealtPerDamageTaken,
+      SUM(player_stat.allDamageDealt) as allDamageDealt,
+      SUM(player_stat.barrierDamageDealt) as barrierDamageDealt,
+      SUM(player_stat.heroDamageDealt) as heroDamageDealt,
+      SUM(player_stat.healingDealt) as healingDealt,
+      SUM(player_stat.healingReceived) as healingReceived,
+      SUM(player_stat.selfHealing) as selfHealing,
+      SUM(player_stat.damageTaken) as damageTaken,
+      SUM(player_stat.damageBlocked) as damageBlocked,
+      SUM(player_stat.defensiveAssists) as defensiveAssists,
+      SUM(player_stat.offensiveAssists) as offensiveAssists,
+      SUM(player_stat.ultimatesEarned) as ultimatesEarned,
+      SUM(player_stat.ultimatesUsed) as ultimatesUsed,
+      MAX(player_stat.multikillBest) as multikillBest,
+      SUM(player_stat.multikills) as multikills,
+      SUM(player_stat.soloKills) as soloKills,
+      SUM(player_stat.objectiveKills) as objectiveKills,
+      SUM(player_stat.environmentalKills) as environmentalKills,
+      SUM(player_stat.environmentalDeaths) as environmentalDeaths,
+      SUM(player_stat.criticalHits) as criticalHits,
+      SUM(player_stat.scopedCriticalHitKills) as scopedCriticalHitKills,
+      SUM(player_stat.shotsFired) as shotsFired,
+      SUM(player_stat.shotsHit) as shotsHit,
+      SUM(player_stat.shotsMissed) as shotsMissed,
+      SUM(player_stat.scopedShotsFired) as scopedShotsFired,
+      SUM(player_stat.scopedShotsHit) as scopedShotsHit,
+      SUM(player_stat.eliminations) / SUM(round_times.roundDuration) * 600 as eliminationsPer10,
+      SUM(player_stat.finalBlows) / SUM(round_times.roundDuration) * 600 as finalBlowsPer10,
+      SUM(player_stat.deaths) / SUM(round_times.roundDuration) * 600 as deathsPer10,
+      SUM(player_stat.allDamageDealt) / SUM(round_times.roundDuration) * 600 as allDamagePer10,
+      SUM(player_stat.heroDamageDealt) / SUM(round_times.roundDuration) * 600 as heroDamagePer10,
+      SUM(player_stat.barrierDamageDealt) / SUM(round_times.roundDuration) * 600 as barrierDamageDealtPer10,
+      SUM(player_stat.healingDealt) / SUM(round_times.roundDuration) * 600 as healingPer10,
+      SUM(player_stat.healingReceived) / SUM(round_times.roundDuration) * 600 as healingReceivedPer10,
+      SUM(player_stat.selfHealing) / SUM(round_times.roundDuration) * 600 as selfHealingPer10,
+      SUM(player_stat.damageTaken) / SUM(round_times.roundDuration) * 600 as damageTakenPer10,
+      SUM(player_stat.damageBlocked) / SUM(round_times.roundDuration) * 600 as damageBlockedPer10,
+      SUM(player_stat.defensiveAssists) / SUM(round_times.roundDuration) * 600 as defensiveAssistsPer10,
+      SUM(player_stat.offensiveAssists) / SUM(round_times.roundDuration) * 600 as offensiveAssistsPer10,
+      SUM(player_stat.ultimatesEarned) / SUM(round_times.roundDuration) * 600 as ultimatesEarnedPer10,
+      SUM(player_stat.ultimatesUsed) / SUM(round_times.roundDuration) * 600 as ultimatesUsedPer10,
+      SUM(player_stat.multikillBest) / SUM(round_times.roundDuration) * 600 as multikillsPer10,
+      SUM(player_stat.multikills) / SUM(round_times.roundDuration) * 600 as multikillsPer10,
+      SUM(player_stat.soloKills) / SUM(round_times.roundDuration) * 600 as soloKillsPer10,
+      SUM(player_stat.objectiveKills) / SUM(round_times.roundDuration) * 600 as objectiveKillsPer10,
+      SUM(player_stat.environmentalKills) / SUM(round_times.roundDuration) * 600 as environmentalKillsPer10,
+      SUM(player_stat.environmentalDeaths) / SUM(round_times.roundDuration) * 600 as environmentalDeathsPer10,
+      SUM(player_stat.criticalHits) / SUM(round_times.roundDuration) * 600 as criticalHitsPer10,
+      SUM(player_stat.scopedCriticalHitKills) / SUM(round_times.roundDuration) * 600 as scopedCriticalHitKillsPer10,
+      SUM(player_stat.shotsFired) / SUM(round_times.roundDuration) * 600 as shotsFiredPer10,
+      SUM(player_stat.shotsHit) / SUM(round_times.roundDuration) * 600 as shotsHitPer10,
+      SUM(player_stat.shotsMissed) / SUM(round_times.roundDuration) * 600 as shotsMissedPer10,
+      SUM(player_stat.scopedShotsFired) / SUM(round_times.roundDuration) * 600 as scopedShotsFiredPer10,
+      SUM(player_stat.scopedShotsHit) / SUM(round_times.roundDuration) * 600 as scopedShotsHitPer10
+`;
+
+const playerStatColumns: string[] = [
+  'eliminations',
+  'finalBlows',
+  'deaths',
+  'finalBlowsPerDeaths',
+  'damageTakenPerDeaths',
+  'allDamageDealtPerDamageTaken',
+  'allDamageDealt',
+  'heroDamageDealt',
+  'barrierDamageDealt',
+  'healingDealt',
+  'healingReceived',
+  'selfHealing',
+  'damageTaken',
+  'damageBlocked',
+  'defensiveAssists',
+  'offensiveAssists',
+  'ultimatesEarned',
+  'ultimatesUsed',
+  'multikills',
+  'multikillBest',
+  'soloKills',
+  'objectiveKills',
+  'environmentalKills',
+  'environmentalDeaths',
+  'criticalHits',
+  'scopedCriticalHitKills',
+  'shotsFired',
+  'shotsHit',
+  'shotsMissed',
+  'scopedShotsFired',
+  'scopedShotsHit',
+  'eliminationsPer10',
+  'finalBlowsPer10',
+  'deathsPer10',
+  'allDamagePer10',
+  'heroDamagePer10',
+  'barrierDamageDealtPer10',
+  'healingPer10',
+  'healingReceivedPer10',
+  'selfHealingPer10',
+  'damageTakenPer10',
+  'damageBlockedPer10',
+  'defensiveAssistsPer10',
+  'offensiveAssistsPer10',
+  'ultimatesEarnedPer10',
+  'ultimatesUsedPer10',
+  'multikillsPer10',
+  'soloKillsPer10',
+  'objectiveKillsPer10',
+  'environmentalKillsPer10',
+  'environmentalDeathsPer10',
+  'criticalHitsPer10',
+  'scopedCriticalHitKillsPer10',
+  'shotsFiredPer10',
+  'shotsHitPer10',
+  'shotsMissedPer10',
+  'scopedShotsFiredPer10',
+  'scopedShotsHitPer10',
+];
+
+function getAllCombinations(inputArray: string[]): string[][] {
+  let result: string[][] = [];
+  const combinationsCount = 2 ** inputArray.length;
+
+  for (let i = 0; i < combinationsCount; i++) {
+    const combination: string[] = [];
+    for (let j = 0; j < inputArray.length; j++) {
+      if (i & (1 << j)) {
+        // Check if the jth bit is set
+        combination.push(inputArray[j]);
+      }
+    }
+    result.push(combination);
+  }
+
+  result = result.filter((group) => !((group.includes('roundNumber') && !group.includes('mapId')) || (!group.includes('playerRole') && group.includes('playerHero'))));
+
+  // sort the combinations by length
+  result.sort((a, b) => a.length - b.length);
+
+  return result;
+}
+
+const player_stat_groups: string[][] = getAllCombinations(['mapId', 'roundNumber', 'playerName', 'playerTeam', 'playerHero', 'playerRole']);
+
+console.log('player_stat_groups', player_stat_groups);
+
+const makeNodeForPlayerStatGroup = (group: string[]): AlaSQLNodeInit => {
+  const sortedGroup = group.slice().sort();
+  const nodeName = `player_stat_group_${sortedGroup.join('_')}`;
+  const displayName = `Player Stat Group ${sortedGroup.join(', ')}`;
+  const sql = `SELECT
+      ${sortedGroup.length > 0 ? sortedGroup.map((column) => `player_stat.${column} as ${column.replaceAll('.', '_')}`).join(',\n      ') + ',' : ''}
+      ${playerStatFragment}
+    FROM ? as player_stat
+    JOIN ? as round_times
+    ON player_stat.mapId = round_times.mapId AND player_stat.roundNumber = round_times.roundNumber
+    ${sortedGroup.length > 0 ? 'GROUP BY\n      ' : ''}
+    ${sortedGroup.map((column) => `player_stat.${column}`).join(',\n      ')}
+    `;
+  return {
+    name: nodeName,
+    displayName,
+    sql,
+    sources: ['player_stat_expanded', 'round_times'],
+    columnNames: [...sortedGroup, ...playerStatColumns],
+  };
+};
+
 // export const NODES: DataNodeInit<any>[] = [
 //
 //   new AlaSQLNode<MapTeams>(
@@ -492,48 +664,48 @@ export interface PlayerStat extends BaseEvent {
 //         player_stat_formatted.playerTeam as teamName,
 //         map_overview_with_scrim_id.team1Name as team1Name,
 //         player_stat_formatted.playerName,
-//         ARRAY(CASE
-//           WHEN player_stat_formatted.playerHero = 'Mauga' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'D.Va' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Orisa' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Reinhardt' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Roadhog' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Sigma' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Winston' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Wrecking Ball' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Zarya' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Doomfist' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Junker Queen' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Rammatra' THEN 'tank'
-//           WHEN player_stat_formatted.playerHero = 'Ashe' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Bastion' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Cassidy' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Echo' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Genji' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Hanzo' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Junkrat' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Mei' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Pharah' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Reaper' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Soldier: 76' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Sojourn' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Sombra' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Symmetra' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Torbjörn' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Tracer' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Widowmaker' THEN 'damage'
-//           WHEN player_stat_formatted.playerHero = 'Ana' THEN 'support'
-//           WHEN player_stat_formatted.playerHero = 'Baptiste' THEN 'support'
-//           WHEN player_stat_formatted.playerHero = 'Brigitte' THEN 'support'
-//           WHEN player_stat_formatted.playerHero = 'Lúcio' THEN 'support'
-//           WHEN player_stat_formatted.playerHero = 'Mercy' THEN 'support'
-//           WHEN player_stat_formatted.playerHero = 'Moira' THEN 'support'
-//           WHEN player_stat_formatted.playerHero = 'Zenyatta' THEN 'support'
-//           WHEN player_stat_formatted.playerHero = 'Lifeweaver' THEN 'support'
-//           WHEN player_stat_formatted.playerHero = 'Illari' THEN 'support'
-//           WHEN player_stat_formatted.playerHero = 'Kiriko' THEN 'support'
-//           ELSE 'unknown'
-//         END)->0 as role,
+// ARRAY(CASE
+//   WHEN player_stat_formatted.playerHero = 'Mauga' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'D.Va' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Orisa' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Reinhardt' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Roadhog' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Sigma' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Winston' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Wrecking Ball' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Zarya' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Doomfist' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Junker Queen' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Rammatra' THEN 'tank'
+//   WHEN player_stat_formatted.playerHero = 'Ashe' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Bastion' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Cassidy' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Echo' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Genji' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Hanzo' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Junkrat' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Mei' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Pharah' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Reaper' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Soldier: 76' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Sojourn' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Sombra' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Symmetra' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Torbjörn' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Tracer' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Widowmaker' THEN 'damage'
+//   WHEN player_stat_formatted.playerHero = 'Ana' THEN 'support'
+//   WHEN player_stat_formatted.playerHero = 'Baptiste' THEN 'support'
+//   WHEN player_stat_formatted.playerHero = 'Brigitte' THEN 'support'
+//   WHEN player_stat_formatted.playerHero = 'Lúcio' THEN 'support'
+//   WHEN player_stat_formatted.playerHero = 'Mercy' THEN 'support'
+//   WHEN player_stat_formatted.playerHero = 'Moira' THEN 'support'
+//   WHEN player_stat_formatted.playerHero = 'Zenyatta' THEN 'support'
+//   WHEN player_stat_formatted.playerHero = 'Lifeweaver' THEN 'support'
+//   WHEN player_stat_formatted.playerHero = 'Illari' THEN 'support'
+//   WHEN player_stat_formatted.playerHero = 'Kiriko' THEN 'support'
+//   ELSE 'unknown'
+// END)->0 as role,
 //         player_stat_formatted.playerHero as hero,
 //         sum(player_stat_formatted.finalBlows) as finalBlows,
 //         sum(player_stat_formatted.deaths) as deaths,
@@ -1126,117 +1298,97 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
   //     'scopedShotsHitPer10',
   //   ],
   // ),
+
   makeAlaSQLNodeInit(
-    'player_stat_per_10',
-    'Player Statistics Per 10 Minutes',
+    'player_stat_expanded',
+    'Player Stat Expanded',
     `
     SELECT
+      player_stat.mapId,
+      player_stat.roundNumber,
       player_stat.playerName,
-      SUM(player_stat.eliminations) / SUM(map_times.mapDuration) * 600 as eliminationsPer10,
-      SUM(player_stat.finalBlows) / SUM(map_times.mapDuration) * 600 as finalBlowsPer10,
-      SUM(player_stat.deaths) / SUM(map_times.mapDuration) * 600 as deathsPer10,
-      SUM(player_stat.allDamageDealt) / SUM(map_times.mapDuration) * 600 as allDamagePer10,
-      SUM(player_stat.heroDamageDealt) / SUM(map_times.mapDuration) * 600 as heroDamagePer10,
-      SUM(player_stat.barrierDamageDealt) / SUM(map_times.mapDuration) * 600 as barrierDamageDealtPer10,
-      SUM(player_stat.healingDealt) / SUM(map_times.mapDuration) * 600 as healingPer10,
-      SUM(player_stat.healingReceived) / SUM(map_times.mapDuration) * 600 as healingReceivedPer10,
-      SUM(player_stat.selfHealing) / SUM(map_times.mapDuration) * 600 as selfHealingPer10,
-      SUM(player_stat.damageTaken) / SUM(map_times.mapDuration) * 600 as damageTakenPer10,
-      SUM(player_stat.damageBlocked) / SUM(map_times.mapDuration) * 600 as damageBlockedPer10,
-      SUM(player_stat.defensiveAssists) / SUM(map_times.mapDuration) * 600 as defensiveAssistsPer10,
-      SUM(player_stat.offensiveAssists) / SUM(map_times.mapDuration) * 600 as offensiveAssistsPer10,
-      SUM(player_stat.ultimatesEarned) / SUM(map_times.mapDuration) * 600 as ultimatesEarnedPer10,
-      SUM(player_stat.ultimatesUsed) / SUM(map_times.mapDuration) * 600 as ultimatesUsedPer10,
-      SUM(player_stat.multikillBest) / SUM(map_times.mapDuration) * 600 as multikillsPer10,
-      SUM(player_stat.multikills) / SUM(map_times.mapDuration) * 600 as multikillsPer10,
-      SUM(player_stat.soloKills) / SUM(map_times.mapDuration) * 600 as soloKillsPer10,
-      SUM(player_stat.objectiveKills) / SUM(map_times.mapDuration) * 600 as objectiveKillsPer10,
-      SUM(player_stat.environmentalKills) / SUM(map_times.mapDuration) * 600 as environmentalKillsPer10,
-      SUM(player_stat.environmentalDeaths) / SUM(map_times.mapDuration) * 600 as environmentalDeathsPer10,
-      SUM(player_stat.criticalHits) / SUM(map_times.mapDuration) * 600 as criticalHitsPer10,
-      SUM(player_stat.scopedCriticalHitKills) / SUM(map_times.mapDuration) * 600 as scopedCriticalHitKillsPer10,
-      SUM(player_stat.shotsFired) / SUM(map_times.mapDuration) * 600 as shotsFiredPer10,
-      SUM(player_stat.shotsHit) / SUM(map_times.mapDuration) * 600 as shotsHitPer10,
-      SUM(player_stat.shotsMissed) / SUM(map_times.mapDuration) * 600 as shotsMissedPer10,
-      SUM(player_stat.scopedShotsFired) / SUM(map_times.mapDuration) * 600 as scopedShotsFiredPer10,
-      SUM(player_stat.scopedShotsHit) / SUM(map_times.mapDuration) * 600 as scopedShotsHitPer10
-    FROM ? as map_times
-    JOIN ? as player_stat
-    ON map_times.mapId = player_stat.mapId
-    GROUP BY player_stat.playerName
-    `,
-    ['map_times', 'player_stat_object_store'],
-    [
-      'playerName',
-      'eliminationsPer10',
-      'finalBlowsPer10',
-      'deathsPer10',
-      'allDamagePer10',
-      'heroDamagePer10',
-      'barrierDamageDealtPer10',
-      'healingPer10',
-      'healingReceivedPer10',
-      'selfHealingPer10',
-      'damageTakenPer10',
-      'damageBlockedPer10',
-      'defensiveAssistsPer10',
-      'offensiveAssistsPer10',
-      'ultimatesEarnedPer10',
-      'ultimatesUsedPer10',
-      'multikillsPer10',
-      'soloKillsPer10',
-      'objectiveKillsPer10',
-      'environmentalKillsPer10',
-      'environmentalDeathsPer10',
-      'criticalHitsPer10',
-      'scopedCriticalHitKillsPer10',
-      'shotsFiredPer10',
-      'shotsHitPer10',
-      'shotsMissedPer10',
-      'scopedShotsFiredPer10',
-      'scopedShotsHitPer10',
-    ],
-  ),
-  makeAlaSQLNodeInit(
-    'player_stat_totals',
-    'Player Stat Totals',
-    `
-    SELECT
-      player_stat.playerName,
-      SUM(player_stat.eliminations) as eliminations,
-      SUM(player_stat.finalBlows) as finalBlows,
-      SUM(player_stat.deaths) as deaths,
-      SUM(player_stat.allDamageDealt) as allDamageDealt,
-      SUM(player_stat.barrierDamageDealt) as barrierDamageDealt,
-      SUM(player_stat.heroDamageDealt) as heroDamageDealt,
-      SUM(player_stat.healingDealt) as healingDealt,
-      SUM(player_stat.healingReceived) as healingReceived,
-      SUM(player_stat.selfHealing) as selfHealing,
-      SUM(player_stat.damageTaken) as damageTaken,
-      SUM(player_stat.damageBlocked) as damageBlocked,
-      SUM(player_stat.defensiveAssists) as defensiveAssists,
-      SUM(player_stat.offensiveAssists) as offensiveAssists,
-      SUM(player_stat.ultimatesEarned) as ultimatesEarned,
-      SUM(player_stat.ultimatesUsed) as ultimatesUsed,
-      MAX(player_stat.multikillBest) as multikillBest,
-      SUM(player_stat.multikills) as multikills,
-      SUM(player_stat.soloKills) as soloKills,
-      SUM(player_stat.objectiveKills) as objectiveKills,
-      SUM(player_stat.environmentalKills) as environmentalKills,
-      SUM(player_stat.environmentalDeaths) as environmentalDeaths,
-      SUM(player_stat.criticalHits) as criticalHits,
-      SUM(player_stat.scopedCriticalHitKills) as scopedCriticalHitKills,
-      SUM(player_stat.shotsFired) as shotsFired,
-      SUM(player_stat.shotsHit) as shotsHit,
-      SUM(player_stat.shotsMissed) as shotsMissed,
-      SUM(player_stat.scopedShotsFired) as scopedShotsFired,
-      SUM(player_stat.scopedShotsHit) as scopedShotsHit
-    FROM ? as player_stat
-    GROUP BY player_stat.playerName
-    `,
+      player_stat.playerTeam,
+      player_stat.playerHero,
+      (CASE
+          WHEN player_stat.playerHero = 'Mauga' THEN 'tank'
+          WHEN player_stat.playerHero = 'D.Va' THEN 'tank'
+          WHEN player_stat.playerHero = 'Orisa' THEN 'tank'
+          WHEN player_stat.playerHero = 'Reinhardt' THEN 'tank'
+          WHEN player_stat.playerHero = 'Roadhog' THEN 'tank'
+          WHEN player_stat.playerHero = 'Sigma' THEN 'tank'
+          WHEN player_stat.playerHero = 'Winston' THEN 'tank'
+          WHEN player_stat.playerHero = 'Wrecking Ball' THEN 'tank'
+          WHEN player_stat.playerHero = 'Zarya' THEN 'tank'
+          WHEN player_stat.playerHero = 'Doomfist' THEN 'tank'
+          WHEN player_stat.playerHero = 'Junker Queen' THEN 'tank'
+          WHEN player_stat.playerHero = 'Rammatra' THEN 'tank'
+          WHEN player_stat.playerHero = 'Ashe' THEN 'damage'
+          WHEN player_stat.playerHero = 'Bastion' THEN 'damage'
+          WHEN player_stat.playerHero = 'Cassidy' THEN 'damage'
+          WHEN player_stat.playerHero = 'Echo' THEN 'damage'
+          WHEN player_stat.playerHero = 'Genji' THEN 'damage'
+          WHEN player_stat.playerHero = 'Hanzo' THEN 'damage'
+          WHEN player_stat.playerHero = 'Junkrat' THEN 'damage'
+          WHEN player_stat.playerHero = 'Mei' THEN 'damage'
+          WHEN player_stat.playerHero = 'Pharah' THEN 'damage'
+          WHEN player_stat.playerHero = 'Reaper' THEN 'damage'
+          WHEN player_stat.playerHero = 'Soldier: 76' THEN 'damage'
+          WHEN player_stat.playerHero = 'Sojourn' THEN 'damage'
+          WHEN player_stat.playerHero = 'Sombra' THEN 'damage'
+          WHEN player_stat.playerHero = 'Symmetra' THEN 'damage'
+          WHEN player_stat.playerHero = 'Torbjörn' THEN 'damage'
+          WHEN player_stat.playerHero = 'Tracer' THEN 'damage'
+          WHEN player_stat.playerHero = 'Widowmaker' THEN 'damage'
+          WHEN player_stat.playerHero = 'Ana' THEN 'support'
+          WHEN player_stat.playerHero = 'Baptiste' THEN 'support'
+          WHEN player_stat.playerHero = 'Brigitte' THEN 'support'
+          WHEN player_stat.playerHero = 'Lúcio' THEN 'support'
+          WHEN player_stat.playerHero = 'Mercy' THEN 'support'
+          WHEN player_stat.playerHero = 'Moira' THEN 'support'
+          WHEN player_stat.playerHero = 'Zenyatta' THEN 'support'
+          WHEN player_stat.playerHero = 'Lifeweaver' THEN 'support'
+          WHEN player_stat.playerHero = 'Illari' THEN 'support'
+          WHEN player_stat.playerHero = 'Kiriko' THEN 'support'
+          ELSE 'unknown' END)
+         as playerRole,
+      player_stat.eliminations,
+      player_stat.finalBlows,
+      player_stat.deaths,
+      player_stat.allDamageDealt,
+      player_stat.barrierDamageDealt,
+      player_stat.heroDamageDealt,
+      player_stat.healingDealt,
+      player_stat.healingReceived,
+      player_stat.selfHealing,
+      player_stat.damageTaken,
+      player_stat.damageBlocked,
+      player_stat.defensiveAssists,
+      player_stat.offensiveAssists,
+      player_stat.ultimatesEarned,
+      player_stat.ultimatesUsed,
+      player_stat.multikillBest,
+      player_stat.multikills,
+      player_stat.soloKills,
+      player_stat.objectiveKills,
+      player_stat.environmentalKills,
+      player_stat.environmentalDeaths,
+      player_stat.criticalHits,
+      player_stat.scopedCriticalHitKills,
+      player_stat.scopedCriticalHitKills,
+      player_stat.shotsFired,
+      player_stat.shotsHit,
+      player_stat.shotsMissed,
+      player_stat.scopedShotsFired,
+      player_stat.scopedShotsHit
+      FROM ? as player_stat`,
     ['player_stat_object_store'],
     [
+      'mapId',
+      'roundNumber',
       'playerName',
+      'playerTeam',
+      'playerHero',
+      'playerRole',
       'eliminations',
       'finalBlows',
       'deaths',
@@ -1267,7 +1419,7 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       'scopedShotsHit',
     ],
   ),
-  // TODO how to do ratios?
+  ...player_stat_groups.map(makeNodeForPlayerStatGroup),
 ];
 
 // interface MapTeams {

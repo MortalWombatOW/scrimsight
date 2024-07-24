@@ -9,8 +9,17 @@ export const format = (val: number | string | undefined, decimals = 2) => {
   if (typeof val === 'string' || val === undefined) {
     return val;
   }
+  if (val == Infinity) {
+    return '∞';
+  }
+  if (val > 1000000) {
+    return format(val / 1000000) + 'm';
+  }
   if (val > 1000) {
     return format(val / 1000) + 'k';
+  }
+  if (val % 1 === 0) {
+    return val.toFixed(0);
   }
   return val.toFixed(decimals);
 };

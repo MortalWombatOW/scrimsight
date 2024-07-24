@@ -14,7 +14,7 @@ const DataProvider = ({children, globalTick, updateGlobalCallback}) => {
   const factoryRef = useRef(new DataNodeFactory(dataManager));
   const factory = factoryRef.current;
 
-  useDeepEffect(() => {
+  if (!dataManager.isSetupComplete()) {
     for (const column of DATA_COLUMNS) {
       dataManager.registerColumn(column);
     }
@@ -33,7 +33,8 @@ const DataProvider = ({children, globalTick, updateGlobalCallback}) => {
     };
 
     fetchData();
-  }, [dataManager]);
+    dataManager.finishSetup();
+  }
 
   console.log('Rendering data, tick = ', globalTick);
 

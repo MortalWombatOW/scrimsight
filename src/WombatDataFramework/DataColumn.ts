@@ -161,6 +161,7 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('playerHero', 'Player Hero', 'The hero of the player.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('playerName', 'Player Name', 'The name of the player.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('playerTeam', 'Player Team', 'The team of the player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('playerRole', 'Player Role', 'The role of the player.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('pointCaptureProgress', 'Point Capture Progress', 'The progress of the point capture.', 'cap%', 'number', percentFormatter, numberComparator),
   makeDataColumn('previousHero', 'Previous Hero', 'The name of the hero that was previously selected.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('revivedHero', 'Revived Hero', 'The hero of the revived player.', 'none', 'string', stringFormatter, stringComparator),
@@ -194,4 +195,7 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('victimTeam', 'Victim Team', 'The team of the victim player.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('weaponAccuracy', 'Weapon Accuracy', 'The accuracy of the weapon.', 'acc%', 'number', percentFormatter, numberComparator),
   makeDataColumn('weaponAccuracyBest', 'Weapon Accuracy Best', 'The highest weapon accuracy.', 'acc%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('finalBlowsPerDeaths', 'Final Blows per Deaths', 'The number of final blows per deaths.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('damageTakenPerDeaths', 'Damage Taken per Deaths', 'The amount of damage taken per deaths.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('allDamageDealtPerDamageTaken', 'All Damage Dealt per Damage Taken', 'The total amount of damage dealt per damage taken.', 'hp', 'number', numberFormatter, numberComparator),
 ];

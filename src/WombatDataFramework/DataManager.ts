@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {DataColumn} from './DataColumn';
-import {AlaSQLNode, AlaSQLNodeInit, DataNode, DataNodeName, FilterNode, FilterNodeInit, ObjectStoreNode, ObjectStoreNodeInit, WriteNode, WriteNodeInit} from './DataNode';
+import {DataNode, DataNodeName} from './DataNode';
 
 class DataManager {
   private nodes: Map<DataNodeName, DataNode<any>>;
   private globalCallbacks: Map<string, () => void>;
   private nodeCallbacks: Map<DataNodeName, () => void>;
+  private setupComplete: boolean;
 
   private columns: Map<string, DataColumn>;
 
@@ -15,6 +16,15 @@ class DataManager {
     this.globalCallbacks.set('globalChange', changeCallback);
     this.nodeCallbacks = new Map();
     this.columns = new Map();
+    this.setupComplete = false;
+  }
+
+  public isSetupComplete(): boolean {
+    return this.setupComplete;
+  }
+
+  public finishSetup(): void {
+    this.setupComplete = true;
   }
 
   public registerGlobalCallback(callback: [string, () => void]): void {
@@ -28,7 +38,7 @@ class DataManager {
     this.columns.set(column.name, column);
   }
 
-  public getColumn(name: string): DataColumn {
+  public getColumnOrDie(name: string): DataColumn {
     const column = this.columns.get(name);
     if (!column) {
       throw new Error(`Column ${name} does not exist`);
@@ -228,6 +238,10 @@ class DataManager {
 
   public getNodeNames(): DataNodeName[] {
     return [...this.nodes.keys()];
+  }
+
+  public hasNodeOutput(name: DataNodeName): boolean {
+    return this.nodes.has(name) && this.getNodeOrDie(name).hasOutput();
   }
 }
 

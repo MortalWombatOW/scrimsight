@@ -17,7 +17,7 @@ class DataNodeFactory {
       init.name,
       init.displayName,
       init.objectStore,
-      init.columnNames.map((name) => this.dataManager.getColumn(name)),
+      init.columnNames.map((name) => this.dataManager.getColumnOrDie(name)),
     );
   }
 
@@ -27,7 +27,7 @@ class DataNodeFactory {
       init.displayName,
       init.sql,
       init.sources,
-      init.columnNames.map((name) => this.dataManager.getColumn(name)),
+      init.columnNames.map((name) => this.dataManager.getColumnOrDie(name)),
     );
   }
 
@@ -38,7 +38,7 @@ class DataNodeFactory {
       init.filterKey,
       init.filterValue,
       init.source,
-      init.columnNames.map((name) => this.dataManager.getColumn(name)),
+      init.columnNames.map((name) => this.dataManager.getColumnOrDie(name)),
     );
   }
 
