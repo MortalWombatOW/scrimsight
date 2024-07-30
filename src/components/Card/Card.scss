@@ -1,7 +1,15 @@
 .MetricCard {
     display: inline-block;
     margin: 5px;
-    padding: 5px;
     // center content
     text-align: center;
+
+    & .metric-value {
+        margin: 5px;
+    }
+
+    & .metric-card-action-area {
+
+        padding: 15px;
+    }
 }

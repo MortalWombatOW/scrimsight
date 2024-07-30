@@ -228,12 +228,20 @@ class DataManager {
     return node;
   }
 
-  public getNodeOutputOrDie(name: DataNodeName): any {
+  public getNodeOutputOrDie(name: DataNodeName): object[] {
     const node = this.getNodeOrDie(name);
     if (!node.hasOutput()) {
       throw new Error(`Node ${name} has no output`);
     }
-    return node.getOutput();
+    return node.getOutput() as object[];
+  }
+
+  public getNodeOutput(name: DataNodeName): object[] {
+    const node = this.getNodeOrDie(name);
+    if (!node.hasOutput()) {
+      return [];
+    }
+    return node.getOutput() as object[];
   }
 
   public getNodeNames(): DataNodeName[] {

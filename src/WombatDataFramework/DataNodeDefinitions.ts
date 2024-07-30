@@ -1032,6 +1032,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     SELECT
       defensive_assist.mapId,
       defensive_assist.playerName,
+      defensive_assist.playerTeam,
+      defensive_assist.playerHero,
       defensive_assist.matchTime as playerEventTime,
       'Defensive Assist' as playerEventType
     FROM ? as defensive_assist
@@ -1039,27 +1041,17 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     SELECT
       offensive_assist.mapId,
       offensive_assist.playerName,
+      offensive_assist.playerTeam,
+      offensive_assist.playerHero,
       offensive_assist.matchTime as playerEventTime,
       'Offensive Assist' as playerEventType
     FROM ? as offensive_assist
     UNION ALL
     SELECT
-      echo_duplicate_start.mapId,
-      echo_duplicate_start.playerName,
-      echo_duplicate_start.matchTime as playerEventTime,
-      'Duplicate Start' as playerEventType
-    FROM ? as echo_duplicate_start
-    UNION ALL
-    SELECT
-      echo_duplicate_end.mapId,
-      echo_duplicate_end.playerName,
-      echo_duplicate_end.matchTime as playerEventTime,
-      'Duplicate End' as playerEventType
-    FROM ? as echo_duplicate_end
-    UNION ALL
-    SELECT
       hero_spawn.mapId,
       hero_spawn.playerName,
+      hero_spawn.playerTeam,
+      hero_spawn.playerHero,
       hero_spawn.matchTime as playerEventTime,
       'Spawn' as playerEventType
     FROM ? as hero_spawn
@@ -1067,34 +1059,17 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     SELECT
       hero_swap.mapId,
       hero_swap.playerName,
+      hero_swap.playerTeam,
+      hero_swap.playerHero,
       hero_swap.matchTime as playerEventTime,
       'Swap' as playerEventType
     FROM ? as hero_swap
     UNION ALL
     SELECT
-      ultimate_charged.mapId,
-      ultimate_charged.playerName,
-      ultimate_charged.matchTime as playerEventTime,
-      'Ultimate Charged' as playerEventType
-    FROM ? as ultimate_charged
-    UNION ALL
-    SELECT
-      ultimate_start.mapId,
-      ultimate_start.playerName,
-      ultimate_start.matchTime as playerEventTime,
-      'Ultimate Start' as playerEventType
-    FROM ? as ultimate_start
-    UNION ALL
-    SELECT
-      ultimate_end.mapId,
-      ultimate_end.playerName,
-      ultimate_end.matchTime as playerEventTime,
-      'Ultimate End' as playerEventType
-    FROM ? as ultimate_end
-    UNION ALL
-    SELECT
       ability_1_used.mapId,
       ability_1_used.playerName,
+      ability_1_used.playerTeam,
+      ability_1_used.playerHero,
       ability_1_used.matchTime as playerEventTime,
       'Ability 1 Used' as playerEventType
     FROM ? as ability_1_used
@@ -1102,26 +1077,16 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     SELECT
       ability_2_used.mapId,
       ability_2_used.playerName,
+      ability_2_used.playerTeam,
+      ability_2_used.playerHero,
       ability_2_used.matchTime as playerEventTime,
       'Ability 2 Used' as playerEventType
     FROM ? as ability_2_used
     )
     ORDER BY mapId, playerName, playerEventTime
     `,
-    [
-      'defensive_assist_object_store',
-      'offensive_assist_object_store',
-      'echo_duplicate_start_object_store',
-      'echo_duplicate_end_object_store',
-      'hero_spawn_object_store',
-      'hero_swap_object_store',
-      'ultimate_charged_object_store',
-      'ultimate_start_object_store',
-      'ultimate_end_object_store',
-      'ability_1_used_object_store',
-      'ability_2_used_object_store',
-    ],
-    ['mapId', 'playerName', 'playerEventTime', 'playerEventType'],
+    ['defensive_assist_object_store', 'offensive_assist_object_store', 'hero_spawn_object_store', 'hero_swap_object_store', 'ability_1_used_object_store', 'ability_2_used_object_store'],
+    ['mapId', 'playerName', 'playerTeam', 'playerHero', 'playerEventTime', 'playerEventType'],
   ),
   makeAlaSQLNodeInit(
     'player_interaction_events',
@@ -1131,6 +1096,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         mercy_rez.mapId,
         mercy_rez.revivedName as playerName,
+        mercy_rez.revivedTeam as playerTeam,
+        mercy_rez.revivedHero as playerHero,
         mercy_rez.mercyName as otherPlayerName,
         mercy_rez.matchTime as playerInteractionEventTime,
         'Resurrected' as playerInteractionEventType
@@ -1139,6 +1106,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         mercy_rez.mapId,
         mercy_rez.mercyName as playerName,
+        mercy_rez.mercyTeam as playerTeam,
+        'Mercy' as playerHero,
         mercy_rez.revivedName as otherPlayerName,
         mercy_rez.matchTime as playerInteractionEventTime,
         'Resurrected Player' as playerInteractionEventType
@@ -1147,6 +1116,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         dva_demech.mapId,
         dva_demech.victimName as playerName,
+        dva_demech.victimTeam as playerTeam,
+        dva_demech.victimHero as playerHero,
         dva_demech.attackerName as otherPlayerName,
         dva_demech.matchTime as playerInteractionEventTime,
         'Demeched' as playerInteractionEventType
@@ -1155,6 +1126,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         dva_remech.mapId,
         dva_remech.playerName as playerName,
+        dva_remech.playerTeam as playerTeam,
+        dva_remech.playerHero as playerHero,
         dva_remech.playerName as otherPlayerName,
         dva_remech.matchTime as playerInteractionEventTime,
         'Remeched' as playerInteractionEventType
@@ -1163,6 +1136,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         kill.mapId,
         kill.attackerName as playerName,
+        kill.attackerTeam as playerTeam,
+        kill.attackerHero as playerHero,
         kill.victimName as otherPlayerName,
         kill.matchTime as playerInteractionEventTime,
         'Killed player' as playerInteractionEventType
@@ -1171,6 +1146,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         kill.mapId,
         kill.victimName as playerName,
+        kill.victimTeam as playerTeam,
+        kill.victimHero as playerHero,
         kill.attackerName as otherPlayerName,
         kill.matchTime as playerInteractionEventTime,
         'Died' as playerInteractionEventType
@@ -1179,6 +1156,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         damage.mapId,
         damage.attackerName as playerName,
+        damage.attackerTeam as playerTeam,
+        damage.attackerHero as playerHero,
         damage.victimName as otherPlayerName,
         damage.matchTime as playerInteractionEventTime,
         'Dealt Damage' as playerInteractionEventType
@@ -1187,6 +1166,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         damage.mapId,
         damage.victimName as playerName,
+        damage.victimTeam as playerTeam,
+        damage.victimHero as playerHero,
         damage.attackerName as otherPlayerName,
         damage.matchTime as playerInteractionEventTime,
         'Recieved Damaged' as playerInteractionEventType
@@ -1195,6 +1176,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         healing.mapId,
         healing.healerName as playerName,
+        healing.healerTeam as playerTeam,
+        healing.healerHero as playerHero,
         healing.healeeName as otherPlayerName,
         healing.matchTime as playerInteractionEventTime,
         'Dealt Healing' as playerInteractionEventType
@@ -1203,6 +1186,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       SELECT
         healing.mapId,
         healing.healeeName as playerName,
+        healing.healeeTeam as playerTeam,
+        healing.healeeHero as playerHero,
         healing.healerName as otherPlayerName,
         healing.matchTime as playerInteractionEventTime,
         'Recieved Healing' as playerInteractionEventType
@@ -1222,7 +1207,7 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       'healing_object_store',
       'healing_object_store',
     ],
-    ['mapId', 'playerName', 'otherPlayerName', 'playerInteractionEventTime', 'playerInteractionEventType'],
+    ['mapId', 'playerName', 'playerTeam', 'playerHero', 'otherPlayerName', 'playerInteractionEventTime', 'playerInteractionEventType'],
   ),
   // makeAlaSQLNodeInit(
   //   'player_stat_per_10_per_map',
@@ -1379,7 +1364,8 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       player_stat.shotsHit,
       player_stat.shotsMissed,
       player_stat.scopedShotsFired,
-      player_stat.scopedShotsHit
+      player_stat.scopedShotsHit,
+      player_stat.weaponAccuracy
       FROM ? as player_stat`,
     ['player_stat_object_store'],
     [
@@ -1417,9 +1403,10 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       'shotsMissed',
       'scopedShotsFired',
       'scopedShotsHit',
+      'weaponAccuracy',
     ],
   ),
-  ...player_stat_groups.map(makeNodeForPlayerStatGroup),
+  // ...player_stat_groups.map(makeNodeForPlayerStatGroup),
 ];
 
 // interface MapTeams {

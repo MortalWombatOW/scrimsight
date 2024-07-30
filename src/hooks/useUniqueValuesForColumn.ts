@@ -16,15 +16,7 @@ const useUniqueValuesForColumn = (columnName: string): string[] => {
 
   const data = dataManager.getNodeOutputOrDie('player_stat_expanded');
 
-  const uniqueValues = data.reduce((acc, row) => {
-    if (row[columnName] === undefined) {
-      return acc;
-    }
-    if (acc.includes(row[columnName])) {
-      return acc;
-    }
-    return [...acc, row[columnName]];
-  }, [] as string[]);
+  const uniqueValues = Array.from(new Set(data.map((row) => row[columnName])));
 
   return uniqueValues;
 };

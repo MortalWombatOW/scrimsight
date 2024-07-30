@@ -2,6 +2,7 @@ import React from 'react';
 import Home from '../pages/Home/Home';
 import SplashPage from '../pages/SplashPage/SplashPage';
 import QueriesPage from '../pages/QueriesPage/QueriesPage';
+import MapPage from '../pages/MapPage/MapPage';
 
 export interface ScrimsightRoute {
   path: string[];
@@ -21,11 +22,10 @@ const routes: ScrimsightRoute[] = [
     component: Home,
     name: 'Maps',
   },
-  // {
-  //   path: ['/map/:mapId'],
-  //   component: MapPage,
-  //   hidden: true,
-  // },
+  {
+    path: ['/map/:mapId'],
+    component: MapPage,
+  },
   // {
   //   path: ['/player/:playerName'],
   //   component: PlayerPage,

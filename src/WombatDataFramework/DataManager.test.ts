@@ -32,7 +32,7 @@ describe('DataManager', () => {
     await dm.executeNode('a');
 
     const output = dm.getNodeOutputOrDie('a');
-    expect(output[0].num).toBe(1);
+    expect(output[0]['num']).toBe(1);
 
     const execution: DataNodeExecution = dm.getNodeOrDie('a').getLatestExecution();
     expect(execution.error).toBe(undefined);

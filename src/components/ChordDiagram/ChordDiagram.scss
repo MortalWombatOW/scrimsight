@@ -1,0 +1,14 @@
+.chord-diagram-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  // height: 500px;
+  /* Adjust as needed */
+}
+
+/* Style the SVG elements */
+.chord-diagram-container svg path {
+  transition: stroke-width 0.3s ease;
+  /* Add a transition for smooth hover effect */
+}
