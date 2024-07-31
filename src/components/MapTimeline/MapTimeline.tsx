@@ -1,7 +1,7 @@
 import React, {useRef, useState, useEffect} from 'react';
 import {useDataManager} from '../../WombatDataFramework/DataContext';
 import {MatchStart} from '../../WombatDataFramework/DataNodeDefinitions';
-import {Grid, Tooltip, Typography} from '@mui/material';
+import {Container, Grid, Tooltip, Typography} from '@mui/material';
 import GrimReaperIcon from '../Icons/GrimReaperIcon';
 import MacheteIcon from '../Icons/MacheteIcon';
 import UpCardIcon from '../Icons/UpCardIcon';
@@ -138,6 +138,7 @@ const TimelineRow: React.FC<{
       position: 'relative',
     }}>
     <div style={{width: 1, height: 20, backgroundColor: 'grey', position: 'absolute', left: 0}} />
+    <div style={{width: width, height: 1, backgroundColor: '#222', position: 'absolute', left: 1, top: 10, zIndex: 0}} />
     {ultimateEvents
       .filter((row) => row['ultimateEndTime'] >= windowStartTime && row['ultimateChargedTime'] <= windowEndTime)
       .map((row, index) => (
@@ -374,7 +375,7 @@ const MapTimeline: React.FC<{mapId: number}> = ({mapId}) => {
   const [windowEndTime, setWindowEndTime] = useState<number>(100);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  const [width, setWidth] = useState<number>(900); // width - 150 to account for the grid padding
+  const [width, setWidth] = useState<number | undefined>();
   const {width: windowWidth} = useWindowSize();
 
   useEffect(() => {
@@ -388,12 +389,7 @@ const MapTimeline: React.FC<{mapId: number}> = ({mapId}) => {
   }, [mapId, dataManager.hasNodeOutput('map_times')]);
 
   useEffect(() => {
-    if (!gridRef.current) {
-      return;
-    }
-    const grid = gridRef.current;
-    const gridWidth = grid.clientWidth;
-    setWidth(gridWidth - 150);
+    setWidth(windowWidth - 300);
   }, [gridRef, windowWidth]);
 
   if (
@@ -402,7 +398,9 @@ const MapTimeline: React.FC<{mapId: number}> = ({mapId}) => {
     !dataManager.hasNodeOutput('player_interaction_events') ||
     !dataManager.hasNodeOutput('round_times') ||
     !dataManager.hasNodeOutput('ultimate_events') ||
-    !dataManager.hasNodeOutput('map_times')
+    !dataManager.hasNodeOutput('map_times') ||
+    !dataManager.hasNodeOutput('player_stat_expanded') ||
+    width === undefined
   ) {
     return <div />;
   }
@@ -498,9 +496,9 @@ const MapTimeline: React.FC<{mapId: number}> = ({mapId}) => {
   const eventsToShow = playerEvents.filter((row) => row['playerEventTime'] >= windowStartTime && row['playerEventTime'] <= windowEndTime).slice(0, 10);
 
   return (
-    <div>
+    <Container>
       <Grid container spacing={1}>
-        <Grid item xs={8} ref={gridRef}>
+        <Grid item xs={10} ref={gridRef}>
           <div>
             <Typography variant="h4">{team1Name}</Typography>
             {Object.entries(team1EventsByPlayerName).map(([playerName, events]) => (
@@ -511,9 +509,9 @@ const MapTimeline: React.FC<{mapId: number}> = ({mapId}) => {
                 <Grid item xs={10}>
                   <TimelineRow
                     width={width}
-                    events={events}
-                    interactionEvents={team1InteractionEventsByPlayerName[playerName]}
-                    ultimateEvents={team1UltimateEventsByPlayerName[playerName]}
+                    events={events || []}
+                    interactionEvents={team1InteractionEventsByPlayerName[playerName] || []}
+                    ultimateEvents={team1UltimateEventsByPlayerName[playerName] || []}
                     windowStartTime={windowStartTime}
                     windowEndTime={windowEndTime}
                     timeToX={timeToXWindow}
@@ -532,9 +530,9 @@ const MapTimeline: React.FC<{mapId: number}> = ({mapId}) => {
                 <Grid item xs={10}>
                   <TimelineRow
                     width={width}
-                    events={events}
-                    interactionEvents={team2InteractionEventsByPlayerName[playerName]}
-                    ultimateEvents={team2UltimateEventsByPlayerName[playerName]}
+                    events={events || []}
+                    interactionEvents={team2InteractionEventsByPlayerName[playerName] || []}
+                    ultimateEvents={team2UltimateEventsByPlayerName[playerName] || []}
                     windowStartTime={windowStartTime}
                     windowEndTime={windowEndTime}
                     timeToX={timeToXWindow}
@@ -562,19 +560,18 @@ const MapTimeline: React.FC<{mapId: number}> = ({mapId}) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={4}>
-          <Typography variant="h6">Recent Events:</Typography>
-          <ul>
-            {eventsToShow.map((event, index) => (
-              <li key={index}>
-                {event['playerEventTime']}: {event['playerEventType']} - {event['playerName']} ({event['playerHero']})
-              </li>
-            ))}
-          </ul>
-        </Grid>
       </Grid>
-      <ChordDiagram mapId={mapId} />
-    </div>
+      <div>
+        <Typography variant="h6">Recent Events:</Typography>
+        <ul>
+          {eventsToShow.map((event, index) => (
+            <li key={index}>
+              {event['playerEventTime']}: {event['playerEventType']} - {event['playerName']} ({event['playerHero']})
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Container>
   );
 };
 

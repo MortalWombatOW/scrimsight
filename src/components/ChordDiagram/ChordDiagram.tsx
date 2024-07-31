@@ -1,6 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {useDataManager} from '../../WombatDataFramework/DataContext';
 import {getColorgorical} from '../../lib/color';
+import {MatchStart} from '../../WombatDataFramework/DataNodeDefinitions';
+import {PathTooltip} from 'react-path-tooltip'; // import the package
+import useWindowSize from '../../hooks/useWindowSize';
+import {Card, CardContent, Container} from '@mui/material';
+import {Typography} from '../../WombatUI/WombatUI';
 
 interface ChordDataEntry {
   sourcePlayerName: string;
@@ -45,22 +50,258 @@ const transformDataToChordFormat = (
 
   const transformedData: ChordDataEntry[] = Array.from(Object.values(interactions));
 
-  console.log('transformedData', transformedData);
-
   return transformedData;
+};
+
+const getArcPath = (sourceStartAngle: number, sourceEndAngle: number, targetStartAngle: number, targetEndAngle: number, outerRadius: number, innerRadius: number, padding: number) => {
+  const sourceStartX = outerRadius + innerRadius * Math.cos(Math.PI * (sourceStartAngle / 180)) + padding;
+  const sourceStartY = outerRadius + innerRadius * Math.sin(Math.PI * (sourceStartAngle / 180)) + padding;
+  const sourceEndX = outerRadius + innerRadius * Math.cos(Math.PI * (sourceEndAngle / 180)) + padding;
+  const sourceEndY = outerRadius + innerRadius * Math.sin(Math.PI * (sourceEndAngle / 180)) + padding;
+
+  const targetStartX = outerRadius + innerRadius * Math.cos(Math.PI * (targetStartAngle / 180)) + padding;
+  const targetStartY = outerRadius + innerRadius * Math.sin(Math.PI * (targetStartAngle / 180)) + padding;
+  const targetEndX = outerRadius + innerRadius * Math.cos(Math.PI * (targetEndAngle / 180)) + padding;
+  const targetEndY = outerRadius + innerRadius * Math.sin(Math.PI * (targetEndAngle / 180)) + padding;
+
+  const averageX = (sourceStartX + sourceEndX + targetStartX + targetEndX) / 4;
+  const averageY = (sourceStartY + sourceEndY + targetStartY + targetEndY) / 4;
+
+  const sourceEndToTargetStartControlPointX = outerRadius / 2 + averageX / 2 + padding / 2;
+  const sourceEndToTargetStartControlPointY = outerRadius / 2 + averageY / 2 + padding / 2;
+
+  const targetStartToTargetEndControlPointX = outerRadius / 2 + averageX / 2 + padding / 2;
+  const targetStartToTargetEndControlPointY = outerRadius / 2 + averageY / 2 + padding / 2;
+
+  let path = '';
+  // path components
+  // 1. start at the source start point
+  path += `M${sourceStartX},${sourceStartY}`;
+  // // 2. draw a line to the source arrow point and then a line to the source end point
+  // path += ` L${sourceArrowX},${sourceArrowY} L${sourceEndX},${sourceEndY}`;
+  // 2. draw an arc to the source end point
+  path += ` A${outerRadius},${outerRadius} 0 0,1 ${sourceEndX},${sourceEndY}`;
+  // 3. draw a quadratic curve to the target start point
+  path += ` Q${sourceEndToTargetStartControlPointX},${sourceEndToTargetStartControlPointY} ${targetStartX},${targetStartY}`;
+  // // 4. draw an line to the target arrow point and then a line to the target end point
+  // path += ` L${targetArrowX},${targetArrowY} L${targetEndX},${targetEndY}`;
+  // 4. draw an arc to the target end point
+  path += ` A${outerRadius},${outerRadius} 0 0,1 ${targetEndX},${targetEndY}`;
+  // 5. draw a quadratic curve back to the source start point
+  path += ` Q${targetStartToTargetEndControlPointX},${targetStartToTargetEndControlPointY} ${sourceStartX},${sourceStartY}`;
+
+  return path;
+};
+
+const PlayerArc: React.FC<{
+  playerName: string;
+  innerRadius: number;
+  outerRadius: number;
+  killsStartAngle: number;
+  killsEndAngle: number;
+  deathsStartAngle: number;
+  deathsEndAngle: number;
+  handleArcHover: (event: React.MouseEvent<SVGPathElement>) => void;
+  handleArcLeave: (event: React.MouseEvent<SVGPathElement>) => void;
+  isHovering: boolean;
+  isInteractionHovering: boolean;
+  hoveredSource: string | null;
+  hoveredTarget: string | null;
+  svgRef: React.RefObject<SVGSVGElement>;
+  padding: number;
+  totalKills: number;
+  totalDeaths: number;
+}> = ({
+  playerName,
+  innerRadius,
+  outerRadius,
+  killsStartAngle,
+  killsEndAngle,
+  deathsStartAngle,
+  deathsEndAngle,
+  handleArcHover,
+  handleArcLeave,
+  isHovering,
+  isInteractionHovering,
+  hoveredSource,
+  hoveredTarget,
+  svgRef,
+  padding,
+  totalKills,
+  totalDeaths,
+}) => {
+  const paddedRadius = innerRadius + 5;
+
+  const killsStartX = outerRadius + paddedRadius * Math.cos(Math.PI * (killsStartAngle / 180)) + padding;
+  const killsStartY = outerRadius + paddedRadius * Math.sin(Math.PI * (killsStartAngle / 180)) + padding;
+  const killsEndX = outerRadius + paddedRadius * Math.cos(Math.PI * (killsEndAngle / 180)) + padding;
+  const killsEndY = outerRadius + paddedRadius * Math.sin(Math.PI * (killsEndAngle / 180)) + padding;
+
+  const deathsStartX = outerRadius + paddedRadius * Math.cos(Math.PI * (deathsStartAngle / 180)) + padding;
+  const deathsStartY = outerRadius + paddedRadius * Math.sin(Math.PI * (deathsStartAngle / 180)) + padding;
+  const deathsEndX = outerRadius + paddedRadius * Math.cos(Math.PI * (deathsEndAngle / 180)) + padding;
+  const deathsEndY = outerRadius + paddedRadius * Math.sin(Math.PI * (deathsEndAngle / 180)) + padding;
+
+  const labelOffset = 40;
+  const killsLabelAngle = (killsStartAngle + killsEndAngle) / 2;
+  const killsLabelX = (killsStartX + killsEndX) / 2 + labelOffset * Math.cos(Math.PI * (killsLabelAngle / 180));
+  const killsLabelY = (killsStartY + killsEndY) / 2 + labelOffset * Math.sin(Math.PI * (killsLabelAngle / 180));
+  const deathsLabelAngle = (deathsStartAngle + deathsEndAngle) / 2;
+  const deathsLabelX = (deathsStartX + deathsEndX) / 2 + labelOffset * Math.cos(Math.PI * (deathsLabelAngle / 180));
+  const deathsLabelY = (deathsStartY + deathsEndY) / 2 + labelOffset * Math.sin(Math.PI * (deathsLabelAngle / 180));
+
+  const killsArcRef = useRef<SVGPathElement>(null);
+  const deathsArcRef = useRef<SVGPathElement>(null);
+
+  return (
+    <g key={playerName}>
+      <g data-source={playerName} onMouseEnter={handleArcHover} onMouseLeave={handleArcLeave} opacity={isHovering ? (hoveredSource === playerName ? 1 : 0.3) : 1}>
+        <path ref={killsArcRef} d={`M${killsStartX},${killsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${killsEndX},${killsEndY}`} fill="none" stroke="green" strokeWidth={5} />
+
+        <text x={killsLabelX} y={killsLabelY} textAnchor="middle" dominantBaseline="central" fill="green" fontSize="0.7em">
+          {totalKills} kills
+        </text>
+      </g>
+      <g data-target={playerName} onMouseEnter={handleArcHover} onMouseLeave={handleArcLeave} opacity={isHovering ? (hoveredTarget === playerName ? 1 : 0.3) : 1}>
+        <path ref={deathsArcRef} d={`M${deathsStartX},${deathsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${deathsEndX},${deathsEndY}`} fill="none" stroke="red" strokeWidth={5} />
+
+        <text x={deathsLabelX} y={deathsLabelY} textAnchor="middle" dominantBaseline="central" fill="red" fontSize="0.7em">
+          {totalDeaths} deaths
+        </text>
+      </g>
+      <PathTooltip svgRef={svgRef} pathRef={killsArcRef} tip={`${playerName} kills: ${totalKills}`} />
+      <PathTooltip svgRef={svgRef} pathRef={deathsArcRef} tip={`${playerName} deaths: ${totalDeaths}`} />
+    </g>
+  );
+};
+
+const Chord: React.FC<{
+  interaction: ChordDataEntry;
+  sourceStart: number;
+  sourceEnd: number;
+  sourceValue: number;
+  getSourceCurrentValue: () => number;
+  addSourceCurrentValue: (value: number) => void;
+  targetStart: number;
+  targetEnd: number;
+  targetValue: number;
+  getTargetCurrentValue: () => number;
+  addTargetCurrentValue: (value: number) => void;
+  outerRadius: number;
+  innerRadius: number;
+  handleArcHover: (event: React.MouseEvent<SVGPathElement>) => void;
+  handleArcLeave: (event: React.MouseEvent<SVGPathElement>) => void;
+  isHovering: boolean;
+  isInteractionHovering: boolean;
+  hoveredSource: string | null;
+  hoveredTarget: string | null;
+  svgRef: React.RefObject<SVGSVGElement>;
+  padding: number;
+}> = ({
+  interaction,
+  sourceStart,
+  sourceEnd,
+  sourceValue,
+  getSourceCurrentValue,
+  addSourceCurrentValue,
+  targetStart,
+  targetEnd,
+  targetValue,
+  getTargetCurrentValue,
+  addTargetCurrentValue,
+  outerRadius,
+  innerRadius,
+  handleArcHover,
+  handleArcLeave,
+  isHovering,
+  isInteractionHovering,
+  hoveredSource,
+  hoveredTarget,
+  svgRef,
+  padding,
+}) => {
+  const color = getColorgorical(interaction.sourceTeamName);
+
+  const sourceCurrentValue = getSourceCurrentValue();
+  const targetCurrentValue = getTargetCurrentValue();
+
+  const interactionSourceStartAngle = sourceStart + (sourceCurrentValue / sourceValue) * (sourceEnd - sourceStart);
+  const interactionSourceEndAngle = sourceStart + ((sourceCurrentValue + interaction.value) / sourceValue) * (sourceEnd - sourceStart);
+  const interactionTargetStartAngle = targetStart + (targetCurrentValue / targetValue) * (targetEnd - targetStart);
+  const interactionTargetEndAngle = targetStart + ((targetCurrentValue + interaction.value) / targetValue) * (targetEnd - targetStart);
+
+  addSourceCurrentValue(interaction.value);
+  addTargetCurrentValue(interaction.value);
+
+  const source = interaction.sourcePlayerName;
+  const target = interaction.targetPlayerName;
+
+  const arcRef = useRef<SVGPathElement>(null);
+
+  return (
+    <g>
+      <path
+        ref={arcRef}
+        d={getArcPath(interactionSourceStartAngle, interactionSourceEndAngle, interactionTargetStartAngle, interactionTargetEndAngle, outerRadius, innerRadius, padding)}
+        fill={color}
+        stroke="white"
+        strokeWidth={1}
+        data-source={source}
+        data-target={interaction.targetPlayerName}
+        onMouseEnter={handleArcHover}
+        onMouseLeave={handleArcLeave}
+        opacity={isHovering ? ((isInteractionHovering ? hoveredSource === source && hoveredTarget === target : hoveredSource === source || hoveredTarget === interaction.targetPlayerName) ? 1 : 0.3) : 0.7}
+      />
+
+      <PathTooltip svgRef={svgRef} pathRef={arcRef} tip={`${interaction.value} kills on ${interaction.targetPlayerName} by ${interaction.sourcePlayerName}`} />
+    </g>
+  );
 };
 
 const ChordDiagram: React.FC<{mapId: number}> = ({mapId}) => {
   const dataManager = useDataManager();
   const [chordData, setChordData] = useState<ChordDataEntry[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
+  const [team1Name, setTeam1Name] = useState<string>('');
+  const [team2Name, setTeam2Name] = useState<string>('');
+  const [team1Players, setTeam1Players] = useState<string[]>([]);
+  const [team2Players, setTeam2Players] = useState<string[]>([]);
+  const [playerRoleMap, setPlayerRoleMap] = useState<{[playerName: string]: string}>({});
 
   useEffect(() => {
     const fetchDataAndTransform = async () => {
-      if (!dataManager.hasNodeOutput('player_stat_expanded')) {
+      if (!dataManager.hasNodeOutput('player_stat_expanded') || !dataManager.hasNodeOutput('player_interaction_events') || !dataManager.hasNodeOutput('match_start_object_store')) {
         return;
       }
-      // sport data by player name, then team name
+      const matchStart = dataManager.getNodeOutputOrDie('match_start_object_store').filter((row) => row['mapId'] === mapId)[0] as MatchStart;
+      setTeam1Name(matchStart.team1Name);
+      setTeam2Name(matchStart.team2Name);
+
+      const teamData = dataManager.getNodeOutputOrDie('player_stat_expanded').filter((row) => row['mapId'] === mapId);
+
+      const playerRoleMap: {[playerName: string]: string} = {};
+      teamData.forEach((row) => {
+        playerRoleMap[row['playerName']] = row['playerRole'];
+      });
+      setPlayerRoleMap(playerRoleMap);
+      const roleScore = (role: string) => {
+        if (role === 'tank') {
+          return 1;
+        }
+        if (role === 'damage') {
+          return 2;
+        }
+        if (role === 'support') {
+          return 3;
+        }
+        return 0;
+      };
+
+      const team1Players = Array.from(new Set(teamData.filter((row) => row['playerTeam'] === matchStart.team1Name).map((row) => row['playerName']))).sort((a, b) => roleScore(playerRoleMap[b]) - roleScore(playerRoleMap[a]));
+      const team2Players = Array.from(new Set(teamData.filter((row) => row['playerTeam'] === matchStart.team2Name).map((row) => row['playerName']))).sort((a, b) => roleScore(playerRoleMap[a]) - roleScore(playerRoleMap[b]));
+
+      setTeam1Players(team1Players);
+      setTeam2Players(team2Players);
       const data = dataManager.getNodeOutputOrDie('player_interaction_events').filter((row) => row['mapId'] === mapId);
 
       const transformedData = transformDataToChordFormat(data as any);
@@ -70,73 +311,26 @@ const ChordDiagram: React.FC<{mapId: number}> = ({mapId}) => {
     fetchDataAndTransform();
   }, [dataManager]);
 
-  const outerRadius = 250;
-  const innerRadius = 200;
-  const [hoveredArc, setHoveredArc] = useState<ChordDataEntry | null>(null);
+  const {width} = useWindowSize();
 
-  // produce a bezier curve path from the start and end points. It starts at the start point pointing towards the center, and ends at the end point pointing towards the center.
-  const getArcPath = (sourceStartAngle: number, sourceEndAngle: number, targetStartAngle: number, targetEndAngle: number, width: number) => {
-    console.log('getArcPath', sourceStartAngle, sourceEndAngle, targetStartAngle, targetEndAngle, width);
-    const sourceStartX = outerRadius + innerRadius * Math.cos(Math.PI * (sourceStartAngle / 180));
-    const sourceStartY = outerRadius + innerRadius * Math.sin(Math.PI * (sourceStartAngle / 180));
-    const sourceEndX = outerRadius + innerRadius * Math.cos(Math.PI * (sourceEndAngle / 180));
-    const sourceEndY = outerRadius + innerRadius * Math.sin(Math.PI * (sourceEndAngle / 180));
+  const padding = width / 8;
 
-    const averageSourceAngle = (sourceStartAngle + sourceEndAngle) / 2;
-    const averageTargetAngle = (targetStartAngle + targetEndAngle) / 2;
-
-    const arrowScaling = 0.97;
-
-    const sourceArrowX = outerRadius + arrowScaling * innerRadius * Math.cos(Math.PI * (averageSourceAngle / 180));
-    const sourceArrowY = outerRadius + arrowScaling * innerRadius * Math.sin(Math.PI * (averageSourceAngle / 180));
-    const targetArrowX = outerRadius + innerRadius * Math.cos(Math.PI * (averageTargetAngle / 180));
-    const targetArrowY = outerRadius + innerRadius * Math.sin(Math.PI * (averageTargetAngle / 180));
-
-    const targetStartX = outerRadius + arrowScaling * innerRadius * Math.cos(Math.PI * (targetStartAngle / 180));
-    const targetStartY = outerRadius + arrowScaling * innerRadius * Math.sin(Math.PI * (targetStartAngle / 180));
-    const targetEndX = outerRadius + arrowScaling * innerRadius * Math.cos(Math.PI * (targetEndAngle / 180));
-    const targetEndY = outerRadius + arrowScaling * innerRadius * Math.sin(Math.PI * (targetEndAngle / 180));
-
-    const averageX = (sourceStartX + sourceEndX + targetStartX + targetEndX) / 4;
-    const averageY = (sourceStartY + sourceEndY + targetStartY + targetEndY) / 4;
-
-    const averageAngle = (sourceStartAngle + sourceEndAngle + targetStartAngle + targetEndAngle) / 4;
-    // const widthXOffset = Math.cos(Math.PI * (averageAngle / 180 - 0.5)) * width;
-    // const widthYOffset = Math.sin(Math.PI * (averageAngle / 180 - 0.5)) * width;
-    const widthXOffset = 0;
-    const widthYOffset = 0;
-
-    const sourceEndToTargetStartControlPointX = outerRadius / 2 + averageX / 2 + widthXOffset / 2;
-    const sourceEndToTargetStartControlPointY = outerRadius / 2 + averageY / 2 + widthYOffset / 2;
-
-    const targetStartToTargetEndControlPointX = outerRadius / 2 + averageX / 2 - widthXOffset / 2;
-    const targetStartToTargetEndControlPointY = outerRadius / 2 + averageY / 2 - widthYOffset / 2;
-
-    let path = '';
-    // path components
-    // 1. start at the source start point
-    path += `M${sourceStartX},${sourceStartY}`;
-    // 2. draw a line to the source arrow point and then a line to the source end point
-    path += ` L${sourceArrowX},${sourceArrowY} L${sourceEndX},${sourceEndY}`;
-    // 3. draw a quadratic curve to the target start point
-    path += ` Q${sourceEndToTargetStartControlPointX},${sourceEndToTargetStartControlPointY} ${targetStartX},${targetStartY}`;
-    // 4. draw an line to the target arrow point and then a line to the target end point
-    path += ` L${targetArrowX},${targetArrowY} L${targetEndX},${targetEndY}`;
-    // 5. draw a quadratic curve back to the source start point
-    path += ` Q${targetStartToTargetEndControlPointX},${targetStartToTargetEndControlPointY} ${sourceStartX},${sourceStartY}`;
-
-    return path;
-  };
+  const outerRadius = width / 4;
+  const innerRadius = outerRadius * 0.8;
+  const [hoveredSource, setHoveredSource] = useState<string | null>(null);
+  const [hoveredTarget, setHoveredTarget] = useState<string | null>(null);
+  const isHovering = hoveredSource !== null || hoveredTarget !== null;
+  const isInteractionHovering = hoveredSource !== null && hoveredTarget !== null;
 
   const getLabelPosition = (angle: number) => {
     const labelRadius = outerRadius + 30;
     return {
-      x: outerRadius + labelRadius * Math.cos(Math.PI * (angle / 180)),
-      y: outerRadius + labelRadius * Math.sin(Math.PI * (angle / 180)),
+      x: outerRadius + labelRadius * Math.cos(Math.PI * (angle / 180)) + padding,
+      y: outerRadius + labelRadius * Math.sin(Math.PI * (angle / 180)) + padding,
     };
   };
 
-  const playerTeamMap: {[playerName: string]: string} = Object.fromEntries(chordData.map((entry) => [entry.sourcePlayerName, entry.sourceTeamName]));
+  const players = [...team1Players, ...team2Players];
 
   const groupedData = chordData.reduce((acc, entry) => {
     if (!acc[entry.sourcePlayerName]) {
@@ -147,14 +341,14 @@ const ChordDiagram: React.FC<{mapId: number}> = ({mapId}) => {
     }
     acc[entry.sourcePlayerName].push(entry);
     return acc;
-  }, {} as {[source: string]: ChordDataEntry[]});
+  }, {} as {[source: string]: ChordDataEntry[]}); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-  const playerAngles: {[player: string]: {startAngle: number; endAngle: number; value: number; currentValue: number}} = {};
+  Object.entries(groupedData).forEach(([source, interactions]) => interactions.sort((a, b) => a.value - b.value).sort((a, b) => players.indexOf(b.targetPlayerName) - players.indexOf(a.targetPlayerName)));
+  const playerAngles: {
+    [player: string]: {killsStartAngle: number; killsEndAngle: number; totalKills: number; currentKills: number; deathsStartAngle: number; deathsEndAngle: number; totalDeaths: number; currentDeaths: number};
+  } = {};
   let currentAngle = 0;
   const totalValue = chordData.reduce((sum, entry) => sum + entry.value, 0) * 2;
-  console.log('totalValue', totalValue);
-
-  const players = Array.from(new Set([...chordData.map((entry) => entry.sourcePlayerName), ...chordData.map((entry) => entry.targetPlayerName)]));
 
   players.forEach((player) => {
     const playerValue = groupedData[player]?.reduce<number>((sum, interaction: ChordDataEntry) => sum + interaction.value, 0) ?? 0;
@@ -163,122 +357,136 @@ const ChordDiagram: React.FC<{mapId: number}> = ({mapId}) => {
       0,
     );
 
-    const angleSpan = ((playerValue + toPlayerValue) / totalValue) * 360;
+    const killsAngleSpan = (playerValue / totalValue) * 360;
+    const deathsAngleSpan = (toPlayerValue / totalValue) * 360;
 
-    playerAngles[player] = {startAngle: currentAngle + angleSpan / 7, endAngle: currentAngle + (5 * angleSpan) / 7, value: playerValue + toPlayerValue, currentValue: 0};
-    currentAngle += angleSpan;
+    playerAngles[player] = {
+      killsStartAngle: currentAngle + killsAngleSpan / 2,
+      killsEndAngle: currentAngle + killsAngleSpan,
+      totalKills: playerValue,
+      currentKills: 0,
+      deathsStartAngle: currentAngle + killsAngleSpan,
+      deathsEndAngle: currentAngle + killsAngleSpan + (1 * deathsAngleSpan) / 2,
+      totalDeaths: toPlayerValue,
+      currentDeaths: 0,
+    };
+    currentAngle += killsAngleSpan;
+    currentAngle += deathsAngleSpan;
   });
-
-  console.log('playerAngles', playerAngles);
 
   const handleArcHover = (event: React.MouseEvent<SVGPathElement>) => {
     if (svgRef.current) {
       const path = event.currentTarget;
-      const chord = JSON.parse(path.dataset.chord as string) as ChordDataEntry;
-      setHoveredArc(chord);
+      const sourcePlayerName = path.dataset.source as string;
+      const targetPlayerName = path.dataset.target as string;
+
+      if (sourcePlayerName) {
+        setHoveredSource(sourcePlayerName);
+      }
+      if (targetPlayerName) {
+        setHoveredTarget(targetPlayerName);
+      }
     }
   };
 
   const handleArcLeave = (event: React.MouseEvent<SVGPathElement>) => {
     if (svgRef.current) {
-      const path = event.currentTarget;
-      setHoveredArc(null);
+      setHoveredSource(null);
+      setHoveredTarget(null);
     }
   };
 
   return (
-    <div className="chord-diagram-container">
-      <svg ref={svgRef} width={outerRadius * 4} height={outerRadius * 4}>
-        <g transform={`translate(${outerRadius},${outerRadius})`}>
-          {Object.entries(playerAngles).map(([source, angles]) => {
-            const {startAngle: sourceStart, endAngle: sourceEnd} = angles;
-            const startAngle = sourceStart; //(4 / 5) * sourceStart + (1 / 5) * sourceEnd;
-            const endAngle = sourceEnd; //(1 / 5) * sourceStart + (4 / 5) * sourceEnd;
-            const startX = outerRadius + innerRadius * Math.cos(Math.PI * (startAngle / 180));
-            const startY = outerRadius + innerRadius * Math.sin(Math.PI * (startAngle / 180));
-            const endX = outerRadius + innerRadius * Math.cos(Math.PI * (endAngle / 180));
-            const endY = outerRadius + innerRadius * Math.sin(Math.PI * (endAngle / 180));
-            return (
-              <path
-                key={source}
-                d={`M${startX},${startY} A${innerRadius},${innerRadius} 0 0,1 ${endX},${endY}`}
-                fill="none"
-                stroke="white"
-                strokeWidth={1}
-                data-chord={JSON.stringify(angles)}
-                onMouseEnter={handleArcHover}
-                onMouseLeave={handleArcLeave}
-                opacity={hoveredArc && (hoveredArc.sourcePlayerName === source || hoveredArc.targetPlayerName === source) ? 1 : 0.5}
-              />
-            );
-          })}
+    <Container>
+      <svg ref={svgRef} width={outerRadius * 2 + padding * 2} height={outerRadius * 2 + padding * 2} style={{display: 'block', margin: '0 auto'}}>
+        {Object.entries(playerAngles).map(([playerName, angles]) => {
+          const {killsStartAngle, killsEndAngle, deathsStartAngle, deathsEndAngle} = angles;
+          return (
+            <PlayerArc
+              key={playerName}
+              playerName={playerName}
+              innerRadius={innerRadius}
+              outerRadius={outerRadius}
+              killsStartAngle={killsStartAngle}
+              killsEndAngle={killsEndAngle}
+              deathsStartAngle={deathsStartAngle}
+              deathsEndAngle={deathsEndAngle}
+              handleArcHover={handleArcHover}
+              handleArcLeave={handleArcLeave}
+              isHovering={isHovering}
+              isInteractionHovering={isInteractionHovering}
+              hoveredSource={hoveredSource}
+              hoveredTarget={hoveredTarget}
+              svgRef={svgRef}
+              padding={padding}
+              totalKills={angles.totalKills}
+              totalDeaths={angles.totalDeaths}
+            />
+          );
+        })}
 
-          {Object.entries(groupedData).map(([source, interactions]) =>
-            interactions.map((interaction, index) => {
-              console.log('interaction', interaction);
-              const {startAngle: sourceStart, endAngle: sourceEnd, value: sourceValue, currentValue: sourceCurrentValue} = playerAngles[source];
+        {Object.entries(groupedData).map(([source, interactions]) =>
+          interactions.map((interaction, index) => (
+            <Chord
+              key={`${source}-${interaction.targetPlayerName}-${index}`}
+              interaction={interaction}
+              sourceStart={playerAngles[source].killsStartAngle}
+              sourceEnd={playerAngles[source].killsEndAngle}
+              sourceValue={playerAngles[source].totalKills}
+              getSourceCurrentValue={() => playerAngles[source].currentKills}
+              addSourceCurrentValue={(value) => (playerAngles[source].currentKills += value)}
+              targetStart={playerAngles[interaction.targetPlayerName].deathsStartAngle}
+              targetEnd={playerAngles[interaction.targetPlayerName].deathsEndAngle}
+              targetValue={playerAngles[interaction.targetPlayerName].totalDeaths}
+              getTargetCurrentValue={() => playerAngles[interaction.targetPlayerName].currentDeaths}
+              addTargetCurrentValue={(value) => (playerAngles[interaction.targetPlayerName].currentDeaths += value)}
+              outerRadius={outerRadius}
+              innerRadius={innerRadius}
+              handleArcHover={handleArcHover}
+              handleArcLeave={handleArcLeave}
+              isHovering={isHovering}
+              isInteractionHovering={isInteractionHovering}
+              hoveredSource={hoveredSource}
+              hoveredTarget={hoveredTarget}
+              svgRef={svgRef}
+              padding={padding}
+            />
+          )),
+        )}
 
-              const res = playerAngles[interaction.targetPlayerName];
-              const {startAngle: targetStart, endAngle: targetEnd, value: targetValue, currentValue: targetCurrentValue} = res;
-
-              const color = getColorgorical(interaction.sourceTeamName);
-
-              const interactionSourceStartAngle = sourceStart + (sourceCurrentValue / sourceValue) * (sourceEnd - sourceStart);
-              const interactionSourceEndAngle = sourceStart + ((sourceCurrentValue + interaction.value) / sourceValue) * (sourceEnd - sourceStart);
-              const interactionTargetStartAngle = targetStart + (targetCurrentValue / targetValue) * (targetEnd - targetStart);
-              const interactionTargetEndAngle = targetStart + ((targetCurrentValue + interaction.value) / targetValue) * (targetEnd - targetStart);
-
-              playerAngles[source].currentValue += interaction.value;
-              playerAngles[interaction.targetPlayerName].currentValue += interaction.value;
-
-              const arcWidth = interaction.value * 20;
-
-              const sourceAverageAngle = (interactionSourceStartAngle + interactionSourceStartAngle) / 2;
-
-              const sourceLabelX = outerRadius; // + 0.92 * innerRadius * Math.cos(Math.PI * (sourceAverageAngle / 180));
-              const sourceLabelY = outerRadius; // + 0.92 * innerRadius * Math.sin(Math.PI * (sourceAverageAngle / 180));
-
-              const targetAverageAngle = (interactionTargetStartAngle + interactionTargetEndAngle) / 2;
-
-              const targetLabelX = outerRadius + 0.92 * innerRadius * Math.cos(Math.PI * (targetAverageAngle / 180));
-              const targetLabelY = outerRadius + 0.92 * innerRadius * Math.sin(Math.PI * (targetAverageAngle / 180));
-
-              return (
-                <g key={`${source}-${interaction.targetPlayerName}-${index}`}>
-                  <path
-                    key={`${source}-${interaction.targetPlayerName}-${index}`}
-                    d={getArcPath(interactionSourceStartAngle, interactionSourceEndAngle, interactionTargetStartAngle, interactionTargetEndAngle, arcWidth)}
-                    fill={color}
-                    stroke="white"
-                    strokeWidth={1}
-                    data-chord={JSON.stringify(interaction)}
-                    onMouseEnter={handleArcHover}
-                    onMouseLeave={handleArcLeave}
-                    opacity={hoveredArc && hoveredArc.sourcePlayerName === source && hoveredArc.targetPlayerName === interaction.targetPlayerName ? 1 : 0.1}
-                  />
-                  {hoveredArc && hoveredArc.sourcePlayerName === source && hoveredArc.targetPlayerName === interaction.targetPlayerName && (
-                    <text key={`${source}-${interaction.targetPlayerName}-${index}-label`} x={sourceLabelX} y={sourceLabelY} fontSize="0.7em" textAnchor="middle" dominantBaseline="central" fill="white">
-                      {interaction.value} kills on {interaction.targetPlayerName} by {interaction.sourcePlayerName}
-                    </text>
-                  )}
-                </g>
-              );
-            }),
-          )}
-
-          {Object.keys(playerAngles).map((player) => {
-            const {startAngle, endAngle} = playerAngles[player];
-            const labelAngle = (startAngle + endAngle) / 2;
-            const {x, y} = getLabelPosition(labelAngle);
-            return (
-              <text key={player} x={x} y={y} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeamMap[player])}>
+        {players.map((player) => {
+          const {killsStartAngle: startAngle, deathsEndAngle: endAngle} = playerAngles[player];
+          const labelAngle = (startAngle + endAngle) / 2;
+          const {x, y} = getLabelPosition(labelAngle);
+          return (
+            <g
+              key={player}
+              onMouseEnter={() => {
+                setHoveredSource(player);
+                setHoveredTarget(player);
+              }}
+              onMouseLeave={() => {
+                setHoveredSource(null);
+                setHoveredTarget(null);
+              }}>
+              <text x={x} y={y} fontSize="0.7em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Players.includes(player) ? team2Name : team1Name)}>
                 {player}
               </text>
-            );
-          })}
-        </g>
+              <text x={x} y={y + 10} fontSize="0.5em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Players.includes(player) ? team2Name : team1Name)}>
+                {playerRoleMap[player]}
+              </text>
+            </g>
+          );
+        })}
       </svg>
-    </div>
+      <Card variant="outlined" style={{margin: '1em'}}>
+        <CardContent>
+          <Typography variant="body2" style={{marginTop: '10px'}} color="text.secondary">
+            This diagram shows the interactions between players in the map. The size of the arcs represent the number of kills and deaths of each player.
+          </Typography>
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 
