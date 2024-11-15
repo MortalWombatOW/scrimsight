@@ -198,4 +198,9 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('finalBlowsPerDeaths', 'Final Blows per Deaths', 'The number of final blows per deaths.', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('damageTakenPerDeaths', 'Damage Taken per Deaths', 'The amount of damage taken per deaths.', 'hp', 'number', numberFormatter, numberComparator),
   makeDataColumn('allDamageDealtPerDamageTaken', 'All Damage Dealt per Damage Taken', 'The total amount of damage dealt per damage taken.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team1ChargedUltimateCount', 'Team 1 Charged Ultimate Count', 'Number of ultimates charged for team 1', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team2ChargedUltimateCount', 'Team 2 Charged Ultimate Count', 'Number of ultimates charged for team 2', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('teamWithUltimateAdvantage', 'Team with Ultimate Advantage', 'Team that has more ultimates charged', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('ultimateAdvantageDiff', 'Ultimate Advantage Difference', 'Difference in number of charged ultimates between teams', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('chargedUltimateCount', 'Charged Ultimate Count', 'Number of charged ultimates for a team at a given time', 'count', 'number', numberFormatter, numberComparator),
 ];

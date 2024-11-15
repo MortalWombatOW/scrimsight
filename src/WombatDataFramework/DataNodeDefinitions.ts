@@ -958,6 +958,9 @@ function buildSQLRatioMetrics(
   `;
 }
 
+// Rules:
+// never use subqueries, always split into multiple nodes.
+// any change to the output columns requires a change to the DataColumn definitions in DataColumn.ts
 export const ALASQL_NODES: AlaSQLNodeInit[] = [
   makeAlaSQLNodeInit(
     'ultimate_events',
@@ -1209,80 +1212,6 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     ],
     ['mapId', 'playerName', 'playerTeam', 'playerHero', 'otherPlayerName', 'playerInteractionEventTime', 'playerInteractionEventType'],
   ),
-  // makeAlaSQLNodeInit(
-  //   'player_stat_per_10_per_map',
-  //   'Player Statistics Per 10 Minutes Per Map',
-  //   buildSQLRatioMetrics(
-  //     'player_stat_object_store',
-  //     ['mapId', 'playerName'],
-  //     [
-  //       'eliminations',
-  //       'finalBlows',
-  //       'deaths',
-  //       'allDamageDealt',
-  //       'heroDamageDealt',
-  //       'healingDealt',
-  //       'healingReceived',
-  //       'selfHealing',
-  //       'damageTaken',
-  //       'damageBlocked',
-  //       'defensiveAssists',
-  //       'offensiveAssists',
-  //       'ultimatesEarned',
-  //       'ultimatesUsed',
-  //       'multikillBest',
-  //       'multikills',
-  //       'soloKills',
-  //       'objectiveKills',
-  //       'environmentalKills',
-  //       'environmentalDeaths',
-  //       'criticalHits',
-  //       'scopedCriticalHitKills',
-  //       'shotsFired',
-  //       'shotsHit',
-  //       'shotsMissed',
-  //       'scopedShotsFired',
-  //       'scopedShotsHit',
-  //     ],
-  //     'map_times',
-  //     'mapDuration',
-  //     600,
-  //     ['mapId'],
-  //     'Per10',
-  //   ),
-
-  //   ['map_times', 'player_stat_object_store'],
-  //   [
-  //     'mapId',
-  //     'playerName',
-  //     'eliminationsPer10',
-  //     'finalBlowsPer10',
-  //     'deathsPer10',
-  //     'allDamagePer10',
-  //     'heroDamagePer10',
-  //     'healingPer10',
-  //     'healingReceivedPer10',
-  //     'selfHealingPer10',
-  //     'damageTakenPer10',
-  //     'damageBlockedPer10',
-  //     'defensiveAssistsPer10',
-  //     'offensiveAssistsPer10',
-  //     'ultimatesEarnedPer10',
-  //     'ultimatesUsedPer10',
-  //     'multikillsPer10',
-  //     'soloKillsPer10',
-  //     'objectiveKillsPer10',
-  //     'environmentalKillsPer10',
-  //     'environmentalDeathsPer10',
-  //     'criticalHitsPer10',
-  //     'scopedCriticalHitKillsPer10',
-  //     'shotsFiredPer10',
-  //     'shotsHitPer10',
-  //     'shotsMissedPer10',
-  //     'scopedShotsFiredPer10',
-  //     'scopedShotsHitPer10',
-  //   ],
-  // ),
 
   makeAlaSQLNodeInit(
     'player_stat_expanded',
@@ -1406,110 +1335,4 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
       'weaponAccuracy',
     ],
   ),
-  // ...player_stat_groups.map(makeNodeForPlayerStatGroup),
 ];
-
-// interface MapTeams {
-//   mapId: number;
-//   teamName: string;
-//   teamPlayers: string[];
-// }
-
-// interface MapTeamsGrouped {
-//   mapId: number;
-//   team1Name: string;
-//   team2Name: string;
-//   team1Players: string[];
-//   team2Players: string[];
-// }
-
-// export interface MapOverview {
-//   mapId: number;
-//   scrimId: string;
-//   mapName: string;
-//   team1Name: string;
-//   team2Name: string;
-//   team1Score: number;
-//   team2Score: number;
-//   team1Players: string[];
-//   team2Players: string[];
-//   timestamp: number;
-//   fileName: string;
-// }
-
-// export interface ScrimPlayersHeroesRoles {
-//   scrimId: string;
-//   teamName: string;
-//   playerName: string;
-//   role: string;
-//   hero: string;
-//   finalBlows: number;
-//   deaths: number;
-// }
-
-// export interface ScrimPlayers {
-//   scrimId: number;
-//   mapId: number;
-//   teamName: string;
-//   teamNumber: number;
-//   playerName: string;
-//   role: string;
-//   roleNumber: number;
-//   heroes: {
-//     hero: string;
-//     finalBlows: number;
-//     deaths: number;
-//     damage: number;
-//     accuracy: number;
-//     shotsFired: number;
-//   }[];
-// }
-
-// interface PlayerTimePlayed {
-//   playerName: string;
-//   playerTeam: string;
-//   timePlayed: number;
-// }
-
-// export interface PlayerStatFormatted {
-//   mapId: number;
-//   roundNumber: number;
-//   playerTeam: string;
-//   playerName: string;
-//   playerHero: string;
-//   eliminations: number;
-//   finalBlows: number;
-//   deaths: number;
-//   allDamageDealt: number;
-//   barrierDamageDealt: number;
-//   heroDamageDealt: number;
-//   healingDealt: number;
-//   healingReceived: number;
-//   selfHealing: number;
-//   damageTaken: number;
-//   damageBlocked: number;
-//   defensiveAssists: number;
-//   offensiveAssists: number;
-//   ultimatesEarned: number;
-//   ultimatesUsed: number;
-//   multikillBest: number;
-//   multikills: number;
-//   soloKills: number;
-//   objectiveKills: number;
-//   environmentalKills: number;
-//   environmentalDeaths: number;
-//   criticalHits: number;
-//   criticalHitAccuracy: number;
-//   scopedAccuracy: number;
-//   scopedCriticalHitAccuracy: number;
-//   scopedCriticalHitKills: number;
-//   shotsFired: number;
-//   shotsHit: number;
-//   shotsMissed: number;
-//   scopedShotsFired: number;
-//   scopedShotsHit: number;
-//   weaponAccuracy: number;
-//   heroTimePlayed: number;
-// }
-
-// export type PlayerStatsAggregated = Omit<PlayerStatFormatted, 'roundNumber'>;
