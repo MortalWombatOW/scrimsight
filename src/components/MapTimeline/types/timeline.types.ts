@@ -107,4 +107,53 @@ export interface UltimateAdvantageData {
   team1ChargedUltimateCount: number;
   team2ChargedUltimateCount: number;
   ultimateAdvantageDiff: number;
+}
+
+export interface UltimateAdvantageChartProps {
+  width: number;
+  timeToX: (time: number) => number;
+  windowStartTime: number;
+  windowEndTime: number;
+  team1Name: string;
+  team2Name: string;
+  ultimateAdvantageData: UltimateAdvantageData[];
+}
+
+export interface TimelineData {
+  team1Name: string;
+  team2Name: string;
+  team1EventsByPlayer: {[playerName: string]: PlayerEvent[]};
+  team2EventsByPlayer: {[playerName: string]: PlayerEvent[]};
+  team1InteractionEventsByPlayer: {[playerName: string]: PlayerInteractionEvent[]};
+  team2InteractionEventsByPlayer: {[playerName: string]: PlayerInteractionEvent[]};
+  team1UltimateEventsByPlayer: {[playerName: string]: UltimateEvent[]};
+  team2UltimateEventsByPlayer: {[playerName: string]: UltimateEvent[]};
+  mapStartTime: number;
+  mapEndTime: number;
+  roundTimes: RoundTimes[];
+  eventTimes: number[];
+  ultimateAdvantageData: UltimateAdvantageData[];
+}
+
+export interface TimelineDimensions {
+  width: number | undefined;
+  timeToX: (time: number) => number;
+  timeToXWindow: (time: number) => number;
+  xToTime: (x: number) => number;
+  xToTimeWindow: (x: number) => number;
+  windowStartTime: number;
+  windowEndTime: number;
+  setWindowStartTime: (time: number) => void;
+  setWindowEndTime: (time: number) => void;
+  handleMouseDown?: (e: React.MouseEvent, type: 'start' | 'end') => void;
+  handleMouseUp?: () => void;
+  handleMouseMove?: (e: React.MouseEvent) => void;
+  gridRef: React.RefObject<HTMLDivElement>;
+}
+
+export interface PixiMapTimelineProps {
+  width: number;
+  height: number;
+  timelineData: TimelineData;
+  dimensions: TimelineDimensions;
 } 

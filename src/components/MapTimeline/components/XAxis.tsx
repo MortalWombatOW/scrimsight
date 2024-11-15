@@ -2,17 +2,9 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { XAxisProps } from '../types/timeline.types';
 import { useTimelineWindow } from '../hooks/useTimelineWindow';
-import {
-  XAxisContainer,
-  TimelineHorizontalLine,
-  RoundSetupSection,
-  RoundActiveSection,
-  RoundLabel,
-  EventMarker,
-  WindowSection,
-  WindowHandle,
-} from '../styles/timeline.styles';
-import { UltimateAdvantageChart } from './UltimateAdvantageChart';
+import { XAxisContainer, WindowHandle } from '../styles/timeline.styles';
+import { PixiWrapper } from './PixiWrapper';
+import { PixiXAxis } from './PixiXAxis';
 
 export const XAxis: React.FC<XAxisProps> = ({
   width,
@@ -48,67 +40,52 @@ export const XAxis: React.FC<XAxisProps> = ({
 
   return (
     <XAxisContainer width={width} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}>
-      <UltimateAdvantageChart
-        width={width}
-        timeToX={timeToX}
-        windowStartTime={windowStartTime}
-        windowEndTime={windowEndTime}
-        team1Name={team1Name}
-        team2Name={team2Name}
-        ultimateAdvantageData={ultimateAdvantageData}
-      />
-      <TimelineHorizontalLine width={width} />
-      <div style={{ position: 'relative', height: '100%' }}>
-        {roundTimes.map((round, index) => (
-          <div key={index + '-round'}>
-            <RoundSetupSection
-              style={{
-                left: timeToX(round.roundStartTime),
-                width: timeToX(round.roundSetupCompleteTime) - timeToX(round.roundStartTime)
-              }}
-            />
-            <RoundActiveSection
-              style={{
-                left: timeToX(round.roundSetupCompleteTime),
-                width: timeToX(round.roundEndTime) - timeToX(round.roundSetupCompleteTime)
-              }}
-            />
-            <RoundLabel
-              style={{
-                left: timeToX(round.roundStartTime),
-                transform: 'translateX(-50%)'
-              }}
-              variant="body2"
-            >
-              Round {index + 1}
-            </RoundLabel>
-          </div>
-        ))}
-        {eventTimes.map((time, index) => (
-          <EventMarker
-            key={index + '-time'}
-            style={{
-              left: timeToX(time)
-            }}
-          />
-        ))}
-        <WindowSection
+      <PixiWrapper width={width} height={100}>
+        <PixiXAxis {...{
+          width,
+          timeToX,
+          xToTime,
+          mapStartTime,
+          mapEndTime,
+          roundTimes,
+          windowStartTime,
+          setWindowStartTime,
+          windowEndTime,
+          setWindowEndTime,
+          eventTimes,
+          team1Name,
+          team2Name,
+          ultimateAdvantageData
+        }} />
+      </PixiWrapper>
+
+      {/* Window handles - kept in DOM for better interaction */}
+      <WindowHandle
+        style={{ left: `${timeToX(innerWindowStartTime)}px` }}
+        onMouseDown={(e) => handleMouseDown(e, 'start')}>
+        {Math.round(windowStartTime)}
+      </WindowHandle>
+      <WindowHandle
+        style={{ left: `${timeToX(innerWindowEndTime)}px` }}
+        onMouseDown={(e) => handleMouseDown(e, 'end')}>
+        {Math.round(windowEndTime)}
+      </WindowHandle>
+
+      {/* Round labels - kept in DOM for text rendering */}
+      {roundTimes.map((round, index) => (
+        <Typography
+          key={`round-${index}`}
+          variant="body2"
           style={{
-            left: timeToX(innerWindowStartTime),
-            width: timeToX(innerWindowEndTime) - timeToX(innerWindowStartTime)
+            position: 'absolute',
+            left: timeToX(round.roundStartTime),
+            top: 10,
+            transform: 'translateX(-50%)'
           }}
-        />
-        <WindowHandle
-          style={{ left: `${timeToX(innerWindowStartTime)}px` }}
-          onMouseDown={(e) => handleMouseDown(e, 'start')}>
-          {Math.round(windowStartTime)}
-        </WindowHandle>
-        <WindowHandle
-          style={{ left: `${timeToX(innerWindowEndTime)}px` }}
-          onMouseDown={(e) => handleMouseDown(e, 'end')}>
-          {Math.round(windowEndTime)}
-        </WindowHandle>
-      </div>
+        >
+          Round {index + 1}
+        </Typography>
+      ))}
     </XAxisContainer>
   );
 }; 

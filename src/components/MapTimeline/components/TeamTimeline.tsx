@@ -1,8 +1,9 @@
 import React, { memo, useMemo } from 'react';
 import { Grid, Typography } from '@mui/material';
-import { TimelineRow } from './TimelineRow';
-import { PlayerEvent, PlayerInteractionEvent, UltimateEvent } from '../types/timeline.types';
+import { PixiTimelineRow } from './PixiTimelineRow';
+import { PixiWrapper } from './PixiWrapper';
 import { TimelineContainer, PlayerNameCell } from '../styles/timeline.styles';
+import { PlayerEvent, PlayerInteractionEvent, UltimateEvent } from '../types/timeline.types';
 
 interface TeamTimelineProps {
   teamName: string;
@@ -32,15 +33,17 @@ export const TeamTimeline: React.FC<TeamTimelineProps> = memo(({
           <Typography variant="h6">{playerName}</Typography>
         </PlayerNameCell>
         <Grid item xs={10}>
-          <TimelineRow
-            width={width}
-            events={events}
-            interactionEvents={interactionEventsByPlayer[playerName] || []}
-            ultimateEvents={ultimateEventsByPlayer[playerName] || []}
-            windowStartTime={windowStartTime}
-            windowEndTime={windowEndTime}
-            timeToX={timeToX}
-          />
+          <PixiWrapper width={width} height={20}>
+            <PixiTimelineRow
+              width={width}
+              events={events}
+              interactionEvents={interactionEventsByPlayer[playerName] || []}
+              ultimateEvents={ultimateEventsByPlayer[playerName] || []}
+              windowStartTime={windowStartTime}
+              windowEndTime={windowEndTime}
+              timeToX={timeToX}
+            />
+          </PixiWrapper>
         </Grid>
       </TimelineContainer>
     )),
@@ -52,15 +55,6 @@ export const TeamTimeline: React.FC<TeamTimelineProps> = memo(({
       <Typography variant="h4">{teamName}</Typography>
       {playerRows}
     </div>
-  );
-}, (prevProps, nextProps) => {
-  // Custom comparison function for memo
-  return (
-    prevProps.width === nextProps.width &&
-    prevProps.windowStartTime === nextProps.windowStartTime &&
-    prevProps.windowEndTime === nextProps.windowEndTime &&
-    prevProps.teamName === nextProps.teamName &&
-    Object.keys(prevProps.eventsByPlayer).length === Object.keys(nextProps.eventsByPlayer).length
   );
 });
 

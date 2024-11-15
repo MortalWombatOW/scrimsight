@@ -10,7 +10,7 @@ import {
   UltimateAdvantageData,
 } from '../types/timeline.types';
 
-interface TimelineData {
+export interface TimelineData {
   team1Name: string;
   team2Name: string;
   team1EventsByPlayer: {[playerName: string]: PlayerEvent[]};
