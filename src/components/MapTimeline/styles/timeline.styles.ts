@@ -50,9 +50,9 @@ export const XAxisMarker = styled.div<{left: number}>`
   background-color: grey;
 `;
 
-export const WindowHandle = styled.div<{left: number}>`
+export const WindowHandle = styled('div')<{ left?: number }>`
   position: absolute;
-  left: ${props => props.left}px;
+  left: ${props => props.left !== undefined ? `${props.left}px` : 'auto'};
   top: 20px;
   cursor: ew-resize;
   user-select: none;

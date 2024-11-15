@@ -31,31 +31,20 @@ const CenterLine = styled('div')`
   top: 50%;
 `;
 
-const Team1Bar = styled('div') <{ left: number; width: number; height: number }>`
+const BaseBar = styled('div')`
   position: absolute;
-  left: ${props => props.left}px;
+  height: 100%;
+  opacity: 0.6;
+`;
+
+const Team1Bar = styled(BaseBar)`
   bottom: 50%;
-  width: ${props => props.width}px;
-  height: ${props => props.height}px;
   background-color: #4caf50;
-  opacity: 0.6;
 `;
 
-const Team2Bar = styled('div') <{ left: number; width: number; height: number }>`
-  position: absolute;
-  left: ${props => props.left}px;
+const Team2Bar = styled(BaseBar)`
   top: 50%;
-  width: ${props => props.width}px;
-  height: ${props => props.height}px;
   background-color: #f44336;
-  opacity: 0.6;
-`;
-
-const AdvantageLine = styled('path')`
-  stroke: #fff;
-  stroke-width: 1;
-  fill: none;
-  opacity: 0.8;
 `;
 
 // Helper function to generate step path
@@ -112,23 +101,36 @@ export const UltimateAdvantageChart: React.FC<UltimateAdvantageChartProps> = mem
           ? timeToX(nextEvent.matchTime) - timeToX(d.matchTime)
           : timeToX(windowEndTime) - timeToX(d.matchTime);
 
+        const barStyle = {
+          left: timeToX(d.matchTime),
+          width: barWidth,
+        };
+
+        const team1Style = {
+          ...barStyle,
+          height: d.team1ChargedUltimateCount * scale,
+        };
+
+        const team2Style = {
+          ...barStyle,
+          height: d.team2ChargedUltimateCount * scale,
+        };
+
         return (
           <React.Fragment key={i}>
-            <Team1Bar
-              left={timeToX(d.matchTime)}
-              width={barWidth}
-              height={d.team1ChargedUltimateCount * scale}
-            />
-            <Team2Bar
-              left={timeToX(d.matchTime)}
-              width={barWidth}
-              height={d.team2ChargedUltimateCount * scale}
-            />
+            <Team1Bar style={team1Style} />
+            <Team2Bar style={team2Style} />
           </React.Fragment>
         );
       })}
       <svg width={width} height={60} style={{ position: 'absolute', top: 0 }}>
-        <AdvantageLine d={pathData} />
+        <path
+          d={pathData}
+          stroke="#fff"
+          strokeWidth={1}
+          fill="none"
+          opacity={0.8}
+        />
       </svg>
     </ChartContainer>
   );

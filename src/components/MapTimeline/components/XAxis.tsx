@@ -83,12 +83,12 @@ export const XAxis: React.FC<XAxisProps> = ({
           width={timeToX(innerWindowEndTime) - timeToX(innerWindowStartTime)}
         />
         <WindowHandle
-          left={timeToX(innerWindowStartTime)}
+          style={{ left: `${timeToX(innerWindowStartTime)}px` }}
           onMouseDown={(e) => handleMouseDown(e, 'start')}>
           {Math.round(windowStartTime)}
         </WindowHandle>
         <WindowHandle
-          left={timeToX(innerWindowEndTime)}
+          style={{ left: `${timeToX(innerWindowEndTime)}px` }}
           onMouseDown={(e) => handleMouseDown(e, 'end')}>
           {Math.round(windowEndTime)}
         </WindowHandle>

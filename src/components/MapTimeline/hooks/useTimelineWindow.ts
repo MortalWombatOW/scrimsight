@@ -1,4 +1,5 @@
-import {useState, useRef, useEffect} from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { throttle } from 'lodash';
 
 interface UseTimelineWindowProps {
   windowStartTime: number;
@@ -20,51 +21,59 @@ export const useTimelineWindow = ({
   xToTime,
 }: UseTimelineWindowProps) => {
   const [dragging, setDragging] = useState<null | 'start' | 'end'>(null);
-  const lastUpdateTimestamp = useRef(Date.now());
+  const [innerWindowStartTime, setInnerWindowStartTime] = useState(windowStartTime);
+  const [innerWindowEndTime, setInnerWindowEndTime] = useState(windowEndTime);
   const currentTime = useRef(0);
-  const [innerWindowStartTime, setInnerWindowStartTime] = useState<number>(windowStartTime);
-  const [innerWindowEndTime, setInnerWindowEndTime] = useState<number>(windowEndTime);
 
+  // Throttled update functions
+  const throttledSetWindowStart = useCallback(
+    throttle((time: number) => setWindowStartTime(time), 100),
+    [setWindowStartTime]
+  );
+
+  const throttledSetWindowEnd = useCallback(
+    throttle((time: number) => setWindowEndTime(time), 100),
+    [setWindowEndTime]
+  );
+
+  // Update inner state when props change
   useEffect(() => {
     setInnerWindowStartTime(windowStartTime);
     setInnerWindowEndTime(windowEndTime);
   }, [windowStartTime, windowEndTime]);
 
-  const handleMouseDown = (e: React.MouseEvent, type: 'start' | 'end') => {
+  const handleMouseDown = useCallback((e: React.MouseEvent, type: 'start' | 'end') => {
     setDragging(type);
-    if (type === 'start') {
-      currentTime.current = windowStartTime;
-    } else {
-      currentTime.current = windowEndTime;
-    }
-  };
+    currentTime.current = type === 'start' ? windowStartTime : windowEndTime;
+  }, [windowStartTime, windowEndTime]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setDragging(null);
-  };
+    // Ensure final values are set
+    if (dragging === 'start') {
+      setWindowStartTime(innerWindowStartTime);
+    } else if (dragging === 'end') {
+      setWindowEndTime(innerWindowEndTime);
+    }
+  }, [dragging, innerWindowStartTime, innerWindowEndTime, setWindowStartTime, setWindowEndTime]);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!dragging) return;
 
     const newTime = xToTime(e.movementX);
 
     if (dragging === 'start') {
-      currentTime.current = Math.round(Math.max(mapStartTime, Math.min(windowEndTime, currentTime.current + newTime)));
-      setInnerWindowStartTime(currentTime.current);
+      const nextTime = Math.round(Math.max(mapStartTime, Math.min(windowEndTime, currentTime.current + newTime)));
+      currentTime.current = nextTime;
+      setInnerWindowStartTime(nextTime);
+      throttledSetWindowStart(nextTime);
     } else {
-      currentTime.current = Math.round(Math.min(mapEndTime, Math.max(windowStartTime, currentTime.current + newTime)));
-      setInnerWindowEndTime(currentTime.current);
+      const nextTime = Math.round(Math.min(mapEndTime, Math.max(windowStartTime, currentTime.current + newTime)));
+      currentTime.current = nextTime;
+      setInnerWindowEndTime(nextTime);
+      throttledSetWindowEnd(nextTime);
     }
-
-    if (Date.now() - lastUpdateTimestamp.current > 50) {
-      if (dragging === 'start') {
-        setWindowStartTime(currentTime.current);
-      } else {
-        setWindowEndTime(currentTime.current);
-      }
-      lastUpdateTimestamp.current = Date.now();
-    }
-  };
+  }, [dragging, mapStartTime, mapEndTime, windowStartTime, windowEndTime, xToTime, throttledSetWindowStart, throttledSetWindowEnd]);
 
   return {
     dragging,

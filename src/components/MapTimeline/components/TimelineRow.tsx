@@ -1,9 +1,9 @@
-import React, {memo} from 'react';
-import {TimelineRowProps} from '../types/timeline.types';
-import {TimelineEvent} from './TimelineEvent';
-import {TimelineInteractionEvent} from './TimelineInteractionEvent';
-import {UltimateBar} from './UltimateBar';
-import {TimelineBase, TimelineLine, TimelineHorizontalLine} from '../styles/timeline.styles';
+import React, { memo, useMemo } from 'react';
+import { TimelineRowProps } from '../types/timeline.types';
+import { TimelineEvent } from './TimelineEvent';
+import { TimelineInteractionEvent } from './TimelineInteractionEvent';
+import { UltimateBar } from './UltimateBar';
+import { TimelineBase, TimelineLine, TimelineHorizontalLine } from '../styles/timeline.styles';
 import {
   EVENT_TYPE_TO_COLOR,
   EVENT_TYPE_TO_ICON,
@@ -19,13 +19,27 @@ export const TimelineRow: React.FC<TimelineRowProps> = memo(({
   timeToX,
   windowStartTime,
   windowEndTime,
-}) => (
-  <TimelineBase width={width}>
-    <TimelineLine />
-    <TimelineHorizontalLine width={width} />
-    {ultimateEvents
-      .filter((row) => row.ultimateEndTime >= windowStartTime && row.ultimateChargedTime <= windowEndTime)
-      .map((row, index) => (
+}) => {
+  const filteredEvents = useMemo(() =>
+    events.filter(e => e.playerEventTime >= windowStartTime && e.playerEventTime <= windowEndTime),
+    [events, windowStartTime, windowEndTime]
+  );
+
+  const filteredInteractionEvents = useMemo(() =>
+    interactionEvents.filter(e => e.playerInteractionEventTime >= windowStartTime && e.playerInteractionEventTime <= windowEndTime),
+    [interactionEvents, windowStartTime, windowEndTime]
+  );
+
+  const filteredUltimateEvents = useMemo(() =>
+    ultimateEvents.filter(e => e.ultimateEndTime >= windowStartTime && e.ultimateChargedTime <= windowEndTime),
+    [ultimateEvents, windowStartTime, windowEndTime]
+  );
+
+  return (
+    <TimelineBase width={width}>
+      <TimelineLine />
+      <TimelineHorizontalLine width={width} />
+      {filteredUltimateEvents.map((row, index) => (
         <UltimateBar
           key={index + '-ultimate'}
           startTime={row.ultimateStartTime}
@@ -36,9 +50,7 @@ export const TimelineRow: React.FC<TimelineRowProps> = memo(({
           windowEndTime={windowEndTime}
         />
       ))}
-    {events
-      .filter((row) => row.playerEventTime >= windowStartTime && row.playerEventTime <= windowEndTime)
-      .map((row, index) => (
+      {filteredEvents.map((row, index) => (
         <TimelineEvent
           key={index + '-event'}
           time={row.playerEventTime}
@@ -48,9 +60,7 @@ export const TimelineRow: React.FC<TimelineRowProps> = memo(({
           tooltipTitle={`${row.playerEventType}: ${row.playerHero}`}
         />
       ))}
-    {interactionEvents
-      .filter((row) => row.playerInteractionEventTime >= windowStartTime && row.playerInteractionEventTime <= windowEndTime)
-      .map((row, index) => (
+      {filteredInteractionEvents.map((row, index) => (
         <TimelineInteractionEvent
           key={index + '-interaction'}
           time={row.playerInteractionEventTime}
@@ -60,7 +70,18 @@ export const TimelineRow: React.FC<TimelineRowProps> = memo(({
           tooltipTitle={`${row.playerInteractionEventType}: ${row.otherPlayerName}`}
         />
       ))}
-  </TimelineBase>
-));
+    </TimelineBase>
+  );
+}, (prevProps, nextProps) => {
+  // Custom comparison function
+  return (
+    prevProps.width === nextProps.width &&
+    prevProps.windowStartTime === nextProps.windowStartTime &&
+    prevProps.windowEndTime === nextProps.windowEndTime &&
+    prevProps.events === nextProps.events &&
+    prevProps.interactionEvents === nextProps.interactionEvents &&
+    prevProps.ultimateEvents === nextProps.ultimateEvents
+  );
+});
 
 TimelineRow.displayName = 'TimelineRow'; 
