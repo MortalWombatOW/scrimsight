@@ -1,13 +1,18 @@
-import React, {useContext, useRef} from 'react';
+import React, { useContext, useRef } from 'react';
 import DataManager from './DataManager';
 import DataNodeFactory from './DataNodeFactory';
-import {DATA_COLUMNS} from './DataColumn';
-import {WRITE_NODES, OBJECT_STORE_NODES, ALASQL_NODES} from './DataNodeDefinitions';
-import {useDeepEffect} from '../hooks/useDeepEffect';
+import { DATA_COLUMNS } from './DataColumn';
+import { WRITE_NODES, OBJECT_STORE_NODES, ALASQL_NODES } from './DataNodeDefinitions';
 
 const DataContext = React.createContext<DataManager | null>(null);
 
-const DataProvider = ({children, globalTick, updateGlobalCallback}) => {
+interface DataProviderProps {
+  children: React.ReactNode;
+  globalTick: number;
+  updateGlobalCallback: () => void;
+}
+
+export const DataProvider: React.FC<DataProviderProps> = ({ children, globalTick, updateGlobalCallback }) => {
   const dataManagerRef = useRef(new DataManager(updateGlobalCallback));
   const dataManager = dataManagerRef.current;
 
@@ -36,20 +41,17 @@ const DataProvider = ({children, globalTick, updateGlobalCallback}) => {
     dataManager.finishSetup();
   }
 
-  console.log('Rendering data, tick = ', globalTick);
+  console.log('Rendering data, tick = ', dataManager.getTick());
 
   return <DataContext.Provider value={dataManager}>{children}</DataContext.Provider>;
 };
 
-const useDataManager = (callback?: [string, () => void]) => {
+export const useDataManager = () => {
   const dataManager = useContext(DataContext);
   if (!dataManager) {
     throw new Error('useDataManager must be used within a DataProvider');
   }
-  if (callback) {
-    dataManager.registerGlobalCallback(callback);
-  }
   return dataManager;
 };
 
-export {DataProvider, DataContext, useDataManager};
+export { DataContext };

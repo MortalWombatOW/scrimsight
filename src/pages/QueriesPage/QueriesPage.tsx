@@ -2,18 +2,12 @@ import React from 'react';
 import QueryGraph from './QueryGraph';
 import useWindowSize from '../../hooks/useWindowSize';
 import DisplayNode from './DisplayNode';
-import {useDataManager} from '../../WombatDataFramework/DataContext';
-import {Card, CardContent} from '@mui/material';
+import { useDataManager } from '../../WombatDataFramework/DataContext';
+import { Card, CardContent } from '@mui/material';
 const QueriesPage = () => {
   const size = useWindowSize();
   const [selectedNode, setSelectedNode] = React.useState<string | null>(null);
-  const [tick, setTick] = React.useState<number>(0); // eslint-disable-line no-unused-vars
-  const dataManager = useDataManager([
-    'QueriesPage',
-    () => {
-      setTick((tick) => tick + 1);
-    },
-  ]);
+  const dataManager = useDataManager();
 
   console.log('Size', size.width, size.height);
 

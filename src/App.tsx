@@ -1,19 +1,19 @@
-import {Location} from 'history';
+import { Location } from 'history';
 import React from 'react';
-import {BrowserRouter, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
-import {CssBaseline, ThemeProvider, createTheme} from '@mui/material';
-import {QueryParamProvider} from 'use-query-params';
-import {ReactRouter6Adapter} from 'use-query-params/adapters/react-router-6';
-import routes, {ScrimsightRoute} from './lib/routes';
-import {themeDef} from './theme';
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { QueryParamProvider } from 'use-query-params';
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
+import routes, { ScrimsightRoute } from './lib/routes';
+import { themeDef } from './theme';
 
-import {DataProvider} from './WombatDataFramework/DataContext';
+import { DataProvider } from './WombatDataFramework/DataContext';
 import Header from './components/Header/Header';
-import {getColorgorical} from './lib/color';
-import {generateThemeColor} from './lib/palette';
-import {useDeepMemo} from './hooks/useDeepEffect';
+import { getColorgorical } from './lib/color';
+import { generateThemeColor } from './lib/palette';
+import { useDeepMemo } from './hooks/useDeepEffect';
 
-const ContextualizedRoute = ({route}: {route: ScrimsightRoute}): JSX.Element => {
+const ContextualizedRoute = ({ route }: { route: ScrimsightRoute }): JSX.Element => {
   let el: JSX.Element = React.createElement(route.component, {});
   for (const context of route.contexts || []) {
     el = React.createElement(context, undefined, el);
@@ -49,12 +49,13 @@ function ThemedRoutes(props) {
 const App = () => {
   const [tick, setTick] = React.useState(0);
   const incrementTick = () => {
-    console.log('apptick', tick);
-    setTick((tick) => tick + 1);
+    setTick((tick) => {
+      return tick + 1
+    });
   };
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <BrowserRouter basename="/">
         <QueryParamProvider adapter={ReactRouter6Adapter}>
           <DataProvider globalTick={tick} updateGlobalCallback={incrementTick}>
@@ -66,7 +67,7 @@ const App = () => {
   );
 };
 
-const RouteAdapter: React.FC = ({children}: {children}) => {
+const RouteAdapter: React.FC = ({ children }: { children }) => {
   const reactRouterNavigate = useNavigate();
   const reactRouterlocation = useLocation();
 
@@ -75,7 +76,7 @@ const RouteAdapter: React.FC = ({children}: {children}) => {
       // can disable eslint for parts here, location.state can be anything
       replace(location: Location) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        reactRouterNavigate(location, {replace: true, state: location.state});
+        reactRouterNavigate(location, { replace: true, state: location.state });
       },
       push(location: Location) {
         reactRouterNavigate(location, {

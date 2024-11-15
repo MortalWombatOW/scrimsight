@@ -7,8 +7,8 @@ class DataManager {
   private globalCallbacks: Map<string, () => void>;
   private nodeCallbacks: Map<DataNodeName, () => void>;
   private setupComplete: boolean;
-
   private columns: Map<string, DataColumn>;
+  private tick: number;
 
   constructor(changeCallback: () => void) {
     this.nodes = new Map();
@@ -17,6 +17,7 @@ class DataManager {
     this.nodeCallbacks = new Map();
     this.columns = new Map();
     this.setupComplete = false;
+    this.tick = 0;
   }
 
   public isSetupComplete(): boolean {
@@ -88,15 +89,22 @@ class DataManager {
     return nodes;
   }
 
+  public getTick(): number {
+    return this.tick;
+  }
+
+  private incrementTick(): void {
+    this.tick += 1;
+    this.globalCallbacks.forEach((callback) => callback());
+  }
+
   async executeNode(name: DataNodeName): Promise<void> {
-    // console.group(`DataManager.executeNode(${name})`);
     const node = this.nodes.get(name);
     if (!node) {
       throw new Error(`Node ${name} does not exist`);
     }
     if (node.isRunning()) {
       console.log(`Node ${name} is already running`);
-      console.groupEnd();
       return;
     }
     const dependencies = node.getDependencies();
@@ -113,7 +121,7 @@ class DataManager {
       console.error(e);
     } finally {
       console.log(`Node ${name} finished, data:`, node.getOutput());
-      this.globalCallbacks.forEach((callback) => callback());
+      this.incrementTick();
       const callback = this.nodeCallbacks.get(name);
       if (callback !== undefined) {
         console.log(`Executing callback for ${name}`);
