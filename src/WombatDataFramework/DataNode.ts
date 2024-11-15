@@ -44,7 +44,7 @@ export interface DataNodeInit {
 }
 
 export abstract class DataNode<OutType extends object> {
-  private type: 'WriteNode' | 'ObjectStoreNode' | 'AlaSQLNode' | 'FilterNode';
+  private type: 'WriteNode' | 'ObjectStoreNode' | 'AlaSQLNode' | 'FilterNode' | 'FunctionNode';
   protected name: DataNodeName;
   protected displayName: string;
   protected columns: DataColumn[];
@@ -53,7 +53,7 @@ export abstract class DataNode<OutType extends object> {
   protected executions: DataNodeExecution[] = [];
   protected needsRun = true;
 
-  constructor(name: DataNodeName, displayName: string, columns: DataColumn[], type: 'WriteNode' | 'ObjectStoreNode' | 'AlaSQLNode' | 'FilterNode') {
+  constructor(name: DataNodeName, displayName: string, columns: DataColumn[], type: 'WriteNode' | 'ObjectStoreNode' | 'AlaSQLNode' | 'FilterNode' | 'FunctionNode') {
     this.name = name;
     this.displayName = displayName;
     this.columns = columns;
@@ -68,7 +68,7 @@ export abstract class DataNode<OutType extends object> {
     return this.displayName;
   }
 
-  public getType(): 'WriteNode' | 'ObjectStoreNode' | 'AlaSQLNode' | 'FilterNode' {
+  public getType(): 'WriteNode' | 'ObjectStoreNode' | 'AlaSQLNode' | 'FilterNode' | 'FunctionNode' {
     return this.type;
   }
 
@@ -333,5 +333,49 @@ export class FilterNode<T extends object> extends DataNode<T> {
 
   public getDescription(): string {
     return `Filters the data where the ${String(this.filterKey)} field is equal to ${String(this.filterValue)}.`;
+  }
+}
+
+export interface FunctionNodeInit extends DataNodeInit {
+  transform: (sources: any[][]) => any[];
+  sources: DataNodeName[];
+}
+
+export class FunctionNode<OutType extends object> extends DataNode<OutType> {
+  private transform: (sources: any[][]) => any[];
+  private sources: DataNodeName[];
+
+  constructor(name: DataNodeName, displayName: string, transform: (sources: any[][]) => any[], sources: DataNodeName[], columns: DataColumn[]) {
+    super(name, displayName, columns, 'FunctionNode');
+    this.transform = transform;
+    this.sources = sources;
+  }
+
+  async runInner(sourceData?: any[][]): Promise<void> {
+    if (!sourceData) {
+      throw new Error('Source data is required for FunctionNode');
+    }
+    const result = this.transform(sourceData);
+    this.setOutput(result);
+  }
+
+  getDependencies(): DataNodeName[] {
+    return this.sources;
+  }
+
+  toString(): string {
+    return this.displayName;
+  }
+
+  canRun(): boolean {
+    return this.needsRun;
+  }
+
+  public hasOutput(): boolean {
+    return this.getOutput() !== undefined && this.getOutput()!.length > 0;
+  }
+
+  public getDescription(): string {
+    return `Transforms data using a custom function`;
   }
 }

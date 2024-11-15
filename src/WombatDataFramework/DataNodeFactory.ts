@@ -1,6 +1,6 @@
 import {DataColumn} from './DataColumn';
 import DataManager from './DataManager';
-import {WriteNodeInit, WriteNode, ObjectStoreNodeInit, ObjectStoreNode, AlaSQLNodeInit, AlaSQLNode, FilterNodeInit, FilterNode, DataNodeName} from './DataNode';
+import {WriteNodeInit, WriteNode, ObjectStoreNodeInit, ObjectStoreNode, AlaSQLNodeInit, AlaSQLNode, FilterNodeInit, FilterNode, DataNodeName, FunctionNodeInit, FunctionNode} from './DataNode';
 
 class DataNodeFactory {
   private dataManager: DataManager;
@@ -38,6 +38,16 @@ class DataNodeFactory {
       init.filterKey,
       init.filterValue,
       init.source,
+      init.columnNames.map((name) => this.dataManager.getColumnOrDie(name)),
+    );
+  }
+
+  public makeFunctionNode(init: FunctionNodeInit): FunctionNode<object> {
+    return new FunctionNode(
+      init.name,
+      init.displayName,
+      init.transform,
+      init.sources,
       init.columnNames.map((name) => this.dataManager.getColumnOrDie(name)),
     );
   }
