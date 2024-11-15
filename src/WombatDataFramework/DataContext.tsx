@@ -2,7 +2,7 @@ import React, { useContext, useRef } from 'react';
 import DataManager from './DataManager';
 import DataNodeFactory from './DataNodeFactory';
 import { DATA_COLUMNS } from './DataColumn';
-import { WRITE_NODES, OBJECT_STORE_NODES, ALASQL_NODES } from './DataNodeDefinitions';
+import { WRITE_NODES, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES } from './DataNodeDefinitions';
 
 const DataContext = React.createContext<DataManager | null>(null);
 
@@ -31,6 +31,9 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children, globalTick
     }
     for (const node of ALASQL_NODES) {
       dataManager.registerNode(factory.makeAlaSQLNode(node));
+    }
+    for (const node of FUNCTION_NODES) {
+      dataManager.registerNode(factory.makeFunctionNode(node));
     }
 
     const fetchData = async () => {
