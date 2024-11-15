@@ -1,14 +1,35 @@
-import React, {memo} from 'react';
-import {Tooltip} from '@mui/material';
-import {TimelineEventProps} from '../types/timeline.types';
-import {EventIcon} from '../styles/timeline.styles';
+import React, { memo, useState } from 'react';
+import { Tooltip } from '@mui/material';
+import { TimelineEventProps } from '../types/timeline.types';
+import { EventIcon } from '../styles/timeline.styles';
 
-export const TimelineEvent: React.FC<TimelineEventProps> = memo(({time, timeToX, color, icon, tooltipTitle}) => (
-  <Tooltip title={tooltipTitle} arrow>
-    <EventIcon left={timeToX(time)} color={color}>
+export const TimelineEvent: React.FC<TimelineEventProps> = memo(({
+  color,
+  icon,
+  tooltipTitle,
+  className,
+  id,
+  style
+}) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const content = (
+    <div
+      className={className}
+      id={id}
+      style={style}
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+    >
       {icon || '?'}
-    </EventIcon>
-  </Tooltip>
-));
+    </div>
+  );
+
+  return showTooltip ? (
+    <Tooltip title={tooltipTitle} arrow>
+      {content}
+    </Tooltip>
+  ) : content;
+});
 
 TimelineEvent.displayName = 'TimelineEvent'; 

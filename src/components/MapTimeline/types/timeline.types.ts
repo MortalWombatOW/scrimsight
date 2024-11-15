@@ -8,10 +8,12 @@ export interface MatchStart {
 
 export interface TimelineEventProps {
   time: number;
-  timeToX: (time: number) => number;
   color: string;
   icon: ReactNode;
   tooltipTitle: string;
+  className?: string;
+  id?: string;
+  style?: React.CSSProperties;
 }
 
 export interface UltimateBarProps {

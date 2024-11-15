@@ -1,13 +1,26 @@
-import React, {memo} from 'react';
-import {Tooltip} from '@mui/material';
-import {TimelineEventProps} from '../types/timeline.types';
-import {InteractionEventIcon} from '../styles/timeline.styles';
+import React, { memo } from 'react';
+import { Tooltip } from '@mui/material';
+import { TimelineEventProps } from '../types/timeline.types';
 
-export const TimelineInteractionEvent: React.FC<TimelineEventProps> = memo(({time, timeToX, color, icon, tooltipTitle}) => (
+interface TimelineInteractionEventProps extends Omit<TimelineEventProps, 'time'> {
+  time: number;
+  className?: string;
+  id?: string;
+  style?: React.CSSProperties;
+}
+
+export const TimelineInteractionEvent: React.FC<TimelineInteractionEventProps> = memo(({
+  color,
+  icon,
+  tooltipTitle,
+  className,
+  id,
+  style
+}) => (
   <Tooltip title={tooltipTitle} arrow>
-    <InteractionEventIcon left={timeToX(time)} color={color}>
+    <div className={className} id={id} style={style}>
       {icon || '?'}
-    </InteractionEventIcon>
+    </div>
   </Tooltip>
 ));
 

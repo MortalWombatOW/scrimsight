@@ -4,14 +4,13 @@ import { XAxisProps } from '../types/timeline.types';
 import { useTimelineWindow } from '../hooks/useTimelineWindow';
 import {
   XAxisContainer,
-  XAxisMarker,
-  WindowHandle,
   TimelineHorizontalLine,
   RoundSetupSection,
   RoundActiveSection,
   RoundLabel,
   EventMarker,
   WindowSection,
+  WindowHandle,
 } from '../styles/timeline.styles';
 import { UltimateAdvantageChart } from './UltimateAdvantageChart';
 
@@ -63,24 +62,41 @@ export const XAxis: React.FC<XAxisProps> = ({
         {roundTimes.map((round, index) => (
           <div key={index + '-round'}>
             <RoundSetupSection
-              left={timeToX(round.roundStartTime)}
-              width={timeToX(round.roundSetupCompleteTime) - timeToX(round.roundStartTime)}
+              style={{
+                left: timeToX(round.roundStartTime),
+                width: timeToX(round.roundSetupCompleteTime) - timeToX(round.roundStartTime)
+              }}
             />
             <RoundActiveSection
-              left={timeToX(round.roundSetupCompleteTime)}
-              width={timeToX(round.roundEndTime) - timeToX(round.roundSetupCompleteTime)}
+              style={{
+                left: timeToX(round.roundSetupCompleteTime),
+                width: timeToX(round.roundEndTime) - timeToX(round.roundSetupCompleteTime)
+              }}
             />
-            <RoundLabel left={timeToX(round.roundStartTime)} variant="body2">
+            <RoundLabel
+              style={{
+                left: timeToX(round.roundStartTime),
+                transform: 'translateX(-50%)'
+              }}
+              variant="body2"
+            >
               Round {index + 1}
             </RoundLabel>
           </div>
         ))}
         {eventTimes.map((time, index) => (
-          <EventMarker key={index + '-time'} left={timeToX(time)} />
+          <EventMarker
+            key={index + '-time'}
+            style={{
+              left: timeToX(time)
+            }}
+          />
         ))}
         <WindowSection
-          left={timeToX(innerWindowStartTime)}
-          width={timeToX(innerWindowEndTime) - timeToX(innerWindowStartTime)}
+          style={{
+            left: timeToX(innerWindowStartTime),
+            width: timeToX(innerWindowEndTime) - timeToX(innerWindowStartTime)
+          }}
         />
         <WindowHandle
           style={{ left: `${timeToX(innerWindowStartTime)}px` }}

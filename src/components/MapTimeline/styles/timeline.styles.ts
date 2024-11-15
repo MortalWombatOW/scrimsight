@@ -70,35 +70,29 @@ export const WindowHandle = styled('div')<{ left?: number }>`
   }
 `;
 
-export const RoundSetupSection = styled.div<{left: number; width: number}>`
+export const RoundSetupSection = styled.div`
   position: absolute;
-  left: ${props => props.left}px;
   top: 0;
-  width: ${props => props.width}px;
   height: 10px;
   background-color: #88222250;
 `;
 
-export const RoundActiveSection = styled.div<{left: number; width: number}>`
+export const RoundActiveSection = styled.div`
   position: absolute;
-  left: ${props => props.left}px;
   top: 0;
-  width: ${props => props.width}px;
   height: 10px;
   background-color: #4caf5050;
 `;
 
-export const RoundLabel = styled(Typography)<{left: number}>`
+export const RoundLabel = styled(Typography)`
   position: absolute;
-  left: ${props => props.left}px;
   top: 10px;
   transform: translateX(-50%);
   variant: body2;
 `;
 
-export const EventMarker = styled.div<{left: number}>`
+export const EventMarker = styled.div`
   position: absolute;
-  left: ${props => props.left}px;
   top: 0;
   width: 1px;
   height: 10px;
@@ -106,11 +100,9 @@ export const EventMarker = styled.div<{left: number}>`
   opacity: 0.2;
 `;
 
-export const WindowSection = styled.div<{left: number; width: number}>`
+export const WindowSection = styled.div`
   position: absolute;
-  left: ${props => props.left}px;
   top: 0;
-  width: ${props => props.width}px;
   height: 20px;
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
