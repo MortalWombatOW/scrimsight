@@ -1341,7 +1341,7 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
   {
     name: 'team_ultimate_advantage',
     displayName: 'Team Ultimate Advantage',
-    sources: ['ultimate_charged_object_store', 'ultimate_end_object_store', 'match_start_object_store'],
+    sources: ['ultimate_charged_object_store', 'ultimate_end_object_store', 'match_start_object_store', 'round_end_object_store', 'round_start_object_store'],
     columnNames: [
       'mapId',
       'matchTime',
@@ -1365,6 +1365,8 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
       const chargedEvents = sources[0];
       const endEvents = sources[1];
       const matchStarts = sources[2];
+      const roundEnds = sources[3];
+      const roundStarts = sources[4];
       
       if (!matchStarts?.length) {
         throw new Error('No match start events found');
@@ -1385,16 +1387,18 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
         });
       }
 
-      // Combine and sort all ultimate events
+      // Combine and sort all events, including round starts and ends
       const allEvents = [
         ...(chargedEvents || []).map(e => ({...e, type: 'charged'})),
-        ...(endEvents || []).map(e => ({...e, type: 'end'}))
+        ...(endEvents || []).map(e => ({...e, type: 'end'})),
+        ...(roundEnds || []).map(e => ({...e, type: 'round_end'})),
+        ...(roundStarts || []).map(e => ({...e, type: 'round_start'}))
       ];
 
       // Group events by map
       for (const event of allEvents) {
-        if (!event.mapId || !event.playerTeam || !event.playerName || !event.playerHero) {
-          throw new Error(`Invalid ultimate event: ${JSON.stringify(event)}`);
+        if (!event.mapId) {
+          throw new Error(`Invalid event: ${JSON.stringify(event)}`);
         }
         const events = mapGroups.get(event.mapId) || [];
         events.push(event);
@@ -1414,7 +1418,6 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
       
       // Process each map's events
       for (const [mapId, events] of mapGroups) {
-        console.log('(adv) Processing map', mapId);
         const teams = mapTeams.get(mapId);
         if (!teams) {
           throw new Error(`No team information found for map ${mapId}`);
@@ -1422,34 +1425,94 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
         
         // Sort events by time
         const sortedEvents = events.sort((a, b) => a.matchTime - b.matchTime);
-        console.log('(adv) Sorted events', sortedEvents);
         
         // Track ultimate counts using player+hero+ultimateId as unique key
         const teamUlts = new Map<string, Set<string>>();
         teamUlts.set(teams.team1Name, new Set());
         teamUlts.set(teams.team2Name, new Set());
         
+        let currentRoundStart: number | null = null;
+        let firstEventAfterRoundStart = true;
+
         // Process each event to build timeline of ultimate advantage
-        let lastTime = 0;
         for (const event of sortedEvents) {
-          const {matchTime, playerTeam, playerName, playerHero, ultimateId, type} = event;
+          const {matchTime, type} = event;
           
-          if (!teamUlts.has(playerTeam)) {
-            throw new Error(`Unknown team "${playerTeam}" for map ${mapId}. Expected ${teams.team1Name} or ${teams.team2Name}`);
-          }
+          if (type === 'round_end' || type === 'round_start') {
+            // Add a data point with current values before resetting
+            if (type === 'round_end') {
+              const team1Count = teamUlts.get(teams.team1Name)?.size || 0;
+              const team2Count = teamUlts.get(teams.team2Name)?.size || 0;
+              const advantageDiff = team1Count - team2Count;
+              
+              result.push({
+                mapId,
+                matchTime,
+                team1Name: teams.team1Name,
+                team2Name: teams.team2Name,
+                team1ChargedUltimateCount: team1Count,
+                team2ChargedUltimateCount: team2Count,
+                teamWithUltimateAdvantage: 
+                  advantageDiff > 0 ? teams.team1Name :
+                  advantageDiff < 0 ? teams.team2Name : 
+                  'None',
+                ultimateAdvantageDiff: Math.abs(advantageDiff)
+              });
+            }
 
-          const ultKey = `${playerName}-${playerHero}-${ultimateId}`;
-          
-          // Update ultimate tracking based on event type
-          if (type === 'charged') {
-            teamUlts.get(playerTeam)!.add(ultKey);
-          } else if (type === 'end') {
-            teamUlts.get(playerTeam)!.delete(ultKey);
-          }
+            // Reset ultimate counts at round boundaries
+            teamUlts.get(teams.team1Name)?.clear();
+            teamUlts.get(teams.team2Name)?.clear();
 
-          
-          // Only create entries when the time changes to avoid duplicates
-          if (matchTime > lastTime) {
+            // Add a data point with zero values after resetting
+            result.push({
+              mapId,
+              matchTime,
+              team1Name: teams.team1Name,
+              team2Name: teams.team2Name,
+              team1ChargedUltimateCount: 0,
+              team2ChargedUltimateCount: 0,
+              teamWithUltimateAdvantage: 'None',
+              ultimateAdvantageDiff: 0
+            });
+
+            if (type === 'round_start') {
+              currentRoundStart = matchTime;
+              firstEventAfterRoundStart = true;
+            }
+
+          } else if (type === 'charged' || type === 'end') {
+            // If this is the first event after round start, add a zero point just before it
+            if (firstEventAfterRoundStart && currentRoundStart !== null) {
+              result.push({
+                mapId,
+                matchTime: matchTime - 1, // Small offset before the event
+                team1Name: teams.team1Name,
+                team2Name: teams.team2Name,
+                team1ChargedUltimateCount: 0,
+                team2ChargedUltimateCount: 0,
+                teamWithUltimateAdvantage: 'None',
+                ultimateAdvantageDiff: 0
+              });
+              firstEventAfterRoundStart = false;
+            }
+
+            const {playerTeam, playerName, playerHero, ultimateId} = event;
+            
+            if (!teamUlts.has(playerTeam)) {
+              throw new Error(`Unknown team "${playerTeam}" for map ${mapId}. Expected ${teams.team1Name} or ${teams.team2Name}`);
+            }
+
+            const ultKey = `${playerName}-${playerHero}-${ultimateId}`;
+            
+            // Update ultimate tracking based on event type
+            if (type === 'charged') {
+              teamUlts.get(playerTeam)!.add(ultKey);
+            } else if (type === 'end') {
+              teamUlts.get(playerTeam)!.delete(ultKey);
+            }
+
+            // Create entry for this change
             const team1Count = teamUlts.get(teams.team1Name)?.size || 0;
             const team2Count = teamUlts.get(teams.team2Name)?.size || 0;
             const advantageDiff = team1Count - team2Count;
@@ -1467,13 +1530,11 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
                 'None',
               ultimateAdvantageDiff: Math.abs(advantageDiff)
             });
-            
-            lastTime = matchTime;
           }
         }
       }
 
-      return result;
+      return result.sort((a, b) => a.matchTime - b.matchTime);
     }
   }
 ];

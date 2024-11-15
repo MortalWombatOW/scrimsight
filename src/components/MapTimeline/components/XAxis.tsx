@@ -1,7 +1,7 @@
 import React from 'react';
-import {Typography} from '@mui/material';
-import {XAxisProps} from '../types/timeline.types';
-import {useTimelineWindow} from '../hooks/useTimelineWindow';
+import { Typography } from '@mui/material';
+import { XAxisProps } from '../types/timeline.types';
+import { useTimelineWindow } from '../hooks/useTimelineWindow';
 import {
   XAxisContainer,
   XAxisMarker,
@@ -13,6 +13,7 @@ import {
   EventMarker,
   WindowSection,
 } from '../styles/timeline.styles';
+import { UltimateAdvantageChart } from './UltimateAdvantageChart';
 
 export const XAxis: React.FC<XAxisProps> = ({
   width,
@@ -26,6 +27,9 @@ export const XAxis: React.FC<XAxisProps> = ({
   windowEndTime,
   setWindowEndTime,
   eventTimes,
+  team1Name,
+  team2Name,
+  ultimateAdvantageData
 }) => {
   const {
     innerWindowStartTime,
@@ -45,8 +49,17 @@ export const XAxis: React.FC<XAxisProps> = ({
 
   return (
     <XAxisContainer width={width} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}>
+      <UltimateAdvantageChart
+        width={width}
+        timeToX={timeToX}
+        windowStartTime={windowStartTime}
+        windowEndTime={windowEndTime}
+        team1Name={team1Name}
+        team2Name={team2Name}
+        ultimateAdvantageData={ultimateAdvantageData}
+      />
       <TimelineHorizontalLine width={width} />
-      <div style={{position: 'relative', height: '100%'}}>
+      <div style={{ position: 'relative', height: '100%' }}>
         {roundTimes.map((round, index) => (
           <div key={index + '-round'}>
             <RoundSetupSection

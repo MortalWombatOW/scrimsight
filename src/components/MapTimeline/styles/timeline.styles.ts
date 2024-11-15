@@ -166,4 +166,48 @@ export const EventsList = styled.ul`
 export const EventListItem = styled.li`
   margin: 8px 0;
   font-family: monospace;
+`;
+
+export const ChartContainer = styled('div')<{width: number}>`
+  width: ${props => props.width}px;
+  height: 60px;
+  position: relative;
+  margin: 20px 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+`;
+
+export const CenterLine = styled('div')`
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+  top: 50%;
+`;
+
+export const Team1Bar = styled('div')<{left: number; width: number; height: number}>`
+  position: absolute;
+  left: ${props => props.left}px;
+  bottom: 50%;
+  width: ${props => props.width}px;
+  height: ${props => props.height}px;
+  background-color: #4caf50;
+  opacity: 0.8;
+`;
+
+export const Team2Bar = styled('div')<{left: number; width: number; height: number}>`
+  position: absolute;
+  left: ${props => props.left}px;
+  top: 50%;
+  width: ${props => props.width}px;
+  height: ${props => props.height}px;
+  background-color: #f44336;
+  opacity: 0.8;
+`;
+
+export const AdvantageLine = styled('path')`
+  stroke: #fff;
+  stroke-width: 2;
+  fill: none;
+  opacity: 0.8;
 `; 

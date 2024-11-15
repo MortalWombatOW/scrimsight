@@ -1,15 +1,15 @@
-import React, {Suspense} from 'react';
-import {Container, Grid} from '@mui/material';
-import {XAxis} from './components/XAxis';
-import {TeamTimeline} from './components/TeamTimeline';
-import {RecentEvents} from './components/RecentEvents';
-import {useTimelineData} from './hooks/useTimelineData';
-import {useTimelineDimensions} from './hooks/useTimelineDimensions';
-import {MapTimelineProps} from './types/timeline.types';
-import {TimelineErrorBoundary} from './components/TimelineErrorBoundary';
-import {TimelineSkeleton} from './components/TimelineSkeleton';
+import React, { Suspense } from 'react';
+import { Container, Grid } from '@mui/material';
+import { XAxis } from './components/XAxis';
+import { TeamTimeline } from './components/TeamTimeline';
+import { RecentEvents } from './components/RecentEvents';
+import { useTimelineData } from './hooks/useTimelineData';
+import { useTimelineDimensions } from './hooks/useTimelineDimensions';
+import { MapTimelineProps } from './types/timeline.types';
+import { TimelineErrorBoundary } from './components/TimelineErrorBoundary';
+import { TimelineSkeleton } from './components/TimelineSkeleton';
 
-const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
+const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
   const timelineData = useTimelineData(mapId);
   const dimensions = useTimelineDimensions(
     timelineData?.mapStartTime ?? 0,
@@ -64,6 +64,9 @@ const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
                       windowEndTime={dimensions.windowEndTime}
                       setWindowEndTime={dimensions.setWindowEndTime}
                       eventTimes={timelineData.eventTimes}
+                      team1Name={timelineData.team1Name}
+                      team2Name={timelineData.team2Name}
+                      ultimateAdvantageData={timelineData.ultimateAdvantageData}
                     />
                   </Grid>
                 </Grid>

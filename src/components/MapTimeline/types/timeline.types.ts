@@ -45,6 +45,9 @@ export interface XAxisProps {
   windowEndTime: number;
   setWindowEndTime: (time: number) => void;
   eventTimes: number[];
+  team1Name: string;
+  team2Name: string;
+  ultimateAdvantageData: UltimateAdvantageData[];
 }
 
 export interface RoundTime {
@@ -95,4 +98,11 @@ export interface RoundTimes {
   roundStartTime: number;
   roundSetupCompleteTime: number;
   roundEndTime: number;
+}
+
+export interface UltimateAdvantageData {
+  matchTime: number;
+  team1ChargedUltimateCount: number;
+  team2ChargedUltimateCount: number;
+  ultimateAdvantageDiff: number;
 } 

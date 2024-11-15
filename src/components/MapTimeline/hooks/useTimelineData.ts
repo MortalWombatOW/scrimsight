@@ -7,6 +7,7 @@ import {
   PlayerInteractionEvent,
   UltimateEvent,
   RoundTimes,
+  UltimateAdvantageData,
 } from '../types/timeline.types';
 
 interface TimelineData {
@@ -22,6 +23,7 @@ interface TimelineData {
   mapEndTime: number;
   roundTimes: RoundTimes[];
   eventTimes: number[];
+  ultimateAdvantageData: UltimateAdvantageData[];
 }
 
 export const useTimelineData = (mapId: number): TimelineData | null => {
@@ -161,6 +163,18 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
       return eventsByPlayer;
     };
 
+    // Add ultimate advantage data
+    const ultimateAdvantageData = dataManager.hasNodeOutput('team_ultimate_advantage') 
+      ? dataManager.getNodeOutput('team_ultimate_advantage')
+          .filter(row => row['mapId'] === mapId)
+          .map(row => ({
+            matchTime: row['matchTime'],
+            team1ChargedUltimateCount: row['team1ChargedUltimateCount'],
+            team2ChargedUltimateCount: row['team2ChargedUltimateCount'],
+            ultimateAdvantageDiff: row['ultimateAdvantageDiff']
+          })) as UltimateAdvantageData[]
+      : [];
+
     return {
       team1Name,
       team2Name,
@@ -174,6 +188,7 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
       mapEndTime: mapTimes.mapEndTime,
       roundTimes,
       eventTimes,
+      ultimateAdvantageData,
     };
   }, [dataManager, mapId, tick]);
 }; 
