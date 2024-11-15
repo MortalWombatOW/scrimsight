@@ -27,7 +27,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
     xToTime: dimensions.xToTime,
   });
 
-  // Calculate total height needed
+  // Calculate layout dimensions
   const rowHeight = 20;
   const team1PlayerCount = timelineData ? Object.keys(timelineData.team1EventsByPlayer).length : 0;
   const team2PlayerCount = timelineData ? Object.keys(timelineData.team2EventsByPlayer).length : 0;
@@ -50,6 +50,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
                   onMouseMove={handleMouseMove}
                   onMouseLeave={handleMouseUp}
                 >
+                  {/* PIXI Canvas */}
                   <PixiWrapper width={dimensions.width} height={totalHeight}>
                     <PixiTimeline
                       width={dimensions.width}
@@ -59,7 +60,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
                     />
                   </PixiWrapper>
 
-                  {/* Window handles above the canvas */}
+                  {/* Window handles - rendered outside canvas for interaction */}
                   <WindowHandle
                     style={{
                       left: `${dimensions.timeToX(dimensions.windowStartTime)}px`,
