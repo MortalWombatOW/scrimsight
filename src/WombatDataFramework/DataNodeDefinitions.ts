@@ -1447,9 +1447,6 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
             teamUlts.get(playerTeam)!.delete(ultKey);
           }
 
-          console.log('(adv) Team ults', teamUlts);
-          console.log('(adv) Last time', lastTime);
-          console.log('(adv) Match time', matchTime);
           
           // Only create entries when the time changes to avoid duplicates
           if (matchTime > lastTime) {
@@ -1476,9 +1473,6 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
         }
       }
 
-      console.log('(adv) Finished processing all maps', result.length);
-      console.log('(adv) Result', result);
-      
       return result;
     }
   }
