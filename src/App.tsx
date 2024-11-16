@@ -12,6 +12,8 @@ import Header from './components/Header/Header';
 import { getColorgorical } from './lib/color';
 import { generateThemeColor } from './lib/palette';
 import { useDeepMemo } from './hooks/useDeepEffect';
+import { DATA_COLUMNS, WRITE_NODES, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES } from './WombatDataFrameworkSchema';
+
 
 const ContextualizedRoute = ({ route }: { route: ScrimsightRoute }): JSX.Element => {
   let el: JSX.Element = React.createElement(route.component, {});
@@ -38,9 +40,6 @@ function ThemedRoutes(props) {
       <Header />
       <Routes>
         {routes.map((route) => route.path.map((path, i) => <Route key={path} path={path} index={(i === (0 as unknown)) as false} element={<ContextualizedRoute route={route} />} />))}
-
-        {/* <Route path="/map/:mapId" element={<Map />} />
-      {/* <Route path="/report/edit" element={<ReportBuilderPage />} /> */}
       </Routes>
     </ThemeProvider>
   );
@@ -58,7 +57,7 @@ const App = () => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <BrowserRouter basename="/">
         <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <DataProvider globalTick={tick} updateGlobalCallback={incrementTick}>
+          <DataProvider updateGlobalCallback={incrementTick} columns={DATA_COLUMNS} writeNodes={WRITE_NODES} objectStoreNodes={OBJECT_STORE_NODES} alaSQLNodes={ALASQL_NODES} functionNodes={FUNCTION_NODES}>
             <ThemedRoutes />
           </DataProvider>
         </QueryParamProvider>

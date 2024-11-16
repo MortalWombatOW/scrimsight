@@ -1,6 +1,8 @@
-import {WriteNodeInit, ObjectStoreNodeInit, AlaSQLNodeInit, FunctionNodeInit} from './DataNode';
-import { processTeamAdvantageEvents } from './TeamAdvantageTracker';
-import { ultimateAdvantageConfig, playerAliveAdvantageConfig } from './AdvantageTrackers';
+import { ultimateAdvantageConfig, playerAliveAdvantageConfig } from "./WombatDataFramework/AdvantageTrackers";
+import { DataColumn, makeDataColumn, makeRatioUnits, numberFormatter, numberComparator, stringFormatter, stringComparator, percentFormatter, booleanFormatter, booleanComparator } from "./WombatDataFramework/DataColumn";
+import { WriteNodeInit, ObjectStoreNodeInit, AlaSQLNodeInit, FunctionNodeInit } from "./WombatDataFramework/DataNode";
+import { processTeamAdvantageEvents } from "./lib/TeamAdvantageTracker";
+
 
 interface BaseEvent {
   mapId: number;
@@ -266,6 +268,159 @@ export interface PlayerStat extends BaseEvent {
   heroTimePlayed: number;
 }
 
+
+export const DATA_COLUMNS: DataColumn[] = [
+  makeDataColumn('eliminationsPer10', 'Eliminations Per 10 Minutes', 'The number of eliminations per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('deathsPer10', 'Deaths Per 10 Minutes', 'The number of deaths per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('damagePer10', 'Damage Per 10 Minutes', 'The amount of damage dealt per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('healingPer10', 'Healing Per 10 Minutes', 'The amount of healing dealt per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('finalBlowsPer10', 'Final Blows Per 10 Minutes', 'The number of final blows per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('allDamagePer10', 'All Damage Dealt Per 10 Minutes', 'The total amount of damage dealt per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('selfHealingPer10', 'Self Healing Per 10 Minutes', 'The amount of self healing per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('damageTakenPer10', 'Damage Taken Per 10 Minutes', 'The amount of damage taken per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('damageBlockedPer10', 'Damage Blocked Per 10 Minutes', 'The amount of damage blocked per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('defensiveAssistsPer10', 'Defensive Assists Per 10 Minutes', 'The number of defensive assists per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('offensiveAssistsPer10', 'Offensive Assists Per 10 Minutes', 'The number of offensive assists per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimatesEarnedPer10', 'Ultimates Earned Per 10 Minutes', 'The number of ultimates earned per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimatesUsedPer10', 'Ultimates Used Per 10 Minutes', 'The number of ultimates used per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('multikillsPer10', 'Multikills Per 10 Minutes', 'The number of multikills per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('soloKillsPer10', 'Solo Kills Per 10 Minutes', 'The number of solo kills per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('objectiveKillsPer10', 'Objective Kills Per 10 Minutes', 'The number of objective kills per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('environmentalKillsPer10', 'Environmental Kills Per 10 Minutes', 'The number of environmental kills per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('environmentalDeathsPer10', 'Environmental Deaths Per 10 Minutes', 'The number of environmental deaths per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('criticalHitsPer10', 'Critical Hits Per 10 Minutes', 'The number of critical hits per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn(
+    'scopedCriticalHitKillsPer10',
+    'Scoped Critical Hit Kills Per 10 Minutes',
+    'The number of scoped critical hits kills per 10 minutes.',
+    makeRatioUnits('count', '10m'),
+    'number',
+    numberFormatter,
+    numberComparator,
+  ),
+  makeDataColumn('scopedShotsFiredPer10', 'Scoped Shots Fired Per 10 Minutes', 'The number of scoped shots fired per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('scopedShotsHitPer10', 'Scoped Shots Hit Per 10 Minutes', 'The number of scoped shots hit per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('shotsFiredPer10', 'Shots Fired Per 10 Minutes', 'The number of shots fired per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('shotsHitPer10', 'Shots Hit Per 10 Minutes', 'The number of shots hit per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('shotsMissedPer10', 'Shots Missed Per 10 Minutes', 'The number of shots missed per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('barrierDamageDealtPer10', 'Barrier Damage Dealt Per 10 Minutes', 'The amount of damage dealt to the barrier per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('heroDamagePer10', 'Hero Damage Dealt Per 10 Minutes', 'The amount of damage dealt to heroes per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('healingReceivedPer10', 'Healing Received Per 10 Minutes', 'The amount of healing received per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
+  makeDataColumn('playerInteractionEventTime', 'Player Interaction Event Time', 'The time the player interaction event occurred.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('playerInteractionEventType', 'Player Interaction Event Type', 'The type of the player interaction event.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('otherPlayerName', 'Other Player Name', 'The name of the other player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('playerEventTime', 'Player Event Time', 'The time the event occurred.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('playerEventType', 'Player Event Type', 'The type of the event.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('roundStartTime', 'Round Start Time', 'The time the round started.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('roundEndTime', 'Round End Time', 'The time the round ended.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('roundDuration', 'Round Duration', 'The duration of the round.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('roundSetupCompleteTime', 'Round Setup Complete Time', 'The time the round setup was completed.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('allDamageDealt', 'All Damage Dealt', 'The total amount of damage dealt.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('attackerHero', 'Attacker Hero', 'The hero of the attacking player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('attackerName', 'Attacker Name', 'The name of the attacking player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('attackerTeam', 'Attacker Team', 'The team of the attacking player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('barrierDamageDealt', 'Barrier Damage Dealt', 'The amount of damage dealt to the barrier.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('capturingTeam', 'Capturing Team', 'The team capturing the objective.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('controlTeam1Progress', 'Control Team 1 Progress', 'The progress of the control team 1.', 'cap%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('controlTeam2Progress', 'Control Team 2 Progress', 'The progress of the control team 2.', 'cap%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('criticalHitAccuracy', 'Critical Hit Accuracy', 'The accuracy of critical hits.', 'acc%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('criticalHits', 'Critical Hits', 'The number of critical hits.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('damageBlocked', 'Damage Blocked', 'The amount of damage blocked.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('damageTaken', 'Damage Taken', 'The amount of damage taken.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('deaths', 'Deaths', 'The number of deaths.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('defensiveAssists', 'Defensive Assists', 'The number of defensive assists.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('eliminations', 'Eliminations', 'The number of eliminations.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('environmentalDeaths', 'Environmental Deaths', 'The number of environmental deaths.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('environmentalKills', 'Environmental Kills', 'The number of environmental kills.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('eventAbility', 'Event Ability', 'The ability that was used.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('eventDamage', 'Event Damage', 'The amount of damage dealt.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('eventHealing', 'Event Healing', 'The amount of healing dealt.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('fileModified', 'File Modified', 'The date the file was last modified.', 'none', 'number', numberFormatter, numberComparator),
+  makeDataColumn('finalBlows', 'Final Blows', 'The number of final blows.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('healeeHero', 'Healee Hero', 'The hero of the healee player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('healeeName', 'Healee Name', 'The name of the healee player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('healeeTeam', 'Healee Team', 'The team of the healee player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('healerHero', 'Healer Hero', 'The hero of the healer player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('healerName', 'Healer Name', 'The name of the healer player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('healerTeam', 'Healer Team', 'The team of the healer player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('healingDealt', 'Healing Dealt', 'The amount of healing dealt.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('healingReceived', 'Healing Received', 'The amount of healing received.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('heroDamageDealt', 'Hero Damage Dealt', 'The amount of damage dealt to the hero.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('heroDuplicated', 'Hero Duplicated', 'The name of the hero that was duplicated.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('heroTimePlayed', 'Hero Time Played (s)', 'The time in seconds the hero was played.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('isCriticalHit', 'Is Critical Hit', 'Whether the attack was a critical hit.', 'none', 'boolean', booleanFormatter, booleanComparator),
+  makeDataColumn('isEnvironmental', 'Is Environmental', 'Whether the attack was environmental.', 'none', 'boolean', booleanFormatter, booleanComparator),
+  makeDataColumn('isHealthPack', 'Is Health Pack', 'Whether the healing was from a health pack.', 'none', 'boolean', booleanFormatter, booleanComparator),
+  makeDataColumn('mapDuration', 'Map Duration', 'The duration of the map.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('mapEndTime', 'Map End Time', 'The time the map ended.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('mapId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'string', stringFormatter, numberComparator),
+  makeDataColumn('mapName', 'Map Name', 'The name of the map.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('mapStartTime', 'Map Start Time', 'The time the map started.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('mapType', 'Map Type', 'The type of the map.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('matchTime', 'Match Time (s)', 'The time in seconds since the start of the match.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('matchTimeRemaining', 'Match Time Remaining (s)', 'The time remaining in the match.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('mercyName', 'Mercy Name', 'The name of the mercy player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('mercyPlayer', 'Mercy Player', 'The name of the mercy player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('mercyTeam', 'Mercy Team', 'The team of the mercy player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('multikillBest', 'Multikill Best', 'The highest multikill.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('multikills', 'Multikills', 'The number of multikills.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('name', 'Log File Name', 'The name of the log file.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('objectiveIndex', 'Objective Index', 'The index of the objective.', 'none', 'number', numberFormatter, numberComparator),
+  makeDataColumn('objectiveKills', 'Objective Kills', 'The number of objective kills.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('offensiveAssists', 'Offensive Assists', 'The number of offensive assists.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('payloadCaptureProgress', 'Payload Capture Progress', 'The progress of the payload capture.', 'cap%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('playerHero', 'Player Hero', 'The hero of the player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('playerName', 'Player Name', 'The name of the player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('playerTeam', 'Player Team', 'The team of the player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('playerRole', 'Player Role', 'The role of the player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('pointCaptureProgress', 'Point Capture Progress', 'The progress of the point capture.', 'cap%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('previousHero', 'Previous Hero', 'The name of the hero that was previously selected.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('revivedHero', 'Revived Hero', 'The hero of the revived player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('revivedName', 'Revived Name', 'The name of the revived player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('revivedTeam', 'Revived Team', 'The team of the revived player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('roundNumber', 'Round Number', 'The number of the round.', 'none', 'number', numberFormatter, numberComparator),
+  makeDataColumn('scopedAccuracy', 'Scoped Accuracy', 'The accuracy of scoped shots.', 'acc%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('scopedCriticalHitAccuracy', 'Scoped Critical Hit Accuracy', 'The accuracy of scoped critical hits.', 'acc%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('scopedCriticalHitKills', 'Scoped Critical Hit Kills', 'The number of scoped critical hits kills.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('scopedShotsFired', 'Scoped Shots Fired', 'The number of scoped shots fired.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('scopedShotsHit', 'Scoped Shots Hit', 'The number of scoped shots hit.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('selfHealing', 'Self Healing', 'The amount of self healing.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('shotsFired', 'Shots Fired', 'The number of shots fired.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('shotsHit', 'Shots Hit', 'The number of shots hit.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('shotsMissed', 'Shots Missed', 'The number of shots missed.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('soloKills', 'Solo Kills', 'The number of solo kills.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team1Name', 'Team 1 Name', 'The name of team 1.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('team1Score', 'Team 1 Score', 'The score of team 1.', 'none', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team2Name', 'Team 2 Name', 'The name of team 2.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('team2Score', 'Team 2 Score', 'The score of team 2.', 'none', 'number', numberFormatter, numberComparator),
+  makeDataColumn('type', 'Type', 'The type of the event.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('ultimateChargedTime', 'Ultimate Charged Time (s)', 'The match time the ultimate was charged.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimateEndTime', 'Ultimate End Time (s)', 'The match time the ultimate was ended.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimateHoldTime', 'Ultimate Hold Time (s)', 'The time the ultimate was held.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimateId', 'Ultimate ID', 'The ID of the ultimate ability.', 'none', 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimateStartTime', 'Ultimate Start Time (s)', 'The match time the ultimate was started.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimatesEarned', 'Ultimates Earned', 'The number of ultimates earned.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimatesUsed', 'Ultimates Used', 'The number of ultimates used.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('victimHero', 'Victim Hero', 'The hero of the victim player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('victimName', 'Victim Name', 'The name of the victim player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('victimTeam', 'Victim Team', 'The team of the victim player.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('weaponAccuracy', 'Weapon Accuracy', 'The accuracy of the weapon.', 'acc%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('weaponAccuracyBest', 'Weapon Accuracy Best', 'The highest weapon accuracy.', 'acc%', 'number', percentFormatter, numberComparator),
+  makeDataColumn('finalBlowsPerDeaths', 'Final Blows per Deaths', 'The number of final blows per deaths.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('damageTakenPerDeaths', 'Damage Taken per Deaths', 'The amount of damage taken per deaths.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('allDamageDealtPerDamageTaken', 'All Damage Dealt per Damage Taken', 'The total amount of damage dealt per damage taken.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team1ChargedUltimateCount', 'Team 1 Charged Ultimate Count', 'Number of ultimates charged for team 1', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team2ChargedUltimateCount', 'Team 2 Charged Ultimate Count', 'Number of ultimates charged for team 2', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('teamWithUltimateAdvantage', 'Team with Ultimate Advantage', 'Team that has more ultimates charged', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('ultimateAdvantageDiff', 'Ultimate Advantage Difference', 'Difference in number of charged ultimates between teams', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('chargedUltimateCount', 'Charged Ultimate Count', 'Number of charged ultimates for a team at a given time', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team1AliveCount', 'Team 1 Alive Players', 'Number of alive players on team 1', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team2AliveCount', 'Team 2 Alive Players', 'Number of alive players on team 2', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('teamWithAliveAdvantage', 'Team with Player Advantage', 'Team that has more alive players', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('aliveAdvantageDiff', 'Player Advantage Difference', 'Difference in number of alive players between teams', 'count', 'number', numberFormatter, numberComparator),
+];
+
+
 const playerStatFragment = `
       SUM(player_stat.eliminations) as eliminations,
       SUM(player_stat.finalBlows) as finalBlows,
@@ -416,318 +571,6 @@ const player_stat_groups: string[][] = getAllCombinations(['mapId', 'roundNumber
 
 console.log('player_stat_groups', player_stat_groups);
 
-const makeNodeForPlayerStatGroup = (group: string[]): AlaSQLNodeInit => {
-  const sortedGroup = group.slice().sort();
-  const nodeName = `player_stat_group_${sortedGroup.join('_')}`;
-  const displayName = `Player Stat Group ${sortedGroup.join(', ')}`;
-  const sql = `SELECT
-      ${sortedGroup.length > 0 ? sortedGroup.map((column) => `player_stat.${column} as ${column.replaceAll('.', '_')}`).join(',\n      ') + ',' : ''}
-      ${playerStatFragment}
-    FROM ? as player_stat
-    JOIN ? as round_times
-    ON player_stat.mapId = round_times.mapId AND player_stat.roundNumber = round_times.roundNumber
-    ${sortedGroup.length > 0 ? 'GROUP BY\n      ' : ''}
-    ${sortedGroup.map((column) => `player_stat.${column}`).join(',\n      ')}
-    `;
-  return {
-    name: nodeName,
-    displayName,
-    sql,
-    sources: ['player_stat_expanded', 'round_times'],
-    columnNames: [...sortedGroup, ...playerStatColumns],
-  };
-};
-
-// export const NODES: DataNodeInit<any>[] = [
-//
-//   new AlaSQLNode<MapTeams>(
-//     'map_teams',
-//     'Map Teams',
-//     `
-//   select
-//    player_stat.mapId,
-//    player_stat.playerTeam as teamName,
-//    array(distinct player_stat.playerName) as teamPlayers
-//   from ? as player_stat
-//   group by player_stat.mapId, player_stat.playerTeam
-//   `,
-//     ['player_stat_object_store'],
-//     ['mapId', 'teamName', 'teamPlayers'],
-//   ),
-//   new AlaSQLNode<MapTeamsGrouped>(
-//     'map_teams_grouped',
-//     'Map Teams Grouped',
-//     `select
-//   map_teams.mapId,
-//   map_teams.teamName as team1Name,
-//   map_teams2.teamName as team2Name,
-//   map_teams.teamPlayers as team1Players,
-//   map_teams2.teamPlayers as team2Players
-// from ? as map_teams join ? as map_teams2
-// on map_teams.mapId = map_teams2.mapId
-// where map_teams.teamName < map_teams2.teamName
-// `,
-//     ['map_teams', 'map_teams'],
-//     ['mapId', 'team1Name', 'team2Name', 'team1Players', 'team2Players'],
-//   ),
-//   new AlaSQLNode<MapOverview>(
-//     'map_overview',
-//     'Map Overview',
-//     `
-//       SELECT
-//           match_start.mapId,
-//           match_end.mapId,
-//           match_start.mapName,
-//           match_start.team1Name,
-//           match_start.team2Name,
-//           match_end.team1Score,
-//           match_end.team2Score,
-//           map_teams.team1Players,
-//           map_teams.team2Players,
-//           maps.name as fileName,
-//           maps.fileModified as timestamp
-//       FROM ? as match_start JOIN ? as match_end
-//       ON match_start.mapId = match_end.mapId
-//       JOIN ? as maps ON match_start.mapId = maps.mapId
-//       JOIN ? as map_teams ON match_start.mapId = map_teams.mapId
-//       `,
-//     ['match_start_object_store', 'match_end_object_store', 'maps_object_store', 'map_teams_grouped'],
-//     ['mapId', 'mapName', 'team1Name', 'team2Name', 'team1Score', 'team2Score', 'team1Players', 'team2Players', 'fileName', 'timestamp'],
-//   ),
-//   new PartitionNode<MapOverview, {scrimId: string}>(
-//     'map_overview_with_scrim_id',
-//     'Map Overview with Scrim ID',
-//     'scrimId',
-//     (map1: MapOverview, map2: MapOverview) => {
-//       return map1.team1Name !== map2.team1Name || map1.team2Name !== map2.team2Name;
-//     },
-//     'map_overview',
-//     ['scrimId'],
-//   ),
-//   new AlaSQLNode<PlayerTimePlayed>(
-//     'player_time_played',
-//     'Player Time Played',
-//     `
-//       SELECT
-//           player_stat.playerName,
-//           player_stat.playerTeam,
-//           SUM(player_stat.timePlayed) as timePlayed
-//       FROM ? as player_stat
-//       GROUP BY player_stat.playerName, player_stat.playerTeam
-//       `,
-//     ['player_stat_object_store'],
-//     ['playerName', 'playerTeam', 'timePlayed'],
-//   ),
-//   new AlaSQLNode<PlayerStatFormatted>(
-//     'player_stat_formatted',
-//     'Player Stat Formatted',
-//     `
-//   SELECT
-//       player_stat.mapId,
-//       player_stat.roundNumber,
-//       player_stat.playerTeam,
-//       player_stat.playerName,
-//       player_stat.playerHero,
-//       player_stat.eliminations,
-//       player_stat.finalBlows,
-//       player_stat.deaths,
-//       player_stat.allDamageDealt,
-//       player_stat.barrierDamageDealt,
-//       player_stat.heroDamageDealt,
-//       player_stat.healingDealt,
-//       player_stat.healingReceived,
-//       player_stat.selfHealing,
-//       player_stat.damageTaken,
-//       player_stat.damageBlocked,
-//       player_stat.defensiveAssists,
-//       player_stat.offensiveAssists,
-//       player_stat.ultimatesEarned,
-//       player_stat.ultimatesUsed,
-//       player_stat.multikillBest,
-//       player_stat.multikills,
-//       player_stat.soloKills,
-//       player_stat.objectiveKills,
-//       player_stat.environmentalKills,
-//       player_stat.environmentalDeaths,
-//       player_stat.criticalHits,
-//       player_stat.criticalHitAccuracy,
-//       player_stat.scopedAccuracy,
-//       player_stat.scopedCriticalHitAccuracy,
-//       player_stat.scopedCriticalHitKills,
-//       player_stat.shotsFired,
-//       player_stat.shotsHit,
-//       player_stat.shotsMissed,
-//       player_stat.scopedShotsFired,
-//       player_stat.scopedShotsHit,
-//       player_stat.weaponAccuracy,
-//       player_stat.heroTimePlayed
-//   FROM ? as player_stat
-//   order by
-//   player_stat.mapId,
-//   player_stat.roundNumber,
-//   player_stat.playerTeam,
-//   player_stat.playerName,
-//   player_stat.heroTimePlayed desc,
-//   player_stat.playerHero
-//   `,
-//     ['player_stat_object_store'],
-//     [
-//       'mapId',
-//       'roundNumber',
-//       'playerTeam',
-//       'playerName',
-//       'playerHero',
-//       'eliminations',
-//       'finalBlows',
-//       'deaths',
-//       'allDamageDealt',
-//       'barrierDamageDealt',
-//       'heroDamageDealt',
-//       'healingDealt',
-//       'healingReceived',
-//       'selfHealing',
-//       'damageTaken',
-//       'damageBlocked',
-//       'defensiveAssists',
-//       'offensiveAssists',
-//       'ultimatesEarned',
-//       'ultimatesUsed',
-//       'multikillBest',
-//       'multikills',
-//       'soloKills',
-//       'objectiveKills',
-//       'environmentalKills',
-//       'environmentalDeaths',
-//       'criticalHits',
-//       'criticalHitAccuracy',
-//       'scopedAccuracy',
-//       'scopedCriticalHitAccuracy',
-//       'scopedCriticalHitKills',
-//       'shotsFired',
-//       'shotsHit',
-//       'shotsMissed',
-//       'scopedShotsFired',
-//       'scopedShotsHit',
-//       'weaponAccuracy',
-//       'heroTimePlayed',
-//     ],
-//   ),
-//   new AlaSQLNode<ScrimPlayersHeroesRoles>(
-//     'scrim_players_heroes_roles',
-//     'Scrim Players Heroes Roles',
-//     `
-//       SELECT
-//         map_overview_with_scrim_id.scrimId,
-//         ARRAY(if(map_overview_with_scrim_id.team1Name = player_stat_formatted.playerTeam, 1, 2))->0 as teamNumber,
-
-//         ARRAY(CASE
-//           WHEN player_stat_formatted.playerHero = 'Mauga' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'D.Va' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Orisa' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Reinhardt' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Roadhog' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Sigma' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Winston' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Wrecking Ball' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Zarya' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Doomfist' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Junker Queen' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Rammatra' THEN 1
-//           WHEN player_stat_formatted.playerHero = 'Ashe' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Bastion' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Cassidy' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Echo' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Genji' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Hanzo' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Junkrat' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Mei' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Pharah' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Reaper' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Soldier: 76' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Sojourn' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Sombra' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Symmetra' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Torbjörn' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Tracer' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Widowmaker' THEN 2
-//           WHEN player_stat_formatted.playerHero = 'Ana' THEN 3
-//           WHEN player_stat_formatted.playerHero = 'Baptiste' THEN 3
-//           WHEN player_stat_formatted.playerHero = 'Brigitte' THEN 3
-//           WHEN player_stat_formatted.playerHero = 'Lúcio' THEN 3
-//           WHEN player_stat_formatted.playerHero = 'Mercy' THEN 3
-//           WHEN player_stat_formatted.playerHero = 'Moira' THEN 3
-//           WHEN player_stat_formatted.playerHero = 'Zenyatta' THEN 3
-//           WHEN player_stat_formatted.playerHero = 'Lifeweaver' THEN 3
-//           WHEN player_stat_formatted.playerHero = 'Illari' THEN 3
-//           WHEN player_stat_formatted.playerHero = 'Kiriko' THEN 3
-//           ELSE 4
-//         END)->0 as roleNumber,
-//         player_stat_formatted.mapId as mapId,
-//         player_stat_formatted.playerTeam as teamName,
-//         map_overview_with_scrim_id.team1Name as team1Name,
-//         player_stat_formatted.playerName,
-// ARRAY(CASE
-//   WHEN player_stat_formatted.playerHero = 'Mauga' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'D.Va' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Orisa' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Reinhardt' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Roadhog' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Sigma' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Winston' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Wrecking Ball' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Zarya' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Doomfist' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Junker Queen' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Rammatra' THEN 'tank'
-//   WHEN player_stat_formatted.playerHero = 'Ashe' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Bastion' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Cassidy' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Echo' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Genji' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Hanzo' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Junkrat' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Mei' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Pharah' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Reaper' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Soldier: 76' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Sojourn' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Sombra' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Symmetra' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Torbjörn' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Tracer' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Widowmaker' THEN 'damage'
-//   WHEN player_stat_formatted.playerHero = 'Ana' THEN 'support'
-//   WHEN player_stat_formatted.playerHero = 'Baptiste' THEN 'support'
-//   WHEN player_stat_formatted.playerHero = 'Brigitte' THEN 'support'
-//   WHEN player_stat_formatted.playerHero = 'Lúcio' THEN 'support'
-//   WHEN player_stat_formatted.playerHero = 'Mercy' THEN 'support'
-//   WHEN player_stat_formatted.playerHero = 'Moira' THEN 'support'
-//   WHEN player_stat_formatted.playerHero = 'Zenyatta' THEN 'support'
-//   WHEN player_stat_formatted.playerHero = 'Lifeweaver' THEN 'support'
-//   WHEN player_stat_formatted.playerHero = 'Illari' THEN 'support'
-//   WHEN player_stat_formatted.playerHero = 'Kiriko' THEN 'support'
-//   ELSE 'unknown'
-// END)->0 as role,
-//         player_stat_formatted.playerHero as hero,
-//         sum(player_stat_formatted.finalBlows) as finalBlows,
-//         sum(player_stat_formatted.deaths) as deaths,
-//         sum(player_stat_formatted.heroDamageDealt) as damage,
-//         sum(player_stat_formatted.shotsFired) as shotsFired,
-//         sum(player_stat_formatted.shotsHit) / sum(player_stat_formatted.shotsFired) as accuracy
-// from ? as map_overview_with_scrim_id join ? as player_stat_formatted
-// on map_overview_with_scrim_id.mapId = player_stat_formatted.mapId
-// group by map_overview_with_scrim_id.scrimId,
-// player_stat_formatted.mapId,
-// player_stat_formatted.playerTeam,
-// map_overview_with_scrim_id.team1Name,
-// player_stat_formatted.playerName,
-// player_stat_formatted.playerHero
-// having sum(player_stat_formatted.shotsFired) > 0
-// `,
-//     ['map_overview_with_scrim_id', 'player_stat_formatted'],
-//     ['scrimId', 'teamName', 'playerName', 'role', 'hero', 'finalBlows', 'deaths'],
-//   ),
-// ];
 
 function makeWriteNodeInit(name: string, displayName: string, objectStore: string): WriteNodeInit {
   return {

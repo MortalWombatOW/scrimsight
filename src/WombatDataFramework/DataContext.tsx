@@ -1,18 +1,22 @@
 import React, { useContext, useRef } from 'react';
 import DataManager from './DataManager';
 import DataNodeFactory from './DataNodeFactory';
-import { DATA_COLUMNS } from './DataColumn';
-import { WRITE_NODES, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES } from './DataNodeDefinitions';
+import { DataColumn } from './DataColumn';
+import { WriteNodeInit, ObjectStoreNodeInit, AlaSQLNodeInit, FunctionNodeInit } from './DataNode';
 
 const DataContext = React.createContext<DataManager | null>(null);
 
 interface DataProviderProps {
   children: React.ReactNode;
-  globalTick: number;
   updateGlobalCallback: () => void;
+  columns: DataColumn[];
+  writeNodes: WriteNodeInit[];
+  objectStoreNodes: ObjectStoreNodeInit[];
+  alaSQLNodes: AlaSQLNodeInit[];
+  functionNodes: FunctionNodeInit[];
 }
 
-export const DataProvider: React.FC<DataProviderProps> = ({ children, globalTick, updateGlobalCallback }) => {
+export const DataProvider: React.FC<DataProviderProps> = ({ children, updateGlobalCallback, columns, writeNodes, objectStoreNodes, alaSQLNodes, functionNodes }) => {
   const dataManagerRef = useRef(new DataManager(updateGlobalCallback));
   const dataManager = dataManagerRef.current;
 
@@ -20,19 +24,19 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children, globalTick
   const factory = factoryRef.current;
 
   if (!dataManager.isSetupComplete()) {
-    for (const column of DATA_COLUMNS) {
+    for (const column of columns) {
       dataManager.registerColumn(column);
     }
-    for (const node of WRITE_NODES) {
+    for (const node of writeNodes) {
       dataManager.registerNode(factory.makeWriteNode(node));
     }
-    for (const node of OBJECT_STORE_NODES) {
+    for (const node of objectStoreNodes) {
       dataManager.registerNode(factory.makeObjectStoreNode(node));
     }
-    for (const node of ALASQL_NODES) {
+    for (const node of alaSQLNodes) {
       dataManager.registerNode(factory.makeAlaSQLNode(node));
     }
-    for (const node of FUNCTION_NODES) {
+    for (const node of functionNodes) {
       dataManager.registerNode(factory.makeFunctionNode(node));
     }
 
