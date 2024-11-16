@@ -11,6 +11,8 @@ interface TimelineDimensions {
   xToTime: (x: number) => number;
   xToTimeWindow: (x: number) => number;
   gridRef: React.RefObject<HTMLDivElement>;
+  mapStartTime: number;
+  mapEndTime: number;
 }
 
 export const useTimelineDimensions = (mapStartTime: number, mapEndTime: number): TimelineDimensions => {
@@ -67,6 +69,8 @@ export const useTimelineDimensions = (mapStartTime: number, mapEndTime: number):
     width,
     windowStartTime,
     windowEndTime,
+    mapStartTime,
+    mapEndTime,
     setWindowStartTime,
     setWindowEndTime,
     timeToX,

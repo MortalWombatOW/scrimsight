@@ -14,12 +14,12 @@ interface PixiWrapperProps {
 
 export const PixiWrapper: React.FC<PixiWrapperProps> = ({ width, height, children }) => {
   return (
-    <div style={{ border: '1px solid red' }}>
+    <div style={{ border: '1px solid #333' }}>
       <Stage
         width={width}
         height={height}
         options={{
-          backgroundColor: 0x222222,
+          backgroundAlpha: 0,
           antialias: true,
           autoDensity: true,
           eventMode: 'passive',

@@ -1,4 +1,5 @@
 import React from 'react';
+import * as PIXI from 'pixi.js';
 import GrimReaperIcon from '../../Icons/GrimReaperIcon';
 import MacheteIcon from '../../Icons/MacheteIcon';
 import UpCardIcon from '../../Icons/UpCardIcon';
@@ -6,10 +7,22 @@ import BeamsAuraIcon from '../../Icons/BeamsAuraIcon';
 import GhostAllyIcon from '../../Icons/GhostAllyIcon';
 
 export const COLORS = {
-  ultimate: '#42c2f5',
-  kill: '#f44336',
-  spawn: '#4caf50',
-  assist: '#009688',
+  ultimate: {
+    color: '#42c2f5',
+    alpha: 0.5
+  },
+  kill: {
+    color: '#f44336',
+    alpha: 0.5
+  },
+  spawn: {
+    color: '#4caf50',
+    alpha: 0.5
+  },
+  assist: {
+    color: '#009688',
+    alpha: 0.5
+  }
 } as const;
 
 export const INTERACTION_EVENT_TYPE_TO_ICON = {
@@ -40,4 +53,24 @@ export const EVENT_TYPE_TO_ICON = {
   'Ability 2 Used': 'Used Ability 2',
   'Offensive Assist': 'A',
   'Defensive Assist': 'A',
-} as const; 
+} as const;
+
+export const textStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial',
+  fontSize: 14,
+  fill: '#ffffff',
+});
+
+export const tooltipStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial',
+  fontSize: 12,
+  fill: '#ffffff',
+  align: 'center',
+});
+
+export const phaseStyle = new PIXI.TextStyle({
+  fontFamily: 'Arial',
+  fontSize: 10,
+  fill: '#ffffff',
+  align: 'center',
+}); 

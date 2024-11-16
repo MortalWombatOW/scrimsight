@@ -11,6 +11,8 @@ interface PixiTimelineProps {
   dimensions: TimelineDimensions;
 }
 
+const parseColor = (colorStr: string) => parseInt(colorStr.replace('#', '0x'));
+
 const drawPlayerRow = (g: PIXI.Graphics, events: any[], interactionEvents: any[], ultimateEvents: any[], timeToX: (t: number) => number, y: number) => {
   g.clear();
 
@@ -21,32 +23,34 @@ const drawPlayerRow = (g: PIXI.Graphics, events: any[], interactionEvents: any[]
     const width = endX - startX;
 
     // Charging bar
-    g.beginFill(parseInt(COLORS.ultimate.replace('#', '0x')), 0.3);
+    g.beginFill(parseColor(COLORS.ultimate.color), COLORS.ultimate.alpha * 0.6);
     g.drawRect(startX, y - 5, width, 10);
 
     // Active bar
     if (event.ultimateStartTime) {
       const activeStartX = timeToX(event.ultimateStartTime);
       const activeWidth = endX - activeStartX;
-      g.beginFill(parseInt(COLORS.ultimate.replace('#', '0x')), 0.8);
+      g.beginFill(parseColor(COLORS.ultimate.color), COLORS.ultimate.alpha);
       g.drawRect(activeStartX, y - 5, activeWidth, 10);
     }
   });
 
   // Draw regular events
   events.forEach(event => {
-    if (EVENT_TYPE_TO_COLOR[event.playerEventType]) {
+    const colorConfig = EVENT_TYPE_TO_COLOR[event.playerEventType];
+    if (colorConfig) {
       const x = timeToX(event.playerEventTime);
-      g.beginFill(parseInt(EVENT_TYPE_TO_COLOR[event.playerEventType].replace('#', '0x')));
+      g.beginFill(parseColor(colorConfig.color), colorConfig.alpha);
       g.drawCircle(x, y, 3);
     }
   });
 
   // Draw interaction events
   interactionEvents.forEach(event => {
-    if (INTERACTION_EVENT_TYPE_TO_COLOR[event.playerInteractionEventType]) {
+    const colorConfig = INTERACTION_EVENT_TYPE_TO_COLOR[event.playerInteractionEventType];
+    if (colorConfig) {
       const x = timeToX(event.playerInteractionEventTime);
-      g.beginFill(parseInt(INTERACTION_EVENT_TYPE_TO_COLOR[event.playerInteractionEventType].replace('#', '0x')));
+      g.beginFill(parseColor(colorConfig.color), colorConfig.alpha);
       g.drawCircle(x, y, 3);
     }
   });

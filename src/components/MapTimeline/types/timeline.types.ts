@@ -143,6 +143,8 @@ export interface TimelineDimensions {
   xToTimeWindow: (x: number) => number;
   windowStartTime: number;
   windowEndTime: number;
+  mapStartTime: number;
+  mapEndTime: number;
   setWindowStartTime: (time: number) => void;
   setWindowEndTime: (time: number) => void;
   handleMouseDown?: (e: React.MouseEvent, type: 'start' | 'end') => void;

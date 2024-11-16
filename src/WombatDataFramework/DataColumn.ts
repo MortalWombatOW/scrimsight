@@ -203,4 +203,8 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('teamWithUltimateAdvantage', 'Team with Ultimate Advantage', 'Team that has more ultimates charged', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('ultimateAdvantageDiff', 'Ultimate Advantage Difference', 'Difference in number of charged ultimates between teams', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('chargedUltimateCount', 'Charged Ultimate Count', 'Number of charged ultimates for a team at a given time', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team1AliveCount', 'Team 1 Alive Players', 'Number of alive players on team 1', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team2AliveCount', 'Team 2 Alive Players', 'Number of alive players on team 2', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('teamWithAliveAdvantage', 'Team with Player Advantage', 'Team that has more alive players', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('aliveAdvantageDiff', 'Player Advantage Difference', 'Difference in number of alive players between teams', 'count', 'number', numberFormatter, numberComparator),
 ];
