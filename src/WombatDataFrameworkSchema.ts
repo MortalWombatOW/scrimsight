@@ -1,4 +1,4 @@
-import { ultimateAdvantageConfig, playerAliveAdvantageConfig } from "./WombatDataFramework/AdvantageTrackers";
+import { ultimateAdvantageConfig, playerAliveAdvantageConfig } from "./lib/AdvantageTrackers";
 import { DataColumn, makeDataColumn, makeRatioUnits, numberFormatter, numberComparator, stringFormatter, stringComparator, percentFormatter, booleanFormatter, booleanComparator } from "./WombatDataFramework/DataColumn";
 import { WriteNodeInit, ObjectStoreNodeInit, AlaSQLNodeInit, FunctionNodeInit } from "./WombatDataFramework/DataNode";
 import { processTeamAdvantageEvents } from "./lib/TeamAdvantageTracker";
