@@ -120,19 +120,20 @@ export interface UltimateAdvantageChartProps {
 }
 
 export interface TimelineData {
-  team1Name: string;
-  team2Name: string;
-  team1EventsByPlayer: {[playerName: string]: PlayerEvent[]};
-  team2EventsByPlayer: {[playerName: string]: PlayerEvent[]};
-  team1InteractionEventsByPlayer: {[playerName: string]: PlayerInteractionEvent[]};
-  team2InteractionEventsByPlayer: {[playerName: string]: PlayerInteractionEvent[]};
-  team1UltimateEventsByPlayer: {[playerName: string]: UltimateEvent[]};
-  team2UltimateEventsByPlayer: {[playerName: string]: UltimateEvent[]};
   mapStartTime: number;
   mapEndTime: number;
-  roundTimes: RoundTimes[];
+  team1Name: string;
+  team2Name: string;
+  team1EventsByPlayer: Record<string, any[]>;
+  team2EventsByPlayer: Record<string, any[]>;
+  team1InteractionEventsByPlayer: Record<string, any[]>;
+  team2InteractionEventsByPlayer: Record<string, any[]>;
+  team1UltimateEventsByPlayer: Record<string, any[]>;
+  team2UltimateEventsByPlayer: Record<string, any[]>;
+  roundTimes: any[];
   eventTimes: number[];
-  ultimateAdvantageData: UltimateAdvantageData[];
+  ultimateAdvantageData: any[];
+  aliveAdvantageData: any[];
 }
 
 export interface TimelineDimensions {

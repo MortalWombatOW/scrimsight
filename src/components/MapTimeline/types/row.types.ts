@@ -25,10 +25,60 @@ export interface PlayerTimelineRowProps extends BaseTimelineRowProps {
   ultimateEvents: any[];
 }
 
+export type TimelineRowType = 
+  | 'player'
+  | 'round'
+  | 'teamAdvantage'
+  | 'eventMap'
+  | 'spacing'
+  | 'header'
+  | 'timeLabels';
+
+export interface PlayerRowConfig {
+  type: 'player';
+  playerName: string;
+  team: string;
+}
+
+export interface HeaderRowConfig {
+  type: 'header';
+  text: string;
+}
+
+export interface TeamAdvantageRowConfig {
+  type: 'teamAdvantage';
+  values: any[];
+  fieldNames: {
+    team1Count: string;
+    team2Count: string;
+  };
+  label: string;
+}
+
+export interface TimeLabelsRowConfig {
+  type: 'timeLabels';
+}
+
+export interface RoundRowConfig {
+  type: 'round';
+}
+
+export interface EventMapRowConfig {
+  type: 'eventMap';
+}
+
+export type RowConfigData = 
+  | PlayerRowConfig 
+  | HeaderRowConfig 
+  | TeamAdvantageRowConfig
+  | TimeLabelsRowConfig
+  | RoundRowConfig
+  | EventMapRowConfig;
+
 export interface TimelineRowConfig {
   id: string;
-  type: 'team' | 'player' | 'round' | 'ultimateAdvantage' | 'eventMap' | 'spacing' | 'header' | 'timeLabels';
+  type: TimelineRowType;
   height: number;
   useWindowScale?: boolean;
-  data?: any;
+  data: RowConfigData;
 } 

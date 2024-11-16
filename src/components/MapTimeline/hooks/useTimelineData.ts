@@ -8,23 +8,10 @@ import {
   UltimateEvent,
   RoundTimes,
   UltimateAdvantageData,
+  TimelineData,
 } from '../types/timeline.types';
 
-export interface TimelineData {
-  team1Name: string;
-  team2Name: string;
-  team1EventsByPlayer: {[playerName: string]: PlayerEvent[]};
-  team2EventsByPlayer: {[playerName: string]: PlayerEvent[]};
-  team1InteractionEventsByPlayer: {[playerName: string]: PlayerInteractionEvent[]};
-  team2InteractionEventsByPlayer: {[playerName: string]: PlayerInteractionEvent[]};
-  team1UltimateEventsByPlayer: {[playerName: string]: UltimateEvent[]};
-  team2UltimateEventsByPlayer: {[playerName: string]: UltimateEvent[]};
-  mapStartTime: number;
-  mapEndTime: number;
-  roundTimes: RoundTimes[];
-  eventTimes: number[];
-  ultimateAdvantageData: UltimateAdvantageData[];
-}
+
 
 export const useTimelineData = (mapId: number): TimelineData | null => {
   const dataManager = useDataManager();
@@ -42,6 +29,8 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
       ultimateEvents: dataManager.hasNodeOutput('ultimate_events'),
       mapTimes: dataManager.hasNodeOutput('map_times'),
       playerStats: dataManager.hasNodeOutput('player_stat_expanded'),
+      ultimateAdvantage: dataManager.hasNodeOutput('team_ultimate_advantage'),
+      aliveAdvantage: dataManager.hasNodeOutput('team_alive_advantage'),
     };
     console.log('Available outputs:', outputs);
 
@@ -63,6 +52,8 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
       roundTimes: dataManager.getNodeOutput('round_times'),
       ultimateEvents: dataManager.getNodeOutput('ultimate_events'),
       mapTimes: dataManager.getNodeOutput('map_times'),
+      ultimateAdvantage: dataManager.getNodeOutput('team_ultimate_advantage'),
+      aliveAdvantage: dataManager.getNodeOutput('team_alive_advantage'),
     };
 
     // Check if any of the outputs are empty arrays
@@ -164,16 +155,7 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
     };
 
     // Add ultimate advantage data
-    const ultimateAdvantageData = dataManager.hasNodeOutput('team_ultimate_advantage') 
-      ? dataManager.getNodeOutput('team_ultimate_advantage')
-          .filter(row => row['mapId'] === mapId)
-          .map(row => ({
-            matchTime: row['matchTime'],
-            team1ChargedUltimateCount: row['team1ChargedUltimateCount'],
-            team2ChargedUltimateCount: row['team2ChargedUltimateCount'],
-            ultimateAdvantageDiff: row['ultimateAdvantageDiff']
-          })) as UltimateAdvantageData[]
-      : [];
+    const ultimateAdvantageData = outputData.ultimateAdvantage.filter(row => row['mapId'] === mapId);
 
     return {
       team1Name,
@@ -189,6 +171,7 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
       roundTimes,
       eventTimes,
       ultimateAdvantageData,
+      aliveAdvantageData: outputData.aliveAdvantage.filter(row => row['mapId'] === mapId),
     };
   }, [dataManager, mapId, tick]);
 }; 
