@@ -57,8 +57,7 @@ const metrics: MetricFramework[] = [
   {
     name: 'Damage done / damage taken',
     description: 'Damage done to enemies divided by damage taken from enemies',
-    rationale:
-      'This metric is used to measure the effectiveness of a player in dealing damage to the enemy team while minimizing the amount of damage they take.',
+    rationale: 'This metric is used to measure the effectiveness of a player in dealing damage to the enemy team while minimizing the amount of damage they take.',
     abbreviation: 'Dmg done/taken',
     isDirectMeasure: true,
     isStyleMeasure: false,
@@ -68,8 +67,7 @@ const metrics: MetricFramework[] = [
   {
     name: 'Eliminations / deaths',
     description: 'Final blows and assists divided by deaths',
-    rationale:
-      "This metric is used to measure a player's ability to stay alive in a game while also eliminating as many opponents as possible.",
+    rationale: "This metric is used to measure a player's ability to stay alive in a game while also eliminating as many opponents as possible.",
     abbreviation: 'Elims/deaths',
     isDirectMeasure: true,
     isStyleMeasure: false,
@@ -79,8 +77,7 @@ const metrics: MetricFramework[] = [
   {
     name: 'Final blows / Assists',
     description: 'Final blows divided by assists',
-    rationale:
-      "This metric is used to measure a player's ability to eliminate opponents without the help of their teammates.",
+    rationale: "This metric is used to measure a player's ability to eliminate opponents without the help of their teammates.",
     abbreviation: 'Final blows/assists',
     isDirectMeasure: true,
     isStyleMeasure: false,
@@ -89,8 +86,7 @@ const metrics: MetricFramework[] = [
   },
 ];
 
-export const getMetric = (name: string) =>
-  metrics.find((metric) => metric.name === name);
+export const getMetric = (name: string) => metrics.find((metric) => metric.name === name);
 
 export const getTextForMetric = (name: string) => {
   const metric = getMetric(name);

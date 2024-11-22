@@ -1,13 +1,13 @@
 @use 'sass:math';
-@import './constants.scss';
+@use 'sass:color';
+@use './constants.scss';
 
-@each $key,
-$value in $colors {
+@each $key, $value in constants.$colors {
   .#{$key} {
     background-color: $value;
     overflow-x: hidden;
     // text-shadow: 0px 0px 2px $dark;
-    color: fade-out(black, 0.3);
+    color: color.adjust(black, $lightness: -70%);
   }
 
   .#{$key}-text {
@@ -123,182 +123,6 @@ $value in $colors {
   width: fit-content !important;
 }
 
-/* The typewriter cursor effect */
-// @keyframes blink-caret {
-//   from, to { border-color: transparent }
-//   50% { border-color: black; }
-// }
-
-// .ana {
-//   background-color: $ana;
-//   fill: $ana;
-//   stroke: $ana;
-// }
-// .ashe {
-//   background-color: $ashe;
-//   fill: $ashe;
-//   stroke: $ashe;
-// }
-// .bastion {
-//   background-color: $bastion;
-//   fill: $bastion;
-//   stroke: $bastion;
-// }
-// .brigitte {
-//   background-color: $brigitte;
-//   fill: $brigitte;
-//   stroke: $brigitte;
-// }
-// .baptiste {
-//   background-color: $baptiste;
-//   fill: $baptiste;
-//   stroke: $baptiste;
-// }
-// .dva {
-//   background-color: $dva;
-//   fill: $dva;
-//   stroke: $dva;
-// }
-// .doomfist {
-//   background-color: $doomfist;
-//   fill: $doomfist;
-//   stroke: $doomfist;
-// }
-// .echo {
-//   background-color: $echo;
-//   fill: $echo;
-//   stroke: $echo;
-// }
-// .genji {
-//   background-color: $genji;
-//   fill: $genji;
-//   stroke: $genji;
-// }
-// .hanzo {
-//   background-color: $hanzo;
-//   fill: $hanzo;
-//   stroke: $hanzo;
-// }
-// .junkrat {
-//   background-color: $junkrat;
-//   fill: $junkrat;
-//   stroke: $junkrat;
-// }
-// .lucio {
-//   background-color: $lucio;
-//   fill: $lucio;
-//   stroke: $lucio;
-// }
-// .cassidy {
-//   background-color: $cassidy;
-//   fill: $cassidy;
-//   stroke: $cassidy;
-// }
-// .mei {
-//   background-color: $mei;
-//   fill: $mei;
-//   stroke: $mei;
-// }
-// .mercy {
-//   background-color: $mercy;
-//   fill: $mercy;
-//   stroke: $mercy;
-// }
-// .moira {
-//   background-color: $moira;
-//   fill: $moira;
-//   stroke: $moira;
-// }
-// .orisa {
-//   background-color: $orisa;
-//   fill: $orisa;
-//   stroke: $orisa;
-// }
-// .pharah {
-//   background-color: $pharah;
-//   fill: $pharah;
-//   stroke: $pharah;
-// }
-// .reaper {
-//   background-color: $reaper;
-//   fill: $reaper;
-//   stroke: $reaper;
-// }
-// .reinhardt {
-//   background-color: $reinhardt;
-//   fill: $reinhardt;
-//   stroke: $reinhardt;
-// }
-// .roadhog {
-//   background-color: $roadhog;
-//   fill: $roadhog;
-//   stroke: $roadhog;
-// }
-// .soldier76 {
-//   background-color: $soldier76;
-//   fill: $soldier76;
-//   stroke: $soldier76;
-// }
-// .sombra {
-//   background-color: $sombra;
-//   fill: $sombra;
-//   stroke: $sombra;
-// }
-// .symmetra {
-//   background-color: $symmetra;
-//   fill: $symmetra;
-//   stroke: $symmetra;
-// }
-// .sigma {
-//   background-color: $sigma;
-//   fill: $sigma;
-//   stroke: $sigma;
-// }
-// .torbjorn {
-//   background-color: $torbjorn;
-//   fill: $torbjorn;
-//   stroke: $torbjorn;
-// }
-// .tracer {
-//   background-color: $tracer;
-//   fill: $tracer;
-//   stroke: $tracer;
-// }
-// .widowmaker {
-//   background-color: $widowmaker;
-//   fill: $widowmaker;
-//   stroke: $widowmaker;
-// }
-// .wreckingball {
-//   background-color: $wreckingball;
-//   fill: $wreckingball;
-//   stroke: $wreckingball;
-// }
-// .winston {
-//   background-color: $winston;
-//   fill: $winston;
-//   stroke: $winston;
-// }
-// .zarya {
-//   background-color: $zarya;
-//   fill: $zarya;
-//   stroke: $zarya;
-// }
-// .zenyatta {
-//   background-color: $zenyatta;
-//   fill: $zenyatta;
-//   stroke: $zenyatta;
-// }
-// .team-1 {
-//   background-color: #368ff4;
-//   stroke: #368ff4;
-//   fill: #368ff4;
-// }
-// .team-2 {
-//   background-color: #ff736e;
-//   stroke: #ff736e;
-//   fill: #ff736e;
-// }
 
 body {
   margin: 0;
@@ -307,8 +131,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: $background;
-  color: $mid;
+  background-color: constants.$background;
+  color: constants.$mid;
   padding-top: 0px;
 }
 
@@ -316,22 +140,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-// input[type="button"] {
-//   border: 1px solid $dark;
-//   color: $dark;
-//   border-radius: 15px;
-//   // line-height: $;
-//   height: 30px;
-//   padding-left: 7px;
-//   padding-right: 7px;
-//   margin: 5px;
-//   background-color: $light;
-//   &:hover {
-//     color: $highlight;
-//     border-color: $highlight;
-//   }
-// }
 
 .summary {
   font-size: 10px;
@@ -350,7 +158,7 @@ div>label.MuiButtonBase-root {
   &.div {
     margin-bottom: 10px;
     margin-top: 20px;
-    background-color: $light;
+    background-color: constants.$light;
     padding: 5px;
   }
 }
@@ -365,7 +173,7 @@ table {
 
 td,
 th {
-  border: 1px solid $mid;
+  border: 1px solid constants.$mid;
   padding: 5px;
 }
 
@@ -394,12 +202,12 @@ table {
 
   >div {
     font-size: 13px;
-    color: $dark;
+    color: constants.$dark;
   }
 
   height: 36.5px;
   // font-size: 10px;
-  color: $dark;
+  color: constants.$dark;
 }
 
 .MuiOutlinedInput-notchedOutline {
@@ -420,7 +228,7 @@ div.tablecontrols>* {
 
 .viewselector {
   // float: inline-end;
-  background-color: $light;
+  background-color: constants.$light;
   float: right;
 }
 
@@ -433,16 +241,16 @@ div.tablecontrols>* {
 }
 
 .histogram .datapoint {
-  fill: $mid;
+  fill: constants.$mid;
 
   &:hover {
-    fill: $highlight;
+    fill: constants.$highlight;
   }
 }
 
 .MuiButton-root {
   &.dark {
-    background-color: $dark !important;
+    background-color: constants.$dark !important;
   }
 
   &.filterButton {
@@ -452,7 +260,7 @@ div.tablecontrols>* {
   }
 
   &.filterButton.selected {
-    background-color: $dark !important;
+    background-color: constants.$dark !important;
     color: white !important;
   }
 }
@@ -462,18 +270,18 @@ div.tablecontrols>* {
 }
 
 .axis {
-  stroke: $mid;
+  stroke: constants.$mid;
 }
 
 .axis-label {
-  fill: $mid;
+  fill: constants.$mid;
   font-size: 12px;
 }
 
 .selection {
   opacity: 0.3;
-  fill: $highlight;
-  stroke: 2px solid $dark;
+  fill: constants.$highlight;
+  stroke: 2px solid constants.$dark;
   pointer-events: none;
 }
 
@@ -484,7 +292,7 @@ div.tablecontrols>* {
 
     // fill: $mid;
     &:hover {
-      fill: $highlight;
+      fill: constants.$highlight;
     }
   }
 }
@@ -536,20 +344,20 @@ div.tablecontrols>* {
 }
 
 .RangeSelector-axis {
-  stroke: $mid;
+  stroke: constants.$mid;
 }
 
 .RangeSelector-selected {
-  stroke: $dark;
+  stroke: constants.$dark;
 }
 
 .RangeSelector-edge {
-  stroke: $highlight;
-  fill: $highlight;
+  stroke: constants.$highlight;
+  fill: constants.$highlight;
 }
 
 .RangeSelector-label {
-  stroke: $dark;
+  stroke: constants.$dark;
   font-size: 14px;
 }
 
@@ -569,7 +377,7 @@ div.tablecontrols>* {
 
   & .header {
     font-weight: bold;
-    color: $mid;
+    color: constants.$mid;
     background-color: white;
     border: none;
     padding-bottom: 3px;
@@ -596,7 +404,7 @@ label.Uploader-button.MuiButton-root {
   flex: 0 0 200px;
   // height: 300px;
   border-radius: 5px;
-  border: 1px solid $light;
+  border: 1px solid constants.$light;
   margin: 10px;
   padding: 10px;
   transition: all 0.1s ease-in-out;
@@ -604,14 +412,14 @@ label.Uploader-button.MuiButton-root {
   &:hover {
     transform: scale(1.05);
     cursor: pointer;
-    box-shadow: 1px 1px 5px $light;
+    box-shadow: 1px 1px 5px constants.$light;
   }
 
   & .NavCard-title {
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: $dark;
+    color: constants.$dark;
   }
 
   & .NavCard-img {
@@ -622,37 +430,37 @@ label.Uploader-button.MuiButton-root {
 
 .Maps {
   & .Maps-teamName {
-    color: $dark;
+    color: constants.$dark;
     font-size: 20px;
   }
 
   & .Maps-container {
     display: flex;
     flex-direction: column;
-    padding-left: $hpadding;
-    padding-right: $hpadding;
-    min-width: $min_width;
+    padding-left: constants.$hpadding;
+    padding-right: constants.$hpadding;
+    min-width: constants.$min_width;
   }
 }
 
 .MapRow {
   border-radius: 5px;
-  border: 1px solid $light;
+  border: 1px solid constants.$light;
   $maprow-height: 100px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   transition: all 0.1s ease-in-out;
   margin-bottom: 10px;
-  box-shadow: 1px 1px 5px $light;
-  background-color: $background;
+  box-shadow: 1px 1px 5px constants.$light;
+  background-color: constants.$background;
   padding: 0px;
 
   &:hover {
     transform: scale(1.02);
     cursor: pointer;
-    box-shadow: 1px 1px 10px $light;
-    border: 1px solid $highlight;
+    box-shadow: 1px 1px 10px constants.$light;
+    border: 1px solid constants.$highlight;
   }
 
   & .MapRow-image {
@@ -669,7 +477,7 @@ label.Uploader-button.MuiButton-root {
   & .MapRow-name {
     font-size: 18px;
     font-weight: bold;
-    color: $mid;
+    color: constants.$mid;
     width: 200px;
     line-height: $maprow-height;
     text-align: left;
@@ -678,7 +486,7 @@ label.Uploader-button.MuiButton-root {
 
   & .MapRow-filename {
     font-size: 12px;
-    color: $mid;
+    color: constants.$mid;
     width: 200px;
     line-height: $maprow-height;
     text-align: left;
@@ -704,8 +512,8 @@ label.Uploader-button.MuiButton-root {
     height: 14px;
     position: relative;
     top: 1px;
-    fill: $neutral;
-    stroke: $neutral;
+    fill: constants.$neutral;
+    stroke: constants.$neutral;
   }
 
   & .MapRow-timestamp {
@@ -717,9 +525,9 @@ label.Uploader-button.MuiButton-root {
   & .Map-container {
     display: flex;
     flex-direction: column;
-    padding-left: $hpadding;
-    padding-right: $hpadding;
-    min-width: $min_width;
+    padding-left: constants.$hpadding;
+    padding-right: constants.$hpadding;
+    min-width: constants.$min_width;
   }
 
   & .Map-toprow {
@@ -727,7 +535,7 @@ label.Uploader-button.MuiButton-root {
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 10px;
-    border: 1px solid $light;
+    border: 1px solid constants.$light;
     border-radius: 5px;
     padding: 0;
   }

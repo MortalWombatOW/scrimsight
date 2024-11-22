@@ -1,3 +1,4 @@
+
 $dark: #000000;
 $mid: #363636;
 $neutral: #5e5e5e;
@@ -44,8 +45,7 @@ $wreckingball: #c09e74;
 $zarya: #e77eb6;
 $zenyatta: #ede582;
 
-$colors: () !default;
-$colors: map-merge(('ana': $ana,
+$colors: ('ana': $ana,
     'ashe': $ashe,
     'bastion': $bastion,
     'brigitte': $brigitte,
@@ -103,5 +103,4 @@ $colors: map-merge(('ana': $ana,
     'color-12': #f33333,
     'increase': #286b28,
     'decrease': #ac1a1a,
-  ),
-  $colors);
+  );

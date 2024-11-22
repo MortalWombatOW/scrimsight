@@ -1,5 +1,5 @@
-import { PlayerEvent, PlayerInteractionEvent, UltimateEvent } from '../types/timeline.types';
-import { EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR } from '../constants/timeline.constants';
+import {PlayerEvent, PlayerInteractionEvent, UltimateEvent} from '../types/timeline.types';
+import {EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR} from '../constants/timeline.constants';
 
 interface TimelineEvent {
   time: number;
@@ -12,24 +12,24 @@ export const findNearestEvent = (
   events: PlayerEvent[],
   interactionEvents: PlayerInteractionEvent[],
   ultimateEvents: UltimateEvent[],
-  threshold = 5 // seconds
+  threshold = 5, // seconds
 ): TimelineEvent | null => {
   const allEvents: TimelineEvent[] = [
-    ...events.map(e => ({
+    ...events.map((e) => ({
       time: e.playerEventTime,
       type: e.playerEventType,
-      text: `${e.playerEventType} (${e.playerHero})`
+      text: `${e.playerEventType} (${e.playerHero})`,
     })),
-    ...interactionEvents.map(e => ({
+    ...interactionEvents.map((e) => ({
       time: e.playerInteractionEventTime,
       type: e.playerInteractionEventType,
-      text: `${e.playerInteractionEventType} ${e.otherPlayerName}`
+      text: `${e.playerInteractionEventType} ${e.otherPlayerName}`,
     })),
-    ...ultimateEvents.map(e => ({
+    ...ultimateEvents.map((e) => ({
       time: e.ultimateChargedTime,
       type: 'Ultimate Charged',
-      text: 'Ultimate Charged'
-    }))
+      text: 'Ultimate Charged',
+    })),
   ];
 
   const nearest = allEvents.reduce((closest, event) => {
@@ -45,4 +45,4 @@ export const findNearestEvent = (
 
 export const formatEventText = (event: TimelineEvent): string => {
   return event.text;
-}; 
+};

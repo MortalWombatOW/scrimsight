@@ -1,4 +1,4 @@
-@import 'constants.scss';
+@use '../../constants.scss';
 
 
 .pie-chart-container {
@@ -7,7 +7,7 @@
 
 .tooltip {
     background-color: $mid;
-    mouse-events: none;
+    // mouse-events: none;
  & .label {
     color: $background;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);

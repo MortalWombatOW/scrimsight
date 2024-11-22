@@ -16,4 +16,4 @@ export const TimelineSkeleton: React.FC = () => (
       </TimelineContainer>
     ))}
   </>
-); 
+);

@@ -1,9 +1,9 @@
-@import '../../constants.scss';
+@use '../../constants.scss';
 
 .header {
   border-bottom: 1px solid white;
-  background-color: $mid;
-  color: $background;
+  background-color: constants.$mid;
+  color: constants.$background;
   margin: 0;
 }
 

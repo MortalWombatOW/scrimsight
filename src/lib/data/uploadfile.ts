@@ -1,6 +1,6 @@
-import { FileUpload, LOG_SPEC, DataAndSpecName } from 'lib/data/types';
-import { stringHash } from './../string';
-import { getDB, mapExists } from './database';
+import {FileUpload, LOG_SPEC, DataAndSpecName} from 'lib/data/types';
+import {stringHash} from './../string';
+import {getDB, mapExists} from './database';
 import batch from 'idb-batch';
 
 // File Utilities
@@ -87,7 +87,6 @@ const parseLine = (line: string, mapId: number): DataAndSpecName => {
 };
 
 export const parseFile = (fileContent: string) => {
-
   const hash = stringHash(fileContent);
   const lines = fileContent.split('\n').filter((l) => l.length > 0);
   const parsedData: DataAndSpecName[] = lines.map((line) => parseLine(line, hash));

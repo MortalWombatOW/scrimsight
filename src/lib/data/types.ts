@@ -39,13 +39,7 @@ interface MapEntity {
   clazz?: string;
   image?: string;
   states: RenderState;
-  entityType:
-    | 'player'
-    | 'damage'
-    | 'healing'
-    | 'final blow'
-    | 'elimination'
-    | 'ability';
+  entityType: 'player' | 'damage' | 'healing' | 'final blow' | 'elimination' | 'ability';
 }
 
 type RenderState = {
@@ -502,11 +496,7 @@ const LOG_SPEC: LogSpec = {
   echo_duplicate_end: {
     displayName: 'Echo Duplicate End',
     key: 'echo_duplicate_end',
-    fields: [
-      ...commmonFields,
-      ...playerFields,
-      {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'},
-    ],
+    fields: [...commmonFields, ...playerFields, {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'}],
   },
   dva_demech: {
     displayName: 'D.Va Demech',
@@ -531,11 +521,7 @@ const LOG_SPEC: LogSpec = {
   dva_remech: {
     displayName: 'D.Va Remech',
     key: 'dva_remech',
-    fields: [
-      ...commmonFields,
-      ...playerFields,
-      {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'},
-    ],
+    fields: [...commmonFields, ...playerFields, {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'}],
   },
   remech_charged: {
     displayName: 'Remech Charged',
@@ -667,21 +653,4 @@ const LOG_SPEC: LogSpec = {
   },
 };
 
-export {
-  FileUpload,
-  TeamInfo,
-  Statistic,
-  ColorInternal,
-  ColorInternalHSL,
-  MapEntity,
-  RenderState,
-  GameStateTimeSlice,
-  GameStateExtractor,
-  Team,
-  DataAndSpecName,
-  DataRowBySpecName,
-  LogSpec,
-  DataSpec,
-  FieldSpec,
-  LOG_SPEC,
-};
+export {FileUpload, TeamInfo, Statistic, ColorInternal, ColorInternalHSL, MapEntity, RenderState, GameStateTimeSlice, GameStateExtractor, Team, DataAndSpecName, DataRowBySpecName, LogSpec, DataSpec, FieldSpec, LOG_SPEC};

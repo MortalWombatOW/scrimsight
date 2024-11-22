@@ -1,5 +1,5 @@
-import React, { memo, useMemo } from 'react';
-import { Graphics, Text, Container } from '@pixi/react';
+import React, {memo, useMemo} from 'react';
+import {Graphics, Text, Container} from '@pixi/react';
 import * as PIXI from 'pixi.js';
 
 interface TimelineGridProps {
@@ -13,12 +13,12 @@ interface TimelineGridProps {
 }
 
 const timeIntervals = [
-  { seconds: 5, alpha: 0.02, showLabel: false },
-  { seconds: 15, alpha: 0.03, showLabel: false },
-  { seconds: 30, alpha: 0.04, showLabel: true },
-  { seconds: 60, alpha: 0.08, showLabel: true },
-  { seconds: 120, alpha: 0.1, showLabel: true },
-  { seconds: 300, alpha: 0.12, showLabel: true },
+  {seconds: 5, alpha: 0.02, showLabel: false},
+  {seconds: 15, alpha: 0.03, showLabel: false},
+  {seconds: 30, alpha: 0.04, showLabel: true},
+  {seconds: 60, alpha: 0.08, showLabel: true},
+  {seconds: 120, alpha: 0.1, showLabel: true},
+  {seconds: 300, alpha: 0.12, showLabel: true},
 ];
 
 const formatTime = (seconds: number): string => {
@@ -34,15 +34,7 @@ const labelStyle = new PIXI.TextStyle({
   align: 'left',
 });
 
-export const TimelineGrid = memo<TimelineGridProps>(({
-  width,
-  height,
-  timeToX,
-  startTime,
-  endTime,
-  labelWidth,
-  showLabels = false
-}) => {
+export const TimelineGrid = memo<TimelineGridProps>(({width, height, timeToX, startTime, endTime, labelWidth, showLabels = false}) => {
   // Calculate the best interval based on the visible time range
   const interval = useMemo(() => {
     const timeRange = endTime - startTime;
@@ -50,8 +42,7 @@ export const TimelineGrid = memo<TimelineGridProps>(({
 
     // Find the first interval that gives us enough space between lines
     // We want at least 50 pixels between lines
-    return timeIntervals.find(int => pixelsPerSecond * int.seconds >= 50)
-      ?? timeIntervals[timeIntervals.length - 1];
+    return timeIntervals.find((int) => pixelsPerSecond * int.seconds >= 50) ?? timeIntervals[timeIntervals.length - 1];
   }, [width, startTime, endTime]);
 
   // Calculate time marks
@@ -67,7 +58,7 @@ export const TimelineGrid = memo<TimelineGridProps>(({
   return (
     <Container>
       <Graphics
-        draw={g => {
+        draw={(g) => {
           g.clear();
 
           // Draw major interval backgrounds first (for minutes)
@@ -77,7 +68,7 @@ export const TimelineGrid = memo<TimelineGridProps>(({
               const x = timeToX(time);
               const nextX = timeToX(time + 60);
               if (x >= 0 && x <= width) {
-                g.beginFill(0xFFFFFF, 0.01);
+                g.beginFill(0xffffff, 0.01);
                 g.drawRect(x, 0, nextX - x, height);
                 g.endFill();
               }
@@ -85,45 +76,31 @@ export const TimelineGrid = memo<TimelineGridProps>(({
           }
 
           // Draw vertical lines
-          timeMarks.forEach(time => {
+          timeMarks.forEach((time) => {
             const x = timeToX(time);
             if (x >= 0 && x <= width) {
               const isMinute = time % 60 === 0;
               const isHalfMinute = time % 30 === 0;
 
-              g.lineStyle(
-                isMinute ? 1 : 0.5,
-                0xFFFFFF,
-                isMinute ? interval.alpha * 1.5 :
-                  isHalfMinute ? interval.alpha * 1.2 :
-                    interval.alpha
-              );
+              g.lineStyle(isMinute ? 1 : 0.5, 0xffffff, isMinute ? interval.alpha * 1.5 : isHalfMinute ? interval.alpha * 1.2 : interval.alpha);
               g.moveTo(x, 0);
               g.lineTo(x, height);
             }
           });
         }}
       />
-      {showLabels && interval.showLabel && timeMarks.map(time => {
-        const x = timeToX(time);
-        const isMinute = time % 60 === 0;
-        if (isMinute && x >= 0 && x <= width) {
-          return (
-            <Text
-              key={time}
-              text={formatTime(time)}
-              style={labelStyle}
-              x={x + 4}
-              y={height / 2}
-              anchor={new PIXI.Point(0, 0.5)}
-              alpha={0.5}
-            />
-          );
-        }
-        return null;
-      })}
+      {showLabels &&
+        interval.showLabel &&
+        timeMarks.map((time) => {
+          const x = timeToX(time);
+          const isMinute = time % 60 === 0;
+          if (isMinute && x >= 0 && x <= width) {
+            return <Text key={time} text={formatTime(time)} style={labelStyle} x={x + 4} y={height / 2} anchor={new PIXI.Point(0, 0.5)} alpha={0.5} />;
+          }
+          return null;
+        })}
     </Container>
   );
 });
 
-TimelineGrid.displayName = 'TimelineGrid'; 
+TimelineGrid.displayName = 'TimelineGrid';

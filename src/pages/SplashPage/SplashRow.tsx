@@ -49,10 +49,7 @@ const SplashRow = ({
             </Typography>
             <Typography variant="body1">{content}</Typography>
             {button && (
-              <Button
-                variant="contained"
-                color="secondary"
-                sx={{marginTop: '32px'}}>
+              <Button variant="contained" color="secondary" sx={{marginTop: '32px'}}>
                 {button?.text}
               </Button>
             )}

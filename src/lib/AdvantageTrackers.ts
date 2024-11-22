@@ -1,4 +1,4 @@
-import { TimelineEvent, TeamAdvantageConfig } from './TeamAdvantageTracker';
+import {TimelineEvent, TeamAdvantageConfig} from './TeamAdvantageTracker';
 
 export const ultimateAdvantageConfig: TeamAdvantageConfig<string> = {
   getTeamNumber: (event, teams) => {
@@ -23,8 +23,8 @@ export const ultimateAdvantageConfig: TeamAdvantageConfig<string> = {
     team1Count: 'team1ChargedUltimateCount',
     team2Count: 'team2ChargedUltimateCount',
     advantageTeam: 'teamWithUltimateAdvantage',
-    advantageDiff: 'ultimateAdvantageDiff'
-  }
+    advantageDiff: 'ultimateAdvantageDiff',
+  },
 };
 
 export const playerAliveAdvantageConfig: TeamAdvantageConfig<string> = {
@@ -62,6 +62,6 @@ export const playerAliveAdvantageConfig: TeamAdvantageConfig<string> = {
     team1Count: 'team1AliveCount',
     team2Count: 'team2AliveCount',
     advantageTeam: 'teamWithAliveAdvantage',
-    advantageDiff: 'aliveAdvantageDiff'
-  }
-}; 
+    advantageDiff: 'aliveAdvantageDiff',
+  },
+};

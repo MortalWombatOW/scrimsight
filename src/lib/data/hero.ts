@@ -1,9 +1,6 @@
 import {heroNameToNormalized} from 'lib/string';
 
-export const getHeroImage = (heroName: string, rounded = true): string =>
-  `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(
-    heroName,
-  )}.png`;
+export const getHeroImage = (heroName: string, rounded = true): string => `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(heroName)}.png`;
 
 const heroToRole = {
   'D.Va': 'tank',
@@ -48,12 +45,10 @@ const heroToRole = {
   Illari: 'support',
 };
 
-export const heroToRoleTable = Object.entries(heroToRole).map(
-  ([hero, role]) => ({
-    hero,
-    role,
-  }),
-);
+export const heroToRoleTable = Object.entries(heroToRole).map(([hero, role]) => ({
+  hero,
+  role,
+}));
 
 export const getRoleFromHero = (hero: string): string => {
   return heroToRole[hero] || 'new hero alert??';

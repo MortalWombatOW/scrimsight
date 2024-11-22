@@ -7,61 +7,31 @@ export class TsBase64 {
   private static _cb_btou(cccc: string): string {
     switch (cccc.length) {
       case 4:
-        const cp =
-            ((0x07 & cccc.charCodeAt(0)) << 18) |
-            ((0x3f & cccc.charCodeAt(1)) << 12) |
-            ((0x3f & cccc.charCodeAt(2)) << 6) |
-            (0x3f & cccc.charCodeAt(3)),
+        const cp = ((0x07 & cccc.charCodeAt(0)) << 18) | ((0x3f & cccc.charCodeAt(1)) << 12) | ((0x3f & cccc.charCodeAt(2)) << 6) | (0x3f & cccc.charCodeAt(3)),
           offset = cp - 0x10000;
-        return (
-          String.fromCharCode((offset >>> 10) + 0xd800) +
-          String.fromCharCode((offset & 0x3ff) + 0xdc00)
-        );
+        return String.fromCharCode((offset >>> 10) + 0xd800) + String.fromCharCode((offset & 0x3ff) + 0xdc00);
       case 3:
-        return String.fromCharCode(
-          ((0x0f & cccc.charCodeAt(0)) << 12) |
-            ((0x3f & cccc.charCodeAt(1)) << 6) |
-            (0x3f & cccc.charCodeAt(2)),
-        );
+        return String.fromCharCode(((0x0f & cccc.charCodeAt(0)) << 12) | ((0x3f & cccc.charCodeAt(1)) << 6) | (0x3f & cccc.charCodeAt(2)));
       default:
-        return String.fromCharCode(
-          ((0x1f & cccc.charCodeAt(0)) << 6) | (0x3f & cccc.charCodeAt(1)),
-        );
+        return String.fromCharCode(((0x1f & cccc.charCodeAt(0)) << 6) | (0x3f & cccc.charCodeAt(1)));
     }
   }
 
   private static _cb_decode(cccc: string): string {
     const b64tab = {};
-    for (let i = 0, l = TsBase64._b64chars.length; i < l; i++)
-      b64tab[TsBase64._b64chars.charAt(i)] = i;
+    for (let i = 0, l = TsBase64._b64chars.length; i < l; i++) b64tab[TsBase64._b64chars.charAt(i)] = i;
     const len = cccc.length,
       padlen = len % 4,
-      n =
-        (len > 0 ? b64tab[cccc.charAt(0)] << 18 : 0) |
-        (len > 1 ? b64tab[cccc.charAt(1)] << 12 : 0) |
-        (len > 2 ? b64tab[cccc.charAt(2)] << 6 : 0) |
-        (len > 3 ? b64tab[cccc.charAt(3)] : 0),
-      chars = [
-        String.fromCharCode(n >>> 16),
-        String.fromCharCode((n >>> 8) & 0xff),
-        String.fromCharCode(n & 0xff),
-      ];
+      n = (len > 0 ? b64tab[cccc.charAt(0)] << 18 : 0) | (len > 1 ? b64tab[cccc.charAt(1)] << 12 : 0) | (len > 2 ? b64tab[cccc.charAt(2)] << 6 : 0) | (len > 3 ? b64tab[cccc.charAt(3)] : 0),
+      chars = [String.fromCharCode(n >>> 16), String.fromCharCode((n >>> 8) & 0xff), String.fromCharCode(n & 0xff)];
     chars.length -= [0, 0, 2, 1][padlen];
     return chars.join('');
   }
 
   private static _cb_encode(ccc): string {
     const padlen = [0, 2, 1][ccc.length % 3],
-      ord =
-        (ccc.charCodeAt(0) << 16) |
-        ((ccc.length > 1 ? ccc.charCodeAt(1) : 0) << 8) |
-        (ccc.length > 2 ? ccc.charCodeAt(2) : 0),
-      chars = [
-        TsBase64._b64chars.charAt(ord >>> 18),
-        TsBase64._b64chars.charAt((ord >>> 12) & 63),
-        padlen >= 2 ? '=' : TsBase64._b64chars.charAt((ord >>> 6) & 63),
-        padlen >= 1 ? '=' : TsBase64._b64chars.charAt(ord & 63),
-      ];
+      ord = (ccc.charCodeAt(0) << 16) | ((ccc.length > 1 ? ccc.charCodeAt(1) : 0) << 8) | (ccc.length > 2 ? ccc.charCodeAt(2) : 0),
+      chars = [TsBase64._b64chars.charAt(ord >>> 18), TsBase64._b64chars.charAt((ord >>> 12) & 63), padlen >= 2 ? '=' : TsBase64._b64chars.charAt((ord >>> 6) & 63), padlen >= 1 ? '=' : TsBase64._b64chars.charAt(ord & 63)];
     return chars.join('');
   }
 
@@ -71,34 +41,16 @@ export class TsBase64 {
       return cc < 0x80
         ? c
         : cc < 0x800
-        ? String.fromCharCode(0xc0 | (cc >>> 6)) +
-          String.fromCharCode(0x80 | (cc & 0x3f))
-        : String.fromCharCode(0xe0 | ((cc >>> 12) & 0x0f)) +
-          String.fromCharCode(0x80 | ((cc >>> 6) & 0x3f)) +
-          String.fromCharCode(0x80 | (cc & 0x3f));
+        ? String.fromCharCode(0xc0 | (cc >>> 6)) + String.fromCharCode(0x80 | (cc & 0x3f))
+        : String.fromCharCode(0xe0 | ((cc >>> 12) & 0x0f)) + String.fromCharCode(0x80 | ((cc >>> 6) & 0x3f)) + String.fromCharCode(0x80 | (cc & 0x3f));
     } else {
-      const cc =
-        0x10000 +
-        (c.charCodeAt(0) - 0xd800) * 0x400 +
-        (c.charCodeAt(1) - 0xdc00);
-      return (
-        String.fromCharCode(0xf0 | ((cc >>> 18) & 0x07)) +
-        String.fromCharCode(0x80 | ((cc >>> 12) & 0x3f)) +
-        String.fromCharCode(0x80 | ((cc >>> 6) & 0x3f)) +
-        String.fromCharCode(0x80 | (cc & 0x3f))
-      );
+      const cc = 0x10000 + (c.charCodeAt(0) - 0xd800) * 0x400 + (c.charCodeAt(1) - 0xdc00);
+      return String.fromCharCode(0xf0 | ((cc >>> 18) & 0x07)) + String.fromCharCode(0x80 | ((cc >>> 12) & 0x3f)) + String.fromCharCode(0x80 | ((cc >>> 6) & 0x3f)) + String.fromCharCode(0x80 | (cc & 0x3f));
     }
   }
 
   private static _re_btou(): RegExp {
-    return new RegExp(
-      [
-        '[\xC0-\xDF][\x80-\xBF]',
-        '[\xE0-\xEF][\x80-\xBF]{2}',
-        '[\xF0-\xF7][\x80-\xBF]{3}',
-      ].join('|'),
-      'g',
-    );
+    return new RegExp(['[\xC0-\xDF][\x80-\xBF]', '[\xE0-\xEF][\x80-\xBF]{2}', '[\xF0-\xF7][\x80-\xBF]{3}'].join('|'), 'g');
   }
 
   private static _atob(a: string): string {

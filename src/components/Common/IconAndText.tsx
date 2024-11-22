@@ -44,11 +44,7 @@ const IconAndText = ({
           maxWidth: 'fit-content',
         }}>
         {dynamic && icon}
-        {!dynamic && (
-          <Typography sx={{paddingLeft: 2, fontWeight: 'bold'}}>
-            {text}
-          </Typography>
-        )}
+        {!dynamic && <Typography sx={{paddingLeft: 2, fontWeight: 'bold'}}>{text}</Typography>}
       </Button>
       {dynamic && (
         <Popover

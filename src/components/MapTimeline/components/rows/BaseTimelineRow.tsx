@@ -1,8 +1,8 @@
-import React, { memo } from 'react';
-import { Container } from '@pixi/react';
-import { BaseTimelineRowProps } from '../../types/row.types';
-import { TimelineGrid } from '../TimelineGrid';
-import { LabelArea } from '../LabelArea';
+import React, {memo} from 'react';
+import {Container} from '@pixi/react';
+import {BaseTimelineRowProps} from '../../types/row.types';
+import {TimelineGrid} from '../TimelineGrid';
+import {LabelArea} from '../LabelArea';
 
 interface ExtendedBaseTimelineRowProps extends BaseTimelineRowProps {
   label: string;
@@ -11,19 +11,7 @@ interface ExtendedBaseTimelineRowProps extends BaseTimelineRowProps {
   showLabels?: boolean;
 }
 
-export const BaseTimelineRow = memo<ExtendedBaseTimelineRowProps>(({
-  width,
-  height,
-  y,
-  dimensions,
-  useWindowScale = true,
-  children,
-  label,
-  labelWidth,
-  onLabelWidthChange,
-  showLabels = false,
-  onDelete,
-}) => {
+export const BaseTimelineRow = memo<ExtendedBaseTimelineRowProps>(({width, height, y, dimensions, useWindowScale = true, children, label, labelWidth, onLabelWidthChange, showLabels = false, onDelete}) => {
   const timeToX = useWindowScale ? dimensions.timeToXWindow : dimensions.timeToX;
   const startTime = useWindowScale ? dimensions.windowStartTime : dimensions.mapStartTime;
   const endTime = useWindowScale ? dimensions.windowEndTime : dimensions.mapEndTime;
@@ -31,30 +19,14 @@ export const BaseTimelineRow = memo<ExtendedBaseTimelineRowProps>(({
 
   return (
     <Container y={y}>
-      <LabelArea
-        text={label}
-        width={labelWidth}
-        height={height}
-        onResize={onLabelWidthChange}
-        onDelete={onDelete}
-      />
+      <LabelArea text={label} width={labelWidth} height={height} onResize={onLabelWidthChange} onDelete={onDelete} />
 
       <Container x={labelWidth}>
-        <TimelineGrid
-          width={timelineWidth}
-          height={height}
-          timeToX={timeToX}
-          startTime={startTime}
-          endTime={endTime}
-          labelWidth={labelWidth}
-          showLabels={showLabels}
-        />
-        <Container>
-          {children}
-        </Container>
+        <TimelineGrid width={timelineWidth} height={height} timeToX={timeToX} startTime={startTime} endTime={endTime} labelWidth={labelWidth} showLabels={showLabels} />
+        <Container>{children}</Container>
       </Container>
     </Container>
   );
 });
 
-BaseTimelineRow.displayName = 'BaseTimelineRow'; 
+BaseTimelineRow.displayName = 'BaseTimelineRow';

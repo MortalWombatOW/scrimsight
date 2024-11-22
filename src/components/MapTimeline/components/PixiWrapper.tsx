@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stage, Container } from '@pixi/react';
+import {Stage, Container} from '@pixi/react';
 import * as PIXI from 'pixi.js';
 
 // Configure PIXI for better performance
@@ -12,9 +12,9 @@ interface PixiWrapperProps {
   children: React.ReactNode;
 }
 
-export const PixiWrapper: React.FC<PixiWrapperProps> = ({ width, height, children }) => {
+export const PixiWrapper: React.FC<PixiWrapperProps> = ({width, height, children}) => {
   return (
-    <div style={{ border: '1px solid #333' }}>
+    <div style={{border: '1px solid #333'}}>
       <Stage
         width={width}
         height={height}
@@ -23,12 +23,9 @@ export const PixiWrapper: React.FC<PixiWrapperProps> = ({ width, height, childre
           antialias: true,
           autoDensity: true,
           eventMode: 'passive',
-        }}
-      >
-        <Container>
-          {children}
-        </Container>
+        }}>
+        <Container>{children}</Container>
       </Stage>
     </div>
   );
-}; 
+};

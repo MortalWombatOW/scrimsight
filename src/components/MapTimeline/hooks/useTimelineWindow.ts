@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { throttle } from 'lodash';
+import {useState, useRef, useCallback, useEffect} from 'react';
+import {throttle} from 'lodash';
 
 interface UseTimelineWindowProps {
   windowStartTime: number;
@@ -11,15 +11,7 @@ interface UseTimelineWindowProps {
   xToTime: (x: number) => number;
 }
 
-export const useTimelineWindow = ({
-  windowStartTime,
-  windowEndTime,
-  mapStartTime,
-  mapEndTime,
-  setWindowStartTime,
-  setWindowEndTime,
-  xToTime,
-}: UseTimelineWindowProps) => {
+export const useTimelineWindow = ({windowStartTime, windowEndTime, mapStartTime, mapEndTime, setWindowStartTime, setWindowEndTime, xToTime}: UseTimelineWindowProps) => {
   const [dragging, setDragging] = useState<null | 'start' | 'end'>(null);
   const [innerWindowStartTime, setInnerWindowStartTime] = useState(windowStartTime);
   const [innerWindowEndTime, setInnerWindowEndTime] = useState(windowEndTime);
@@ -28,12 +20,12 @@ export const useTimelineWindow = ({
   // Throttled update functions
   const throttledSetWindowStart = useCallback(
     throttle((time: number) => setWindowStartTime(time), 100),
-    [setWindowStartTime]
+    [setWindowStartTime],
   );
 
   const throttledSetWindowEnd = useCallback(
     throttle((time: number) => setWindowEndTime(time), 100),
-    [setWindowEndTime]
+    [setWindowEndTime],
   );
 
   // Update inner state when props change
@@ -42,10 +34,13 @@ export const useTimelineWindow = ({
     setInnerWindowEndTime(windowEndTime);
   }, [windowStartTime, windowEndTime]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent, type: 'start' | 'end') => {
-    setDragging(type);
-    currentTime.current = type === 'start' ? windowStartTime : windowEndTime;
-  }, [windowStartTime, windowEndTime]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent, type: 'start' | 'end') => {
+      setDragging(type);
+      currentTime.current = type === 'start' ? windowStartTime : windowEndTime;
+    },
+    [windowStartTime, windowEndTime],
+  );
 
   const handleMouseUp = useCallback(() => {
     setDragging(null);
@@ -57,23 +52,26 @@ export const useTimelineWindow = ({
     }
   }, [dragging, innerWindowStartTime, innerWindowEndTime, setWindowStartTime, setWindowEndTime]);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!dragging) return;
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!dragging) return;
 
-    const newTime = xToTime(e.movementX);
+      const newTime = xToTime(e.movementX);
 
-    if (dragging === 'start') {
-      const nextTime = Math.round(Math.max(mapStartTime, Math.min(windowEndTime, currentTime.current + newTime)));
-      currentTime.current = nextTime;
-      setInnerWindowStartTime(nextTime);
-      throttledSetWindowStart(nextTime);
-    } else {
-      const nextTime = Math.round(Math.min(mapEndTime, Math.max(windowStartTime, currentTime.current + newTime)));
-      currentTime.current = nextTime;
-      setInnerWindowEndTime(nextTime);
-      throttledSetWindowEnd(nextTime);
-    }
-  }, [dragging, mapStartTime, mapEndTime, windowStartTime, windowEndTime, xToTime, throttledSetWindowStart, throttledSetWindowEnd]);
+      if (dragging === 'start') {
+        const nextTime = Math.round(Math.max(mapStartTime, Math.min(windowEndTime, currentTime.current + newTime)));
+        currentTime.current = nextTime;
+        setInnerWindowStartTime(nextTime);
+        throttledSetWindowStart(nextTime);
+      } else {
+        const nextTime = Math.round(Math.min(mapEndTime, Math.max(windowStartTime, currentTime.current + newTime)));
+        currentTime.current = nextTime;
+        setInnerWindowEndTime(nextTime);
+        throttledSetWindowEnd(nextTime);
+      }
+    },
+    [dragging, mapStartTime, mapEndTime, windowStartTime, windowEndTime, xToTime, throttledSetWindowStart, throttledSetWindowEnd],
+  );
 
   return {
     dragging,
@@ -83,4 +81,4 @@ export const useTimelineWindow = ({
     handleMouseUp,
     handleMouseMove,
   };
-}; 
+};

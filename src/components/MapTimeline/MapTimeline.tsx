@@ -1,22 +1,22 @@
-import React, { Suspense, useState, useCallback } from 'react';
-import { Container, Grid } from '@mui/material';
-import { useTimelineData } from './hooks/useTimelineData';
-import { useTimelineDimensions } from './hooks/useTimelineDimensions';
-import { MapTimelineProps, TimelineData } from './types/timeline.types';
-import { TimelineErrorBoundary } from './components/TimelineErrorBoundary';
-import { TimelineSkeleton } from './components/TimelineSkeleton';
-import { PixiWrapper } from './components/PixiWrapper';
-import { PixiTimeline } from './components/PixiTimeline';
-import { WindowHandle } from './styles/timeline.styles';
-import { useTimelineWindow } from './hooks/useTimelineWindow';
-import { TimelineRowConfig } from './types/row.types';
-import { PlayerTimelineRow } from './components/rows/PlayerTimelineRow';
-import { RoundTimelineRow } from './components/rows/RoundTimelineRow';
-import { UltimateAdvantageRow } from './components/rows/UltimateAdvantageRow';
-import { EventMapRow } from './components/rows/EventMapRow';
-import { HeaderRow } from './components/rows/HeaderRow';
-import { TimeLabelsRow } from './components/rows/TimeLabelsRow';
-import { TeamAdvantageRow } from './components/rows/TeamAdvantageRow';
+import React, {Suspense, useState, useCallback} from 'react';
+import {Container, Grid} from '@mui/material';
+import {useTimelineData} from './hooks/useTimelineData';
+import {useTimelineDimensions} from './hooks/useTimelineDimensions';
+import {MapTimelineProps, TimelineData} from './types/timeline.types';
+import {TimelineErrorBoundary} from './components/TimelineErrorBoundary';
+import {TimelineSkeleton} from './components/TimelineSkeleton';
+import {PixiWrapper} from './components/PixiWrapper';
+import {PixiTimeline} from './components/PixiTimeline';
+import {WindowHandle} from './styles/timeline.styles';
+import {useTimelineWindow} from './hooks/useTimelineWindow';
+import {TimelineRowConfig} from './types/row.types';
+import {PlayerTimelineRow} from './components/rows/PlayerTimelineRow';
+import {RoundTimelineRow} from './components/rows/RoundTimelineRow';
+import {UltimateAdvantageRow} from './components/rows/UltimateAdvantageRow';
+import {EventMapRow} from './components/rows/EventMapRow';
+import {HeaderRow} from './components/rows/HeaderRow';
+import {TimeLabelsRow} from './components/rows/TimeLabelsRow';
+import {TeamAdvantageRow} from './components/rows/TeamAdvantageRow';
 
 const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowConfig[] => {
   if (!timelineData) return [];
@@ -29,7 +29,7 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
     type: 'timeLabels',
     height: 20,
     useWindowScale: true,
-    data: { type: 'timeLabels' }
+    data: {type: 'timeLabels'},
   });
 
   // Team 1 header and players
@@ -39,8 +39,8 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
     height: 30,
     data: {
       type: 'header',
-      text: timelineData.team1Name
-    }
+      text: timelineData.team1Name,
+    },
   });
 
   // Team 1 players
@@ -54,7 +54,7 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
         type: 'player',
         playerName,
         team: 'team1',
-      }
+      },
     });
   });
 
@@ -65,8 +65,8 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
     height: 30,
     data: {
       type: 'header',
-      text: timelineData.team2Name
-    }
+      text: timelineData.team2Name,
+    },
   });
 
   // Team 2 players
@@ -80,7 +80,7 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
         type: 'player',
         playerName,
         team: 'team2',
-      }
+      },
     });
   });
 
@@ -91,7 +91,7 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
       type: 'round',
       height: 30,
       useWindowScale: false,
-      data: { type: 'round' }
+      data: {type: 'round'},
     },
     {
       id: 'ultimateAdvantage',
@@ -103,10 +103,10 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
         values: timelineData.ultimateAdvantageData,
         fieldNames: {
           team1Count: 'team1ChargedUltimateCount',
-          team2Count: 'team2ChargedUltimateCount'
+          team2Count: 'team2ChargedUltimateCount',
         },
-        label: 'Ultimate Advantage'
-      }
+        label: 'Ultimate Advantage',
+      },
     },
     {
       id: 'aliveAdvantage',
@@ -118,38 +118,35 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
         values: timelineData.aliveAdvantageData,
         fieldNames: {
           team1Count: 'team1AliveCount',
-          team2Count: 'team2AliveCount'
+          team2Count: 'team2AliveCount',
         },
-        label: 'Player Advantage'
-      }
+        label: 'Player Advantage',
+      },
     },
     {
       id: 'eventMap',
       type: 'eventMap',
       height: 10,
       useWindowScale: false,
-      data: { type: 'eventMap' }
+      data: {type: 'eventMap'},
     },
     {
       id: 'time-labels-bottom',
       type: 'timeLabels',
       height: 20,
       useWindowScale: false,
-      data: { type: 'timeLabels' }
-    }
+      data: {type: 'timeLabels'},
+    },
   );
 
   return configs;
 };
 
-const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
+const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
   const timelineData = useTimelineData(mapId);
-  const dimensions = useTimelineDimensions(
-    timelineData?.mapStartTime ?? 0,
-    timelineData?.mapEndTime ?? 100
-  );
+  const dimensions = useTimelineDimensions(timelineData?.mapStartTime ?? 0, timelineData?.mapEndTime ?? 100);
 
-  const { handleMouseDown, handleMouseUp, handleMouseMove } = useTimelineWindow({
+  const {handleMouseDown, handleMouseUp, handleMouseMove} = useTimelineWindow({
     windowStartTime: dimensions.windowStartTime,
     windowEndTime: dimensions.windowEndTime,
     mapStartTime: timelineData?.mapStartTime ?? 0,
@@ -170,7 +167,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
   }, [timelineData]);
 
   const handleDeleteRow = useCallback((id: string) => {
-    setRowConfigs(prev => prev.filter(config => config.id !== id));
+    setRowConfigs((prev) => prev.filter((config) => config.id !== id));
   }, []);
 
   // Calculate total height
@@ -188,17 +185,10 @@ const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
               <TimelineSkeleton />
             ) : (
               <Suspense fallback={<TimelineSkeleton />}>
-                <div
-                  style={{ position: 'relative' }}
-                  onMouseUp={handleMouseUp}
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseUp}
-                >
+                <div style={{position: 'relative'}} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp}>
                   <PixiWrapper width={dimensions.width || 0} height={totalHeight}>
                     {rowConfigs.map((config, index) => {
-                      const y = rowConfigs
-                        .slice(0, index)
-                        .reduce((sum, c) => sum + c.height, 0);
+                      const y = rowConfigs.slice(0, index).reduce((sum, c) => sum + c.height, 0);
 
                       const commonProps = {
                         width: dimensions.width || 0,
@@ -231,63 +221,24 @@ const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
                           );
 
                         case 'round':
-                          return (
-                            <RoundTimelineRow
-                              key={config.id}
-                              {...commonProps}
-                              label="Rounds"
-                              timelineData={timelineData}
-                              useWindowScale={config.useWindowScale}
-                            />
-                          );
+                          return <RoundTimelineRow key={config.id} {...commonProps} label="Rounds" timelineData={timelineData} useWindowScale={config.useWindowScale} />;
 
                         case 'teamAdvantage':
                           if (config.data.type !== 'teamAdvantage') break;
-                          return (
-                            <TeamAdvantageRow
-                              key={config.id}
-                              {...commonProps}
-                              data={config.data.values}
-                              fieldNames={config.data.fieldNames}
-                              label={config.data.label}
-                              useWindowScale={config.useWindowScale}
-                            />
-                          );
+                          return <TeamAdvantageRow key={config.id} {...commonProps} data={config.data.values} fieldNames={config.data.fieldNames} label={config.data.label} useWindowScale={config.useWindowScale} />;
 
                         case 'eventMap':
-                          return (
-                            <EventMapRow
-                              key={config.id}
-                              {...commonProps}
-                              label="Events"
-                              timelineData={timelineData}
-                              useWindowScale={config.useWindowScale}
-                            />
-                          );
+                          return <EventMapRow key={config.id} {...commonProps} label="Events" timelineData={timelineData} useWindowScale={config.useWindowScale} />;
 
                         case 'spacing':
                           return null;
 
                         case 'header':
                           if (config.data.type !== 'header') break;
-                          return (
-                            <HeaderRow
-                              key={config.id}
-                              {...commonProps}
-                              label={config.data.text}
-                              text={config.data.text}
-                            />
-                          );
+                          return <HeaderRow key={config.id} {...commonProps} label={config.data.text} text={config.data.text} />;
 
                         case 'timeLabels':
-                          return (
-                            <TimeLabelsRow
-                              key={config.id}
-                              {...commonProps}
-                              label=""
-                              useWindowScale={config.useWindowScale}
-                            />
-                          );
+                          return <TimeLabelsRow key={config.id} {...commonProps} label="" useWindowScale={config.useWindowScale} />;
 
                         default:
                           return null;
@@ -299,7 +250,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
                   <WindowHandle
                     style={{
                       left: `${dimensions.timeToX(dimensions.windowStartTime) * (timelineWidth / (dimensions.width || 1)) + labelWidth}px`,
-                      top: `${totalHeight - 80}px`
+                      top: `${totalHeight - 80}px`,
                     }}
                     onMouseDown={(e) => handleMouseDown(e, 'start')}>
                     {Math.round(dimensions.windowStartTime)}
@@ -307,7 +258,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({ mapId }) => {
                   <WindowHandle
                     style={{
                       left: `${dimensions.timeToX(dimensions.windowEndTime) * (timelineWidth / (dimensions.width || 1)) + labelWidth}px`,
-                      top: `${totalHeight - 80}px`
+                      top: `${totalHeight - 80}px`,
                     }}
                     onMouseDown={(e) => handleMouseDown(e, 'end')}>
                     {Math.round(dimensions.windowEndTime)}

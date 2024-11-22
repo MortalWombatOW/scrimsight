@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { styled } from '@mui/material';
+import React, {memo} from 'react';
+import {styled} from '@mui/material';
 
 interface UltimateAdvantageChartProps {
   width: number;
@@ -16,8 +16,8 @@ interface UltimateAdvantageChartProps {
   }[];
 }
 
-const ChartContainer = styled('div') <{ width: number }>`
-  width: ${props => props.width}px;
+const ChartContainer = styled('div')<{width: number}>`
+  width: ${(props) => props.width}px;
   height: 60px;
   position: relative;
   margin-top: 10px;
@@ -48,7 +48,7 @@ const Team2Bar = styled(BaseBar)`
 `;
 
 // Helper function to generate step path
-const generateStepPath = (points: { x: number; y: number }[]): string => {
+const generateStepPath = (points: {x: number; y: number}[]): string => {
   if (points.length < 2) return '';
 
   const path: string[] = [];
@@ -69,25 +69,17 @@ const generateStepPath = (points: { x: number; y: number }[]): string => {
   return path.join(' ');
 };
 
-export const UltimateAdvantageChart: React.FC<UltimateAdvantageChartProps> = memo(({
-  width,
-  timeToX,
-  windowStartTime,
-  windowEndTime,
-  ultimateAdvantageData
-}) => {
-  const maxUltCount = Math.max(
-    ...ultimateAdvantageData.map(d => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount))
-  );
+export const UltimateAdvantageChart: React.FC<UltimateAdvantageChartProps> = memo(({width, timeToX, windowStartTime, windowEndTime, ultimateAdvantageData}) => {
+  const maxUltCount = Math.max(...ultimateAdvantageData.map((d) => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)));
 
   const scale = 30 / maxUltCount;
 
   // Generate points for the advantage line
-  const points = ultimateAdvantageData.map(d => {
+  const points = ultimateAdvantageData.map((d) => {
     const x = timeToX(d.matchTime);
     const diff = d.team1ChargedUltimateCount - d.team2ChargedUltimateCount;
-    const y = 30 - (diff * scale);
-    return { x, y };
+    const y = 30 - diff * scale;
+    return {x, y};
   });
 
   const pathData = generateStepPath(points);
@@ -97,9 +89,7 @@ export const UltimateAdvantageChart: React.FC<UltimateAdvantageChartProps> = mem
       <CenterLine />
       {ultimateAdvantageData.map((d, i) => {
         const nextEvent = ultimateAdvantageData[i + 1];
-        const barWidth = nextEvent
-          ? timeToX(nextEvent.matchTime) - timeToX(d.matchTime)
-          : timeToX(windowEndTime) - timeToX(d.matchTime);
+        const barWidth = nextEvent ? timeToX(nextEvent.matchTime) - timeToX(d.matchTime) : timeToX(windowEndTime) - timeToX(d.matchTime);
 
         const barStyle = {
           left: timeToX(d.matchTime),
@@ -123,17 +113,11 @@ export const UltimateAdvantageChart: React.FC<UltimateAdvantageChartProps> = mem
           </React.Fragment>
         );
       })}
-      <svg width={width} height={60} style={{ position: 'absolute', top: 0 }}>
-        <path
-          d={pathData}
-          stroke="#fff"
-          strokeWidth={1}
-          fill="none"
-          opacity={0.8}
-        />
+      <svg width={width} height={60} style={{position: 'absolute', top: 0}}>
+        <path d={pathData} stroke="#fff" strokeWidth={1} fill="none" opacity={0.8} />
       </svg>
     </ChartContainer>
   );
 });
 
-UltimateAdvantageChart.displayName = 'UltimateAdvantageChart'; 
+UltimateAdvantageChart.displayName = 'UltimateAdvantageChart';

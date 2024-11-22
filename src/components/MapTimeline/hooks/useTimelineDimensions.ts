@@ -79,4 +79,4 @@ export const useTimelineDimensions = (mapStartTime: number, mapEndTime: number):
     xToTimeWindow,
     gridRef,
   };
-}; 
+};

@@ -10,13 +10,7 @@ interface RecentEventsProps {
 }
 
 export const RecentEvents: React.FC<RecentEventsProps> = memo(({events, windowStartTime, windowEndTime}) => {
-  const eventsToShow = useMemo(
-    () =>
-      events
-        .filter((event) => event.playerEventTime >= windowStartTime && event.playerEventTime <= windowEndTime)
-        .slice(0, 10),
-    [events, windowStartTime, windowEndTime]
-  );
+  const eventsToShow = useMemo(() => events.filter((event) => event.playerEventTime >= windowStartTime && event.playerEventTime <= windowEndTime).slice(0, 10), [events, windowStartTime, windowEndTime]);
 
   return (
     <RecentEventsContainer>
@@ -32,4 +26,4 @@ export const RecentEvents: React.FC<RecentEventsProps> = memo(({events, windowSt
   );
 });
 
-RecentEvents.displayName = 'RecentEvents'; 
+RecentEvents.displayName = 'RecentEvents';

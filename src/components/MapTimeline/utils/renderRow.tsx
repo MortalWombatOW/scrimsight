@@ -1,12 +1,12 @@
 import React from 'react';
-import { HeaderRowConfig, PlayerRowConfig, TimelineRowConfig } from '../types/row.types';
-import { PlayerTimelineRow } from '../components/rows/PlayerTimelineRow';
-import { RoundTimelineRow } from '../components/rows/RoundTimelineRow';
-import { UltimateAdvantageRow } from '../components/rows/UltimateAdvantageRow';
-import { EventMapRow } from '../components/rows/EventMapRow';
-import { HeaderRow } from '../components/rows/HeaderRow';
-import { TimeLabelsRow } from '../components/rows/TimeLabelsRow';
-import { TimelineData, TimelineDimensions } from '../types/timeline.types';
+import {HeaderRowConfig, PlayerRowConfig, TimelineRowConfig} from '../types/row.types';
+import {PlayerTimelineRow} from '../components/rows/PlayerTimelineRow';
+import {RoundTimelineRow} from '../components/rows/RoundTimelineRow';
+import {UltimateAdvantageRow} from '../components/rows/UltimateAdvantageRow';
+import {EventMapRow} from '../components/rows/EventMapRow';
+import {HeaderRow} from '../components/rows/HeaderRow';
+import {TimeLabelsRow} from '../components/rows/TimeLabelsRow';
+import {TimelineData, TimelineDimensions} from '../types/timeline.types';
 
 interface RenderTimelineRowProps {
   config: TimelineRowConfig;
@@ -19,16 +19,7 @@ interface RenderTimelineRowProps {
   handleDeleteRow: (id: string) => void;
 }
 
-export const renderTimelineRow = ({
-  config,
-  index,
-  configs,
-  timelineData,
-  dimensions,
-  labelWidth,
-  setLabelWidth,
-  handleDeleteRow,
-}: RenderTimelineRowProps) => {
+export const renderTimelineRow = ({config, index, configs, timelineData, dimensions, labelWidth, setLabelWidth, handleDeleteRow}: RenderTimelineRowProps) => {
   if (!timelineData) return null;
 
   const y = configs.slice(0, index).reduce((sum, prevConfig) => sum + prevConfig.height, 0);
@@ -64,26 +55,10 @@ export const renderTimelineRow = ({
       );
 
     case 'round':
-      return (
-        <RoundTimelineRow
-          key={config.id}
-          {...commonProps}
-          label="Rounds"
-          timelineData={timelineData}
-          useWindowScale={config.useWindowScale}
-        />
-      );
+      return <RoundTimelineRow key={config.id} {...commonProps} label="Rounds" timelineData={timelineData} useWindowScale={config.useWindowScale} />;
 
     case 'teamAdvantage':
-      return (
-        <UltimateAdvantageRow
-          key={config.id}
-          {...commonProps}
-          label="Ultimate Advantage"
-          timelineData={timelineData}
-          useWindowScale={config.useWindowScale}
-        />
-      );
+      return <UltimateAdvantageRow key={config.id} {...commonProps} label="Ultimate Advantage" timelineData={timelineData} useWindowScale={config.useWindowScale} />;
 
     case 'eventMap':
       return (
@@ -99,25 +74,12 @@ export const renderTimelineRow = ({
 
     case 'header':
       const headerRowConfig = config.data as HeaderRowConfig;
-      return (
-        <HeaderRow
-          key={config.id}
-          {...commonProps}
-          label={headerRowConfig.text}
-        />
-      );
+      return <HeaderRow key={config.id} {...commonProps} label={headerRowConfig.text} />;
 
     case 'timeLabels':
-      return (
-        <TimeLabelsRow
-          key={config.id}
-          {...commonProps}
-          label=""
-          useWindowScale={config.useWindowScale}
-        />
-      );
+      return <TimeLabelsRow key={config.id} {...commonProps} label="" useWindowScale={config.useWindowScale} />;
 
     default:
       return null;
   }
-}; 
+};

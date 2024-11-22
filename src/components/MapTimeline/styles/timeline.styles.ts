@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Grid } from '@mui/material';
+import {Grid} from '@mui/material';
 
 export const TimelineContainer = styled(Grid)`
   position: relative;
@@ -11,9 +11,9 @@ export const PlayerNameCell = styled(Grid)`
   padding-right: 16px;
 `;
 
-export const WindowHandle = styled('div')<{ left?: number }>`
+export const WindowHandle = styled('div')<{left?: number}>`
   position: absolute;
-  left: ${props => props.left !== undefined ? `${props.left}px` : 'auto'};
+  left: ${(props) => (props.left !== undefined ? `${props.left}px` : 'auto')};
   top: 20px;
   cursor: ew-resize;
   user-select: none;
@@ -43,4 +43,4 @@ export const EventsList = styled.ul`
 export const EventListItem = styled.li`
   margin: 8px 0;
   font-family: monospace;
-`; 
+`;

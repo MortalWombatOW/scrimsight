@@ -12,7 +12,6 @@ export const generateThemeColor = (base: string): MuiThemeColor => {
     main: alpha(base, 0.7),
     light: alpha(base, 0.9),
     dark: alpha(base, 0.5),
-    contrastText:
-      getContrastRatio(alpha(base, 0.7), '#000') >= 4.5 ? '#000' : '#fff',
+    contrastText: getContrastRatio(alpha(base, 0.7), '#000') >= 4.5 ? '#000' : '#fff',
   };
 };

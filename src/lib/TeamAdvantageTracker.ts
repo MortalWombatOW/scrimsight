@@ -27,23 +27,23 @@ export interface TeamAdvantageResult {
 
 export interface TeamAdvantageConfig<T> {
   // How to identify which team an event belongs to
-  getTeamNumber: (event: TimelineEvent, teams: {team1Name: string, team2Name: string}) => 1 | 2 | null;
-  
+  getTeamNumber: (event: TimelineEvent, teams: {team1Name: string; team2Name: string}) => 1 | 2 | null;
+
   // How to get a unique identifier for the tracked item
   getItemKey: (event: TimelineEvent) => T | null;
-  
+
   // Whether this event should add the item
   isAddEvent: (event: TimelineEvent) => boolean;
-  
+
   // Whether this event should remove the item
   isRemoveEvent: (event: TimelineEvent) => boolean;
-  
+
   // Whether this event should trigger a state reset
   isResetEvent: (event: TimelineEvent) => boolean;
-  
+
   // Whether to generate a data point before reset
   generatePreResetPoint: boolean;
-  
+
   // Whether to generate a data point after reset
   generatePostResetPoint: boolean;
 
@@ -51,14 +51,7 @@ export interface TeamAdvantageConfig<T> {
   fieldNames: TeamAdvantageFieldNames;
 }
 
-export function calculateAdvantage(
-  state: TeamAdvantageState<any>,
-  team1Name: string,
-  team2Name: string,
-  mapId: string,
-  matchTime: number,
-  fieldNames: TeamAdvantageFieldNames
-): TeamAdvantageResult {
+export function calculateAdvantage(state: TeamAdvantageState<any>, team1Name: string, team2Name: string, mapId: string, matchTime: number, fieldNames: TeamAdvantageFieldNames): TeamAdvantageResult {
   const team1Count = state.team1Items.size;
   const team2Count = state.team2Items.size;
   const advantageDiff = team1Count - team2Count;
@@ -70,23 +63,16 @@ export function calculateAdvantage(
     team2Name,
     [fieldNames.team1Count]: team1Count,
     [fieldNames.team2Count]: team2Count,
-    [fieldNames.advantageTeam]: 
-      advantageDiff > 0 ? team1Name :
-      advantageDiff < 0 ? team2Name : 
-      'None',
-    [fieldNames.advantageDiff]: Math.abs(advantageDiff)
+    [fieldNames.advantageTeam]: advantageDiff > 0 ? team1Name : advantageDiff < 0 ? team2Name : 'None',
+    [fieldNames.advantageDiff]: Math.abs(advantageDiff),
   };
 }
 
-export function processTeamAdvantageEvents<T>(
-  events: TimelineEvent[],
-  mapTeams: Map<string, {team1Name: string, team2Name: string}>,
-  config: TeamAdvantageConfig<T>
-): TeamAdvantageResult[] {
+export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams: Map<string, {team1Name: string; team2Name: string}>, config: TeamAdvantageConfig<T>): TeamAdvantageResult[] {
   const results: TeamAdvantageResult[] = [];
   const state: TeamAdvantageState<T> = {
     team1Items: new Set<T>(),
-    team2Items: new Set<T>()
+    team2Items: new Set<T>(),
   };
 
   // Group events by map
@@ -106,7 +92,7 @@ export function processTeamAdvantageEvents<T>(
 
     // Sort events by time
     const sortedEvents = mapEvents.sort((a, b) => a.matchTime - b.matchTime);
-    
+
     // Reset state at start of map
     state.team1Items.clear();
     state.team2Items.clear();
@@ -136,7 +122,7 @@ export function processTeamAdvantageEvents<T>(
 
       const teamNumber = config.getTeamNumber(event, teams);
       const itemKey = config.getItemKey(event);
-      
+
       if (teamNumber === null || itemKey === null) {
         continue;
       }
@@ -159,4 +145,4 @@ export function processTeamAdvantageEvents<T>(
   }
 
   return results.sort((a, b) => a.matchTime - b.matchTime);
-} 
+}

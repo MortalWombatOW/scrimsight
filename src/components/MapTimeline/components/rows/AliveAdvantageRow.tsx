@@ -1,8 +1,8 @@
-import React, { memo } from 'react';
-import { Graphics } from '@pixi/react';
+import React, {memo} from 'react';
+import {Graphics} from '@pixi/react';
 import * as PIXI from 'pixi.js';
-import { TimelineRowProps } from '../../types/row.types';
-import { BaseTimelineRow } from './BaseTimelineRow';
+import {TimelineRowProps} from '../../types/row.types';
+import {BaseTimelineRow} from './BaseTimelineRow';
 
 interface TeamBarParams {
   g: PIXI.Graphics;
@@ -15,42 +15,17 @@ interface TeamBarParams {
   isTopTeam: boolean;
 }
 
-const drawTeamBar = ({
-  g,
-  x,
-  barWidth,
-  count,
-  scale,
-  centerY,
-  color,
-  isTopTeam
-}: TeamBarParams) => {
+const drawTeamBar = ({g, x, barWidth, count, scale, centerY, color, isTopTeam}: TeamBarParams) => {
   if (count > 0 && barWidth > 0) {
     const height = count * scale;
     g.beginFill(color, 0.6);
     g.lineStyle(0);
-    g.drawRect(
-      x,
-      isTopTeam ? centerY - height : centerY,
-      barWidth,
-      height
-    );
+    g.drawRect(x, isTopTeam ? centerY - height : centerY, barWidth, height);
     g.endFill();
   }
 };
 
-export const AliveAdvantageRow = memo<TimelineRowProps>(({
-  width,
-  height,
-  y,
-  timelineData,
-  dimensions,
-  useWindowScale = false,
-  label = 'Player Advantage',
-  labelWidth,
-  onLabelWidthChange,
-  onDelete
-}) => {
+export const AliveAdvantageRow = memo<TimelineRowProps>(({width, height, y, timelineData, dimensions, useWindowScale = false, label = 'Player Advantage', labelWidth, onLabelWidthChange, onDelete}) => {
   if (!dimensions || !timelineData?.aliveAdvantageData) return null;
 
   const timeToX = useWindowScale ? dimensions.timeToXWindow : dimensions.timeToX;
@@ -59,19 +34,9 @@ export const AliveAdvantageRow = memo<TimelineRowProps>(({
   const centerY = height / 2;
 
   return (
-    <BaseTimelineRow
-      width={width}
-      height={height}
-      y={y}
-      dimensions={dimensions}
-      useWindowScale={useWindowScale}
-      label={label}
-      labelWidth={labelWidth}
-      onLabelWidthChange={onLabelWidthChange}
-      onDelete={onDelete}
-    >
+    <BaseTimelineRow width={width} height={height} y={y} dimensions={dimensions} useWindowScale={useWindowScale} label={label} labelWidth={labelWidth} onLabelWidthChange={onLabelWidthChange} onDelete={onDelete}>
       <Graphics
-        draw={g => {
+        draw={(g) => {
           g.clear();
 
           // Draw center line
@@ -96,7 +61,7 @@ export const AliveAdvantageRow = memo<TimelineRowProps>(({
                 scale,
                 centerY,
                 color: 0x4caf50,
-                isTopTeam: true
+                isTopTeam: true,
               });
 
               // Draw team 2 bar (bottom)
@@ -108,26 +73,26 @@ export const AliveAdvantageRow = memo<TimelineRowProps>(({
                 scale,
                 centerY,
                 color: 0xf44336,
-                isTopTeam: false
+                isTopTeam: false,
               });
             }
           });
 
           // Draw advantage step line
-          g.lineStyle(1, 0xFFFFFF, 1);
+          g.lineStyle(1, 0xffffff, 1);
           let lastY: number | null = null;
           let lastX: number | null = null;
 
           timelineData.aliveAdvantageData.forEach((d, i) => {
             const x = timeToX(d.matchTime);
             const diff = d.team1AliveCount - d.team2AliveCount;
-            const y = centerY - (diff * scale / 2);
+            const y = centerY - (diff * scale) / 2;
 
             if (i === 0) {
               g.moveTo(x, y);
             } else if (lastY !== null && lastX !== null) {
-              g.lineTo(x, lastY);  // Horizontal line to new x
-              g.lineTo(x, y);      // Vertical line to new y
+              g.lineTo(x, lastY); // Horizontal line to new x
+              g.lineTo(x, y); // Vertical line to new y
             }
 
             lastX = x;
@@ -147,4 +112,4 @@ export const AliveAdvantageRow = memo<TimelineRowProps>(({
   );
 });
 
-AliveAdvantageRow.displayName = 'AliveAdvantageRow'; 
+AliveAdvantageRow.displayName = 'AliveAdvantageRow';

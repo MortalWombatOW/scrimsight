@@ -2,24 +2,12 @@ import {ThemeOptions} from '@mui/material/styles';
 import {generateThemeColor} from './lib/palette';
 import {heroColors} from './lib/color';
 
-const heroColorsTheme = Object.entries(heroColors).reduce(
-  (acc, [key, value]) => {
-    acc[key] = generateThemeColor(value);
-    return acc;
-  },
-  {},
-);
+const heroColorsTheme = Object.entries(heroColors).reduce((acc, [key, value]) => {
+  acc[key] = generateThemeColor(value);
+  return acc;
+}, {});
 
-export type ColorKey =
-  | keyof typeof heroColors
-  | 'team1'
-  | 'team2'
-  | 'primary'
-  | 'secondary'
-  | 'info'
-  | 'warning'
-  | 'error'
-  | 'success';
+export type ColorKey = keyof typeof heroColors | 'team1' | 'team2' | 'primary' | 'secondary' | 'info' | 'warning' | 'error' | 'success';
 
 export const themeDef: ThemeOptions = {
   palette: {

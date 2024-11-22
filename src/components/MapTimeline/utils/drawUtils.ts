@@ -1,21 +1,13 @@
 import * as PIXI from 'pixi.js';
-import { EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR, COLORS } from '../constants/timeline.constants';
+import {EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR, COLORS} from '../constants/timeline.constants';
 
 const parseColor = (colorStr: string) => parseInt(colorStr.replace('#', '0x'));
 
-export const drawPlayerRow = (
-  g: PIXI.Graphics,
-  events: any[],
-  interactionEvents: any[],
-  ultimateEvents: any[],
-  timeToX: (t: number) => number,
-  centerY: number,
-  timelineWidth: number
-) => {
+export const drawPlayerRow = (g: PIXI.Graphics, events: any[], interactionEvents: any[], ultimateEvents: any[], timeToX: (t: number) => number, centerY: number, timelineWidth: number) => {
   g.clear();
 
   // Draw ultimate bars first (background)
-  ultimateEvents.forEach(event => {
+  ultimateEvents.forEach((event) => {
     const startX = timeToX(event.ultimateChargedTime);
     const endX = timeToX(event.ultimateEndTime);
     const width = Math.min(endX - startX, timelineWidth - startX);
@@ -38,7 +30,7 @@ export const drawPlayerRow = (
   });
 
   // Draw regular events
-  events.forEach(event => {
+  events.forEach((event) => {
     const x = timeToX(event.playerEventTime);
     if (x >= 0 && x <= timelineWidth) {
       const colorConfig = EVENT_TYPE_TO_COLOR[event.playerEventType];
@@ -50,7 +42,7 @@ export const drawPlayerRow = (
   });
 
   // Draw interaction events
-  interactionEvents.forEach(event => {
+  interactionEvents.forEach((event) => {
     const x = timeToX(event.playerInteractionEventTime);
     if (x >= 0 && x <= timelineWidth) {
       const colorConfig = INTERACTION_EVENT_TYPE_TO_COLOR[event.playerInteractionEventType];
@@ -62,4 +54,4 @@ export const drawPlayerRow = (
   });
 
   g.endFill();
-}; 
+};

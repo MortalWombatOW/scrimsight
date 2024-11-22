@@ -1,8 +1,8 @@
-import React, { memo } from 'react';
-import { Graphics } from '@pixi/react';
+import React, {memo} from 'react';
+import {Graphics} from '@pixi/react';
 import * as PIXI from 'pixi.js';
-import { TimelineRowProps } from '../../types/row.types';
-import { BaseTimelineRow } from './BaseTimelineRow';
+import {TimelineRowProps} from '../../types/row.types';
+import {BaseTimelineRow} from './BaseTimelineRow';
 
 interface TeamBarParams {
   g: PIXI.Graphics;
@@ -15,67 +15,28 @@ interface TeamBarParams {
   isTopTeam: boolean;
 }
 
-const drawTeamBar = ({
-  g,
-  x,
-  barWidth,
-  count,
-  scale,
-  centerY,
-  color,
-  isTopTeam
-}: TeamBarParams) => {
+const drawTeamBar = ({g, x, barWidth, count, scale, centerY, color, isTopTeam}: TeamBarParams) => {
   if (count > 0 && barWidth > 0) {
     const height = count * scale;
     g.beginFill(color, 0.6);
     g.lineStyle(0);
-    g.drawRect(
-      x,
-      isTopTeam ? centerY - height : centerY,
-      barWidth,
-      height
-    );
+    g.drawRect(x, isTopTeam ? centerY - height : centerY, barWidth, height);
     g.endFill();
   }
 };
 
-export const UltimateAdvantageRow = memo<TimelineRowProps>(({
-  width,
-  height,
-  y,
-  timelineData,
-  dimensions,
-  useWindowScale = false,
-  label = 'Ultimate Advantage',
-  labelWidth,
-  onLabelWidthChange,
-  onDelete
-}) => {
+export const UltimateAdvantageRow = memo<TimelineRowProps>(({width, height, y, timelineData, dimensions, useWindowScale = false, label = 'Ultimate Advantage', labelWidth, onLabelWidthChange, onDelete}) => {
   if (!dimensions || !timelineData) return null;
 
   const timeToX = useWindowScale ? dimensions.timeToXWindow : dimensions.timeToX;
-  const maxUltCount = Math.max(
-    ...timelineData.ultimateAdvantageData.map(d =>
-      Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)
-    )
-  );
+  const maxUltCount = Math.max(...timelineData.ultimateAdvantageData.map((d) => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)));
   const scale = height / (2 * maxUltCount);
   const centerY = height / 2;
 
   return (
-    <BaseTimelineRow
-      width={width}
-      height={height}
-      y={y}
-      dimensions={dimensions}
-      useWindowScale={useWindowScale}
-      label={label}
-      labelWidth={labelWidth}
-      onLabelWidthChange={onLabelWidthChange}
-      onDelete={onDelete}
-    >
+    <BaseTimelineRow width={width} height={height} y={y} dimensions={dimensions} useWindowScale={useWindowScale} label={label} labelWidth={labelWidth} onLabelWidthChange={onLabelWidthChange} onDelete={onDelete}>
       <Graphics
-        draw={g => {
+        draw={(g) => {
           g.clear();
 
           // Draw center line
@@ -100,7 +61,7 @@ export const UltimateAdvantageRow = memo<TimelineRowProps>(({
                 scale,
                 centerY,
                 color: 0x4caf50,
-                isTopTeam: true
+                isTopTeam: true,
               });
 
               // Draw team 2 bar (bottom)
@@ -112,28 +73,28 @@ export const UltimateAdvantageRow = memo<TimelineRowProps>(({
                 scale,
                 centerY,
                 color: 0xf44336,
-                isTopTeam: false
+                isTopTeam: false,
               });
             }
           });
 
           // Draw advantage step line
-          g.lineStyle(1, 0xFFFFFF, 1);
+          g.lineStyle(1, 0xffffff, 1);
           let lastY: number | null = null;
           let lastX: number | null = null;
 
           timelineData.ultimateAdvantageData.forEach((d, i) => {
             const x = timeToX(d.matchTime);
             const diff = d.team1ChargedUltimateCount - d.team2ChargedUltimateCount;
-            const y = centerY - (diff * scale / 2);
+            const y = centerY - (diff * scale) / 2;
 
             if (i === 0) {
               // First point
               g.moveTo(x, y);
             } else if (lastY !== null && lastX !== null) {
               // Draw vertical line at current x from last y to new y
-              g.lineTo(x, lastY);  // Horizontal line to new x
-              g.lineTo(x, y);      // Vertical line to new y
+              g.lineTo(x, lastY); // Horizontal line to new x
+              g.lineTo(x, y); // Vertical line to new y
             }
 
             // Store last positions
@@ -144,7 +105,8 @@ export const UltimateAdvantageRow = memo<TimelineRowProps>(({
             const nextEvent = timelineData.ultimateAdvantageData[i + 1];
             if (nextEvent) {
               const nextX = timeToX(nextEvent.matchTime);
-              if (nextX > x) {  // Only draw if next x is greater
+              if (nextX > x) {
+                // Only draw if next x is greater
                 g.lineTo(nextX, y);
               }
             }
@@ -155,4 +117,4 @@ export const UltimateAdvantageRow = memo<TimelineRowProps>(({
   );
 });
 
-UltimateAdvantageRow.displayName = 'UltimateAdvantageRow'; 
+UltimateAdvantageRow.displayName = 'UltimateAdvantageRow';

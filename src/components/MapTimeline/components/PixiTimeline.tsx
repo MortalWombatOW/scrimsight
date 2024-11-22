@@ -1,8 +1,8 @@
-import React, { memo } from 'react';
-import { Container, Text, Graphics } from '@pixi/react';
+import React, {memo} from 'react';
+import {Container, Text, Graphics} from '@pixi/react';
 import * as PIXI from 'pixi.js';
-import { TimelineData, TimelineDimensions } from '../types/timeline.types';
-import { EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR, COLORS } from '../constants/timeline.constants';
+import {TimelineData, TimelineDimensions} from '../types/timeline.types';
+import {EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR, COLORS} from '../constants/timeline.constants';
 
 interface PixiTimelineProps {
   width: number;
@@ -17,7 +17,7 @@ const drawPlayerRow = (g: PIXI.Graphics, events: any[], interactionEvents: any[]
   g.clear();
 
   // Draw ultimate bars first (background)
-  ultimateEvents.forEach(event => {
+  ultimateEvents.forEach((event) => {
     const startX = timeToX(event.ultimateChargedTime);
     const endX = timeToX(event.ultimateEndTime);
     const width = endX - startX;
@@ -36,7 +36,7 @@ const drawPlayerRow = (g: PIXI.Graphics, events: any[], interactionEvents: any[]
   });
 
   // Draw regular events
-  events.forEach(event => {
+  events.forEach((event) => {
     const colorConfig = EVENT_TYPE_TO_COLOR[event.playerEventType];
     if (colorConfig) {
       const x = timeToX(event.playerEventTime);
@@ -46,7 +46,7 @@ const drawPlayerRow = (g: PIXI.Graphics, events: any[], interactionEvents: any[]
   });
 
   // Draw interaction events
-  interactionEvents.forEach(event => {
+  interactionEvents.forEach((event) => {
     const colorConfig = INTERACTION_EVENT_TYPE_TO_COLOR[event.playerInteractionEventType];
     if (colorConfig) {
       const x = timeToX(event.playerInteractionEventTime);
@@ -59,9 +59,7 @@ const drawPlayerRow = (g: PIXI.Graphics, events: any[], interactionEvents: any[]
 };
 
 const drawUltimateAdvantageChart = (g: PIXI.Graphics, data: any[], timeToX: (t: number) => number, width: number) => {
-  const maxUltCount = Math.max(
-    ...data.map(d => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount))
-  );
+  const maxUltCount = Math.max(...data.map((d) => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)));
   const scale = 30 / maxUltCount;
 
   g.clear();
@@ -88,11 +86,11 @@ const drawUltimateAdvantageChart = (g: PIXI.Graphics, data: any[], timeToX: (t: 
   g.endFill();
 
   // Draw advantage line
-  g.lineStyle(2, 0xFFFFFF, 0.8);
+  g.lineStyle(2, 0xffffff, 0.8);
   data.forEach((d, i) => {
     const x = timeToX(d.matchTime);
     const diff = d.team1ChargedUltimateCount - d.team2ChargedUltimateCount;
-    const y = 30 - (diff * scale);
+    const y = 30 - diff * scale;
 
     if (i === 0) {
       g.moveTo(x, y);
@@ -122,12 +120,7 @@ const roundLabelStyle = new PIXI.TextStyle({
   align: 'center',
 });
 
-export const PixiTimeline = memo<PixiTimelineProps>(({
-  width,
-  height,
-  timelineData,
-  dimensions
-}) => {
+export const PixiTimeline = memo<PixiTimelineProps>(({width, height, timelineData, dimensions}) => {
   const rowHeight = 20;
   const labelWidth = 150;
   const team1PlayerCount = Object.keys(timelineData.team1EventsByPlayer).length;
@@ -138,40 +131,23 @@ export const PixiTimeline = memo<PixiTimelineProps>(({
   // Calculate section heights
   const team1Height = team1PlayerCount * rowHeight;
   const team2Height = team2PlayerCount * rowHeight;
-  const totalContentHeight = team1Height + team2Height + xAxisHeight + (padding * 2); // Add padding
+  const totalContentHeight = team1Height + team2Height + xAxisHeight + padding * 2; // Add padding
 
   return (
     <Container>
       {/* Team 1 Section */}
       <Container y={0}>
         {/* Team 1 Header */}
-        <Text
-          text={timelineData.team1Name}
-          style={headerStyle}
-          x={5}
-          y={0}
-        />
+        <Text text={timelineData.team1Name} style={headerStyle} x={5} y={0} />
 
         {/* Team 1 Rows */}
         <Container y={30}>
           {Object.entries(timelineData.team1EventsByPlayer).map(([playerName, events], index) => (
             <Container key={`team1-${playerName}`} y={index * rowHeight}>
-              <Text
-                text={playerName}
-                style={textStyle}
-                x={5}
-                y={0}
-              />
+              <Text text={playerName} style={textStyle} x={5} y={0} />
               <Graphics
                 x={labelWidth}
-                draw={g => drawPlayerRow(
-                  g,
-                  events,
-                  timelineData.team1InteractionEventsByPlayer[playerName] || [],
-                  timelineData.team1UltimateEventsByPlayer[playerName] || [],
-                  dimensions.timeToXWindow,
-                  rowHeight / 2
-                )}
+                draw={(g) => drawPlayerRow(g, events, timelineData.team1InteractionEventsByPlayer[playerName] || [], timelineData.team1UltimateEventsByPlayer[playerName] || [], dimensions.timeToXWindow, rowHeight / 2)}
               />
             </Container>
           ))}
@@ -181,33 +157,16 @@ export const PixiTimeline = memo<PixiTimelineProps>(({
       {/* Team 2 Section */}
       <Container y={team1Height + padding}>
         {/* Team 2 Header */}
-        <Text
-          text={timelineData.team2Name}
-          style={headerStyle}
-          x={5}
-          y={0}
-        />
+        <Text text={timelineData.team2Name} style={headerStyle} x={5} y={0} />
 
         {/* Team 2 Rows */}
         <Container y={30}>
           {Object.entries(timelineData.team2EventsByPlayer).map(([playerName, events], index) => (
             <Container key={`team2-${playerName}`} y={index * rowHeight}>
-              <Text
-                text={playerName}
-                style={textStyle}
-                x={5}
-                y={0}
-              />
+              <Text text={playerName} style={textStyle} x={5} y={0} />
               <Graphics
                 x={labelWidth}
-                draw={g => drawPlayerRow(
-                  g,
-                  events,
-                  timelineData.team2InteractionEventsByPlayer[playerName] || [],
-                  timelineData.team2UltimateEventsByPlayer[playerName] || [],
-                  dimensions.timeToXWindow,
-                  rowHeight / 2
-                )}
+                draw={(g) => drawPlayerRow(g, events, timelineData.team2InteractionEventsByPlayer[playerName] || [], timelineData.team2UltimateEventsByPlayer[playerName] || [], dimensions.timeToXWindow, rowHeight / 2)}
               />
             </Container>
           ))}
@@ -215,57 +174,37 @@ export const PixiTimeline = memo<PixiTimelineProps>(({
       </Container>
 
       {/* X-Axis Section */}
-      <Container y={team1Height + team2Height + (padding * 2)}>
+      <Container y={team1Height + team2Height + padding * 2}>
         {/* Round sections */}
         <Graphics
-          draw={g => {
+          draw={(g) => {
             g.clear();
-            timelineData.roundTimes.forEach(round => {
+            timelineData.roundTimes.forEach((round) => {
               // Setup section
               g.beginFill(0x882222, 0.3);
-              g.drawRect(
-                dimensions.timeToX(round.roundStartTime),
-                0,
-                dimensions.timeToX(round.roundSetupCompleteTime) - dimensions.timeToX(round.roundStartTime),
-                10
-              );
+              g.drawRect(dimensions.timeToX(round.roundStartTime), 0, dimensions.timeToX(round.roundSetupCompleteTime) - dimensions.timeToX(round.roundStartTime), 10);
               // Active section
-              g.beginFill(0x4CAF50, 0.3);
-              g.drawRect(
-                dimensions.timeToX(round.roundSetupCompleteTime),
-                0,
-                dimensions.timeToX(round.roundEndTime) - dimensions.timeToX(round.roundSetupCompleteTime),
-                10
-              );
+              g.beginFill(0x4caf50, 0.3);
+              g.drawRect(dimensions.timeToX(round.roundSetupCompleteTime), 0, dimensions.timeToX(round.roundEndTime) - dimensions.timeToX(round.roundSetupCompleteTime), 10);
             });
           }}
         />
 
         {/* Round labels */}
         {timelineData.roundTimes.map((round, index) => (
-          <Text
-            key={`round-${index}`}
-            text={`Round ${index + 1}`}
-            style={roundLabelStyle}
-            x={dimensions.timeToX(round.roundStartTime)}
-            y={12}
-            anchor={new PIXI.Point(0.5, 0)}
-          />
+          <Text key={`round-${index}`} text={`Round ${index + 1}`} style={roundLabelStyle} x={dimensions.timeToX(round.roundStartTime)} y={12} anchor={new PIXI.Point(0.5, 0)} />
         ))}
 
         {/* Ultimate advantage chart */}
-        <Graphics
-          y={30}
-          draw={g => drawUltimateAdvantageChart(g, timelineData.ultimateAdvantageData, dimensions.timeToX, width)}
-        />
+        <Graphics y={30} draw={(g) => drawUltimateAdvantageChart(g, timelineData.ultimateAdvantageData, dimensions.timeToX, width)} />
 
         {/* Event markers */}
         <Graphics
           y={90}
-          draw={g => {
+          draw={(g) => {
             g.clear();
-            g.beginFill(0xFFFFFF, 0.2);
-            timelineData.eventTimes.forEach(time => {
+            g.beginFill(0xffffff, 0.2);
+            timelineData.eventTimes.forEach((time) => {
               g.drawRect(dimensions.timeToX(time), 0, 1, 10);
             });
             g.endFill();
@@ -276,4 +215,4 @@ export const PixiTimeline = memo<PixiTimelineProps>(({
   );
 });
 
-PixiTimeline.displayName = 'PixiTimeline'; 
+PixiTimeline.displayName = 'PixiTimeline';

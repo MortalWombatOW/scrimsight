@@ -12,8 +12,7 @@ import Header from './components/Header/Header';
 import { getColorgorical } from './lib/color';
 import { generateThemeColor } from './lib/palette';
 import { useDeepMemo } from './hooks/useDeepEffect';
-import { DATA_COLUMNS, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES, FILE_PARSING_NODES, indexedDbNode, } from './WombatDataFrameworkSchema';
-
+import { DATA_COLUMNS, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES, FILE_PARSING_NODES, indexedDbNode } from './WombatDataFrameworkSchema';
 
 const ContextualizedRoute = ({ route }: { route: ScrimsightRoute }): JSX.Element => {
   let el: JSX.Element = React.createElement(route.component, {});
@@ -38,9 +37,7 @@ function ThemedRoutes(props) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Header />
-      <Routes>
-        {routes.map((route) => route.path.map((path, i) => <Route key={path} path={path} index={(i === (0 as unknown)) as false} element={<ContextualizedRoute route={route} />} />))}
-      </Routes>
+      <Routes>{routes.map((route) => route.path.map((path, i) => <Route key={path} path={path} index={(i === (0 as unknown)) as false} element={<ContextualizedRoute route={route} />} />))}</Routes>
     </ThemeProvider>
   );
 }
@@ -49,9 +46,11 @@ const App = () => {
   const [tick, setTick] = React.useState(0);
   const incrementTick = () => {
     setTick((tick) => {
-      return tick + 1
+      return tick + 1;
     });
   };
+
+  console.log('Rendering App');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>

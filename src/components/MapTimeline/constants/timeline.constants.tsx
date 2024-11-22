@@ -9,20 +9,20 @@ import GhostAllyIcon from '../../Icons/GhostAllyIcon';
 export const COLORS = {
   ultimate: {
     color: '#42c2f5',
-    alpha: 0.5
+    alpha: 0.5,
   },
   kill: {
     color: '#f44336',
-    alpha: 0.5
+    alpha: 0.5,
   },
   spawn: {
     color: '#4caf50',
-    alpha: 0.5
+    alpha: 0.5,
   },
   assist: {
     color: '#009688',
-    alpha: 0.5
-  }
+    alpha: 0.5,
+  },
 } as const;
 
 export const INTERACTION_EVENT_TYPE_TO_ICON = {
@@ -73,4 +73,4 @@ export const phaseStyle = new PIXI.TextStyle({
   fontSize: 10,
   fill: '#ffffff',
   align: 'center',
-}); 
+});

@@ -1,13 +1,4 @@
-import {
-  Card,
-  CardActionArea,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Box,
-  Typography,
-  Button,
-} from '@mui/material';
+import {Card, CardActionArea, CardActions, CardContent, CardMedia, Box, Typography, Button} from '@mui/material';
 import React from 'react';
 
 const ImageCard = ({
@@ -59,8 +50,7 @@ const ImageCard = ({
             variant="h1"
             style={{
               textShadow: '0 0 10px rgba(0, 0, 0, 1)',
-            }}
-            >
+            }}>
             {titleText}
           </Typography>
           <Typography

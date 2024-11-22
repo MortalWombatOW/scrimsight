@@ -1,18 +1,8 @@
-import React, { memo } from 'react';
-import { BaseTimelineRow } from './BaseTimelineRow';
-import { BaseTimelineRowProps } from '../../types/row.types';
+import React, {memo} from 'react';
+import {BaseTimelineRow} from './BaseTimelineRow';
+import {BaseTimelineRowProps} from '../../types/row.types';
 
-export const TimeLabelsRow = memo<BaseTimelineRowProps>(({
-  width,
-  height,
-  y,
-  dimensions,
-  useWindowScale = false,
-  label = '',
-  labelWidth,
-  onLabelWidthChange,
-  onDelete
-}) => {
+export const TimeLabelsRow = memo<BaseTimelineRowProps>(({width, height, y, dimensions, useWindowScale = false, label = '', labelWidth, onLabelWidthChange, onDelete}) => {
   return (
     <BaseTimelineRow
       width={width}
@@ -29,4 +19,4 @@ export const TimeLabelsRow = memo<BaseTimelineRowProps>(({
   );
 });
 
-TimeLabelsRow.displayName = 'TimeLabelsRow'; 
+TimeLabelsRow.displayName = 'TimeLabelsRow';

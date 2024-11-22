@@ -1,5 +1,5 @@
 import React from 'react';
-import { useWombatDataManager } from 'wombat-data-framework';
+import {useWombatDataManager} from 'wombat-data-framework';
 
 const useUniqueValuesForColumn = (columnName: string): string[] => {
   const dataManager = useWombatDataManager();

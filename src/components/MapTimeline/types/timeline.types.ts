@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import {ReactNode} from 'react';
 
 export interface MatchStart {
   mapId: number;
@@ -159,4 +159,4 @@ export interface PixiMapTimelineProps {
   height: number;
   timelineData: TimelineData;
   dimensions: TimelineDimensions;
-} 
+}

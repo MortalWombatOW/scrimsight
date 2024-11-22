@@ -1,25 +1,12 @@
-import { useMemo } from 'react';
-import { useWombatDataManager, useWombatDataNode } from 'wombat-data-framework';
-import {
-  MatchStart,
-  MapTimes,
-  PlayerEvent,
-  PlayerInteractionEvent,
-  UltimateEvent,
-  RoundTimes,
-  UltimateAdvantageData,
-  TimelineData,
-} from '../types/timeline.types';
-
-
+import {useMemo} from 'react';
+import {useWombatDataManager, useWombatDataNode} from 'wombat-data-framework';
+import {MatchStart, MapTimes, PlayerEvent, PlayerInteractionEvent, UltimateEvent, RoundTimes, UltimateAdvantageData, TimelineData} from '../types/timeline.types';
 
 export const useTimelineData = (mapId: number): TimelineData | null => {
   const dataManager = useWombatDataManager();
   const tick = dataManager.getTick();
 
-
   console.log('Fetching data for mapId:', mapId, 'tick:', tick);
-
 
   const [matchStartNode] = useWombatDataNode('match_start_object_store');
   const [playerEventsNode] = useWombatDataNode('player_events');
@@ -30,25 +17,25 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
   const [ultimateAdvantageNode] = useWombatDataNode('team_ultimate_advantage');
   const [aliveAdvantageNode] = useWombatDataNode('team_alive_advantage');
 
-
-
-  const matchStart = matchStartNode.getOutput<MatchStart[]>().find((row) => row['mapId'] === mapId)
+  const matchStart = matchStartNode.getOutput<MatchStart[]>().find((row) => row['mapId'] === mapId);
   if (!matchStart) {
-    console.error(`No match start data found for map ${mapId}. Available mapIds:`,
-      matchStartNode.getOutput<MatchStart[]>().map(row => row['mapId'])
+    console.error(
+      `No match start data found for map ${mapId}. Available mapIds:`,
+      matchStartNode.getOutput<MatchStart[]>().map((row) => row['mapId']),
     );
     return null;
   }
 
-  const mapTimes = mapTimesNode.getOutput<MapTimes[]>().find((row) => row['mapId'] === mapId)
+  const mapTimes = mapTimesNode.getOutput<MapTimes[]>().find((row) => row['mapId'] === mapId);
   if (!mapTimes) {
-    console.error(`No map times data found for map ${mapId}. Available mapIds:`,
-      mapTimesNode.getOutput<MapTimes[]>().map(row => row['mapId'])
+    console.error(
+      `No map times data found for map ${mapId}. Available mapIds:`,
+      mapTimesNode.getOutput<MapTimes[]>().map((row) => row['mapId']),
     );
     return null;
   }
 
-  console.log('Found match data:', { matchStart, mapTimes });
+  console.log('Found match data:', {matchStart, mapTimes});
 
   // Log raw event data before filtering
 
@@ -60,10 +47,10 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
   });
 
   // Filter events for this map
-  const playerEvents = playerEventsNode.getOutput<PlayerEvent[]>().filter((row) => row['mapId'] === mapId)
-  const interactionEvents = interactionEventsNode.getOutput<PlayerInteractionEvent[]>().filter((row) => row['mapId'] === mapId)
-  const ultimateEvents = ultimateEventsNode.getOutput<UltimateEvent[]>().filter((row) => row['mapId'] === mapId)
-  const roundTimes = roundTimesNode.getOutput<RoundTimes[]>().filter((row) => row['mapId'] === mapId)
+  const playerEvents = playerEventsNode.getOutput<PlayerEvent[]>().filter((row) => row['mapId'] === mapId);
+  const interactionEvents = interactionEventsNode.getOutput<PlayerInteractionEvent[]>().filter((row) => row['mapId'] === mapId);
+  const ultimateEvents = ultimateEventsNode.getOutput<UltimateEvent[]>().filter((row) => row['mapId'] === mapId);
+  const roundTimes = roundTimesNode.getOutput<RoundTimes[]>().filter((row) => row['mapId'] === mapId);
 
   console.log('Event counts after filtering for mapId:', {
     playerEvents: playerEvents.length,
@@ -72,10 +59,10 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
     roundTimes: roundTimes.length,
   });
 
-  const { team1Name, team2Name } = matchStart;
+  const {team1Name, team2Name} = matchStart;
 
   // Log team names and event counts per team
-  console.log('Team names:', { team1Name, team2Name });
+  console.log('Team names:', {team1Name, team2Name});
 
   const team1Events = playerEvents.filter((row) => row.playerTeam === team1Name);
   const team2Events = playerEvents.filter((row) => row.playerTeam === team2Name);
@@ -90,13 +77,10 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
   const team1UltimateEvents = ultimateEvents.filter((row) => row.playerTeam === team1Name);
   const team2UltimateEvents = ultimateEvents.filter((row) => row.playerTeam === team2Name);
 
-  const eventTimes = [
-    ...playerEvents.map((row) => row.playerEventTime),
-    ...interactionEvents.map((row) => row.playerInteractionEventTime),
-  ];
+  const eventTimes = [...playerEvents.map((row) => row.playerEventTime), ...interactionEvents.map((row) => row.playerInteractionEventTime)];
 
-  const groupEventsByPlayer = <T extends { playerName: string }>(events: T[]): { [playerName: string]: T[] } => {
-    const eventsByPlayer: { [playerName: string]: T[] } = {};
+  const groupEventsByPlayer = <T extends {playerName: string}>(events: T[]): {[playerName: string]: T[]} => {
+    const eventsByPlayer: {[playerName: string]: T[]} = {};
     for (const event of events) {
       const playerName = event.playerName;
       if (!eventsByPlayer[playerName]) {
@@ -108,9 +92,9 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
   };
 
   // Add ultimate advantage data
-  const ultimateAdvantageData = ultimateAdvantageNode.getOutput<UltimateAdvantageData[]>().filter(row => row['mapId'] === mapId);
+  const ultimateAdvantageData = ultimateAdvantageNode.getOutput<UltimateAdvantageData[]>().filter((row) => row['mapId'] === mapId);
   // TODO: fix this type
-  const aliveAdvantageData = aliveAdvantageNode.getOutput<object[]>().filter(row => row['mapId'] === mapId);
+  const aliveAdvantageData = aliveAdvantageNode.getOutput<object[]>().filter((row) => row['mapId'] === mapId);
   return {
     team1Name,
     team2Name,
@@ -127,4 +111,4 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
     ultimateAdvantageData,
     aliveAdvantageData,
   };
-}
+};

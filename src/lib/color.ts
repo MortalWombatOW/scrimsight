@@ -1,17 +1,6 @@
 import {ColorInternal, ColorInternalHSL} from '../lib/data/types';
 
-const colorgorical = [
-  '#78b4c6',
-  '#fd6ca0',
-  '#fd7450',
-  '#7d9af7',
-  '#2cc18e',
-  '#eaa5c3',
-  '#4ed31b',
-  '#a3c541',
-  '#c87ef8',
-  '#fb57f9',
-];
+const colorgorical = ['#78b4c6', '#fd6ca0', '#fd7450', '#7d9af7', '#2cc18e', '#eaa5c3', '#4ed31b', '#a3c541', '#c87ef8', '#fb57f9'];
 
 export const getColorgorical = (str: string | null | undefined): string => {
   if (!str) {
@@ -54,11 +43,7 @@ export const colorToHex = (color: ColorInternal): string => {
   return `#${r}${g}${b}${a}`;
 };
 
-export const interpolateColors = (
-  startColor: string,
-  endColor: string,
-  steps: number,
-) => {
+export const interpolateColors = (startColor: string, endColor: string, steps: number) => {
   const start = parseHex(startColor);
   const end = parseHex(endColor);
   const step = {

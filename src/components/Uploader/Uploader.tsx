@@ -1,10 +1,10 @@
 /* eslint-disable no-restricted-syntax */
-import React, { ChangeEvent, useState } from 'react';
-import { Button } from '@mui/material';
+import React, {ChangeEvent, useState} from 'react';
+import {Button} from '@mui/material';
 import UploadProgressModal from './UploadProgressModal';
-import { FileUpload } from 'lib/data/types';
-import { useWombatDataManager, DataManager, useWombatDataNode } from 'wombat-data-framework';
-import { InputNode } from 'wombat-data-framework';
+import {FileUpload} from 'lib/data/types';
+import {useWombatDataManager, DataManager, useWombatDataNode} from 'wombat-data-framework';
+import {InputNode} from 'wombat-data-framework';
 
 interface UploaderProps {
   refreshCallback?: () => void;
@@ -17,7 +17,7 @@ const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
   }>({});
 
   const handleFilePerChange = (fileName: string) => (percent: number) => {
-    setFilePercents((prev) => ({ ...prev, [fileName]: percent }));
+    setFilePercents((prev) => ({...prev, [fileName]: percent}));
     if (percent === 100) {
       refreshCallback && refreshCallback();
     }
@@ -30,12 +30,12 @@ const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
     }
   };
 
-  return { files, filePercents, startFileUploads };
+  return {files, filePercents, startFileUploads};
 };
 
 const Uploader: React.FC<UploaderProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  refreshCallback = () => { },
+  refreshCallback = () => {},
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const dataManager = useWombatDataManager();

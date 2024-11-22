@@ -1,15 +1,5 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import {
-  AppBar,
-  Box,
-  Button,
-  Container,
-  IconButton,
-  Menu,
-  MenuItem,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import {AppBar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography} from '@mui/material';
 import React, {MouseEvent, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 
@@ -49,8 +39,7 @@ const Header = () => {
           disableGutters
           sx={{
             borderBottom: '2px solid transparent',
-            borderImage:
-              'linear-gradient(90deg,hsl(0deg 0% 7%) 0%,hsl(231deg 40% 46%) 25%,hsl(311deg 24% 53%) 50%,hsl(9deg 38% 43%) 75%,hsl(0deg 0% 7%) 100%)',
+            borderImage: 'linear-gradient(90deg,hsl(0deg 0% 7%) 0%,hsl(231deg 40% 46%) 25%,hsl(311deg 24% 53%) 50%,hsl(9deg 38% 43%) 75%,hsl(0deg 0% 7%) 100%)',
             borderImageSlice: 1,
             marginBottom: '16px',
           }}>
@@ -73,13 +62,7 @@ const Header = () => {
           </Typography>
 
           <Box component="div" sx={{display: {xs: 'flex', lg: 'none'}}}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit">
+            <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
               <MenuIcon />
             </IconButton>
             <Menu
@@ -102,9 +85,7 @@ const Header = () => {
               {routes
                 .filter((route) => route.name && !route.hidden)
                 .map((route) => (
-                  <MenuItem
-                    onClick={() => handleClickForPage(route.path[0])}
-                    key={route.path[0]}>
+                  <MenuItem onClick={() => handleClickForPage(route.path[0])} key={route.path[0]}>
                     <Typography textAlign="center">{route.name}</Typography>
                   </MenuItem>
                 ))}
@@ -129,17 +110,12 @@ const Header = () => {
             }}>
             scrimsight
           </Typography>
-          <Box
-            component="div"
-            sx={{flexGrow: 1, display: {xs: 'none', lg: 'flex'}}}>
+          <Box component="div" sx={{flexGrow: 1, display: {xs: 'none', lg: 'flex'}}}>
             <Box component="div" sx={{display: 'flex', marginLeft: '100px'}}>
               {routes
                 .filter((route) => route.name && !route.hidden)
                 .map((route) => (
-                  <Button
-                    key={route.path[0]}
-                    onClick={() => handleClickForPage(route.path[0])}
-                    sx={{my: 2, mx: 2, color: 'white', display: 'block'}}>
+                  <Button key={route.path[0]} onClick={() => handleClickForPage(route.path[0])} sx={{my: 2, mx: 2, color: 'white', display: 'block'}}>
                     {route.name}
                   </Button>
                 ))}

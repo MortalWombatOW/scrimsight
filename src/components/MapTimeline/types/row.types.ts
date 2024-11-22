@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { TimelineData, TimelineDimensions } from './timeline.types';
+import {ReactNode} from 'react';
+import {TimelineData, TimelineDimensions} from './timeline.types';
 
 export interface BaseTimelineRowProps {
   width: number;
@@ -25,14 +25,7 @@ export interface PlayerTimelineRowProps extends BaseTimelineRowProps {
   ultimateEvents: any[];
 }
 
-export type TimelineRowType = 
-  | 'player'
-  | 'round'
-  | 'teamAdvantage'
-  | 'eventMap'
-  | 'spacing'
-  | 'header'
-  | 'timeLabels';
+export type TimelineRowType = 'player' | 'round' | 'teamAdvantage' | 'eventMap' | 'spacing' | 'header' | 'timeLabels';
 
 export interface PlayerRowConfig {
   type: 'player';
@@ -67,13 +60,7 @@ export interface EventMapRowConfig {
   type: 'eventMap';
 }
 
-export type RowConfigData = 
-  | PlayerRowConfig 
-  | HeaderRowConfig 
-  | TeamAdvantageRowConfig
-  | TimeLabelsRowConfig
-  | RoundRowConfig
-  | EventMapRowConfig;
+export type RowConfigData = PlayerRowConfig | HeaderRowConfig | TeamAdvantageRowConfig | TimeLabelsRowConfig | RoundRowConfig | EventMapRowConfig;
 
 export interface TimelineRowConfig {
   id: string;
@@ -81,4 +68,4 @@ export interface TimelineRowConfig {
   height: number;
   useWindowScale?: boolean;
   data: RowConfigData;
-} 
+}

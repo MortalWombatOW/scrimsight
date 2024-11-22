@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
-import { Container, Graphics } from '@pixi/react';
+import React, {memo} from 'react';
+import {Container, Graphics} from '@pixi/react';
 import * as PIXI from 'pixi.js';
-import { UltimateAdvantageChartProps } from '../types/timeline.types';
+import {UltimateAdvantageChartProps} from '../types/timeline.types';
 
 const drawBars = (g: PIXI.Graphics, data: any[], timeToX: (t: number) => number, scale: number) => {
   g.clear();
@@ -24,12 +24,12 @@ const drawBars = (g: PIXI.Graphics, data: any[], timeToX: (t: number) => number,
 
 const drawLine = (g: PIXI.Graphics, data: any[], timeToX: (t: number) => number, scale: number) => {
   g.clear();
-  g.lineStyle(2, 0xFFFFFF, 0.8);
+  g.lineStyle(2, 0xffffff, 0.8);
 
   data.forEach((d, i) => {
     const x = timeToX(d.matchTime);
     const diff = d.team1ChargedUltimateCount - d.team2ChargedUltimateCount;
-    const y = 30 - (diff * scale);
+    const y = 30 - diff * scale;
 
     if (i === 0) {
       g.moveTo(x, y);
@@ -39,21 +39,15 @@ const drawLine = (g: PIXI.Graphics, data: any[], timeToX: (t: number) => number,
   });
 };
 
-export const PixiUltimateAdvantageChart = memo<UltimateAdvantageChartProps>(({
-  width,
-  timeToX,
-  ultimateAdvantageData
-}) => {
-  const maxUltCount = Math.max(
-    ...ultimateAdvantageData.map(d => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount))
-  );
+export const PixiUltimateAdvantageChart = memo<UltimateAdvantageChartProps>(({width, timeToX, ultimateAdvantageData}) => {
+  const maxUltCount = Math.max(...ultimateAdvantageData.map((d) => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)));
   const scale = 30 / maxUltCount;
 
   return (
     <Container y={0}>
       {/* Center line */}
       <Graphics
-        draw={g => {
+        draw={(g) => {
           g.clear();
           g.lineStyle(1, 0x666666, 0.2);
           g.moveTo(0, 30);
@@ -62,16 +56,12 @@ export const PixiUltimateAdvantageChart = memo<UltimateAdvantageChartProps>(({
       />
 
       {/* Bars */}
-      <Graphics
-        draw={g => drawBars(g, ultimateAdvantageData, timeToX, scale)}
-      />
+      <Graphics draw={(g) => drawBars(g, ultimateAdvantageData, timeToX, scale)} />
 
       {/* Advantage line */}
-      <Graphics
-        draw={g => drawLine(g, ultimateAdvantageData, timeToX, scale)}
-      />
+      <Graphics draw={(g) => drawLine(g, ultimateAdvantageData, timeToX, scale)} />
     </Container>
   );
 });
 
-PixiUltimateAdvantageChart.displayName = 'PixiUltimateAdvantageChart'; 
+PixiUltimateAdvantageChart.displayName = 'PixiUltimateAdvantageChart';
