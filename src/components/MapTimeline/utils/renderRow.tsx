@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimelineRowConfig } from '../types/row.types';
+import { HeaderRowConfig, PlayerRowConfig, TimelineRowConfig } from '../types/row.types';
 import { PlayerTimelineRow } from '../components/rows/PlayerTimelineRow';
 import { RoundTimelineRow } from '../components/rows/RoundTimelineRow';
 import { UltimateAdvantageRow } from '../components/rows/UltimateAdvantageRow';
@@ -49,15 +49,16 @@ export const renderTimelineRow = ({
 
   switch (config.type) {
     case 'player':
+      const playerRowConfig = config.data as PlayerRowConfig;
       return (
         <PlayerTimelineRow
           key={config.id}
           {...commonProps}
-          label={config.data.playerName}
-          playerName={config.data.playerName}
-          events={timelineData[`${config.data.team}EventsByPlayer`]?.[config.data.playerName] ?? []}
-          interactionEvents={timelineData[`${config.data.team}InteractionEventsByPlayer`]?.[config.data.playerName] ?? []}
-          ultimateEvents={timelineData[`${config.data.team}UltimateEventsByPlayer`]?.[config.data.playerName] ?? []}
+          label={playerRowConfig.playerName}
+          playerName={playerRowConfig.playerName}
+          events={timelineData[`${playerRowConfig.team}EventsByPlayer`]?.[playerRowConfig.playerName] ?? []}
+          interactionEvents={timelineData[`${playerRowConfig.team}InteractionEventsByPlayer`]?.[playerRowConfig.playerName] ?? []}
+          ultimateEvents={timelineData[`${playerRowConfig.team}UltimateEventsByPlayer`]?.[playerRowConfig.playerName] ?? []}
           useWindowScale={config.useWindowScale}
         />
       );
@@ -73,7 +74,7 @@ export const renderTimelineRow = ({
         />
       );
 
-    case 'ultimateAdvantage':
+    case 'teamAdvantage':
       return (
         <UltimateAdvantageRow
           key={config.id}
@@ -97,12 +98,12 @@ export const renderTimelineRow = ({
       );
 
     case 'header':
+      const headerRowConfig = config.data as HeaderRowConfig;
       return (
         <HeaderRow
           key={config.id}
           {...commonProps}
-          label={config.data.text}
-          text=""
+          label={headerRowConfig.text}
         />
       );
 

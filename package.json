@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "webpack-cli serve --mode=development --env development --open --hot",
-    "build": "npx webpack --mode=production --env production --progress --config=webpack.config.ts",
+    "start": "NODE_OPTIONS='--loader ts-node/esm' webpack-cli serve --mode=development --env development --open --hot",
+    "build": "NODE_OPTIONS='--loader ts-node/esm' npx webpack --mode=production --env production --progress --config=webpack.config.ts",
     "lint": "eslint src/**/*.{ts,tsx} --quiet --fix",
     "test": "jest --watchAll --coverage --maxWorkers=1 --silent=false"
   },
@@ -54,7 +54,6 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.8",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "fork-ts-checker-webpack-plugin": "^7.2.13",
     "history": "^5.3.0",
     "html-webpack-plugin": "^5.5.0",
@@ -98,9 +97,11 @@
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.11.1",
+    "wombat-data-framework": "file:../wombat-data-framework",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.3.1"
+    "@testing-library/react": "^14.3.1",
+    "eslint-plugin-react-hooks": "^5.0.0"
   }
 }

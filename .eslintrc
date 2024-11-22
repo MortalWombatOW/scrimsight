@@ -6,7 +6,8 @@
     "extends": [
         "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended",
-        "plugin:prettier/recommended"
+        "plugin:prettier/recommended",
+        "plugin:react-hooks/recommended"
     ],
     "parserOptions": {
         "ecmaVersion": 2020,
@@ -20,7 +21,7 @@
         "react",
         "react-hooks",
         "eslint-plugin-import",
-        "prettier"
+        "prettier",
     ],
     "rules": {
         "react-hooks/rules-of-hooks": "error",

@@ -7,12 +7,12 @@ import { Box } from '../../WombatUI/WombatUI';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 import { mapNameToFileName } from '../../lib/string';
 import { MatchStart, MatchEnd } from '../../WombatDataFrameworkSchema';
-import { useDataManager } from '../../WombatDataFramework/DataContext';
+import { useWombatDataManager } from 'wombat-data-framework';
 
 const MapPage = () => {
   const { mapId: mapIdString } = useParams();
   const mapId = Number(mapIdString);
-  const dataManager = useDataManager();
+  const dataManager = useWombatDataManager();
 
   const [tab, setTab] = useQueryParam('tab', withDefault(StringParam, 'timeline'));
 
@@ -22,9 +22,9 @@ const MapPage = () => {
 
   console.log('mapId', mapId, tab);
 
-  const { mapName, mapType, team1Name, team2Name } = dataManager.getNodeOutput('match_start_object_store').filter((row) => row['mapId'] === mapId)[0] as MatchStart;
-  const { team1Score, team2Score } = dataManager.getNodeOutput('match_end_object_store').filter((row) => row['mapId'] === mapId)[0] as MatchEnd;
-  const { name, fileModified } = dataManager.getNodeOutput('maps_object_store').filter((row) => row['mapId'] === mapId)[0] as { name: string; fileModified: number };
+  const { mapName, mapType, team1Name, team2Name } = dataManager.getNode('match_start_object_store').getOutput<MatchStart[]>().filter((row) => row['mapId'] === mapId)[0];
+  const { team1Score, team2Score } = dataManager.getNode('match_end_object_store').getOutput<MatchEnd[]>().filter((row) => row['mapId'] === mapId)[0];
+  const { name, fileModified } = dataManager.getNode('maps_object_store').getOutput<{ name: string; fileModified: number }[]>().filter((row) => row['mapId'] === mapId)[0];
 
   return (
     <Container>

@@ -41,5 +41,8 @@
     "./src/**/*.tsx",
     "./src/**/*.json",
     "webpack.config.ts",
+    // "../wombat-data-framework/src/**/*.ts",
+    // "../wombat-data-framework/src/**/*.tsx",
+    // "../wombat-data-framework/src/**/*.json",
   ]
 }

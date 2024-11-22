@@ -20,7 +20,7 @@ export const useHoverEvent = () => {
     timeToX: (t: number) => number,
     xToTime: (x: number) => number
   ) => {
-    const localX = e.getLocalPosition(e.currentTarget).x;
+    const localX = e.getLocalPosition(e.currentTarget as any).x;
     const time = xToTime(localX);
     const nearestEvent = findNearestEvent(time, events, interactionEvents, ultimateEvents);
     if (nearestEvent) {

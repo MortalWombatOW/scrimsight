@@ -1,15 +1,13 @@
 /* eslint-disable no-restricted-syntax */
-import React, {ChangeEvent, useState} from 'react';
-import {Button} from '@mui/material';
+import React, { ChangeEvent, useState } from 'react';
+import { Button } from '@mui/material';
 import UploadProgressModal from './UploadProgressModal';
-import {FileUpload} from 'lib/data/types';
-import {uploadFile} from 'lib/data/uploadfile';
-import DataManager from '../../WombatDataFramework/DataManager';
-import {useDataManager} from '../../WombatDataFramework/DataContext';
+import { FileUpload } from 'lib/data/types';
+import { useWombatDataManager, DataManager, useWombatDataNode } from 'wombat-data-framework';
+import { InputNode } from 'wombat-data-framework';
 
 interface UploaderProps {
   refreshCallback?: () => void;
-  uploadFileHandler?: (fileUpload: FileUpload, dataManager: DataManager, cb: (percent: number) => void) => Promise<void>;
 }
 
 const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
@@ -19,7 +17,7 @@ const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
   }>({});
 
   const handleFilePerChange = (fileName: string) => (percent: number) => {
-    setFilePercents((prev) => ({...prev, [fileName]: percent}));
+    setFilePercents((prev) => ({ ...prev, [fileName]: percent }));
     if (percent === 100) {
       refreshCallback && refreshCallback();
     }
@@ -32,26 +30,26 @@ const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
     }
   };
 
-  return {files, filePercents, startFileUploads};
+  return { files, filePercents, startFileUploads };
 };
 
 const Uploader: React.FC<UploaderProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  refreshCallback = () => {},
-  uploadFileHandler = uploadFile,
+  refreshCallback = () => { },
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const dataManager = useDataManager();
-  const {files, filePercents, startFileUploads} = useFileUpload(uploadFileHandler, dataManager, refreshCallback);
+  const dataManager = useWombatDataManager();
+  // const { files, filePercents, startFileUploads } = useFileUpload(uploadFileHandler, dataManager, refreshCallback);
+  const [logFileInputNode] = useWombatDataNode<InputNode>('log_file_input');
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    const filesToUpload: FileUpload[] = Array.from(e.target.files).map((file) => ({
-      file,
-      fileName: file.name,
-    }));
-    startFileUploads(filesToUpload);
-    setModalOpen(true);
+    // const filesToUpload: FileUpload[] = Array.from(e.target.files).map((file) => ({
+    //   file,
+    //   fileName: file.name,
+    // }));
+    logFileInputNode.input(Array.from(e.target.files));
+    // setModalOpen(true);
   };
 
   return (
@@ -60,7 +58,7 @@ const Uploader: React.FC<UploaderProps> = ({
         Add maps
         <input id="fileinput" type="file" onChange={onInputChange} hidden multiple />
       </Button>
-      <UploadProgressModal isOpen={modalOpen} setIsOpen={setModalOpen} files={files} filePercents={filePercents} />
+      {/* <UploadProgressModal isOpen={modalOpen} setIsOpen={setModalOpen} files={files} filePercents={filePercents} /> */}
     </>
   );
 };

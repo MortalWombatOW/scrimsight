@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDataManager } from '../../WombatDataFramework/DataContext';
+import { useWombatDataManager } from 'wombat-data-framework';
 import { getColorgorical } from '../../lib/color';
 import { MatchStart } from '../../WombatDataFrameworkSchema';
 import { PathTooltip } from 'react-path-tooltip'; // import the package
 import useWindowSize from '../../hooks/useWindowSize';
 import { Card, CardContent, Container } from '@mui/material';
 import { Typography } from '../../WombatUI/WombatUI';
+import { PlayerInteractionEvent } from '../MapTimeline/types/timeline.types';
 
 interface ChordDataEntry {
   sourcePlayerName: string;
@@ -15,14 +16,7 @@ interface ChordDataEntry {
 }
 
 const transformDataToChordFormat = (
-  data: {
-    playerName: string;
-    playerTeam: string;
-    playerHero: string;
-    otherPlayerName: string;
-    playerInteractionEventTime: number;
-    playerInteractionEventType: string;
-  }[],
+  data: PlayerInteractionEvent[],
 ): ChordDataEntry[] => {
   const interactions: {
     [key: string]: ChordDataEntry;
@@ -263,7 +257,7 @@ const Chord: React.FC<{
   };
 
 const ChordDiagram: React.FC<{ mapId: number }> = ({ mapId }) => {
-  const dataManager = useDataManager();
+  const dataManager = useWombatDataManager();
   const [chordData, setChordData] = useState<ChordDataEntry[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
   const [team1Name, setTeam1Name] = useState<string>('');
@@ -277,11 +271,11 @@ const ChordDiagram: React.FC<{ mapId: number }> = ({ mapId }) => {
       if (!dataManager.hasNodeOutput('player_stat_expanded') || !dataManager.hasNodeOutput('player_interaction_events') || !dataManager.hasNodeOutput('match_start_object_store')) {
         return;
       }
-      const matchStart = dataManager.getNodeOutputOrDie('match_start_object_store').filter((row) => row['mapId'] === mapId)[0] as MatchStart;
+      const matchStart = dataManager.getNode('match_start_object_store').getOutput<MatchStart[]>().filter((row) => row['mapId'] === mapId)[0];
       setTeam1Name(matchStart.team1Name);
       setTeam2Name(matchStart.team2Name);
 
-      const teamData = dataManager.getNodeOutputOrDie('player_stat_expanded').filter((row) => row['mapId'] === mapId);
+      const teamData = dataManager.getNode('player_stat_expanded').getOutput<object[]>().filter((row) => row['mapId'] === mapId);
 
       const playerRoleMap: { [playerName: string]: string } = {};
       teamData.forEach((row) => {
@@ -306,9 +300,9 @@ const ChordDiagram: React.FC<{ mapId: number }> = ({ mapId }) => {
 
       setTeam1Players(team1Players);
       setTeam2Players(team2Players);
-      const data = dataManager.getNodeOutputOrDie('player_interaction_events').filter((row) => row['mapId'] === mapId);
+      const data = dataManager.getNode('player_interaction_events').getOutput<PlayerInteractionEvent[]>().filter((row) => row['mapId'] === mapId);
 
-      const transformedData = transformDataToChordFormat(data as any);
+      const transformedData = transformDataToChordFormat(data);
       setChordData(transformedData);
     };
 

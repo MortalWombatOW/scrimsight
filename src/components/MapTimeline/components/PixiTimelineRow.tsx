@@ -13,7 +13,7 @@ const drawCircle = (g: PIXI.Graphics) => {
 
 const drawUltimateBar = (g: PIXI.Graphics, width: number) => {
   g.clear();
-  g.beginFill(COLORS.ultimate.replace('#', '0x'));
+  g.beginFill(COLORS.ultimate.color.replace('#', '0x'));
   g.drawRect(0, -5, width, 10);
   g.endFill();
 };

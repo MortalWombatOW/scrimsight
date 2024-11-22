@@ -7,12 +7,12 @@ import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import routes, { ScrimsightRoute } from './lib/routes';
 import { themeDef } from './theme';
 
-import { DataProvider } from './WombatDataFramework/DataContext';
+import { WombatDataProvider } from 'wombat-data-framework';
 import Header from './components/Header/Header';
 import { getColorgorical } from './lib/color';
 import { generateThemeColor } from './lib/palette';
 import { useDeepMemo } from './hooks/useDeepEffect';
-import { DATA_COLUMNS, WRITE_NODES, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES } from './WombatDataFrameworkSchema';
+import { DATA_COLUMNS, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES, FILE_PARSING_NODES, indexedDbNode, } from './WombatDataFrameworkSchema';
 
 
 const ContextualizedRoute = ({ route }: { route: ScrimsightRoute }): JSX.Element => {
@@ -57,9 +57,9 @@ const App = () => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <BrowserRouter basename="/">
         <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <DataProvider updateGlobalCallback={incrementTick} columns={DATA_COLUMNS} writeNodes={WRITE_NODES} objectStoreNodes={OBJECT_STORE_NODES} alaSQLNodes={ALASQL_NODES} functionNodes={FUNCTION_NODES}>
+          <WombatDataProvider updateGlobalCallback={incrementTick} columns={DATA_COLUMNS} nodes={[indexedDbNode, ...FILE_PARSING_NODES, ...OBJECT_STORE_NODES, ...ALASQL_NODES, ...FUNCTION_NODES]}>
             <ThemedRoutes />
-          </DataProvider>
+          </WombatDataProvider>
         </QueryParamProvider>
       </BrowserRouter>
     </div>

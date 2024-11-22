@@ -12,11 +12,11 @@ const webpackConfig = () => ({
   entry: './src/index.tsx',
   ...(process.env.production || !process.env.development
     ? {}
-    : {devtool: 'eval-source-map'}),
+    : { devtool: 'eval-source-map' }),
 
   resolve: {
     extensions: ['.ts', '.tsx', '.json', '.js'],
-    plugins: [new TsconfigPathsPlugin({configFile: './tsconfig.json'})],
+    plugins: [new TsconfigPathsPlugin({ configFile: './tsconfig.json' })],
     fallback: {
       stream: require.resolve('stream-browserify'),
       assert: require.resolve('assert/'),
@@ -41,7 +41,10 @@ const webpackConfig = () => ({
       {
         test: /.(ts|tsx|json)?$/,
         // loader: 'ts-loader',
-        include: path.resolve(__dirname, 'src'),
+        include: [
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, '../wombat-data-framework/src'),
+        ],
         exclude: '/node_modules/',
         use: [
           {

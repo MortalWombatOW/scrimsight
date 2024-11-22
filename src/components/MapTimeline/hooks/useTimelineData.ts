@@ -1,5 +1,5 @@
-import {useMemo} from 'react';
-import {useDataManager} from '../../../WombatDataFramework/DataContext';
+import { useMemo } from 'react';
+import { useWombatDataManager, useWombatDataNode } from 'wombat-data-framework';
 import {
   MatchStart,
   MapTimes,
@@ -14,164 +14,117 @@ import {
 
 
 export const useTimelineData = (mapId: number): TimelineData | null => {
-  const dataManager = useDataManager();
+  const dataManager = useWombatDataManager();
   const tick = dataManager.getTick();
 
-  return useMemo(() => {
-    console.log('Fetching data for mapId:', mapId, 'tick:', tick);
 
-    // Check if all required outputs exist
-    const outputs = {
-      matchStart: dataManager.hasNodeOutput('match_start_object_store'),
-      playerEvents: dataManager.hasNodeOutput('player_events'),
-      interactionEvents: dataManager.hasNodeOutput('player_interaction_events'),
-      roundTimes: dataManager.hasNodeOutput('round_times'),
-      ultimateEvents: dataManager.hasNodeOutput('ultimate_events'),
-      mapTimes: dataManager.hasNodeOutput('map_times'),
-      playerStats: dataManager.hasNodeOutput('player_stat_expanded'),
-      ultimateAdvantage: dataManager.hasNodeOutput('team_ultimate_advantage'),
-      aliveAdvantage: dataManager.hasNodeOutput('team_alive_advantage'),
-    };
-    console.log('Available outputs:', outputs);
+  console.log('Fetching data for mapId:', mapId, 'tick:', tick);
 
-    // Add a delay before checking outputs
-    const missingOutputs = Object.entries(outputs)
-      .filter(([_, value]) => !value)
-      .map(([key]) => key);
 
-    if (missingOutputs.length > 0) {
-      console.log('Waiting for outputs:', missingOutputs);
-      return null;
-    }
+  const [matchStartNode] = useWombatDataNode('match_start_object_store');
+  const [playerEventsNode] = useWombatDataNode('player_events');
+  const [interactionEventsNode] = useWombatDataNode('player_interaction_events');
+  const [roundTimesNode] = useWombatDataNode('round_times');
+  const [ultimateEventsNode] = useWombatDataNode('ultimate_events');
+  const [mapTimesNode] = useWombatDataNode('map_times');
+  const [ultimateAdvantageNode] = useWombatDataNode('team_ultimate_advantage');
+  const [aliveAdvantageNode] = useWombatDataNode('team_alive_advantage');
 
-    // Check if the outputs have data
-    const outputData = {
-      matchStart: dataManager.getNodeOutput('match_start_object_store'),
-      playerEvents: dataManager.getNodeOutput('player_events'),
-      interactionEvents: dataManager.getNodeOutput('player_interaction_events'),
-      roundTimes: dataManager.getNodeOutput('round_times'),
-      ultimateEvents: dataManager.getNodeOutput('ultimate_events'),
-      mapTimes: dataManager.getNodeOutput('map_times'),
-      ultimateAdvantage: dataManager.getNodeOutput('team_ultimate_advantage'),
-      aliveAdvantage: dataManager.getNodeOutput('team_alive_advantage'),
-    };
 
-    // Check if any of the outputs are empty arrays
-    const emptyOutputs = Object.entries(outputData)
-      .filter(([_, value]) => Array.isArray(value) && value.length === 0)
-      .map(([key]) => key);
 
-    if (emptyOutputs.length > 0) {
-      console.log('Waiting for data in outputs:', emptyOutputs);
-      return null;
-    }
+  const matchStart = matchStartNode.getOutput<MatchStart[]>().find((row) => row['mapId'] === mapId)
+  if (!matchStart) {
+    console.error(`No match start data found for map ${mapId}. Available mapIds:`,
+      matchStartNode.getOutput<MatchStart[]>().map(row => row['mapId'])
+    );
+    return null;
+  }
 
-    console.log('All outputs have data:', {
-      matchStartLength: outputData.matchStart.length,
-      playerEventsLength: outputData.playerEvents.length,
-      interactionEventsLength: outputData.interactionEvents.length,
-      roundTimesLength: outputData.roundTimes.length,
-      ultimateEventsLength: outputData.ultimateEvents.length,
-      mapTimesLength: outputData.mapTimes.length,
-    });
+  const mapTimes = mapTimesNode.getOutput<MapTimes[]>().find((row) => row['mapId'] === mapId)
+  if (!mapTimes) {
+    console.error(`No map times data found for map ${mapId}. Available mapIds:`,
+      mapTimesNode.getOutput<MapTimes[]>().map(row => row['mapId'])
+    );
+    return null;
+  }
 
-    const matchStart = outputData.matchStart.find((row) => row['mapId'] === mapId) as MatchStart | undefined;
-    if (!matchStart) {
-      console.error(`No match start data found for map ${mapId}. Available mapIds:`, 
-        outputData.matchStart.map(row => row['mapId'])
-      );
-      return null;
-    }
+  console.log('Found match data:', { matchStart, mapTimes });
 
-    const mapTimes = outputData.mapTimes.find((row) => row['mapId'] === mapId) as MapTimes | undefined;
-    if (!mapTimes) {
-      console.error(`No map times data found for map ${mapId}. Available mapIds:`, 
-        outputData.mapTimes.map(row => row['mapId'])
-      );
-      return null;
-    }
+  // Log raw event data before filtering
 
-    console.log('Found match data:', { matchStart, mapTimes });
+  console.log('Event counts before filtering:', {
+    playerEvents: playerEventsNode.getOutput<PlayerEvent[]>().length,
+    interactionEvents: interactionEventsNode.getOutput<PlayerInteractionEvent[]>().length,
+    ultimateEvents: ultimateEventsNode.getOutput<UltimateEvent[]>().length,
+    roundTimes: roundTimesNode.getOutput<RoundTimes[]>().length,
+  });
 
-    // Log raw event data before filtering
-    const allPlayerEvents = outputData.playerEvents;
-    const allInteractionEvents = outputData.interactionEvents;
-    const allUltimateEvents = outputData.ultimateEvents;
-    const allRoundTimes = outputData.roundTimes;
+  // Filter events for this map
+  const playerEvents = playerEventsNode.getOutput<PlayerEvent[]>().filter((row) => row['mapId'] === mapId)
+  const interactionEvents = interactionEventsNode.getOutput<PlayerInteractionEvent[]>().filter((row) => row['mapId'] === mapId)
+  const ultimateEvents = ultimateEventsNode.getOutput<UltimateEvent[]>().filter((row) => row['mapId'] === mapId)
+  const roundTimes = roundTimesNode.getOutput<RoundTimes[]>().filter((row) => row['mapId'] === mapId)
 
-    console.log('Event counts before filtering:', {
-      playerEvents: allPlayerEvents.length,
-      interactionEvents: allInteractionEvents.length,
-      ultimateEvents: allUltimateEvents.length,
-      roundTimes: allRoundTimes.length,
-    });
+  console.log('Event counts after filtering for mapId:', {
+    playerEvents: playerEvents.length,
+    interactionEvents: interactionEvents.length,
+    ultimateEvents: ultimateEvents.length,
+    roundTimes: roundTimes.length,
+  });
 
-    // Filter events for this map
-    const playerEvents = allPlayerEvents.filter((row) => row['mapId'] === mapId) as PlayerEvent[];
-    const interactionEvents = allInteractionEvents.filter((row) => row['mapId'] === mapId) as PlayerInteractionEvent[];
-    const ultimateEvents = allUltimateEvents.filter((row) => row['mapId'] === mapId) as UltimateEvent[];
-    const roundTimes = allRoundTimes.filter((row) => row['mapId'] === mapId) as RoundTimes[];
+  const { team1Name, team2Name } = matchStart;
 
-    console.log('Event counts after filtering for mapId:', {
-      playerEvents: playerEvents.length,
-      interactionEvents: interactionEvents.length,
-      ultimateEvents: ultimateEvents.length,
-      roundTimes: roundTimes.length,
-    });
+  // Log team names and event counts per team
+  console.log('Team names:', { team1Name, team2Name });
 
-    const {team1Name, team2Name} = matchStart;
+  const team1Events = playerEvents.filter((row) => row.playerTeam === team1Name);
+  const team2Events = playerEvents.filter((row) => row.playerTeam === team2Name);
 
-    // Log team names and event counts per team
-    console.log('Team names:', {team1Name, team2Name});
-    
-    const team1Events = playerEvents.filter((row) => row.playerTeam === team1Name);
-    const team2Events = playerEvents.filter((row) => row.playerTeam === team2Name);
-    
-    console.log('Events per team:', {
-      team1Events: team1Events.length,
-      team2Events: team2Events.length,
-    });
+  console.log('Events per team:', {
+    team1Events: team1Events.length,
+    team2Events: team2Events.length,
+  });
 
-    const team1InteractionEvents = interactionEvents.filter((row) => row.playerTeam === team1Name);
-    const team2InteractionEvents = interactionEvents.filter((row) => row.playerTeam === team2Name);
-    const team1UltimateEvents = ultimateEvents.filter((row) => row.playerTeam === team1Name);
-    const team2UltimateEvents = ultimateEvents.filter((row) => row.playerTeam === team2Name);
+  const team1InteractionEvents = interactionEvents.filter((row) => row.playerTeam === team1Name);
+  const team2InteractionEvents = interactionEvents.filter((row) => row.playerTeam === team2Name);
+  const team1UltimateEvents = ultimateEvents.filter((row) => row.playerTeam === team1Name);
+  const team2UltimateEvents = ultimateEvents.filter((row) => row.playerTeam === team2Name);
 
-    const eventTimes = [
-      ...playerEvents.map((row) => row.playerEventTime),
-      ...interactionEvents.map((row) => row.playerInteractionEventTime),
-    ];
+  const eventTimes = [
+    ...playerEvents.map((row) => row.playerEventTime),
+    ...interactionEvents.map((row) => row.playerInteractionEventTime),
+  ];
 
-    const groupEventsByPlayer = <T extends {playerName: string}>(events: T[]): {[playerName: string]: T[]} => {
-      const eventsByPlayer: {[playerName: string]: T[]} = {};
-      for (const event of events) {
-        const playerName = event.playerName;
-        if (!eventsByPlayer[playerName]) {
-          eventsByPlayer[playerName] = [];
-        }
-        eventsByPlayer[playerName].push(event);
+  const groupEventsByPlayer = <T extends { playerName: string }>(events: T[]): { [playerName: string]: T[] } => {
+    const eventsByPlayer: { [playerName: string]: T[] } = {};
+    for (const event of events) {
+      const playerName = event.playerName;
+      if (!eventsByPlayer[playerName]) {
+        eventsByPlayer[playerName] = [];
       }
-      return eventsByPlayer;
-    };
+      eventsByPlayer[playerName].push(event);
+    }
+    return eventsByPlayer;
+  };
 
-    // Add ultimate advantage data
-    const ultimateAdvantageData = outputData.ultimateAdvantage.filter(row => row['mapId'] === mapId);
-
-    return {
-      team1Name,
-      team2Name,
-      team1EventsByPlayer: groupEventsByPlayer(team1Events),
-      team2EventsByPlayer: groupEventsByPlayer(team2Events),
-      team1InteractionEventsByPlayer: groupEventsByPlayer(team1InteractionEvents),
-      team2InteractionEventsByPlayer: groupEventsByPlayer(team2InteractionEvents),
-      team1UltimateEventsByPlayer: groupEventsByPlayer(team1UltimateEvents),
-      team2UltimateEventsByPlayer: groupEventsByPlayer(team2UltimateEvents),
-      mapStartTime: mapTimes.mapStartTime,
-      mapEndTime: mapTimes.mapEndTime,
-      roundTimes,
-      eventTimes,
-      ultimateAdvantageData,
-      aliveAdvantageData: outputData.aliveAdvantage.filter(row => row['mapId'] === mapId),
-    };
-  }, [dataManager, mapId, tick]);
-}; 
+  // Add ultimate advantage data
+  const ultimateAdvantageData = ultimateAdvantageNode.getOutput<UltimateAdvantageData[]>().filter(row => row['mapId'] === mapId);
+  // TODO: fix this type
+  const aliveAdvantageData = aliveAdvantageNode.getOutput<object[]>().filter(row => row['mapId'] === mapId);
+  return {
+    team1Name,
+    team2Name,
+    team1EventsByPlayer: groupEventsByPlayer(team1Events),
+    team2EventsByPlayer: groupEventsByPlayer(team2Events),
+    team1InteractionEventsByPlayer: groupEventsByPlayer(team1InteractionEvents),
+    team2InteractionEventsByPlayer: groupEventsByPlayer(team2InteractionEvents),
+    team1UltimateEventsByPlayer: groupEventsByPlayer(team1UltimateEvents),
+    team2UltimateEventsByPlayer: groupEventsByPlayer(team2UltimateEvents),
+    mapStartTime: mapTimes.mapStartTime,
+    mapEndTime: mapTimes.mapEndTime,
+    roundTimes,
+    eventTimes,
+    ultimateAdvantageData,
+    aliveAdvantageData,
+  };
+}

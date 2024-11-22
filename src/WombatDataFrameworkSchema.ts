@@ -1,8 +1,9 @@
+import { DataNodeInputMap } from "wombat-data-framework/src/DataNode";
 import { ultimateAdvantageConfig, playerAliveAdvantageConfig } from "./lib/AdvantageTrackers";
-import { DataColumn, makeDataColumn, makeRatioUnits, numberFormatter, numberComparator, stringFormatter, stringComparator, percentFormatter, booleanFormatter, booleanComparator } from "./WombatDataFramework/DataColumn";
-import { WriteNodeInit, ObjectStoreNodeInit, AlaSQLNodeInit, FunctionNodeInit } from "./WombatDataFramework/DataNode";
 import { processTeamAdvantageEvents } from "./lib/TeamAdvantageTracker";
-
+import { DataColumn, makeDataColumn, makeRatioUnits, numberFormatter, numberComparator, stringFormatter, stringComparator, ObjectStoreNodeConfig, InputNodeConfig, FunctionNodeConfig, ObjectStoreNodeBehavior, AlaSQLNodeConfig, booleanFormatter, booleanComparator, percentFormatter } from "wombat-data-framework";
+import { parseFile, readFileAsync } from "./lib/data/uploadfile";
+import { INDEXED_DB_NODE_NAME, IndexedDBNodeConfig } from "wombat-data-framework";
 
 interface BaseEvent {
   mapId: number;
@@ -572,59 +573,433 @@ const player_stat_groups: string[][] = getAllCombinations(['mapId', 'roundNumber
 console.log('player_stat_groups', player_stat_groups);
 
 
-function makeWriteNodeInit(name: string, displayName: string, objectStore: string): WriteNodeInit {
-  return {
-    name,
-    displayName,
-    objectStore,
-    columnNames: [],
-  };
-}
+// function makeWriteNodeInit(name: string, displayName: string, objectStore: string): WriteNodeInit {
+//   return {
+//     name,
+//     displayName,
+//     objectStore,
+//     columnNames: [],
+//   };
+// }
 
-export const WRITE_NODES: WriteNodeInit[] = [
-  makeWriteNodeInit('ability_1_used_write_node', 'Add Ability 1 Used Events', 'ability_1_used'),
-  makeWriteNodeInit('ability_2_used_write_node', 'Add Ability 2 Used Events', 'ability_2_used'),
-  makeWriteNodeInit('damage_write_node', 'Add Damage Events', 'damage'),
-  makeWriteNodeInit('defensive_assist_write_node', 'Add Defensive Assist Events', 'defensive_assist'),
-  makeWriteNodeInit('dva_demech_write_node', 'Add Dva Demech Events', 'dva_demech'),
-  makeWriteNodeInit('dva_remech_write_node', 'Add Dva Remech Events', 'dva_remech'),
-  makeWriteNodeInit('echo_duplicate_end_write_node', 'Add Echo Duplicate End Events', 'echo_duplicate_end'),
-  makeWriteNodeInit('echo_duplicate_start_write_node', 'Add Echo Duplicate Start Events', 'echo_duplicate_start'),
-  makeWriteNodeInit('healing_write_node', 'Add Healing Events', 'healing'),
-  makeWriteNodeInit('hero_spawn_write_node', 'Add Hero Spawn Events', 'hero_spawn'),
-  makeWriteNodeInit('hero_swap_write_node', 'Add Hero Swap Events', 'hero_swap'),
-  makeWriteNodeInit('kill_write_node', 'Add Kill Events', 'kill'),
-  makeWriteNodeInit('maps_write_node', 'Add Maps', 'maps'),
-  makeWriteNodeInit('match_end_write_node', 'Add Match End Events', 'match_end'),
-  makeWriteNodeInit('match_start_write_node', 'Add Match Start Events', 'match_start'),
-  makeWriteNodeInit('mercy_rez_write_node', 'Add Mercy Rez Events', 'mercy_rez'),
-  makeWriteNodeInit('objective_captured_write_node', 'Add Objective Captured Events', 'objective_captured'),
-  makeWriteNodeInit('offensive_assist_write_node', 'Add Offensive Assist Events', 'offensive_assist'),
-  makeWriteNodeInit('payload_progress_write_node', 'Add Payload Progress Events', 'payload_progress'),
-  makeWriteNodeInit('player_stat_write_node', 'Add Player Stat Events', 'player_stat'),
-  makeWriteNodeInit('point_progress_write_node', 'Add Point Progress Events', 'point_progress'),
-  makeWriteNodeInit('remech_charged_write_node', 'Add Remech Charged Events', 'remech_charged'),
-  makeWriteNodeInit('round_end_write_node', 'Add Round End Events', 'round_end'),
-  makeWriteNodeInit('round_start_write_node', 'Add Round Start Events', 'round_start'),
-  makeWriteNodeInit('setup_complete_write_node', 'Add Setup Complete Events', 'setup_complete'),
-  makeWriteNodeInit('ultimate_charged_write_node', 'Add Ultimate Charged Events', 'ultimate_charged'),
-  makeWriteNodeInit('ultimate_end_write_node', 'Add Ultimate End Events', 'ultimate_end'),
-  makeWriteNodeInit('ultimate_start_write_node', 'Add Ultimate Start Events', 'ultimate_start'),
+// export const WRITE_NODES: WriteNodeInit[] = [
+//   makeWriteNodeInit('ability_1_used_write_node', 'Add Ability 1 Used Events', 'ability_1_used'),
+//   makeWriteNodeInit('ability_2_used_write_node', 'Add Ability 2 Used Events', 'ability_2_used'),
+//   makeWriteNodeInit('damage_write_node', 'Add Damage Events', 'damage'),
+//   makeWriteNodeInit('defensive_assist_write_node', 'Add Defensive Assist Events', 'defensive_assist'),
+//   makeWriteNodeInit('dva_demech_write_node', 'Add Dva Demech Events', 'dva_demech'),
+//   makeWriteNodeInit('dva_remech_write_node', 'Add Dva Remech Events', 'dva_remech'),
+//   makeWriteNodeInit('echo_duplicate_end_write_node', 'Add Echo Duplicate End Events', 'echo_duplicate_end'),
+//   makeWriteNodeInit('echo_duplicate_start_write_node', 'Add Echo Duplicate Start Events', 'echo_duplicate_start'),
+//   makeWriteNodeInit('healing_write_node', 'Add Healing Events', 'healing'),
+//   makeWriteNodeInit('hero_spawn_write_node', 'Add Hero Spawn Events', 'hero_spawn'),
+//   makeWriteNodeInit('hero_swap_write_node', 'Add Hero Swap Events', 'hero_swap'),
+//   makeWriteNodeInit('kill_write_node', 'Add Kill Events', 'kill'),
+//   makeWriteNodeInit('maps_write_node', 'Add Maps', 'maps'),
+//   makeWriteNodeInit('match_end_write_node', 'Add Match End Events', 'match_end'),
+//   makeWriteNodeInit('match_start_write_node', 'Add Match Start Events', 'match_start'),
+//   makeWriteNodeInit('mercy_rez_write_node', 'Add Mercy Rez Events', 'mercy_rez'),
+//   makeWriteNodeInit('objective_captured_write_node', 'Add Objective Captured Events', 'objective_captured'),
+//   makeWriteNodeInit('offensive_assist_write_node', 'Add Offensive Assist Events', 'offensive_assist'),
+//   makeWriteNodeInit('payload_progress_write_node', 'Add Payload Progress Events', 'payload_progress'),
+//   makeWriteNodeInit('player_stat_write_node', 'Add Player Stat Events', 'player_stat'),
+//   makeWriteNodeInit('point_progress_write_node', 'Add Point Progress Events', 'point_progress'),
+//   makeWriteNodeInit('remech_charged_write_node', 'Add Remech Charged Events', 'remech_charged'),
+//   makeWriteNodeInit('round_end_write_node', 'Add Round End Events', 'round_end'),
+//   makeWriteNodeInit('round_start_write_node', 'Add Round Start Events', 'round_start'),
+//   makeWriteNodeInit('setup_complete_write_node', 'Add Setup Complete Events', 'setup_complete'),
+//   makeWriteNodeInit('ultimate_charged_write_node', 'Add Ultimate Charged Events', 'ultimate_charged'),
+//   makeWriteNodeInit('ultimate_end_write_node', 'Add Ultimate End Events', 'ultimate_end'),
+//   makeWriteNodeInit('ultimate_start_write_node', 'Add Ultimate Start Events', 'ultimate_start'),
+// ];
+
+export const indexedDbNode: IndexedDBNodeConfig = {
+  name: INDEXED_DB_NODE_NAME,
+  type: "IndexedDBNode",
+  displayName: 'Indexed DB',
+  outputType: "Multiple",
+  databaseName: 'scrimsight',
+  version: 1,
+  columnNames: [],
+};
+
+
+const logFileInputNode: InputNodeConfig = {
+  name: 'log_file_input',
+  type: "InputNode",
+  displayName: 'Log File Input',
+  outputType: "Multiple",
+  behavior: "Append",
+  columnNames: ['file']
+};
+
+const logFileLoaderNode: FunctionNodeConfig = {
+  name: 'log_file_loader',
+  type: "FunctionNode",
+  displayName: 'Log File Loader',
+  outputType: "Multiple",
+  sources: ['log_file_input'],
+  transform: async (data: DataNodeInputMap) => {
+    const files = data['log_file_input'].map((file) => file.file);
+    const fileContents = await Promise.all(files.map(readFileAsync));
+    return fileContents.map((content, index) => ({
+      fileName: files[index].name,
+      fileContent: content,
+    }));
+  },
+  columnNames: ['fileName', 'fileContent']
+};
+
+const logFileParserNode: FunctionNodeConfig = {
+  name: 'log_file_parser',
+  type: "FunctionNode",
+  displayName: 'Log File Parser',
+  outputType: "Multiple",
+  sources: ['log_file_loader'],
+  transform: async (data: DataNodeInputMap) => data['log_file_loader'].map((file) => {
+    const { mapId, logs } = parseFile(file.fileContent);
+    return {
+      fileName: file.fileName,
+      mapId,
+      logs,
+      fileModified: file.fileModified,
+    };
+  }),
+  columnNames: ['fileName', 'mapId', 'logs', 'fileModified']
+};
+
+const extractEventType = (type: string, logs: { type: string }[]) => logs.filter((log) => log.type === type);
+
+const ability_1_used_extractor: FunctionNodeConfig = {
+  name: 'ability_1_used_extractor',
+  type: "FunctionNode",
+  displayName: 'Ability 1 Used Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ability_1_used', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']
+};
+
+const ability_2_used_extractor: FunctionNodeConfig = {
+  name: 'ability_2_used_extractor',
+  type: "FunctionNode",
+  displayName: 'Ability 2 Used Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ability_2_used', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']
+};
+
+const damage_extractor: FunctionNodeConfig = {
+  name: 'damage_extractor',
+  type: "FunctionNode",
+  displayName: 'Damage Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('damage', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental']
+};
+
+const defensive_assist_extractor: FunctionNodeConfig = {
+  name: 'defensive_assist_extractor',
+  type: "FunctionNode",
+  displayName: 'Defensive Assist Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('defensive_assist', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']
+};
+
+const dva_demech_extractor: FunctionNodeConfig = {
+  name: 'dva_demech_extractor',
+  type: "FunctionNode",
+  displayName: 'Dva Demech Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('dva_demech', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental']
+};
+
+const dva_remech_extractor: FunctionNodeConfig = {
+  name: 'dva_remech_extractor',
+  type: "FunctionNode",
+  displayName: 'Dva Remech Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('dva_remech', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']
+};
+
+const echo_duplicate_end_extractor: FunctionNodeConfig = {
+  name: 'echo_duplicate_end_extractor',
+  type: "FunctionNode",
+  displayName: 'Echo Duplicate End Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('echo_duplicate_end', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']
+};
+
+const echo_duplicate_start_extractor: FunctionNodeConfig = {
+  name: 'echo_duplicate_start_extractor',
+  type: "FunctionNode",
+  displayName: 'Echo Duplicate Start Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('echo_duplicate_start', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']
+};
+
+const healing_extractor: FunctionNodeConfig = {
+  name: 'healing_extractor',
+  type: "FunctionNode",
+  displayName: 'Healing Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('healing', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'healerTeam', 'healerName', 'healerHero', 'healeeTeam', 'healeeName', 'healeeHero', 'eventAbility', 'eventHealing', 'isHealthPack']
+};
+
+const hero_spawn_extractor: FunctionNodeConfig = {
+  name: 'hero_spawn_extractor',
+  type: "FunctionNode",
+  displayName: 'Hero Spawn Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('hero_spawn', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']
+};
+
+const hero_swap_extractor: FunctionNodeConfig = {
+  name: 'hero_swap_extractor',
+  type: "FunctionNode",
+  displayName: 'Hero Swap Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('hero_swap', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']
+};
+
+const kill_extractor: FunctionNodeConfig = {
+  name: 'kill_extractor',
+  type: "FunctionNode",
+  displayName: 'Kill Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('kill', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental']
+};
+
+const maps_extractor: FunctionNodeConfig = {
+  name: 'maps_extractor',
+  type: "FunctionNode",
+  displayName: 'Maps Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].map((file) => ({ mapId: file.mapId, name: file.name, fileModified: file.fileModified })),
+  columnNames: ['mapId', 'name', 'fileModified']
+};
+
+const match_end_extractor: FunctionNodeConfig = {
+  name: 'match_end_extractor',
+  type: "FunctionNode",
+  displayName: 'Match End Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('match_end', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score']
+};
+
+const match_start_extractor: FunctionNodeConfig = {
+  name: 'match_start_extractor',
+  type: "FunctionNode",
+  displayName: 'Match Start Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('match_start', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name']
+};
+
+const mercy_rez_extractor: FunctionNodeConfig = {
+  name: 'mercy_rez_extractor',
+  type: "FunctionNode",
+  displayName: 'Mercy Rez Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('mercy_rez', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility']
+};
+
+const objective_captured_extractor: FunctionNodeConfig = {
+  name: 'objective_captured_extractor',
+  type: "FunctionNode",
+  displayName: 'Objective Captured Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('objective_captured', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining']
+};
+
+const offensive_assist_extractor: FunctionNodeConfig = {
+  name: 'offensive_assist_extractor',
+  type: "FunctionNode",
+  displayName: 'Offensive Assist Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('offensive_assist', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']
+};
+
+const payload_progress_extractor: FunctionNodeConfig = {
+  name: 'payload_progress_extractor',
+  type: "FunctionNode",
+  displayName: 'Payload Progress Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('payload_progress', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress']
+};
+
+const player_stat_extractor: FunctionNodeConfig = {
+  name: 'player_stat_extractor',
+  type: "FunctionNode",
+  displayName: 'Player Stat Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('player_stat', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'playerTeam', 'playerName', 'playerHero', 'eliminations', 'finalBlows', 'deaths', 'allDamageDealt', 'barrierDamageDealt', 'heroDamageDealt', 'healingDealt', 'healingReceived', 'selfHealing', 'damageTaken', 'damageBlocked', 'defensiveAssists', 'offensiveAssists']
+};
+
+const point_progress_extractor: FunctionNodeConfig = {
+  name: 'point_progress_extractor',
+  type: "FunctionNode",
+  displayName: 'Point Progress Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('point_progress', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress']
+};
+
+const remech_charged_extractor: FunctionNodeConfig = {
+  name: 'remech_charged_extractor',
+  type: "FunctionNode",
+  displayName: 'Remech Charged Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('remech_charged', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']
+};
+
+const round_end_extractor: FunctionNodeConfig = {
+  name: 'round_end_extractor',
+  type: "FunctionNode",
+  displayName: 'Round End Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('round_end', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining']
+};
+
+const round_start_extractor: FunctionNodeConfig = {
+  name: 'round_start_extractor',
+  type: "FunctionNode",
+  displayName: 'Round Start Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('round_start', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining']
+};
+
+const setup_complete_extractor: FunctionNodeConfig = {
+  name: 'setup_complete_extractor',
+  type: "FunctionNode",
+  displayName: 'Setup Complete Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('setup_complete', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score']
+};
+
+const ultimate_charged_extractor: FunctionNodeConfig = {
+  name: 'ultimate_charged_extractor',
+  type: "FunctionNode",
+  displayName: 'Ultimate Charged Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ultimate_charged', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']
+};
+
+const ultimate_end_extractor: FunctionNodeConfig = {
+  name: 'ultimate_end_extractor',
+  type: "FunctionNode",
+  displayName: 'Ultimate End Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ultimate_end', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']
+};
+
+const ultimate_start_extractor: FunctionNodeConfig = {
+  name: 'ultimate_start_extractor',
+  type: "FunctionNode",
+  displayName: 'Ultimate Start Extractor',
+  outputType: "Multiple",
+  sources: ['log_file_parser'],
+  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ultimate_start', file.logs)),
+  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']
+};
+
+export const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
+  logFileInputNode,
+  logFileLoaderNode,
+  logFileParserNode,
+  ability_1_used_extractor,
+  ability_2_used_extractor,
+  damage_extractor,
+  defensive_assist_extractor,
+  dva_demech_extractor,
+  dva_remech_extractor,
+  echo_duplicate_end_extractor,
+  echo_duplicate_start_extractor,
+  healing_extractor,
+  hero_spawn_extractor,
+  hero_swap_extractor,
+  kill_extractor,
+  match_end_extractor,
+  match_start_extractor,
+  mercy_rez_extractor,
+  objective_captured_extractor,
+  offensive_assist_extractor,
+  payload_progress_extractor,
+  player_stat_extractor,
+  point_progress_extractor,
+  remech_charged_extractor,
+  round_end_extractor,
+  round_start_extractor,
+  setup_complete_extractor,
+  ultimate_charged_extractor,
+  ultimate_end_extractor,
+  ultimate_start_extractor,
 ];
 
-function makeObjectStoreNodeInit(name: string, displayName: string, objectStore: string, columnNames: string[]): ObjectStoreNodeInit {
+function makeObjectStoreNodeConfig(name: string, displayName: string, objectStore: string, columnNames: string[]): ObjectStoreNodeConfig {
   return {
     name,
     displayName,
     objectStore,
     columnNames,
+    behavior: "Append",
+    source: objectStore === 'maps' ? 'log_file_parser' : `${objectStore}_extractor`,
+    type: "ObjectStoreNode",
+    outputType: "Multiple",
   };
 }
 
-export const OBJECT_STORE_NODES: ObjectStoreNodeInit[] = [
-  makeObjectStoreNodeInit('ability_1_used_object_store', 'Ability 1 Used', 'ability_1_used', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeInit('ability_2_used_object_store', 'Ability 2 Used', 'ability_2_used', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeInit('damage_object_store', 'Damage', 'damage', [
+export const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
+  makeObjectStoreNodeConfig('ability_1_used_object_store', 'Ability 1 Used', 'ability_1_used', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig('ability_2_used_object_store', 'Ability 2 Used', 'ability_2_used', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig('damage_object_store', 'Damage', 'damage', [
     'mapId',
     'type',
     'matchTime',
@@ -639,8 +1014,8 @@ export const OBJECT_STORE_NODES: ObjectStoreNodeInit[] = [
     'isCriticalHit',
     'isEnvironmental',
   ]),
-  makeObjectStoreNodeInit('defensive_assist_object_store', 'Defensive Assist', 'defensive_assist', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeInit('dva_demech_object_store', 'Dva Demech', 'dva_demech', [
+  makeObjectStoreNodeConfig('defensive_assist_object_store', 'Defensive Assist', 'defensive_assist', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig('dva_demech_object_store', 'Dva Demech', 'dva_demech', [
     'mapId',
     'type',
     'matchTime',
@@ -655,10 +1030,10 @@ export const OBJECT_STORE_NODES: ObjectStoreNodeInit[] = [
     'isCriticalHit',
     'isEnvironmental',
   ]),
-  makeObjectStoreNodeInit('dva_remech_object_store', 'Dva Remech', 'dva_remech', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
-  makeObjectStoreNodeInit('echo_duplicate_end_object_store', 'Echo Duplicate End', 'echo_duplicate_end', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
-  makeObjectStoreNodeInit('echo_duplicate_start_object_store', 'Echo Duplicate Start', 'echo_duplicate_start', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeInit('healing_object_store', 'Healing', 'healing', [
+  makeObjectStoreNodeConfig('dva_remech_object_store', 'Dva Remech', 'dva_remech', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
+  makeObjectStoreNodeConfig('echo_duplicate_end_object_store', 'Echo Duplicate End', 'echo_duplicate_end', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
+  makeObjectStoreNodeConfig('echo_duplicate_start_object_store', 'Echo Duplicate Start', 'echo_duplicate_start', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('healing_object_store', 'Healing', 'healing', [
     'mapId',
     'type',
     'matchTime',
@@ -672,9 +1047,9 @@ export const OBJECT_STORE_NODES: ObjectStoreNodeInit[] = [
     'eventHealing',
     'isHealthPack',
   ]),
-  makeObjectStoreNodeInit('hero_spawn_object_store', 'Hero Spawn', 'hero_spawn', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
-  makeObjectStoreNodeInit('hero_swap_object_store', 'Hero Swap', 'hero_swap', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
-  makeObjectStoreNodeInit('kill_object_store', 'Kill', 'kill', [
+  makeObjectStoreNodeConfig('hero_spawn_object_store', 'Hero Spawn', 'hero_spawn', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
+  makeObjectStoreNodeConfig('hero_swap_object_store', 'Hero Swap', 'hero_swap', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
+  makeObjectStoreNodeConfig('kill_object_store', 'Kill', 'kill', [
     'mapId',
     'type',
     'matchTime',
@@ -689,11 +1064,11 @@ export const OBJECT_STORE_NODES: ObjectStoreNodeInit[] = [
     'isCriticalHit',
     'isEnvironmental',
   ]),
-  makeObjectStoreNodeInit('maps_object_store', 'Maps', 'maps', ['mapId', 'name', 'fileModified']),
-  makeObjectStoreNodeInit('match_end_object_store', 'Match End', 'match_end', ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score']),
-  makeObjectStoreNodeInit('match_start_object_store', 'Match Start', 'match_start', ['mapId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name']),
-  makeObjectStoreNodeInit('mercy_rez_object_store', 'Mercy Rez', 'mercy_rez', ['mapId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility']),
-  makeObjectStoreNodeInit('objective_captured_object_store', 'Objective Captured', 'objective_captured', [
+  makeObjectStoreNodeConfig('maps_object_store', 'Maps', 'maps', ['mapId', 'name', 'fileModified']),
+  makeObjectStoreNodeConfig('match_end_object_store', 'Match End', 'match_end', ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score']),
+  makeObjectStoreNodeConfig('match_start_object_store', 'Match Start', 'match_start', ['mapId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name']),
+  makeObjectStoreNodeConfig('mercy_rez_object_store', 'Mercy Rez', 'mercy_rez', ['mapId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility']),
+  makeObjectStoreNodeConfig('objective_captured_object_store', 'Objective Captured', 'objective_captured', [
     'mapId',
     'type',
     'matchTime',
@@ -704,9 +1079,9 @@ export const OBJECT_STORE_NODES: ObjectStoreNodeInit[] = [
     'controlTeam2Progress',
     'matchTimeRemaining',
   ]),
-  makeObjectStoreNodeInit('offensive_assist_object_store', 'Offensive Assist', 'offensive_assist', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeInit('payload_progress_object_store', 'Payload Progress', 'payload_progress', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress']),
-  makeObjectStoreNodeInit('player_stat_object_store', 'Player Stat', 'player_stat', [
+  makeObjectStoreNodeConfig('offensive_assist_object_store', 'Offensive Assist', 'offensive_assist', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig('payload_progress_object_store', 'Payload Progress', 'payload_progress', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress']),
+  makeObjectStoreNodeConfig('player_stat_object_store', 'Player Stat', 'player_stat', [
     'mapId',
     'type',
     'matchTime',
@@ -748,9 +1123,9 @@ export const OBJECT_STORE_NODES: ObjectStoreNodeInit[] = [
     'weaponAccuracy',
     'heroTimePlayed',
   ]),
-  makeObjectStoreNodeInit('point_progress_object_store', 'Point Progress', 'point_progress', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress']),
-  makeObjectStoreNodeInit('remech_charged_object_store', 'Remech Charged', 'remech_charged', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeInit('round_end_object_store', 'Round End', 'round_end', [
+  makeObjectStoreNodeConfig('point_progress_object_store', 'Point Progress', 'point_progress', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress']),
+  makeObjectStoreNodeConfig('remech_charged_object_store', 'Remech Charged', 'remech_charged', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('round_end_object_store', 'Round End', 'round_end', [
     'mapId',
     'type',
     'matchTime',
@@ -763,20 +1138,22 @@ export const OBJECT_STORE_NODES: ObjectStoreNodeInit[] = [
     'controlTeam2Progress',
     'matchTimeRemaining',
   ]),
-  makeObjectStoreNodeInit('round_start_object_store', 'Round Start', 'round_start', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex']),
-  makeObjectStoreNodeInit('setup_complete_object_store', 'Setup Complete', 'setup_complete', ['mapId', 'type', 'matchTime', 'roundNumber', 'matchTimeRemaining']),
-  makeObjectStoreNodeInit('ultimate_charged_object_store', 'Ultimate Charged', 'ultimate_charged', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeInit('ultimate_end_object_store', 'Ultimate End', 'ultimate_end', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeInit('ultimate_start_object_store', 'Ultimate Start', 'ultimate_start', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('round_start_object_store', 'Round Start', 'round_start', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex']),
+  makeObjectStoreNodeConfig('setup_complete_object_store', 'Setup Complete', 'setup_complete', ['mapId', 'type', 'matchTime', 'roundNumber', 'matchTimeRemaining']),
+  makeObjectStoreNodeConfig('ultimate_charged_object_store', 'Ultimate Charged', 'ultimate_charged', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('ultimate_end_object_store', 'Ultimate End', 'ultimate_end', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('ultimate_start_object_store', 'Ultimate Start', 'ultimate_start', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
 ];
 
-function makeAlaSQLNodeInit(name: string, displayName: string, sql: string, sources: string[], columnNames: string[]): AlaSQLNodeInit {
+function makeAlaSQLNodeConfig(name: string, displayName: string, sql: string, sources: string[], columnNames: string[]): AlaSQLNodeConfig {
   return {
     name,
+    type: "AlaSQLNode",
     displayName,
     sql,
     sources,
     columnNames,
+    outputType: "Multiple",
   };
 }
 
@@ -806,8 +1183,8 @@ function buildSQLRatioMetrics(
 // Rules:
 // never use subqueries, always split into multiple nodes.
 // any change to the output columns requires a change to the DataColumn definitions in DataColumn.ts
-export const ALASQL_NODES: AlaSQLNodeInit[] = [
-  makeAlaSQLNodeInit(
+export const ALASQL_NODES: AlaSQLNodeConfig[] = [
+  makeAlaSQLNodeConfig(
     'ultimate_events',
     'Ultimate Events',
     `
@@ -833,7 +1210,7 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     ['ultimate_charged_object_store', 'ultimate_start_object_store', 'ultimate_end_object_store'],
     ['mapId', 'playerName', 'playerTeam', 'playerHero', 'ultimateId', 'ultimateChargedTime', 'ultimateStartTime', 'ultimateEndTime', 'ultimateHoldTime'],
   ),
-  makeAlaSQLNodeInit(
+  makeAlaSQLNodeConfig(
     'map_times',
     'Map Times',
     `SELECT
@@ -852,7 +1229,7 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     ['match_start_object_store', 'match_end_object_store', 'round_times'],
     ['mapId', 'mapStartTime', 'mapEndTime', 'mapDuration'],
   ),
-  makeAlaSQLNodeInit(
+  makeAlaSQLNodeConfig(
     'round_times',
     'Round Times',
     `SELECT
@@ -872,7 +1249,7 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     ['round_start_object_store', 'round_end_object_store', 'setup_complete_object_store'],
     ['mapId', 'roundNumber', 'roundStartTime', 'roundEndTime', 'roundDuration', 'roundSetupCompleteTime'],
   ),
-  makeAlaSQLNodeInit(
+  makeAlaSQLNodeConfig(
     'player_events',
     'Player Events',
     `
@@ -936,7 +1313,7 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     ['defensive_assist_object_store', 'offensive_assist_object_store', 'hero_spawn_object_store', 'hero_swap_object_store', 'ability_1_used_object_store', 'ability_2_used_object_store'],
     ['mapId', 'playerName', 'playerTeam', 'playerHero', 'playerEventTime', 'playerEventType'],
   ),
-  makeAlaSQLNodeInit(
+  makeAlaSQLNodeConfig(
     'player_interaction_events',
     'Player Interaction Events',
     `
@@ -1058,7 +1435,7 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
     ['mapId', 'playerName', 'playerTeam', 'playerHero', 'otherPlayerName', 'playerInteractionEventTime', 'playerInteractionEventType'],
   ),
 
-  makeAlaSQLNodeInit(
+  makeAlaSQLNodeConfig(
     'player_stat_expanded',
     'Player Stat Expanded',
     `
@@ -1182,7 +1559,7 @@ export const ALASQL_NODES: AlaSQLNodeInit[] = [
   ),
 ];
 
-export const FUNCTION_NODES: FunctionNodeInit[] = [
+export const FUNCTION_NODES: FunctionNodeConfig[] = [
   {
     name: 'team_ultimate_advantage',
     displayName: 'Team Ultimate Advantage',
@@ -1191,36 +1568,39 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
       'mapId',
       'matchTime',
       'team1Name',
-      'team2Name', 
+      'team2Name',
       'team1ChargedUltimateCount',
       'team2ChargedUltimateCount',
       'teamWithUltimateAdvantage',
       'ultimateAdvantageDiff'
     ],
-    transform: (sources: any[][]): any[] => {
+    transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(sources[0] || []).map(e => ({...e, type: 'charged'})),
-        ...(sources[1] || []).map(e => ({...e, type: 'end'})),
-        ...(sources[3] || []).map(e => ({...e, type: 'round_end'})),
-        ...(sources[4] || []).map(e => ({...e, type: 'round_start'}))
+        ...(data['ultimate_charged_object_store'] || []).map(e => ({ ...e, type: 'charged' })),
+        ...(data['ultimate_end_object_store'] || []).map(e => ({ ...e, type: 'end' })),
+        ...(data['round_end_object_store'] || []).map(e => ({ ...e, type: 'round_end' })),
+        ...(data['round_start_object_store'] || []).map(e => ({ ...e, type: 'round_start' }))
       ];
 
-      const mapTeams = new Map(
-        (sources[2] || []).map(match => [
+      const mapTeams = new Map<string, { team1Name: string, team2Name: string }>(
+        (data['match_start_object_store'] || []).map(match => [
           match.mapId,
-          {team1Name: match.team1Name, team2Name: match.team2Name}
+          { team1Name: match.team1Name, team2Name: match.team2Name }
         ])
       );
 
       return processTeamAdvantageEvents(events, mapTeams, ultimateAdvantageConfig);
-    }
+    },
+    outputType: "Multiple",
+    type: "FunctionNode",
+
   },
   {
     name: 'team_alive_advantage',
     displayName: 'Team Alive Players Advantage',
     sources: [
       'kill_object_store',
-      'hero_spawn_object_store', 
+      'hero_spawn_object_store',
       'match_start_object_store',
       'round_end_object_store',
       'round_start_object_store'
@@ -1235,22 +1615,24 @@ export const FUNCTION_NODES: FunctionNodeInit[] = [
       'teamWithAliveAdvantage',
       'aliveAdvantageDiff'
     ],
-    transform: (sources: any[][]): any[] => {
+    transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(sources[0] || []).map(e => ({...e, type: 'kill'})),
-        ...(sources[1] || []).map(e => ({...e, type: 'spawn'})),
-        ...(sources[3] || []).map(e => ({...e, type: 'round_end'})),
-        ...(sources[4] || []).map(e => ({...e, type: 'round_start'}))
+        ...(data['kill_object_store'] || []).map(e => ({ ...e, type: 'kill' })),
+        ...(data['hero_spawn_object_store'] || []).map(e => ({ ...e, type: 'spawn' })),
+        ...(data['round_end_object_store'] || []).map(e => ({ ...e, type: 'round_end' })),
+        ...(data['round_start_object_store'] || []).map(e => ({ ...e, type: 'round_start' }))
       ];
 
-      const mapTeams = new Map(
-        (sources[2] || []).map(match => [
+      const mapTeams = new Map<string, { team1Name: string, team2Name: string }>(
+        (data['match_start_object_store'] || []).map(match => [
           match.mapId,
-          {team1Name: match.team1Name, team2Name: match.team2Name}
+          { team1Name: match.team1Name, team2Name: match.team2Name }
         ])
       );
 
       return processTeamAdvantageEvents(events, mapTeams, playerAliveAdvantageConfig);
-    }
+    },
+    outputType: "Multiple",
+    type: "FunctionNode",
   }
 ];

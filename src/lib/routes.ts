@@ -1,15 +1,15 @@
 import React from 'react';
 import Home from '../pages/Home/Home';
 import SplashPage from '../pages/SplashPage/SplashPage';
-import QueriesPage from '../pages/QueriesPage/QueriesPage';
 import MapPage from '../pages/MapPage/MapPage';
+import { QueriesPage } from 'wombat-data-framework';
 
 export interface ScrimsightRoute {
   path: string[];
   component: () => JSX.Element;
   name?: string;
   hidden?: boolean;
-  contexts?: ((props: {children: React.ReactNode}) => JSX.Element)[];
+  contexts?: ((props: { children: React.ReactNode }) => JSX.Element)[];
 }
 
 const routes: ScrimsightRoute[] = [

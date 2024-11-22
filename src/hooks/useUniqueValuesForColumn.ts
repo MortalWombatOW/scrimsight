@@ -1,8 +1,8 @@
 import React from 'react';
-import {useDataManager} from '../WombatDataFramework/DataContext';
+import { useWombatDataManager } from 'wombat-data-framework';
 
 const useUniqueValuesForColumn = (columnName: string): string[] => {
-  const dataManager = useDataManager();
+  const dataManager = useWombatDataManager();
 
   const column = dataManager.getColumnOrDie(columnName);
 
@@ -14,7 +14,7 @@ const useUniqueValuesForColumn = (columnName: string): string[] => {
     return [];
   }
 
-  const data = dataManager.getNodeOutputOrDie('player_stat_expanded');
+  const data = dataManager.getNode('player_stat_expanded').getOutput<object[]>();
 
   const uniqueValues = Array.from(new Set(data.map((row) => row[columnName])));
 
