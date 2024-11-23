@@ -1,7 +1,8 @@
 import React, {memo} from 'react';
 import {Container, Text, Graphics} from '@pixi/react';
-import * as PIXI from 'pixi.js';
 import {textStyle} from '../constants/timeline.constants';
+import {Point} from '@pixi/math';
+import {FederatedPointerEvent} from '@pixi/events';
 
 interface LabelAreaProps {
   text: string;
@@ -27,8 +28,6 @@ export const LabelArea = memo<LabelAreaProps>(({text, width, height, onResize, o
       {/* Delete button */}
       {onDelete && (
         <Graphics
-          interactive={true}
-          cursor="pointer"
           draw={(g) => {
             g.clear();
             g.beginFill(0x666666);
@@ -47,19 +46,17 @@ export const LabelArea = memo<LabelAreaProps>(({text, width, height, onResize, o
       )}
 
       {/* Label text - moved right to make room for delete button */}
-      <Text text={text} style={textStyle} x={width - 10} y={height / 2} anchor={new PIXI.Point(1, 0.5)} />
+      <Text text={text} style={textStyle} x={width - 10} y={height / 2} anchor={new Point(1, 0.5)} />
 
       {/* Resize handle */}
       <Graphics
-        interactive={true}
-        cursor="ew-resize"
         draw={(g) => {
           g.clear();
           g.beginFill(0x666666);
           g.drawRect(width - 4, 0, 4, height);
           g.endFill();
         }}
-        pointerdown={(e: PIXI.FederatedPointerEvent) => {
+        pointerdown={(e: FederatedPointerEvent) => {
           const startClientX = e.clientX;
           const startWidth = width;
 

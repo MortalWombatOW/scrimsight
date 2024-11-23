@@ -1,9 +1,9 @@
 import React, {memo} from 'react';
 import {Container, Graphics} from '@pixi/react';
-import * as PIXI from 'pixi.js';
+import {Graphics as GraphicsType} from '@pixi/graphics';
 import {UltimateAdvantageChartProps} from '../types/timeline.types';
 
-const drawBars = (g: PIXI.Graphics, data: any[], timeToX: (t: number) => number, scale: number) => {
+const drawBars = (g: GraphicsType, data: any[], timeToX: (t: number) => number, scale: number) => {
   g.clear();
 
   data.forEach((d, i) => {
@@ -22,7 +22,7 @@ const drawBars = (g: PIXI.Graphics, data: any[], timeToX: (t: number) => number,
   g.endFill();
 };
 
-const drawLine = (g: PIXI.Graphics, data: any[], timeToX: (t: number) => number, scale: number) => {
+const drawLine = (g: GraphicsType, data: any[], timeToX: (t: number) => number, scale: number) => {
   g.clear();
   g.lineStyle(2, 0xffffff, 0.8);
 

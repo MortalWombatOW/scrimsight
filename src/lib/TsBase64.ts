@@ -41,8 +41,8 @@ export class TsBase64 {
       return cc < 0x80
         ? c
         : cc < 0x800
-        ? String.fromCharCode(0xc0 | (cc >>> 6)) + String.fromCharCode(0x80 | (cc & 0x3f))
-        : String.fromCharCode(0xe0 | ((cc >>> 12) & 0x0f)) + String.fromCharCode(0x80 | ((cc >>> 6) & 0x3f)) + String.fromCharCode(0x80 | (cc & 0x3f));
+          ? String.fromCharCode(0xc0 | (cc >>> 6)) + String.fromCharCode(0x80 | (cc & 0x3f))
+          : String.fromCharCode(0xe0 | ((cc >>> 12) & 0x0f)) + String.fromCharCode(0x80 | ((cc >>> 6) & 0x3f)) + String.fromCharCode(0x80 | (cc & 0x3f));
     } else {
       const cc = 0x10000 + (c.charCodeAt(0) - 0xd800) * 0x400 + (c.charCodeAt(1) - 0xdc00);
       return String.fromCharCode(0xf0 | ((cc >>> 18) & 0x07)) + String.fromCharCode(0x80 | ((cc >>> 12) & 0x3f)) + String.fromCharCode(0x80 | ((cc >>> 6) & 0x3f)) + String.fromCharCode(0x80 | (cc & 0x3f));

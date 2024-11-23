@@ -1,24 +1,24 @@
 import React, {memo} from 'react';
 import {Container, Graphics} from '@pixi/react';
-import * as PIXI from 'pixi.js';
+import {Graphics as GraphicsType} from '@pixi/graphics';
 import {XAxisProps} from '../types/timeline.types';
 import {PixiUltimateAdvantageChart} from './PixiUltimateAdvantageChart';
 
-const drawRoundSection = (g: PIXI.Graphics, x: number, width: number, color: number, alpha: number) => {
+const drawRoundSection = (g: GraphicsType, x: number, width: number, color: number, alpha: number) => {
   g.clear();
   g.beginFill(color, alpha);
   g.drawRect(x, 0, width, 10);
   g.endFill();
 };
 
-const drawEventMarker = (g: PIXI.Graphics) => {
+const drawEventMarker = (g: GraphicsType) => {
   g.clear();
   g.beginFill(0xffffff, 0.2);
   g.drawRect(0, 0, 1, 10);
   g.endFill();
 };
 
-const drawWindowSection = (g: PIXI.Graphics, width: number) => {
+const drawWindowSection = (g: GraphicsType, width: number) => {
   g.clear();
   g.lineStyle(1, 0xffffff, 0.2);
   g.beginFill(0xffffff, 0.1);

@@ -1,10 +1,10 @@
 import React from 'react';
 import {Stage, Container} from '@pixi/react';
-import * as PIXI from 'pixi.js';
+// import * as PIXI from 'pixi.js';
 
 // Configure PIXI for better performance
-PIXI.settings.RESOLUTION = window.devicePixelRatio;
-PIXI.settings.ROUND_PIXELS = true;
+// PIXI.settings.RESOLUTION = window.devicePixelRatio;
+// PIXI.settings.ROUND_PIXELS = true;
 
 interface PixiWrapperProps {
   width: number;
@@ -22,7 +22,7 @@ export const PixiWrapper: React.FC<PixiWrapperProps> = ({width, height, children
           backgroundAlpha: 0,
           antialias: true,
           autoDensity: true,
-          eventMode: 'passive',
+          // eventMode: 'passive',
         }}>
         <Container>{children}</Container>
       </Stage>

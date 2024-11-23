@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import {Box, Typography, Button} from '@mui/material';
 import React from 'react';
 import ImageCard from '../../components/Card/ImageCard';

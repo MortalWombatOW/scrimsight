@@ -1,10 +1,10 @@
 import React from 'react';
-import * as PIXI from 'pixi.js';
 import GrimReaperIcon from '../../Icons/GrimReaperIcon';
 import MacheteIcon from '../../Icons/MacheteIcon';
 import UpCardIcon from '../../Icons/UpCardIcon';
 import BeamsAuraIcon from '../../Icons/BeamsAuraIcon';
 import GhostAllyIcon from '../../Icons/GhostAllyIcon';
+import {TextStyle} from '@pixi/text';
 
 export const COLORS = {
   ultimate: {
@@ -55,20 +55,20 @@ export const EVENT_TYPE_TO_ICON = {
   'Defensive Assist': 'A',
 } as const;
 
-export const textStyle = new PIXI.TextStyle({
+export const textStyle: TextStyle = new TextStyle({
   fontFamily: 'Arial',
   fontSize: 14,
   fill: '#ffffff',
 });
 
-export const tooltipStyle = new PIXI.TextStyle({
+export const tooltipStyle: TextStyle = new TextStyle({
   fontFamily: 'Arial',
   fontSize: 12,
   fill: '#ffffff',
   align: 'center',
 });
 
-export const phaseStyle = new PIXI.TextStyle({
+export const phaseStyle: TextStyle = new TextStyle({
   fontFamily: 'Arial',
   fontSize: 10,
   fill: '#ffffff',

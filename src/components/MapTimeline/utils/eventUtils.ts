@@ -32,13 +32,16 @@ export const findNearestEvent = (
     })),
   ];
 
-  const nearest = allEvents.reduce((closest, event) => {
-    const distance = Math.abs(event.time - time);
-    if (distance < threshold && (!closest || distance < Math.abs(closest.time - time))) {
-      return event;
-    }
-    return closest;
-  }, null as TimelineEvent | null);
+  const nearest = allEvents.reduce(
+    (closest, event) => {
+      const distance = Math.abs(event.time - time);
+      if (distance < threshold && (!closest || distance < Math.abs(closest.time - time))) {
+        return event;
+      }
+      return closest;
+    },
+    null as TimelineEvent | null,
+  );
 
   return nearest;
 };

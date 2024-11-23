@@ -1,6 +1,6 @@
 import React, {memo} from 'react';
 import {Graphics} from '@pixi/react';
-import * as PIXI from 'pixi.js';
+import {Graphics as GraphicsType} from '@pixi/graphics';
 import {TimelineRowProps, BaseTimelineRowProps} from '../../types/row.types';
 import {BaseTimelineRow} from './BaseTimelineRow';
 
@@ -21,7 +21,7 @@ interface TeamAdvantageRowProps extends Omit<BaseTimelineRowProps, 'label'> {
 }
 
 interface TeamBarParams {
-  g: PIXI.Graphics;
+  g: GraphicsType;
   x: number;
   barWidth: number;
   count: number;

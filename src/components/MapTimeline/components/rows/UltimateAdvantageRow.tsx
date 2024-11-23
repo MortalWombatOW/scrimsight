@@ -1,11 +1,11 @@
 import React, {memo} from 'react';
 import {Graphics} from '@pixi/react';
-import * as PIXI from 'pixi.js';
+import {Graphics as GraphicsType} from '@pixi/graphics';
 import {TimelineRowProps} from '../../types/row.types';
 import {BaseTimelineRow} from './BaseTimelineRow';
 
 interface TeamBarParams {
-  g: PIXI.Graphics;
+  g: GraphicsType;
   x: number;
   barWidth: number;
   count: number;

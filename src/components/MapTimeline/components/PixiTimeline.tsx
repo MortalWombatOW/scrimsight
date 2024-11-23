@@ -1,8 +1,10 @@
 import React, {memo} from 'react';
-import {Container, Text, Graphics} from '@pixi/react';
-import * as PIXI from 'pixi.js';
+import {Container, Graphics, Text} from '@pixi/react';
 import {TimelineData, TimelineDimensions} from '../types/timeline.types';
 import {EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR, COLORS} from '../constants/timeline.constants';
+import {Graphics as GraphicsType} from '@pixi/graphics';
+import {TextStyle} from '@pixi/text';
+import {Point} from '@pixi/math';
 
 interface PixiTimelineProps {
   width: number;
@@ -13,7 +15,7 @@ interface PixiTimelineProps {
 
 const parseColor = (colorStr: string) => parseInt(colorStr.replace('#', '0x'));
 
-const drawPlayerRow = (g: PIXI.Graphics, events: any[], interactionEvents: any[], ultimateEvents: any[], timeToX: (t: number) => number, y: number) => {
+const drawPlayerRow = (g: GraphicsType, events: any[], interactionEvents: any[], ultimateEvents: any[], timeToX: (t: number) => number, y: number) => {
   g.clear();
 
   // Draw ultimate bars first (background)
@@ -58,7 +60,7 @@ const drawPlayerRow = (g: PIXI.Graphics, events: any[], interactionEvents: any[]
   g.endFill();
 };
 
-const drawUltimateAdvantageChart = (g: PIXI.Graphics, data: any[], timeToX: (t: number) => number, width: number) => {
+const drawUltimateAdvantageChart = (g: GraphicsType, data: any[], timeToX: (t: number) => number, width: number) => {
   const maxUltCount = Math.max(...data.map((d) => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)));
   const scale = 30 / maxUltCount;
 
@@ -100,20 +102,20 @@ const drawUltimateAdvantageChart = (g: PIXI.Graphics, data: any[], timeToX: (t: 
   });
 };
 
-const textStyle = new PIXI.TextStyle({
+const textStyle = new TextStyle({
   fontFamily: 'Arial',
   fontSize: 14,
   fill: '#ffffff',
 });
 
-const headerStyle = new PIXI.TextStyle({
+const headerStyle = new TextStyle({
   fontFamily: 'Arial',
   fontSize: 18,
   fontWeight: 'bold',
   fill: '#ffffff',
 });
 
-const roundLabelStyle = new PIXI.TextStyle({
+const roundLabelStyle = new TextStyle({
   fontFamily: 'Arial',
   fontSize: 12,
   fill: '#ffffff',
@@ -192,7 +194,7 @@ export const PixiTimeline = memo<PixiTimelineProps>(({width, height, timelineDat
 
         {/* Round labels */}
         {timelineData.roundTimes.map((round, index) => (
-          <Text key={`round-${index}`} text={`Round ${index + 1}`} style={roundLabelStyle} x={dimensions.timeToX(round.roundStartTime)} y={12} anchor={new PIXI.Point(0.5, 0)} />
+          <Text key={`round-${index}`} text={`Round ${index + 1}`} style={roundLabelStyle} x={dimensions.timeToX(round.roundStartTime)} y={12} anchor={new Point(0.5, 0)} />
         ))}
 
         {/* Ultimate advantage chart */}

@@ -1,17 +1,17 @@
 import React, {memo} from 'react';
 import {Container, Graphics} from '@pixi/react';
-import * as PIXI from 'pixi.js';
+import {Graphics as GraphicsType} from '@pixi/graphics';
 import {TimelineRowProps} from '../types/timeline.types';
 import {EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR, COLORS} from '../constants/timeline.constants';
 
-const drawCircle = (g: PIXI.Graphics) => {
+const drawCircle = (g: GraphicsType) => {
   g.clear();
   g.beginFill(0xffffff);
   g.drawCircle(0, 0, 3);
   g.endFill();
 };
 
-const drawUltimateBar = (g: PIXI.Graphics, width: number) => {
+const drawUltimateBar = (g: GraphicsType, width: number) => {
   g.clear();
   g.beginFill(COLORS.ultimate.color.replace('#', '0x'));
   g.drawRect(0, -5, width, 10);

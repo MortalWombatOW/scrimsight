@@ -1,6 +1,6 @@
 import React, {memo} from 'react';
 import {Graphics, Text} from '@pixi/react';
-import * as PIXI from 'pixi.js';
+import {Point} from '@pixi/math';
 import {TimelineRowProps} from '../../types/row.types';
 import {BaseTimelineRow} from './BaseTimelineRow';
 import {textStyle, phaseStyle} from '../../constants/timeline.constants';
@@ -27,12 +27,12 @@ export const RoundTimelineRow = memo<TimelineRowProps>(({width, height, y, timel
       />
       {timelineData.roundTimes.map((round, index) => (
         <React.Fragment key={`round-${index}`}>
-          <Text text="Setup" style={phaseStyle} x={(timeToX(round.roundStartTime) + timeToX(round.roundSetupCompleteTime)) / 2} y={2} anchor={new PIXI.Point(0.5, 0)} />
-          <Text text="Active" style={phaseStyle} x={(timeToX(round.roundSetupCompleteTime) + timeToX(round.roundEndTime)) / 2} y={2} anchor={new PIXI.Point(0.5, 0)} />
+          <Text text="Setup" style={phaseStyle} x={(timeToX(round.roundStartTime) + timeToX(round.roundSetupCompleteTime)) / 2} y={2} anchor={new Point(0.5, 0)} />
+          <Text text="Active" style={phaseStyle} x={(timeToX(round.roundSetupCompleteTime) + timeToX(round.roundEndTime)) / 2} y={2} anchor={new Point(0.5, 0)} />
         </React.Fragment>
       ))}
       {timelineData.roundTimes.map((round, index) => (
-        <Text key={`round-${index}`} text={`Round ${index + 1}`} style={textStyle} x={timeToX(round.roundStartTime)} y={height + 2} anchor={new PIXI.Point(0.5, 0)} />
+        <Text key={`round-${index}`} text={`Round ${index + 1}`} style={textStyle} x={timeToX(round.roundStartTime)} y={height + 2} anchor={new Point(0.5, 0)} />
       ))}
     </BaseTimelineRow>
   );

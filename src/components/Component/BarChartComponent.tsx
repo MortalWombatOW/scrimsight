@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Legend, ResponsiveContainer, Tooltip, XAxis } from 'recharts';
+import {BarChart, Legend, ResponsiveContainer, Tooltip, XAxis} from 'recharts';
 
 // const BarChartComponent = ({height, width, data, setSortBy}: {height: number; width: number; data: object[]; sortBy: string; setSortBy: (sortBy: string) => void}) => {
 //   console.log('BarChartComponent');

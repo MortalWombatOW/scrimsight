@@ -1,6 +1,7 @@
 import React, {memo, useMemo} from 'react';
 import {Graphics, Text, Container} from '@pixi/react';
-import * as PIXI from 'pixi.js';
+import {Point} from '@pixi/math';
+import {TextStyle} from '@pixi/text';
 
 interface TimelineGridProps {
   width: number;
@@ -27,7 +28,7 @@ const formatTime = (seconds: number): string => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
-const labelStyle = new PIXI.TextStyle({
+const labelStyle = new TextStyle({
   fontFamily: 'Arial',
   fontSize: 10,
   fill: '#ffffff',
@@ -95,7 +96,7 @@ export const TimelineGrid = memo<TimelineGridProps>(({width, height, timeToX, st
           const x = timeToX(time);
           const isMinute = time % 60 === 0;
           if (isMinute && x >= 0 && x <= width) {
-            return <Text key={time} text={formatTime(time)} style={labelStyle} x={x + 4} y={height / 2} anchor={new PIXI.Point(0, 0.5)} alpha={0.5} />;
+            return <Text key={time} text={formatTime(time)} style={labelStyle} x={x + 4} y={height / 2} anchor={new Point(0, 0.5)} alpha={0.5} />;
           }
           return null;
         })}

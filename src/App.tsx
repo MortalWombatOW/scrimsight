@@ -1,13 +1,13 @@
 import { Location } from 'history';
-import React from 'react';
-import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import React, { useRef } from 'react';
+import { BrowserRouter, data, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import routes, { ScrimsightRoute } from './lib/routes';
 import { themeDef } from './theme';
 
-import { WombatDataProvider } from 'wombat-data-framework';
+import { WombatDataProvider, DataManager, AlaSQLNode, AlaSQLNodeConfig, FunctionNode, FunctionNodeConfig, IndexedDBNode, IndexedDBNodeConfig, ObjectStoreNode, ObjectStoreNodeConfig, LogLevel, InputNodeConfig, InputNode } from 'wombat-data-framework';
 import Header from './components/Header/Header';
 import { getColorgorical } from './lib/color';
 import { generateThemeColor } from './lib/palette';
@@ -50,17 +50,52 @@ const App = () => {
     });
   };
 
-  console.log('Rendering App');
+  const [hasInitializedDataManager, setHasInitializedDataManager] = React.useState(false);
+  const dataManagerRef = useRef<DataManager>(new DataManager(incrementTick, LogLevel.Error));
+
+  const dataManager = dataManagerRef.current;
+
+  if (!hasInitializedDataManager) {
+    console.log('Initializing Data Manager');
+    DATA_COLUMNS.forEach((col) => dataManager.registerColumn(col));
+
+    [indexedDbNode, ...FILE_PARSING_NODES, ...OBJECT_STORE_NODES, ...ALASQL_NODES, ...FUNCTION_NODES].forEach((node) => {
+      if (node.type === 'IndexedDBNode') {
+        dataManager.registerNode(new IndexedDBNode(node as IndexedDBNodeConfig));
+      }
+      const nodeColumns = node.columnNames.map((name) => dataManager.getColumnOrDie(name));
+      if (node.type === 'InputNode') {
+        const inputNode = node as InputNodeConfig;
+        dataManager.registerNode(new InputNode(inputNode.name, inputNode.displayName, inputNode.outputType, nodeColumns, inputNode.behavior));
+      }
+      if (node.type === 'ObjectStoreNode') {
+        const objectStoreNode = node as ObjectStoreNodeConfig;
+        dataManager.registerNode(new ObjectStoreNode(objectStoreNode.name, objectStoreNode.displayName, nodeColumns, objectStoreNode.objectStore, objectStoreNode.source, objectStoreNode.behavior));
+      }
+      if (node.type === 'AlaSQLNode') {
+        const alaSQLNode = node as AlaSQLNodeConfig;
+        dataManager.registerNode(new AlaSQLNode(alaSQLNode.name, alaSQLNode.displayName, alaSQLNode.sql, alaSQLNode.sources, nodeColumns));
+      }
+      if (node.type === 'FunctionNode') {
+        const functionNode = node as FunctionNodeConfig;
+        dataManager.registerNode(new FunctionNode(functionNode.name, functionNode.displayName, functionNode.transform, functionNode.sources, nodeColumns, functionNode.outputType));
+      }
+    });
+
+    dataManager.process();
+    setHasInitializedDataManager(true);
+  }
+  console.log('Rendering App', tick);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <BrowserRouter basename="/">
-        <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <WombatDataProvider updateGlobalCallback={incrementTick} columns={DATA_COLUMNS} nodes={[indexedDbNode, ...FILE_PARSING_NODES, ...OBJECT_STORE_NODES, ...ALASQL_NODES, ...FUNCTION_NODES]}>
+      <WombatDataProvider dataManagerRef={dataManagerRef}>
+        <BrowserRouter basename="/">
+          <QueryParamProvider adapter={ReactRouter6Adapter}>
             <ThemedRoutes />
-          </WombatDataProvider>
-        </QueryParamProvider>
-      </BrowserRouter>
+          </QueryParamProvider>
+        </BrowserRouter>
+      </WombatDataProvider>
     </div>
   );
 };
@@ -73,13 +108,12 @@ const RouteAdapter: React.FC = ({ children }: { children }) => {
     () => ({
       // can disable eslint for parts here, location.state can be anything
       replace(location: Location) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         reactRouterNavigate(location, { replace: true, state: location.state });
       },
       push(location: Location) {
         reactRouterNavigate(location, {
           replace: false,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
           state: location.state,
         });
       },
@@ -89,7 +123,7 @@ const RouteAdapter: React.FC = ({ children }: { children }) => {
   // https://github.com/pbeshai/use-query-params/issues/196
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
   return children({
     history: adaptedHistory,
     location: reactRouterlocation,

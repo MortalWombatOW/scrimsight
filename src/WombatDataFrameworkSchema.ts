@@ -1,6 +1,6 @@
-import {DataNodeInputMap} from 'wombat-data-framework/src/DataNode';
-import {ultimateAdvantageConfig, playerAliveAdvantageConfig} from './lib/AdvantageTrackers';
-import {processTeamAdvantageEvents} from './lib/TeamAdvantageTracker';
+import { DataNodeInputMap } from 'wombat-data-framework/src/DataNode';
+import { ultimateAdvantageConfig, playerAliveAdvantageConfig } from './lib/AdvantageTrackers';
+import { processTeamAdvantageEvents } from './lib/TeamAdvantageTracker';
 import {
   DataColumn,
   makeDataColumn,
@@ -17,9 +17,11 @@ import {
   booleanFormatter,
   booleanComparator,
   percentFormatter,
+  objectComparator,
+  objectFormatter,
 } from 'wombat-data-framework';
-import {parseFile, readFileAsync} from './lib/data/uploadfile';
-import {INDEXED_DB_NODE_NAME, IndexedDBNodeConfig} from 'wombat-data-framework';
+import { parseFile, readFileAsync } from './lib/data/uploadfile';
+import { INDEXED_DB_NODE_NAME, IndexedDBNodeConfig } from 'wombat-data-framework';
 
 interface BaseEvent {
   mapId: number;
@@ -351,6 +353,9 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('eventAbility', 'Event Ability', 'The ability that was used.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('eventDamage', 'Event Damage', 'The amount of damage dealt.', 'hp', 'number', numberFormatter, numberComparator),
   makeDataColumn('eventHealing', 'Event Healing', 'The amount of healing dealt.', 'hp', 'number', numberFormatter, numberComparator),
+  makeDataColumn('file', 'File', 'The name of the file.', 'none', 'string', objectFormatter, objectComparator),
+  makeDataColumn('fileContent', 'File Content', 'The content of the file.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('fileName', 'File Name', 'The name of the file.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('fileModified', 'File Modified', 'The date the file was last modified.', 'none', 'number', numberFormatter, numberComparator),
   makeDataColumn('finalBlows', 'Final Blows', 'The number of final blows.', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('healeeHero', 'Healee Hero', 'The hero of the healee player.', 'none', 'string', stringFormatter, stringComparator),
@@ -367,6 +372,7 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('isCriticalHit', 'Is Critical Hit', 'Whether the attack was a critical hit.', 'none', 'boolean', booleanFormatter, booleanComparator),
   makeDataColumn('isEnvironmental', 'Is Environmental', 'Whether the attack was environmental.', 'none', 'boolean', booleanFormatter, booleanComparator),
   makeDataColumn('isHealthPack', 'Is Health Pack', 'Whether the healing was from a health pack.', 'none', 'boolean', booleanFormatter, booleanComparator),
+  makeDataColumn('logs', 'Logs', 'The logs from the file.', 'none', 'string', objectFormatter, objectComparator),
   makeDataColumn('mapDuration', 'Map Duration', 'The duration of the map.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('mapEndTime', 'Map End Time', 'The time the map ended.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('mapId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'string', stringFormatter, numberComparator),
@@ -584,8 +590,6 @@ function getAllCombinations(inputArray: string[]): string[][] {
 
 const player_stat_groups: string[][] = getAllCombinations(['mapId', 'roundNumber', 'playerName', 'playerTeam', 'playerHero', 'playerRole']);
 
-console.log('player_stat_groups', player_stat_groups);
-
 // function makeWriteNodeInit(name: string, displayName: string, objectStore: string): WriteNodeInit {
 //   return {
 //     name,
@@ -670,7 +674,7 @@ const logFileParserNode: FunctionNodeConfig = {
   sources: ['log_file_loader'],
   transform: async (data: DataNodeInputMap) =>
     data['log_file_loader'].map((file) => {
-      const {mapId, logs} = parseFile(file.fileContent);
+      const { mapId, logs } = parseFile(file.fileContent);
       return {
         fileName: file.fileName,
         mapId,
@@ -681,7 +685,7 @@ const logFileParserNode: FunctionNodeConfig = {
   columnNames: ['fileName', 'mapId', 'logs', 'fileModified'],
 };
 
-const extractEventType = (type: string, logs: {type: string}[]) => logs.filter((log) => log.type === type);
+const extractEventType = (type: string, logs: { type: string }[]) => logs.filter((log) => log.type === type);
 
 const ability_1_used_extractor: FunctionNodeConfig = {
   name: 'ability_1_used_extractor',
@@ -809,7 +813,7 @@ const maps_extractor: FunctionNodeConfig = {
   displayName: 'Maps Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].map((file) => ({mapId: file.mapId, name: file.name, fileModified: file.fileModified})),
+  transform: (data) => data['log_file_parser'].map((file) => ({ mapId: file.mapId, name: file.name, fileModified: file.fileModified })),
   columnNames: ['mapId', 'name', 'fileModified'],
 };
 
@@ -1601,13 +1605,13 @@ export const FUNCTION_NODES: FunctionNodeConfig[] = [
     columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1ChargedUltimateCount', 'team2ChargedUltimateCount', 'teamWithUltimateAdvantage', 'ultimateAdvantageDiff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(data['ultimate_charged_object_store'] || []).map((e) => ({...e, type: 'charged'})),
-        ...(data['ultimate_end_object_store'] || []).map((e) => ({...e, type: 'end'})),
-        ...(data['round_end_object_store'] || []).map((e) => ({...e, type: 'round_end'})),
-        ...(data['round_start_object_store'] || []).map((e) => ({...e, type: 'round_start'})),
+        ...(data['ultimate_charged_object_store'] || []).map((e) => ({ ...e, type: 'charged' })),
+        ...(data['ultimate_end_object_store'] || []).map((e) => ({ ...e, type: 'end' })),
+        ...(data['round_end_object_store'] || []).map((e) => ({ ...e, type: 'round_end' })),
+        ...(data['round_start_object_store'] || []).map((e) => ({ ...e, type: 'round_start' })),
       ];
 
-      const mapTeams = new Map<string, {team1Name: string; team2Name: string}>((data['match_start_object_store'] || []).map((match) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]));
+      const mapTeams = new Map<string, { team1Name: string; team2Name: string }>((data['match_start_object_store'] || []).map((match) => [match.mapId, { team1Name: match.team1Name, team2Name: match.team2Name }]));
 
       return processTeamAdvantageEvents(events, mapTeams, ultimateAdvantageConfig);
     },
@@ -1621,13 +1625,13 @@ export const FUNCTION_NODES: FunctionNodeConfig[] = [
     columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1AliveCount', 'team2AliveCount', 'teamWithAliveAdvantage', 'aliveAdvantageDiff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(data['kill_object_store'] || []).map((e) => ({...e, type: 'kill'})),
-        ...(data['hero_spawn_object_store'] || []).map((e) => ({...e, type: 'spawn'})),
-        ...(data['round_end_object_store'] || []).map((e) => ({...e, type: 'round_end'})),
-        ...(data['round_start_object_store'] || []).map((e) => ({...e, type: 'round_start'})),
+        ...(data['kill_object_store'] || []).map((e) => ({ ...e, type: 'kill' })),
+        ...(data['hero_spawn_object_store'] || []).map((e) => ({ ...e, type: 'spawn' })),
+        ...(data['round_end_object_store'] || []).map((e) => ({ ...e, type: 'round_end' })),
+        ...(data['round_start_object_store'] || []).map((e) => ({ ...e, type: 'round_start' })),
       ];
 
-      const mapTeams = new Map<string, {team1Name: string; team2Name: string}>((data['match_start_object_store'] || []).map((match) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]));
+      const mapTeams = new Map<string, { team1Name: string; team2Name: string }>((data['match_start_object_store'] || []).map((match) => [match.mapId, { team1Name: match.team1Name, team2Name: match.team2Name }]));
 
       return processTeamAdvantageEvents(events, mapTeams, playerAliveAdvantageConfig);
     },

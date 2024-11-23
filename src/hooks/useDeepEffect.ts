@@ -55,7 +55,6 @@ export function useDeepEffect(setup: () => void, deps: unknown[]): void {
       setup();
       prevDeps.current = deps;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   });
 }
 

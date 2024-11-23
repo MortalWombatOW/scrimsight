@@ -1,10 +1,12 @@
 import React from 'react';
-import {useWombatDataManager} from 'wombat-data-framework';
+import { useWombatData, useWombatDataManager } from 'wombat-data-framework';
 
 const useUniqueValuesForColumn = (columnName: string): string[] => {
   const dataManager = useWombatDataManager();
 
   const column = dataManager.getColumnOrDie(columnName);
+
+  const { data } = useWombatData<object>('player_stat_expanded');
 
   if (!column) {
     throw new Error(`Column ${columnName} not found`);
@@ -13,8 +15,6 @@ const useUniqueValuesForColumn = (columnName: string): string[] => {
   if (!dataManager.hasNodeOutput('player_stat_expanded')) {
     return [];
   }
-
-  const data = dataManager.getNode('player_stat_expanded').getOutput<object[]>();
 
   const uniqueValues = Array.from(new Set(data.map((row) => row[columnName])));
 
