@@ -7,6 +7,7 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import Dotenv from 'dotenv-webpack';
 import SpeedMeasurePlugin from 'speed-measure-webpack-plugin';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const smp = new SpeedMeasurePlugin({
   outputFormat: "humanVerbose",
@@ -53,20 +54,20 @@ const webpackConfig = () =>
           ],
           exclude: '/node_modules/',
           use: [
-            {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                  '@babel/env',
-                  '@babel/preset-typescript',
-                  '@babel/react',
-                ],
-                plugins: [
-                  '@babel/plugin-syntax-dynamic-import',
-                  '@babel/plugin-syntax-import-assertions',
-                ],
-              },
-            },
+            // {
+            //   loader: 'babel-loader',
+            //   options: {
+            //     presets: [
+            //       '@babel/env',
+            //       '@babel/preset-typescript',
+            //       '@babel/react',
+            //     ],
+            //     plugins: [
+            //       '@babel/plugin-syntax-dynamic-import',
+            //       '@babel/plugin-syntax-import-assertions',
+            //     ],
+            //   },
+            // },
             {
               loader: 'ts-loader',
             },
@@ -108,6 +109,7 @@ const webpackConfig = () =>
       new Dotenv({
         path: `./.env.${process.env.NODE_ENV}`,
       }),
+      new BundleAnalyzerPlugin(),
     ],
     optimization: {
       minimize: true,

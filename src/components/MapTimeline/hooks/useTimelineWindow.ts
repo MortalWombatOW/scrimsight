@@ -1,5 +1,4 @@
-import {useState, useRef, useCallback, useEffect} from 'react';
-import {throttle} from 'lodash';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface UseTimelineWindowProps {
   windowStartTime: number;
@@ -11,7 +10,7 @@ interface UseTimelineWindowProps {
   xToTime: (x: number) => number;
 }
 
-export const useTimelineWindow = ({windowStartTime, windowEndTime, mapStartTime, mapEndTime, setWindowStartTime, setWindowEndTime, xToTime}: UseTimelineWindowProps) => {
+export const useTimelineWindow = ({ windowStartTime, windowEndTime, mapStartTime, mapEndTime, setWindowStartTime, setWindowEndTime, xToTime }: UseTimelineWindowProps) => {
   const [dragging, setDragging] = useState<null | 'start' | 'end'>(null);
   const [innerWindowStartTime, setInnerWindowStartTime] = useState(windowStartTime);
   const [innerWindowEndTime, setInnerWindowEndTime] = useState(windowEndTime);
@@ -19,12 +18,12 @@ export const useTimelineWindow = ({windowStartTime, windowEndTime, mapStartTime,
 
   // Throttled update functions
   const throttledSetWindowStart = useCallback(
-    throttle((time: number) => setWindowStartTime(time), 100),
+    (time: number) => setWindowStartTime(time),
     [setWindowStartTime],
   );
 
   const throttledSetWindowEnd = useCallback(
-    throttle((time: number) => setWindowEndTime(time), 100),
+    (time: number) => setWindowEndTime(time),
     [setWindowEndTime],
   );
 
