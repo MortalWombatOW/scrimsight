@@ -36,14 +36,7 @@ const Uploader: React.FC<UploaderProps> = ({ refreshCallback = () => { } }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const dataManager = useWombatDataManager();
   // const { files, filePercents, startFileUploads } = useFileUpload(uploadFileHandler, dataManager, refreshCallback);
-  const [logFileInputNode] = useWombatDataNode<InputNode>('log_file_input');
 
-  if (!logFileInputNode) {
-    console.error('logFileInputNode not found');
-    return null;
-  } else {
-    console.log('logFileInputNode found');
-  }
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -51,7 +44,7 @@ const Uploader: React.FC<UploaderProps> = ({ refreshCallback = () => { } }) => {
     //   file,
     //   fileName: file.name,
     // }));
-    logFileInputNode.input(Array.from(e.target.files));
+    dataManager.setInputForInputNode('log_file_input', Array.from(e.target.files));
     // setModalOpen(true);
   };
 

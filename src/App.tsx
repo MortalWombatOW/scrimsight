@@ -51,7 +51,7 @@ const App = () => {
   };
 
   const [hasInitializedDataManager, setHasInitializedDataManager] = React.useState(false);
-  const dataManagerRef = useRef<DataManager>(new DataManager(incrementTick, LogLevel.Error));
+  const dataManagerRef = useRef<DataManager>(new DataManager(incrementTick, LogLevel.Timing));
 
   const dataManager = dataManagerRef.current;
 
@@ -59,9 +59,12 @@ const App = () => {
     console.log('Initializing Data Manager');
     DATA_COLUMNS.forEach((col) => dataManager.registerColumn(col));
 
-    [indexedDbNode, ...FILE_PARSING_NODES, ...OBJECT_STORE_NODES, ...ALASQL_NODES, ...FUNCTION_NODES].forEach((node) => {
+    const allNodes = [indexedDbNode, ...FILE_PARSING_NODES, ...OBJECT_STORE_NODES, ...ALASQL_NODES, ...FUNCTION_NODES];
+    allNodes.forEach((node) => {
       if (node.type === 'IndexedDBNode') {
-        dataManager.registerNode(new IndexedDBNode(node as IndexedDBNodeConfig));
+        const requiredObjectStores = allNodes.filter((n) => n.type === 'ObjectStoreNode').map((n) => (n as ObjectStoreNodeConfig).objectStore);
+        const configWithObjectStores: IndexedDBNodeConfig = { ...node as IndexedDBNodeConfig, objectStores: requiredObjectStores };
+        dataManager.registerNode(new IndexedDBNode(configWithObjectStores));
       }
       const nodeColumns = node.columnNames.map((name) => dataManager.getColumnOrDie(name));
       if (node.type === 'InputNode') {

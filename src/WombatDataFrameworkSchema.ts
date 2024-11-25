@@ -375,7 +375,7 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('logs', 'Logs', 'The logs from the file.', 'none', 'string', objectFormatter, objectComparator),
   makeDataColumn('mapDuration', 'Map Duration', 'The duration of the map.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('mapEndTime', 'Map End Time', 'The time the map ended.', 's', 'number', numberFormatter, numberComparator),
-  makeDataColumn('mapId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'string', stringFormatter, numberComparator),
+  makeDataColumn('mapId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'number', stringFormatter, numberComparator),
   makeDataColumn('mapName', 'Map Name', 'The name of the map.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mapStartTime', 'Map Start Time', 'The time the map started.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('mapType', 'Map Type', 'The type of the map.', 'none', 'string', stringFormatter, stringComparator),
@@ -636,8 +636,9 @@ export const indexedDbNode: IndexedDBNodeConfig = {
   displayName: 'Indexed DB',
   outputType: 'Multiple',
   databaseName: 'scrimsight',
-  version: 1,
+  version: 5,
   columnNames: [],
+  objectStores: [],
 };
 
 const logFileInputNode: InputNodeConfig = {
@@ -656,10 +657,9 @@ const logFileLoaderNode: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_input'],
   transform: async (data: DataNodeInputMap) => {
-    const files = data['log_file_input'].map((file) => file.file);
-    const fileContents = await Promise.all(files.map(readFileAsync));
+    const fileContents = await Promise.all(data['log_file_input'].map(readFileAsync));
     return fileContents.map((content, index) => ({
-      fileName: files[index].name,
+      fileName: data['log_file_input'][index].name,
       fileContent: content,
     }));
   },
@@ -685,7 +685,7 @@ const logFileParserNode: FunctionNodeConfig = {
   columnNames: ['fileName', 'mapId', 'logs', 'fileModified'],
 };
 
-const extractEventType = (type: string, logs: { type: string }[]) => logs.filter((log) => log.type === type);
+const extractEventType = (type: string, logs: { specName: string; data: any }[]) => logs.filter((log) => log.specName === type)[0]?.data;
 
 const ability_1_used_extractor: FunctionNodeConfig = {
   name: 'ability_1_used_extractor',
