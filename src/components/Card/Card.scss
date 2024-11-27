@@ -1,8 +1,11 @@
 .MetricCard {
+    position: relative;
     display: inline-block;
-    margin: 5px;
     // center content
     text-align: center;
+    overflow: visible;
+    min-width: 200px;
+    min-height: 200px;
 
     & .metric-value {
         margin: 5px;

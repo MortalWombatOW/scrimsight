@@ -1,24 +1,36 @@
 import { Location } from 'history';
 import React, { useRef } from 'react';
-import { BrowserRouter, data, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
-import routes, { ScrimsightRoute } from './lib/routes';
+import routes, { ScrimsightRoute } from './routes';
 import { themeDef } from './theme';
-
+import { AppProvider } from '@toolpad/core/react-router-dom';
 import { WombatDataProvider, DataManager, AlaSQLNode, AlaSQLNodeConfig, FunctionNode, FunctionNodeConfig, IndexedDBNode, IndexedDBNodeConfig, ObjectStoreNode, ObjectStoreNodeConfig, LogLevel, InputNodeConfig, InputNode } from 'wombat-data-framework';
 import Header from './components/Header/Header';
 import { getColorgorical } from './lib/color';
 import { generateThemeColor } from './lib/palette';
 import { useDeepMemo } from './hooks/useDeepEffect';
 import { DATA_COLUMNS, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES, FILE_PARSING_NODES, indexedDbNode } from './WombatDataFrameworkSchema';
+import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import { NavigationItem, NavigationPageItem } from '@toolpad/core/AppProvider';
+import Uploader from './components/Uploader/Uploader';
+
+const routesToNavigation = (routes: ScrimsightRoute[]): NavigationPageItem[] => {
+  return routes.map((route) => ({
+    kind: 'page',
+    segment: route.path[0].substring(1),
+    title: route.name ?? route.path[0],
+    icon: route.icon,
+  }));
+};
 
 const ContextualizedRoute = ({ route }: { route: ScrimsightRoute }): JSX.Element => {
   let el: JSX.Element = React.createElement(route.component, {});
-  for (const context of route.contexts || []) {
-    el = React.createElement(context, undefined, el);
-  }
+  // for (const context of route.contexts || []) {
+  //   el = React.createElement(context, undefined, el);
+  // }
   return el;
 };
 
@@ -35,8 +47,17 @@ function ThemedRoutes(props) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Header />
-      <Routes>{routes.map((route) => route.path.map((path, i) => <Route key={path} path={path} index={(i === (0 as unknown)) as false} element={<ContextualizedRoute route={route} />} />))}</Routes>
+      <AppProvider navigation={routesToNavigation(routes)} branding={{ logo: <div />, title: 'SCRIMSIGHT' }} theme={theme}>
+        <DashboardLayout>
+          {/* <Header /> */}
+
+
+          <Routes>{routes.map((route) =>
+            <Route key={route.path[0]} path={route.path[0]} element={<ContextualizedRoute route={route} />} />
+          )}
+          </Routes>
+        </DashboardLayout>
+      </AppProvider>
     </ThemeProvider>
   );
 }

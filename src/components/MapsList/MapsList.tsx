@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import { Button, Card, CardActionArea, CardContent, CardMedia, Divider, Grid, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Button, Card, CardActionArea, CardContent, CardMedia, Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import useUniqueValuesForColumn from '../../hooks/useUniqueValuesForColumn';
 import { useWombatData, useWombatDataManager } from 'wombat-data-framework';
 import { MatchEnd, MatchStart } from '../../WombatDataFrameworkSchema';
 import { mapNameToFileName } from '../../lib/string';
 import { useNavigate } from 'react-router-dom';
+import './MapsList.scss';
 
 const MapRow = ({ mapId }: { mapId: number }) => {
   const navigate = useNavigate();
@@ -16,55 +18,61 @@ const MapRow = ({ mapId }: { mapId: number }) => {
   const { mapName, mapType, team1Name, team2Name } = matchStartData.data.find((row) => row['mapId'] === mapId) || { mapName: '', mapType: '', team1Name: '', team2Name: '' };
   const { team1Score, team2Score } = matchEndData.data.find((row) => row['mapId'] === mapId) || { team1Score: 0, team2Score: 0 };
   const { name, fileModified } = mapsData.data.find((row) => row['mapId'] === mapId) || { name: '', fileModified: 0 };
+
   return (
-    <Card sx={{ width: '100%', minWidth: '500px' }}>
-      {/* <CardActionArea> */}
-      <Grid container spacing={2}>
-        <Grid item xs={2}>
-          <CardMedia component="img" image={mapNameToFileName(mapName, false)} sx={{ height: '100%' }} />
-        </Grid>
-        <Grid item xs={9}>
-          <CardContent>
-            <Typography variant="h6" component="div">
-              {mapName} ({mapType})
+    <Card
+      sx={{
+        width: '200px',
+        height: '200px',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        overflow: 'visible',
+        border: '1px solid',
+        borderColor: 'secondary.main',
+      }}
+      className="dashboard-item secondary"
+    >
+
+      <CardContent sx={{
+        flexGrow: 1,
+        padding: '0',
+        display: 'flex',
+        gap: 2,
+      }}>
+        {/* Scores section - always visible */}
+        <div style={{
+          width: '200px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap',
+          alignContent: 'space-between',
+        }}>
+
+          <img
+            src={mapNameToFileName(mapName, false)}
+            style={{
+              width: '200px',
+              position: 'relative',
+              //curved corners
+              borderRadius: '10px',
+            }}
+          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2, margin: '10px' }}>
+            <Typography variant="h5" align="center" gutterBottom>
+              {team1Name}
             </Typography>
-            <Divider sx={{ my: 1 }} />
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="body1">{team1Name}</Typography>
-                <Typography variant="h6">{team1Score}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body1" align="right">
-                  {team2Name}
-                </Typography>
-                <Typography variant="h6" align="right">
-                  {team2Score}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Divider sx={{ my: 1 }} />
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(fileModified).toLocaleString()}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" color="text.secondary" align="right">
-                  {name}
-                </Typography>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Grid>
-        <Grid item xs={1} sx={{ display: 'flex', alignItems: 'center' }}>
-          <Button variant="contained" color="primary" size="small" onClick={() => navigate(`/map/${mapId}`)}>
-            View
-          </Button>
-        </Grid>
-      </Grid>
-      {/* </CardActionArea> */}
+            <Typography variant="h3" align="center">
+              {team1Score}
+            </Typography>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2, margin: '10px' }}>
+            <Typography variant="h5" align="center" gutterBottom>
+              {team2Name}
+            </Typography>
+            <Typography variant="h3" align="center">
+              {team2Score}
+            </Typography>
+          </div>
+        </div>
+      </CardContent>
     </Card>
   );
 };
@@ -78,17 +86,12 @@ const MapsList = () => {
 
   console.log('mapsData', mapsData.data);
 
-  return (
-    <div style={{ width: '80%', marginLeft: '10%' }}>
-      <Typography variant="h3">Recent Maps</Typography>
-      <List>
-        {mapsData.data.map((map) => (
-          <ListItem key={map['mapId']}>
-            <MapRow mapId={parseInt(map['mapId'], 10)} />
-          </ListItem>
-        ))}
-      </List>
-    </div>
+  return (<>
+
+    {mapsData.data.map((map) => (
+      <MapRow mapId={parseInt(map['mapId'], 10)} />
+    ))}
+  </>
   );
 };
 

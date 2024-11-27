@@ -4,7 +4,8 @@ import UploadProgressModal from './UploadProgressModal';
 import { FileUpload } from 'lib/data/types';
 import { useWombatDataManager, DataManager, useWombatDataNode } from 'wombat-data-framework';
 import { InputNode } from 'wombat-data-framework';
-
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import { Typography } from '../../WombatUI/WombatUI';
 interface UploaderProps {
   refreshCallback?: () => void;
 }
@@ -49,13 +50,12 @@ const Uploader: React.FC<UploaderProps> = ({ refreshCallback = () => { } }) => {
   };
 
   return (
-    <>
-      <Button variant="contained" component="label" color="primary">
-        Add maps
-        <input id="fileinput" type="file" onChange={onInputChange} hidden multiple />
-      </Button>
-      {/* <UploadProgressModal isOpen={modalOpen} setIsOpen={setModalOpen} files={files} filePercents={filePercents} /> */}
-    </>
+    // <>
+    <Button variant="outlined" component="label" color="primary" sx={{ minWidth: '200px', minHeight: '200px', backgroundColor: "rgb(14, 71, 77)" }} startIcon={<NoteAddIcon />} className="dashboard-item primary">
+      <Typography variant="h6" sx={{ whiteSpace: 'nowrap' }}>Add logs</Typography>
+      <input id="fileinput" type="file" onChange={onInputChange} hidden multiple />
+    </Button>
+    // </>
   );
 };
 
