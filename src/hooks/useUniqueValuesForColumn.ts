@@ -4,7 +4,7 @@ import { useWombatData, useWombatDataManager } from 'wombat-data-framework';
 const useUniqueValuesForColumn = (columnName: string): string[] => {
   const dataManager = useWombatDataManager();
 
-  const column = dataManager.getColumnOrDie(columnName);
+  const column = dataManager.getColumn(columnName);
 
   const { data } = useWombatData<object>('player_stat_expanded');
 

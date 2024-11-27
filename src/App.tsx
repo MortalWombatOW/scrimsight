@@ -19,7 +19,6 @@ const ContextualizedRoute = ({ route }: { route: ScrimsightRoute }): JSX.Element
   for (const context of route.contexts || []) {
     el = React.createElement(context, undefined, el);
   }
-  console.log('el', el);
   return el;
 };
 
@@ -53,7 +52,7 @@ const initializeDataManager = (dataManager: DataManager) => {
       const configWithObjectStores: IndexedDBNodeConfig = { ...node as IndexedDBNodeConfig, objectStores: requiredObjectStores };
       dataManager.registerNode(new IndexedDBNode(configWithObjectStores));
     }
-    const nodeColumns = node.columnNames.map((name) => dataManager.getColumnOrDie(name));
+    const nodeColumns = node.columnNames.map((name) => dataManager.getColumn(name));
     if (node.type === 'InputNode') {
       const inputNode = node as InputNodeConfig;
       dataManager.registerNode(new InputNode(inputNode.name, inputNode.displayName, inputNode.outputType, nodeColumns, inputNode.behavior));
