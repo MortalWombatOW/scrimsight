@@ -61,12 +61,12 @@ const MetricCard: React.FC<MetricCardProps> = ({ columnName, slice, compareToOth
   }
 
   return (
-    <Card className="MetricCard dashboard-item" sx={{ overflow: 'visible' }}>
+    <Card className="MetricCard dashboard-item secondary" sx={{ overflow: 'visible', maxWidth: 200, maxHeight: 200 }}>
       <CardActionArea className="metric-card-action-area" onClick={() => setExpanded(!expanded)}>
-        <Typography variant="h4">
-          Avg. {metric.column.displayName} for {metric.valueLabel} per round
+        <Typography variant="h5">
+          {metric.column.displayName} for {metric.valueLabel} per round
         </Typography>
-        <Typography variant="h3" className="metric-value">
+        <Typography variant="h4" className="metric-value">
           {metric.column.formatter(metric.value)}
         </Typography>
         <Typography variant="subtitle2">
