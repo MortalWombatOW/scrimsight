@@ -1,6 +1,6 @@
 import { Location } from 'history';
 import React, { useRef } from 'react';
-import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
@@ -16,6 +16,7 @@ import { DATA_COLUMNS, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES, FILE_PA
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { NavigationItem, NavigationPageItem } from '@toolpad/core/AppProvider';
 import Uploader from './components/Uploader/Uploader';
+import WombatDataWrapper from './components/WombatDataWrapper/WombatDataWrapper';
 
 const routesToNavigation = (routes: ScrimsightRoute[]): NavigationPageItem[] => {
   return routes.map((route) => ({
@@ -62,56 +63,18 @@ function ThemedRoutes(props) {
   );
 }
 
-const initializeDataManager = (dataManager: DataManager) => {
-  console.log('Initializing Data Manager');
-  DATA_COLUMNS.forEach((col) => dataManager.registerColumn(col));
-
-  const allNodes = [indexedDbNode, ...FILE_PARSING_NODES, ...OBJECT_STORE_NODES, ...ALASQL_NODES, ...FUNCTION_NODES];
-  allNodes.forEach((node) => {
-    if (node.type === 'IndexedDBNode') {
-      const requiredObjectStores = allNodes.filter((n) => n.type === 'ObjectStoreNode').map((n) => (n as ObjectStoreNodeConfig).objectStore);
-      const configWithObjectStores: IndexedDBNodeConfig = { ...node as IndexedDBNodeConfig, objectStores: requiredObjectStores };
-      dataManager.registerNode(new IndexedDBNode(configWithObjectStores));
-    }
-    const nodeColumns = node.columnNames.map((name) => dataManager.getColumn(name));
-    if (node.type === 'InputNode') {
-      const inputNode = node as InputNodeConfig;
-      dataManager.registerNode(new InputNode(inputNode.name, inputNode.displayName, inputNode.outputType, nodeColumns, inputNode.behavior));
-    }
-    if (node.type === 'ObjectStoreNode') {
-      const objectStoreNode = node as ObjectStoreNodeConfig;
-      dataManager.registerNode(new ObjectStoreNode(objectStoreNode.name, objectStoreNode.displayName, nodeColumns, objectStoreNode.objectStore, objectStoreNode.source, objectStoreNode.behavior));
-    }
-    if (node.type === 'AlaSQLNode') {
-      const alaSQLNode = node as AlaSQLNodeConfig;
-      dataManager.registerNode(new AlaSQLNode(alaSQLNode.name, alaSQLNode.displayName, alaSQLNode.sql, alaSQLNode.sources, nodeColumns));
-    }
-    if (node.type === 'FunctionNode') {
-      const functionNode = node as FunctionNodeConfig;
-      dataManager.registerNode(new FunctionNode(functionNode.name, functionNode.displayName, functionNode.transform, functionNode.sources, nodeColumns, functionNode.outputType));
-    }
-  });
-};
-
 const App = () => {
-  const [tick, setTick] = React.useState(0);
-  const incrementTick = () => {
-    setTick((tick) => {
-      return tick + 1;
-    });
-  };
-
-  console.log('Rendering App', tick);
+  console.log('Rendering App');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <WombatDataProvider changeCallback={incrementTick} logLevel={LogLevel.Debug} initializeDataManager={initializeDataManager}>
-        <BrowserRouter basename="/">
-          <QueryParamProvider adapter={ReactRouter6Adapter}>
+      <BrowserRouter basename="/">
+        <QueryParamProvider adapter={ReactRouter6Adapter}>
+          <WombatDataWrapper>
             <ThemedRoutes />
-          </QueryParamProvider>
-        </BrowserRouter>
-      </WombatDataProvider>
+          </WombatDataWrapper>
+        </QueryParamProvider>
+      </BrowserRouter>
     </div>
   );
 };
