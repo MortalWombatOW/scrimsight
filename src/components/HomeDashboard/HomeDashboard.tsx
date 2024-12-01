@@ -7,6 +7,7 @@ import { DataTable } from 'wombat-data-framework';
 import Uploader from '../Uploader/Uploader';
 import Grid from '@mui/material/Grid2';
 import './HomeDashboard.scss';
+import Debug from '../Debug/Debug';
 
 const HomeDashboard = () => {
   return (

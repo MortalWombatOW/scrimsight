@@ -1,4 +1,4 @@
-import { DataManager, IndexedDBNode, InputNode, ObjectStoreNode, AlaSQLNode, FunctionNode } from 'wombat-data-framework';
+import { DataManager, IndexedDBNode, InputNode, ObjectStoreNode, AlaSQLNode, FunctionNode, FunctionNodeConfig, InputNodeConfig, ObjectStoreNodeConfig, IndexedDBNodeConfig, AlaSQLNodeConfig } from 'wombat-data-framework';
 import { DATA_COLUMNS, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES, FILE_PARSING_NODES, indexedDbNode } from '../WombatDataFrameworkSchema';
 
 export const initializeDataManager = (dataManager: DataManager) => {

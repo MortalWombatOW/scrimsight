@@ -1,25 +1,17 @@
-import {Modal, Box, IconButton} from '@mui/material';
+import { Modal, Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import React from 'react';
-import {FileUpload} from '../../lib/data/types';
 import CloseIcon from '@mui/icons-material/Close';
 import StatusIcon from './StatusIcon';
 
 interface UploadProgressModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  files: FileUpload[];
-  filePercents: {[fileName: string]: number};
+  initialRowCounts: { [objectStoreName: string]: number };
+  rowCounts: { [fileName: string]: { [objectStoreName: string]: number } };
+  objectStoreNames: string[];
 }
 
-const FileItem: React.FC<{file: FileUpload; percent: number}> = ({file, percent}) => (
-  <div className="Uploader-progress">
-    <StatusIcon percent={percent} />
-    <span className="file-name">{file.fileName}</span>
-    {percent < 0 && <span className="file-error">{file.error}</span>}
-  </div>
-);
-
-const UploadProgressModal: React.FC<UploadProgressModalProps> = ({isOpen, setIsOpen, files, filePercents}) => (
+const UploadProgressModal: React.FC<UploadProgressModalProps> = ({ isOpen, setIsOpen, initialRowCounts, rowCounts, objectStoreNames }) => (
   <Modal open={isOpen} onClose={() => setIsOpen(false)}>
     <div className="Uploader-progresscontainer">
       <Box component="div" display="flex" alignItems="center" className="header-container">
@@ -28,7 +20,34 @@ const UploadProgressModal: React.FC<UploadProgressModalProps> = ({isOpen, setIsO
           <CloseIcon />
         </IconButton>
       </Box>
-      {files.length === 0 ? <div>No files selected</div> : files.map((file) => <FileItem key={file.fileName} file={file} percent={filePercents[file.fileName]} />)}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>File Name</TableCell>
+              {objectStoreNames.map((name) => (
+                <TableCell key={name}>{name}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell>Initial</TableCell>
+              {objectStoreNames.map((name) => (
+                <TableCell key={name}>{initialRowCounts[name]}</TableCell>
+              ))}
+            </TableRow>
+            {Object.entries(rowCounts).map(([fileName, counts]) => (
+              <TableRow key={fileName}>
+                <TableCell>{fileName}</TableCell>
+                {objectStoreNames.map((name) => (
+                  <TableCell key={name}>{counts[name]}</TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   </Modal>
 );

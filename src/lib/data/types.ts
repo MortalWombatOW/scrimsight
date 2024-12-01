@@ -1,12 +1,3 @@
-type FileUpload = {
-  fileName: string;
-  file?: File;
-  data?: string;
-  mapId?: number;
-  events?: DataAndSpecName[];
-  error?: string;
-  done?: boolean;
-};
 
 interface TeamInfo {
   name: string;
@@ -113,24 +104,24 @@ interface FieldSpec {
 }
 
 const commmonFields: FieldSpec[] = [
-  {displayName: 'Map ID', key: 'mapId', dataType: 'number'},
-  {displayName: 'Type', key: 'type', dataType: 'string'},
-  {displayName: 'Match Time', key: 'matchTime', dataType: 'number'},
+  { displayName: 'Map ID', key: 'mapId', dataType: 'number' },
+  { displayName: 'Type', key: 'type', dataType: 'string' },
+  { displayName: 'Match Time', key: 'matchTime', dataType: 'number' },
 ];
 
 const playerFields: FieldSpec[] = [
-  {displayName: 'Player Team', key: 'playerTeam', dataType: 'string'},
-  {displayName: 'Player Name', key: 'playerName', dataType: 'string'},
-  {displayName: 'Player Hero', key: 'playerHero', dataType: 'string'},
+  { displayName: 'Player Team', key: 'playerTeam', dataType: 'string' },
+  { displayName: 'Player Name', key: 'playerName', dataType: 'string' },
+  { displayName: 'Player Hero', key: 'playerHero', dataType: 'string' },
 ];
 
 const attackFields: FieldSpec[] = [
-  {displayName: 'Attacker Team', key: 'attackerTeam', dataType: 'string'},
-  {displayName: 'Attacker Name', key: 'attackerName', dataType: 'string'},
-  {displayName: 'Attacker Hero', key: 'attackerHero', dataType: 'string'},
-  {displayName: 'Victim Team', key: 'victimTeam', dataType: 'string'},
-  {displayName: 'Victim Name', key: 'victimName', dataType: 'string'},
-  {displayName: 'Victim Hero', key: 'victimHero', dataType: 'string'},
+  { displayName: 'Attacker Team', key: 'attackerTeam', dataType: 'string' },
+  { displayName: 'Attacker Name', key: 'attackerName', dataType: 'string' },
+  { displayName: 'Attacker Hero', key: 'attackerHero', dataType: 'string' },
+  { displayName: 'Victim Team', key: 'victimTeam', dataType: 'string' },
+  { displayName: 'Victim Name', key: 'victimName', dataType: 'string' },
+  { displayName: 'Victim Hero', key: 'victimHero', dataType: 'string' },
 ];
 
 const LOG_SPEC: LogSpec = {
@@ -139,10 +130,10 @@ const LOG_SPEC: LogSpec = {
     key: 'match_start',
     fields: [
       ...commmonFields,
-      {displayName: 'Map Name', key: 'mapName', dataType: 'string'},
-      {displayName: 'Map Type', key: 'mapType', dataType: 'string'},
-      {displayName: 'Team 1 Name', key: 'team1Name', dataType: 'string'},
-      {displayName: 'Team 2 Name', key: 'team2Name', dataType: 'string'},
+      { displayName: 'Map Name', key: 'mapName', dataType: 'string' },
+      { displayName: 'Map Type', key: 'mapType', dataType: 'string' },
+      { displayName: 'Team 1 Name', key: 'team1Name', dataType: 'string' },
+      { displayName: 'Team 2 Name', key: 'team2Name', dataType: 'string' },
     ],
   },
   match_end: {
@@ -150,9 +141,9 @@ const LOG_SPEC: LogSpec = {
     key: 'match_end',
     fields: [
       ...commmonFields,
-      {displayName: 'Round Number', key: 'roundNumber', dataType: 'number'},
-      {displayName: 'Team 1 Score', key: 'team1Score', dataType: 'number'},
-      {displayName: 'Team 2 Score', key: 'team2Score', dataType: 'number'},
+      { displayName: 'Round Number', key: 'roundNumber', dataType: 'number' },
+      { displayName: 'Team 1 Score', key: 'team1Score', dataType: 'number' },
+      { displayName: 'Team 2 Score', key: 'team2Score', dataType: 'number' },
     ],
   },
   round_start: {
@@ -160,10 +151,10 @@ const LOG_SPEC: LogSpec = {
     key: 'round_start',
     fields: [
       ...commmonFields,
-      {displayName: 'Round Number', key: 'roundNumber', dataType: 'number'},
-      {displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string'},
-      {displayName: 'Team 1 Score', key: 'team1Score', dataType: 'number'},
-      {displayName: 'Team 2 Score', key: 'team2Score', dataType: 'number'},
+      { displayName: 'Round Number', key: 'roundNumber', dataType: 'number' },
+      { displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string' },
+      { displayName: 'Team 1 Score', key: 'team1Score', dataType: 'number' },
+      { displayName: 'Team 2 Score', key: 'team2Score', dataType: 'number' },
       {
         displayName: 'Objective Index',
         key: 'objectiveIndex',
@@ -176,10 +167,10 @@ const LOG_SPEC: LogSpec = {
     key: 'round_end',
     fields: [
       ...commmonFields,
-      {displayName: 'Round Number', key: 'roundNumber', dataType: 'number'},
-      {displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string'},
-      {displayName: 'Team 1 Score', key: 'team1Score', dataType: 'number'},
-      {displayName: 'Team 2 Score', key: 'team2Score', dataType: 'number'},
+      { displayName: 'Round Number', key: 'roundNumber', dataType: 'number' },
+      { displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string' },
+      { displayName: 'Team 1 Score', key: 'team1Score', dataType: 'number' },
+      { displayName: 'Team 2 Score', key: 'team2Score', dataType: 'number' },
       {
         displayName: 'Objective Index',
         key: 'objectiveIndex',
@@ -207,7 +198,7 @@ const LOG_SPEC: LogSpec = {
     key: 'setup_complete',
     fields: [
       ...commmonFields,
-      {displayName: 'Round Number', key: 'roundNumber', dataType: 'number'},
+      { displayName: 'Round Number', key: 'roundNumber', dataType: 'number' },
       {
         displayName: 'Match Time Remaining',
         key: 'matchTimeRemaining',
@@ -221,8 +212,8 @@ const LOG_SPEC: LogSpec = {
     key: 'objective_captured',
     fields: [
       ...commmonFields,
-      {displayName: 'Round Number', key: 'roundNumber', dataType: 'number'},
-      {displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string'},
+      { displayName: 'Round Number', key: 'roundNumber', dataType: 'number' },
+      { displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string' },
       {
         displayName: 'Objective Index',
         key: 'objectiveIndex',
@@ -250,8 +241,8 @@ const LOG_SPEC: LogSpec = {
     key: 'point_progress',
     fields: [
       ...commmonFields,
-      {displayName: 'Round Number', key: 'roundNumber', dataType: 'number'},
-      {displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string'},
+      { displayName: 'Round Number', key: 'roundNumber', dataType: 'number' },
+      { displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string' },
       {
         displayName: 'Objective Index',
         key: 'objectiveIndex',
@@ -269,8 +260,8 @@ const LOG_SPEC: LogSpec = {
     key: 'payload_progress',
     fields: [
       ...commmonFields,
-      {displayName: 'Round Number', key: 'roundNumber', dataType: 'number'},
-      {displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string'},
+      { displayName: 'Round Number', key: 'roundNumber', dataType: 'number' },
+      { displayName: 'Capturing Team', key: 'capturingTeam', dataType: 'string' },
       {
         displayName: 'Objective Index',
         key: 'objectiveIndex',
@@ -289,7 +280,7 @@ const LOG_SPEC: LogSpec = {
     fields: [
       ...commmonFields,
       ...playerFields,
-      {displayName: 'Previous Hero', key: 'previousHero', dataType: 'string'},
+      { displayName: 'Previous Hero', key: 'previousHero', dataType: 'string' },
       {
         displayName: 'Hero Time Played',
         key: 'heroTimePlayed',
@@ -303,7 +294,7 @@ const LOG_SPEC: LogSpec = {
     fields: [
       ...commmonFields,
       ...playerFields,
-      {displayName: 'Previous Hero', key: 'previousHero', dataType: 'string'},
+      { displayName: 'Previous Hero', key: 'previousHero', dataType: 'string' },
       {
         displayName: 'Hero Time Played',
         key: 'heroTimePlayed',
@@ -374,7 +365,7 @@ const LOG_SPEC: LogSpec = {
         key: 'heroDuplicated',
         dataType: 'string',
       },
-      {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'},
+      { displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number' },
     ],
   },
   ultimate_start: {
@@ -388,7 +379,7 @@ const LOG_SPEC: LogSpec = {
         key: 'heroDuplicated',
         dataType: 'string',
       },
-      {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'},
+      { displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number' },
     ],
   },
   ultimate_end: {
@@ -402,7 +393,7 @@ const LOG_SPEC: LogSpec = {
         key: 'heroDuplicated',
         dataType: 'string',
       },
-      {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'},
+      { displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number' },
     ],
   },
   kill: {
@@ -411,8 +402,8 @@ const LOG_SPEC: LogSpec = {
     fields: [
       ...commmonFields,
       ...attackFields,
-      {displayName: 'Event Ability', key: 'eventAbility', dataType: 'string'},
-      {displayName: 'Event Damage', key: 'eventDamage', dataType: 'number'},
+      { displayName: 'Event Ability', key: 'eventAbility', dataType: 'string' },
+      { displayName: 'Event Damage', key: 'eventDamage', dataType: 'number' },
       {
         displayName: 'Is Critical Hit',
         key: 'isCriticalHit',
@@ -431,8 +422,8 @@ const LOG_SPEC: LogSpec = {
     fields: [
       ...commmonFields,
       ...attackFields,
-      {displayName: 'Event Ability', key: 'eventAbility', dataType: 'string'},
-      {displayName: 'Event Damage', key: 'eventDamage', dataType: 'number'},
+      { displayName: 'Event Ability', key: 'eventAbility', dataType: 'string' },
+      { displayName: 'Event Damage', key: 'eventDamage', dataType: 'number' },
       {
         displayName: 'Is Critical Hit',
         key: 'isCriticalHit',
@@ -451,14 +442,14 @@ const LOG_SPEC: LogSpec = {
     key: 'healing',
     fields: [
       ...commmonFields,
-      {displayName: 'Healer Team', key: 'healerTeam', dataType: 'string'},
-      {displayName: 'Healer Name', key: 'healerName', dataType: 'string'},
-      {displayName: 'Healer Hero', key: 'healerHero', dataType: 'string'},
-      {displayName: 'Healee Team', key: 'healeeTeam', dataType: 'string'},
-      {displayName: 'Healee Name', key: 'healeeName', dataType: 'string'},
-      {displayName: 'Healee Hero', key: 'healeeHero', dataType: 'string'},
-      {displayName: 'Event Ability', key: 'eventAbility', dataType: 'string'},
-      {displayName: 'Event Healing', key: 'eventHealing', dataType: 'number'},
+      { displayName: 'Healer Team', key: 'healerTeam', dataType: 'string' },
+      { displayName: 'Healer Name', key: 'healerName', dataType: 'string' },
+      { displayName: 'Healer Hero', key: 'healerHero', dataType: 'string' },
+      { displayName: 'Healee Team', key: 'healeeTeam', dataType: 'string' },
+      { displayName: 'Healee Name', key: 'healeeName', dataType: 'string' },
+      { displayName: 'Healee Hero', key: 'healeeHero', dataType: 'string' },
+      { displayName: 'Event Ability', key: 'eventAbility', dataType: 'string' },
+      { displayName: 'Event Healing', key: 'eventHealing', dataType: 'number' },
       {
         displayName: 'Is Health Pack',
         key: 'isHealthPack',
@@ -471,12 +462,12 @@ const LOG_SPEC: LogSpec = {
     key: 'mercy_rez',
     fields: [
       ...commmonFields,
-      {displayName: 'Mercy Team', key: 'mercyTeam', dataType: 'string'},
-      {displayName: 'Mercy Name', key: 'mercyName', dataType: 'string'},
-      {displayName: 'Revived Team', key: 'revivedTeam', dataType: 'string'},
-      {displayName: 'Revived Name', key: 'revivedName', dataType: 'string'},
-      {displayName: 'Revived Hero', key: 'revivedHero', dataType: 'string'},
-      {displayName: 'Event Ability', key: 'eventAbility', dataType: 'string'},
+      { displayName: 'Mercy Team', key: 'mercyTeam', dataType: 'string' },
+      { displayName: 'Mercy Name', key: 'mercyName', dataType: 'string' },
+      { displayName: 'Revived Team', key: 'revivedTeam', dataType: 'string' },
+      { displayName: 'Revived Name', key: 'revivedName', dataType: 'string' },
+      { displayName: 'Revived Hero', key: 'revivedHero', dataType: 'string' },
+      { displayName: 'Event Ability', key: 'eventAbility', dataType: 'string' },
     ],
   },
   echo_duplicate_start: {
@@ -490,13 +481,13 @@ const LOG_SPEC: LogSpec = {
         key: 'heroDuplicated',
         dataType: 'string',
       },
-      {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'},
+      { displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number' },
     ],
   },
   echo_duplicate_end: {
     displayName: 'Echo Duplicate End',
     key: 'echo_duplicate_end',
-    fields: [...commmonFields, ...playerFields, {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'}],
+    fields: [...commmonFields, ...playerFields, { displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number' }],
   },
   dva_demech: {
     displayName: 'D.Va Demech',
@@ -504,8 +495,8 @@ const LOG_SPEC: LogSpec = {
     fields: [
       ...commmonFields,
       ...attackFields,
-      {displayName: 'Event Ability', key: 'eventAbility', dataType: 'string'},
-      {displayName: 'Event Damage', key: 'eventDamage', dataType: 'number'},
+      { displayName: 'Event Ability', key: 'eventAbility', dataType: 'string' },
+      { displayName: 'Event Damage', key: 'eventDamage', dataType: 'number' },
       {
         displayName: 'Is Critical Hit',
         key: 'isCriticalHit',
@@ -521,7 +512,7 @@ const LOG_SPEC: LogSpec = {
   dva_remech: {
     displayName: 'D.Va Remech',
     key: 'dva_remech',
-    fields: [...commmonFields, ...playerFields, {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'}],
+    fields: [...commmonFields, ...playerFields, { displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number' }],
   },
   remech_charged: {
     displayName: 'Remech Charged',
@@ -534,7 +525,7 @@ const LOG_SPEC: LogSpec = {
         key: 'heroDuplicated',
         dataType: 'string',
       },
-      {displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number'},
+      { displayName: 'Ultimate ID', key: 'ultimateId', dataType: 'number' },
     ],
   },
   player_stat: {
@@ -542,11 +533,11 @@ const LOG_SPEC: LogSpec = {
     key: 'player_stat',
     fields: [
       ...commmonFields,
-      {displayName: 'Round Number', key: 'roundNumber', dataType: 'number'},
+      { displayName: 'Round Number', key: 'roundNumber', dataType: 'number' },
       ...playerFields,
-      {displayName: 'Eliminations', key: 'eliminations', dataType: 'number'},
-      {displayName: 'Final Blows', key: 'finalBlows', dataType: 'number'},
-      {displayName: 'Deaths', key: 'deaths', dataType: 'number'},
+      { displayName: 'Eliminations', key: 'eliminations', dataType: 'number' },
+      { displayName: 'Final Blows', key: 'finalBlows', dataType: 'number' },
+      { displayName: 'Deaths', key: 'deaths', dataType: 'number' },
       {
         displayName: 'All Damage Dealt',
         key: 'allDamageDealt',
@@ -562,15 +553,15 @@ const LOG_SPEC: LogSpec = {
         key: 'heroDamageDealt',
         dataType: 'number',
       },
-      {displayName: 'Healing Dealt', key: 'healingDealt', dataType: 'number'},
+      { displayName: 'Healing Dealt', key: 'healingDealt', dataType: 'number' },
       {
         displayName: 'Healing Received',
         key: 'healingReceived',
         dataType: 'number',
       },
-      {displayName: 'Self Healing', key: 'selfHealing', dataType: 'number'},
-      {displayName: 'Damage Taken', key: 'damageTaken', dataType: 'number'},
-      {displayName: 'Damage Blocked', key: 'damageBlocked', dataType: 'number'},
+      { displayName: 'Self Healing', key: 'selfHealing', dataType: 'number' },
+      { displayName: 'Damage Taken', key: 'damageTaken', dataType: 'number' },
+      { displayName: 'Damage Blocked', key: 'damageBlocked', dataType: 'number' },
       {
         displayName: 'Defensive Assists',
         key: 'defensiveAssists',
@@ -586,10 +577,10 @@ const LOG_SPEC: LogSpec = {
         key: 'ultimatesEarned',
         dataType: 'number',
       },
-      {displayName: 'Ultimates Used', key: 'ultimatesUsed', dataType: 'number'},
-      {displayName: 'Multikill Best', key: 'multikillBest', dataType: 'number'},
-      {displayName: 'Multikills', key: 'multikills', dataType: 'number'},
-      {displayName: 'Solo Kills', key: 'soloKills', dataType: 'number'},
+      { displayName: 'Ultimates Used', key: 'ultimatesUsed', dataType: 'number' },
+      { displayName: 'Multikill Best', key: 'multikillBest', dataType: 'number' },
+      { displayName: 'Multikills', key: 'multikills', dataType: 'number' },
+      { displayName: 'Solo Kills', key: 'soloKills', dataType: 'number' },
       {
         displayName: 'Objective Kills',
         key: 'objectiveKills',
@@ -605,7 +596,7 @@ const LOG_SPEC: LogSpec = {
         key: 'environmentalDeaths',
         dataType: 'number',
       },
-      {displayName: 'Critical Hits', key: 'criticalHits', dataType: 'number'},
+      { displayName: 'Critical Hits', key: 'criticalHits', dataType: 'number' },
       {
         displayName: 'Critical Hit Accuracy',
         key: 'criticalHitAccuracy',
@@ -626,9 +617,9 @@ const LOG_SPEC: LogSpec = {
         key: 'scopedCriticalHitKills',
         dataType: 'number',
       },
-      {displayName: 'Shots Fired', key: 'shotsFired', dataType: 'number'},
-      {displayName: 'Shots Hit', key: 'shotsHit', dataType: 'number'},
-      {displayName: 'Shots Missed', key: 'shotsMissed', dataType: 'number'},
+      { displayName: 'Shots Fired', key: 'shotsFired', dataType: 'number' },
+      { displayName: 'Shots Hit', key: 'shotsHit', dataType: 'number' },
+      { displayName: 'Shots Missed', key: 'shotsMissed', dataType: 'number' },
       {
         displayName: 'Scoped Shots Fired',
         key: 'scopedShotsFired',
@@ -653,4 +644,4 @@ const LOG_SPEC: LogSpec = {
   },
 };
 
-export {FileUpload, TeamInfo, Statistic, ColorInternal, ColorInternalHSL, MapEntity, RenderState, GameStateTimeSlice, GameStateExtractor, Team, DataAndSpecName, DataRowBySpecName, LogSpec, DataSpec, FieldSpec, LOG_SPEC};
+export { TeamInfo, Statistic, ColorInternal, ColorInternalHSL, MapEntity, RenderState, GameStateTimeSlice, GameStateExtractor, Team, DataAndSpecName, DataRowBySpecName, LogSpec, DataSpec, FieldSpec, LOG_SPEC };

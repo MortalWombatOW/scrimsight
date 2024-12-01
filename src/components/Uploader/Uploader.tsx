@@ -1,61 +1,69 @@
 import React, { ChangeEvent, useState } from 'react';
 import { Button } from '@mui/material';
 import UploadProgressModal from './UploadProgressModal';
-import { FileUpload } from 'lib/data/types';
-import { useWombatDataManager, DataManager, useWombatDataNode } from 'wombat-data-framework';
-import { InputNode } from 'wombat-data-framework';
+import { useWombatDataManager } from 'wombat-data-framework';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { Typography } from '../../WombatUI/WombatUI';
+
 interface UploaderProps {
   refreshCallback?: () => void;
 }
 
-const useFileUpload = (uploadFileHandler, dataManager, refreshCallback) => {
-  const [files, setFiles] = useState<FileUpload[]>([]);
-  const [filePercents, setFilePercents] = useState<{
-    [fileName: string]: number;
-  }>({});
-
-  const handleFilePerChange = (fileName: string) => (percent: number) => {
-    setFilePercents((prev) => ({ ...prev, [fileName]: percent }));
-    if (percent === 100) {
-      refreshCallback && refreshCallback();
-    }
-  };
-
-  const startFileUploads = async (fileUploads: FileUpload[]) => {
-    setFiles((files) => [...files, ...fileUploads]);
-    for (const fileUpload of fileUploads) {
-      await uploadFileHandler(fileUpload, dataManager, handleFilePerChange(fileUpload.fileName));
-    }
-  };
-
-  return { files, filePercents, startFileUploads };
-};
-
 const Uploader: React.FC<UploaderProps> = ({ refreshCallback = () => { } }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const dataManager = useWombatDataManager();
-  // const { files, filePercents, startFileUploads } = useFileUpload(uploadFileHandler, dataManager, refreshCallback);
 
+  // Get all object store nodes
+  const objectStoreNames = dataManager.getAllNodes()
+    .map(node => node.getName())
+    .filter(nodeName => nodeName.endsWith('_object_store'));
+
+  const fileNames = dataManager.getAllNodes()
+    .map(node => node.getName())
+    .filter(nodeName => nodeName.endsWith('maps_object_store'));
+
+  // Get initial and current row counts
+  const initialRowCounts = objectStoreNames.reduce((acc, storeName) => {
+    acc[storeName] = 0;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const rowCounts = fileNames.reduce((acc, fileName) => {
+    const out = objectStoreNames.reduce((acc2, storeName) => {
+      acc2[storeName] = dataManager.getNode(storeName)?.getOutput<unknown[]>()?.length || 0;
+      return acc2;
+    }, {} as Record<string, number>);
+    acc[fileName] = out;
+    return acc;
+  }, {} as { [fileName: string]: { [objectStoreName: string]: number } });
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
-    // const filesToUpload: FileUpload[] = Array.from(e.target.files).map((file) => ({
-    //   file,
-    //   fileName: file.name,
-    // }));
     dataManager.setInputForInputNode('log_file_input', Array.from(e.target.files));
-    // setModalOpen(true);
+    setModalOpen(true);
   };
 
   return (
-    // <>
-    <Button variant="outlined" component="label" color="primary" sx={{ minWidth: '200px', minHeight: '200px', backgroundColor: "rgb(14, 71, 77)" }} startIcon={<NoteAddIcon />} className="dashboard-item primary">
-      <Typography variant="h6" sx={{ whiteSpace: 'nowrap' }}>Add logs</Typography>
-      <input id="fileinput" type="file" onChange={onInputChange} hidden multiple />
-    </Button>
-    // </>
+    <>
+      <Button
+        variant="outlined"
+        component="label"
+        color="primary"
+        sx={{ minWidth: '200px', minHeight: '200px', backgroundColor: "rgb(14, 71, 77)" }}
+        startIcon={<NoteAddIcon />}
+        className="dashboard-item primary"
+      >
+        <Typography variant="h6" sx={{ whiteSpace: 'nowrap' }}>Add logs</Typography>
+        <input id="fileinput" type="file" onChange={onInputChange} hidden multiple />
+      </Button>
+      <UploadProgressModal
+        isOpen={modalOpen}
+        setIsOpen={setModalOpen}
+        initialRowCounts={initialRowCounts}
+        rowCounts={rowCounts}
+        objectStoreNames={objectStoreNames}
+      />
+    </>
   );
 };
 

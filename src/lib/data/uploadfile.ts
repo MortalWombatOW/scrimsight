@@ -1,7 +1,6 @@
-import {FileUpload, LOG_SPEC, DataAndSpecName} from 'lib/data/types';
-import {stringHash} from './../string';
-import {getDB, mapExists} from './database';
-import batch from 'idb-batch';
+import { LOG_SPEC, DataAndSpecName } from 'lib/data/types';
+import { stringHash } from './../string';
+
 
 // File Utilities
 export const readFileAsync = (file: File): Promise<string> => {
@@ -13,22 +12,6 @@ export const readFileAsync = (file: File): Promise<string> => {
   });
 };
 
-// const loadFile = async (fileUpload: FileUpload): Promise<FileUpload> => {
-//   if (!fileUpload.file) {
-//     fileUpload.error = 'No file';
-//     return fileUpload;
-//   }
-
-//   try {
-//     const data = (await readFileAsync(fileUpload.file)) as string;
-//     fileUpload.data = data;
-//   } catch (e) {
-//     fileUpload.error = 'Error reading file';
-//     return fileUpload;
-//   }
-
-//   return fileUpload;
-// };
 
 // Parsing Utilities
 const parseFieldValue = (value: string, dataType: string) => {
@@ -106,69 +89,3 @@ export const parseFile = (fileContent: string) => {
     mapId: hash,
   };
 };
-
-// // Database Utilities
-// const saveFile = async (fileUpload: FileUpload, dataManager: DataManager, setPercent: (n: number) => void) => {
-//   if (!fileUpload.events || !fileUpload.mapId) {
-//     console.error('No parsed data');
-//     return;
-//   }
-
-//   const exists = await mapExists(fileUpload.mapId);
-//   if (exists) {
-//     fileUpload.error = 'Map already exists';
-//     setPercent(-1);
-//     return;
-//   }
-
-//   const db = getDB();
-//   const numKeys = Object.keys(LOG_SPEC).length;
-//   const startPercent = 40;
-//   const endPercent = 90;
-//   const percentPerKey = (endPercent - startPercent) / numKeys;
-
-//   let percent = startPercent;
-
-//   for (const key of Object.keys(LOG_SPEC)) {
-//     const node = dataManager.getNodeOrDie(key + '_write_node') as WriteNode<any>;
-//     const data = fileUpload.events.find((e) => e.specName === key)?.data;
-//     if (!data) throw new Error(`Data not found for key: ${key}`);
-//     node.addData(data);
-//     await dataManager.executeNode(key + '_write_node');
-//     percent += percentPerKey;
-//     setPercent(percent);
-//   }
-
-//   await batch(db, 'maps', [
-//     {
-//       type: 'add',
-//       value: {
-//         mapId: fileUpload.mapId,
-//         name: fileUpload.fileName,
-//         fileModified: fileUpload.file!.lastModified,
-//       },
-//     },
-//   ]);
-//   setPercent(100);
-// };
-
-// // Main Upload Function
-// const uploadFile = async (fileUpload: FileUpload, dataManager: DataManager, setPercent: (n: number) => void) => {
-//   setPercent(0);
-//   await loadFile(fileUpload);
-//   if (fileUpload.error) {
-//     setPercent(-1);
-//     return;
-//   }
-//   setPercent(10);
-//   await parseFile(fileUpload);
-//   if (fileUpload.error) {
-//     setPercent(-1);
-//     return;
-//   }
-//   setPercent(20);
-//   await saveFile(fileUpload, dataManager, setPercent);
-//   fileUpload.done = true;
-// };
-
-// export { uploadFile };

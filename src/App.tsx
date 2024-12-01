@@ -17,6 +17,7 @@ import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { NavigationItem, NavigationPageItem } from '@toolpad/core/AppProvider';
 import Uploader from './components/Uploader/Uploader';
 import WombatDataWrapper from './components/WombatDataWrapper/WombatDataWrapper';
+import Debug from './components/Debug/Debug';
 
 const routesToNavigation = (routes: ScrimsightRoute[]): NavigationPageItem[] => {
   return routes.map((route) => ({
@@ -51,6 +52,8 @@ function ThemedRoutes(props) {
       <AppProvider navigation={routesToNavigation(routes)} branding={{ logo: <div />, title: 'SCRIMSIGHT' }} theme={theme}>
         <DashboardLayout>
           {/* <Header /> */}
+          <Debug />
+
 
 
           <Routes>{routes.map((route) =>
@@ -71,6 +74,7 @@ const App = () => {
       <BrowserRouter basename="/">
         <QueryParamProvider adapter={ReactRouter6Adapter}>
           <WombatDataWrapper>
+
             <ThemedRoutes />
           </WombatDataWrapper>
         </QueryParamProvider>
