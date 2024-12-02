@@ -37,7 +37,7 @@ export const useTimelineDimensions = (mapStartTime: number, mapEndTime: number):
     return () => {
       resizeObserver.disconnect();
     };
-  }, [gridRef.current]);
+  }, [gridRef]);
 
   useEffect(() => {
     console.log('Setting initial window times:', {mapStartTime, mapEndTime});

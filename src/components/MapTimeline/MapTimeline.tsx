@@ -6,13 +6,11 @@ import {MapTimelineProps, TimelineData} from './types/timeline.types';
 import {TimelineErrorBoundary} from './components/TimelineErrorBoundary';
 import {TimelineSkeleton} from './components/TimelineSkeleton';
 import {PixiWrapper} from './components/PixiWrapper';
-import {PixiTimeline} from './components/PixiTimeline';
 import {WindowHandle} from './styles/timeline.styles';
 import {useTimelineWindow} from './hooks/useTimelineWindow';
 import {TimelineRowConfig} from './types/row.types';
 import {PlayerTimelineRow} from './components/rows/PlayerTimelineRow';
 import {RoundTimelineRow} from './components/rows/RoundTimelineRow';
-import {UltimateAdvantageRow} from './components/rows/UltimateAdvantageRow';
 import {EventMapRow} from './components/rows/EventMapRow';
 import {HeaderRow} from './components/rows/HeaderRow';
 import {TimeLabelsRow} from './components/rows/TimeLabelsRow';
@@ -203,19 +201,15 @@ const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
                       switch (config.type) {
                         case 'player':
                           if (config.data.type !== 'player') break;
-                          const playerEvents = timelineData[`${config.data.team}EventsByPlayer`]?.[config.data.playerName] ?? [];
-                          const playerInteractionEvents = timelineData[`${config.data.team}InteractionEventsByPlayer`]?.[config.data.playerName] ?? [];
-                          const playerUltimateEvents = timelineData[`${config.data.team}UltimateEventsByPlayer`]?.[config.data.playerName] ?? [];
-
                           return (
                             <PlayerTimelineRow
                               key={config.id}
                               {...commonProps}
                               label={config.data.playerName}
                               playerName={config.data.playerName}
-                              events={playerEvents}
-                              interactionEvents={playerInteractionEvents}
-                              ultimateEvents={playerUltimateEvents}
+                              events={(timelineData[`${config.data.team}EventsByPlayer` as keyof TimelineData] as Record<string, unknown[]>)?.[config.data.playerName] ?? []}
+                              interactionEvents={(timelineData[`${config.data.team}InteractionEventsByPlayer` as keyof TimelineData] as Record<string, unknown[]>)?.[config.data.playerName] ?? []}
+                              ultimateEvents={(timelineData[`${config.data.team}UltimateEventsByPlayer` as keyof TimelineData] as Record<string, unknown[]>)?.[config.data.playerName] ?? []}
                               useWindowScale={config.useWindowScale}
                             />
                           );

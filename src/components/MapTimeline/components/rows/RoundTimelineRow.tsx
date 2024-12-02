@@ -15,7 +15,7 @@ export const RoundTimelineRow = memo<TimelineRowProps>(({width, height, y, timel
       <Graphics
         draw={(g) => {
           g.clear();
-          timelineData.roundTimes.forEach((round, index) => {
+          timelineData.roundTimes.forEach((round) => {
             // Setup section - more subtle colors
             g.beginFill(0x882222, 0.15); // Reduced opacity
             g.drawRect(timeToX(round.roundStartTime), 0, timeToX(round.roundSetupCompleteTime) - timeToX(round.roundStartTime), height);

@@ -1,4 +1,4 @@
-import React, {memo, useMemo} from 'react';
+import {memo, useMemo} from 'react';
 import {Graphics, Text, Container} from '@pixi/react';
 import {Point} from '@pixi/math';
 import {TextStyle} from '@pixi/text';
@@ -35,7 +35,7 @@ const labelStyle = new TextStyle({
   align: 'left',
 });
 
-export const TimelineGrid = memo<TimelineGridProps>(({width, height, timeToX, startTime, endTime, labelWidth, showLabels = false}) => {
+export const TimelineGrid = memo<TimelineGridProps>(({width, height, timeToX, startTime, endTime, showLabels = false}) => {
   // Calculate the best interval based on the visible time range
   const interval = useMemo(() => {
     const timeRange = endTime - startTime;

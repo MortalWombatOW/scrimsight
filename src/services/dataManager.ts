@@ -1,5 +1,5 @@
-import { DataManager, IndexedDBNode, InputNode, ObjectStoreNode, AlaSQLNode, FunctionNode, FunctionNodeConfig, InputNodeConfig, ObjectStoreNodeConfig, IndexedDBNodeConfig, AlaSQLNodeConfig } from 'wombat-data-framework';
-import { DATA_COLUMNS, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES, FILE_PARSING_NODES, indexedDbNode } from '../WombatDataFrameworkSchema';
+import {DataManager, IndexedDBNode, InputNode, ObjectStoreNode, AlaSQLNode, FunctionNode, FunctionNodeConfig, InputNodeConfig, ObjectStoreNodeConfig, IndexedDBNodeConfig, AlaSQLNodeConfig} from 'wombat-data-framework';
+import {DATA_COLUMNS, OBJECT_STORE_NODES, ALASQL_NODES, FUNCTION_NODES, FILE_PARSING_NODES, indexedDbNode} from '../WombatDataFrameworkSchema';
 
 export const initializeDataManager = (dataManager: DataManager) => {
   console.log('Initializing Data Manager');
@@ -9,7 +9,7 @@ export const initializeDataManager = (dataManager: DataManager) => {
   allNodes.forEach((node) => {
     if (node.type === 'IndexedDBNode') {
       const requiredObjectStores = allNodes.filter((n) => n.type === 'ObjectStoreNode').map((n) => (n as ObjectStoreNodeConfig).objectStore);
-      const configWithObjectStores: IndexedDBNodeConfig = { ...node as IndexedDBNodeConfig, objectStores: requiredObjectStores };
+      const configWithObjectStores: IndexedDBNodeConfig = {...(node as IndexedDBNodeConfig), objectStores: requiredObjectStores};
       dataManager.registerNode(new IndexedDBNode(configWithObjectStores));
     }
     const nodeColumns = node.columnNames.map((name) => dataManager.getColumn(name));
@@ -30,4 +30,4 @@ export const initializeDataManager = (dataManager: DataManager) => {
       dataManager.registerNode(new FunctionNode(functionNode.name, functionNode.displayName, functionNode.transform, functionNode.sources, nodeColumns, functionNode.outputType));
     }
   });
-}; 
+};

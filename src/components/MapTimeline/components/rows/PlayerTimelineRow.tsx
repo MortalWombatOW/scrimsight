@@ -1,14 +1,14 @@
-import React, {memo, useState} from 'react';
+import {memo, useState} from 'react';
 import {Text, Graphics} from '@pixi/react';
 import {PlayerTimelineRowProps} from '../../types/row.types';
 import {BaseTimelineRow} from './BaseTimelineRow';
 import {drawPlayerRow} from '../../utils/drawUtils';
 import {findNearestEvent, formatEventText} from '../../utils/eventUtils';
-import {textStyle, tooltipStyle} from '../../constants/timeline.constants';
+import {tooltipStyle} from '../../constants/timeline.constants';
 import {Rectangle, Point} from '@pixi/math';
 
 export const PlayerTimelineRow = memo<PlayerTimelineRowProps>(
-  ({width, height, y, playerName, events = [], interactionEvents = [], ultimateEvents = [], dimensions, useWindowScale = true, label, labelWidth, onLabelWidthChange, onDelete}) => {
+  ({width, height, y, events = [], interactionEvents = [], ultimateEvents = [], dimensions, useWindowScale = true, label, labelWidth, onLabelWidthChange, onDelete}) => {
     const timeToX = useWindowScale ? dimensions.timeToXWindow : dimensions.timeToX;
     const xToTime = useWindowScale ? dimensions.xToTimeWindow : dimensions.xToTime;
     const [hoverEvent, setHoverEvent] = useState<{x: number; y: number; text: string} | null>(null);

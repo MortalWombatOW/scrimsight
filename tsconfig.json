@@ -1,48 +1,29 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "moduleResolution": "node",
-    "target": "ES5",
-    "removeComments": true,
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react",
-    "allowJs": true,
-    "baseUrl": "./src",
-    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-    "downlevelIteration": true,
-    "noUnusedParameters": false,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "*"
-      ]
+      "~/*": ["src/*"]
     },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ],
-    "sourceMap": true,
-    "noImplicitAny": false,
-    "strictNullChecks": true
+    "types": ["vite/client", "node"]
   },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS",
-      "moduleResolution": "node"
-    }
-  },
-  "exclude": [
-    "node_modules",
-    "build"
-  ],
   "include": [
-    "./src/**/*.ts",
-    "./src/**/*.tsx",
-    "./src/**/*.json",
-    "webpack.config.ts",
-    // "../wombat-data-framework/src/**/*.ts",
-    // "../wombat-data-framework/src/**/*.tsx",
-    // "../wombat-data-framework/src/**/*.json",
-  ]
+    "src",
+    "vite.config.ts"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

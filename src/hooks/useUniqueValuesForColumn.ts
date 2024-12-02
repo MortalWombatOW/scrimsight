@@ -1,12 +1,11 @@
-import React from 'react';
-import { useWombatData, useWombatDataManager } from 'wombat-data-framework';
+import {useWombatData, useWombatDataManager} from 'wombat-data-framework';
 
-const useUniqueValuesForColumn = (columnName: string): string[] => {
+const useUniqueValuesForColumn = (columnName: string): unknown[] => {
   const dataManager = useWombatDataManager();
 
   const column = dataManager.getColumn(columnName);
 
-  const { data } = useWombatData<object>('player_stat_expanded');
+  const {data} = useWombatData<Record<string, unknown>>('player_stat_expanded');
 
   if (!column) {
     throw new Error(`Column ${columnName} not found`);

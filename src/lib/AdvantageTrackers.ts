@@ -1,4 +1,4 @@
-import {TimelineEvent, TeamAdvantageConfig} from './TeamAdvantageTracker';
+import {TeamAdvantageConfig} from './TeamAdvantageTracker';
 
 export const ultimateAdvantageConfig: TeamAdvantageConfig<string> = {
   getTeamNumber: (event, teams) => {

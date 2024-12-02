@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Original: https://github.com/michael-mcanulty/tsBase64
 
 export class TsBase64 {
@@ -18,7 +19,7 @@ export class TsBase64 {
   }
 
   private static _cb_decode(cccc: string): string {
-    const b64tab = {};
+    const b64tab: Record<string, number> = {};
     for (let i = 0, l = TsBase64._b64chars.length; i < l; i++) b64tab[TsBase64._b64chars.charAt(i)] = i;
     const len = cccc.length,
       padlen = len % 4,
@@ -28,7 +29,7 @@ export class TsBase64 {
     return chars.join('');
   }
 
-  private static _cb_encode(ccc): string {
+  private static _cb_encode(ccc: string): string {
     const padlen = [0, 2, 1][ccc.length % 3],
       ord = (ccc.charCodeAt(0) << 16) | ((ccc.length > 1 ? ccc.charCodeAt(1) : 0) << 8) | (ccc.length > 2 ? ccc.charCodeAt(2) : 0),
       chars = [TsBase64._b64chars.charAt(ord >>> 18), TsBase64._b64chars.charAt((ord >>> 12) & 63), padlen >= 2 ? '=' : TsBase64._b64chars.charAt((ord >>> 6) & 63), padlen >= 1 ? '=' : TsBase64._b64chars.charAt(ord & 63)];
@@ -66,7 +67,7 @@ export class TsBase64 {
   }
 
   private static _decode(a: string): string {
-    const _decode = (a) => {
+    const _decode = (a: string) => {
       return this._btou(this._atob(a));
     };
     return _decode(
@@ -79,7 +80,7 @@ export class TsBase64 {
   }
 
   private static _encode(u: string, urisafe = false): string {
-    const _encode = (u) => {
+    const _encode = (u: string) => {
       return this._btoa(this._utob(u));
     };
     return !urisafe
@@ -91,7 +92,7 @@ export class TsBase64 {
           .replace(/=/g, '');
   }
 
-  public static EncodeURI(u): string {
+  public static EncodeURI(u: string): string {
     return this._encode(u, true);
   }
 

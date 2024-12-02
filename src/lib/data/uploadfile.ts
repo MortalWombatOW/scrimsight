@@ -1,6 +1,5 @@
-import { LOG_SPEC, DataAndSpecName } from 'lib/data/types';
-import { stringHash } from './../string';
-
+import {LOG_SPEC, DataAndSpecName} from './types';
+import {stringHash} from './../string';
 
 // File Utilities
 export const readFileAsync = (file: File): Promise<string> => {
@@ -11,7 +10,6 @@ export const readFileAsync = (file: File): Promise<string> => {
     reader.readAsText(file);
   });
 };
-
 
 // Parsing Utilities
 const parseFieldValue = (value: string, dataType: string) => {
@@ -48,7 +46,7 @@ const parseLine = (line: string, mapId: number): DataAndSpecName => {
 
   const timestamp = parseTimestampString(timestampStr);
 
-  const parsedData: object = {
+  const parsedData: Record<string, unknown> = {
     mapId,
     type: eventType,
   };

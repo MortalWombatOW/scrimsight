@@ -1,14 +1,12 @@
 import React from 'react';
 import Home from './pages/Home/Home';
-import SplashPage from './pages/SplashPage/SplashPage';
 import MapPage from './pages/MapPage/MapPage';
 import PlayersPage from './pages/Players/PlayersPage';
 import PlayerPage from './pages/Player/PlayerPage';
 import TeamsPage from './pages/Teams/TeamsPage';
 import TeamPage from './pages/Team/TeamPage';
 import MetricsPage from './pages/Metrics/MetricsPage';
-import { QueriesPage } from 'wombat-data-framework';
-import { Navigation } from '@toolpad/core/AppProvider';
+import {QueriesPage} from 'wombat-data-framework';
 import HomeIcon from '@mui/icons-material/Home';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
@@ -80,6 +78,5 @@ const routes: ScrimsightRoute[] = [
     icon: <BugReportIcon />,
   },
 ];
-
 
 export default routes;

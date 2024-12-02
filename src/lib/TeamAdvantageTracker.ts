@@ -1,8 +1,8 @@
 export interface TimelineEvent {
-  mapId: string;
+  mapId: number;
   matchTime: number;
   type: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface TeamAdvantageState<T> {
@@ -22,7 +22,7 @@ export interface TeamAdvantageResult {
   matchTime: number;
   team1Name: string;
   team2Name: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface TeamAdvantageConfig<T> {
@@ -51,7 +51,7 @@ export interface TeamAdvantageConfig<T> {
   fieldNames: TeamAdvantageFieldNames;
 }
 
-export function calculateAdvantage(state: TeamAdvantageState<any>, team1Name: string, team2Name: string, mapId: string, matchTime: number, fieldNames: TeamAdvantageFieldNames): TeamAdvantageResult {
+export function calculateAdvantage(state: TeamAdvantageState<unknown>, team1Name: string, team2Name: string, mapId: string, matchTime: number, fieldNames: TeamAdvantageFieldNames): TeamAdvantageResult {
   const team1Count = state.team1Items.size;
   const team2Count = state.team2Items.size;
   const advantageDiff = team1Count - team2Count;
@@ -68,7 +68,7 @@ export function calculateAdvantage(state: TeamAdvantageState<any>, team1Name: st
   };
 }
 
-export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams: Map<string, {team1Name: string; team2Name: string}>, config: TeamAdvantageConfig<T>): TeamAdvantageResult[] {
+export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams: Map<number, {team1Name: string; team2Name: string}>, config: TeamAdvantageConfig<T>): TeamAdvantageResult[] {
   const results: TeamAdvantageResult[] = [];
   const state: TeamAdvantageState<T> = {
     team1Items: new Set<T>(),
@@ -76,7 +76,7 @@ export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams:
   };
 
   // Group events by map
-  const mapGroups = new Map<string, TimelineEvent[]>();
+  const mapGroups = new Map<number, TimelineEvent[]>();
   for (const event of events) {
     const events = mapGroups.get(event.mapId) || [];
     events.push(event);

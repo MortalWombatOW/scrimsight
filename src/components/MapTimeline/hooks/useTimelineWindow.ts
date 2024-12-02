@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import {useState, useRef, useCallback, useEffect} from 'react';
 
 interface UseTimelineWindowProps {
   windowStartTime: number;
@@ -10,22 +10,16 @@ interface UseTimelineWindowProps {
   xToTime: (x: number) => number;
 }
 
-export const useTimelineWindow = ({ windowStartTime, windowEndTime, mapStartTime, mapEndTime, setWindowStartTime, setWindowEndTime, xToTime }: UseTimelineWindowProps) => {
+export const useTimelineWindow = ({windowStartTime, windowEndTime, mapStartTime, mapEndTime, setWindowStartTime, setWindowEndTime, xToTime}: UseTimelineWindowProps) => {
   const [dragging, setDragging] = useState<null | 'start' | 'end'>(null);
   const [innerWindowStartTime, setInnerWindowStartTime] = useState(windowStartTime);
   const [innerWindowEndTime, setInnerWindowEndTime] = useState(windowEndTime);
   const currentTime = useRef(0);
 
   // Throttled update functions
-  const throttledSetWindowStart = useCallback(
-    (time: number) => setWindowStartTime(time),
-    [setWindowStartTime],
-  );
+  const throttledSetWindowStart = useCallback((time: number) => setWindowStartTime(time), [setWindowStartTime]);
 
-  const throttledSetWindowEnd = useCallback(
-    (time: number) => setWindowEndTime(time),
-    [setWindowEndTime],
-  );
+  const throttledSetWindowEnd = useCallback((time: number) => setWindowEndTime(time), [setWindowEndTime]);
 
   // Update inner state when props change
   useEffect(() => {

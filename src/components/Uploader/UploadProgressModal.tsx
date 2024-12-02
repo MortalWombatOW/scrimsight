@@ -1,17 +1,16 @@
-import { Modal, Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import {Modal, Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
 import React from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import StatusIcon from './StatusIcon';
 
 interface UploadProgressModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  initialRowCounts: { [objectStoreName: string]: number };
-  rowCounts: { [fileName: string]: { [objectStoreName: string]: number } };
+  initialRowCounts: {[objectStoreName: string]: number};
+  rowCounts: {[fileName: string]: {[objectStoreName: string]: number}};
   objectStoreNames: string[];
 }
 
-const UploadProgressModal: React.FC<UploadProgressModalProps> = ({ isOpen, setIsOpen, initialRowCounts, rowCounts, objectStoreNames }) => (
+const UploadProgressModal: React.FC<UploadProgressModalProps> = ({isOpen, setIsOpen, initialRowCounts, rowCounts, objectStoreNames}) => (
   <Modal open={isOpen} onClose={() => setIsOpen(false)}>
     <div className="Uploader-progresscontainer">
       <Box component="div" display="flex" alignItems="center" className="header-container">

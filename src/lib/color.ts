@@ -1,4 +1,4 @@
-import {ColorInternal, ColorInternalHSL} from '../lib/data/types';
+import {ColorInternal} from '../lib/data/types';
 
 const colorgorical = ['#78b4c6', '#fd6ca0', '#fd7450', '#7d9af7', '#2cc18e', '#eaa5c3', '#4ed31b', '#a3c541', '#c87ef8', '#fb57f9'];
 
@@ -116,8 +116,4 @@ export const heroColors = {
   lifeweaver: '#F0A3A5',
   kiriko: '#ed93c7',
   sojourn: '#815049',
-};
-
-export const getColorForHero = (key: string): string => {
-  return heroColors[key] || 'red';
 };

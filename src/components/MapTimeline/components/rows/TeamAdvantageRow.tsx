@@ -1,12 +1,12 @@
-import React, {memo} from 'react';
+import {memo} from 'react';
 import {Graphics} from '@pixi/react';
 import {Graphics as GraphicsType} from '@pixi/graphics';
-import {TimelineRowProps, BaseTimelineRowProps} from '../../types/row.types';
+import {BaseTimelineRowProps} from '../../types/row.types';
 import {BaseTimelineRow} from './BaseTimelineRow';
 
 interface TeamAdvantageData {
   matchTime: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface TeamAdvantageRowProps extends Omit<BaseTimelineRowProps, 'label'> {
@@ -46,7 +46,7 @@ export const TeamAdvantageRow = memo<TeamAdvantageRowProps>(
     if (!dimensions || !data) return null;
 
     const timeToX = useWindowScale ? dimensions.timeToXWindow : dimensions.timeToX;
-    const maxCount = Math.max(...data.map((d) => Math.max(d[fieldNames.team1Count], d[fieldNames.team2Count])));
+    const maxCount = Math.max(...data.map((d) => Math.max(d[fieldNames.team1Count] as number, d[fieldNames.team2Count] as number)));
     const scale = height / (2 * maxCount);
     const centerY = height / 2;
 

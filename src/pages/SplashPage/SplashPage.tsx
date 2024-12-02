@@ -1,7 +1,5 @@
 import {Box, Typography, Button} from '@mui/material';
-import React from 'react';
 import ImageCard from '../../components/Card/ImageCard';
-import Header from '../../components/Header/Header';
 import SplashRow from './SplashRow';
 
 const SplashPage = () => {
@@ -39,8 +37,8 @@ const SplashPage = () => {
             Do you manage or coach a competitive Overwatch team?
           </Typography>
           <Typography variant="body1" style={{marginBottom: '20px'}}>
-            Scrimsight takes the guesswork out of analyzing your team's performance. With detailed statistics and replay features, you can quickly identify and communicate the issues that are holding your team back and make
-            better-informed decisions to supercharge your team. Use Scrimsight to find the keys to victory for your team!
+            Scrimsight takes the guesswork out of analyzing your team&apos;s performance. With detailed statistics and replay features, you can quickly identify and communicate the issues that are holding your team back and
+            make better-informed decisions to supercharge your team. Use Scrimsight to find the keys to victory for your team!
           </Typography>
         </Box>
       </Box>

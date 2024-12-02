@@ -1,5 +1,4 @@
 import {PlayerEvent, PlayerInteractionEvent, UltimateEvent} from '../types/timeline.types';
-import {EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR} from '../constants/timeline.constants';
 
 interface TimelineEvent {
   time: number;

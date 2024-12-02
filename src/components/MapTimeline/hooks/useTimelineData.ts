@@ -1,4 +1,3 @@
-import {useMemo} from 'react';
 import {useWombatDataManager, useWombatDataNode} from 'wombat-data-framework';
 import {MatchStart, MapTimes, PlayerEvent, PlayerInteractionEvent, UltimateEvent, RoundTimes, UltimateAdvantageData, TimelineData} from '../types/timeline.types';
 
@@ -16,6 +15,11 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
   const [mapTimesNode] = useWombatDataNode('map_times');
   const [ultimateAdvantageNode] = useWombatDataNode('team_ultimate_advantage');
   const [aliveAdvantageNode] = useWombatDataNode('team_alive_advantage');
+
+  if (!matchStartNode || !playerEventsNode || !interactionEventsNode || !roundTimesNode || !ultimateEventsNode || !mapTimesNode || !ultimateAdvantageNode || !aliveAdvantageNode) {
+    console.error(`Missing data nodes for map ${mapId}`);
+    return null;
+  }
 
   const matchStart = matchStartNode.getOutput<MatchStart[]>().find((row) => row['mapId'] === mapId);
   if (!matchStart) {

@@ -1,7 +1,6 @@
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
-import { useWombatData } from 'wombat-data-framework';
-import { PlayerStat } from '../../WombatDataFrameworkSchema';
+import {Card, CardContent, Typography} from '@mui/material';
+import {useWombatData} from 'wombat-data-framework';
 import './PlayerList.scss';
 
 interface PlayerStats {
@@ -10,7 +9,7 @@ interface PlayerStats {
   playerRole: string;
 }
 
-const PlayerRow = ({ playerName, matchCount, playerRole }: PlayerStats) => {
+const PlayerRow = ({playerName, matchCount, playerRole}: PlayerStats) => {
   return (
     <Card
       sx={{
@@ -23,17 +22,17 @@ const PlayerRow = ({ playerName, matchCount, playerRole }: PlayerStats) => {
         border: '1px solid',
         borderColor: 'secondary.main',
       }}
-      className="dashboard-item secondary"
-    >
-      <CardContent sx={{
-        flexGrow: 1,
-        padding: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
+      className="dashboard-item secondary">
+      <CardContent
+        sx={{
+          flexGrow: 1,
+          padding: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
         <Typography variant="h5" align="center">
           {playerName}
         </Typography>
@@ -49,7 +48,7 @@ const PlayerRow = ({ playerName, matchCount, playerRole }: PlayerStats) => {
 };
 
 const PlayerList = () => {
-  const playerStatData = useWombatData<{ playerName: string, playerRole: string, mapId: number }>('player_stat_expanded');
+  const playerStatData = useWombatData<{playerName: string; playerRole: string; mapId: number}>('player_stat_expanded');
 
   // Process the data to count unique matches per player
   const playerStats = React.useMemo(() => {
@@ -67,7 +66,7 @@ const PlayerList = () => {
     const stats: PlayerStats[] = Array.from(playerMatches.entries()).map(([playerName, matches]) => ({
       playerName,
       matchCount: matches.size,
-      playerRole: playerRoles.get(playerName) || 'unknown'
+      playerRole: playerRoles.get(playerName) || 'unknown',
     }));
 
     // Sort by match count descending

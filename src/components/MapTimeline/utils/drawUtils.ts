@@ -1,9 +1,10 @@
 import {Graphics} from '@pixi/graphics';
 import {EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR, COLORS} from '../constants/timeline.constants';
+import {PlayerEvent, PlayerInteractionEvent, UltimateEvent} from '../types/timeline.types';
 
 const parseColor = (colorStr: string) => parseInt(colorStr.replace('#', '0x'));
 
-export const drawPlayerRow = (g: Graphics, events: any[], interactionEvents: any[], ultimateEvents: any[], timeToX: (t: number) => number, centerY: number, timelineWidth: number) => {
+export const drawPlayerRow = (g: Graphics, events: PlayerEvent[], interactionEvents: PlayerInteractionEvent[], ultimateEvents: UltimateEvent[], timeToX: (t: number) => number, centerY: number, timelineWidth: number) => {
   g.clear();
 
   // Draw ultimate bars first (background)

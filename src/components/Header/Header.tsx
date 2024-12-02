@@ -1,7 +1,7 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
-import React, { MouseEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {AppBar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography} from '@mui/material';
+import React, {MouseEvent, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import routes from '../../routes';
 import './Header.scss';
@@ -50,7 +50,7 @@ const Header = () => {
             href="/"
             sx={{
               mr: 2,
-              display: { xs: 'none', lg: 'flex' },
+              display: {xs: 'none', lg: 'flex'},
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',
@@ -61,7 +61,7 @@ const Header = () => {
             scrimsight
           </Typography>
 
-          <Box component="div" sx={{ display: { xs: 'flex', lg: 'none' } }}>
+          <Box component="div" sx={{display: {xs: 'flex', lg: 'none'}}}>
             <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
               <MenuIcon />
             </IconButton>
@@ -80,7 +80,7 @@ const Header = () => {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: 'block', lg: 'none' },
+                display: {xs: 'block', lg: 'none'},
               }}>
               {routes
                 .filter((route) => route.name && !route.hidden)
@@ -99,7 +99,7 @@ const Header = () => {
             href=""
             sx={{
               mr: 2,
-              display: { xs: 'flex', lg: 'none' },
+              display: {xs: 'flex', lg: 'none'},
               flexGrow: 1,
               fontFamily: 'monospace',
               fontWeight: 700,
@@ -110,12 +110,12 @@ const Header = () => {
             }}>
             scrimsight
           </Typography>
-          <Box component="div" sx={{ flexGrow: 1, display: { xs: 'none', lg: 'flex' } }}>
-            <Box component="div" sx={{ display: 'flex', marginLeft: '100px' }}>
+          <Box component="div" sx={{flexGrow: 1, display: {xs: 'none', lg: 'flex'}}}>
+            <Box component="div" sx={{display: 'flex', marginLeft: '100px'}}>
               {routes
                 .filter((route) => route.name && !route.hidden)
                 .map((route) => (
-                  <Button key={route.path[0]} onClick={() => handleClickForPage(route.path[0])} sx={{ my: 2, mx: 2, color: 'white', display: 'block' }}>
+                  <Button key={route.path[0]} onClick={() => handleClickForPage(route.path[0])} sx={{my: 2, mx: 2, color: 'white', display: 'block'}}>
                     {route.name}
                   </Button>
                 ))}

@@ -1,6 +1,5 @@
-import { DataNodeInputMap } from 'wombat-data-framework/src/DataNode';
-import { ultimateAdvantageConfig, playerAliveAdvantageConfig } from './lib/AdvantageTrackers';
-import { processTeamAdvantageEvents } from './lib/TeamAdvantageTracker';
+import {ultimateAdvantageConfig, playerAliveAdvantageConfig} from './lib/AdvantageTrackers';
+import {processTeamAdvantageEvents} from './lib/TeamAdvantageTracker';
 import {
   DataColumn,
   makeDataColumn,
@@ -12,7 +11,6 @@ import {
   ObjectStoreNodeConfig,
   InputNodeConfig,
   FunctionNodeConfig,
-  ObjectStoreNodeBehavior,
   AlaSQLNodeConfig,
   booleanFormatter,
   booleanComparator,
@@ -20,8 +18,8 @@ import {
   objectComparator,
   objectFormatter,
 } from 'wombat-data-framework';
-import { parseFile, readFileAsync } from './lib/data/uploadfile';
-import { INDEXED_DB_NODE_NAME, IndexedDBNodeConfig } from 'wombat-data-framework';
+import {parseFile, readFileAsync} from './lib/data/uploadfile';
+import {INDEXED_DB_NODE_NAME, IndexedDBNodeConfig} from 'wombat-data-framework';
 
 interface BaseEvent {
   mapId: number;
@@ -442,153 +440,153 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('aliveAdvantageDiff', 'Player Advantage Difference', 'Difference in number of alive players between teams', 'count', 'number', numberFormatter, numberComparator),
 ];
 
-const playerStatFragment = `
-      SUM(player_stat.eliminations) as eliminations,
-      SUM(player_stat.finalBlows) as finalBlows,
-      SUM(player_stat.deaths) as deaths,
-      IF(SUM(player_stat.deaths) = 0, 0, SUM(player_stat.finalBlows) / SUM(player_stat.deaths)) as finalBlowsPerDeaths,
-      IF(SUM(player_stat.damageTaken) = 0, 0, SUM(player_stat.damageTaken) / SUM(player_stat.deaths)) as damageTakenPerDeaths,
-      IF(SUM(player_stat.allDamageDealt) = 0, 0, SUM(player_stat.allDamageDealt) / SUM(player_stat.damageTaken)) as allDamageDealtPerDamageTaken,
-      SUM(player_stat.allDamageDealt) as allDamageDealt,
-      SUM(player_stat.barrierDamageDealt) as barrierDamageDealt,
-      SUM(player_stat.heroDamageDealt) as heroDamageDealt,
-      SUM(player_stat.healingDealt) as healingDealt,
-      SUM(player_stat.healingReceived) as healingReceived,
-      SUM(player_stat.selfHealing) as selfHealing,
-      SUM(player_stat.damageTaken) as damageTaken,
-      SUM(player_stat.damageBlocked) as damageBlocked,
-      SUM(player_stat.defensiveAssists) as defensiveAssists,
-      SUM(player_stat.offensiveAssists) as offensiveAssists,
-      SUM(player_stat.ultimatesEarned) as ultimatesEarned,
-      SUM(player_stat.ultimatesUsed) as ultimatesUsed,
-      MAX(player_stat.multikillBest) as multikillBest,
-      SUM(player_stat.multikills) as multikills,
-      SUM(player_stat.soloKills) as soloKills,
-      SUM(player_stat.objectiveKills) as objectiveKills,
-      SUM(player_stat.environmentalKills) as environmentalKills,
-      SUM(player_stat.environmentalDeaths) as environmentalDeaths,
-      SUM(player_stat.criticalHits) as criticalHits,
-      SUM(player_stat.scopedCriticalHitKills) as scopedCriticalHitKills,
-      SUM(player_stat.shotsFired) as shotsFired,
-      SUM(player_stat.shotsHit) as shotsHit,
-      SUM(player_stat.shotsMissed) as shotsMissed,
-      SUM(player_stat.scopedShotsFired) as scopedShotsFired,
-      SUM(player_stat.scopedShotsHit) as scopedShotsHit,
-      SUM(player_stat.eliminations) / SUM(round_times.roundDuration) * 600 as eliminationsPer10,
-      SUM(player_stat.finalBlows) / SUM(round_times.roundDuration) * 600 as finalBlowsPer10,
-      SUM(player_stat.deaths) / SUM(round_times.roundDuration) * 600 as deathsPer10,
-      SUM(player_stat.allDamageDealt) / SUM(round_times.roundDuration) * 600 as allDamagePer10,
-      SUM(player_stat.heroDamageDealt) / SUM(round_times.roundDuration) * 600 as heroDamagePer10,
-      SUM(player_stat.barrierDamageDealt) / SUM(round_times.roundDuration) * 600 as barrierDamageDealtPer10,
-      SUM(player_stat.healingDealt) / SUM(round_times.roundDuration) * 600 as healingPer10,
-      SUM(player_stat.healingReceived) / SUM(round_times.roundDuration) * 600 as healingReceivedPer10,
-      SUM(player_stat.selfHealing) / SUM(round_times.roundDuration) * 600 as selfHealingPer10,
-      SUM(player_stat.damageTaken) / SUM(round_times.roundDuration) * 600 as damageTakenPer10,
-      SUM(player_stat.damageBlocked) / SUM(round_times.roundDuration) * 600 as damageBlockedPer10,
-      SUM(player_stat.defensiveAssists) / SUM(round_times.roundDuration) * 600 as defensiveAssistsPer10,
-      SUM(player_stat.offensiveAssists) / SUM(round_times.roundDuration) * 600 as offensiveAssistsPer10,
-      SUM(player_stat.ultimatesEarned) / SUM(round_times.roundDuration) * 600 as ultimatesEarnedPer10,
-      SUM(player_stat.ultimatesUsed) / SUM(round_times.roundDuration) * 600 as ultimatesUsedPer10,
-      SUM(player_stat.multikillBest) / SUM(round_times.roundDuration) * 600 as multikillsPer10,
-      SUM(player_stat.multikills) / SUM(round_times.roundDuration) * 600 as multikillsPer10,
-      SUM(player_stat.soloKills) / SUM(round_times.roundDuration) * 600 as soloKillsPer10,
-      SUM(player_stat.objectiveKills) / SUM(round_times.roundDuration) * 600 as objectiveKillsPer10,
-      SUM(player_stat.environmentalKills) / SUM(round_times.roundDuration) * 600 as environmentalKillsPer10,
-      SUM(player_stat.environmentalDeaths) / SUM(round_times.roundDuration) * 600 as environmentalDeathsPer10,
-      SUM(player_stat.criticalHits) / SUM(round_times.roundDuration) * 600 as criticalHitsPer10,
-      SUM(player_stat.scopedCriticalHitKills) / SUM(round_times.roundDuration) * 600 as scopedCriticalHitKillsPer10,
-      SUM(player_stat.shotsFired) / SUM(round_times.roundDuration) * 600 as shotsFiredPer10,
-      SUM(player_stat.shotsHit) / SUM(round_times.roundDuration) * 600 as shotsHitPer10,
-      SUM(player_stat.shotsMissed) / SUM(round_times.roundDuration) * 600 as shotsMissedPer10,
-      SUM(player_stat.scopedShotsFired) / SUM(round_times.roundDuration) * 600 as scopedShotsFiredPer10,
-      SUM(player_stat.scopedShotsHit) / SUM(round_times.roundDuration) * 600 as scopedShotsHitPer10
-`;
+// const playerStatFragment = `
+//       SUM(player_stat.eliminations) as eliminations,
+//       SUM(player_stat.finalBlows) as finalBlows,
+//       SUM(player_stat.deaths) as deaths,
+//       IF(SUM(player_stat.deaths) = 0, 0, SUM(player_stat.finalBlows) / SUM(player_stat.deaths)) as finalBlowsPerDeaths,
+//       IF(SUM(player_stat.damageTaken) = 0, 0, SUM(player_stat.damageTaken) / SUM(player_stat.deaths)) as damageTakenPerDeaths,
+//       IF(SUM(player_stat.allDamageDealt) = 0, 0, SUM(player_stat.allDamageDealt) / SUM(player_stat.damageTaken)) as allDamageDealtPerDamageTaken,
+//       SUM(player_stat.allDamageDealt) as allDamageDealt,
+//       SUM(player_stat.barrierDamageDealt) as barrierDamageDealt,
+//       SUM(player_stat.heroDamageDealt) as heroDamageDealt,
+//       SUM(player_stat.healingDealt) as healingDealt,
+//       SUM(player_stat.healingReceived) as healingReceived,
+//       SUM(player_stat.selfHealing) as selfHealing,
+//       SUM(player_stat.damageTaken) as damageTaken,
+//       SUM(player_stat.damageBlocked) as damageBlocked,
+//       SUM(player_stat.defensiveAssists) as defensiveAssists,
+//       SUM(player_stat.offensiveAssists) as offensiveAssists,
+//       SUM(player_stat.ultimatesEarned) as ultimatesEarned,
+//       SUM(player_stat.ultimatesUsed) as ultimatesUsed,
+//       MAX(player_stat.multikillBest) as multikillBest,
+//       SUM(player_stat.multikills) as multikills,
+//       SUM(player_stat.soloKills) as soloKills,
+//       SUM(player_stat.objectiveKills) as objectiveKills,
+//       SUM(player_stat.environmentalKills) as environmentalKills,
+//       SUM(player_stat.environmentalDeaths) as environmentalDeaths,
+//       SUM(player_stat.criticalHits) as criticalHits,
+//       SUM(player_stat.scopedCriticalHitKills) as scopedCriticalHitKills,
+//       SUM(player_stat.shotsFired) as shotsFired,
+//       SUM(player_stat.shotsHit) as shotsHit,
+//       SUM(player_stat.shotsMissed) as shotsMissed,
+//       SUM(player_stat.scopedShotsFired) as scopedShotsFired,
+//       SUM(player_stat.scopedShotsHit) as scopedShotsHit,
+//       SUM(player_stat.eliminations) / SUM(round_times.roundDuration) * 600 as eliminationsPer10,
+//       SUM(player_stat.finalBlows) / SUM(round_times.roundDuration) * 600 as finalBlowsPer10,
+//       SUM(player_stat.deaths) / SUM(round_times.roundDuration) * 600 as deathsPer10,
+//       SUM(player_stat.allDamageDealt) / SUM(round_times.roundDuration) * 600 as allDamagePer10,
+//       SUM(player_stat.heroDamageDealt) / SUM(round_times.roundDuration) * 600 as heroDamagePer10,
+//       SUM(player_stat.barrierDamageDealt) / SUM(round_times.roundDuration) * 600 as barrierDamageDealtPer10,
+//       SUM(player_stat.healingDealt) / SUM(round_times.roundDuration) * 600 as healingPer10,
+//       SUM(player_stat.healingReceived) / SUM(round_times.roundDuration) * 600 as healingReceivedPer10,
+//       SUM(player_stat.selfHealing) / SUM(round_times.roundDuration) * 600 as selfHealingPer10,
+//       SUM(player_stat.damageTaken) / SUM(round_times.roundDuration) * 600 as damageTakenPer10,
+//       SUM(player_stat.damageBlocked) / SUM(round_times.roundDuration) * 600 as damageBlockedPer10,
+//       SUM(player_stat.defensiveAssists) / SUM(round_times.roundDuration) * 600 as defensiveAssistsPer10,
+//       SUM(player_stat.offensiveAssists) / SUM(round_times.roundDuration) * 600 as offensiveAssistsPer10,
+//       SUM(player_stat.ultimatesEarned) / SUM(round_times.roundDuration) * 600 as ultimatesEarnedPer10,
+//       SUM(player_stat.ultimatesUsed) / SUM(round_times.roundDuration) * 600 as ultimatesUsedPer10,
+//       SUM(player_stat.multikillBest) / SUM(round_times.roundDuration) * 600 as multikillsPer10,
+//       SUM(player_stat.multikills) / SUM(round_times.roundDuration) * 600 as multikillsPer10,
+//       SUM(player_stat.soloKills) / SUM(round_times.roundDuration) * 600 as soloKillsPer10,
+//       SUM(player_stat.objectiveKills) / SUM(round_times.roundDuration) * 600 as objectiveKillsPer10,
+//       SUM(player_stat.environmentalKills) / SUM(round_times.roundDuration) * 600 as environmentalKillsPer10,
+//       SUM(player_stat.environmentalDeaths) / SUM(round_times.roundDuration) * 600 as environmentalDeathsPer10,
+//       SUM(player_stat.criticalHits) / SUM(round_times.roundDuration) * 600 as criticalHitsPer10,
+//       SUM(player_stat.scopedCriticalHitKills) / SUM(round_times.roundDuration) * 600 as scopedCriticalHitKillsPer10,
+//       SUM(player_stat.shotsFired) / SUM(round_times.roundDuration) * 600 as shotsFiredPer10,
+//       SUM(player_stat.shotsHit) / SUM(round_times.roundDuration) * 600 as shotsHitPer10,
+//       SUM(player_stat.shotsMissed) / SUM(round_times.roundDuration) * 600 as shotsMissedPer10,
+//       SUM(player_stat.scopedShotsFired) / SUM(round_times.roundDuration) * 600 as scopedShotsFiredPer10,
+//       SUM(player_stat.scopedShotsHit) / SUM(round_times.roundDuration) * 600 as scopedShotsHitPer10
+// `;
 
-const playerStatColumns: string[] = [
-  'eliminations',
-  'finalBlows',
-  'deaths',
-  'finalBlowsPerDeaths',
-  'damageTakenPerDeaths',
-  'allDamageDealtPerDamageTaken',
-  'allDamageDealt',
-  'heroDamageDealt',
-  'barrierDamageDealt',
-  'healingDealt',
-  'healingReceived',
-  'selfHealing',
-  'damageTaken',
-  'damageBlocked',
-  'defensiveAssists',
-  'offensiveAssists',
-  'ultimatesEarned',
-  'ultimatesUsed',
-  'multikills',
-  'multikillBest',
-  'soloKills',
-  'objectiveKills',
-  'environmentalKills',
-  'environmentalDeaths',
-  'criticalHits',
-  'scopedCriticalHitKills',
-  'shotsFired',
-  'shotsHit',
-  'shotsMissed',
-  'scopedShotsFired',
-  'scopedShotsHit',
-  'eliminationsPer10',
-  'finalBlowsPer10',
-  'deathsPer10',
-  'allDamagePer10',
-  'heroDamagePer10',
-  'barrierDamageDealtPer10',
-  'healingPer10',
-  'healingReceivedPer10',
-  'selfHealingPer10',
-  'damageTakenPer10',
-  'damageBlockedPer10',
-  'defensiveAssistsPer10',
-  'offensiveAssistsPer10',
-  'ultimatesEarnedPer10',
-  'ultimatesUsedPer10',
-  'multikillsPer10',
-  'soloKillsPer10',
-  'objectiveKillsPer10',
-  'environmentalKillsPer10',
-  'environmentalDeathsPer10',
-  'criticalHitsPer10',
-  'scopedCriticalHitKillsPer10',
-  'shotsFiredPer10',
-  'shotsHitPer10',
-  'shotsMissedPer10',
-  'scopedShotsFiredPer10',
-  'scopedShotsHitPer10',
-];
+// const playerStatColumns: string[] = [
+//   'eliminations',
+//   'finalBlows',
+//   'deaths',
+//   'finalBlowsPerDeaths',
+//   'damageTakenPerDeaths',
+//   'allDamageDealtPerDamageTaken',
+//   'allDamageDealt',
+//   'heroDamageDealt',
+//   'barrierDamageDealt',
+//   'healingDealt',
+//   'healingReceived',
+//   'selfHealing',
+//   'damageTaken',
+//   'damageBlocked',
+//   'defensiveAssists',
+//   'offensiveAssists',
+//   'ultimatesEarned',
+//   'ultimatesUsed',
+//   'multikills',
+//   'multikillBest',
+//   'soloKills',
+//   'objectiveKills',
+//   'environmentalKills',
+//   'environmentalDeaths',
+//   'criticalHits',
+//   'scopedCriticalHitKills',
+//   'shotsFired',
+//   'shotsHit',
+//   'shotsMissed',
+//   'scopedShotsFired',
+//   'scopedShotsHit',
+//   'eliminationsPer10',
+//   'finalBlowsPer10',
+//   'deathsPer10',
+//   'allDamagePer10',
+//   'heroDamagePer10',
+//   'barrierDamageDealtPer10',
+//   'healingPer10',
+//   'healingReceivedPer10',
+//   'selfHealingPer10',
+//   'damageTakenPer10',
+//   'damageBlockedPer10',
+//   'defensiveAssistsPer10',
+//   'offensiveAssistsPer10',
+//   'ultimatesEarnedPer10',
+//   'ultimatesUsedPer10',
+//   'multikillsPer10',
+//   'soloKillsPer10',
+//   'objectiveKillsPer10',
+//   'environmentalKillsPer10',
+//   'environmentalDeathsPer10',
+//   'criticalHitsPer10',
+//   'scopedCriticalHitKillsPer10',
+//   'shotsFiredPer10',
+//   'shotsHitPer10',
+//   'shotsMissedPer10',
+//   'scopedShotsFiredPer10',
+//   'scopedShotsHitPer10',
+// ];
 
-function getAllCombinations(inputArray: string[]): string[][] {
-  let result: string[][] = [];
-  const combinationsCount = 2 ** inputArray.length;
+// function getAllCombinations(inputArray: string[]): string[][] {
+//   let result: string[][] = [];
+//   const combinationsCount = 2 ** inputArray.length;
 
-  for (let i = 0; i < combinationsCount; i++) {
-    const combination: string[] = [];
-    for (let j = 0; j < inputArray.length; j++) {
-      if (i & (1 << j)) {
-        // Check if the jth bit is set
-        combination.push(inputArray[j]);
-      }
-    }
-    result.push(combination);
-  }
+//   for (let i = 0; i < combinationsCount; i++) {
+//     const combination: string[] = [];
+//     for (let j = 0; j < inputArray.length; j++) {
+//       if (i & (1 << j)) {
+//         // Check if the jth bit is set
+//         combination.push(inputArray[j]);
+//       }
+//     }
+//     result.push(combination);
+//   }
 
-  result = result.filter((group) => !((group.includes('roundNumber') && !group.includes('mapId')) || (!group.includes('playerRole') && group.includes('playerHero'))));
+//   result = result.filter((group) => !((group.includes('roundNumber') && !group.includes('mapId')) || (!group.includes('playerRole') && group.includes('playerHero'))));
 
-  // sort the combinations by length
-  result.sort((a, b) => a.length - b.length);
+//   // sort the combinations by length
+//   result.sort((a, b) => a.length - b.length);
 
-  return result;
-}
+//   return result;
+// }
 
-const player_stat_groups: string[][] = getAllCombinations(['mapId', 'roundNumber', 'playerName', 'playerTeam', 'playerHero', 'playerRole']);
+// const player_stat_groups: string[][] = getAllCombinations(['mapId', 'roundNumber', 'playerName', 'playerTeam', 'playerHero', 'playerRole']);
 
 // function makeWriteNodeInit(name: string, displayName: string, objectStore: string): WriteNodeInit {
 //   return {
@@ -658,7 +656,7 @@ const logFileLoaderNode: FunctionNodeConfig = {
   sources: ['log_file_input'],
   transform: async (data: DataNodeInputMap) => {
     const fileContents = await Promise.all(data['log_file_input'].map(readFileAsync));
-    return fileContents.map((content, index) => ({
+    return fileContents.map((content: string, index: string | number) => ({
       fileName: data['log_file_input'][index].name,
       fileContent: content,
     }));
@@ -673,8 +671,8 @@ const logFileParserNode: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_loader'],
   transform: async (data: DataNodeInputMap) =>
-    data['log_file_loader'].map((file) => {
-      const { mapId, logs } = parseFile(file.fileContent);
+    data['log_file_loader'].map((file: {fileContent: string; fileName: string; fileModified: number}) => {
+      const {mapId, logs} = parseFile(file.fileContent);
       return {
         fileName: file.fileName,
         mapId,
@@ -685,7 +683,7 @@ const logFileParserNode: FunctionNodeConfig = {
   columnNames: ['fileName', 'mapId', 'logs', 'fileModified'],
 };
 
-const extractEventType = (type: string, logs: { specName: string; data: any }[]) => logs.filter((log) => log.specName === type)[0]?.data;
+const extractEventType = (type: string, logs: {specName: string; data: object}[]) => logs.filter((log) => log.specName === type)[0]?.data;
 
 const ability_1_used_extractor: FunctionNodeConfig = {
   name: 'ability_1_used_extractor',
@@ -693,7 +691,7 @@ const ability_1_used_extractor: FunctionNodeConfig = {
   displayName: 'Ability 1 Used Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ability_1_used', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ability_1_used', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
@@ -703,7 +701,7 @@ const ability_2_used_extractor: FunctionNodeConfig = {
   displayName: 'Ability 2 Used Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ability_2_used', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ability_2_used', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
@@ -713,7 +711,7 @@ const damage_extractor: FunctionNodeConfig = {
   displayName: 'Damage Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('damage', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('damage', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
 };
 
@@ -723,7 +721,7 @@ const defensive_assist_extractor: FunctionNodeConfig = {
   displayName: 'Defensive Assist Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('defensive_assist', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('defensive_assist', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
@@ -733,7 +731,7 @@ const dva_demech_extractor: FunctionNodeConfig = {
   displayName: 'Dva Demech Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('dva_demech', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_demech', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
 };
 
@@ -743,7 +741,7 @@ const dva_remech_extractor: FunctionNodeConfig = {
   displayName: 'Dva Remech Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('dva_remech', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_remech', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
 };
 
@@ -753,7 +751,7 @@ const echo_duplicate_end_extractor: FunctionNodeConfig = {
   displayName: 'Echo Duplicate End Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('echo_duplicate_end', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_end', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
 };
 
@@ -763,7 +761,7 @@ const echo_duplicate_start_extractor: FunctionNodeConfig = {
   displayName: 'Echo Duplicate Start Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('echo_duplicate_start', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_start', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
@@ -773,7 +771,7 @@ const healing_extractor: FunctionNodeConfig = {
   displayName: 'Healing Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('healing', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('healing', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'healerTeam', 'healerName', 'healerHero', 'healeeTeam', 'healeeName', 'healeeHero', 'eventAbility', 'eventHealing', 'isHealthPack'],
 };
 
@@ -783,7 +781,7 @@ const hero_spawn_extractor: FunctionNodeConfig = {
   displayName: 'Hero Spawn Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('hero_spawn', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('hero_spawn', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
 };
 
@@ -793,7 +791,7 @@ const hero_swap_extractor: FunctionNodeConfig = {
   displayName: 'Hero Swap Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('hero_swap', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('hero_swap', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
 };
 
@@ -803,7 +801,7 @@ const kill_extractor: FunctionNodeConfig = {
   displayName: 'Kill Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('kill', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('kill', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
 };
 
@@ -813,7 +811,12 @@ const maps_extractor: FunctionNodeConfig = {
   displayName: 'Maps Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].map((file) => ({ mapId: file.mapId, name: file.name, fileModified: file.fileModified })),
+  transform: async (data) =>
+    (data['log_file_parser'] as {mapId: number; name: string; fileModified: number}[]).map((file: {mapId: number; name: string; fileModified: number}) => ({
+      mapId: file.mapId,
+      name: file.name,
+      fileModified: file.fileModified,
+    })),
   columnNames: ['mapId', 'name', 'fileModified'],
 };
 
@@ -823,7 +826,7 @@ const match_end_extractor: FunctionNodeConfig = {
   displayName: 'Match End Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('match_end', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('match_end', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
 };
 
@@ -833,7 +836,7 @@ const match_start_extractor: FunctionNodeConfig = {
   displayName: 'Match Start Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('match_start', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('match_start', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name'],
 };
 
@@ -843,7 +846,7 @@ const mercy_rez_extractor: FunctionNodeConfig = {
   displayName: 'Mercy Rez Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('mercy_rez', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('mercy_rez', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility'],
 };
 
@@ -853,7 +856,7 @@ const objective_captured_extractor: FunctionNodeConfig = {
   displayName: 'Objective Captured Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('objective_captured', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('objective_captured', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
 };
 
@@ -863,7 +866,7 @@ const offensive_assist_extractor: FunctionNodeConfig = {
   displayName: 'Offensive Assist Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('offensive_assist', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('offensive_assist', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
@@ -873,7 +876,7 @@ const payload_progress_extractor: FunctionNodeConfig = {
   displayName: 'Payload Progress Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('payload_progress', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('payload_progress', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress'],
 };
 
@@ -883,7 +886,7 @@ const player_stat_extractor: FunctionNodeConfig = {
   displayName: 'Player Stat Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('player_stat', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('player_stat', file.logs)),
   columnNames: [
     'mapId',
     'type',
@@ -914,7 +917,7 @@ const point_progress_extractor: FunctionNodeConfig = {
   displayName: 'Point Progress Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('point_progress', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('point_progress', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress'],
 };
 
@@ -924,7 +927,7 @@ const remech_charged_extractor: FunctionNodeConfig = {
   displayName: 'Remech Charged Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('remech_charged', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('remech_charged', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
@@ -934,7 +937,7 @@ const round_end_extractor: FunctionNodeConfig = {
   displayName: 'Round End Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('round_end', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('round_end', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
 };
 
@@ -944,7 +947,7 @@ const round_start_extractor: FunctionNodeConfig = {
   displayName: 'Round Start Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('round_start', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('round_start', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
 };
 
@@ -954,7 +957,7 @@ const setup_complete_extractor: FunctionNodeConfig = {
   displayName: 'Setup Complete Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('setup_complete', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('setup_complete', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
 };
 
@@ -964,7 +967,7 @@ const ultimate_charged_extractor: FunctionNodeConfig = {
   displayName: 'Ultimate Charged Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ultimate_charged', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ultimate_charged', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
@@ -974,7 +977,7 @@ const ultimate_end_extractor: FunctionNodeConfig = {
   displayName: 'Ultimate End Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ultimate_end', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ultimate_end', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
@@ -984,7 +987,7 @@ const ultimate_start_extractor: FunctionNodeConfig = {
   displayName: 'Ultimate Start Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: (data) => data['log_file_parser'].flatMap((file) => extractEventType('ultimate_start', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ultimate_start', file.logs)),
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
@@ -1007,6 +1010,7 @@ export const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
   match_end_extractor,
   match_start_extractor,
   mercy_rez_extractor,
+  maps_extractor,
   objective_captured_extractor,
   offensive_assist_extractor,
   payload_progress_extractor,
@@ -1195,28 +1199,28 @@ function makeAlaSQLNodeConfig(name: string, displayName: string, sql: string, so
   };
 }
 
-function buildSQLRatioMetrics(
-  numeratorSource: string,
-  numeratorSliceColumns: string[],
-  numeratorColumns: string[],
-  denominatorSource: string,
-  denominatorColumn: string,
-  weight: number,
-  joinColumns: string[],
-  metricSuffix: string,
-): string {
-  function ratioForNumeratorColumn(column: string): string {
-    return `${numeratorSource}.${column} / ${denominatorSource}.${denominatorColumn} * ${weight} as ${column}${metricSuffix}`;
-  }
-  return `
-  SELECT
-    ${numeratorSliceColumns.map((column) => `${numeratorSource}.${column}`).join(', ')},
-    ${numeratorColumns.map(ratioForNumeratorColumn).join(', ')}
-  FROM ? as ${numeratorSource}
-  JOIN ? as ${denominatorSource}
-  ON ${joinColumns.map((column) => `${numeratorSource}.${column} = ${denominatorSource}.${column}`).join(' AND ')}
-  `;
-}
+// function buildSQLRatioMetrics(
+//   numeratorSource: string,
+//   numeratorSliceColumns: string[],
+//   numeratorColumns: string[],
+//   denominatorSource: string,
+//   denominatorColumn: string,
+//   weight: number,
+//   joinColumns: string[],
+//   metricSuffix: string,
+// ): string {
+//   function ratioForNumeratorColumn(column: string): string {
+//     return `${numeratorSource}.${column} / ${denominatorSource}.${denominatorColumn} * ${weight} as ${column}${metricSuffix}`;
+//   }
+//   return `
+//   SELECT
+//     ${numeratorSliceColumns.map((column) => `${numeratorSource}.${column}`).join(', ')},
+//     ${numeratorColumns.map(ratioForNumeratorColumn).join(', ')}
+//   FROM ? as ${numeratorSource}
+//   JOIN ? as ${denominatorSource}
+//   ON ${joinColumns.map((column) => `${numeratorSource}.${column} = ${denominatorSource}.${column}`).join(' AND ')}
+//   `;
+// }
 
 // Rules:
 // never use subqueries, always split into multiple nodes.
@@ -1605,13 +1609,15 @@ export const FUNCTION_NODES: FunctionNodeConfig[] = [
     columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1ChargedUltimateCount', 'team2ChargedUltimateCount', 'teamWithUltimateAdvantage', 'ultimateAdvantageDiff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(data['ultimate_charged_object_store'] || []).map((e) => ({ ...e, type: 'charged' })),
-        ...(data['ultimate_end_object_store'] || []).map((e) => ({ ...e, type: 'end' })),
-        ...(data['round_end_object_store'] || []).map((e) => ({ ...e, type: 'round_end' })),
-        ...(data['round_start_object_store'] || []).map((e) => ({ ...e, type: 'round_start' })),
+        ...(data['ultimate_charged_object_store'] || []).map((e: object) => ({...e, type: 'charged'})),
+        ...(data['ultimate_end_object_store'] || []).map((e: object) => ({...e, type: 'end'})),
+        ...(data['round_end_object_store'] || []).map((e: object) => ({...e, type: 'round_end'})),
+        ...(data['round_start_object_store'] || []).map((e: object) => ({...e, type: 'round_start'})),
       ];
 
-      const mapTeams = new Map<string, { team1Name: string; team2Name: string }>((data['match_start_object_store'] || []).map((match) => [match.mapId, { team1Name: match.team1Name, team2Name: match.team2Name }]));
+      const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
+        (data['match_start_object_store'] || []).map((match: {mapId: number; team1Name: string; team2Name: string}) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
+      );
 
       return processTeamAdvantageEvents(events, mapTeams, ultimateAdvantageConfig);
     },
@@ -1625,13 +1631,15 @@ export const FUNCTION_NODES: FunctionNodeConfig[] = [
     columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1AliveCount', 'team2AliveCount', 'teamWithAliveAdvantage', 'aliveAdvantageDiff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(data['kill_object_store'] || []).map((e) => ({ ...e, type: 'kill' })),
-        ...(data['hero_spawn_object_store'] || []).map((e) => ({ ...e, type: 'spawn' })),
-        ...(data['round_end_object_store'] || []).map((e) => ({ ...e, type: 'round_end' })),
-        ...(data['round_start_object_store'] || []).map((e) => ({ ...e, type: 'round_start' })),
+        ...(data['kill_object_store'] || []).map((e: object) => ({...e, type: 'kill'})),
+        ...(data['hero_spawn_object_store'] || []).map((e: object) => ({...e, type: 'spawn'})),
+        ...(data['round_end_object_store'] || []).map((e: object) => ({...e, type: 'round_end'})),
+        ...(data['round_start_object_store'] || []).map((e: object) => ({...e, type: 'round_start'})),
       ];
 
-      const mapTeams = new Map<string, { team1Name: string; team2Name: string }>((data['match_start_object_store'] || []).map((match) => [match.mapId, { team1Name: match.team1Name, team2Name: match.team2Name }]));
+      const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
+        (data['match_start_object_store'] || []).map((match: {mapId: number; team1Name: string; team2Name: string}) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
+      );
 
       return processTeamAdvantageEvents(events, mapTeams, playerAliveAdvantageConfig);
     },

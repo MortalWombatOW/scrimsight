@@ -145,7 +145,7 @@ const getCollisionData = (
   };
 };
 
-const useLegibleTextSvg = (ref: React.RefObject<SVGSVGElement> | null, dependencies: any[] = []): number => {
+const useLegibleTextSvg = (ref: React.RefObject<SVGSVGElement> | null, dependencies: unknown[] = []): number => {
   // This hook is used to make sure that text elements in an SVG are not overlapping.
 
   const [tick, setTick] = useState(0);
@@ -164,7 +164,6 @@ const useLegibleTextSvg = (ref: React.RefObject<SVGSVGElement> | null, dependenc
 
     const gElements = Array.from(ref.current?.getElementsByTagName('g') || []).filter((el) => el.classList.contains('svg-wrap-text-group'));
 
-    const svgElement = ref.current;
     // set display none
     // svgElement.style.display = 'none';
 

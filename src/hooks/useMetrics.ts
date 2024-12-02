@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useWombatDataManager, DataColumn, useWombatDataNode } from 'wombat-data-framework';
+import {useWombatDataManager, DataColumn, useWombatDataNode} from 'wombat-data-framework';
 import jStat from 'jstat';
 
 // to be displayed like
@@ -12,7 +11,7 @@ export interface MetricData {
   upperBound: number;
   valueLabel: string;
   roundCount: number;
-  histogram: { bin: number; count: number; compareCount: number }[];
+  histogram: {bin: number; count: number; compareCount: number}[];
   direction: 'increase' | 'decrease' | 'flat';
   compareValue: number;
   compareValueLabel: string;
@@ -61,7 +60,7 @@ function degreesOfFreedom(sample1: number[], sample2: number[]): number {
   return Math.pow(var1 / n1 + var2 / n2, 2) / (Math.pow(var1 / n1, 2) / (n1 - 1) + Math.pow(var2 / n2, 2) / (n2 - 1));
 }
 
-function welchsTTest(sample1: number[], sample2: number[]): { tValue: number; degreesOfFreedom: number; pValue: number; label: string } {
+function welchsTTest(sample1: number[], sample2: number[]): {tValue: number; degreesOfFreedom: number; pValue: number; label: string} {
   console.log('welchsTTest', sample1, sample2);
   const n1 = sample1.length;
   const n2 = sample2.length;
@@ -92,7 +91,7 @@ function welchsTTest(sample1: number[], sample2: number[]): { tValue: number; de
     label = `Very significant difference`;
   }
 
-  return { tValue, degreesOfFreedom: dof, pValue, label };
+  return {tValue, degreesOfFreedom: dof, pValue, label};
 }
 
 function meanWithConfidenceInterval(
@@ -110,7 +109,7 @@ function meanWithConfidenceInterval(
   const mean = jStat.mean(data);
   const lowerBound = mean - tCriticalValue * standardError;
   const upperBound = mean + tCriticalValue * standardError;
-  return { lowerBound, mean, upperBound };
+  return {lowerBound, mean, upperBound};
 }
 
 const useMetric = (columnName: string, slice: Record<string, string | number>, compareToOther: string[]): MetricData => {
@@ -139,21 +138,21 @@ const useMetric = (columnName: string, slice: Record<string, string | number>, c
       significance: 'unknown',
     };
   }
-  const data = playerStatExpandedNode?.getOutput<object[]>()?.filter((row) => row['allDamageDealt'] > 0) || [];
+  const data = playerStatExpandedNode?.getOutput<Record<string, unknown>[]>()?.filter((row) => (row['allDamageDealt'] as number) > 0) || [];
 
-  const valueArray = data.filter((row) => Object.entries(slice).every(([group, value]) => row[group] === value)).map((row) => row[columnName]);
-  const compareValueArray = data.filter((row) => Object.entries(compareSlice).every(([group, value]) => row[group] === value)).map((row) => row[columnName]);
+  const valueArray = data.filter((row) => Object.entries(slice).every(([group, value]) => row[group] === value)).map((row) => row[columnName]) as number[];
+  const compareValueArray = data.filter((row) => Object.entries(compareSlice).every(([group, value]) => row[group] === value)).map((row) => row[columnName]) as number[];
 
   console.log('slice', slice);
   console.log('data', data);
   console.log('valueArray', valueArray);
 
-  const { tValue, degreesOfFreedom, pValue, label: significance } = welchsTTest(valueArray, compareValueArray);
+  const {tValue, degreesOfFreedom, pValue, label: significance} = welchsTTest(valueArray, compareValueArray);
 
   console.log('welchsTTest', tValue, degreesOfFreedom, pValue);
 
-  const { lowerBound, mean, upperBound } = meanWithConfidenceInterval(valueArray);
-  const { lowerBound: compareLowerBound, mean: compareMean, upperBound: compareUpperBound } = meanWithConfidenceInterval(compareValueArray);
+  const {lowerBound, mean, upperBound} = meanWithConfidenceInterval(valueArray);
+  const {mean: compareMean} = meanWithConfidenceInterval(compareValueArray);
 
   // percent change is the change in value compared to the baseline
   const percentChange = compareMean === 0 ? Infinity : ((mean - compareMean) / compareMean) * 100;
@@ -165,8 +164,7 @@ const useMetric = (columnName: string, slice: Record<string, string | number>, c
   const minValue = Math.min(...valueArray, ...compareValueArray);
   const maxValue = Math.max(...valueArray, ...compareValueArray);
   const binWidth = (maxValue - minValue) / binCount;
-  const histogram = bins.map((bin, index) => ({ bin: Math.round((minValue + index * binWidth) * 100) / 100, count: bin / Math.max(...bins), compareCount: compareBins[index] / Math.max(...compareBins) }));
-
+  const histogram = bins.map((bin, index) => ({bin: Math.round((minValue + index * binWidth) * 100) / 100, count: bin / Math.max(...bins), compareCount: compareBins[index] / Math.max(...compareBins)}));
 
   console.log('useMetric', column);
   return {
