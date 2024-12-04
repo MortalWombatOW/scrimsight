@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import {memo} from 'react';
 import {Container} from '@pixi/react';
 import {BaseTimelineRowProps} from '../../types/row.types';
 import {TimelineGrid} from '../TimelineGrid';

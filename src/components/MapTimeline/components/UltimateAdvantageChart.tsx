@@ -58,7 +58,6 @@ const generateStepPath = (points: {x: number; y: number}[]): string => {
   // then a vertical line to its y coordinate
   for (let i = 1; i < points.length; i++) {
     const current = points[i];
-    const previous = points[i - 1];
 
     // Horizontal line to new x position
     path.push(`H ${current.x}`);
@@ -69,7 +68,7 @@ const generateStepPath = (points: {x: number; y: number}[]): string => {
   return path.join(' ');
 };
 
-export const UltimateAdvantageChart: React.FC<UltimateAdvantageChartProps> = memo(({width, timeToX, windowStartTime, windowEndTime, ultimateAdvantageData}) => {
+export const UltimateAdvantageChart: React.FC<UltimateAdvantageChartProps> = memo(({width, timeToX, windowEndTime, ultimateAdvantageData}) => {
   const maxUltCount = Math.max(...ultimateAdvantageData.map((d) => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)));
 
   const scale = 30 / maxUltCount;

@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import {memo} from 'react';
 import {Graphics} from '@pixi/react';
 import {Graphics as GraphicsType} from '@pixi/graphics';
 import {TimelineRowProps} from '../../types/row.types';

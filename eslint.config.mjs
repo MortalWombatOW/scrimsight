@@ -2,69 +2,61 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import _import from 'eslint-plugin-import';
-import prettier from 'eslint-plugin-prettier';
 import tsParser from '@typescript-eslint/parser';
 import unusedImports from 'eslint-plugin-unused-imports';
 
 export default [
   {
+    // Base config for JS/TS files
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/coverage/**'],
+    
     plugins: {
       '@typescript-eslint': typescriptEslint,
       react,
       'react-hooks': reactHooks,
       import: _import,
-      prettier,
-      unusedImports,
+      'unused-imports': unusedImports,
     },
-
     languageOptions: {
-      globals: {
-        // ...globals.browser,
-      },
-
       parser: tsParser,
-      ecmaVersion: 2020,
+      ecmaVersion: 'latest',
       sourceType: 'module',
-
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
         },
       },
     },
-
     settings: {
       react: {
         version: 'detect',
       },
     },
-
     rules: {
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['error', {
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_'
+      }],
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
-      'prettier/prettier': [
-        'error',
-        {
-          printWidth: 225,
-          endOfLine: 'auto',
-        },
-      ],
+      'unused-imports/no-unused-imports': 'error',
     },
   },
   {
+    // TypeScript-specific config with project references
     files: ['**/*.ts', '**/*.tsx'],
-    ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/coverage/**'],
-
     languageOptions: {
-      ecmaVersion: 5,
-      sourceType: 'script',
-
       parserOptions: {
         project: ['./tsconfig.json'],
       },
     },
-  },
+    rules: {
+      // Add any TypeScript-specific rules here
+    }
+  }
 ];

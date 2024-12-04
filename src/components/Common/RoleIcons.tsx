@@ -1,4 +1,3 @@
-import React from 'react';
 import ShieldIcon from '@mui/icons-material/Shield';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';

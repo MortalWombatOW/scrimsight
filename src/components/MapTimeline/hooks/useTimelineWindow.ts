@@ -28,7 +28,7 @@ export const useTimelineWindow = ({windowStartTime, windowEndTime, mapStartTime,
   }, [windowStartTime, windowEndTime]);
 
   const handleMouseDown = useCallback(
-    (e: React.MouseEvent, type: 'start' | 'end') => {
+    (_e: React.MouseEvent, type: 'start' | 'end') => {
       setDragging(type);
       currentTime.current = type === 'start' ? windowStartTime : windowEndTime;
     },

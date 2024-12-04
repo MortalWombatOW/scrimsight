@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import {memo} from 'react';
 import {BaseTimelineRow} from './BaseTimelineRow';
 import {BaseTimelineRowProps} from '../../types/row.types';
 

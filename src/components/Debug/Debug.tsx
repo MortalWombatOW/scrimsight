@@ -1,4 +1,3 @@
-import React from 'react';
 import {useSearchParams} from 'react-router-dom';
 import {Typography, Paper} from '@mui/material';
 import {useWombatDataManager} from 'wombat-data-framework';

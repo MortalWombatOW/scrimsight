@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import {memo} from 'react';
 import {Container, Graphics} from '@pixi/react';
 import {Graphics as GraphicsType} from '@pixi/graphics';
 import {XAxisProps} from '../types/timeline.types';
@@ -27,7 +27,7 @@ const drawWindowSection = (g: GraphicsType, width: number) => {
 };
 
 export const PixiXAxis = memo<XAxisProps>(
-  ({width, timeToX, xToTime, mapStartTime, mapEndTime, roundTimes, windowStartTime, setWindowStartTime, windowEndTime, setWindowEndTime, eventTimes, team1Name, team2Name, ultimateAdvantageData}) => {
+  ({width, timeToX, roundTimes, windowStartTime, windowEndTime, eventTimes, team1Name, team2Name, ultimateAdvantageData}) => {
     return (
       <Container>
         <PixiUltimateAdvantageChart width={width} timeToX={timeToX} windowStartTime={windowStartTime} windowEndTime={windowEndTime} team1Name={team1Name} team2Name={team2Name} ultimateAdvantageData={ultimateAdvantageData} />

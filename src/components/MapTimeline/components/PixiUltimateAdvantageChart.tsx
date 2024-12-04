@@ -1,7 +1,7 @@
-import React, {memo} from 'react';
+import {memo} from 'react';
 import {Container, Graphics} from '@pixi/react';
 import {Graphics as GraphicsType} from '@pixi/graphics';
-import {UltimateAdvantageChartProps} from '../types/timeline.types';
+import {UltimateAdvantageChartProps, UltimateAdvantageData} from '../types/timeline.types';
 
 const drawBars = (g: GraphicsType, data: any[], timeToX: (t: number) => number, scale: number) => {
   g.clear();
@@ -22,13 +22,13 @@ const drawBars = (g: GraphicsType, data: any[], timeToX: (t: number) => number, 
   g.endFill();
 };
 
-const drawLine = (g: GraphicsType, data: any[], timeToX: (t: number) => number, scale: number) => {
+const drawLine = (g: GraphicsType, data: UltimateAdvantageData[], timeToX: (t: number) => number, scale: number) => {
   g.clear();
   g.lineStyle(2, 0xffffff, 0.8);
 
   data.forEach((d, i) => {
-    const x = timeToX(d.matchTime);
-    const diff = d.team1ChargedUltimateCount - d.team2ChargedUltimateCount;
+    const x = timeToX(d.matchTime as number);
+    const diff = (d.team1ChargedUltimateCount as number) - (d.team2ChargedUltimateCount as number);
     const y = 30 - diff * scale;
 
     if (i === 0) {

@@ -74,7 +74,7 @@ export const TeamAdvantageRow = memo<TeamAdvantageRowProps>(
                   g,
                   x,
                   barWidth,
-                  count: d[fieldNames.team1Count],
+                  count: d[fieldNames.team1Count] as number,
                   scale,
                   centerY,
                   color: team1Color,
@@ -86,7 +86,7 @@ export const TeamAdvantageRow = memo<TeamAdvantageRowProps>(
                   g,
                   x,
                   barWidth,
-                  count: d[fieldNames.team2Count],
+                  count: d[fieldNames.team2Count] as number,
                   scale,
                   centerY,
                   color: team2Color,
@@ -102,7 +102,7 @@ export const TeamAdvantageRow = memo<TeamAdvantageRowProps>(
 
             data.forEach((d, i) => {
               const x = timeToX(d.matchTime);
-              const diff = d[fieldNames.team1Count] - d[fieldNames.team2Count];
+              const diff = (d[fieldNames.team1Count] as number) - (d[fieldNames.team2Count] as number);
               const y = centerY - (diff * scale) / 2;
 
               if (i === 0) {

@@ -6,7 +6,7 @@ import {MapTimelineProps, TimelineData} from './types/timeline.types';
 import {TimelineErrorBoundary} from './components/TimelineErrorBoundary';
 import {TimelineSkeleton} from './components/TimelineSkeleton';
 import {PixiWrapper} from './components/PixiWrapper';
-import {WindowHandle} from './styles/timeline.styles';
+import {WindowHandle} from './components/styles/timeline.styles';
 import {useTimelineWindow} from './hooks/useTimelineWindow';
 import {TimelineRowConfig} from './types/row.types';
 import {PlayerTimelineRow} from './components/rows/PlayerTimelineRow';

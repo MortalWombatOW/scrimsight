@@ -11,7 +11,7 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings 0",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "type-check": "tsc --noEmit",
-    "test": "jest --watchAll --coverage --maxWorkers=1 --silent=false"
+    "build-graph": "npx tsg --tsconfig=tsconfig.json --exclude node_modules --md=codebase-structure-graph.md"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",
@@ -31,7 +31,9 @@
     "@types/node": "^22.9.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@ysk8hori/typescript-graph": "^0.17.0",
     "assert": "^2.1.0",
+    "global": "^4.4.0",
     "history": "^5.3.0",
     "idb-batch": "^1.0.0",
     "idb-factory": "^1.0.0",

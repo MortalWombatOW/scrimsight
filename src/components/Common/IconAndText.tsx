@@ -1,7 +1,5 @@
-import {Box, Button, Popover, Typography} from '@mui/material';
+import { Button, Popover, Typography} from '@mui/material';
 import React from 'react';
-import {getColorgorical} from '../../lib/color';
-import {heroNameToNormalized} from '../../lib/string';
 import {ColorKey} from '../../theme';
 
 const IconAndText = ({

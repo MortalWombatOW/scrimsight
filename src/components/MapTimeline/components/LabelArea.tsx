@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import {memo} from 'react';
 import {Container, Text, Graphics} from '@pixi/react';
 import {textStyle} from '../constants/timeline.constants';
 import {Point} from '@pixi/math';

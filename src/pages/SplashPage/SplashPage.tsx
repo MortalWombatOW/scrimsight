@@ -1,30 +1,9 @@
 import {Box, Typography, Button} from '@mui/material';
-import ImageCard from '../../components/Card/ImageCard';
 import SplashRow from './SplashRow';
 
 const SplashPage = () => {
   return (
     <Box component="div" style={{width: '100%'}}>
-      <ImageCard
-        width="100%"
-        src="/assets/splash.png"
-        titleText="Take your team to the next level"
-        contentText="Unlock the power of data-driven insights for your Overwatch team with Scrimsight"
-        // buttons={[
-        //   {
-        //     text: 'Explore example data',
-        //     onClick: () => {},
-        //   },
-        //   {
-        //     text: 'Create your team',
-        //     onClick: () => {},
-        //   },
-        // ]}
-        style={{
-          marginLeft: '50px',
-          marginRight: '50px',
-        }}
-      />
 
       <Box
         component="div"

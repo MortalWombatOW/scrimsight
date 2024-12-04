@@ -80,6 +80,7 @@ const MapRow = ({mapId}: {mapId: number}) => {
 const MapsList = () => {
   const mapsData = useWombatData<{name: string; fileModified: number; mapId: number}>('maps_object_store');
 
+  
   // TODO: This is a hack to get the maps to sort by fileModified, there should be a better way to do this directly in the data hook
   useEffect(() => {
     mapsData.onSortSelection('fileModified');

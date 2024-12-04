@@ -96,9 +96,9 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
   };
 
   // Add ultimate advantage data
-  const ultimateAdvantageData = ultimateAdvantageNode.getOutput<UltimateAdvantageData[]>().filter((row) => row['mapId'] === mapId);
+  const ultimateAdvantageData = ultimateAdvantageNode.getOutput<UltimateAdvantageData[]>().filter((row) => row['mapId'] as number === mapId);
   // TODO: fix this type
-  const aliveAdvantageData = aliveAdvantageNode.getOutput<object[]>().filter((row) => row['mapId'] === mapId);
+  const aliveAdvantageData = aliveAdvantageNode.getOutput<object[]>().filter((row) => (row['mapId'] as number) === mapId);
   return {
     team1Name,
     team2Name,

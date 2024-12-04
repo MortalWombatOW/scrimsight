@@ -1,4 +1,4 @@
-import React, {Component, ErrorInfo, ReactNode} from 'react';
+import {Component, ErrorInfo, ReactNode} from 'react';
 import {Typography, Button, Box} from '@mui/material';
 
 interface Props {

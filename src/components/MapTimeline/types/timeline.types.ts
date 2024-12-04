@@ -103,6 +103,7 @@ export interface RoundTimes {
 }
 
 export interface UltimateAdvantageData {
+  mapId: number;
   matchTime: number;
   team1ChargedUltimateCount: number;
   team2ChargedUltimateCount: number;

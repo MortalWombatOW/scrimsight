@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import {memo} from 'react';
 import {Container, Graphics, Text} from '@pixi/react';
 import {TimelineData, TimelineDimensions} from '../types/timeline.types';
 import {EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR, COLORS} from '../constants/timeline.constants';
@@ -8,20 +8,19 @@ import {Point} from '@pixi/math';
 
 interface PixiTimelineProps {
   width: number;
-  height: number;
   timelineData: TimelineData;
   dimensions: TimelineDimensions;
 }
 
 const parseColor = (colorStr: string) => parseInt(colorStr.replace('#', '0x'));
 
-const drawPlayerRow = (g: GraphicsType, events: any[], interactionEvents: any[], ultimateEvents: any[], timeToX: (t: number) => number, y: number) => {
+const drawPlayerRow = (g: GraphicsType, events: Record<string, unknown>[], interactionEvents: Record<string, unknown>[], ultimateEvents: Record<string, unknown>[], timeToX: (t: number) => number, y: number) => {
   g.clear();
 
   // Draw ultimate bars first (background)
   ultimateEvents.forEach((event) => {
-    const startX = timeToX(event.ultimateChargedTime);
-    const endX = timeToX(event.ultimateEndTime);
+    const startX = timeToX(event.ultimateChargedTime as number);
+    const endX = timeToX(event.ultimateEndTime as number);
     const width = endX - startX;
 
     // Charging bar
@@ -30,7 +29,7 @@ const drawPlayerRow = (g: GraphicsType, events: any[], interactionEvents: any[],
 
     // Active bar
     if (event.ultimateStartTime) {
-      const activeStartX = timeToX(event.ultimateStartTime);
+      const activeStartX = timeToX(event.ultimateStartTime as number);
       const activeWidth = endX - activeStartX;
       g.beginFill(parseColor(COLORS.ultimate.color), COLORS.ultimate.alpha);
       g.drawRect(activeStartX, y - 5, activeWidth, 10);
@@ -39,9 +38,9 @@ const drawPlayerRow = (g: GraphicsType, events: any[], interactionEvents: any[],
 
   // Draw regular events
   events.forEach((event) => {
-    const colorConfig = EVENT_TYPE_TO_COLOR[event.playerEventType];
+    const colorConfig = EVENT_TYPE_TO_COLOR[event.playerEventType as keyof typeof EVENT_TYPE_TO_COLOR];
     if (colorConfig) {
-      const x = timeToX(event.playerEventTime);
+      const x = timeToX(event.playerEventTime as number);
       g.beginFill(parseColor(colorConfig.color), colorConfig.alpha);
       g.drawCircle(x, y, 3);
     }
@@ -49,9 +48,9 @@ const drawPlayerRow = (g: GraphicsType, events: any[], interactionEvents: any[],
 
   // Draw interaction events
   interactionEvents.forEach((event) => {
-    const colorConfig = INTERACTION_EVENT_TYPE_TO_COLOR[event.playerInteractionEventType];
+    const colorConfig = INTERACTION_EVENT_TYPE_TO_COLOR[event.playerInteractionEventType as keyof typeof INTERACTION_EVENT_TYPE_TO_COLOR];
     if (colorConfig) {
-      const x = timeToX(event.playerInteractionEventTime);
+      const x = timeToX(event.playerInteractionEventTime as number);
       g.beginFill(parseColor(colorConfig.color), colorConfig.alpha);
       g.drawCircle(x, y, 3);
     }
@@ -60,8 +59,8 @@ const drawPlayerRow = (g: GraphicsType, events: any[], interactionEvents: any[],
   g.endFill();
 };
 
-const drawUltimateAdvantageChart = (g: GraphicsType, data: any[], timeToX: (t: number) => number, width: number) => {
-  const maxUltCount = Math.max(...data.map((d) => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)));
+const drawUltimateAdvantageChart = (g: GraphicsType, data: Record<string, unknown>[], timeToX: (t: number) => number, width: number) => {
+  const maxUltCount = Math.max(...data.map((d) => Math.max(d.team1ChargedUltimateCount as number, d.team2ChargedUltimateCount as number)));
   const scale = 30 / maxUltCount;
 
   g.clear();
@@ -74,24 +73,24 @@ const drawUltimateAdvantageChart = (g: GraphicsType, data: any[], timeToX: (t: n
   // Draw bars
   data.forEach((d, i) => {
     const nextEvent = data[i + 1];
-    const x = timeToX(d.matchTime);
-    const width = nextEvent ? timeToX(nextEvent.matchTime) - x : 0;
+    const x = timeToX(d.matchTime as number);
+    const width = nextEvent ? timeToX(nextEvent.matchTime as number) - x : 0;
 
     // Team 1 bar (top)
     g.beginFill(0x4caf50, 0.6);
-    g.drawRect(x, 30 - d.team1ChargedUltimateCount * scale, width, d.team1ChargedUltimateCount * scale);
+    g.drawRect(x, 30 - (d.team1ChargedUltimateCount as number) * scale, width, (d.team1ChargedUltimateCount as number) * scale);
 
     // Team 2 bar (bottom)
     g.beginFill(0xf44336, 0.6);
-    g.drawRect(x, 30, width, d.team2ChargedUltimateCount * scale);
+    g.drawRect(x, 30, width, (d.team2ChargedUltimateCount as number) * scale);
   });
   g.endFill();
 
   // Draw advantage line
   g.lineStyle(2, 0xffffff, 0.8);
   data.forEach((d, i) => {
-    const x = timeToX(d.matchTime);
-    const diff = d.team1ChargedUltimateCount - d.team2ChargedUltimateCount;
+    const x = timeToX(d.matchTime as number);
+    const diff = (d.team1ChargedUltimateCount as number) - (d.team2ChargedUltimateCount as number);
     const y = 30 - diff * scale;
 
     if (i === 0) {
@@ -122,18 +121,16 @@ const roundLabelStyle = new TextStyle({
   align: 'center',
 });
 
-export const PixiTimeline = memo<PixiTimelineProps>(({width, height, timelineData, dimensions}) => {
+export const PixiTimeline = memo<PixiTimelineProps>(({width, timelineData, dimensions}) => {
   const rowHeight = 20;
   const labelWidth = 150;
   const team1PlayerCount = Object.keys(timelineData.team1EventsByPlayer).length;
   const team2PlayerCount = Object.keys(timelineData.team2EventsByPlayer).length;
-  const xAxisHeight = 100;
   const padding = 20; // Add padding between sections
 
   // Calculate section heights
   const team1Height = team1PlayerCount * rowHeight;
   const team2Height = team2PlayerCount * rowHeight;
-  const totalContentHeight = team1Height + team2Height + xAxisHeight + padding * 2; // Add padding
 
   return (
     <Container>

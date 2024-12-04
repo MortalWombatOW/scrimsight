@@ -26,7 +26,7 @@ const UploadProgressModal: React.FC<UploadProgressModalProps> = ({isOpen, setIsO
               <TableCell>File Name</TableCell>
               {objectStoreNames.map((name) => (
                 <TableCell key={name}>{name}</TableCell>
-              ))}
+              ))}    
             </TableRow>
           </TableHead>
           <TableBody>
@@ -42,6 +42,7 @@ const UploadProgressModal: React.FC<UploadProgressModalProps> = ({isOpen, setIsO
                 {objectStoreNames.map((name) => (
                   <TableCell key={name}>{counts[name]}</TableCell>
                 ))}
+
               </TableRow>
             ))}
           </TableBody>
