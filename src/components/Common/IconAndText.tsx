@@ -1,6 +1,6 @@
 import { Button, Popover, Typography} from '@mui/material';
-import React from 'react';
 import {ColorKey} from '../../theme';
+import { useState } from 'react';
 
 const IconAndText = ({
   variant,
@@ -21,7 +21,7 @@ const IconAndText = ({
   colorKey: ColorKey;
   onClick?: () => void;
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   return (
     <>

@@ -1,10 +1,10 @@
-import {ThemeOptions} from '@mui/material/styles';
+import {createTheme, ThemeOptions} from '@mui/material/styles';
 import {generateThemeColor} from './lib/palette';
 import {heroColors} from './lib/color';
 
 export type ColorKey = keyof typeof heroColors | 'team1' | 'team2' | 'primary' | 'secondary' | 'info' | 'warning' | 'error' | 'success';
 
-export const themeDef: ThemeOptions = {
+export const themeDef: ThemeOptions = createTheme({
   palette: {
     mode: 'dark',
     contrastThreshold: 4.5,
@@ -20,9 +20,6 @@ export const themeDef: ThemeOptions = {
     error: generateThemeColor('#e00040'),
     // The success color is used for indicating success.
     success: generateThemeColor('#7dc95e'),
-    team1: generateThemeColor('#78b4c6'),
-    team2: generateThemeColor('#fd6ca0'),
-
     background: {
       default: '#000505',
       paper: '#000505',
@@ -96,4 +93,4 @@ export const themeDef: ThemeOptions = {
   shape: {
     borderRadius: 8,
   },
-};
+});

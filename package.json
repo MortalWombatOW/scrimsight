@@ -12,7 +12,9 @@
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "type-check": "tsc --noEmit",
     "build-graph": "npx tsg --tsconfig=tsconfig.json --exclude node_modules --md=codebase-structure-graph.md",
-    "scan": "npm run start && npx react-scan@latest localhost:3000"
+    "scan": "npm run start && npx react-scan@latest localhost:3000",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",
@@ -53,6 +55,15 @@
     "wombat-data-framework": "file:../wombat-data-framework"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^3.2.2",
+    "@storybook/addon-essentials": "^8.4.6",
+    "@storybook/addon-interactions": "^8.4.6",
+    "@storybook/addon-onboarding": "^8.4.6",
+    "@storybook/addon-themes": "^8.4.6",
+    "@storybook/blocks": "^8.4.6",
+    "@storybook/react": "^8.4.6",
+    "@storybook/react-vite": "^8.4.6",
+    "@storybook/test": "^8.4.6",
     "@types/eslint": "^8.56.2",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
@@ -63,13 +74,20 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-storybook": "^0.11.1",
     "eslint-plugin-unused-imports": "^4.1.4",
     "prettier": "^3.3.3",
     "rollup-plugin-visualizer": "^5.12.0",
+    "storybook": "^8.4.6",
     "typescript": "~5.3.3",
     "vite": "^6.0.0",
     "vite-plugin-dts": "^3.7.0",
     "vite-plugin-eslint": "^1.8.1",
     "vite-tsconfig-paths": "^4.2.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
   }
 }

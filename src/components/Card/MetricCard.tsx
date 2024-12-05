@@ -3,6 +3,7 @@ import {Card, Typography, CircularProgress, CardActionArea} from '@mui/material'
 import useMetric, {MetricData} from '../../hooks/useMetrics';
 import './Card.scss';
 import {Bar, BarChart, XAxis} from 'recharts';
+import { useWombatDataManager } from 'wombat-data-framework';
 
 interface MetricCardProps {
   columnName: string;
@@ -46,8 +47,18 @@ const SmallHistogram = ({metric}: {metric: MetricData}) => {
 
 const MetricCard: React.FC<MetricCardProps> = ({columnName, slice, compareToOther}) => {
   const [expanded, setExpanded] = useState(false);
+  const dataManager = useWombatDataManager();
   const metric = useMetric(columnName, slice, compareToOther);
   console.log('MetricCard', metric);
+
+  const isValidColumn = dataManager.hasColumn(columnName);
+  console.log('columns', dataManager.getColumns());
+
+  if (!isValidColumn) {
+    return <Card className="MetricCard dashboard-item" sx={{overflow: 'visible'}}>
+      <Typography variant="h5">Invalid column name: {columnName}</Typography>
+    </Card>;
+  }
 
   const isLoading = metric.significance === 'unknown';
 
