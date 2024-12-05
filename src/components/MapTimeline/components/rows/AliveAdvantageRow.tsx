@@ -57,7 +57,7 @@ export const AliveAdvantageRow = memo<TimelineRowProps>(({width, height, y, time
                 g,
                 x,
                 barWidth,
-                count: d.team1AliveCount,
+                count: d.team1Count,
                 scale,
                 centerY,
                 color: 0x4caf50,
@@ -69,7 +69,7 @@ export const AliveAdvantageRow = memo<TimelineRowProps>(({width, height, y, time
                 g,
                 x,
                 barWidth,
-                count: d.team2AliveCount,
+                count: d.team2Count,
                 scale,
                 centerY,
                 color: 0xf44336,
@@ -85,7 +85,7 @@ export const AliveAdvantageRow = memo<TimelineRowProps>(({width, height, y, time
 
           timelineData.aliveAdvantageData.forEach((d, i) => {
             const x = timeToX(d.matchTime);
-            const diff = d.team1AliveCount - d.team2AliveCount;
+            const diff = d.team1Count - d.team2Count;
             const y = centerY - (diff * scale) / 2;
 
             if (i === 0) {

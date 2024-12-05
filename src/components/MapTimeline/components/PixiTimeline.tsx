@@ -1,6 +1,6 @@
 import {memo} from 'react';
 import {Container, Graphics, Text} from '@pixi/react';
-import {TimelineData, TimelineDimensions} from '../types/timeline.types';
+import {PlayerEvent, PlayerInteractionEvent, TeamAdvantageData, TimelineData, TimelineDimensions, UltimateEvent} from '../types/timeline.types';
 import {EVENT_TYPE_TO_COLOR, INTERACTION_EVENT_TYPE_TO_COLOR, COLORS} from '../constants/timeline.constants';
 import {Graphics as GraphicsType} from '@pixi/graphics';
 import {TextStyle} from '@pixi/text';
@@ -14,7 +14,7 @@ interface PixiTimelineProps {
 
 const parseColor = (colorStr: string) => parseInt(colorStr.replace('#', '0x'));
 
-const drawPlayerRow = (g: GraphicsType, events: Record<string, unknown>[], interactionEvents: Record<string, unknown>[], ultimateEvents: Record<string, unknown>[], timeToX: (t: number) => number, y: number) => {
+const drawPlayerRow = (g: GraphicsType, events: PlayerEvent[], interactionEvents: PlayerInteractionEvent[], ultimateEvents: UltimateEvent[], timeToX: (t: number) => number, y: number) => {
   g.clear();
 
   // Draw ultimate bars first (background)
@@ -59,8 +59,8 @@ const drawPlayerRow = (g: GraphicsType, events: Record<string, unknown>[], inter
   g.endFill();
 };
 
-const drawUltimateAdvantageChart = (g: GraphicsType, data: Record<string, unknown>[], timeToX: (t: number) => number, width: number) => {
-  const maxUltCount = Math.max(...data.map((d) => Math.max(d.team1ChargedUltimateCount as number, d.team2ChargedUltimateCount as number)));
+const drawUltimateAdvantageChart = (g: GraphicsType, data: TeamAdvantageData[], timeToX: (t: number) => number, width: number) => {
+  const maxUltCount = Math.max(...data.map((d) => Math.max(d.team1Count, d.team2Count)));
   const scale = 30 / maxUltCount;
 
   g.clear();
@@ -78,11 +78,11 @@ const drawUltimateAdvantageChart = (g: GraphicsType, data: Record<string, unknow
 
     // Team 1 bar (top)
     g.beginFill(0x4caf50, 0.6);
-    g.drawRect(x, 30 - (d.team1ChargedUltimateCount as number) * scale, width, (d.team1ChargedUltimateCount as number) * scale);
+    g.drawRect(x, 30 - (d.team1Count) * scale, width, (d.team1Count) * scale);
 
     // Team 2 bar (bottom)
     g.beginFill(0xf44336, 0.6);
-    g.drawRect(x, 30, width, (d.team2ChargedUltimateCount as number) * scale);
+    g.drawRect(x, 30, width, (d.team2Count) * scale);
   });
   g.endFill();
 
@@ -90,7 +90,7 @@ const drawUltimateAdvantageChart = (g: GraphicsType, data: Record<string, unknow
   g.lineStyle(2, 0xffffff, 0.8);
   data.forEach((d, i) => {
     const x = timeToX(d.matchTime as number);
-    const diff = (d.team1ChargedUltimateCount as number) - (d.team2ChargedUltimateCount as number);
+    const diff = d.diff;
     const y = 30 - diff * scale;
 
     if (i === 0) {

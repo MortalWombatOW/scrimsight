@@ -29,7 +29,7 @@ export const UltimateAdvantageRow = memo<TimelineRowProps>(({width, height, y, t
   if (!dimensions || !timelineData) return null;
 
   const timeToX = useWindowScale ? dimensions.timeToXWindow : dimensions.timeToX;
-  const maxUltCount = Math.max(...timelineData.ultimateAdvantageData.map((d) => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)));
+  const maxUltCount = Math.max(...timelineData.ultimateAdvantageData.map((d) => Math.max(d.team1Count, d.team2Count)));
   const scale = height / (2 * maxUltCount);
   const centerY = height / 2;
 
@@ -57,7 +57,7 @@ export const UltimateAdvantageRow = memo<TimelineRowProps>(({width, height, y, t
                 g,
                 x,
                 barWidth,
-                count: d.team1ChargedUltimateCount,
+                count: d.team1Count,
                 scale,
                 centerY,
                 color: 0x4caf50,
@@ -69,7 +69,7 @@ export const UltimateAdvantageRow = memo<TimelineRowProps>(({width, height, y, t
                 g,
                 x,
                 barWidth,
-                count: d.team2ChargedUltimateCount,
+                count: d.team2Count,
                 scale,
                 centerY,
                 color: 0xf44336,
@@ -85,7 +85,7 @@ export const UltimateAdvantageRow = memo<TimelineRowProps>(({width, height, y, t
 
           timelineData.ultimateAdvantageData.forEach((d, i) => {
             const x = timeToX(d.matchTime);
-            const diff = d.team1ChargedUltimateCount - d.team2ChargedUltimateCount;
+            const diff = d.diff;
             const y = centerY - (diff * scale) / 2;
 
             if (i === 0) {

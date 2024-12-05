@@ -1,4 +1,3 @@
-import {useEffect} from 'react';
 import {Card, CardContent, Typography} from '@mui/material';
 import {useWombatData} from 'wombat-data-framework';
 import {MatchEnd, MatchStart} from '../../WombatDataFrameworkSchema';
@@ -78,14 +77,8 @@ const MapRow = ({mapId}: {mapId: number}) => {
 };
 
 const MapsList = () => {
-  const mapsData = useWombatData<{name: string; fileModified: number; mapId: number}>('maps_object_store');
-
+  const mapsData = useWombatData<{name: string; fileModified: number; mapId: number}>('maps_object_store');//, {initialSortColumn: 'fileModified', initialSortDirection: 'desc'});
   
-  // TODO: This is a hack to get the maps to sort by fileModified, there should be a better way to do this directly in the data hook
-  useEffect(() => {
-    mapsData.onSortSelection('fileModified');
-  }, []);
-
   console.log('mapsData', mapsData.data);
 
   return (

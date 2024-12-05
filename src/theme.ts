@@ -2,11 +2,6 @@ import {ThemeOptions} from '@mui/material/styles';
 import {generateThemeColor} from './lib/palette';
 import {heroColors} from './lib/color';
 
-const heroColorsTheme = Object.entries(heroColors).reduce((acc, [key, value]) => {
-  acc[key] = generateThemeColor(value);
-  return acc;
-}, {});
-
 export type ColorKey = keyof typeof heroColors | 'team1' | 'team2' | 'primary' | 'secondary' | 'info' | 'warning' | 'error' | 'success';
 
 export const themeDef: ThemeOptions = {
@@ -25,8 +20,6 @@ export const themeDef: ThemeOptions = {
     error: generateThemeColor('#e00040'),
     // The success color is used for indicating success.
     success: generateThemeColor('#7dc95e'),
-
-    ...heroColorsTheme,
     team1: generateThemeColor('#78b4c6'),
     team2: generateThemeColor('#fd6ca0'),
 

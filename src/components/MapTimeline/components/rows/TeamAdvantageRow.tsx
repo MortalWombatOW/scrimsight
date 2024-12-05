@@ -3,19 +3,11 @@ import {Graphics} from '@pixi/react';
 import {Graphics as GraphicsType} from '@pixi/graphics';
 import {BaseTimelineRowProps} from '../../types/row.types';
 import {BaseTimelineRow} from './BaseTimelineRow';
+import { TeamAdvantageData } from '~/components/MapTimeline/types/timeline.types';
 
-interface TeamAdvantageData {
-  matchTime: number;
-  [key: string]: unknown;
-}
 
-interface TeamAdvantageRowProps extends Omit<BaseTimelineRowProps, 'label'> {
+interface TeamAdvantageRowProps extends BaseTimelineRowProps {
   data: TeamAdvantageData[];
-  fieldNames: {
-    team1Count: string;
-    team2Count: string;
-  };
-  label: string;
   team1Color?: number;
   team2Color?: number;
 }
@@ -42,11 +34,11 @@ const drawTeamBar = ({g, x, barWidth, count, scale, centerY, color, isTopTeam}: 
 };
 
 export const TeamAdvantageRow = memo<TeamAdvantageRowProps>(
-  ({width, height, y, dimensions, useWindowScale = false, label, labelWidth, onLabelWidthChange, onDelete, data, fieldNames, team1Color = 0x4caf50, team2Color = 0xf44336}) => {
+  ({width, height, y, dimensions, useWindowScale = false, label, labelWidth, onLabelWidthChange, onDelete, data, team1Color = 0x4caf50, team2Color = 0xf44336}) => {
     if (!dimensions || !data) return null;
 
     const timeToX = useWindowScale ? dimensions.timeToXWindow : dimensions.timeToX;
-    const maxCount = Math.max(...data.map((d) => Math.max(d[fieldNames.team1Count] as number, d[fieldNames.team2Count] as number)));
+    const maxCount = Math.max(...data.map((d) => Math.max(d.team1Count, d.team2Count)));
     const scale = height / (2 * maxCount);
     const centerY = height / 2;
 
@@ -74,7 +66,7 @@ export const TeamAdvantageRow = memo<TeamAdvantageRowProps>(
                   g,
                   x,
                   barWidth,
-                  count: d[fieldNames.team1Count] as number,
+                  count: d.team1Count,
                   scale,
                   centerY,
                   color: team1Color,
@@ -86,7 +78,7 @@ export const TeamAdvantageRow = memo<TeamAdvantageRowProps>(
                   g,
                   x,
                   barWidth,
-                  count: d[fieldNames.team2Count] as number,
+                  count: d.team2Count,
                   scale,
                   centerY,
                   color: team2Color,
@@ -102,7 +94,7 @@ export const TeamAdvantageRow = memo<TeamAdvantageRowProps>(
 
             data.forEach((d, i) => {
               const x = timeToX(d.matchTime);
-              const diff = (d[fieldNames.team1Count] as number) - (d[fieldNames.team2Count] as number);
+              const diff = d.team1Count - d.team2Count;
               const y = centerY - (diff * scale) / 2;
 
               if (i === 0) {

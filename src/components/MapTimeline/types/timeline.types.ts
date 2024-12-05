@@ -49,7 +49,7 @@ export interface XAxisProps {
   eventTimes: number[];
   team1Name: string;
   team2Name: string;
-  ultimateAdvantageData: UltimateAdvantageData[];
+  ultimateAdvantageData: TeamAdvantageData[];
 }
 
 export interface RoundTime {
@@ -102,12 +102,12 @@ export interface RoundTimes {
   roundEndTime: number;
 }
 
-export interface UltimateAdvantageData {
+export interface TeamAdvantageData {
   mapId: number;
   matchTime: number;
-  team1ChargedUltimateCount: number;
-  team2ChargedUltimateCount: number;
-  ultimateAdvantageDiff: number;
+  team1Count: number;
+  team2Count: number;
+  diff: number;
 }
 
 export interface UltimateAdvantageChartProps {
@@ -117,7 +117,7 @@ export interface UltimateAdvantageChartProps {
   windowEndTime: number;
   team1Name: string;
   team2Name: string;
-  ultimateAdvantageData: UltimateAdvantageData[];
+  ultimateAdvantageData: TeamAdvantageData[];
 }
 
 export interface TimelineData {
@@ -125,16 +125,16 @@ export interface TimelineData {
   mapEndTime: number;
   team1Name: string;
   team2Name: string;
-  team1EventsByPlayer: Record<string, any[]>;
-  team2EventsByPlayer: Record<string, any[]>;
-  team1InteractionEventsByPlayer: Record<string, any[]>;
-  team2InteractionEventsByPlayer: Record<string, any[]>;
-  team1UltimateEventsByPlayer: Record<string, any[]>;
-  team2UltimateEventsByPlayer: Record<string, any[]>;
-  roundTimes: any[];
+  team1EventsByPlayer: Record<string, PlayerEvent[]>;
+  team2EventsByPlayer: Record<string, PlayerEvent[]>;
+  team1InteractionEventsByPlayer: Record<string, PlayerInteractionEvent[]>;
+  team2InteractionEventsByPlayer: Record<string, PlayerInteractionEvent[]>;
+  team1UltimateEventsByPlayer: Record<string, UltimateEvent[]>;
+  team2UltimateEventsByPlayer: Record<string, UltimateEvent[]>;
+  roundTimes: RoundTimes[];
   eventTimes: number[];
-  ultimateAdvantageData: any[];
-  aliveAdvantageData: any[];
+  ultimateAdvantageData: TeamAdvantageData[];
+  aliveAdvantageData: TeamAdvantageData[];
 }
 
 export interface TimelineDimensions {

@@ -17,6 +17,7 @@ import {
   percentFormatter,
   objectComparator,
   objectFormatter,
+  DataNodeInputMap,
 } from 'wombat-data-framework';
 import {parseFile, readFileAsync} from './lib/data/uploadfile';
 import {INDEXED_DB_NODE_NAME, IndexedDBNodeConfig} from 'wombat-data-framework';
@@ -648,6 +649,11 @@ const logFileInputNode: InputNodeConfig = {
   columnNames: ['file'],
 };
 
+interface LogFileLoaderOutput {
+  fileName: string;
+  fileModified: number;
+  fileContent: string;
+}
 const logFileLoaderNode: FunctionNodeConfig = {
   name: 'log_file_loader',
   type: 'FunctionNode',
@@ -655,9 +661,10 @@ const logFileLoaderNode: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_input'],
   transform: async (data: DataNodeInputMap) => {
-    const fileContents = await Promise.all(data['log_file_input'].map(readFileAsync));
-    return fileContents.map((content: string, index: string | number) => ({
-      fileName: data['log_file_input'][index].name,
+    const fileContents = await Promise.all((data['log_file_input'] as File[]).map((file) => readFileAsync(file)));
+    return fileContents.map((content: string, index: number) => ({
+      fileName: (data['log_file_input'] as File[])[index].name,
+      fileModified: (data['log_file_input'] as File[])[index].lastModified,
       fileContent: content,
     }));
   },
@@ -671,7 +678,7 @@ const logFileParserNode: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_loader'],
   transform: async (data: DataNodeInputMap) =>
-    data['log_file_loader'].map((file: {fileContent: string; fileName: string; fileModified: number}) => {
+    (data['log_file_loader'] as LogFileLoaderOutput[]).map((file) => {
       const {mapId, logs} = parseFile(file.fileContent);
       return {
         fileName: file.fileName,

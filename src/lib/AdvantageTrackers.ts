@@ -18,13 +18,6 @@ export const ultimateAdvantageConfig: TeamAdvantageConfig<string> = {
   isResetEvent: (event) => event.type === 'round_start' || event.type === 'round_end',
   generatePreResetPoint: true,
   generatePostResetPoint: true,
-
-  fieldNames: {
-    team1Count: 'team1ChargedUltimateCount',
-    team2Count: 'team2ChargedUltimateCount',
-    advantageTeam: 'teamWithUltimateAdvantage',
-    advantageDiff: 'ultimateAdvantageDiff',
-  },
 };
 
 export const playerAliveAdvantageConfig: TeamAdvantageConfig<string> = {
@@ -57,11 +50,4 @@ export const playerAliveAdvantageConfig: TeamAdvantageConfig<string> = {
   isResetEvent: (event) => event.type === 'round_start' || event.type === 'round_end',
   generatePreResetPoint: true,
   generatePostResetPoint: true,
-
-  fieldNames: {
-    team1Count: 'team1AliveCount',
-    team2Count: 'team2AliveCount',
-    advantageTeam: 'teamWithAliveAdvantage',
-    advantageDiff: 'aliveAdvantageDiff',
-  },
 };

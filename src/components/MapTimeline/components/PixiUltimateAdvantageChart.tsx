@@ -1,9 +1,9 @@
 import {memo} from 'react';
 import {Container, Graphics} from '@pixi/react';
 import {Graphics as GraphicsType} from '@pixi/graphics';
-import {UltimateAdvantageChartProps, UltimateAdvantageData} from '../types/timeline.types';
+import {UltimateAdvantageChartProps, TeamAdvantageData} from '../types/timeline.types';
 
-const drawBars = (g: GraphicsType, data: any[], timeToX: (t: number) => number, scale: number) => {
+const drawBars = (g: GraphicsType, data: TeamAdvantageData[], timeToX: (t: number) => number, scale: number) => {
   g.clear();
 
   data.forEach((d, i) => {
@@ -13,22 +13,22 @@ const drawBars = (g: GraphicsType, data: any[], timeToX: (t: number) => number, 
 
     // Team 1 bar (top)
     g.beginFill(0x4caf50, 0.6);
-    g.drawRect(x, 30 - d.team1ChargedUltimateCount * scale, width, d.team1ChargedUltimateCount * scale);
+    g.drawRect(x, 30 - d.team1Count * scale, width, d.team1Count * scale);
 
     // Team 2 bar (bottom)
     g.beginFill(0xf44336, 0.6);
-    g.drawRect(x, 30, width, d.team2ChargedUltimateCount * scale);
+    g.drawRect(x, 30, width, d.team2Count * scale);
   });
   g.endFill();
 };
 
-const drawLine = (g: GraphicsType, data: UltimateAdvantageData[], timeToX: (t: number) => number, scale: number) => {
+const drawLine = (g: GraphicsType, data: TeamAdvantageData[], timeToX: (t: number) => number, scale: number) => {
   g.clear();
   g.lineStyle(2, 0xffffff, 0.8);
 
   data.forEach((d, i) => {
     const x = timeToX(d.matchTime as number);
-    const diff = (d.team1ChargedUltimateCount as number) - (d.team2ChargedUltimateCount as number);
+    const diff = d.diff;
     const y = 30 - diff * scale;
 
     if (i === 0) {
@@ -40,7 +40,7 @@ const drawLine = (g: GraphicsType, data: UltimateAdvantageData[], timeToX: (t: n
 };
 
 export const PixiUltimateAdvantageChart = memo<UltimateAdvantageChartProps>(({width, timeToX, ultimateAdvantageData}) => {
-  const maxUltCount = Math.max(...ultimateAdvantageData.map((d) => Math.max(d.team1ChargedUltimateCount, d.team2ChargedUltimateCount)));
+  const maxUltCount = Math.max(...ultimateAdvantageData.map((d) => Math.max(d.team1Count, d.team2Count)));
   const scale = 30 / maxUltCount;
 
   return (

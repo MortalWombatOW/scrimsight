@@ -317,7 +317,7 @@ const ChordDiagram: React.FC<{mapId: number}> = ({mapId}) => {
     };
 
     fetchDataAndTransform();
-  }, [dataManager]);
+  }, [dataManager, mapId]);
 
   const {width} = useWindowSize();
 

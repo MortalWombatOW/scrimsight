@@ -1,6 +1,5 @@
 import {Grid, Typography, Button} from '@mui/material';
 import {Box} from '@mui/system';
-import React from 'react';
 
 const SplashRow = ({
   title,

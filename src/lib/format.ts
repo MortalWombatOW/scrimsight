@@ -5,18 +5,21 @@ export const safeDivide = (a: number | string, b: number | string) => {
   return (a as number) / (b as number);
 };
 
-export const format = (val: number | string | undefined, decimals = 2) => {
-  if (typeof val === 'string' || val === undefined) {
+export const prettyFormat = (val: number | string | undefined, decimals = 2): string => {
+  if (val === undefined) {
+    return 'undefined';
+  }
+  if (typeof val === 'string') {
     return val;
   }
   if (val == Infinity) {
     return '∞';
   }
   if (val > 1000000) {
-    return format(val / 1000000) + 'm';
+    return prettyFormat(val / 1000000) + 'm';
   }
   if (val > 1000) {
-    return format(val / 1000) + 'k';
+    return prettyFormat(val / 1000) + 'k';
   }
   if (val % 1 === 0) {
     return val.toFixed(0);
@@ -24,13 +27,7 @@ export const format = (val: number | string | undefined, decimals = 2) => {
   return val.toFixed(decimals);
 };
 
-export const formatTime = (val: number | string | undefined) => {
-  if (val === undefined) {
-    return '';
-  }
-  if (typeof val === 'string') {
-    return val;
-  }
+export const formatTime = (val: number) => {
   const hours = Math.floor(val / 3600);
   const minutes = Math.floor((val % 3600) / 60);
   const seconds = Math.floor(val % 60);

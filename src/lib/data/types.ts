@@ -643,4 +643,22 @@ const LOG_SPEC: LogSpec = {
   },
 };
 
-export {TeamInfo, Statistic, ColorInternal, ColorInternalHSL, MapEntity, RenderState, GameStateTimeSlice, GameStateExtractor, Team, DataAndSpecName, DataRowBySpecName, LogSpec, DataSpec, FieldSpec, LOG_SPEC};
+
+
+export type {
+  TeamInfo,
+  Statistic,
+  ColorInternal,
+  ColorInternalHSL,
+  MapEntity,
+  RenderState,
+  GameStateTimeSlice,
+  GameStateExtractor,
+  Team,
+  DataAndSpecName,
+  DataRowBySpecName,
+  LogSpec,
+  DataSpec,
+  FieldSpec
+};
+export {LOG_SPEC};

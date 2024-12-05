@@ -1,5 +1,5 @@
 import {ReactNode} from 'react';
-import {TimelineData, TimelineDimensions} from './timeline.types';
+import {PlayerEvent, PlayerInteractionEvent, TeamAdvantageData, TimelineData, TimelineDimensions, UltimateEvent} from './timeline.types';
 
 export interface BaseTimelineRowProps {
   width: number;
@@ -20,9 +20,9 @@ export interface TimelineRowProps extends BaseTimelineRowProps {
 
 export interface PlayerTimelineRowProps extends BaseTimelineRowProps {
   playerName: string;
-  events: any[];
-  interactionEvents: any[];
-  ultimateEvents: any[];
+  playerEvents: PlayerEvent[];
+  interactionEvents: PlayerInteractionEvent[];
+  ultimateEvents: UltimateEvent[];
 }
 
 export type TimelineRowType = 'player' | 'round' | 'teamAdvantage' | 'eventMap' | 'spacing' | 'header' | 'timeLabels';
@@ -40,11 +40,7 @@ export interface HeaderRowConfig {
 
 export interface TeamAdvantageRowConfig {
   type: 'teamAdvantage';
-  values: any[];
-  fieldNames: {
-    team1Count: string;
-    team2Count: string;
-  };
+  values: TeamAdvantageData[];
   label: string;
 }
 

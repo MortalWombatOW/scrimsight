@@ -1,5 +1,5 @@
 import {useWombatDataManager, useWombatDataNode} from 'wombat-data-framework';
-import {MatchStart, MapTimes, PlayerEvent, PlayerInteractionEvent, UltimateEvent, RoundTimes, UltimateAdvantageData, TimelineData} from '../types/timeline.types';
+import {MatchStart, MapTimes, PlayerEvent, PlayerInteractionEvent, UltimateEvent, RoundTimes, TimelineData, TeamAdvantageData} from '../types/timeline.types';
 
 export const useTimelineData = (mapId: number): TimelineData | null => {
   const dataManager = useWombatDataManager();
@@ -95,10 +95,9 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
     return eventsByPlayer;
   };
 
-  // Add ultimate advantage data
-  const ultimateAdvantageData = ultimateAdvantageNode.getOutput<UltimateAdvantageData[]>().filter((row) => row['mapId'] as number === mapId);
+  const ultimateAdvantageData = ultimateAdvantageNode.getOutput<TeamAdvantageData[]>().filter((row) => row['mapId'] as number === mapId);
   // TODO: fix this type
-  const aliveAdvantageData = aliveAdvantageNode.getOutput<object[]>().filter((row) => (row['mapId'] as number) === mapId);
+  const aliveAdvantageData = aliveAdvantageNode.getOutput<TeamAdvantageData[]>().filter((row) => (row['mapId'] as number) === mapId);
   return {
     team1Name,
     team2Name,

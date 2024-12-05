@@ -1,4 +1,5 @@
 import {useWombatDataManager, DataColumn, useWombatDataNode} from 'wombat-data-framework';
+// @ts-ignore
 import jStat from 'jstat';
 
 // to be displayed like

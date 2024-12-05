@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import {useState, useLayoutEffect} from 'react';
 
 const useWindowSize = () => {
   const [width, setWidth] = useState(document.body.clientWidth);
   const [height, setHeight] = useState(document.body.clientHeight);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     const widthDetector = document.createElement('iframe');
     Object.assign(widthDetector.style, {
       height: 0,

@@ -1,12 +1,10 @@
-import React, {Suspense, useState, useCallback} from 'react';
-import {Container, Grid} from '@mui/material';
+import React, { useState, useCallback} from 'react';
+import {Container, Grid, LinearProgress} from '@mui/material';
 import {useTimelineData} from './hooks/useTimelineData';
 import {useTimelineDimensions} from './hooks/useTimelineDimensions';
-import {MapTimelineProps, TimelineData} from './types/timeline.types';
+import {MapTimelineProps, PlayerEvent, PlayerInteractionEvent, TimelineData, UltimateEvent} from './types/timeline.types';
 import {TimelineErrorBoundary} from './components/TimelineErrorBoundary';
-import {TimelineSkeleton} from './components/TimelineSkeleton';
 import {PixiWrapper} from './components/PixiWrapper';
-import {WindowHandle} from './components/styles/timeline.styles';
 import {useTimelineWindow} from './hooks/useTimelineWindow';
 import {TimelineRowConfig} from './types/row.types';
 import {PlayerTimelineRow} from './components/rows/PlayerTimelineRow';
@@ -99,10 +97,6 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
       data: {
         type: 'teamAdvantage',
         values: timelineData.ultimateAdvantageData,
-        fieldNames: {
-          team1Count: 'team1ChargedUltimateCount',
-          team2Count: 'team2ChargedUltimateCount',
-        },
         label: 'Ultimate Advantage',
       },
     },
@@ -114,10 +108,6 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
       data: {
         type: 'teamAdvantage',
         values: timelineData.aliveAdvantageData,
-        fieldNames: {
-          team1Count: 'team1AliveCount',
-          team2Count: 'team2AliveCount',
-        },
         label: 'Player Advantage',
       },
     },
@@ -144,7 +134,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
   const timelineData = useTimelineData(mapId);
   const dimensions = useTimelineDimensions(timelineData?.mapStartTime ?? 0, timelineData?.mapEndTime ?? 100);
 
-  const {handleMouseDown, handleMouseUp, handleMouseMove} = useTimelineWindow({
+  const {handleMouseUp, handleMouseMove} = useTimelineWindow({
     windowStartTime: dimensions.windowStartTime,
     windowEndTime: dimensions.windowEndTime,
     mapStartTime: timelineData?.mapStartTime ?? 0,
@@ -172,7 +162,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
   const totalHeight = rowConfigs.reduce((sum, config) => sum + config.height, 0);
 
   // Calculate timeline width
-  const timelineWidth = (dimensions.width || 0) - labelWidth;
+  // const timelineWidth = (dimensions.width || 0) - labelWidth;
 
   return (
     <TimelineErrorBoundary>
@@ -180,9 +170,8 @@ const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
         <Grid container spacing={1}>
           <Grid item xs={12} ref={dimensions.gridRef}>
             {!timelineData || !dimensions.width ? (
-              <TimelineSkeleton />
+              <LinearProgress />
             ) : (
-              <Suspense fallback={<TimelineSkeleton />}>
                 <div style={{position: 'relative'}} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp}>
                   <PixiWrapper width={dimensions.width || 0} height={totalHeight}>
                     {rowConfigs.map((config, index) => {
@@ -207,9 +196,9 @@ const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
                               {...commonProps}
                               label={config.data.playerName}
                               playerName={config.data.playerName}
-                              events={(timelineData[`${config.data.team}EventsByPlayer` as keyof TimelineData] as Record<string, unknown[]>)?.[config.data.playerName] ?? []}
-                              interactionEvents={(timelineData[`${config.data.team}InteractionEventsByPlayer` as keyof TimelineData] as Record<string, unknown[]>)?.[config.data.playerName] ?? []}
-                              ultimateEvents={(timelineData[`${config.data.team}UltimateEventsByPlayer` as keyof TimelineData] as Record<string, unknown[]>)?.[config.data.playerName] ?? []}
+                              playerEvents={(timelineData[`${config.data.team}EventsByPlayer` as keyof TimelineData] as Record<string, PlayerEvent[]>)?.[config.data.playerName] ?? []}
+                              interactionEvents={(timelineData[`${config.data.team}InteractionEventsByPlayer` as keyof TimelineData] as Record<string, PlayerInteractionEvent[]>)?.[config.data.playerName] ?? []}
+                              ultimateEvents={(timelineData[`${config.data.team}UltimateEventsByPlayer` as keyof TimelineData] as Record<string, UltimateEvent[]>)?.[config.data.playerName] ?? []}
                               useWindowScale={config.useWindowScale}
                             />
                           );
@@ -219,7 +208,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
 
                         case 'teamAdvantage':
                           if (config.data.type !== 'teamAdvantage') break;
-                          return <TeamAdvantageRow key={config.id} {...commonProps} data={config.data.values} fieldNames={config.data.fieldNames} label={config.data.label} useWindowScale={config.useWindowScale} />;
+                          return <TeamAdvantageRow key={config.id} {...commonProps} data={config.data.values} label={config.data.label} useWindowScale={config.useWindowScale} />;
 
                         case 'eventMap':
                           return <EventMapRow key={config.id} {...commonProps} label="Events" timelineData={timelineData} useWindowScale={config.useWindowScale} />;
@@ -239,26 +228,7 @@ const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
                       }
                     })}
                   </PixiWrapper>
-
-                  {/* Window handles - updated positioning */}
-                  <WindowHandle
-                    style={{
-                      left: `${dimensions.timeToX(dimensions.windowStartTime) * (timelineWidth / (dimensions.width || 1)) + labelWidth}px`,
-                      top: `${totalHeight - 80}px`,
-                    }}
-                    onMouseDown={(e) => handleMouseDown(e, 'start')}>
-                    {Math.round(dimensions.windowStartTime)}
-                  </WindowHandle>
-                  <WindowHandle
-                    style={{
-                      left: `${dimensions.timeToX(dimensions.windowEndTime) * (timelineWidth / (dimensions.width || 1)) + labelWidth}px`,
-                      top: `${totalHeight - 80}px`,
-                    }}
-                    onMouseDown={(e) => handleMouseDown(e, 'end')}>
-                    {Math.round(dimensions.windowEndTime)}
-                  </WindowHandle>
                 </div>
-              </Suspense>
             )}
           </Grid>
         </Grid>

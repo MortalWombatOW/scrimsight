@@ -8,7 +8,7 @@ import {tooltipStyle} from '../../constants/timeline.constants';
 import {Rectangle, Point} from '@pixi/math';
 
 export const PlayerTimelineRow = memo<PlayerTimelineRowProps>(
-  ({width, height, y, events = [], interactionEvents = [], ultimateEvents = [], dimensions, useWindowScale = true, label, labelWidth, onLabelWidthChange, onDelete}) => {
+  ({width, height, y, playerEvents: events = [], interactionEvents = [], ultimateEvents = [], dimensions, useWindowScale = true, label, labelWidth, onLabelWidthChange, onDelete}) => {
     const timeToX = useWindowScale ? dimensions.timeToXWindow : dimensions.timeToX;
     const xToTime = useWindowScale ? dimensions.xToTimeWindow : dimensions.xToTime;
     const [hoverEvent, setHoverEvent] = useState<{x: number; y: number; text: string} | null>(null);

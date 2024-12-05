@@ -10,19 +10,15 @@ export interface TeamAdvantageState<T> {
   team2Items: Set<T>;
 }
 
-export interface TeamAdvantageFieldNames {
-  team1Count: string;
-  team2Count: string;
-  advantageTeam: string;
-  advantageDiff: string;
-}
-
 export interface TeamAdvantageResult {
-  mapId: string;
+  mapId: number;
   matchTime: number;
   team1Name: string;
   team2Name: string;
-  [key: string]: unknown;
+  team1Count: number;
+  team2Count: number;
+  teamWithAdvantage: string;
+  diff: number;
 }
 
 export interface TeamAdvantageConfig<T> {
@@ -47,11 +43,9 @@ export interface TeamAdvantageConfig<T> {
   // Whether to generate a data point after reset
   generatePostResetPoint: boolean;
 
-  // Names for the output fields
-  fieldNames: TeamAdvantageFieldNames;
 }
 
-export function calculateAdvantage(state: TeamAdvantageState<unknown>, team1Name: string, team2Name: string, mapId: string, matchTime: number, fieldNames: TeamAdvantageFieldNames): TeamAdvantageResult {
+export function calculateAdvantage(state: TeamAdvantageState<unknown>, team1Name: string, team2Name: string, mapId: number, matchTime: number): TeamAdvantageResult {
   const team1Count = state.team1Items.size;
   const team2Count = state.team2Items.size;
   const advantageDiff = team1Count - team2Count;
@@ -61,10 +55,10 @@ export function calculateAdvantage(state: TeamAdvantageState<unknown>, team1Name
     matchTime,
     team1Name,
     team2Name,
-    [fieldNames.team1Count]: team1Count,
-    [fieldNames.team2Count]: team2Count,
-    [fieldNames.advantageTeam]: advantageDiff > 0 ? team1Name : advantageDiff < 0 ? team2Name : 'None',
-    [fieldNames.advantageDiff]: Math.abs(advantageDiff),
+    team1Count,
+    team2Count,
+    teamWithAdvantage: advantageDiff > 0 ? team1Name : advantageDiff < 0 ? team2Name : 'None',
+    diff: Math.abs(advantageDiff),
   };
 }
 
@@ -104,7 +98,7 @@ export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams:
       if (config.isResetEvent(event)) {
         // Generate pre-reset point if configured
         if (config.generatePreResetPoint) {
-          results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime, config.fieldNames));
+          results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime));
         }
 
         // Reset state
@@ -113,7 +107,7 @@ export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams:
 
         // Generate post-reset point if configured
         if (config.generatePostResetPoint) {
-          results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime, config.fieldNames));
+          results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime));
         }
 
         firstEventAfterReset = true;
@@ -132,14 +126,14 @@ export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams:
       // Add or remove item based on event type
       if (config.isAddEvent(event)) {
         if (firstEventAfterReset) {
-          results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime - 0.1, config.fieldNames));
+          results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime - 0.1));
           firstEventAfterReset = false;
         }
         teamItems.add(itemKey);
-        results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime, config.fieldNames));
+        results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime));
       } else if (config.isRemoveEvent(event)) {
         teamItems.delete(itemKey);
-        results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime, config.fieldNames));
+        results.push(calculateAdvantage(state, teams.team1Name, teams.team2Name, mapId, event.matchTime));
       }
     }
   }

@@ -16,9 +16,9 @@ const MapPage = () => {
 
   console.log('mapId', mapId, tab);
 
-  const {mapName, mapType, team1Name, team2Name} = useWombatData<MatchStart>('match_start_object_store', {mapId}).data[0];
-  const {team1Score, team2Score} = useWombatData<MatchEnd>('match_end_object_store', {mapId}).data[0];
-  const {name, fileModified} = useWombatData<{mapId: number; name: string; fileModified: number}>('maps_object_store', {mapId}).data[0];
+  const {mapName, mapType, team1Name, team2Name} = useWombatData<MatchStart>('match_start_object_store', {initialFilter: {mapId}}).data[0];
+  const {team1Score, team2Score} = useWombatData<MatchEnd>('match_end_object_store', {initialFilter: {mapId}}).data[0];
+  const {name, fileModified} = useWombatData<{mapId: number; name: string; fileModified: number}>('maps_object_store', {initialFilter: {mapId}}).data[0];
 
   return (
     <Container>

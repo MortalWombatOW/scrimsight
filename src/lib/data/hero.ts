@@ -1,59 +1,69 @@
-import {heroNameToNormalized} from 'lib/string';
+import {heroNameToNormalized} from '../string';
 
 export const getHeroImage = (heroName: string, rounded = true): string => `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(heroName)}.png`;
 
-const heroToRole = {
-  'D.Va': 'tank',
-  Orisa: 'tank',
-  Reinhardt: 'tank',
-  Roadhog: 'tank',
-  Winston: 'tank',
-  Sigma: 'tank',
-  'Wrecking Ball': 'tank',
-  Zarya: 'tank',
-  Ashe: 'damage',
-  Bastion: 'damage',
-  Cassidy: 'damage',
-  McCree: 'damage',
-  Doomfist: 'damage',
-  Echo: 'damage',
-  Genji: 'damage',
-  Hanzo: 'damage',
-  Junkrat: 'damage',
-  Mei: 'damage',
-  Pharah: 'damage',
-  Reaper: 'damage',
-  'Soldier: 76': 'damage',
-  Sombra: 'damage',
-  Symmetra: 'damage',
-  Torbjörn: 'damage',
-  Tracer: 'damage',
-  Widowmaker: 'damage',
-  Ana: 'support',
-  Baptiste: 'support',
-  Brigitte: 'support',
-  Lúcio: 'support',
-  Mercy: 'support',
-  Moira: 'support',
-  Zenyatta: 'support',
-  Rammatra: 'tank',
-  Mauga: 'tank',
-  Sojourn: 'damage',
-  Kiriko: 'support',
-  'Junker Queen': 'tank',
-  Lifeweaver: 'support',
-  Illari: 'support',
+// Hero lists by role
+const TANK_HEROES = [
+  'D.Va',
+  'Orisa',
+  'Reinhardt',
+  'Roadhog',
+  'Winston',
+  'Sigma',
+  'Wrecking Ball',
+  'Zarya',
+  'Rammatra',
+  'Mauga',
+  'Junker Queen',
+  'Hazard'
+] as const;
+
+const DAMAGE_HEROES = [
+  'Ashe',
+  'Bastion',
+  'Cassidy',
+  'McCree',
+  'Doomfist',
+  'Echo',
+  'Genji',
+  'Hanzo',
+  'Junkrat',
+  'Mei',
+  'Pharah',
+  'Reaper',
+  'Soldier: 76',
+  'Sombra',
+  'Symmetra',
+  'Torbjörn',
+  'Tracer',
+  'Widowmaker',
+  'Sojourn'
+] as const;
+
+const SUPPORT_HEROES = [
+  'Ana',
+  'Baptiste',
+  'Brigitte',
+  'Lúcio',
+  'Mercy',
+  'Moira',
+  'Zenyatta',
+  'Kiriko',
+  'Lifeweaver',
+  'Illari',
+  'Juno'
+] as const;
+
+export type OverwatchRole = 'tank' | 'damage' | 'support';
+export type OverwatchHero = typeof TANK_HEROES[number] | typeof DAMAGE_HEROES[number] | typeof SUPPORT_HEROES[number];
+
+export const getRoleFromHero = (hero: OverwatchHero): OverwatchRole => {
+  if (TANK_HEROES.includes(hero as typeof TANK_HEROES[number])) return 'tank';
+  if (DAMAGE_HEROES.includes(hero as typeof DAMAGE_HEROES[number])) return 'damage';
+  if (SUPPORT_HEROES.includes(hero as typeof SUPPORT_HEROES[number])) return 'support';
+  throw new Error(`Unknown hero: ${hero}`);
 };
 
-export const heroToRoleTable = Object.entries(heroToRole).map(([hero, role]) => ({
-  hero,
-  role,
-}));
-
-export const getRoleFromHero = (hero: string): string => {
-  return heroToRole[hero] || 'new hero alert??';
-};
-
-export const getRankForRole = (role: string): number => {
-  return role === 'tank' ? 1 : role === 'damage' ? 2 : 3;
+export const getRankForRole = (role: OverwatchRole): number => {
+  return {tank: 1, damage: 2, support: 3}[role];
 };
