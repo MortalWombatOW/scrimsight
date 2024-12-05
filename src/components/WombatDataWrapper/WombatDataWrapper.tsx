@@ -1,7 +1,8 @@
 import React from 'react';
 import {useSearchParams} from 'react-router-dom';
 import {WombatDataProvider, LogLevel} from 'wombat-data-framework';
-import {initializeDataManager} from '../../services/dataManager';
+import { initializeDataManager } from '../../WombatDataFrameworkSchema';
+
 
 interface WombatDataWrapperProps {
   children: React.ReactNode;

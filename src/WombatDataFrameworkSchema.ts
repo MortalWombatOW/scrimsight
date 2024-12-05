@@ -18,6 +18,13 @@ import {
   objectComparator,
   objectFormatter,
   DataNodeInputMap,
+  AlaSQLNode,
+  DataManager,
+  FunctionNode,
+  IndexedDBNode,
+  InputNode,
+  ObjectStoreNode,
+  timeFormatter,
 } from 'wombat-data-framework';
 import {parseFile, readFileAsync} from './lib/data/uploadfile';
 import {INDEXED_DB_NODE_NAME, IndexedDBNodeConfig} from 'wombat-data-framework';
@@ -286,7 +293,7 @@ export interface PlayerStat extends BaseEvent {
   heroTimePlayed: number;
 }
 
-export const DATA_COLUMNS: DataColumn[] = [
+const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('eliminationsPer10', 'Eliminations Per 10 Minutes', 'The number of eliminations per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
   makeDataColumn('deathsPer10', 'Deaths Per 10 Minutes', 'The number of deaths per 10 minutes.', makeRatioUnits('count', '10m'), 'number', numberFormatter, numberComparator),
   makeDataColumn('damagePer10', 'Damage Per 10 Minutes', 'The amount of damage dealt per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
@@ -323,14 +330,14 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('barrierDamageDealtPer10', 'Barrier Damage Dealt Per 10 Minutes', 'The amount of damage dealt to the barrier per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
   makeDataColumn('heroDamagePer10', 'Hero Damage Dealt Per 10 Minutes', 'The amount of damage dealt to heroes per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
   makeDataColumn('healingReceivedPer10', 'Healing Received Per 10 Minutes', 'The amount of healing received per 10 minutes.', makeRatioUnits('hp', '10m'), 'number', numberFormatter, numberComparator),
-  makeDataColumn('playerInteractionEventTime', 'Player Interaction Event Time', 'The time the player interaction event occurred.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('playerInteractionEventTime', 'Player Interaction Event Time', 'The time the player interaction event occurred.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('playerInteractionEventType', 'Player Interaction Event Type', 'The type of the player interaction event.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('otherPlayerName', 'Other Player Name', 'The name of the other player.', 'none', 'string', stringFormatter, stringComparator),
-  makeDataColumn('playerEventTime', 'Player Event Time', 'The time the event occurred.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('playerEventTime', 'Player Event Time', 'The time the event occurred.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('playerEventType', 'Player Event Type', 'The type of the event.', 'none', 'string', stringFormatter, stringComparator),
-  makeDataColumn('roundStartTime', 'Round Start Time', 'The time the round started.', 's', 'number', numberFormatter, numberComparator),
-  makeDataColumn('roundEndTime', 'Round End Time', 'The time the round ended.', 's', 'number', numberFormatter, numberComparator),
-  makeDataColumn('roundDuration', 'Round Duration', 'The duration of the round.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('roundStartTime', 'Round Start Time', 'The time the round started.', 's', 'number', timeFormatter, numberComparator),
+  makeDataColumn('roundEndTime', 'Round End Time', 'The time the round ended.', 's', 'number', timeFormatter, numberComparator),
+  makeDataColumn('roundDuration', 'Round Duration', 'The duration of the round.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('roundSetupCompleteTime', 'Round Setup Complete Time', 'The time the round setup was completed.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('allDamageDealt', 'All Damage Dealt', 'The total amount of damage dealt.', 'hp', 'number', numberFormatter, numberComparator),
   makeDataColumn('attackerHero', 'Attacker Hero', 'The hero of the attacking player.', 'none', 'string', stringFormatter, stringComparator),
@@ -352,7 +359,7 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('eventAbility', 'Event Ability', 'The ability that was used.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('eventDamage', 'Event Damage', 'The amount of damage dealt.', 'hp', 'number', numberFormatter, numberComparator),
   makeDataColumn('eventHealing', 'Event Healing', 'The amount of healing dealt.', 'hp', 'number', numberFormatter, numberComparator),
-  makeDataColumn('file', 'File', 'The name of the file.', 'none', 'string', objectFormatter, objectComparator),
+  makeDataColumn('file', 'File', 'The file object.', 'none', 'string', objectFormatter, objectComparator),
   makeDataColumn('fileContent', 'File Content', 'The content of the file.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('fileName', 'File Name', 'The name of the file.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('fileModified', 'File Modified', 'The date the file was last modified.', 'none', 'number', numberFormatter, numberComparator),
@@ -367,19 +374,19 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('healingReceived', 'Healing Received', 'The amount of healing received.', 'hp', 'number', numberFormatter, numberComparator),
   makeDataColumn('heroDamageDealt', 'Hero Damage Dealt', 'The amount of damage dealt to the hero.', 'hp', 'number', numberFormatter, numberComparator),
   makeDataColumn('heroDuplicated', 'Hero Duplicated', 'The name of the hero that was duplicated.', 'none', 'string', stringFormatter, stringComparator),
-  makeDataColumn('heroTimePlayed', 'Hero Time Played (s)', 'The time in seconds the hero was played.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('heroTimePlayed', 'Hero Time Played (s)', 'The time in seconds the hero was played.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('isCriticalHit', 'Is Critical Hit', 'Whether the attack was a critical hit.', 'none', 'boolean', booleanFormatter, booleanComparator),
   makeDataColumn('isEnvironmental', 'Is Environmental', 'Whether the attack was environmental.', 'none', 'boolean', booleanFormatter, booleanComparator),
   makeDataColumn('isHealthPack', 'Is Health Pack', 'Whether the healing was from a health pack.', 'none', 'boolean', booleanFormatter, booleanComparator),
   makeDataColumn('logs', 'Logs', 'The logs from the file.', 'none', 'string', objectFormatter, objectComparator),
-  makeDataColumn('mapDuration', 'Map Duration', 'The duration of the map.', 's', 'number', numberFormatter, numberComparator),
-  makeDataColumn('mapEndTime', 'Map End Time', 'The time the map ended.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('mapDuration', 'Map Duration', 'The duration of the map.', 's', 'number', timeFormatter, numberComparator),
+  makeDataColumn('mapEndTime', 'Map End Time', 'The time the map ended.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('mapId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'number', stringFormatter, numberComparator),
   makeDataColumn('mapName', 'Map Name', 'The name of the map.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mapStartTime', 'Map Start Time', 'The time the map started.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('mapType', 'Map Type', 'The type of the map.', 'none', 'string', stringFormatter, stringComparator),
-  makeDataColumn('matchTime', 'Match Time (s)', 'The time in seconds since the start of the match.', 's', 'number', numberFormatter, numberComparator),
-  makeDataColumn('matchTimeRemaining', 'Match Time Remaining (s)', 'The time remaining in the match.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('matchTime', 'Match Time (s)', 'The time in seconds since the start of the match.', 's', 'number', timeFormatter, numberComparator),
+  makeDataColumn('matchTimeRemaining', 'Match Time Remaining (s)', 'The time remaining in the match.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('mercyName', 'Mercy Name', 'The name of the mercy player.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mercyPlayer', 'Mercy Player', 'The name of the mercy player.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mercyTeam', 'Mercy Team', 'The team of the mercy player.', 'none', 'string', stringFormatter, stringComparator),
@@ -410,16 +417,20 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('shotsHit', 'Shots Hit', 'The number of shots hit.', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('shotsMissed', 'Shots Missed', 'The number of shots missed.', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('soloKills', 'Solo Kills', 'The number of solo kills.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team1Count', 'Team 1 Count', 'The count for team 1.', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('team1Name', 'Team 1 Name', 'The name of team 1.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('team1Score', 'Team 1 Score', 'The score of team 1.', 'none', 'number', numberFormatter, numberComparator),
+  makeDataColumn('team2Count', 'Team 2 Count', 'The count for team 2.', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('teamWithAdvantage', 'Team with Advantage', 'The team with the advantage.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('diff', 'Difference', 'The difference between the two teams.', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('team2Name', 'Team 2 Name', 'The name of team 2.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('team2Score', 'Team 2 Score', 'The score of team 2.', 'none', 'number', numberFormatter, numberComparator),
   makeDataColumn('type', 'Type', 'The type of the event.', 'none', 'string', stringFormatter, stringComparator),
-  makeDataColumn('ultimateChargedTime', 'Ultimate Charged Time (s)', 'The match time the ultimate was charged.', 's', 'number', numberFormatter, numberComparator),
-  makeDataColumn('ultimateEndTime', 'Ultimate End Time (s)', 'The match time the ultimate was ended.', 's', 'number', numberFormatter, numberComparator),
-  makeDataColumn('ultimateHoldTime', 'Ultimate Hold Time (s)', 'The time the ultimate was held.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimateChargedTime', 'Ultimate Charged Time (s)', 'The match time the ultimate was charged.', 's', 'number', timeFormatter, numberComparator),
+  makeDataColumn('ultimateEndTime', 'Ultimate End Time (s)', 'The match time the ultimate was ended.', 's', 'number', timeFormatter, numberComparator),
+  makeDataColumn('ultimateHoldTime', 'Ultimate Hold Time (s)', 'The time the ultimate was held.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('ultimateId', 'Ultimate ID', 'The ID of the ultimate ability.', 'none', 'number', numberFormatter, numberComparator),
-  makeDataColumn('ultimateStartTime', 'Ultimate Start Time (s)', 'The match time the ultimate was started.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('ultimateStartTime', 'Ultimate Start Time (s)', 'The match time the ultimate was started.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('ultimatesEarned', 'Ultimates Earned', 'The number of ultimates earned.', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('ultimatesUsed', 'Ultimates Used', 'The number of ultimates used.', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('victimHero', 'Victim Hero', 'The hero of the victim player.', 'none', 'string', stringFormatter, stringComparator),
@@ -430,16 +441,8 @@ export const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('finalBlowsPerDeaths', 'Final Blows per Deaths', 'The number of final blows per deaths.', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('damageTakenPerDeaths', 'Damage Taken per Deaths', 'The amount of damage taken per deaths.', 'hp', 'number', numberFormatter, numberComparator),
   makeDataColumn('allDamageDealtPerDamageTaken', 'All Damage Dealt per Damage Taken', 'The total amount of damage dealt per damage taken.', 'hp', 'number', numberFormatter, numberComparator),
-  makeDataColumn('team1ChargedUltimateCount', 'Team 1 Charged Ultimate Count', 'Number of ultimates charged for team 1', 'count', 'number', numberFormatter, numberComparator),
-  makeDataColumn('team2ChargedUltimateCount', 'Team 2 Charged Ultimate Count', 'Number of ultimates charged for team 2', 'count', 'number', numberFormatter, numberComparator),
-  makeDataColumn('teamWithUltimateAdvantage', 'Team with Ultimate Advantage', 'Team that has more ultimates charged', 'none', 'string', stringFormatter, stringComparator),
-  makeDataColumn('ultimateAdvantageDiff', 'Ultimate Advantage Difference', 'Difference in number of charged ultimates between teams', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('chargedUltimateCount', 'Charged Ultimate Count', 'Number of charged ultimates for a team at a given time', 'count', 'number', numberFormatter, numberComparator),
-  makeDataColumn('team1AliveCount', 'Team 1 Alive Players', 'Number of alive players on team 1', 'count', 'number', numberFormatter, numberComparator),
-  makeDataColumn('team2AliveCount', 'Team 2 Alive Players', 'Number of alive players on team 2', 'count', 'number', numberFormatter, numberComparator),
-  makeDataColumn('teamWithAliveAdvantage', 'Team with Player Advantage', 'Team that has more alive players', 'none', 'string', stringFormatter, stringComparator),
-  makeDataColumn('aliveAdvantageDiff', 'Player Advantage Difference', 'Difference in number of alive players between teams', 'count', 'number', numberFormatter, numberComparator),
-];
+  ];
 
 // const playerStatFragment = `
 //       SUM(player_stat.eliminations) as eliminations,
@@ -629,7 +632,7 @@ export const DATA_COLUMNS: DataColumn[] = [
 //   makeWriteNodeInit('ultimate_start_write_node', 'Add Ultimate Start Events', 'ultimate_start'),
 // ];
 
-export const indexedDbNode: IndexedDBNodeConfig = {
+const indexedDbNode: IndexedDBNodeConfig = {
   name: INDEXED_DB_NODE_NAME,
   type: 'IndexedDBNode',
   displayName: 'Indexed DB',
@@ -998,7 +1001,7 @@ const ultimate_start_extractor: FunctionNodeConfig = {
   columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
-export const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
+const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
   logFileInputNode,
   logFileLoaderNode,
   logFileParserNode,
@@ -1045,7 +1048,7 @@ function makeObjectStoreNodeConfig(name: string, displayName: string, objectStor
   };
 }
 
-export const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
+const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
   makeObjectStoreNodeConfig('ability_1_used_object_store', 'Ability 1 Used', 'ability_1_used', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
   makeObjectStoreNodeConfig('ability_2_used_object_store', 'Ability 2 Used', 'ability_2_used', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
   makeObjectStoreNodeConfig('damage_object_store', 'Damage', 'damage', [
@@ -1232,7 +1235,7 @@ function makeAlaSQLNodeConfig(name: string, displayName: string, sql: string, so
 // Rules:
 // never use subqueries, always split into multiple nodes.
 // any change to the output columns requires a change to the DataColumn definitions in DataColumn.ts
-export const ALASQL_NODES: AlaSQLNodeConfig[] = [
+const ALASQL_NODES: AlaSQLNodeConfig[] = [
   makeAlaSQLNodeConfig(
     'ultimate_events',
     'Ultimate Events',
@@ -1608,22 +1611,22 @@ export const ALASQL_NODES: AlaSQLNodeConfig[] = [
   ),
 ];
 
-export const FUNCTION_NODES: FunctionNodeConfig[] = [
+const FUNCTION_NODES: FunctionNodeConfig[] = [
   {
     name: 'team_ultimate_advantage',
     displayName: 'Team Ultimate Advantage',
     sources: ['ultimate_charged_object_store', 'ultimate_end_object_store', 'match_start_object_store', 'round_end_object_store', 'round_start_object_store'],
-    columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1ChargedUltimateCount', 'team2ChargedUltimateCount', 'teamWithUltimateAdvantage', 'ultimateAdvantageDiff'],
+    columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1Count', 'team2Count', 'teamWithAdvantage', 'diff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(data['ultimate_charged_object_store'] || []).map((e: object) => ({...e, type: 'charged'})),
-        ...(data['ultimate_end_object_store'] || []).map((e: object) => ({...e, type: 'end'})),
-        ...(data['round_end_object_store'] || []).map((e: object) => ({...e, type: 'round_end'})),
-        ...(data['round_start_object_store'] || []).map((e: object) => ({...e, type: 'round_start'})),
+        ...(data['ultimate_charged_object_store'] as UltimateCharged[]).map((e) => ({...e, type: 'charged'})),
+        ...(data['ultimate_end_object_store'] as UltimateEnd[]).map((e) => ({...e, type: 'end'})),
+        ...(data['round_end_object_store'] as RoundEnd[]).map((e) => ({...e, type: 'round_end'})),
+        ...(data['round_start_object_store'] as RoundStart[]).map((e) => ({...e, type: 'round_start'})),
       ];
 
       const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
-        (data['match_start_object_store'] || []).map((match: {mapId: number; team1Name: string; team2Name: string}) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
+        (data['match_start_object_store'] as MatchStart[]).map((match) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
       );
 
       return processTeamAdvantageEvents(events, mapTeams, ultimateAdvantageConfig);
@@ -1635,17 +1638,17 @@ export const FUNCTION_NODES: FunctionNodeConfig[] = [
     name: 'team_alive_advantage',
     displayName: 'Team Alive Players Advantage',
     sources: ['kill_object_store', 'hero_spawn_object_store', 'match_start_object_store', 'round_end_object_store', 'round_start_object_store'],
-    columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1AliveCount', 'team2AliveCount', 'teamWithAliveAdvantage', 'aliveAdvantageDiff'],
+    columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1Count', 'team2Count', 'teamWithAdvantage', 'diff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(data['kill_object_store'] || []).map((e: object) => ({...e, type: 'kill'})),
-        ...(data['hero_spawn_object_store'] || []).map((e: object) => ({...e, type: 'spawn'})),
-        ...(data['round_end_object_store'] || []).map((e: object) => ({...e, type: 'round_end'})),
-        ...(data['round_start_object_store'] || []).map((e: object) => ({...e, type: 'round_start'})),
+        ...(data['kill_object_store'] as Kill[]).map((e) => ({...e, type: 'kill'})),
+        ...(data['hero_spawn_object_store'] as HeroSpawn[]).map((e) => ({...e, type: 'spawn'})),
+        ...(data['round_end_object_store'] as RoundEnd[]).map((e) => ({...e, type: 'round_end'})),
+        ...(data['round_start_object_store'] as RoundStart[]).map((e) => ({...e, type: 'round_start'})),
       ];
 
       const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
-        (data['match_start_object_store'] || []).map((match: {mapId: number; team1Name: string; team2Name: string}) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
+        (data['match_start_object_store'] as MatchStart[]).map((match) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
       );
 
       return processTeamAdvantageEvents(events, mapTeams, playerAliveAdvantageConfig);
@@ -1654,3 +1657,38 @@ export const FUNCTION_NODES: FunctionNodeConfig[] = [
     type: 'FunctionNode',
   },
 ];
+
+export const initializeDataManager = (dataManager: DataManager) => {
+  console.log('Initializing Data Manager');
+  DATA_COLUMNS.forEach((col) => !dataManager.hasColumn(col.name) && dataManager.registerColumn(col));
+
+  const allNodes = [indexedDbNode, ...FILE_PARSING_NODES, ...OBJECT_STORE_NODES, ...ALASQL_NODES, ...FUNCTION_NODES];
+  allNodes.forEach((node) => {
+    if (dataManager.hasNode(node.name)) {
+      return;
+    }
+    if (node.type === 'IndexedDBNode') {
+      const requiredObjectStores = allNodes.filter((n) => n.type === 'ObjectStoreNode').map((n) => (n as ObjectStoreNodeConfig).objectStore);
+      const configWithObjectStores: IndexedDBNodeConfig = {...(node as IndexedDBNodeConfig), objectStores: requiredObjectStores};
+      dataManager.registerNode(new IndexedDBNode(configWithObjectStores));
+    }
+    const nodeColumns = node.columnNames.map((name) => dataManager.getColumn(name));
+    if (node.type === 'InputNode') {
+      const inputNode = node as InputNodeConfig;
+    
+      dataManager.registerNode(new InputNode(inputNode.name, inputNode.displayName, inputNode.outputType, nodeColumns, inputNode.behavior));
+    }
+    if (node.type === 'ObjectStoreNode') {
+      const objectStoreNode = node as ObjectStoreNodeConfig;
+      dataManager.registerNode(new ObjectStoreNode(objectStoreNode.name, objectStoreNode.displayName, nodeColumns, objectStoreNode.objectStore, objectStoreNode.source, objectStoreNode.behavior));
+    }
+    if (node.type === 'AlaSQLNode') {
+      const alaSQLNode = node as AlaSQLNodeConfig;
+      dataManager.registerNode(new AlaSQLNode(alaSQLNode.name, alaSQLNode.displayName, alaSQLNode.sql, alaSQLNode.sources, nodeColumns));
+    }
+    if (node.type === 'FunctionNode') {
+      const functionNode = node as FunctionNodeConfig;
+      dataManager.registerNode(new FunctionNode(functionNode.name, functionNode.displayName, functionNode.transform, functionNode.sources, nodeColumns, functionNode.outputType));
+    }
+  });
+};
