@@ -19,7 +19,13 @@ const preview: Preview = {
     },
   },
 
-  decorators: [withThemeFromJSXProvider({
+  decorators: [
+  (Story) => (
+    <WombatDataWrapper>
+      <Story />
+    </WombatDataWrapper>
+  ),
+  withThemeFromJSXProvider({
     GlobalStyles: CssBaseline,
     Provider: ThemeProvider,
     themes: {
@@ -29,11 +35,6 @@ const preview: Preview = {
     },
     defaultTheme: 'dark',
   }),
-  (Story) => (
-    <WombatDataWrapper>
-      <Story />
-    </WombatDataWrapper>
-  ),
 ]
 };
 

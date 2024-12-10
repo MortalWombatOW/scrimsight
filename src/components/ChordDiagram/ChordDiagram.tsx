@@ -5,7 +5,7 @@ import {MatchStart} from '../../WombatDataFrameworkSchema';
 import {PathTooltip} from 'react-path-tooltip'; // import the package
 import useWindowSize from '../../hooks/useWindowSize';
 import {Card, CardContent, Container} from '@mui/material';
-import {Typography} from '../../WombatUI/WombatUI';
+import {Typography} from '@mui/material';
 import {PlayerInteractionEvent} from '../MapTimeline/types/timeline.types';
 
 interface ChordDataEntry {

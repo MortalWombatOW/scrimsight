@@ -2,7 +2,7 @@ import {useParams} from 'react-router-dom';
 import MapTimeline from '../../components/MapTimeline/MapTimeline';
 import {Card, CardContent, CardMedia, Container, Divider, Grid, Tab, Tabs, Typography} from '@mui/material';
 import ChordDiagram from '../../components/ChordDiagram/ChordDiagram';
-import {Box} from '../../WombatUI/WombatUI';
+import {Box} from '@mui/material';
 import {StringParam, useQueryParam, withDefault} from 'use-query-params';
 import {mapNameToFileName} from '../../lib/string';
 import {MatchStart, MatchEnd} from '../../WombatDataFrameworkSchema';

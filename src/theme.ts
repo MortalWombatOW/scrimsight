@@ -9,11 +9,11 @@ export const themeDef: ThemeOptions = createTheme({
     mode: 'dark',
     contrastThreshold: 4.5,
     // The primary color is used for primary interface elements like buttons and tabs.
-    primary: generateThemeColor('#18d3e6'),
+    primary: generateThemeColor('#ff8921'),
     // The secondary color is used for secondary interface elements like input fields and progress bars.
-    secondary: generateThemeColor('#db7f67'),
+    secondary: generateThemeColor('#18d3e6'),
     // The info color is used for neutral information like helper text.
-    info: generateThemeColor('#CEABB1'),
+    info: generateThemeColor('#db7f67'),
     // The warning color is used for warning messages.
     warning: generateThemeColor('#f39c28'),
     // The error color is used for notifications requiring immediate user action.

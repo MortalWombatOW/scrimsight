@@ -1,9 +1,8 @@
 import React, {ChangeEvent, useState} from 'react';
-import {Button} from '@mui/material';
+import {Button, Typography} from '@mui/material';
 import UploadProgressModal from './UploadProgressModal';
 import {useWombatDataManager} from 'wombat-data-framework';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import {Typography} from '../../WombatUI/WombatUI';
 
 const Uploader: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
