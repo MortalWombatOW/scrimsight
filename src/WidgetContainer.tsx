@@ -5,14 +5,13 @@ import { Intent } from "./Widget";
 
 interface WidgetContainerProps {
   intent: Intent;
-  maxWidgets?: number;
 }
 
 // WidgetContainer Component
-const WidgetContainer: React.FC<WidgetContainerProps> = ({ intent, maxWidgets = 3 }) => {
+const WidgetContainer: React.FC<WidgetContainerProps> = ({ intent }) => {
   const widgetRegistry = useWidgetBidders();
 
-  const relevantWidgets = useMemo(() => widgetRegistry.getWidgets(intent, maxWidgets), [widgetRegistry, intent, maxWidgets]);
+  const relevantWidgets = useMemo(() => widgetRegistry.getWidgets(intent), [widgetRegistry, intent]);
 
   return (
     <div>

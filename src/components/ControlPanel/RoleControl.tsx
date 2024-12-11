@@ -14,7 +14,7 @@ const RoleControl: React.FC<RoleControlProps> = ({
   size = 'large'
 }) => {
   return (
-    <div>
+    <div style={{marginLeft: 10, marginRight: 10}}>
       <Typography variant="h6">Roles</Typography>
       <FormGroup row={size === 'small'}>
         <FormControlLabel 

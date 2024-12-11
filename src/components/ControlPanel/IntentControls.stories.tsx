@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import IntentControls from "./IntentControls";
 import React from "react";
 import { Intent } from "~/Widget";
+import { OverwatchHero } from "~/lib/data/hero";
 
 const meta: Meta<typeof IntentControls> = {
   component: IntentControls,

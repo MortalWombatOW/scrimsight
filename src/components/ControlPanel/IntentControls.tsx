@@ -12,7 +12,7 @@ import { Intent } from "~/Widget";
 
 interface IntentControlsProps {
   intent: Intent;
-  onChange: (newIntent: Intent) => void;
+  setIntent: (newIntent: Intent) => void;
   possibleValues: {
     players: string[];
     maps: string[];
@@ -32,21 +32,50 @@ const formatTime = (seconds: number) => {
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
 };
 
+const validateIntent = (intent: Intent): Intent => {
+  if (intent.mapId && intent.mapId.length === 0) {
+    delete intent.mapId;
+  }
+  if (intent.playerName && intent.playerName.length === 0) {
+    delete intent.playerName;
+  }
+  if (intent.team && intent.team.length === 0) {
+    delete intent.team;
+  }
+  if (intent.hero && intent.hero.length === 0) {
+    delete intent.hero;
+  }
+  if (intent.metric && intent.metric.length === 0) {
+    delete intent.metric;
+  }
+  if (intent.mode && intent.mode.length === 0) {
+    delete intent.mode;
+  }
+  if (intent.mapName && intent.mapName.length === 0) {
+    delete intent.mapName;
+  }
+  if (intent.mapId === undefined || intent.mapId.length > 1) {
+    delete intent.time;
+  }
+  return intent;
+};
+
 const IntentControls: React.FC<IntentControlsProps> = ({
   intent,
-  onChange,
+  setIntent,
   possibleValues,
   size = 'large'
 }) => {
   const updateIntent = <K extends keyof Intent>(key: K, value: Intent[K]) => {
-    onChange({ ...intent, [key]: value });
+    setIntent(validateIntent({ ...intent, [key]: value }));
   };
 
+  const hasMap = intent.mapId !== undefined;
   const hasDate = intent.date !== undefined;
   const hasTime = intent.time !== undefined;
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, flexWrap: 'wrap' }}>
+    <Box sx={{ margin: 1, display: 'flex', flexDirection: 'row', gap: 2, flexWrap: 'wrap' }}>
               <IconAutocomplete
                 options={possibleValues.players}
                 selected={intent.playerName || []}
@@ -76,7 +105,6 @@ const IntentControls: React.FC<IntentControlsProps> = ({
                 noOptionsText="No teams found"
                 size={size}
               />
-
 
               <RoleControl
                 selectedRoles={intent.playerRole || []}
@@ -108,8 +136,8 @@ const IntentControls: React.FC<IntentControlsProps> = ({
           
    
               {hasDate ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  <Typography variant="h6">Date Range</Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, marginRight: 2 }}>
+                  <Typography variant="h6">Date Range: {intent.date ? intent.date.join(' to ') : 'All time'}</Typography>
                   <TimeRangeSlider
                 value={intent.date ? [
                   new Date(intent.date[0]).getTime() / (1000 * 60 * 60 * 24),
@@ -134,7 +162,7 @@ const IntentControls: React.FC<IntentControlsProps> = ({
               )}
 
                          
-{hasTime ? (
+{hasTime && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                   <Typography variant="h6">Time Range</Typography>
                   <TimeRangeSlider
@@ -147,7 +175,8 @@ const IntentControls: React.FC<IntentControlsProps> = ({
                   />
                   <Button onClick={() => updateIntent('time', undefined)}>Clear Time Range</Button>
                 </Box>
-              ) : (
+              )}
+              {!hasTime && hasMap && (
                 <Button onClick={() => updateIntent('time', [0, 24 * 60 * 60])}>Set Time Range</Button>
               )}
 

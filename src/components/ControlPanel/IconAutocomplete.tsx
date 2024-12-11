@@ -17,7 +17,7 @@ const IconAutocomplete: React.FC<IconAutocompleteProps> = ({options, selected, o
     size={size === 'large' ? 'medium' : 'small'}
     multiple
     getOptionLabel={(option) =>
-      option
+      String(option)
     }
     // filterOptions={(x) => x}
     options={options}

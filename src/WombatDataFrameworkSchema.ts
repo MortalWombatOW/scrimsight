@@ -1486,7 +1486,48 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     ],
     ['mapId', 'playerName', 'playerTeam', 'playerHero', 'otherPlayerName', 'playerInteractionEventTime', 'playerInteractionEventType'],
   ),
-
+  makeAlaSQLNodeConfig(
+    'unique_player_names',
+    'Unique Player Names',
+    `SELECT DISTINCT playerName FROM ? as player_stat_object_store`,
+    ['player_stat_object_store'],
+    ['playerName']
+  ),
+  makeAlaSQLNodeConfig(
+    'unique_map_names',
+    'Unique Map Names',
+    `SELECT DISTINCT mapName FROM ? as match_start_object_store`,
+    ['match_start_object_store'],
+    ['mapName']
+  ),
+  makeAlaSQLNodeConfig(
+    'unique_map_ids',
+    'Unique Map IDs',
+    `SELECT DISTINCT mapId FROM ? as match_start_object_store`,
+    ['match_start_object_store'],
+    ['mapId']
+  ),
+  makeAlaSQLNodeConfig(
+    'unique_game_modes',
+    'Unique Game Modes',
+    `SELECT DISTINCT mapType FROM ? as match_start_object_store`,
+    ['match_start_object_store'],
+    ['mapType']
+  ),
+  makeAlaSQLNodeConfig(
+    'team_names',
+    'Team Names',
+    `SELECT team1Name as teamName FROM ? as match_start_object_store UNION ALL SELECT team2Name as teamName FROM ? as match_start_object_store`,
+    ['match_start_object_store', 'match_start_object_store'],
+    ['teamName']
+  ),
+  makeAlaSQLNodeConfig(
+    'unique_team_names',
+    'Unique Team Names',
+    `SELECT DISTINCT teamName FROM ? as team_names`,
+    ['team_names'],
+    ['teamName']
+  ),
   makeAlaSQLNodeConfig(
     'player_stat_expanded',
     'Player Stat Expanded',

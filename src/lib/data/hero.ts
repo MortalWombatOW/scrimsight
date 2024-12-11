@@ -56,6 +56,11 @@ const SUPPORT_HEROES = [
 
 export type OverwatchRole = 'tank' | 'damage' | 'support';
 export type OverwatchHero = typeof TANK_HEROES[number] | typeof DAMAGE_HEROES[number] | typeof SUPPORT_HEROES[number];
+export type OverwatchMode = 'Control' | 'Escort' | 'Hybrid' | 'Flashpoint' | 'Push' | 'Clash';
+export type OverwatchMap = 'Antarctic Peninsula' | 'Busan' | 'Ilios' | 'Lijiang Tower' | 'Nepal' | 'Oasis' | 'Samoa' | 'Circuit Royal' | 'Dorado' | 'Havana' | 'Junkertown' | 'Rialto' | 'Route 66' | 'Shambali Monastary' | 'Watchpoint: Gibraltar' 
+| 'New Junk City' | 'Suravasa' 
+| 'Blizzard World' | 'Eichenwalde' | 'Hollywood' | 'King\'s Row' | 'Midtown' | 'Numbani' | 'Paraiso' 
+| 'Colosseo' | 'Esperanca' | 'New Queen Street' | 'Runasapi' | 'Hanaoka' | 'Throne of Anubis';
 
 export const getRoleFromHero = (hero: OverwatchHero): OverwatchRole => {
   if (TANK_HEROES.includes(hero as typeof TANK_HEROES[number])) return 'tank';
