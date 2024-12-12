@@ -39,6 +39,9 @@ const validateIntent = (intent: Intent): Intent => {
   if (intent.playerName && intent.playerName.length === 0) {
     delete intent.playerName;
   }
+  if (intent.playerRole && intent.playerRole.length === 0) {
+    delete intent.playerRole;
+  }
   if (intent.team && intent.team.length === 0) {
     delete intent.team;
   }

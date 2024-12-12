@@ -1,8 +1,4 @@
-// import MetricCard from '../Card/MetricCard';
-// import MapsList from '../MapsList/MapsList';
-// import PlayerList from '../PlayerList/PlayerList';
-// import Uploader from '../Uploader/Uploader';
-import './HomeDashboard.scss';
+
 import WidgetContainer from '../../WidgetContainer';
 import WidgetProvider from '../../WidgetProvider';
 import IntentControls from '~/components/ControlPanel/IntentControls';
@@ -36,8 +32,10 @@ const HomeDashboard = () => {
         <div>
           <IntentControls intent={intent} setIntent={setIntent} possibleValues={possibleValues} size='small' />
         </div>
-        <div style={{display: 'flex', flexWrap: 'wrap', gap: '25px', padding: '50px', position: 'relative'}} className="home-dashboard">
-          {JSON.stringify(intent)}
+        <div>      
+           {JSON.stringify(intent)}
+        </div>
+        <div style={{padding: '50px'}}>
           <WidgetContainer intent={intent} />
       </div>
       </div>

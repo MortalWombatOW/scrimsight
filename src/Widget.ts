@@ -37,7 +37,7 @@ function compareLists(list1: unknown[] | undefined, list2: unknown[] | undefined
 
 
 export function intentSimilarity(intent1: Intent, intent2: Intent): number {
-  let numComparisons = 0;
+  let numComparisons = 1;
   let numMatches = 0;
   const playerNameComparison = compareLists(intent1.playerName, intent2.playerName);
   numComparisons += playerNameComparison.numComparisons;
@@ -85,6 +85,8 @@ export function intentSimilarity(intent1: Intent, intent2: Intent): number {
     }
   }
 
+  console.log(`Comparing ${JSON.stringify(intent1)} and ${JSON.stringify(intent2)}`, numComparisons, numMatches);
+
   return numMatches / numComparisons;
 }
 
@@ -92,6 +94,7 @@ export function intentSimilarity(intent1: Intent, intent2: Intent): number {
 export interface WidgetBid {
   id: string;
   widget: React.ReactNode;
+  scorePrior?: number;
   intent: Intent;
 }
 
