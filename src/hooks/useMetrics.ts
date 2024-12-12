@@ -21,7 +21,7 @@ export interface MetricData {
 }
 
 const getGroupDisplayName = (group: string): string => {
-  if (group === 'mapId') {
+  if (group === 'matchId') {
     return 'map';
   }
   if (group === 'teamName') {

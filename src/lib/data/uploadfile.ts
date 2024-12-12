@@ -34,7 +34,7 @@ const parseTimestampString = (timestampStr: string): number => {
   return hours * 3600 + minutes * 60 + seconds;
 };
 
-const parseLine = (line: string, mapId: number): DataAndSpecName => {
+const parseLine = (line: string, matchId: number): DataAndSpecName => {
   const values = line.trim().split(',');
   const timestampStr = values[0];
   const eventType = values[1];
@@ -47,7 +47,7 @@ const parseLine = (line: string, mapId: number): DataAndSpecName => {
   const timestamp = parseTimestampString(timestampStr);
 
   const parsedData: Record<string, unknown> = {
-    mapId,
+    matchId,
     type: eventType,
   };
 
@@ -84,6 +84,6 @@ export const parseFile = (fileContent: string) => {
 
   return {
     logs: groupedData,
-    mapId: hash,
+    matchId: hash,
   };
 };

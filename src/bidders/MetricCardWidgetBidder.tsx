@@ -18,18 +18,14 @@ const MetricCardWidgetBidder: WidgetBidder = (intent) => {
     return [];
   }
 
-  if (playerName.length === 1 && playerName[0] === "*") {
-    // Show all players.
-    return metrics.flatMap((metric) => {
-      return playerName.map((player) => {
-        return {id: `MetricCard-${metric}-${player}`, intent: {metric: [metric], playerName: [player]}, widget: <MetricCard columnName={metric} slice={{playerName: player}} compareToOther={['playerName']} />};
-      });
-    });
-  }
-
   return metrics.flatMap((metric) => {
     return playerName.map((player) => {
-      return {id: `MetricCard-${metric}-${player}`, intent: {metric: [metric], playerName: [player]}, widget: <MetricCard columnName={metric} slice={{playerName: player}} compareToOther={['playerName']} />};
+      return {
+        id: `MetricCard-${metric}-${player}`,
+        intent: { metric: [metric], playerName: [player] },
+        displayName: `Metric Card for ${metric} for ${player}`,
+        widget: <MetricCard columnName={metric} slice={{ playerName: player }} compareToOther={['playerName']} />
+      };
     });
   });
 };

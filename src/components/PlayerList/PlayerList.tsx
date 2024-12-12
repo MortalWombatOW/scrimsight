@@ -48,7 +48,7 @@ const PlayerRow = ({playerName, matchCount, playerRole}: PlayerStats) => {
 };
 
 const PlayerList = () => {
-  const playerStatData = useWombatData<{playerName: string; playerRole: string; mapId: number}>('player_stat_expanded');
+  const playerStatData = useWombatData<{playerName: string; playerRole: string; matchId: number}>('player_stat_expanded');
 
   // Process the data to count unique matches per player
   const playerStats = React.useMemo(() => {
@@ -60,7 +60,7 @@ const PlayerList = () => {
         playerMatches.set(stat.playerName, new Set());
         playerRoles.set(stat.playerName, stat.playerRole);
       }
-      playerMatches.get(stat.playerName)?.add(stat.mapId);
+      playerMatches.get(stat.playerName)?.add(stat.matchId);
     });
 
     const stats: PlayerStats[] = Array.from(playerMatches.entries()).map(([playerName, matches]) => ({

@@ -40,7 +40,7 @@ export const Filled: Story = {
     intent: {
       playerName: ['Striker', 'Proper'],
       playerRole: ['tank', 'support'],
-      mapId: ['Kings Row'],
+      matchId: ['Kings Row'],
       team: ['San Francisco Shock'],
       hero: ['Ana'],
       metric: ['Damage Done'],
@@ -66,7 +66,7 @@ export const SmallFilled: Story = {
     intent: {
       playerName: ['Striker', 'Proper'],
       playerRole: ['tank', 'support'],
-      mapId: ['Kings Row'],
+      matchId: ['Kings Row'],
       team: ['San Francisco Shock'],
       hero: ['Ana'],
       metric: ['Damage Done'],
@@ -91,7 +91,7 @@ export const LargeFilled: Story = {
     intent: {
       playerName: ['Striker', 'Proper'],
       playerRole: ['tank', 'support'],
-      mapId: ['Kings Row'],
+      matchId: ['Kings Row'],
       team: ['San Francisco Shock'],
       hero: ['Ana'],
       metric: ['Damage Done'],

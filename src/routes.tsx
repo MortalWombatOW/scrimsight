@@ -26,7 +26,7 @@ const routes: ScrimsightRoute[] = [
   //   icon: <DateRangeIcon />,
   // },
   // {
-  //   path: ['/map/:mapId'],
+  //   path: ['/map/:matchId'],
   //   component: MapPage,
   //   icon: <EmojiFlagsIcon />,
   // },

@@ -30,7 +30,7 @@ This intent is represented by an object, which the user can refine by setting th
 ```typescript
 interface Intent {
   playerName?: string[]; // A list of players. Unset means not caring about players.
-  mapId?: string[]; // A list of map IDs. Unset means not caring about maps.
+  matchId?: string[]; // A list of map IDs. Unset means not caring about maps.
   roundNumber?: (1 | 2 | 3)[]; // A list of round numbers. Unset means not caring about rounds.
   mapName?: string[]; // A list of map names. Unset means not caring about maps.
   mode?: string[]; // A list of modes, or "*" for any mode. Unset means not caring about modes.
@@ -51,7 +51,7 @@ interface WidgetBid {
 }
 ```
 
-For example, if the user's intent is `{ mapId: [1], hero: ["Reaper", "Doomfist"] }` and a widget declares `{ mapId: [1], hero: ["Reaper"] }`, then the relevance score will be high, but lower than if the widget declares `{ mapId: [1], hero: ["Reaper", "Doomfist"] }`.
+For example, if the user's intent is `{ matchId: [1], hero: ["Reaper", "Doomfist"] }` and a widget declares `{ matchId: [1], hero: ["Reaper"] }`, then the relevance score will be high, but lower than if the widget declares `{ matchId: [1], hero: ["Reaper", "Doomfist"] }`.
 
 Once the bidders have returned their bids, the bids are sorted by relevance score, and the top bids are displayed in the dashboard.
 

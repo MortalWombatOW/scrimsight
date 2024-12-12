@@ -8,20 +8,20 @@ interface WidgetCardProps {
 }
 
 const WidgetCard: React.FC<WidgetCardProps> = ({ widget }) => {
-  return <Card style={{margin: 10}} className="dashboard-item primary">{widget}</Card>;
+  return <Card style={{ margin: 10, height: 'fit-content' }} className="dashboard-item primary">{widget}</Card>;
 }
 
 interface WidgetContainerProps {
   intent: Intent;
 }
 
-  const WidgetContainer: React.FC<WidgetContainerProps> = ({ intent }) => {
+const WidgetContainer: React.FC<WidgetContainerProps> = ({ intent }) => {
   const widgetRegistry = useWidgetBidders();
 
   const relevantWidgets = useMemo(() => widgetRegistry.getWidgets(intent), [widgetRegistry, intent]);
 
   return (
-    <div style={{display: 'flex', flexWrap: 'wrap', gap: 0, position: 'relative'}}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 0, position: 'relative' }}>
       {relevantWidgets.map((widget) => <WidgetCard widget={widget} />)}
     </div>
   );

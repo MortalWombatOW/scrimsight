@@ -22,7 +22,7 @@ const WombatDataWrapper: React.FC<WombatDataWrapperProps> = ({children}) => {
 
   // console.log('Rendering WombatDataWrapper', tick);
 
-  const logLevel = LogLevel.Debug;
+  const logLevel = LogLevel.Error;
   const maxTicks = undefined;
 
   return (

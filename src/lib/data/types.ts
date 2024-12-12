@@ -39,7 +39,7 @@ type RenderState = {
 };
 
 type GameStateTimeSlice = {
-  mapId: number;
+  matchId: number;
   timestamp: number;
   players: {
     name: string;
@@ -103,7 +103,7 @@ interface FieldSpec {
 }
 
 const commmonFields: FieldSpec[] = [
-  {displayName: 'Map ID', key: 'mapId', dataType: 'number'},
+  {displayName: 'Map ID', key: 'matchId', dataType: 'number'},
   {displayName: 'Type', key: 'type', dataType: 'string'},
   {displayName: 'Match Time', key: 'matchTime', dataType: 'number'},
 ];

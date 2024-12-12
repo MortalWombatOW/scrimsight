@@ -9,16 +9,16 @@ import {MatchStart, MatchEnd} from '../../WombatDataFrameworkSchema';
 import {useWombatData} from 'wombat-data-framework';
 
 const MapPage = () => {
-  const {mapId: mapIdString} = useParams();
-  const mapId = Number(mapIdString);
+  const {matchId: matchIdString} = useParams();
+  const matchId = Number(matchIdString);
 
   const [tab, setTab] = useQueryParam('tab', withDefault(StringParam, 'timeline'));
 
-  console.log('mapId', mapId, tab);
+  console.log('matchId', matchId, tab);
 
-  const {mapName, mapType, team1Name, team2Name} = useWombatData<MatchStart>('match_start_object_store', {initialFilter: {mapId}}).data[0];
-  const {team1Score, team2Score} = useWombatData<MatchEnd>('match_end_object_store', {initialFilter: {mapId}}).data[0];
-  const {name, fileModified} = useWombatData<{mapId: number; name: string; fileModified: number}>('maps_object_store', {initialFilter: {mapId}}).data[0];
+  const {mapName, mapType, team1Name, team2Name} = useWombatData<MatchStart>('match_start_object_store', {initialFilter: {matchId}}).data[0];
+  const {team1Score, team2Score} = useWombatData<MatchEnd>('match_end_object_store', {initialFilter: {matchId}}).data[0];
+  const {name, fileModified} = useWombatData<{matchId: number; name: string; fileModified: number}>('match_object_store', {initialFilter: {matchId}}).data[0];
 
   return (
     <Container>
@@ -74,8 +74,8 @@ const MapPage = () => {
         </Tabs>
       </Box>
       {tab === 'statistics' && <div>Statistics</div>}
-      {tab === 'timeline' && <MapTimeline mapId={Number(mapId)} />}
-      {tab === 'interactions' && <ChordDiagram mapId={Number(mapId)} />}
+      {tab === 'timeline' && <MapTimeline matchId={Number(matchId)} />}
+      {tab === 'interactions' && <ChordDiagram matchId={Number(matchId)} />}
     </Container>
   );
 };

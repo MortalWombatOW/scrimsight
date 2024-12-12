@@ -130,8 +130,8 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
   return configs;
 };
 
-const MapTimeline: React.FC<MapTimelineProps> = ({mapId}) => {
-  const timelineData = useTimelineData(mapId);
+const MapTimeline: React.FC<MapTimelineProps> = ({matchId}) => {
+  const timelineData = useTimelineData(matchId);
   const dimensions = useTimelineDimensions(timelineData?.mapStartTime ?? 0, timelineData?.mapEndTime ?? 100);
 
   const {handleMouseUp, handleMouseMove} = useTimelineWindow({

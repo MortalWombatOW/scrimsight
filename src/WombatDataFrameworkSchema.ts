@@ -30,7 +30,7 @@ import {parseFile, readFileAsync} from './lib/data/uploadfile';
 import {INDEXED_DB_NODE_NAME, IndexedDBNodeConfig} from 'wombat-data-framework';
 
 interface BaseEvent {
-  mapId: number;
+  matchId: number;
   type: string;
   matchTime: number;
 }
@@ -381,7 +381,7 @@ const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('logs', 'Logs', 'The logs from the file.', 'none', 'string', objectFormatter, objectComparator),
   makeDataColumn('mapDuration', 'Map Duration', 'The duration of the map.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('mapEndTime', 'Map End Time', 'The time the map ended.', 's', 'number', timeFormatter, numberComparator),
-  makeDataColumn('mapId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'number', stringFormatter, numberComparator),
+  makeDataColumn('matchId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'number', stringFormatter, numberComparator),
   makeDataColumn('mapName', 'Map Name', 'The name of the map.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mapStartTime', 'Map Start Time', 'The time the map started.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('mapType', 'Map Type', 'The type of the map.', 'none', 'string', stringFormatter, stringComparator),
@@ -442,6 +442,9 @@ const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('damageTakenPerDeaths', 'Damage Taken per Deaths', 'The amount of damage taken per deaths.', 'hp', 'number', numberFormatter, numberComparator),
   makeDataColumn('allDamageDealtPerDamageTaken', 'All Damage Dealt per Damage Taken', 'The total amount of damage dealt per damage taken.', 'hp', 'number', numberFormatter, numberComparator),
   makeDataColumn('chargedUltimateCount', 'Charged Ultimate Count', 'Number of charged ultimates for a team at a given time', 'count', 'number', numberFormatter, numberComparator),
+  makeDataColumn('dateString', 'Date', 'The date of the match.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('timeString', 'Time', 'The time of the match.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('matchIds', 'Match IDs', 'The IDs of the matches.', 'none', 'string', stringFormatter, stringComparator),
   ];
 
 // const playerStatFragment = `
@@ -582,7 +585,7 @@ const DATA_COLUMNS: DataColumn[] = [
 //     result.push(combination);
 //   }
 
-//   result = result.filter((group) => !((group.includes('roundNumber') && !group.includes('mapId')) || (!group.includes('playerRole') && group.includes('playerHero'))));
+//   result = result.filter((group) => !((group.includes('roundNumber') && !group.includes('matchId')) || (!group.includes('playerRole') && group.includes('playerHero'))));
 
 //   // sort the combinations by length
 //   result.sort((a, b) => a.length - b.length);
@@ -590,47 +593,7 @@ const DATA_COLUMNS: DataColumn[] = [
 //   return result;
 // }
 
-// const player_stat_groups: string[][] = getAllCombinations(['mapId', 'roundNumber', 'playerName', 'playerTeam', 'playerHero', 'playerRole']);
-
-// function makeWriteNodeInit(name: string, displayName: string, objectStore: string): WriteNodeInit {
-//   return {
-//     name,
-//     displayName,
-//     objectStore,
-//     columnNames: [],
-//   };
-// }
-
-// export const WRITE_NODES: WriteNodeInit[] = [
-//   makeWriteNodeInit('ability_1_used_write_node', 'Add Ability 1 Used Events', 'ability_1_used'),
-//   makeWriteNodeInit('ability_2_used_write_node', 'Add Ability 2 Used Events', 'ability_2_used'),
-//   makeWriteNodeInit('damage_write_node', 'Add Damage Events', 'damage'),
-//   makeWriteNodeInit('defensive_assist_write_node', 'Add Defensive Assist Events', 'defensive_assist'),
-//   makeWriteNodeInit('dva_demech_write_node', 'Add Dva Demech Events', 'dva_demech'),
-//   makeWriteNodeInit('dva_remech_write_node', 'Add Dva Remech Events', 'dva_remech'),
-//   makeWriteNodeInit('echo_duplicate_end_write_node', 'Add Echo Duplicate End Events', 'echo_duplicate_end'),
-//   makeWriteNodeInit('echo_duplicate_start_write_node', 'Add Echo Duplicate Start Events', 'echo_duplicate_start'),
-//   makeWriteNodeInit('healing_write_node', 'Add Healing Events', 'healing'),
-//   makeWriteNodeInit('hero_spawn_write_node', 'Add Hero Spawn Events', 'hero_spawn'),
-//   makeWriteNodeInit('hero_swap_write_node', 'Add Hero Swap Events', 'hero_swap'),
-//   makeWriteNodeInit('kill_write_node', 'Add Kill Events', 'kill'),
-//   makeWriteNodeInit('maps_write_node', 'Add Maps', 'maps'),
-//   makeWriteNodeInit('match_end_write_node', 'Add Match End Events', 'match_end'),
-//   makeWriteNodeInit('match_start_write_node', 'Add Match Start Events', 'match_start'),
-//   makeWriteNodeInit('mercy_rez_write_node', 'Add Mercy Rez Events', 'mercy_rez'),
-//   makeWriteNodeInit('objective_captured_write_node', 'Add Objective Captured Events', 'objective_captured'),
-//   makeWriteNodeInit('offensive_assist_write_node', 'Add Offensive Assist Events', 'offensive_assist'),
-//   makeWriteNodeInit('payload_progress_write_node', 'Add Payload Progress Events', 'payload_progress'),
-//   makeWriteNodeInit('player_stat_write_node', 'Add Player Stat Events', 'player_stat'),
-//   makeWriteNodeInit('point_progress_write_node', 'Add Point Progress Events', 'point_progress'),
-//   makeWriteNodeInit('remech_charged_write_node', 'Add Remech Charged Events', 'remech_charged'),
-//   makeWriteNodeInit('round_end_write_node', 'Add Round End Events', 'round_end'),
-//   makeWriteNodeInit('round_start_write_node', 'Add Round Start Events', 'round_start'),
-//   makeWriteNodeInit('setup_complete_write_node', 'Add Setup Complete Events', 'setup_complete'),
-//   makeWriteNodeInit('ultimate_charged_write_node', 'Add Ultimate Charged Events', 'ultimate_charged'),
-//   makeWriteNodeInit('ultimate_end_write_node', 'Add Ultimate End Events', 'ultimate_end'),
-//   makeWriteNodeInit('ultimate_start_write_node', 'Add Ultimate Start Events', 'ultimate_start'),
-// ];
+// const player_stat_groups: string[][] = getAllCombinations(['matchId', 'roundNumber', 'playerName', 'playerTeam', 'playerHero', 'playerRole']);
 
 const indexedDbNode: IndexedDBNodeConfig = {
   name: INDEXED_DB_NODE_NAME,
@@ -682,15 +645,15 @@ const logFileParserNode: FunctionNodeConfig = {
   sources: ['log_file_loader'],
   transform: async (data: DataNodeInputMap) =>
     (data['log_file_loader'] as LogFileLoaderOutput[]).map((file) => {
-      const {mapId, logs} = parseFile(file.fileContent);
+      const {matchId, logs} = parseFile(file.fileContent);
       return {
         fileName: file.fileName,
-        mapId,
+        matchId,
         logs,
         fileModified: file.fileModified,
       };
     }),
-  columnNames: ['fileName', 'mapId', 'logs', 'fileModified'],
+  columnNames: ['fileName', 'matchId', 'logs', 'fileModified'],
 };
 
 const extractEventType = (type: string, logs: {specName: string; data: object}[]) => logs.filter((log) => log.specName === type)[0]?.data;
@@ -702,7 +665,7 @@ const ability_1_used_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ability_1_used', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
 const ability_2_used_extractor: FunctionNodeConfig = {
@@ -712,7 +675,7 @@ const ability_2_used_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ability_2_used', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
 const damage_extractor: FunctionNodeConfig = {
@@ -722,7 +685,7 @@ const damage_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('damage', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
+  columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
 };
 
 const defensive_assist_extractor: FunctionNodeConfig = {
@@ -732,7 +695,7 @@ const defensive_assist_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('defensive_assist', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
 const dva_demech_extractor: FunctionNodeConfig = {
@@ -742,7 +705,7 @@ const dva_demech_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_demech', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
+  columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
 };
 
 const dva_remech_extractor: FunctionNodeConfig = {
@@ -752,7 +715,7 @@ const dva_remech_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_remech', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
 };
 
 const echo_duplicate_end_extractor: FunctionNodeConfig = {
@@ -762,7 +725,7 @@ const echo_duplicate_end_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_end', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
 };
 
 const echo_duplicate_start_extractor: FunctionNodeConfig = {
@@ -772,7 +735,7 @@ const echo_duplicate_start_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_start', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
 const healing_extractor: FunctionNodeConfig = {
@@ -782,7 +745,7 @@ const healing_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('healing', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'healerTeam', 'healerName', 'healerHero', 'healeeTeam', 'healeeName', 'healeeHero', 'eventAbility', 'eventHealing', 'isHealthPack'],
+  columnNames: ['matchId', 'type', 'matchTime', 'healerTeam', 'healerName', 'healerHero', 'healeeTeam', 'healeeName', 'healeeHero', 'eventAbility', 'eventHealing', 'isHealthPack'],
 };
 
 const hero_spawn_extractor: FunctionNodeConfig = {
@@ -792,7 +755,7 @@ const hero_spawn_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('hero_spawn', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
 };
 
 const hero_swap_extractor: FunctionNodeConfig = {
@@ -802,7 +765,7 @@ const hero_swap_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('hero_swap', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
 };
 
 const kill_extractor: FunctionNodeConfig = {
@@ -812,22 +775,24 @@ const kill_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('kill', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
+  columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
 };
 
-const maps_extractor: FunctionNodeConfig = {
-  name: 'maps_extractor',
+const match_extractor: FunctionNodeConfig = {
+  name: 'match_extractor',
   type: 'FunctionNode',
-  displayName: 'Maps Extractor',
+  displayName: 'Match Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) =>
-    (data['log_file_parser'] as {mapId: number; name: string; fileModified: number}[]).map((file: {mapId: number; name: string; fileModified: number}) => ({
-      mapId: file.mapId,
-      name: file.name,
+    (data['log_file_parser'] as {matchId: number; fileName: string; fileModified: number}[]).map((file: {matchId: number; fileName: string; fileModified: number}) => ({
+      matchId: file.matchId,
+      name: file.fileName,
       fileModified: file.fileModified,
+      dateString: new Date(file.fileModified).toLocaleDateString(),
+      timeString: new Date(file.fileModified).toLocaleTimeString(),
     })),
-  columnNames: ['mapId', 'name', 'fileModified'],
+  columnNames: ['matchId', 'name', 'fileModified', 'dateString', 'timeString'],
 };
 
 const match_end_extractor: FunctionNodeConfig = {
@@ -837,7 +802,7 @@ const match_end_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('match_end', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
 };
 
 const match_start_extractor: FunctionNodeConfig = {
@@ -847,7 +812,7 @@ const match_start_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('match_start', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name'],
+  columnNames: ['matchId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name'],
 };
 
 const mercy_rez_extractor: FunctionNodeConfig = {
@@ -857,7 +822,7 @@ const mercy_rez_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('mercy_rez', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility'],
+  columnNames: ['matchId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility'],
 };
 
 const objective_captured_extractor: FunctionNodeConfig = {
@@ -867,7 +832,7 @@ const objective_captured_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('objective_captured', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
 };
 
 const offensive_assist_extractor: FunctionNodeConfig = {
@@ -877,7 +842,7 @@ const offensive_assist_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('offensive_assist', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
 const payload_progress_extractor: FunctionNodeConfig = {
@@ -887,7 +852,7 @@ const payload_progress_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('payload_progress', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress'],
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress'],
 };
 
 const player_stat_extractor: FunctionNodeConfig = {
@@ -898,7 +863,7 @@ const player_stat_extractor: FunctionNodeConfig = {
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('player_stat', file.logs)),
   columnNames: [
-    'mapId',
+    'matchId',
     'type',
     'matchTime',
     'roundNumber',
@@ -928,7 +893,7 @@ const point_progress_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('point_progress', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress'],
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress'],
 };
 
 const remech_charged_extractor: FunctionNodeConfig = {
@@ -938,7 +903,7 @@ const remech_charged_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('remech_charged', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
 const round_end_extractor: FunctionNodeConfig = {
@@ -948,7 +913,7 @@ const round_end_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('round_end', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
 };
 
 const round_start_extractor: FunctionNodeConfig = {
@@ -958,7 +923,7 @@ const round_start_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('round_start', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
 };
 
 const setup_complete_extractor: FunctionNodeConfig = {
@@ -968,7 +933,7 @@ const setup_complete_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('setup_complete', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
 };
 
 const ultimate_charged_extractor: FunctionNodeConfig = {
@@ -978,7 +943,7 @@ const ultimate_charged_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ultimate_charged', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
 const ultimate_end_extractor: FunctionNodeConfig = {
@@ -988,7 +953,7 @@ const ultimate_end_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ultimate_end', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
 const ultimate_start_extractor: FunctionNodeConfig = {
@@ -998,7 +963,7 @@ const ultimate_start_extractor: FunctionNodeConfig = {
   outputType: 'Multiple',
   sources: ['log_file_parser'],
   transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ultimate_start', file.logs)),
-  columnNames: ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
 const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
@@ -1020,7 +985,7 @@ const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
   match_end_extractor,
   match_start_extractor,
   mercy_rez_extractor,
-  maps_extractor,
+  match_extractor,
   objective_captured_extractor,
   offensive_assist_extractor,
   payload_progress_extractor,
@@ -1042,17 +1007,17 @@ function makeObjectStoreNodeConfig(name: string, displayName: string, objectStor
     objectStore,
     columnNames,
     behavior: 'Append',
-    source: objectStore === 'maps' ? 'log_file_parser' : `${objectStore}_extractor`,
+    source: `${objectStore}_extractor`,
     type: 'ObjectStoreNode',
     outputType: 'Multiple',
   };
 }
 
 const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
-  makeObjectStoreNodeConfig('ability_1_used_object_store', 'Ability 1 Used', 'ability_1_used', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeConfig('ability_2_used_object_store', 'Ability 2 Used', 'ability_2_used', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig('ability_1_used_object_store', 'Ability 1 Used', 'ability_1_used', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig('ability_2_used_object_store', 'Ability 2 Used', 'ability_2_used', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
   makeObjectStoreNodeConfig('damage_object_store', 'Damage', 'damage', [
-    'mapId',
+    'matchId',
     'type',
     'matchTime',
     'attackerTeam',
@@ -1066,9 +1031,9 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'isCriticalHit',
     'isEnvironmental',
   ]),
-  makeObjectStoreNodeConfig('defensive_assist_object_store', 'Defensive Assist', 'defensive_assist', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig('defensive_assist_object_store', 'Defensive Assist', 'defensive_assist', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
   makeObjectStoreNodeConfig('dva_demech_object_store', 'Dva Demech', 'dva_demech', [
-    'mapId',
+    'matchId',
     'type',
     'matchTime',
     'attackerTeam',
@@ -1082,11 +1047,11 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'isCriticalHit',
     'isEnvironmental',
   ]),
-  makeObjectStoreNodeConfig('dva_remech_object_store', 'Dva Remech', 'dva_remech', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
-  makeObjectStoreNodeConfig('echo_duplicate_end_object_store', 'Echo Duplicate End', 'echo_duplicate_end', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
-  makeObjectStoreNodeConfig('echo_duplicate_start_object_store', 'Echo Duplicate Start', 'echo_duplicate_start', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('dva_remech_object_store', 'Dva Remech', 'dva_remech', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
+  makeObjectStoreNodeConfig('echo_duplicate_end_object_store', 'Echo Duplicate End', 'echo_duplicate_end', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
+  makeObjectStoreNodeConfig('echo_duplicate_start_object_store', 'Echo Duplicate Start', 'echo_duplicate_start', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
   makeObjectStoreNodeConfig('healing_object_store', 'Healing', 'healing', [
-    'mapId',
+    'matchId',
     'type',
     'matchTime',
     'healerTeam',
@@ -1099,10 +1064,10 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'eventHealing',
     'isHealthPack',
   ]),
-  makeObjectStoreNodeConfig('hero_spawn_object_store', 'Hero Spawn', 'hero_spawn', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
-  makeObjectStoreNodeConfig('hero_swap_object_store', 'Hero Swap', 'hero_swap', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
+  makeObjectStoreNodeConfig('hero_spawn_object_store', 'Hero Spawn', 'hero_spawn', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
+  makeObjectStoreNodeConfig('hero_swap_object_store', 'Hero Swap', 'hero_swap', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
   makeObjectStoreNodeConfig('kill_object_store', 'Kill', 'kill', [
-    'mapId',
+    'matchId',
     'type',
     'matchTime',
     'attackerTeam',
@@ -1116,12 +1081,12 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'isCriticalHit',
     'isEnvironmental',
   ]),
-  makeObjectStoreNodeConfig('maps_object_store', 'Maps', 'maps', ['mapId', 'name', 'fileModified']),
-  makeObjectStoreNodeConfig('match_end_object_store', 'Match End', 'match_end', ['mapId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score']),
-  makeObjectStoreNodeConfig('match_start_object_store', 'Match Start', 'match_start', ['mapId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name']),
-  makeObjectStoreNodeConfig('mercy_rez_object_store', 'Mercy Rez', 'mercy_rez', ['mapId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility']),
+  makeObjectStoreNodeConfig('match_object_store', 'Match', 'match', ['matchId', 'name', 'fileModified', 'dateString', 'timeString']),
+  makeObjectStoreNodeConfig('match_end_object_store', 'Match End', 'match_end', ['matchId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score']),
+  makeObjectStoreNodeConfig('match_start_object_store', 'Match Start', 'match_start', ['matchId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name']),
+  makeObjectStoreNodeConfig('mercy_rez_object_store', 'Mercy Rez', 'mercy_rez', ['matchId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility']),
   makeObjectStoreNodeConfig('objective_captured_object_store', 'Objective Captured', 'objective_captured', [
-    'mapId',
+    'matchId',
     'type',
     'matchTime',
     'roundNumber',
@@ -1131,10 +1096,10 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'controlTeam2Progress',
     'matchTimeRemaining',
   ]),
-  makeObjectStoreNodeConfig('offensive_assist_object_store', 'Offensive Assist', 'offensive_assist', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeConfig('payload_progress_object_store', 'Payload Progress', 'payload_progress', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress']),
+  makeObjectStoreNodeConfig('offensive_assist_object_store', 'Offensive Assist', 'offensive_assist', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig('payload_progress_object_store', 'Payload Progress', 'payload_progress', ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress']),
   makeObjectStoreNodeConfig('player_stat_object_store', 'Player Stat', 'player_stat', [
-    'mapId',
+    'matchId',
     'type',
     'matchTime',
     'roundNumber',
@@ -1175,10 +1140,10 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'weaponAccuracy',
     'heroTimePlayed',
   ]),
-  makeObjectStoreNodeConfig('point_progress_object_store', 'Point Progress', 'point_progress', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress']),
-  makeObjectStoreNodeConfig('remech_charged_object_store', 'Remech Charged', 'remech_charged', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('point_progress_object_store', 'Point Progress', 'point_progress', ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress']),
+  makeObjectStoreNodeConfig('remech_charged_object_store', 'Remech Charged', 'remech_charged', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
   makeObjectStoreNodeConfig('round_end_object_store', 'Round End', 'round_end', [
-    'mapId',
+    'matchId',
     'type',
     'matchTime',
     'roundNumber',
@@ -1190,11 +1155,11 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'controlTeam2Progress',
     'matchTimeRemaining',
   ]),
-  makeObjectStoreNodeConfig('round_start_object_store', 'Round Start', 'round_start', ['mapId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex']),
-  makeObjectStoreNodeConfig('setup_complete_object_store', 'Setup Complete', 'setup_complete', ['mapId', 'type', 'matchTime', 'roundNumber', 'matchTimeRemaining']),
-  makeObjectStoreNodeConfig('ultimate_charged_object_store', 'Ultimate Charged', 'ultimate_charged', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeConfig('ultimate_end_object_store', 'Ultimate End', 'ultimate_end', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeConfig('ultimate_start_object_store', 'Ultimate Start', 'ultimate_start', ['mapId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('round_start_object_store', 'Round Start', 'round_start', ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex']),
+  makeObjectStoreNodeConfig('setup_complete_object_store', 'Setup Complete', 'setup_complete', ['matchId', 'type', 'matchTime', 'roundNumber', 'matchTimeRemaining']),
+  makeObjectStoreNodeConfig('ultimate_charged_object_store', 'Ultimate Charged', 'ultimate_charged', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('ultimate_end_object_store', 'Ultimate End', 'ultimate_end', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig('ultimate_start_object_store', 'Ultimate Start', 'ultimate_start', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
 ];
 
 function makeAlaSQLNodeConfig(name: string, displayName: string, sql: string, sources: string[], columnNames: string[]): AlaSQLNodeConfig {
@@ -1241,7 +1206,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     'Ultimate Events',
     `
   SELECT
-    ult_charged.mapId,
+    ult_charged.matchId,
     ult_charged.playerName,
     ult_charged.playerTeam,
     ult_charged.playerHero,
@@ -1252,40 +1217,40 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     ult_start.matchTime - ult_charged.matchTime as ultimateHoldTime
   FROM ? as ult_charged
   JOIN ? as ult_start
-  ON ult_charged.mapId = ult_start.mapId AND ult_charged.playerName = ult_start.playerName AND ult_charged.playerTeam = ult_start.playerTeam
+  ON ult_charged.matchId = ult_start.matchId AND ult_charged.playerName = ult_start.playerName AND ult_charged.playerTeam = ult_start.playerTeam
   AND ult_charged.playerHero = ult_start.playerHero AND ult_charged.ultimateId = ult_start.ultimateId AND ult_charged.matchTime <= ult_start.matchTime
   JOIN ? as ult_end
-  ON ult_charged.mapId = ult_end.mapId AND ult_charged.playerName = ult_end.playerName AND ult_charged.playerTeam = ult_end.playerTeam
+  ON ult_charged.matchId = ult_end.matchId AND ult_charged.playerName = ult_end.playerName AND ult_charged.playerTeam = ult_end.playerTeam
   AND ult_charged.playerHero = ult_end.playerHero AND ult_charged.ultimateId = ult_end.ultimateId AND ult_start.matchTime <= ult_end.matchTime
-  ORDER BY ult_charged.mapId, ult_charged.playerName, ult_charged.matchTime
+  ORDER BY ult_charged.matchId, ult_charged.playerName, ult_charged.matchTime
   `,
     ['ultimate_charged_object_store', 'ultimate_start_object_store', 'ultimate_end_object_store'],
-    ['mapId', 'playerName', 'playerTeam', 'playerHero', 'ultimateId', 'ultimateChargedTime', 'ultimateStartTime', 'ultimateEndTime', 'ultimateHoldTime'],
+    ['matchId', 'playerName', 'playerTeam', 'playerHero', 'ultimateId', 'ultimateChargedTime', 'ultimateStartTime', 'ultimateEndTime', 'ultimateHoldTime'],
   ),
   makeAlaSQLNodeConfig(
     'map_times',
     'Map Times',
     `SELECT
-      match_start.mapId,
+      match_start.matchId,
       match_start.matchTime as mapStartTime,
       match_end.matchTime as mapEndTime,
       SUM(round.roundDuration) as mapDuration
     FROM ? as match_start
     JOIN ? as match_end
-    ON match_start.mapId = match_end.mapId
+    ON match_start.matchId = match_end.matchId
     JOIN ? as round
-    ON match_start.mapId = round.mapId
-    GROUP BY match_start.mapId, match_start.matchTime, match_end.matchTime
-    ORDER BY match_start.mapId, match_start.matchTime
+    ON match_start.matchId = round.matchId
+    GROUP BY match_start.matchId, match_start.matchTime, match_end.matchTime
+    ORDER BY match_start.matchId, match_start.matchTime
     `,
     ['match_start_object_store', 'match_end_object_store', 'round_times'],
-    ['mapId', 'mapStartTime', 'mapEndTime', 'mapDuration'],
+    ['matchId', 'mapStartTime', 'mapEndTime', 'mapDuration'],
   ),
   makeAlaSQLNodeConfig(
     'round_times',
     'Round Times',
     `SELECT
-      round_start.mapId,
+      round_start.matchId,
       round_start.roundNumber,
       round_start.matchTime as roundStartTime,
       setup_complete.matchTime as roundSetupCompleteTime,
@@ -1293,13 +1258,13 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       round_end.matchTime - setup_complete.matchTime as roundDuration
     FROM ? as round_start
     JOIN ? as round_end
-    ON round_start.mapId = round_end.mapId AND round_start.roundNumber = round_end.roundNumber
+    ON round_start.matchId = round_end.matchId AND round_start.roundNumber = round_end.roundNumber
     JOIN ? as setup_complete
-    ON round_start.mapId = setup_complete.mapId AND round_start.roundNumber = setup_complete.roundNumber
-    ORDER BY round_start.mapId, round_start.roundNumber
+    ON round_start.matchId = setup_complete.matchId AND round_start.roundNumber = setup_complete.roundNumber
+    ORDER BY round_start.matchId, round_start.roundNumber
     `,
     ['round_start_object_store', 'round_end_object_store', 'setup_complete_object_store'],
-    ['mapId', 'roundNumber', 'roundStartTime', 'roundEndTime', 'roundDuration', 'roundSetupCompleteTime'],
+    ['matchId', 'roundNumber', 'roundStartTime', 'roundEndTime', 'roundDuration', 'roundSetupCompleteTime'],
   ),
   makeAlaSQLNodeConfig(
     'player_events',
@@ -1307,7 +1272,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     `
     SELECT * FROM (
     SELECT
-      defensive_assist.mapId,
+      defensive_assist.matchId,
       defensive_assist.playerName,
       defensive_assist.playerTeam,
       defensive_assist.playerHero,
@@ -1316,7 +1281,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     FROM ? as defensive_assist
     UNION ALL
     SELECT
-      offensive_assist.mapId,
+      offensive_assist.matchId,
       offensive_assist.playerName,
       offensive_assist.playerTeam,
       offensive_assist.playerHero,
@@ -1325,7 +1290,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     FROM ? as offensive_assist
     UNION ALL
     SELECT
-      hero_spawn.mapId,
+      hero_spawn.matchId,
       hero_spawn.playerName,
       hero_spawn.playerTeam,
       hero_spawn.playerHero,
@@ -1334,7 +1299,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     FROM ? as hero_spawn
     UNION ALL
     SELECT
-      hero_swap.mapId,
+      hero_swap.matchId,
       hero_swap.playerName,
       hero_swap.playerTeam,
       hero_swap.playerHero,
@@ -1343,7 +1308,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     FROM ? as hero_swap
     UNION ALL
     SELECT
-      ability_1_used.mapId,
+      ability_1_used.matchId,
       ability_1_used.playerName,
       ability_1_used.playerTeam,
       ability_1_used.playerHero,
@@ -1352,7 +1317,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     FROM ? as ability_1_used
     UNION ALL
     SELECT
-      ability_2_used.mapId,
+      ability_2_used.matchId,
       ability_2_used.playerName,
       ability_2_used.playerTeam,
       ability_2_used.playerHero,
@@ -1360,10 +1325,10 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       'Ability 2 Used' as playerEventType
     FROM ? as ability_2_used
     )
-    ORDER BY mapId, playerName, playerEventTime
+    ORDER BY matchId, playerName, playerEventTime
     `,
     ['defensive_assist_object_store', 'offensive_assist_object_store', 'hero_spawn_object_store', 'hero_swap_object_store', 'ability_1_used_object_store', 'ability_2_used_object_store'],
-    ['mapId', 'playerName', 'playerTeam', 'playerHero', 'playerEventTime', 'playerEventType'],
+    ['matchId', 'playerName', 'playerTeam', 'playerHero', 'playerEventTime', 'playerEventType'],
   ),
   makeAlaSQLNodeConfig(
     'player_interaction_events',
@@ -1371,7 +1336,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     `
     SELECT * FROM (
       SELECT
-        mercy_rez.mapId,
+        mercy_rez.matchId,
         mercy_rez.revivedName as playerName,
         mercy_rez.revivedTeam as playerTeam,
         mercy_rez.revivedHero as playerHero,
@@ -1381,7 +1346,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as mercy_rez
       UNION ALL
       SELECT
-        mercy_rez.mapId,
+        mercy_rez.matchId,
         mercy_rez.mercyName as playerName,
         mercy_rez.mercyTeam as playerTeam,
         'Mercy' as playerHero,
@@ -1391,7 +1356,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as mercy_rez
       UNION ALL
       SELECT
-        dva_demech.mapId,
+        dva_demech.matchId,
         dva_demech.victimName as playerName,
         dva_demech.victimTeam as playerTeam,
         dva_demech.victimHero as playerHero,
@@ -1401,7 +1366,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as dva_demech
       UNION ALL
       SELECT
-        dva_remech.mapId,
+        dva_remech.matchId,
         dva_remech.playerName as playerName,
         dva_remech.playerTeam as playerTeam,
         dva_remech.playerHero as playerHero,
@@ -1411,7 +1376,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as dva_remech
       UNION ALL
       SELECT
-        kill.mapId,
+        kill.matchId,
         kill.attackerName as playerName,
         kill.attackerTeam as playerTeam,
         kill.attackerHero as playerHero,
@@ -1421,7 +1386,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as kill
       UNION ALL
       SELECT
-        kill.mapId,
+        kill.matchId,
         kill.victimName as playerName,
         kill.victimTeam as playerTeam,
         kill.victimHero as playerHero,
@@ -1431,7 +1396,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as kill
       UNION ALL
       SELECT
-        damage.mapId,
+        damage.matchId,
         damage.attackerName as playerName,
         damage.attackerTeam as playerTeam,
         damage.attackerHero as playerHero,
@@ -1441,7 +1406,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as damage
       UNION ALL
       SELECT
-        damage.mapId,
+        damage.matchId,
         damage.victimName as playerName,
         damage.victimTeam as playerTeam,
         damage.victimHero as playerHero,
@@ -1451,7 +1416,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as damage
       UNION ALL
       SELECT
-        healing.mapId,
+        healing.matchId,
         healing.healerName as playerName,
         healing.healerTeam as playerTeam,
         healing.healerHero as playerHero,
@@ -1461,7 +1426,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as healing
       UNION ALL
       SELECT
-        healing.mapId,
+        healing.matchId,
         healing.healeeName as playerName,
         healing.healeeTeam as playerTeam,
         healing.healeeHero as playerHero,
@@ -1470,7 +1435,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
         'Recieved Healing' as playerInteractionEventType
       FROM ? as healing
     )
-    ORDER BY mapId, playerName, playerInteractionEventTime
+    ORDER BY matchId, playerName, playerInteractionEventTime
     `,
     [
       'mercy_rez_object_store',
@@ -1484,7 +1449,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       'healing_object_store',
       'healing_object_store',
     ],
-    ['mapId', 'playerName', 'playerTeam', 'playerHero', 'otherPlayerName', 'playerInteractionEventTime', 'playerInteractionEventType'],
+    ['matchId', 'playerName', 'playerTeam', 'playerHero', 'otherPlayerName', 'playerInteractionEventTime', 'playerInteractionEventType'],
   ),
   makeAlaSQLNodeConfig(
     'unique_player_names',
@@ -1503,9 +1468,9 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
   makeAlaSQLNodeConfig(
     'unique_map_ids',
     'Unique Map IDs',
-    `SELECT DISTINCT mapId FROM ? as match_start_object_store`,
+    `SELECT DISTINCT matchId FROM ? as match_start_object_store`,
     ['match_start_object_store'],
-    ['mapId']
+    ['matchId']
   ),
   makeAlaSQLNodeConfig(
     'unique_game_modes',
@@ -1533,7 +1498,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     'Player Stat Expanded',
     `
     SELECT
-      player_stat.mapId,
+      player_stat.matchId,
       player_stat.roundNumber,
       player_stat.playerName,
       player_stat.playerTeam,
@@ -1613,7 +1578,7 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       FROM ? as player_stat`,
     ['player_stat_object_store'],
     [
-      'mapId',
+      'matchId',
       'roundNumber',
       'playerName',
       'playerTeam',
@@ -1650,6 +1615,13 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       'weaponAccuracy',
     ],
   ),
+  makeAlaSQLNodeConfig(
+    'matches_grouped_by_date',
+    'Matches Grouped By Date',
+    `SELECT dateString, ARRAY(matchId) as matchIds FROM ? as match_object_store GROUP BY dateString`,
+    ['match_object_store'],
+    ['dateString', 'matchIds'],
+  ),
 ];
 
 const FUNCTION_NODES: FunctionNodeConfig[] = [
@@ -1657,7 +1629,7 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
     name: 'team_ultimate_advantage',
     displayName: 'Team Ultimate Advantage',
     sources: ['ultimate_charged_object_store', 'ultimate_end_object_store', 'match_start_object_store', 'round_end_object_store', 'round_start_object_store'],
-    columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1Count', 'team2Count', 'teamWithAdvantage', 'diff'],
+    columnNames: ['matchId', 'matchTime', 'team1Name', 'team2Name', 'team1Count', 'team2Count', 'teamWithAdvantage', 'diff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
         ...(data['ultimate_charged_object_store'] as UltimateCharged[]).map((e) => ({...e, type: 'charged'})),
@@ -1667,7 +1639,7 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
       ];
 
       const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
-        (data['match_start_object_store'] as MatchStart[]).map((match) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
+        (data['match_start_object_store'] as MatchStart[]).map((match) => [match.matchId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
       );
 
       return processTeamAdvantageEvents(events, mapTeams, ultimateAdvantageConfig);
@@ -1679,7 +1651,7 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
     name: 'team_alive_advantage',
     displayName: 'Team Alive Players Advantage',
     sources: ['kill_object_store', 'hero_spawn_object_store', 'match_start_object_store', 'round_end_object_store', 'round_start_object_store'],
-    columnNames: ['mapId', 'matchTime', 'team1Name', 'team2Name', 'team1Count', 'team2Count', 'teamWithAdvantage', 'diff'],
+    columnNames: ['matchId', 'matchTime', 'team1Name', 'team2Name', 'team1Count', 'team2Count', 'teamWithAdvantage', 'diff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
         ...(data['kill_object_store'] as Kill[]).map((e) => ({...e, type: 'kill'})),
@@ -1689,7 +1661,7 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
       ];
 
       const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
-        (data['match_start_object_store'] as MatchStart[]).map((match) => [match.mapId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
+        (data['match_start_object_store'] as MatchStart[]).map((match) => [match.matchId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
       );
 
       return processTeamAdvantageEvents(events, mapTeams, playerAliveAdvantageConfig);

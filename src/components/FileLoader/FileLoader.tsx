@@ -41,7 +41,7 @@ const FileLoader: React.FC<FileLoaderProps> = ({ onSubmit }) => {
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h5" gutterBottom>
-        Add Logs
+        Add matches
       </Typography>
 
       <Paper

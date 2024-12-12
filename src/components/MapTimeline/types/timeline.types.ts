@@ -1,7 +1,7 @@
 import {ReactNode} from 'react';
 
 export interface MatchStart {
-  mapId: number;
+  matchId: number;
   team1Name: string;
   team2Name: string;
 }
@@ -59,17 +59,17 @@ export interface RoundTime {
 }
 
 export interface MapTimelineProps {
-  mapId: number;
+  matchId: number;
 }
 
 export interface MapTimes {
-  mapId: number;
+  matchId: number;
   mapStartTime: number;
   mapEndTime: number;
 }
 
 export interface PlayerEvent {
-  mapId: number;
+  matchId: number;
   playerTeam: string;
   playerName: string;
   playerEventTime: number;
@@ -78,7 +78,7 @@ export interface PlayerEvent {
 }
 
 export interface PlayerInteractionEvent {
-  mapId: number;
+  matchId: number;
   playerTeam: string;
   playerName: string;
   playerInteractionEventTime: number;
@@ -87,7 +87,7 @@ export interface PlayerInteractionEvent {
 }
 
 export interface UltimateEvent {
-  mapId: number;
+  matchId: number;
   playerTeam: string;
   playerName: string;
   ultimateStartTime: number;
@@ -96,14 +96,14 @@ export interface UltimateEvent {
 }
 
 export interface RoundTimes {
-  mapId: number;
+  matchId: number;
   roundStartTime: number;
   roundSetupCompleteTime: number;
   roundEndTime: number;
 }
 
 export interface TeamAdvantageData {
-  mapId: number;
+  matchId: number;
   matchTime: number;
   team1Count: number;
   team2Count: number;

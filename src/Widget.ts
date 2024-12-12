@@ -6,8 +6,8 @@ type OverwatchMode = string; // TODO: enum
 export interface Intent {
   playerName?: string[]; // A list of players. Unset means not caring about players.
   playerRole?: OverwatchRole[]; // A list of player roles. Unset means not caring about roles.
-  mapId?: string[]; // A list of map IDs. Unset means not caring about maps.
-  roundNumber?: (1 | 2 | 3)[]; // A list of round numbers. Unset means not caring about rounds. Only applies to modes that have rounds. Only used if mapId is set.
+  matchId?: string[]; // A list of map IDs. Unset means not caring about maps.
+  roundNumber?: (1 | 2 | 3)[]; // A list of round numbers. Unset means not caring about rounds. Only applies to modes that have rounds. Only used if matchId is set.
   mapName?: OverwatchMap[]; // A list of map names. Unset means not caring about maps.
   mode?: OverwatchMode[]; // A list of modes. Unset means not caring about modes.
   team?: string[]; // A list of teams, or "*" for any team. Unset means not caring about teams.
@@ -45,9 +45,9 @@ export function intentSimilarity(intent1: Intent, intent2: Intent): number {
   const playerRoleComparison = compareLists(intent1.playerRole, intent2.playerRole);
   numComparisons += playerRoleComparison.numComparisons;
   numMatches += playerRoleComparison.numMatches;
-  const mapIdComparison = compareLists(intent1.mapId, intent2.mapId);
-  numComparisons += mapIdComparison.numComparisons;
-  numMatches += mapIdComparison.numMatches;
+  const matchIdComparison = compareLists(intent1.matchId, intent2.matchId);
+  numComparisons += matchIdComparison.numComparisons;
+  numMatches += matchIdComparison.numMatches;
   const roundNumberComparison = compareLists(intent1.roundNumber, intent2.roundNumber);
   numComparisons += roundNumberComparison.numComparisons;
   numMatches += roundNumberComparison.numMatches;
@@ -93,6 +93,7 @@ export function intentSimilarity(intent1: Intent, intent2: Intent): number {
 
 export interface WidgetBid {
   id: string;
+  displayName: string;
   widget: React.ReactNode;
   scorePrior?: number;
   intent: Intent;

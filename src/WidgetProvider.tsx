@@ -21,7 +21,7 @@ const WidgetProvider: React.FC<{ children: React.ReactNode | React.ReactNode[] }
 
     // registry.registerWidget('my-widget', {
     //   component: MyWidget,
-    //   intent: { mapId: '*', hero: 'Reaper' },
+    //   intent: { matchId: '*', hero: 'Reaper' },
     //   dataNode: 'player_scores', // Example DataNode
     // });
     // // ... register other widgets

@@ -9,14 +9,15 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import { Intent } from "~/Widget";
+import { useWombatData } from "wombat-data-framework";
 
 interface IntentControlsProps {
   intent: Intent;
   setIntent: (newIntent: Intent) => void;
   possibleValues: {
     players: string[];
-    maps: string[];
-    mapNames: OverwatchMap[];
+    matches: string[];
+    maps: OverwatchMap[];
     modes: OverwatchMode[];
     teams: string[];
     heroes: OverwatchHero[];
@@ -33,8 +34,8 @@ const formatTime = (seconds: number) => {
 };
 
 const validateIntent = (intent: Intent): Intent => {
-  if (intent.mapId && intent.mapId.length === 0) {
-    delete intent.mapId;
+  if (intent.matchId && intent.matchId.length === 0) {
+    delete intent.matchId;
   }
   if (intent.playerName && intent.playerName.length === 0) {
     delete intent.playerName;
@@ -57,7 +58,7 @@ const validateIntent = (intent: Intent): Intent => {
   if (intent.mapName && intent.mapName.length === 0) {
     delete intent.mapName;
   }
-  if (intent.mapId === undefined || intent.mapId.length > 1) {
+  if (intent.matchId === undefined || intent.matchId.length > 1) {
     delete intent.time;
   }
   return intent;
@@ -73,115 +74,136 @@ const IntentControls: React.FC<IntentControlsProps> = ({
     setIntent(validateIntent({ ...intent, [key]: value }));
   };
 
-  const hasMap = intent.mapId !== undefined;
+  const hasMap = intent.matchId !== undefined;
   const hasDate = intent.date !== undefined;
   const hasTime = intent.time !== undefined;
 
+  const matchData = useWombatData<{ dateString: string }>('match_object_store');
+
+  const endDate = Math.ceil(new Date().getTime() / (1000 * 60 * 60 * 24));
+
+  const startDate = matchData.data.length > 0 ? (matchData.data.map((match) => new Date(match.dateString)).sort()[0].getTime() / (1000 * 60 * 60 * 24)) : endDate - 365;
+
+  console.log('startDate', startDate);
+  console.log('endDate', endDate);
+  console.log('matchData', matchData.data);
+
+
   return (
     <Box sx={{ margin: 1, display: 'flex', flexDirection: 'row', gap: 2, flexWrap: 'wrap' }}>
-              <IconAutocomplete
-                options={possibleValues.players}
-                selected={intent.playerName || []}
-                onChange={(value) => updateIntent('playerName', value)}
-                icon={<PersonIcon />}
-                label="Players"
-                noOptionsText="No players found"
-                size={size}
-              />
+      <IconAutocomplete
+        options={possibleValues.players}
+        selected={intent.playerName || []}
+        onChange={(value) => updateIntent('playerName', value)}
+        icon={<PersonIcon />}
+        label="Players"
+        noOptionsText="No players found"
+        size={size}
+      />
 
-              <IconAutocomplete
-                options={possibleValues.maps}
-                selected={intent.mapId || []}
-                onChange={(value) => updateIntent('mapId', value)}
-                icon={<LocationOnIcon />}
-                label="Maps"
-                noOptionsText="No maps found"
-                size={size}
-              />
+      <IconAutocomplete
+        options={possibleValues.matches}
+        selected={intent.matchId || []}
+        onChange={(value) => updateIntent('matchId', value)}
+        icon={<LocationOnIcon />}
+        label="Matches"
+        noOptionsText="No matches found"
+        size={size}
+      />
 
-              <IconAutocomplete
-                options={possibleValues.teams}
-                selected={intent.team || []}
-                onChange={(value) => updateIntent('team', value)}
-                icon={<GroupsIcon />}
-                label="Teams"
-                noOptionsText="No teams found"
-                size={size}
-              />
+      <IconAutocomplete
+        options={possibleValues.maps}
+        selected={intent.mapName || []}
+        onChange={(value) => updateIntent('mapName', value)}
+        icon={<LocationOnIcon />}
+        label="Maps"
+        noOptionsText="No maps found"
+        size={size}
+      />
 
-              <RoleControl
-                selectedRoles={intent.playerRole || []}
-                onChange={(value) => updateIntent('playerRole', value)}
-                size={size}
-              />
+      <IconAutocomplete
+        options={possibleValues.teams}
+        selected={intent.team || []}
+        onChange={(value) => updateIntent('team', value)}
+        icon={<GroupsIcon />}
+        label="Teams"
+        noOptionsText="No teams found"
+        size={size}
+      />
 
-      
-              <IconAutocomplete
-                options={possibleValues.heroes}
-                selected={intent.hero || []}
-                onChange={(value) => updateIntent('hero', value as OverwatchHero[])}
-                icon={<SportsEsportsIcon />}
-                label="Heroes"
-                noOptionsText="No heroes found"
-                size={size}
-              />
+      <RoleControl
+        selectedRoles={intent.playerRole || []}
+        onChange={(value) => updateIntent('playerRole', value)}
+        size={size}
+      />
 
-              <IconAutocomplete
-                options={possibleValues.metrics}
-                selected={intent.metric || []}
-                onChange={(value) => updateIntent('metric', value)}
-                icon={<ShowChartIcon />}
-                label="Metrics"
-                noOptionsText="No metrics found"
-                size={size}
-              />
 
-          
-   
-              {hasDate ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, marginRight: 2 }}>
-                  <Typography variant="h6">Date Range: {intent.date ? intent.date.join(' to ') : 'All time'}</Typography>
-                  <TimeRangeSlider
-                value={intent.date ? [
-                  new Date(intent.date[0]).getTime() / (1000 * 60 * 60 * 24),
-                  new Date(intent.date[1]).getTime() / (1000 * 60 * 60 * 24)
-                ] : [
-                  new Date().getTime() / (1000 * 60 * 60 * 24) - 30,
-                  new Date().getTime() / (1000 * 60 * 60 * 24)
-                ]}
-                onChange={(value) => updateIntent('date', [
-                  new Date(value[0] * 1000 * 60 * 60 * 24).toISOString().split('T')[0],
-                  new Date(value[1] * 1000 * 60 * 60 * 24).toISOString().split('T')[0]
-                ])}
-                min={new Date().getTime() / (1000 * 60 * 60 * 24) - 365}
-                max={new Date().getTime() / (1000 * 60 * 60 * 24)}
-                minDistance={1}
-                    renderLabel={(value) => new Date(value * 1000 * 60 * 60 * 24).toLocaleDateString()}
-                  />
-                  <Button onClick={() => updateIntent('date', undefined)}>Clear Date Range</Button>
-                </Box>
-              ) : (
-                <Button onClick={() => updateIntent('date', [(new Date(new Date().setDate(new Date().getDate() - 30))).toISOString().split('T')[0], new Date().toISOString().split('T')[0]])}>Set Date Range</Button>
-              )}
+      <IconAutocomplete
+        options={possibleValues.heroes}
+        selected={intent.hero || []}
+        onChange={(value) => updateIntent('hero', value as OverwatchHero[])}
+        icon={<SportsEsportsIcon />}
+        label="Heroes"
+        noOptionsText="No heroes found"
+        size={size}
+      />
 
-                         
-{hasTime && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  <Typography variant="h6">Time Range</Typography>
-                  <TimeRangeSlider
-                    value={intent.time || [0, 24 * 60 * 60]}
-                    onChange={(value) => updateIntent('time', value)}
-                    min={0}
-                    max={24 * 60 * 60}
-                    minDistance={60}
-                    renderLabel={(value) => formatTime(value)}
-                  />
-                  <Button onClick={() => updateIntent('time', undefined)}>Clear Time Range</Button>
-                </Box>
-              )}
-              {!hasTime && hasMap && (
-                <Button onClick={() => updateIntent('time', [0, 24 * 60 * 60])}>Set Time Range</Button>
-              )}
+      <IconAutocomplete
+        options={possibleValues.metrics}
+        selected={intent.metric || []}
+        onChange={(value) => updateIntent('metric', value)}
+        icon={<ShowChartIcon />}
+        label="Metrics"
+        noOptionsText="No metrics found"
+        size={size}
+      />
+
+
+
+      {hasDate ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, marginRight: 2 }}>
+          <Typography variant="h6">Date Range: {intent.date ? intent.date.join(' to ') : 'All time'}</Typography>
+          <TimeRangeSlider
+            value={intent.date ? [
+              new Date(intent.date[0]).getTime() / (1000 * 60 * 60 * 24),
+              new Date(intent.date[1]).getTime() / (1000 * 60 * 60 * 24)
+            ] : [
+              startDate,
+              endDate
+            ]}
+            onChange={(value) => updateIntent('date', [
+              new Date(value[0] * 1000 * 60 * 60 * 24).toISOString().split('T')[0],
+              new Date(value[1] * 1000 * 60 * 60 * 24).toISOString().split('T')[0]
+            ])}
+            min={startDate}
+            max={endDate}
+            minDistance={1}
+            renderLabel={(value) => new Date(value * 1000 * 60 * 60 * 24).toLocaleDateString()}
+          />
+          <Button onClick={() => updateIntent('date', undefined)}>Clear Date Range</Button>
+        </Box>
+      ) : (
+        <Button onClick={() => updateIntent('date', [(new Date(new Date().setDate(new Date().getDate() - 30))).toISOString().split('T')[0], new Date().toISOString().split('T')[0]])}>Set Date Range</Button>
+      )}
+
+
+      {hasTime && (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Typography variant="h6">Time Range</Typography>
+          <TimeRangeSlider
+            value={intent.time || [0, 24 * 60 * 60]}
+            onChange={(value) => updateIntent('time', value)}
+            min={0}
+            max={24 * 60 * 60}
+            minDistance={60}
+            renderLabel={(value) => formatTime(value)}
+          />
+          <Button onClick={() => updateIntent('time', undefined)}>Clear Time Range</Button>
+        </Box>
+      )}
+      {!hasTime && hasMap && (
+        <Button onClick={() => updateIntent('time', [0, 24 * 60 * 60])}>Set Time Range</Button>
+      )}
 
     </Box>
   );

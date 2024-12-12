@@ -1,93 +1,94 @@
-import {Card, CardContent, Typography} from '@mui/material';
-import {useWombatData} from 'wombat-data-framework';
-import {MatchEnd, MatchStart} from '../../WombatDataFrameworkSchema';
-import {mapNameToFileName} from '../../lib/string';
+import { CardContent, Typography } from '@mui/material';
+import { useWombatData } from 'wombat-data-framework';
+import { MatchEnd, MatchStart } from '../../WombatDataFrameworkSchema';
+import { mapNameToFileName } from '../../lib/string';
 // import {useNavigate} from 'react-router-dom';
 import './MapsList.scss';
 
-const MapRow = ({mapId}: {mapId: number}) => {
+const MapRow = ({ matchId }: { matchId: number }) => {
   // const navigate = useNavigate();
 
+  const matchData = useWombatData<{ name: string, timeString: string, matchId: number }>('match_object_store');
   const matchStartData = useWombatData<MatchStart>('match_start_object_store');
   const matchEndData = useWombatData<MatchEnd>('match_end_object_store');
-  // const mapsData = useWombatData<{name: string; fileModified: number; mapId: number}>('maps_object_store');
 
-  const {mapName, team1Name, team2Name} = matchStartData.data.find((row) => row['mapId'] === mapId) || {mapName: '', mapType: '', team1Name: '', team2Name: ''};
-  const {team1Score, team2Score} = matchEndData.data.find((row) => row['mapId'] === mapId) || {team1Score: 0, team2Score: 0};
-  // const {name, fileModified} = mapsData.data.find((row) => row['mapId'] === mapId) || {name: '', fileModified: 0};
+  if (matchStartData.data.length === 0 || matchEndData.data.length === 0 || matchData.data.length === 0) {
+    return null;
+  }
+
+  const { mapName, team1Name, team2Name } = matchStartData.data.find((row) => row['matchId'] === matchId) || { mapName: '', mapType: '', team1Name: '', team2Name: '' };
+  const { team1Score, team2Score } = matchEndData.data.find((row) => row['matchId'] === matchId) || { team1Score: 0, team2Score: 0 };
+  const { timeString } = matchData.data.find((row) => row['matchId'] === matchId) || { name: '', timeString: '' };
 
   return (
-    <Card
-      sx={{
+    <div
+      style={{
         width: '200px',
-        height: '200px',
         display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflow: 'visible',
-        border: '1px solid',
-        borderColor: 'secondary.main',
-      }}
-      className="dashboard-item secondary">
-      <CardContent
-        sx={{
-          flexGrow: 1,
-          padding: '0',
-          display: 'flex',
-          gap: 2,
-        }}>
-        {/* Scores section - always visible */}
-        <div
-          style={{
-            width: '200px',
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            alignContent: 'space-between',
-          }}>
-          <img
-            src={mapNameToFileName(mapName, false)}
-            style={{
-              width: '200px',
-              position: 'relative',
-              //curved corners
-              borderRadius: '10px',
-            }}
-          />
-          <div style={{display: 'flex', flexDirection: 'column', gap: 2, margin: '10px'}}>
-            <Typography variant="h5" align="center" gutterBottom>
-              {team1Name}
-            </Typography>
-            <Typography variant="h3" align="center">
-              {team1Score}
-            </Typography>
-          </div>
-          <div style={{display: 'flex', flexDirection: 'column', gap: 2, margin: '10px'}}>
-            <Typography variant="h5" align="center" gutterBottom>
-              {team2Name}
-            </Typography>
-            <Typography variant="h3" align="center">
-              {team2Score}
-            </Typography>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignContent: 'space-between',
+
+      }}>
+      <Typography variant="h5" gutterBottom>{mapName}</Typography>
+      <Typography variant="h6" gutterBottom>{timeString}</Typography>
+      <img
+        src={mapNameToFileName(mapName, false)}
+        style={{
+          width: '200px',
+          position: 'relative',
+          //curved corners
+          borderRadius: '10px',
+        }}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, margin: '10px' }}>
+        <Typography variant="h5" align="center" gutterBottom>
+          {team1Name}
+        </Typography>
+        <Typography variant="h3" align="center">
+          {team1Score}
+        </Typography>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, margin: '10px' }}>
+        <Typography variant="h5" align="center" gutterBottom>
+          {team2Name}
+        </Typography>
+        <Typography variant="h3" align="center">
+          {team2Score}
+        </Typography>
+      </div>
+    </div>
   );
 };
 
-const MapsList = () => {
-  const mapsData = useWombatData<{name: string; fileModified: number; mapId: number}>('maps_object_store');//, {initialSortColumn: 'fileModified', initialSortDirection: 'desc'});
-  
-  console.log('mapsData', mapsData.data);
+const MatchList = () => {
+
+  const matchesByDate = useWombatData<{ dateString: string; matchIds: number[] }>('matches_grouped_by_date');
+
+  console.log('matchesByDate', matchesByDate.data);
+
+  if (matchesByDate.data.length === 0) {
+    return null;
+  }
 
   return (
     <>
-      {mapsData.data.map((map) => (
-        <MapRow mapId={map['mapId']} key={map['mapId']} />
-      ))}
+      <CardContent>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Typography variant="h3" gutterBottom>Matches</Typography></div>
+        {matchesByDate.data.map((dateMatches) => (
+          <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', gap: 2 }}>
+            <Typography variant="h4" gutterBottom>{dateMatches.dateString}</Typography>
+            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2 }}>
+              {dateMatches.matchIds.map((matchId) => (
+                <MapRow matchId={matchId} key={matchId} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </CardContent>
     </>
   );
 };
 
-export default MapsList;
+export default MatchList;

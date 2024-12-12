@@ -4,7 +4,7 @@ import { WidgetBidder } from "../Widget";
 const UploaderWidgetBidder: WidgetBidder = () => {
   // Want to show the uploader no matter what the intent is.
   return [
-    {id: 'uploader', intent: {}, widget: <UploaderWidget />},
+    { id: 'uploader', intent: {}, displayName: 'Add Matches', widget: <UploaderWidget /> },
   ];
 };
 

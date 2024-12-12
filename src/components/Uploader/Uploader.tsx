@@ -1,6 +1,6 @@
-import React, { useState} from 'react';
-import {Button, Dialog, Typography} from '@mui/material';
-import {useWombatDataManager} from 'wombat-data-framework';
+import React, { useState } from 'react';
+import { Button, Dialog, Typography } from '@mui/material';
+import { useWombatDataManager } from 'wombat-data-framework';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import FileLoader from '~/components/FileLoader/FileLoader';
 
@@ -10,9 +10,9 @@ const Uploader: React.FC = () => {
 
   return (
     <>
-      <Button variant="outlined" component="label" color="secondary" sx={{minWidth: '200px', minHeight: '200px'}} startIcon={<NoteAddIcon />} className="dashboard-item primary" onClick={() => setModalOpen(true)}>
-        <Typography variant="h6" sx={{whiteSpace: 'nowrap'}}>
-          Add logs
+      <Button variant="outlined" component="label" color="secondary" sx={{ minWidth: '200px', minHeight: '200px' }} startIcon={<NoteAddIcon />} className="dashboard-item primary" onClick={() => setModalOpen(true)}>
+        <Typography variant="h6" sx={{ whiteSpace: 'nowrap' }}>
+          Add matches
         </Typography>
       </Button>
       <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>

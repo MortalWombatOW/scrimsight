@@ -6,12 +6,12 @@ const WelcomeWidgetBidder: WidgetBidder = (intent) => {
     return [];
   }
   return [
-    {id: 'welcome', intent: {}, widget: <WelcomeWidget />, scorePrior: 1},
+    { id: 'welcome', displayName: 'Welcome Message', intent: {}, widget: <WelcomeWidget />, scorePrior: 1 },
   ];
 };
 
 const WelcomeWidget: React.FC = () => {
-  return <div style={{padding: '20px'}}>Welcome to Scrimsight! Add a match to get started.</div>;
+  return <div style={{ padding: '20px' }}>Welcome to Scrimsight! Add your <a href="https://workshop.codes/scrimtime" target="_blank" rel="noopener noreferrer">ScrimTime</a> logs to get started.</div>;
 };
 
 export default WelcomeWidgetBidder;

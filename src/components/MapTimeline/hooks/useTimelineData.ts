@@ -1,11 +1,11 @@
 import {useWombatDataManager, useWombatDataNode} from 'wombat-data-framework';
 import {MatchStart, MapTimes, PlayerEvent, PlayerInteractionEvent, UltimateEvent, RoundTimes, TimelineData, TeamAdvantageData} from '../types/timeline.types';
 
-export const useTimelineData = (mapId: number): TimelineData | null => {
+export const useTimelineData = (matchId: number): TimelineData | null => {
   const dataManager = useWombatDataManager();
   const tick = dataManager.getTick();
 
-  console.log('Fetching data for mapId:', mapId, 'tick:', tick);
+  console.log('Fetching data for matchId:', matchId, 'tick:', tick);
 
   const [matchStartNode] = useWombatDataNode('match_start_object_store');
   const [playerEventsNode] = useWombatDataNode('player_events');
@@ -17,24 +17,24 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
   const [aliveAdvantageNode] = useWombatDataNode('team_alive_advantage');
 
   if (!matchStartNode || !playerEventsNode || !interactionEventsNode || !roundTimesNode || !ultimateEventsNode || !mapTimesNode || !ultimateAdvantageNode || !aliveAdvantageNode) {
-    console.error(`Missing data nodes for map ${mapId}`);
+    console.error(`Missing data nodes for map ${matchId}`);
     return null;
   }
 
-  const matchStart = matchStartNode.getOutput<MatchStart[]>().find((row) => row['mapId'] === mapId);
+  const matchStart = matchStartNode.getOutput<MatchStart[]>().find((row) => row['matchId'] === matchId);
   if (!matchStart) {
     console.error(
-      `No match start data found for map ${mapId}. Available mapIds:`,
-      matchStartNode.getOutput<MatchStart[]>().map((row) => row['mapId']),
+      `No match start data found for map ${matchId}. Available matchIds:`,
+      matchStartNode.getOutput<MatchStart[]>().map((row) => row['matchId']),
     );
     return null;
   }
 
-  const mapTimes = mapTimesNode.getOutput<MapTimes[]>().find((row) => row['mapId'] === mapId);
+  const mapTimes = mapTimesNode.getOutput<MapTimes[]>().find((row) => row['matchId'] === matchId);
   if (!mapTimes) {
     console.error(
-      `No map times data found for map ${mapId}. Available mapIds:`,
-      mapTimesNode.getOutput<MapTimes[]>().map((row) => row['mapId']),
+      `No map times data found for map ${matchId}. Available matchIds:`,
+      mapTimesNode.getOutput<MapTimes[]>().map((row) => row['matchId']),
     );
     return null;
   }
@@ -51,12 +51,12 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
   });
 
   // Filter events for this map
-  const playerEvents = playerEventsNode.getOutput<PlayerEvent[]>().filter((row) => row['mapId'] === mapId);
-  const interactionEvents = interactionEventsNode.getOutput<PlayerInteractionEvent[]>().filter((row) => row['mapId'] === mapId);
-  const ultimateEvents = ultimateEventsNode.getOutput<UltimateEvent[]>().filter((row) => row['mapId'] === mapId);
-  const roundTimes = roundTimesNode.getOutput<RoundTimes[]>().filter((row) => row['mapId'] === mapId);
+  const playerEvents = playerEventsNode.getOutput<PlayerEvent[]>().filter((row) => row['matchId'] === matchId);
+  const interactionEvents = interactionEventsNode.getOutput<PlayerInteractionEvent[]>().filter((row) => row['matchId'] === matchId);
+  const ultimateEvents = ultimateEventsNode.getOutput<UltimateEvent[]>().filter((row) => row['matchId'] === matchId);
+  const roundTimes = roundTimesNode.getOutput<RoundTimes[]>().filter((row) => row['matchId'] === matchId);
 
-  console.log('Event counts after filtering for mapId:', {
+  console.log('Event counts after filtering for matchId:', {
     playerEvents: playerEvents.length,
     interactionEvents: interactionEvents.length,
     ultimateEvents: ultimateEvents.length,
@@ -95,9 +95,9 @@ export const useTimelineData = (mapId: number): TimelineData | null => {
     return eventsByPlayer;
   };
 
-  const ultimateAdvantageData = ultimateAdvantageNode.getOutput<TeamAdvantageData[]>().filter((row) => row['mapId'] as number === mapId);
+  const ultimateAdvantageData = ultimateAdvantageNode.getOutput<TeamAdvantageData[]>().filter((row) => row['matchId'] as number === matchId);
   // TODO: fix this type
-  const aliveAdvantageData = aliveAdvantageNode.getOutput<TeamAdvantageData[]>().filter((row) => (row['mapId'] as number) === mapId);
+  const aliveAdvantageData = aliveAdvantageNode.getOutput<TeamAdvantageData[]>().filter((row) => (row['matchId'] as number) === matchId);
   return {
     team1Name,
     team2Name,
