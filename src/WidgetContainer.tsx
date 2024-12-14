@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 import { useWidgetBidders } from "./WidgetProvider";
-import { Intent } from "./Widget";
+import { Intent, WidgetBid } from "./Widget";
 import { Card } from "@mui/material";
 
 interface WidgetCardProps {
-  widget: React.ReactNode;
+  bid: WidgetBid;
 }
 
-const WidgetCard: React.FC<WidgetCardProps> = ({ widget }) => {
-  return <Card style={{ margin: 10, height: 'fit-content' }} className="dashboard-item primary">{widget}</Card>;
+const WidgetCard: React.FC<WidgetCardProps> = ({ bid }) => {
+  return <Card style={{ height: 'fit-content', width: 'fit-content', gridColumnEnd: `span ${bid.gridColumnSpan}`, gridRowEnd: `span ${bid.gridRowSpan}` }} className="dashboard-item primary">{bid.widget}</Card>;
 }
 
 interface WidgetContainerProps {
@@ -18,11 +18,11 @@ interface WidgetContainerProps {
 const WidgetContainer: React.FC<WidgetContainerProps> = ({ intent }) => {
   const widgetRegistry = useWidgetBidders();
 
-  const relevantWidgets = useMemo(() => widgetRegistry.getWidgets(intent), [widgetRegistry, intent]);
+  const relevantWidgets = useMemo(() => widgetRegistry.getScoredBids(intent), [widgetRegistry, intent]);
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 0, position: 'relative' }}>
-      {relevantWidgets.map((widget) => <WidgetCard widget={widget} />)}
+    <div style={{ display: 'grid', gridAutoFlow: 'row dense', gap: 10, justifyContent: 'start', width: '100%', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+      {relevantWidgets.map((bid) => <WidgetCard bid={bid} />)}
     </div>
   );
 };

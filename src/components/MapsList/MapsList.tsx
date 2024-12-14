@@ -1,9 +1,11 @@
-import { CardContent, Typography } from '@mui/material';
-import { useWombatData } from 'wombat-data-framework';
+import { Card, CardMedia, CardContent, Box, Typography, ButtonBase } from '@mui/material';
+import { useWombatData, useWombatDataManager } from 'wombat-data-framework';
 import { MatchEnd, MatchStart } from '../../WombatDataFrameworkSchema';
 import { mapNameToFileName } from '../../lib/string';
 // import {useNavigate} from 'react-router-dom';
 import './MapsList.scss';
+import Uploader from '~/components/Uploader/Uploader';
+import FileLoader from '~/components/FileLoader/FileLoader';
 
 const MapRow = ({ matchId }: { matchId: number }) => {
   // const navigate = useNavigate();
@@ -20,48 +22,76 @@ const MapRow = ({ matchId }: { matchId: number }) => {
   const { team1Score, team2Score } = matchEndData.data.find((row) => row['matchId'] === matchId) || { team1Score: 0, team2Score: 0 };
   const { timeString } = matchData.data.find((row) => row['matchId'] === matchId) || { name: '', timeString: '' };
 
-  return (
-    <div
-      style={{
-        width: '200px',
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        alignContent: 'space-between',
+  const handleClick = () => {
+    // TODO: Implement navigation or action when card is clicked
+    console.log(`Clicked match ${matchId}`);
+  };
 
+  return (
+    <ButtonBase
+      onClick={handleClick}
+      sx={{
+        display: 'block',
+        textAlign: 'left',
+        width: 200,
+        '&:hover': {
+          '& .MuiCard-root': {
+            borderColor: 'primary.main',
+            transform: 'scale(1.02)',
+            transition: 'transform 0.2s ease-in-out'
+          }
+        }
+      }}
+    >
+      <Card sx={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        borderColor: 'info.main',
+        borderWidth: 1,
+        borderStyle: 'solid',
+        transition: 'all 0.2s ease-in-out'
       }}>
-      <Typography variant="h5" gutterBottom>{mapName}</Typography>
-      <Typography variant="h6" gutterBottom>{timeString}</Typography>
-      <img
-        src={mapNameToFileName(mapName, false)}
-        style={{
-          width: '200px',
-          position: 'relative',
-          //curved corners
-          borderRadius: '10px',
-        }}
-      />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, margin: '10px' }}>
-        <Typography variant="h5" align="center" gutterBottom>
-          {team1Name}
-        </Typography>
-        <Typography variant="h3" align="center">
-          {team1Score}
-        </Typography>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, margin: '10px' }}>
-        <Typography variant="h5" align="center" gutterBottom>
-          {team2Name}
-        </Typography>
-        <Typography variant="h3" align="center">
-          {team2Score}
-        </Typography>
-      </div>
-    </div>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>{mapName}</Typography>
+          <Typography variant="h6" gutterBottom>{timeString}</Typography>
+        </CardContent>
+
+        <CardMedia
+          component="img"
+          image={mapNameToFileName(mapName, false)}
+          alt={mapName}
+          sx={{ borderRadius: 1 }}
+        />
+
+        <CardContent>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Typography variant="h5" gutterBottom>
+                {team1Name}
+              </Typography>
+              <Typography variant="h3">
+                {team1Score}
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Typography variant="h5" gutterBottom>
+                {team2Name}
+              </Typography>
+              <Typography variant="h3">
+                {team2Score}
+              </Typography>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+    </ButtonBase>
   );
 };
 
 const MatchList = () => {
+  const dataManager = useWombatDataManager();
 
   const matchesByDate = useWombatData<{ dateString: string; matchIds: number[] }>('matches_grouped_by_date');
 
@@ -76,12 +106,19 @@ const MatchList = () => {
       <CardContent>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Typography variant="h3" gutterBottom>Matches</Typography></div>
-        {matchesByDate.data.map((dateMatches) => (
+        {matchesByDate.data.map((dateMatches, dateIndex) => (
           <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', gap: 2 }}>
             <Typography variant="h4" gutterBottom>{dateMatches.dateString}</Typography>
-            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 2 }}>
-              {dateMatches.matchIds.map((matchId) => (
-                <MapRow matchId={matchId} key={matchId} />
+            <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
+              {dateIndex === 0 && <FileLoader onSubmit={(files) => {
+                dataManager.setInputForInputNode('log_file_input', files);
+              }} />}
+              {dateMatches.matchIds.map((matchId, index) => (
+
+                index < 3 && (
+                  <MapRow matchId={matchId} key={matchId} />
+                )
+
               ))}
             </div>
           </div>

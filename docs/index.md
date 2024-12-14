@@ -28,14 +28,15 @@ Here are the fundamental attributes that users can query on:
 This intent is represented by an object, which the user can refine by setting the attributes to specific values or by clearing them to be unset.
 
 ```typescript
-interface Intent {
+export interface Intent {
   playerName?: string[]; // A list of players. Unset means not caring about players.
+  playerRole?: OverwatchRole[]; // A list of player roles. Unset means not caring about roles.
   matchId?: string[]; // A list of map IDs. Unset means not caring about maps.
-  roundNumber?: (1 | 2 | 3)[]; // A list of round numbers. Unset means not caring about rounds.
-  mapName?: string[]; // A list of map names. Unset means not caring about maps.
-  mode?: string[]; // A list of modes, or "*" for any mode. Unset means not caring about modes.
-  team?: string[]; // A list of teams. Unset means not caring about teams.
-  hero?: string[]; // A list of heroes. Unset means not caring about heroes.
+  roundNumber?: (1 | 2 | 3)[]; // A list of round numbers. Unset means not caring about rounds. Only applies to modes that have rounds. Only used if matchId is set.
+  mapName?: OverwatchMap[]; // A list of map names. Unset means not caring about maps.
+  mode?: OverwatchMode[]; // A list of modes. Unset means not caring about modes.
+  team?: string[]; // A list of teams, or "*" for any team. Unset means not caring about teams.
+  hero?: OverwatchHero[]; // A list of heroes. Unset means not caring about heroes.
   metric?: string[]; // A list of metrics. Unset means not caring about metrics.
   time?: [number, number]; // A time range in seconds. Unset means not caring about times.
   date?: [string, string]; // A date range in YYYY-MM-DD format. Unset means not caring about dates.
@@ -43,13 +44,6 @@ interface Intent {
 ```
 
 The intent is processed by a series of bidders, one for each type of widget. These bidders return a list of widgets that match the intent, with their corresponding intents.
-
-```typescript
-interface WidgetBid {
-  widget: Widget;
-  intent: Intent;
-}
-```
 
 For example, if the user's intent is `{ matchId: [1], hero: ["Reaper", "Doomfist"] }` and a widget declares `{ matchId: [1], hero: ["Reaper"] }`, then the relevance score will be high, but lower than if the widget declares `{ matchId: [1], hero: ["Reaper", "Doomfist"] }`.
 
@@ -59,9 +53,8 @@ They are organized into containers, which are used to group related widgets toge
 
 There is an outermost container, which contains all the bids, and can contain other containers.
 
-The widgets and child containers inside a parent container are ranked according to a relevance score, which is computed by comparing the user's intent to the intent of the widgets and child containers inside the parent container.
-
-The relevance score of a container is the sum of the relevance scores of the widgets and child containers inside the container.
-
-The relevance score of a widget is computed by comparing the user's intent to the intent of the widget.
-
+Widgets:
+Single field:
+* Player Name
+  * teams / role / match history
+  * 

@@ -14,7 +14,7 @@ const Outline: React.FC<{ intent: Intent }> = ({ intent }) => {
 
   const relevantWidgets = useMemo(() => widgetRegistry.getScoredBids(intent), [widgetRegistry, intent]);
 
-  return <Card>
+  return <Card style={{ marginBottom: 10 }}>
     <CardHeader title="Outline" />
     <CardContent>
       {relevantWidgets.map((widget) => <div>{widget.displayName}</div>)}

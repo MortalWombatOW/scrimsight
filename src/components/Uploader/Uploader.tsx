@@ -10,7 +10,11 @@ const Uploader: React.FC = () => {
 
   return (
     <>
-      <Button variant="outlined" component="label" color="secondary" sx={{ minWidth: '200px', minHeight: '200px' }} startIcon={<NoteAddIcon />} className="dashboard-item primary" onClick={() => setModalOpen(true)}>
+      <Button variant="outlined" component="label" color="primary" sx={{
+        minWidth: '200px', minHeight: '200px', border: '2px dashed',
+        borderColor: 'primary.main',
+        cursor: 'pointer',
+      }} startIcon={<NoteAddIcon />} className="dashboard-item primary" onClick={() => setModalOpen(true)}>
         <Typography variant="h6" sx={{ whiteSpace: 'nowrap' }}>
           Add matches
         </Typography>

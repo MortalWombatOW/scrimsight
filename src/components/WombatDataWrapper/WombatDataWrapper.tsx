@@ -1,5 +1,5 @@
 import React from 'react';
-import {WombatDataProvider, LogLevel} from 'wombat-data-framework';
+import { WombatDataProvider, LogLevel } from 'wombat-data-framework';
 import { initializeDataManager } from '../../WombatDataFrameworkSchema';
 
 
@@ -7,7 +7,7 @@ interface WombatDataWrapperProps {
   children: React.ReactNode;
 }
 
-const WombatDataWrapper: React.FC<WombatDataWrapperProps> = ({children}) => {
+const WombatDataWrapper: React.FC<WombatDataWrapperProps> = ({ children }) => {
   const [_, setTick] = React.useState(0);
   const incrementTick = () => {
     setTick((tick) => tick + 1);
@@ -22,7 +22,7 @@ const WombatDataWrapper: React.FC<WombatDataWrapperProps> = ({children}) => {
 
   // console.log('Rendering WombatDataWrapper', tick);
 
-  const logLevel = LogLevel.Error;
+  const logLevel = LogLevel.Debug;
   const maxTicks = undefined;
 
   return (

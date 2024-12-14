@@ -24,6 +24,9 @@ const MetricCardWidgetBidder: WidgetBidder = (intent) => {
         id: `MetricCard-${metric}-${player}`,
         intent: { metric: [metric], playerName: [player] },
         displayName: `Metric Card for ${metric} for ${player}`,
+        description: `A card showing the ${metric} for ${player}`,
+        gridColumnSpan: 1,
+        gridRowSpan: 1,
         widget: <MetricCard columnName={metric} slice={{ playerName: player }} compareToOther={['playerName']} />
       };
     });

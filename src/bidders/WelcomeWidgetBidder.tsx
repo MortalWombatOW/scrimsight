@@ -6,7 +6,16 @@ const WelcomeWidgetBidder: WidgetBidder = (intent) => {
     return [];
   }
   return [
-    { id: 'welcome', displayName: 'Welcome Message', intent: {}, widget: <WelcomeWidget />, scorePrior: 1 },
+    {
+      id: 'welcome',
+      displayName: 'Welcome Message',
+      intent: {},
+      description: 'A welcome message',
+      gridColumnSpan: 1,
+      gridRowSpan: 1,
+      widget: <WelcomeWidget />,
+      scorePrior: 1,
+    },
   ];
 };
 

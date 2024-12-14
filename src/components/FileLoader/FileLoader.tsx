@@ -12,6 +12,8 @@ import {
   Grid,
 } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
+import ArticleIcon from '@mui/icons-material/Article';
+import IconAndText from '~/components/Common/IconAndText';
 
 interface FileLoaderProps {
   onSubmit: (files: File[]) => void;
@@ -39,20 +41,18 @@ const FileLoader: React.FC<FileLoaderProps> = ({ onSubmit }) => {
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        Add matches
-      </Typography>
-
+    <Box sx={{ padding: 0 }}>
       <Paper
         {...getRootProps()}
         elevation={3}
         sx={{
-          padding: 4,
+          padding: 2,
           textAlign: 'center',
           border: '2px dashed',
           borderColor: 'primary.main',
           cursor: 'pointer',
+          width: '200px',
+          height: '220px',
           // backgroundColor: isDragActive ? '#f0f0f0' : 'white',
           marginBottom: 2,
         }}
@@ -61,7 +61,7 @@ const FileLoader: React.FC<FileLoaderProps> = ({ onSubmit }) => {
         <Typography variant="body1">
           {isDragActive
             ? 'Drop files here...'
-            : 'Drag and drop files here, or click to select files'}
+            : 'Drop log files here, or click to select from system'}
         </Typography>
       </Paper>
 
@@ -81,8 +81,9 @@ const FileLoader: React.FC<FileLoaderProps> = ({ onSubmit }) => {
                     <DeleteIcon />
                   </IconButton>
                 }
+
               >
-                <ListItemText primary={file.name} />
+                <ListItemText primary={<IconAndText icon={<ArticleIcon />} text={file.name} />} />
               </ListItem>
             ))}
           </List>

@@ -1,5 +1,5 @@
-import { Button, Popover, Typography} from '@mui/material';
-import {ColorKey} from '../../theme';
+import { Button, Popover, Typography } from '@mui/material';
+import { ColorKey } from '../../theme';
 import { useState } from 'react';
 
 const IconAndText = ({
@@ -18,7 +18,7 @@ const IconAndText = ({
   padding?: string;
   borderRadius?: string;
   dynamic?: boolean;
-  colorKey: ColorKey;
+  colorKey?: ColorKey;
   onClick?: () => void;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -42,7 +42,7 @@ const IconAndText = ({
           maxWidth: 'fit-content',
         }}>
         {dynamic && icon}
-        {!dynamic && <Typography sx={{paddingLeft: 2, fontWeight: 'bold'}}>{text}</Typography>}
+        {!dynamic && <Typography sx={{ paddingLeft: 2, fontWeight: 'bold' }}>{text}</Typography>}
       </Button>
       {dynamic && (
         <Popover
