@@ -263,7 +263,7 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   // const [team2Players, setTeam2Players] = useState<string[]>([]);
   // const [playerRoleMap, setPlayerRoleMap] = useState<{ [playerName: string]: string }>({});
 
-  const matchData = useWombatData<{ name: string, timeString: string, matchId: number }>('match_object_store');
+  const matchData = useWombatData<{ name: string, timeString: string, matchId: string }>('match_object_store');
   const matchStartData = useWombatData<MatchStart>('match_start_object_store');
   const matchEndData = useWombatData<MatchEnd>('match_end_object_store');
 

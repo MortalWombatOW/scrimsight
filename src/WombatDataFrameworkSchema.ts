@@ -30,7 +30,7 @@ import {parseFile, readFileAsync} from './lib/data/uploadfile';
 import {INDEXED_DB_NODE_NAME, IndexedDBNodeConfig} from 'wombat-data-framework';
 
 interface BaseEvent {
-  matchId: number;
+  matchId: string;
   type: string;
   matchTime: number;
 }
@@ -381,7 +381,7 @@ const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('logs', 'Logs', 'The logs from the file.', 'none', 'string', objectFormatter, objectComparator),
   makeDataColumn('mapDuration', 'Map Duration', 'The duration of the map.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('mapEndTime', 'Map End Time', 'The time the map ended.', 's', 'number', timeFormatter, numberComparator),
-  makeDataColumn('matchId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'number', stringFormatter, numberComparator),
+  makeDataColumn('matchId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mapName', 'Map Name', 'The name of the map.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mapStartTime', 'Map Start Time', 'The time the map started.', 's', 'number', numberFormatter, numberComparator),
   makeDataColumn('mapType', 'Map Type', 'The type of the map.', 'none', 'string', stringFormatter, stringComparator),
@@ -444,7 +444,7 @@ const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('chargedUltimateCount', 'Charged Ultimate Count', 'Number of charged ultimates for a team at a given time', 'count', 'number', numberFormatter, numberComparator),
   makeDataColumn('dateString', 'Date', 'The date of the match.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('timeString', 'Time', 'The time of the match.', 'none', 'string', stringFormatter, stringComparator),
-  makeDataColumn('matchIds', 'Match IDs', 'The IDs of the matches.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('matchIds', 'Match IDs', 'The IDs of the matches.', 'none', 'object', objectFormatter, objectComparator),
   ];
 
 // const playerStatFragment = `
@@ -637,6 +637,13 @@ const logFileLoaderNode: FunctionNodeConfig = {
   columnNames: ['fileName', 'fileContent'],
 };
 
+interface LogFileParserOutput {
+  fileName: string;
+  matchId: number;
+  logs: {specName: string; data: object}[];
+  fileModified: number;
+}
+
 const logFileParserNode: FunctionNodeConfig = {
   name: 'log_file_parser',
   type: 'FunctionNode',
@@ -645,10 +652,10 @@ const logFileParserNode: FunctionNodeConfig = {
   sources: ['log_file_loader'],
   transform: async (data: DataNodeInputMap) =>
     (data['log_file_loader'] as LogFileLoaderOutput[]).map((file) => {
-      const {matchId, logs} = parseFile(file.fileContent);
+      const {logs} = parseFile(file.fileContent);
       return {
         fileName: file.fileName,
-        matchId,
+        matchId: file.fileName,
         logs,
         fileModified: file.fileModified,
       };
@@ -656,127 +663,14 @@ const logFileParserNode: FunctionNodeConfig = {
   columnNames: ['fileName', 'matchId', 'logs', 'fileModified'],
 };
 
-const extractEventType = (type: string, logs: {specName: string; data: object}[]) => logs.filter((log) => log.specName === type)[0]?.data;
-
-const ability_1_used_extractor: FunctionNodeConfig = {
-  name: 'ability_1_used_extractor',
-  type: 'FunctionNode',
-  displayName: 'Ability 1 Used Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ability_1_used', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
-};
-
-const ability_2_used_extractor: FunctionNodeConfig = {
-  name: 'ability_2_used_extractor',
-  type: 'FunctionNode',
-  displayName: 'Ability 2 Used Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ability_2_used', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
-};
-
-const damage_extractor: FunctionNodeConfig = {
-  name: 'damage_extractor',
-  type: 'FunctionNode',
-  displayName: 'Damage Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('damage', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
-};
-
-const defensive_assist_extractor: FunctionNodeConfig = {
-  name: 'defensive_assist_extractor',
-  type: 'FunctionNode',
-  displayName: 'Defensive Assist Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('defensive_assist', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
-};
-
-const dva_demech_extractor: FunctionNodeConfig = {
-  name: 'dva_demech_extractor',
-  type: 'FunctionNode',
-  displayName: 'Dva Demech Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_demech', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
-};
-
-const dva_remech_extractor: FunctionNodeConfig = {
-  name: 'dva_remech_extractor',
-  type: 'FunctionNode',
-  displayName: 'Dva Remech Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_remech', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
-};
-
-const echo_duplicate_end_extractor: FunctionNodeConfig = {
-  name: 'echo_duplicate_end_extractor',
-  type: 'FunctionNode',
-  displayName: 'Echo Duplicate End Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_end', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
-};
-
-const echo_duplicate_start_extractor: FunctionNodeConfig = {
-  name: 'echo_duplicate_start_extractor',
-  type: 'FunctionNode',
-  displayName: 'Echo Duplicate Start Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_start', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
-};
-
-const healing_extractor: FunctionNodeConfig = {
-  name: 'healing_extractor',
-  type: 'FunctionNode',
-  displayName: 'Healing Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('healing', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'healerTeam', 'healerName', 'healerHero', 'healeeTeam', 'healeeName', 'healeeHero', 'eventAbility', 'eventHealing', 'isHealthPack'],
-};
-
-const hero_spawn_extractor: FunctionNodeConfig = {
-  name: 'hero_spawn_extractor',
-  type: 'FunctionNode',
-  displayName: 'Hero Spawn Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('hero_spawn', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
-};
-
-const hero_swap_extractor: FunctionNodeConfig = {
-  name: 'hero_swap_extractor',
-  type: 'FunctionNode',
-  displayName: 'Hero Swap Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('hero_swap', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
-};
-
-const kill_extractor: FunctionNodeConfig = {
-  name: 'kill_extractor',
-  type: 'FunctionNode',
-  displayName: 'Kill Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('kill', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
-};
+// Define the expected structure for match start events
+interface MatchStartEvent {
+  team1Name: string;
+  team2Name: string;
+  mapName: string;
+  matchTime: number;
+  // Add other properties as needed
+}
 
 const match_extractor: FunctionNodeConfig = {
   name: 'match_extractor',
@@ -784,25 +678,22 @@ const match_extractor: FunctionNodeConfig = {
   displayName: 'Match Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) =>
-    (data['log_file_parser'] as {matchId: number; fileName: string; fileModified: number}[]).map((file: {matchId: number; fileName: string; fileModified: number}) => ({
-      matchId: file.matchId,
-      name: file.fileName,
-      fileModified: file.fileModified,
-      dateString: new Date(file.fileModified).toLocaleDateString(),
-      timeString: new Date(file.fileModified).toLocaleTimeString(),
-    })),
-  columnNames: ['matchId', 'name', 'fileModified', 'dateString', 'timeString'],
+  transform: async (data) => (data['log_file_parser'] as LogFileParserOutput[]).map((file) => {
+    const matchId = file.matchId;
+    const name = file.fileName;
+    const fileModified = file.fileModified;
+    const date = new Date(fileModified);
+    const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    const timeString = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    return {matchId, name, fileModified, dateString, timeString};
+  }),
+  columnNames: ['matchId', 'name', 'fileModified', 'dateString', 'timeString']
 };
 
-const match_end_extractor: FunctionNodeConfig = {
-  name: 'match_end_extractor',
-  type: 'FunctionNode',
-  displayName: 'Match End Extractor',
-  outputType: 'Multiple',
-  sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('match_end', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
+
+// Update the extractEventType function to return the correct type
+const extractEventType = (type: string, logs: {specName: string; data: object}[]): MatchStartEvent | undefined => {
+  return logs.find((log) => log.specName === type)?.data as MatchStartEvent;
 };
 
 const match_start_extractor: FunctionNodeConfig = {
@@ -811,18 +702,31 @@ const match_start_extractor: FunctionNodeConfig = {
   displayName: 'Match Start Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('match_start', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file) => {
+    const matchStart = extractEventType('match_start', file.logs);
+    if (matchStart) {
+      const { team1Name, team2Name, mapName, matchTime } = matchStart;
+      const date = new Date(matchTime);
+      const formattedDate = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}`;
+      const matchId = parseInt(`${team1Name.length}${team2Name.length}${mapName.length}${formattedDate}`); // Convert to a number
+      return {
+        matchId,
+        ...matchStart,
+      };
+    }
+    return null;
+  }).filter(Boolean),
   columnNames: ['matchId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name'],
 };
 
-const mercy_rez_extractor: FunctionNodeConfig = {
-  name: 'mercy_rez_extractor',
+const match_end_extractor: FunctionNodeConfig = {
+  name: 'match_end_extractor',
   type: 'FunctionNode',
-  displayName: 'Mercy Rez Extractor',
+  displayName: 'Match End Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('mercy_rez', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility'],
+  transform: async (data: DataNodeInputMap) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('match_end', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
 };
 
 const objective_captured_extractor: FunctionNodeConfig = {
@@ -966,10 +870,141 @@ const ultimate_start_extractor: FunctionNodeConfig = {
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
+const kill_extractor: FunctionNodeConfig = {
+  name: 'kill_extractor',
+  type: 'FunctionNode',
+  displayName: 'Kill Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('kill', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
+};
+
+const damage_extractor: FunctionNodeConfig = {
+  name: 'damage_extractor',
+  type: 'FunctionNode',
+  displayName: 'Damage Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('damage', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
+};
+
+const healing_extractor: FunctionNodeConfig = {
+  name: 'healing_extractor',
+  type: 'FunctionNode',
+  displayName: 'Healing Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('healing', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'healerTeam', 'healerName', 'healerHero', 'healeeTeam', 'healeeName', 'healeeHero', 'eventAbility', 'eventHealing', 'isHealthPack'],
+};
+
+const mercy_rez_extractor: FunctionNodeConfig = {
+  name: 'mercy_rez_extractor',
+  type: 'FunctionNode',
+  displayName: 'Mercy Rez Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('mercy_rez', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility'],
+};
+
+const echo_duplicate_end_extractor: FunctionNodeConfig = {
+  name: 'echo_duplicate_end_extractor',
+  type: 'FunctionNode',
+  displayName: 'Echo Duplicate End Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_end', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
+};
+
+const echo_duplicate_start_extractor: FunctionNodeConfig = {
+  name: 'echo_duplicate_start_extractor',
+  type: 'FunctionNode',
+  displayName: 'Echo Duplicate Start Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_start', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
+};
+
+const dva_demech_extractor: FunctionNodeConfig = {
+  name: 'dva_demech_extractor',
+  type: 'FunctionNode',
+  displayName: 'Dva Demech Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_demech', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
+};
+
+const dva_remech_extractor: FunctionNodeConfig = {
+  name: 'dva_remech_extractor',
+  type: 'FunctionNode',
+  displayName: 'Dva Remech Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_remech', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
+};
+
+const hero_spawn_extractor: FunctionNodeConfig = {
+  name: 'hero_spawn_extractor',
+  type: 'FunctionNode',
+  displayName: 'Hero Spawn Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('hero_spawn', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
+};
+
+const hero_swap_extractor: FunctionNodeConfig = {
+  name: 'hero_swap_extractor',
+  type: 'FunctionNode',
+  displayName: 'Hero Swap Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('hero_swap', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
+};
+
+const ability_1_used_extractor: FunctionNodeConfig = {
+  name: 'ability_1_used_extractor',
+  type: 'FunctionNode',
+  displayName: 'Ability 1 Used Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ability_1_used', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
+};
+
+const ability_2_used_extractor: FunctionNodeConfig = {
+  name: 'ability_2_used_extractor',
+  type: 'FunctionNode',
+  displayName: 'Ability 2 Used Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ability_2_used', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
+};
+
+const defensive_assist_extractor: FunctionNodeConfig = {
+  name: 'defensive_assist_extractor',
+  type: 'FunctionNode',
+  displayName: 'Defensive Assist Extractor',
+  outputType: 'Multiple',
+  sources: ['log_file_parser'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('defensive_assist', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
+};
+
 const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
   logFileInputNode,
   logFileLoaderNode,
   logFileParserNode,
+  match_extractor,
   ability_1_used_extractor,
   ability_2_used_extractor,
   damage_extractor,
@@ -985,7 +1020,6 @@ const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
   match_end_extractor,
   match_start_extractor,
   mercy_rez_extractor,
-  match_extractor,
   objective_captured_extractor,
   offensive_assist_extractor,
   payload_progress_extractor,
@@ -1638,6 +1672,7 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
         ...(data['round_start_object_store'] as RoundStart[]).map((e) => ({...e, type: 'round_start'})),
       ];
 
+      // Define mapTeams with number keys
       const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
         (data['match_start_object_store'] as MatchStart[]).map((match) => [match.matchId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
       );
@@ -1660,6 +1695,7 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
         ...(data['round_start_object_store'] as RoundStart[]).map((e) => ({...e, type: 'round_start'})),
       ];
 
+      // Define mapTeams with number keys
       const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
         (data['match_start_object_store'] as MatchStart[]).map((match) => [match.matchId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
       );
@@ -1670,6 +1706,15 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
     type: 'FunctionNode',
   },
 ];
+
+// Ensure processTeamAdvantageEvents accepts a Map with number keys
+function processTeamAdvantageEvents(
+  events: any[],
+  mapTeams: Map<number, { team1Name: string; team2Name: string }>,
+  config: any
+) {
+  // Implementation of the function
+}
 
 export const initializeDataManager = (dataManager: DataManager) => {
   console.log('Initializing Data Manager');

@@ -1,5 +1,5 @@
 export interface TimelineEvent {
-  matchId: number;
+  matchId: string;
   matchTime: number;
   type: string;
   [key: string]: unknown;
@@ -11,7 +11,7 @@ export interface TeamAdvantageState<T> {
 }
 
 export interface TeamAdvantageResult {
-  matchId: number;
+  matchId: string;
   matchTime: number;
   team1Name: string;
   team2Name: string;
@@ -45,7 +45,7 @@ export interface TeamAdvantageConfig<T> {
 
 }
 
-export function calculateAdvantage(state: TeamAdvantageState<unknown>, team1Name: string, team2Name: string, matchId: number, matchTime: number): TeamAdvantageResult {
+export function calculateAdvantage(state: TeamAdvantageState<unknown>, team1Name: string, team2Name: string, matchId: string, matchTime: number): TeamAdvantageResult {
   const team1Count = state.team1Items.size;
   const team2Count = state.team2Items.size;
   const advantageDiff = team1Count - team2Count;

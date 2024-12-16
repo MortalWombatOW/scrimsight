@@ -51,8 +51,9 @@ const FileLoader: React.FC<FileLoaderProps> = ({ onSubmit }) => {
           border: '2px dashed',
           borderColor: 'primary.main',
           cursor: 'pointer',
-          width: '200px',
-          height: '220px',
+          width: '100%',
+          height: '100px',
+          padding: 4.4,
           // backgroundColor: isDragActive ? '#f0f0f0' : 'white',
           marginBottom: 2,
         }}
@@ -91,14 +92,16 @@ const FileLoader: React.FC<FileLoaderProps> = ({ onSubmit }) => {
       )}
 
       <Grid container justifyContent="flex-end">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit}
-          disabled={stagedFiles.length === 0}
-        >
-          Load {stagedFiles.length} File{stagedFiles.length !== 1 ? 's' : ''}
-        </Button>
+        {stagedFiles.length > 0 && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={stagedFiles.length === 0}
+          >
+            Load {stagedFiles.length} File{stagedFiles.length !== 1 ? 's' : ''}
+          </Button>
+        )}
       </Grid>
     </Box>
   );

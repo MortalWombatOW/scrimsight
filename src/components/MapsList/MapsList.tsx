@@ -4,13 +4,12 @@ import { MatchEnd, MatchStart } from '../../WombatDataFrameworkSchema';
 import { mapNameToFileName } from '../../lib/string';
 // import {useNavigate} from 'react-router-dom';
 import './MapsList.scss';
-import Uploader from '~/components/Uploader/Uploader';
 import FileLoader from '~/components/FileLoader/FileLoader';
 
-const MapRow = ({ matchId }: { matchId: number }) => {
+const MapRow = ({ matchId }: { matchId: string }) => {
   // const navigate = useNavigate();
 
-  const matchData = useWombatData<{ name: string, timeString: string, matchId: number }>('match_object_store');
+  const matchData = useWombatData<{ name: string, timeString: string, matchId: string }>('match_object_store');
   const matchStartData = useWombatData<MatchStart>('match_start_object_store');
   const matchEndData = useWombatData<MatchEnd>('match_end_object_store');
 
@@ -93,26 +92,28 @@ const MapRow = ({ matchId }: { matchId: number }) => {
 const MatchList = () => {
   const dataManager = useWombatDataManager();
 
-  const matchesByDate = useWombatData<{ dateString: string; matchIds: number[] }>('matches_grouped_by_date');
+  const matchesByDate = useWombatData<{ dateString: string; matchIds: string[] }>('matches_grouped_by_date');
 
   console.log('matchesByDate', matchesByDate.data);
 
-  if (matchesByDate.data.length === 0) {
-    return null;
-  }
+  // if (matchesByDate.data.length === 0) {
+  //   return null;
+  // }
 
   return (
     <>
       <CardContent>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Typography variant="h3" gutterBottom>Matches</Typography></div>
-        {matchesByDate.data.map((dateMatches, dateIndex) => (
+        <FileLoader onSubmit={(files) => {
+          dataManager.setInputForInputNode('log_file_input', files);
+        }} />
+        {matchesByDate.data.map((dateMatches) => (
           <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', gap: 2 }}>
             <Typography variant="h4" gutterBottom>{dateMatches.dateString}</Typography>
+
             <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
-              {dateIndex === 0 && <FileLoader onSubmit={(files) => {
-                dataManager.setInputForInputNode('log_file_input', files);
-              }} />}
+
               {dateMatches.matchIds.map((matchId, index) => (
 
                 index < 3 && (

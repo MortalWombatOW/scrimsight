@@ -1,6 +1,6 @@
 import React from 'react';
-import {Card, CardContent, Typography} from '@mui/material';
-import {useWombatData} from 'wombat-data-framework';
+import { Card, CardContent, Typography } from '@mui/material';
+import { useWombatData } from 'wombat-data-framework';
 import './PlayerList.scss';
 
 interface PlayerStats {
@@ -9,7 +9,7 @@ interface PlayerStats {
   playerRole: string;
 }
 
-const PlayerRow = ({playerName, matchCount, playerRole}: PlayerStats) => {
+const PlayerRow = ({ playerName, matchCount, playerRole }: PlayerStats) => {
   return (
     <Card
       sx={{
@@ -48,7 +48,7 @@ const PlayerRow = ({playerName, matchCount, playerRole}: PlayerStats) => {
 };
 
 const PlayerList = () => {
-  const playerStatData = useWombatData<{playerName: string; playerRole: string; matchId: number}>('player_stat_expanded');
+  const playerStatData = useWombatData<{ playerName: string; playerRole: string; matchId: string }>('player_stat_expanded');
 
   // Process the data to count unique matches per player
   const playerStats = React.useMemo(() => {

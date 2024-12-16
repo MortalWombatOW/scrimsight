@@ -1,7 +1,7 @@
 import {useWombatDataManager, useWombatDataNode} from 'wombat-data-framework';
 import {MatchStart, MapTimes, PlayerEvent, PlayerInteractionEvent, UltimateEvent, RoundTimes, TimelineData, TeamAdvantageData} from '../types/timeline.types';
 
-export const useTimelineData = (matchId: number): TimelineData | null => {
+export const useTimelineData = (matchId: string): TimelineData | null => {
   const dataManager = useWombatDataManager();
   const tick = dataManager.getTick();
 

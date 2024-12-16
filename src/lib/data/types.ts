@@ -39,7 +39,7 @@ type RenderState = {
 };
 
 type GameStateTimeSlice = {
-  matchId: number;
+  matchId: string;
   timestamp: number;
   players: {
     name: string;

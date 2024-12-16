@@ -34,7 +34,7 @@ const parseTimestampString = (timestampStr: string): number => {
   return hours * 3600 + minutes * 60 + seconds;
 };
 
-const parseLine = (line: string, matchId: number): DataAndSpecName => {
+const parseLine = (line: string, matchId: string): DataAndSpecName => {
   const values = line.trim().split(',');
   const timestampStr = values[0];
   const eventType = values[1];
@@ -68,9 +68,9 @@ const parseLine = (line: string, matchId: number): DataAndSpecName => {
 };
 
 export const parseFile = (fileContent: string) => {
-  const hash = stringHash(fileContent);
+  const matchId = stringHash(fileContent).toString();
   const lines = fileContent.split('\n').filter((l) => l.length > 0);
-  const parsedData: DataAndSpecName[] = lines.map((line) => parseLine(line, hash));
+  const parsedData: DataAndSpecName[] = lines.map((line) => parseLine(line, matchId));
 
   // Group by specName
   const groupedData: DataAndSpecName[] = [];
@@ -84,6 +84,6 @@ export const parseFile = (fileContent: string) => {
 
   return {
     logs: groupedData,
-    matchId: hash,
+    matchId,
   };
 };
