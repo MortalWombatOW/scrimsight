@@ -9,7 +9,8 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import { Intent } from "~/Widget";
-import { useWombatData } from "wombat-data-framework";
+import { useWombatData, useWombatDataManager } from "wombat-data-framework";
+import { PlayerMetrics } from "~/WombatDataFrameworkSchema";
 
 interface IntentControlsProps {
   intent: Intent;
@@ -21,7 +22,7 @@ interface IntentControlsProps {
     modes: OverwatchMode[];
     teams: string[];
     heroes: OverwatchHero[];
-    metrics: string[];
+    metrics: (keyof PlayerMetrics)[];
   };
   size?: 'small' | 'large';
 }
@@ -76,9 +77,12 @@ const IntentControls: React.FC<IntentControlsProps> = ({
 
   const hasMap = intent.matchId !== undefined;
   const hasDate = intent.date !== undefined;
+
+  const dataManager = useWombatDataManager();
+
   const hasTime = intent.time !== undefined;
 
-  const matchData = useWombatData<{ dateString: string }>('match_object_store');
+  const matchData = useWombatData<MatchFileInfo>('match_object_store');
 
   const endDate = Math.ceil(new Date().getTime() / (1000 * 60 * 60 * 24));
 
@@ -151,11 +155,13 @@ const IntentControls: React.FC<IntentControlsProps> = ({
       <IconAutocomplete
         options={possibleValues.metrics}
         selected={intent.metric || []}
-        onChange={(value) => updateIntent('metric', value)}
+        onChange={(value) => updateIntent('metric', value as (keyof PlayerMetrics)[])}
         icon={<ShowChartIcon />}
         label="Metrics"
         noOptionsText="No metrics found"
         size={size}
+        optionLabel={(option) => dataManager.getColumn(option).displayName}
+        optionSubLabel={(option) => dataManager.getColumn(option).description}
       />
 
 

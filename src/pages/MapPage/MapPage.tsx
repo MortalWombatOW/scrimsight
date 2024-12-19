@@ -5,7 +5,7 @@ import ChordDiagram from '../../components/ChordDiagram/ChordDiagram';
 import { Box } from '@mui/material';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 import { mapNameToFileName } from '../../lib/string';
-import { MatchStart, MatchEnd } from '../../WombatDataFrameworkSchema';
+import { MatchStartLogEvent, MatchEndLogEvent } from '../../WombatDataFrameworkSchema';
 import { useWombatData } from 'wombat-data-framework';
 
 const MapPage = () => {
@@ -16,8 +16,8 @@ const MapPage = () => {
 
   console.log('matchId', matchId, tab);
 
-  const { mapName, mapType, team1Name, team2Name } = useWombatData<MatchStart>('match_start_object_store', { initialFilter: { matchId } }).data[0];
-  const { team1Score, team2Score } = useWombatData<MatchEnd>('match_end_object_store', { initialFilter: { matchId } }).data[0];
+  const { mapName, mapType, team1Name, team2Name } = useWombatData<MatchStartLogEvent>('match_start_object_store', { initialFilter: { matchId } }).data[0];
+  const { team1Score, team2Score } = useWombatData<MatchEndLogEvent>('match_end_object_store', { initialFilter: { matchId } }).data[0];
   const { name, fileModified } = useWombatData<{ matchId: string; name: string; fileModified: number }>('match_object_store', { initialFilter: { matchId } }).data[0];
 
   return (

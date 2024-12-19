@@ -6,6 +6,7 @@ import { WidgetBidder, Intent, WidgetBid, intentSimilarity } from "./Widget";
 import WelcomeWidgetBidder from "~/bidders/WelcomeWidgetBidder";
 import MatchListBidder from "~/bidders/MatchListBidder";
 import ChordDiagramWidgetBidder from "~/bidders/ChordDiagramWidgetBidder";
+import BarChartBidder from "~/bidders/BarChartBidder";
 
 type ScoredWidgetBid = WidgetBid & {
   score: number;
@@ -18,6 +19,7 @@ class WidgetRegistry {
     WelcomeWidgetBidder,
     MatchListBidder,
     ChordDiagramWidgetBidder,
+    BarChartBidder,
   ];
 
   getBids(intent: Intent): WidgetBid[] {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useWombatData, useWombatDataManager } from 'wombat-data-framework';
 import { getColorgorical } from '../../lib/color';
-import { MatchEnd, MatchStart } from '../../WombatDataFrameworkSchema';
+import { MatchEndLogEvent, MatchStartLogEvent } from '../../WombatDataFrameworkSchema';
 import { PathTooltip } from 'react-path-tooltip'; // import the package
 import useWindowSize from '../../hooks/useWindowSize';
 import { Card, CardContent, Container } from '@mui/material';
@@ -255,7 +255,6 @@ const Chord: React.FC<{
 
 const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   const dataManager = useWombatDataManager();
-  const [chordData, setChordData] = useState<ChordDataEntry[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
   // const [team1Name, setTeam1Name] = useState<string>('');
   // const [team2Name, setTeam2Name] = useState<string>('');
@@ -263,75 +262,16 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   // const [team2Players, setTeam2Players] = useState<string[]>([]);
   // const [playerRoleMap, setPlayerRoleMap] = useState<{ [playerName: string]: string }>({});
 
-  const matchData = useWombatData<{ name: string, timeString: string, matchId: string }>('match_object_store');
-  const matchStartData = useWombatData<MatchStart>('match_start_object_store');
-  const matchEndData = useWombatData<MatchEnd>('match_end_object_store');
+  const matchData = useWombatData<{ name: string, timeString: string, matchId: string }>('match_object_store', { initialFilter: { matchId } });
+  const matchStartData = useWombatData<MatchStartLogEvent>('match_start_object_store', { initialFilter: { matchId } });
+  const matchEndData = useWombatData<MatchEndLogEvent>('match_end_object_store', { initialFilter: { matchId } });
+  const playerInteractionEventsData = useWombatData<PlayerInteractionEvent>('player_interaction_events', { initialFilter: { matchId } });
 
 
   const { mapName, team1Name, team2Name } = matchStartData.data.find((row) => row['matchId'] === matchId) || { mapName: '', mapType: '', team1Name: '', team2Name: '' };
 
-  console.log('team1Name', team1Name);
-  console.log('team2Name', team2Name);
-  console.log('team1Players', team1Players);
-  console.log('team2Players', team2Players);
-  console.log('playerRoleMap', playerRoleMap);
-  console.log('chordData', chordData);
 
-  useEffect(() => {
-    const fetchDataAndTransform = async () => {
-      if (!dataManager.hasNodeOutput('player_stat_expanded') || !dataManager.hasNodeOutput('player_interaction_events') || !dataManager.hasNodeOutput('match_start_object_store')) {
-        return;
-      }
-      const matchStart = dataManager
-        .getNode('match_start_object_store')!
-        .getOutput<MatchStart[]>()
-        .filter((row) => row['matchId'] === matchId)[0];
-      setTeam1Name(matchStart.team1Name);
-      setTeam2Name(matchStart.team2Name);
-
-      const teamData = dataManager
-        .getNode('player_stat_expanded')!
-        .getOutput<Record<string, unknown>[]>()
-        .filter((row) => row['matchId'] === matchId);
-
-      const playerRoleMap: { [playerName: string]: string } = {};
-      teamData.forEach((row) => {
-        playerRoleMap[row['playerName'] as string] = row['playerRole'] as string;
-      });
-      setPlayerRoleMap(playerRoleMap);
-      const roleScore = (role: string) => {
-        if (role === 'tank') {
-          return 1;
-        }
-        if (role === 'damage') {
-          return 2;
-        }
-        if (role === 'support') {
-          return 3;
-        }
-        return 0;
-      };
-
-      const team1Players = Array.from(new Set(teamData.filter((row) => row['playerTeam'] === matchStart.team1Name).map((row) => row['playerName'] as string))).sort(
-        (a, b) => roleScore(playerRoleMap[b]) - roleScore(playerRoleMap[a]),
-      );
-      const team2Players = Array.from(new Set(teamData.filter((row) => row['playerTeam'] === matchStart.team2Name).map((row) => row['playerName'] as string))).sort(
-        (a, b) => roleScore(playerRoleMap[a]) - roleScore(playerRoleMap[b]),
-      );
-
-      setTeam1Players(team1Players);
-      setTeam2Players(team2Players);
-      const data = dataManager
-        .getNode('player_interaction_events')!
-        .getOutput<PlayerInteractionEvent[]>()
-        .filter((row) => row['matchId'] === matchId);
-
-      const transformedData = transformDataToChordFormat(data);
-      setChordData(transformedData);
-    };
-
-    fetchDataAndTransform();
-  }, [dataManager, matchId]);
+  const chordData = transformDataToChordFormat(playerInteractionEventsData.data);
 
   const { width } = useWindowSize();
 

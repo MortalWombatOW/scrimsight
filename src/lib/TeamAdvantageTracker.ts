@@ -62,7 +62,7 @@ export function calculateAdvantage(state: TeamAdvantageState<unknown>, team1Name
   };
 }
 
-export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams: Map<number, {team1Name: string; team2Name: string}>, config: TeamAdvantageConfig<T>): TeamAdvantageResult[] {
+export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams: Map<string, {team1Name: string; team2Name: string}>, config: TeamAdvantageConfig<T>): TeamAdvantageResult[] {
   const results: TeamAdvantageResult[] = [];
   const state: TeamAdvantageState<T> = {
     team1Items: new Set<T>(),
@@ -70,7 +70,7 @@ export function processTeamAdvantageEvents<T>(events: TimelineEvent[], mapTeams:
   };
 
   // Group events by map
-  const mapGroups = new Map<number, TimelineEvent[]>();
+  const mapGroups = new Map<string, TimelineEvent[]>();
   for (const event of events) {
     const events = mapGroups.get(event.matchId) || [];
     events.push(event);

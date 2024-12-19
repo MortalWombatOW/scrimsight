@@ -1,6 +1,6 @@
-import { Card, CardMedia, CardContent, Box, Typography, ButtonBase } from '@mui/material';
+import { Card, CardMedia, CardContent, Box, Typography, ButtonBase, Button } from '@mui/material';
 import { useWombatData, useWombatDataManager } from 'wombat-data-framework';
-import { MatchEnd, MatchStart } from '../../WombatDataFrameworkSchema';
+import { MatchEndLogEvent, matches_grouped_by_date_node, MatchesGroupedByDateNodeData, MatchStartLogEvent } from '../../WombatDataFrameworkSchema';
 import { mapNameToFileName } from '../../lib/string';
 // import {useNavigate} from 'react-router-dom';
 import './MapsList.scss';
@@ -10,14 +10,18 @@ const MapRow = ({ matchId }: { matchId: string }) => {
   // const navigate = useNavigate();
 
   const matchData = useWombatData<{ name: string, timeString: string, matchId: string }>('match_object_store');
-  const matchStartData = useWombatData<MatchStart>('match_start_object_store');
-  const matchEndData = useWombatData<MatchEnd>('match_end_object_store');
+  const matchStartData = useWombatData<MatchStartLogEvent>('match_start_object_store');
+  const matchEndData = useWombatData<MatchEndLogEvent>('match_end_object_store');
 
   if (matchStartData.data.length === 0 || matchEndData.data.length === 0 || matchData.data.length === 0) {
     return null;
   }
 
-  const { mapName, team1Name, team2Name } = matchStartData.data.find((row) => row['matchId'] === matchId) || { mapName: '', mapType: '', team1Name: '', team2Name: '' };
+  console.log('matchStartData', matchStartData.data);
+  console.log('matchEndData', matchEndData.data);
+  console.log('matchData', matchData.data);
+
+  const { mapName, mapType, team1Name, team2Name } = matchStartData.data.find((row) => row['matchId'] === matchId) || { mapName: 'loading', mapType: 'loading', team1Name: 'loading', team2Name: 'loading' };
   const { team1Score, team2Score } = matchEndData.data.find((row) => row['matchId'] === matchId) || { team1Score: 0, team2Score: 0 };
   const { timeString } = matchData.data.find((row) => row['matchId'] === matchId) || { name: '', timeString: '' };
 
@@ -49,22 +53,13 @@ const MapRow = ({ matchId }: { matchId: string }) => {
         borderColor: 'info.main',
         borderWidth: 1,
         borderStyle: 'solid',
-        transition: 'all 0.2s ease-in-out'
+        transition: 'all 0.2s ease-in-out',
+        background: `linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(${mapNameToFileName(mapName, false)})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top'
       }}>
         <CardContent>
-          <Typography variant="h5" gutterBottom>{mapName}</Typography>
-          <Typography variant="h6" gutterBottom>{timeString}</Typography>
-        </CardContent>
-
-        <CardMedia
-          component="img"
-          image={mapNameToFileName(mapName, false)}
-          alt={mapName}
-          sx={{ borderRadius: 1 }}
-        />
-
-        <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Typography variant="h5" gutterBottom>
                 {team1Name}
@@ -83,6 +78,8 @@ const MapRow = ({ matchId }: { matchId: string }) => {
               </Typography>
             </Box>
           </Box>
+          <Typography variant="h5" gutterBottom>{mapName} - {mapType}</Typography>
+          <Typography variant="h6">{timeString}</Typography>
         </CardContent>
       </Card>
     </ButtonBase>
@@ -92,7 +89,7 @@ const MapRow = ({ matchId }: { matchId: string }) => {
 const MatchList = () => {
   const dataManager = useWombatDataManager();
 
-  const matchesByDate = useWombatData<{ dateString: string; matchIds: string[] }>('matches_grouped_by_date');
+  const matchesByDate = useWombatData<MatchesGroupedByDateNodeData>(matches_grouped_by_date_node.name);
 
   console.log('matchesByDate', matchesByDate.data);
 
@@ -108,8 +105,11 @@ const MatchList = () => {
         <FileLoader onSubmit={(files) => {
           dataManager.setInputForInputNode('log_file_input', files);
         }} />
+        <Button variant="contained" color="primary">
+          See All Matches
+        </Button>
         {matchesByDate.data.map((dateMatches) => (
-          <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', gap: 2 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', gap: 2, marginTop: 10 }}>
             <Typography variant="h4" gutterBottom>{dateMatches.dateString}</Typography>
 
             <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
@@ -124,6 +124,7 @@ const MatchList = () => {
             </div>
           </div>
         ))}
+
       </CardContent>
     </>
   );

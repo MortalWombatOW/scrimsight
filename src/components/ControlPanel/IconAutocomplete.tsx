@@ -1,4 +1,4 @@
-import { Autocomplete, Checkbox, Chip, TextField } from "@mui/material";
+import { Autocomplete, Box, Checkbox, Chip, TextField, Typography } from "@mui/material";
 
 
 interface IconAutocompleteProps {
@@ -9,16 +9,18 @@ interface IconAutocompleteProps {
   noOptionsText: string;
   label: string;
   size?: 'small' | 'large';
+  optionLabel?: (option: string) => string;
+  optionSubLabel?: (option: string) => string;
 }
 
-const IconAutocomplete: React.FC<IconAutocompleteProps> = ({options, selected, onChange, icon, noOptionsText, label, size}) => {
+const IconAutocomplete: React.FC<IconAutocompleteProps> = ({ options, selected, onChange, icon, noOptionsText, label, size, optionLabel, optionSubLabel }) => {
   return (<Autocomplete
     style={{ width: '100%', minWidth: size === 'large' ? 300 : 200, maxWidth: size === 'large' ? 500 : 300 }}
     size={size === 'large' ? 'medium' : 'small'}
     multiple
-    getOptionLabel={(option) =>
-      String(option)
-    }
+    // getOptionLabel={(option) =>
+    //   optionLabel ? optionLabel(option) : String(option)
+    // }
     // filterOptions={(x) => x}
     options={options}
     autoComplete
@@ -39,7 +41,14 @@ const IconAutocomplete: React.FC<IconAutocompleteProps> = ({options, selected, o
             style={{ marginRight: 8 }}
             checked={selected}
           />
-          {option}
+          <Box>
+            <Typography variant="body1">
+              {optionLabel ? optionLabel(option) : option}
+            </Typography>
+            <Typography variant="body2">
+              {optionSubLabel ? optionSubLabel(option) : null}
+            </Typography>
+          </Box>
         </li>
       );
     }}
@@ -67,7 +76,7 @@ const IconAutocomplete: React.FC<IconAutocompleteProps> = ({options, selected, o
       value.map((option: string, index: number) => {
         const { key, ...tagProps } = getTagProps({ index });
         return (
-          <Chip variant="outlined" label={option} key={key} {...tagProps} />
+          <Chip variant="outlined" label={optionLabel ? optionLabel(option) : option} key={key} {...tagProps} />
         );
       })
     }

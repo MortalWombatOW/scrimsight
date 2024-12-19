@@ -1,3 +1,4 @@
+import { PlayerMetrics } from "~/WombatDataFrameworkSchema";
 import { OverwatchHero, OverwatchRole } from "./lib/data/hero";
 
 type OverwatchMap = string; // TODO: enum
@@ -12,7 +13,7 @@ export interface Intent {
   mode?: OverwatchMode[]; // A list of modes. Unset means not caring about modes.
   team?: string[]; // A list of teams, or "*" for any team. Unset means not caring about teams.
   hero?: OverwatchHero[]; // A list of heroes. Unset means not caring about heroes.
-  metric?: string[]; // A list of metrics. Unset means not caring about metrics.
+  metric?: (keyof PlayerMetrics)[]; // A list of metrics. Unset means not caring about metrics.
   time?: [number, number]; // A time range in seconds. Unset means not caring about times.
   date?: [string, string]; // A date range in YYYY-MM-DD format. Unset means not caring about dates.
 }

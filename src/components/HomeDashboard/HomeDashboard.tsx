@@ -7,6 +7,7 @@ import { OverwatchHero, OverwatchMap, OverwatchMode } from '~/lib/data/hero';
 import { useMemo, useState } from 'react';
 import { useWombatDataNode } from 'wombat-data-framework';
 import { Card, CardContent, CardHeader } from '@mui/material';
+import { PLAYER_METRICS } from '~/WombatDataFrameworkSchema';
 
 
 const Outline: React.FC<{ intent: Intent }> = ({ intent }) => {
@@ -39,7 +40,7 @@ const HomeDashboard = () => {
     modes: modesNode?.getOutput<{ mapType: OverwatchMode }[]>()?.map(mode => mode.mapType) ?? [],
     teams: teamNamesNode?.getOutput<{ teamName: string }[]>()?.map(team => team.teamName) ?? [],
     heroes: ['Ana', 'Ashe', 'Baptiste'] as OverwatchHero[],
-    metrics: ['Damage Done', 'Healing Done', 'Eliminations'],
+    metrics: PLAYER_METRICS,
   };
 
   return (

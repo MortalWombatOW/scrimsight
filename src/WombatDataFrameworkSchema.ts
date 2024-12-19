@@ -28,6 +28,7 @@ import {
 } from 'wombat-data-framework';
 import {parseFile, readFileAsync} from './lib/data/uploadfile';
 import {INDEXED_DB_NODE_NAME, IndexedDBNodeConfig} from 'wombat-data-framework';
+import { stringHash } from '~/lib/string';
 
 interface BaseEvent {
   matchId: string;
@@ -35,20 +36,20 @@ interface BaseEvent {
   matchTime: number;
 }
 
-export interface MatchStart extends BaseEvent {
+export interface MatchStartLogEvent extends BaseEvent {
   mapName: string;
   mapType: string;
   team1Name: string;
   team2Name: string;
 }
 
-export interface MatchEnd extends BaseEvent {
+export interface MatchEndLogEvent extends BaseEvent {
   roundNumber: number;
   team1Score: number;
   team2Score: number;
 }
 
-export interface RoundStart extends BaseEvent {
+export interface RoundStartLogEvent extends BaseEvent {
   roundNumber: number;
   capturingTeam: string;
   team1Score: number;
@@ -56,7 +57,7 @@ export interface RoundStart extends BaseEvent {
   objectiveIndex: number;
 }
 
-export interface RoundEnd extends BaseEvent {
+export interface RoundEndLogEvent extends BaseEvent {
   roundNumber: number;
   capturingTeam: string;
   team1Score: number;
@@ -67,12 +68,12 @@ export interface RoundEnd extends BaseEvent {
   matchTimeRemaining: number;
 }
 
-export interface SetupComplete extends BaseEvent {
+export interface SetupCompleteLogEvent extends BaseEvent {
   roundNumber: number;
   matchTimeRemaining: number;
 }
 
-export interface ObjectiveCaptured extends BaseEvent {
+export interface ObjectiveCapturedLogEvent extends BaseEvent {
   roundNumber: number;
   capturingTeam: string;
   objectiveIndex: number;
@@ -81,21 +82,21 @@ export interface ObjectiveCaptured extends BaseEvent {
   matchTimeRemaining: number;
 }
 
-export interface PointProgress extends BaseEvent {
+export interface PointProgressLogEvent extends BaseEvent {
   roundNumber: number;
   capturingTeam: string;
   objectiveIndex: number;
   pointCaptureProgress: number;
 }
 
-export interface PayloadProgress extends BaseEvent {
+export interface PayloadProgressLogEvent extends BaseEvent {
   roundNumber: number;
   capturingTeam: string;
   objectiveIndex: number;
   payloadCaptureProgress: number;
 }
 
-export interface HeroSpawn extends BaseEvent {
+export interface HeroSpawnLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
@@ -103,7 +104,7 @@ export interface HeroSpawn extends BaseEvent {
   heroTimePlayed: number;
 }
 
-export interface HeroSwap extends BaseEvent {
+export interface HeroSwapLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
@@ -111,43 +112,35 @@ export interface HeroSwap extends BaseEvent {
   heroTimePlayed: number;
 }
 
-export interface Ability1Used extends BaseEvent {
+export interface Ability1UsedLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
   heroDuplicated: string;
 }
 
-export interface Ability2Used extends BaseEvent {
+export interface Ability2UsedLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
   heroDuplicated: string;
 }
 
-export interface OffensiveAssist extends BaseEvent {
+export interface OffensiveAssistLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
   heroDuplicated: string;
 }
 
-export interface DefensiveAssist extends BaseEvent {
+export interface DefensiveAssistLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
   heroDuplicated: string;
 }
 
-export interface UltimateCharged extends BaseEvent {
-  playerTeam: string;
-  playerName: string;
-  playerHero: string;
-  heroDuplicated: string;
-  ultimateId: number;
-}
-
-export interface UltimateStart extends BaseEvent {
+export interface UltimateChargedLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
@@ -155,7 +148,7 @@ export interface UltimateStart extends BaseEvent {
   ultimateId: number;
 }
 
-export interface UltimateEnd extends BaseEvent {
+export interface UltimateStartLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
@@ -163,7 +156,15 @@ export interface UltimateEnd extends BaseEvent {
   ultimateId: number;
 }
 
-export interface Kill extends BaseEvent {
+export interface UltimateEndLogEvent extends BaseEvent {
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+  ultimateId: number;
+}
+
+export interface KillLogEvent extends BaseEvent {
   attackerTeam: string;
   attackerName: string;
   attackerHero: string;
@@ -176,7 +177,7 @@ export interface Kill extends BaseEvent {
   isEnvironmental: boolean;
 }
 
-export interface Damage extends BaseEvent {
+export interface DamageLogEvent extends BaseEvent {
   attackerTeam: string;
   attackerName: string;
   attackerHero: string;
@@ -189,7 +190,7 @@ export interface Damage extends BaseEvent {
   isEnvironmental: boolean;
 }
 
-export interface Healing extends BaseEvent {
+export interface HealingLogEvent extends BaseEvent {
   healerTeam: string;
   healerName: string;
   healerHero: string;
@@ -201,7 +202,7 @@ export interface Healing extends BaseEvent {
   isHealthPack: boolean;
 }
 
-export interface MercyRez extends BaseEvent {
+export interface MercyRezLogEvent extends BaseEvent {
   mercyTeam: string;
   mercyName: string;
   revivedTeam: string;
@@ -210,7 +211,7 @@ export interface MercyRez extends BaseEvent {
   eventAbility: string;
 }
 
-export interface EchoDuplicateStart extends BaseEvent {
+export interface EchoDuplicateStartLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
@@ -218,14 +219,14 @@ export interface EchoDuplicateStart extends BaseEvent {
   ultimateId: number;
 }
 
-export interface EchoDuplicateEnd extends BaseEvent {
+export interface EchoDuplicateEndLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
   ultimateId: number;
 }
 
-export interface DvaDemech extends BaseEvent {
+export interface DvaDemechLogEvent extends BaseEvent {
   attackerTeam: string;
   attackerName: string;
   attackerHero: string;
@@ -238,14 +239,14 @@ export interface DvaDemech extends BaseEvent {
   isEnvironmental: boolean;
 }
 
-export interface DvaRemech extends BaseEvent {
+export interface DvaRemechLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
   ultimateId: number;
 }
 
-export interface RemechCharged extends BaseEvent {
+export interface RemechChargedLogEvent extends BaseEvent {
   playerTeam: string;
   playerName: string;
   playerHero: string;
@@ -253,7 +254,7 @@ export interface RemechCharged extends BaseEvent {
   ultimateId: number;
 }
 
-export interface PlayerStat extends BaseEvent {
+export interface PlayerStatLogEvent extends BaseEvent {
   roundNumber: number;
   playerTeam: string;
   playerName: string;
@@ -606,7 +607,10 @@ const indexedDbNode: IndexedDBNodeConfig = {
   objectStores: [],
 };
 
-const logFileInputNode: InputNodeConfig = {
+interface LogFileInputNodeData {
+  file: File;
+}
+const logFileInputNode: InputNodeConfig<LogFileInputNodeData> = {
   name: 'log_file_input',
   type: 'InputNode',
   displayName: 'Log File Input',
@@ -620,7 +624,7 @@ interface LogFileLoaderOutput {
   fileModified: number;
   fileContent: string;
 }
-const logFileLoaderNode: FunctionNodeConfig = {
+const logFileLoaderNode: FunctionNodeConfig<LogFileLoaderOutput> = {
   name: 'log_file_loader',
   type: 'FunctionNode',
   displayName: 'Log File Loader',
@@ -634,17 +638,17 @@ const logFileLoaderNode: FunctionNodeConfig = {
       fileContent: content,
     }));
   },
-  columnNames: ['fileName', 'fileContent'],
+  columnNames: ['fileName', 'fileContent', 'fileModified'],
 };
 
 interface LogFileParserOutput {
   fileName: string;
-  matchId: number;
+  matchId: string;
   logs: {specName: string; data: object}[];
   fileModified: number;
 }
 
-const logFileParserNode: FunctionNodeConfig = {
+const logFileParserNode: FunctionNodeConfig<LogFileParserOutput> = {
   name: 'log_file_parser',
   type: 'FunctionNode',
   displayName: 'Log File Parser',
@@ -655,7 +659,7 @@ const logFileParserNode: FunctionNodeConfig = {
       const {logs} = parseFile(file.fileContent);
       return {
         fileName: file.fileName,
-        matchId: file.fileName,
+        matchId: stringHash(file.fileContent).toString(),
         logs,
         fileModified: file.fileModified,
       };
@@ -663,16 +667,15 @@ const logFileParserNode: FunctionNodeConfig = {
   columnNames: ['fileName', 'matchId', 'logs', 'fileModified'],
 };
 
-// Define the expected structure for match start events
-interface MatchStartEvent {
-  team1Name: string;
-  team2Name: string;
-  mapName: string;
-  matchTime: number;
-  // Add other properties as needed
+export interface MatchFileInfo {
+  matchId: string;
+  name: string;
+  fileModified: number;
+  dateString: string;
+  timeString: string;
 }
 
-const match_extractor: FunctionNodeConfig = {
+const match_extractor: FunctionNodeConfig<MatchFileInfo> = {
   name: 'match_extractor',
   type: 'FunctionNode',
   displayName: 'Match Extractor',
@@ -692,80 +695,73 @@ const match_extractor: FunctionNodeConfig = {
 
 
 // Update the extractEventType function to return the correct type
-const extractEventType = (type: string, logs: {specName: string; data: object}[]): MatchStartEvent | undefined => {
-  return logs.find((log) => log.specName === type)?.data as MatchStartEvent;
+const extractEventType = <T extends BaseEvent>(type: string, logs: {specName: string; data: object}[]): T[]=> {
+  const log = logs.find((log) => log.specName === type);
+  if (log === undefined) {
+    return [];
+  }
+  return log.data as T[];
 };
 
-const match_start_extractor: FunctionNodeConfig = {
+
+
+const match_start_extractor: FunctionNodeConfig<MatchStartLogEvent> = {
   name: 'match_start_extractor',
   type: 'FunctionNode',
   displayName: 'Match Start Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file) => {
-    const matchStart = extractEventType('match_start', file.logs);
-    if (matchStart) {
-      const { team1Name, team2Name, mapName, matchTime } = matchStart;
-      const date = new Date(matchTime);
-      const formattedDate = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}`;
-      const matchId = parseInt(`${team1Name.length}${team2Name.length}${mapName.length}${formattedDate}`); // Convert to a number
-      return {
-        matchId,
-        ...matchStart,
-      };
-    }
-    return null;
-  }).filter(Boolean),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file) => extractEventType<MatchStartLogEvent>('match_start', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name'],
 };
 
-const match_end_extractor: FunctionNodeConfig = {
+const match_end_extractor: FunctionNodeConfig<MatchEndLogEvent> = {
   name: 'match_end_extractor',
   type: 'FunctionNode',
   displayName: 'Match End Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data: DataNodeInputMap) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('match_end', file.logs)),
+  transform: async (data: DataNodeInputMap) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<MatchEndLogEvent>('match_end', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
 };
 
-const objective_captured_extractor: FunctionNodeConfig = {
+const objective_captured_extractor: FunctionNodeConfig<ObjectiveCapturedLogEvent> = {
   name: 'objective_captured_extractor',
   type: 'FunctionNode',
   displayName: 'Objective Captured Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('objective_captured', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<ObjectiveCapturedLogEvent>('objective_captured', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
 };
 
-const offensive_assist_extractor: FunctionNodeConfig = {
+const offensive_assist_extractor: FunctionNodeConfig<OffensiveAssistLogEvent> = {
   name: 'offensive_assist_extractor',
   type: 'FunctionNode',
   displayName: 'Offensive Assist Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('offensive_assist', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<OffensiveAssistLogEvent>('offensive_assist', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
-const payload_progress_extractor: FunctionNodeConfig = {
+const payload_progress_extractor: FunctionNodeConfig<PayloadProgressLogEvent> = {
   name: 'payload_progress_extractor',
   type: 'FunctionNode',
   displayName: 'Payload Progress Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('payload_progress', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<PayloadProgressLogEvent>('payload_progress', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress'],
 };
 
-const player_stat_extractor: FunctionNodeConfig = {
+const player_stat_extractor: FunctionNodeConfig<PlayerStatLogEvent> = {
   name: 'player_stat_extractor',
   type: 'FunctionNode',
   displayName: 'Player Stat Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('player_stat', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<PlayerStatLogEvent>('player_stat', file.logs)),
   columnNames: [
     'matchId',
     'type',
@@ -790,27 +786,27 @@ const player_stat_extractor: FunctionNodeConfig = {
   ],
 };
 
-const point_progress_extractor: FunctionNodeConfig = {
+const point_progress_extractor: FunctionNodeConfig<PointProgressLogEvent> = {
   name: 'point_progress_extractor',
   type: 'FunctionNode',
   displayName: 'Point Progress Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('point_progress', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<PointProgressLogEvent>('point_progress', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress'],
 };
 
-const remech_charged_extractor: FunctionNodeConfig = {
+const remech_charged_extractor: FunctionNodeConfig<RemechChargedLogEvent> = {
   name: 'remech_charged_extractor',
   type: 'FunctionNode',
   displayName: 'Remech Charged Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('remech_charged', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<RemechChargedLogEvent>('remech_charged', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
-const round_end_extractor: FunctionNodeConfig = {
+const round_end_extractor: FunctionNodeConfig<RoundEndLogEvent> = {
   name: 'round_end_extractor',
   type: 'FunctionNode',
   displayName: 'Round End Extractor',
@@ -820,137 +816,137 @@ const round_end_extractor: FunctionNodeConfig = {
   columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
 };
 
-const round_start_extractor: FunctionNodeConfig = {
+const round_start_extractor: FunctionNodeConfig<RoundStartLogEvent> = {
   name: 'round_start_extractor',
   type: 'FunctionNode',
   displayName: 'Round Start Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('round_start', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'objectiveIndex', 'controlTeam1Progress', 'controlTeam2Progress', 'matchTimeRemaining'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<RoundStartLogEvent>('round_start', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'team1Score', 'team2Score'],
 };
 
-const setup_complete_extractor: FunctionNodeConfig = {
+const setup_complete_extractor: FunctionNodeConfig<SetupCompleteLogEvent> = {
   name: 'setup_complete_extractor',
   type: 'FunctionNode',
   displayName: 'Setup Complete Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('setup_complete', file.logs)),
-  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score'],
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<SetupCompleteLogEvent>('setup_complete', file.logs)),
+  columnNames: ['matchId', 'type', 'matchTime', 'roundNumber', 'matchTimeRemaining'],
 };
 
-const ultimate_charged_extractor: FunctionNodeConfig = {
+const ultimate_charged_extractor: FunctionNodeConfig<UltimateChargedLogEvent> = {
   name: 'ultimate_charged_extractor',
   type: 'FunctionNode',
   displayName: 'Ultimate Charged Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ultimate_charged', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<UltimateChargedLogEvent>('ultimate_charged', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
-const ultimate_end_extractor: FunctionNodeConfig = {
+const ultimate_end_extractor: FunctionNodeConfig<UltimateEndLogEvent> = {
   name: 'ultimate_end_extractor',
   type: 'FunctionNode',
   displayName: 'Ultimate End Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ultimate_end', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<UltimateEndLogEvent>('ultimate_end', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
-const ultimate_start_extractor: FunctionNodeConfig = {
+const ultimate_start_extractor: FunctionNodeConfig<UltimateStartLogEvent> = {
   name: 'ultimate_start_extractor',
   type: 'FunctionNode',
   displayName: 'Ultimate Start Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('ultimate_start', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<UltimateStartLogEvent>('ultimate_start', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
-const kill_extractor: FunctionNodeConfig = {
+const kill_extractor: FunctionNodeConfig<KillLogEvent> = {
   name: 'kill_extractor',
   type: 'FunctionNode',
   displayName: 'Kill Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('kill', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<KillLogEvent>('kill', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
 };
 
-const damage_extractor: FunctionNodeConfig = {
+const damage_extractor: FunctionNodeConfig<DamageLogEvent> = {
   name: 'damage_extractor',
   type: 'FunctionNode',
   displayName: 'Damage Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('damage', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<DamageLogEvent>('damage', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
 };
 
-const healing_extractor: FunctionNodeConfig = {
+const healing_extractor: FunctionNodeConfig<HealingLogEvent> = {
   name: 'healing_extractor',
   type: 'FunctionNode',
   displayName: 'Healing Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('healing', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<HealingLogEvent>('healing', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'healerTeam', 'healerName', 'healerHero', 'healeeTeam', 'healeeName', 'healeeHero', 'eventAbility', 'eventHealing', 'isHealthPack'],
 };
 
-const mercy_rez_extractor: FunctionNodeConfig = {
+const mercy_rez_extractor: FunctionNodeConfig<MercyRezLogEvent> = {
   name: 'mercy_rez_extractor',
   type: 'FunctionNode',
   displayName: 'Mercy Rez Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('mercy_rez', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<MercyRezLogEvent>('mercy_rez', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility'],
 };
 
-const echo_duplicate_end_extractor: FunctionNodeConfig = {
+const echo_duplicate_end_extractor: FunctionNodeConfig<EchoDuplicateEndLogEvent> = {
   name: 'echo_duplicate_end_extractor',
   type: 'FunctionNode',
   displayName: 'Echo Duplicate End Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_end', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<EchoDuplicateEndLogEvent>('echo_duplicate_end', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
 };
 
-const echo_duplicate_start_extractor: FunctionNodeConfig = {
+const echo_duplicate_start_extractor: FunctionNodeConfig<EchoDuplicateStartLogEvent> = {
   name: 'echo_duplicate_start_extractor',
   type: 'FunctionNode',
   displayName: 'Echo Duplicate Start Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('echo_duplicate_start', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<EchoDuplicateStartLogEvent>('echo_duplicate_start', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId'],
 };
 
-const dva_demech_extractor: FunctionNodeConfig = {
+const dva_demech_extractor: FunctionNodeConfig<DvaDemechLogEvent> = {
   name: 'dva_demech_extractor',
   type: 'FunctionNode',
   displayName: 'Dva Demech Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_demech', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<DvaDemechLogEvent>('dva_demech', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'attackerTeam', 'attackerName', 'attackerHero', 'victimTeam', 'victimName', 'victimHero', 'eventAbility', 'eventDamage', 'isCriticalHit', 'isEnvironmental'],
 };
 
-const dva_remech_extractor: FunctionNodeConfig = {
+const dva_remech_extractor: FunctionNodeConfig<DvaRemechLogEvent> = {
   name: 'dva_remech_extractor',
   type: 'FunctionNode',
   displayName: 'Dva Remech Extractor',
   outputType: 'Multiple',
   sources: ['log_file_parser'],
-  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType('dva_remech', file.logs)),
+  transform: async (data) => (data['log_file_parser'] as {logs: {specName: string; data: object}[]}[]).flatMap((file: {logs: {specName: string; data: object}[]}) => extractEventType<DvaRemechLogEvent>('dva_remech', file.logs)),
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId'],
 };
 
-const hero_spawn_extractor: FunctionNodeConfig = {
+const hero_spawn_extractor: FunctionNodeConfig<HeroSpawnLogEvent> = {
   name: 'hero_spawn_extractor',
   type: 'FunctionNode',
   displayName: 'Hero Spawn Extractor',
@@ -960,7 +956,7 @@ const hero_spawn_extractor: FunctionNodeConfig = {
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
 };
 
-const hero_swap_extractor: FunctionNodeConfig = {
+const hero_swap_extractor: FunctionNodeConfig<HeroSwapLogEvent> = {
   name: 'hero_swap_extractor',
   type: 'FunctionNode',
   displayName: 'Hero Swap Extractor',
@@ -970,7 +966,7 @@ const hero_swap_extractor: FunctionNodeConfig = {
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed'],
 };
 
-const ability_1_used_extractor: FunctionNodeConfig = {
+const ability_1_used_extractor: FunctionNodeConfig<Ability1UsedLogEvent> = {
   name: 'ability_1_used_extractor',
   type: 'FunctionNode',
   displayName: 'Ability 1 Used Extractor',
@@ -980,7 +976,7 @@ const ability_1_used_extractor: FunctionNodeConfig = {
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
-const ability_2_used_extractor: FunctionNodeConfig = {
+const ability_2_used_extractor: FunctionNodeConfig<Ability2UsedLogEvent> = {
   name: 'ability_2_used_extractor',
   type: 'FunctionNode',
   displayName: 'Ability 2 Used Extractor',
@@ -990,7 +986,7 @@ const ability_2_used_extractor: FunctionNodeConfig = {
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
-const defensive_assist_extractor: FunctionNodeConfig = {
+const defensive_assist_extractor: FunctionNodeConfig<DefensiveAssistLogEvent> = {
   name: 'defensive_assist_extractor',
   type: 'FunctionNode',
   displayName: 'Defensive Assist Extractor',
@@ -1000,7 +996,7 @@ const defensive_assist_extractor: FunctionNodeConfig = {
   columnNames: ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated'],
 };
 
-const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
+const FILE_PARSING_NODES: (InputNodeConfig<any> | FunctionNodeConfig<any>)[] = [
   logFileInputNode,
   logFileLoaderNode,
   logFileParserNode,
@@ -1034,7 +1030,7 @@ const FILE_PARSING_NODES: (InputNodeConfig | FunctionNodeConfig)[] = [
   ultimate_start_extractor,
 ];
 
-function makeObjectStoreNodeConfig(name: string, displayName: string, objectStore: string, columnNames: string[]): ObjectStoreNodeConfig {
+function makeObjectStoreNodeConfig<T>(name: string, displayName: string, objectStore: string, columnNames: (keyof T)[]): ObjectStoreNodeConfig<T> {
   return {
     name,
     displayName,
@@ -1047,10 +1043,10 @@ function makeObjectStoreNodeConfig(name: string, displayName: string, objectStor
   };
 }
 
-const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
-  makeObjectStoreNodeConfig('ability_1_used_object_store', 'Ability 1 Used', 'ability_1_used', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeConfig('ability_2_used_object_store', 'Ability 2 Used', 'ability_2_used', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeConfig('damage_object_store', 'Damage', 'damage', [
+const OBJECT_STORE_NODES = [
+  makeObjectStoreNodeConfig<Ability1UsedLogEvent>('ability_1_used_object_store', 'Ability 1 Used', 'ability_1_used', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig<Ability2UsedLogEvent>('ability_2_used_object_store', 'Ability 2 Used', 'ability_2_used', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig<DamageLogEvent>('damage_object_store', 'Damage', 'damage', [
     'matchId',
     'type',
     'matchTime',
@@ -1065,8 +1061,8 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'isCriticalHit',
     'isEnvironmental',
   ]),
-  makeObjectStoreNodeConfig('defensive_assist_object_store', 'Defensive Assist', 'defensive_assist', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeConfig('dva_demech_object_store', 'Dva Demech', 'dva_demech', [
+  makeObjectStoreNodeConfig<DefensiveAssistLogEvent>('defensive_assist_object_store', 'Defensive Assist', 'defensive_assist', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig<DvaDemechLogEvent>('dva_demech_object_store', 'Dva Demech', 'dva_demech', [
     'matchId',
     'type',
     'matchTime',
@@ -1081,10 +1077,10 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'isCriticalHit',
     'isEnvironmental',
   ]),
-  makeObjectStoreNodeConfig('dva_remech_object_store', 'Dva Remech', 'dva_remech', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
-  makeObjectStoreNodeConfig('echo_duplicate_end_object_store', 'Echo Duplicate End', 'echo_duplicate_end', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
-  makeObjectStoreNodeConfig('echo_duplicate_start_object_store', 'Echo Duplicate Start', 'echo_duplicate_start', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeConfig('healing_object_store', 'Healing', 'healing', [
+  makeObjectStoreNodeConfig<DvaRemechLogEvent>('dva_remech_object_store', 'Dva Remech', 'dva_remech', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
+  makeObjectStoreNodeConfig<EchoDuplicateEndLogEvent>('echo_duplicate_end_object_store', 'Echo Duplicate End', 'echo_duplicate_end', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'ultimateId']),
+  makeObjectStoreNodeConfig<EchoDuplicateStartLogEvent>('echo_duplicate_start_object_store', 'Echo Duplicate Start', 'echo_duplicate_start', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig<HealingLogEvent>('healing_object_store', 'Healing', 'healing', [
     'matchId',
     'type',
     'matchTime',
@@ -1098,9 +1094,9 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'eventHealing',
     'isHealthPack',
   ]),
-  makeObjectStoreNodeConfig('hero_spawn_object_store', 'Hero Spawn', 'hero_spawn', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
-  makeObjectStoreNodeConfig('hero_swap_object_store', 'Hero Swap', 'hero_swap', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
-  makeObjectStoreNodeConfig('kill_object_store', 'Kill', 'kill', [
+  makeObjectStoreNodeConfig<HeroSpawnLogEvent>('hero_spawn_object_store', 'Hero Spawn', 'hero_spawn', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
+  makeObjectStoreNodeConfig<HeroSwapLogEvent>('hero_swap_object_store', 'Hero Swap', 'hero_swap', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'previousHero', 'heroTimePlayed']),
+  makeObjectStoreNodeConfig<KillLogEvent>('kill_object_store', 'Kill', 'kill', [
     'matchId',
     'type',
     'matchTime',
@@ -1115,11 +1111,11 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'isCriticalHit',
     'isEnvironmental',
   ]),
-  makeObjectStoreNodeConfig('match_object_store', 'Match', 'match', ['matchId', 'name', 'fileModified', 'dateString', 'timeString']),
-  makeObjectStoreNodeConfig('match_end_object_store', 'Match End', 'match_end', ['matchId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score']),
-  makeObjectStoreNodeConfig('match_start_object_store', 'Match Start', 'match_start', ['matchId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name']),
-  makeObjectStoreNodeConfig('mercy_rez_object_store', 'Mercy Rez', 'mercy_rez', ['matchId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility']),
-  makeObjectStoreNodeConfig('objective_captured_object_store', 'Objective Captured', 'objective_captured', [
+  makeObjectStoreNodeConfig<MatchFileInfo>('match_object_store', 'Match', 'match', ['matchId', 'name', 'fileModified', 'dateString', 'timeString']),
+  makeObjectStoreNodeConfig<MatchEndLogEvent>('match_end_object_store', 'Match End', 'match_end', ['matchId', 'type', 'matchTime', 'roundNumber', 'team1Score', 'team2Score']),
+  makeObjectStoreNodeConfig<MatchStartLogEvent>('match_start_object_store', 'Match Start', 'match_start', ['matchId', 'type', 'matchTime', 'mapName', 'mapType', 'team1Name', 'team2Name']),
+  makeObjectStoreNodeConfig<MercyRezLogEvent>('mercy_rez_object_store', 'Mercy Rez', 'mercy_rez', ['matchId', 'type', 'matchTime', 'mercyTeam', 'mercyName', 'revivedTeam', 'revivedName', 'revivedHero', 'eventAbility']),
+  makeObjectStoreNodeConfig<ObjectiveCapturedLogEvent>('objective_captured_object_store', 'Objective Captured', 'objective_captured', [
     'matchId',
     'type',
     'matchTime',
@@ -1130,9 +1126,9 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'controlTeam2Progress',
     'matchTimeRemaining',
   ]),
-  makeObjectStoreNodeConfig('offensive_assist_object_store', 'Offensive Assist', 'offensive_assist', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
-  makeObjectStoreNodeConfig('payload_progress_object_store', 'Payload Progress', 'payload_progress', ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress']),
-  makeObjectStoreNodeConfig('player_stat_object_store', 'Player Stat', 'player_stat', [
+  makeObjectStoreNodeConfig<OffensiveAssistLogEvent>('offensive_assist_object_store', 'Offensive Assist', 'offensive_assist', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated']),
+  makeObjectStoreNodeConfig<PayloadProgressLogEvent>('payload_progress_object_store', 'Payload Progress', 'payload_progress', ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'payloadCaptureProgress']),
+  makeObjectStoreNodeConfig<PlayerStatLogEvent>('player_stat_object_store', 'Player Stat', 'player_stat', [
     'matchId',
     'type',
     'matchTime',
@@ -1174,9 +1170,9 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'weaponAccuracy',
     'heroTimePlayed',
   ]),
-  makeObjectStoreNodeConfig('point_progress_object_store', 'Point Progress', 'point_progress', ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress']),
-  makeObjectStoreNodeConfig('remech_charged_object_store', 'Remech Charged', 'remech_charged', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeConfig('round_end_object_store', 'Round End', 'round_end', [
+  makeObjectStoreNodeConfig<PointProgressLogEvent>('point_progress_object_store', 'Point Progress', 'point_progress', ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'objectiveIndex', 'pointCaptureProgress']),
+  makeObjectStoreNodeConfig<RemechChargedLogEvent>('remech_charged_object_store', 'Remech Charged', 'remech_charged', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig<RoundEndLogEvent>('round_end_object_store', 'Round End', 'round_end', [
     'matchId',
     'type',
     'matchTime',
@@ -1189,14 +1185,14 @@ const OBJECT_STORE_NODES: ObjectStoreNodeConfig[] = [
     'controlTeam2Progress',
     'matchTimeRemaining',
   ]),
-  makeObjectStoreNodeConfig('round_start_object_store', 'Round Start', 'round_start', ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex']),
-  makeObjectStoreNodeConfig('setup_complete_object_store', 'Setup Complete', 'setup_complete', ['matchId', 'type', 'matchTime', 'roundNumber', 'matchTimeRemaining']),
-  makeObjectStoreNodeConfig('ultimate_charged_object_store', 'Ultimate Charged', 'ultimate_charged', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeConfig('ultimate_end_object_store', 'Ultimate End', 'ultimate_end', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
-  makeObjectStoreNodeConfig('ultimate_start_object_store', 'Ultimate Start', 'ultimate_start', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig<RoundStartLogEvent>('round_start_object_store', 'Round Start', 'round_start', ['matchId', 'type', 'matchTime', 'roundNumber', 'capturingTeam', 'team1Score', 'team2Score', 'objectiveIndex']),
+  makeObjectStoreNodeConfig<SetupCompleteLogEvent>('setup_complete_object_store', 'Setup Complete', 'setup_complete', ['matchId', 'type', 'matchTime', 'roundNumber', 'matchTimeRemaining']),
+  makeObjectStoreNodeConfig<UltimateChargedLogEvent>('ultimate_charged_object_store', 'Ultimate Charged', 'ultimate_charged', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig<UltimateEndLogEvent>('ultimate_end_object_store', 'Ultimate End', 'ultimate_end', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
+  makeObjectStoreNodeConfig<UltimateStartLogEvent>('ultimate_start_object_store', 'Ultimate Start', 'ultimate_start', ['matchId', 'type', 'matchTime', 'playerTeam', 'playerName', 'playerHero', 'heroDuplicated', 'ultimateId']),
 ];
 
-function makeAlaSQLNodeConfig(name: string, displayName: string, sql: string, sources: string[], columnNames: string[]): AlaSQLNodeConfig {
+function makeAlaSQLNodeConfig<T extends object>(name: string, displayName: string, sql: string, sources: string[], columnNames: (keyof T & string)[]): AlaSQLNodeConfig<T> {
   return {
     name,
     type: 'AlaSQLNode',
@@ -1234,8 +1230,19 @@ function makeAlaSQLNodeConfig(name: string, displayName: string, sql: string, so
 // Rules:
 // never use subqueries, always split into multiple nodes.
 // any change to the output columns requires a change to the DataColumn definitions in DataColumn.ts
-const ALASQL_NODES: AlaSQLNodeConfig[] = [
-  makeAlaSQLNodeConfig(
+export interface UltimateEventNodeData {
+  matchId: string;
+  playerName: string;
+  playerTeam: string;
+  playerHero: string;
+  ultimateId: string;
+  ultimateChargedTime: number;
+  ultimateStartTime: number;
+  ultimateEndTime: number;
+  ultimateHoldTime: number;
+};
+
+export const ultimate_events_node = makeAlaSQLNodeConfig<UltimateEventNodeData>(
     'ultimate_events',
     'Ultimate Events',
     `
@@ -1260,8 +1267,16 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
   `,
     ['ultimate_charged_object_store', 'ultimate_start_object_store', 'ultimate_end_object_store'],
     ['matchId', 'playerName', 'playerTeam', 'playerHero', 'ultimateId', 'ultimateChargedTime', 'ultimateStartTime', 'ultimateEndTime', 'ultimateHoldTime'],
-  ),
-  makeAlaSQLNodeConfig(
+  );
+
+export interface MapTimesNodeData {
+  matchId: string;
+  mapStartTime: number;
+  mapEndTime: number;
+  mapDuration: number;
+}
+
+export const map_times_node = makeAlaSQLNodeConfig<MapTimesNodeData>(
     'map_times',
     'Map Times',
     `SELECT
@@ -1279,11 +1294,21 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     `,
     ['match_start_object_store', 'match_end_object_store', 'round_times'],
     ['matchId', 'mapStartTime', 'mapEndTime', 'mapDuration'],
-  ),
-  makeAlaSQLNodeConfig(
-    'round_times',
-    'Round Times',
-    `SELECT
+  );
+
+export interface RoundTimesNodeData {
+  matchId: string;
+  roundNumber: number;
+  roundStartTime: number;
+  roundSetupCompleteTime: number;
+  roundEndTime: number;
+  roundDuration: number;
+  }
+
+export const round_times_node = makeAlaSQLNodeConfig<RoundTimesNodeData>(
+  'round_times',
+  'Round Times',
+  `SELECT
       round_start.matchId,
       round_start.roundNumber,
       round_start.matchTime as roundStartTime,
@@ -1299,11 +1324,21 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     `,
     ['round_start_object_store', 'round_end_object_store', 'setup_complete_object_store'],
     ['matchId', 'roundNumber', 'roundStartTime', 'roundEndTime', 'roundDuration', 'roundSetupCompleteTime'],
-  ),
-  makeAlaSQLNodeConfig(
-    'player_events',
-    'Player Events',
-    `
+  );
+
+export interface PlayerEventsNodeData {
+  matchId: string;
+  playerName: string;
+  playerTeam: string;
+  playerHero: string;
+  playerEventTime: number;
+  playerEventType: string;
+  }
+
+export const player_events_node = makeAlaSQLNodeConfig<PlayerEventsNodeData>(
+  'player_events',
+  'Player Events',
+  `
     SELECT * FROM (
     SELECT
       defensive_assist.matchId,
@@ -1363,11 +1398,22 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
     `,
     ['defensive_assist_object_store', 'offensive_assist_object_store', 'hero_spawn_object_store', 'hero_swap_object_store', 'ability_1_used_object_store', 'ability_2_used_object_store'],
     ['matchId', 'playerName', 'playerTeam', 'playerHero', 'playerEventTime', 'playerEventType'],
-  ),
-  makeAlaSQLNodeConfig(
-    'player_interaction_events',
-    'Player Interaction Events',
-    `
+  );
+
+export interface PlayerInteractionEventsNodeData {
+  matchId: string;
+  playerName: string;
+  playerTeam: string;
+  playerHero: string;
+  otherPlayerName: string;
+  playerInteractionEventTime: number;
+    playerInteractionEventType: string;
+  }
+
+export const player_interaction_events_node = makeAlaSQLNodeConfig<PlayerInteractionEventsNodeData>(
+  'player_interaction_events',
+  'Player Interaction Events',
+  `
     SELECT * FROM (
       SELECT
         mercy_rez.matchId,
@@ -1484,53 +1530,122 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       'healing_object_store',
     ],
     ['matchId', 'playerName', 'playerTeam', 'playerHero', 'otherPlayerName', 'playerInteractionEventTime', 'playerInteractionEventType'],
-  ),
-  makeAlaSQLNodeConfig(
-    'unique_player_names',
-    'Unique Player Names',
-    `SELECT DISTINCT playerName FROM ? as player_stat_object_store`,
-    ['player_stat_object_store'],
-    ['playerName']
-  ),
-  makeAlaSQLNodeConfig(
-    'unique_map_names',
-    'Unique Map Names',
-    `SELECT DISTINCT mapName FROM ? as match_start_object_store`,
-    ['match_start_object_store'],
-    ['mapName']
-  ),
-  makeAlaSQLNodeConfig(
-    'unique_map_ids',
-    'Unique Map IDs',
-    `SELECT DISTINCT matchId FROM ? as match_start_object_store`,
-    ['match_start_object_store'],
-    ['matchId']
-  ),
-  makeAlaSQLNodeConfig(
-    'unique_game_modes',
-    'Unique Game Modes',
-    `SELECT DISTINCT mapType FROM ? as match_start_object_store`,
-    ['match_start_object_store'],
-    ['mapType']
-  ),
-  makeAlaSQLNodeConfig(
-    'team_names',
-    'Team Names',
-    `SELECT team1Name as teamName FROM ? as match_start_object_store UNION ALL SELECT team2Name as teamName FROM ? as match_start_object_store`,
-    ['match_start_object_store', 'match_start_object_store'],
-    ['teamName']
-  ),
-  makeAlaSQLNodeConfig(
-    'unique_team_names',
-    'Unique Team Names',
-    `SELECT DISTINCT teamName FROM ? as team_names`,
-    ['team_names'],
-    ['teamName']
-  ),
-  makeAlaSQLNodeConfig(
-    'player_stat_expanded',
-    'Player Stat Expanded',
-    `
+  );
+
+  export interface UniquePlayerNamesNodeData {
+    playerName: string;
+  }
+
+export const unique_player_names_node = makeAlaSQLNodeConfig<UniquePlayerNamesNodeData>(
+  'unique_player_names',
+  'Unique Player Names',
+  `SELECT DISTINCT playerName FROM ? as player_stat_object_store`,
+  ['player_stat_object_store'],
+  ['playerName']
+);
+
+export interface UniqueMapNamesNodeData {
+  mapName: string;
+}
+
+export const unique_map_names_node = makeAlaSQLNodeConfig<UniqueMapNamesNodeData>(
+  'unique_map_names',
+  'Unique Map Names',
+  `SELECT DISTINCT mapName FROM ? as match_start_object_store`,
+  ['match_start_object_store'],
+  ['mapName']
+);
+
+export interface UniqueMapIdsNodeData {
+  matchId: string;
+}
+
+export const unique_map_ids_node = makeAlaSQLNodeConfig<UniqueMapIdsNodeData>(
+  'unique_map_ids',
+  'Unique Map IDs',
+  `SELECT DISTINCT matchId FROM ? as match_start_object_store`,
+  ['match_start_object_store'],
+  ['matchId']
+);
+
+export interface UniqueGameModesNodeData {
+  mapType: string;
+}
+
+export const unique_game_modes_node = makeAlaSQLNodeConfig<UniqueGameModesNodeData>(
+  'unique_game_modes',
+  'Unique Game Modes',
+  `SELECT DISTINCT mapType FROM ? as match_start_object_store`,
+  ['match_start_object_store'],
+  ['mapType']
+);
+
+export interface TeamNamesNodeData {
+  teamName: string;
+}
+
+export const team_names_node = makeAlaSQLNodeConfig<TeamNamesNodeData>(
+  'team_names',
+  'Team Names',
+  `SELECT team1Name as teamName FROM ? as match_start_object_store UNION ALL SELECT team2Name as teamName FROM ? as match_start_object_store`,
+  ['match_start_object_store', 'match_start_object_store'],
+  ['teamName']
+);
+
+export interface UniqueTeamNamesNodeData {
+  teamName: string;
+}
+
+export const unique_team_names_node = makeAlaSQLNodeConfig<UniqueTeamNamesNodeData>(
+  'unique_team_names',
+  'Unique Team Names',
+  `SELECT DISTINCT teamName FROM ? as team_names`,
+  ['team_names'],
+  ['teamName']
+);
+
+export interface PlayerStatExpandedNodeData {
+  matchId: string;
+  roundNumber: number;
+  playerName: string;
+  playerTeam: string;
+  playerHero: string;
+  playerRole: string;
+  eliminations: number;
+  finalBlows: number;
+  deaths: number;
+  allDamageDealt: number;
+  heroDamageDealt: number;
+  barrierDamageDealt: number;
+  healingDealt: number;
+    healingReceived: number;
+    selfHealing: number;
+    damageTaken: number;
+    damageBlocked: number;
+    defensiveAssists: number;
+    offensiveAssists: number;
+    ultimatesEarned: number;
+    ultimatesUsed: number;
+    multikills: number;
+    multikillBest: number;
+    soloKills: number;
+    objectiveKills: number;
+    environmentalKills: number;
+    environmentalDeaths: number;
+    criticalHits: number;
+    scopedCriticalHitKills: number;
+    shotsFired: number;
+    shotsHit: number;
+    shotsMissed: number;
+    scopedShotsFired: number;
+    scopedShotsHit: number;
+    weaponAccuracy: number;
+  }
+
+export const player_stat_expanded_node = makeAlaSQLNodeConfig<PlayerStatExpandedNodeData>(
+  'player_stat_expanded',
+  'Player Stat Expanded',
+  `
     SELECT
       player_stat.matchId,
       player_stat.roundNumber,
@@ -1648,17 +1763,223 @@ const ALASQL_NODES: AlaSQLNodeConfig[] = [
       'scopedShotsHit',
       'weaponAccuracy',
     ],
-  ),
-  makeAlaSQLNodeConfig(
+  );
+
+  export interface MatchesGroupedByDateNodeData {  
+    dateString: string;
+    matchIds: string[];
+  }
+
+  export const matches_grouped_by_date_node = makeAlaSQLNodeConfig<MatchesGroupedByDateNodeData>(
     'matches_grouped_by_date',
     'Matches Grouped By Date',
     `SELECT dateString, ARRAY(matchId) as matchIds FROM ? as match_object_store GROUP BY dateString`,
     ['match_object_store'],
     ['dateString', 'matchIds'],
-  ),
-];
+  );
 
-const FUNCTION_NODES: FunctionNodeConfig[] = [
+  export interface TeamPlayersByMatchNodeData {
+    matchId: string;
+    team1Name: string;
+    team2Name: string;
+    team1Players: string[];
+    team2Players: string[];
+  }
+
+  export const team_players_by_match_node = makeAlaSQLNodeConfig<TeamPlayersByMatchNodeData>(
+    'team_players_by_match',
+    'Team Players By Match',
+    `SELECT
+      match_start_object_store.matchId,
+      match_start_object_store.team1Name,
+      match_start_object_store.team2Name,
+      ARRAY(DISTINCT player_stat_object_store_team1.playerName) as team1Players,
+      ARRAY(DISTINCT player_stat_object_store_team2.playerName) as team2Players
+    FROM ? as match_start_object_store
+    JOIN ? as player_stat_object_store_team1 ON match_start_object_store.matchId = player_stat_object_store_team1.matchId
+    JOIN ? as player_stat_object_store_team2 ON match_start_object_store.matchId = player_stat_object_store_team2.matchId
+    WHERE player_stat_object_store_team1.playerTeam = match_start_object_store.team1Name
+    AND player_stat_object_store_team2.playerTeam = match_start_object_store.team2Name
+    GROUP BY match_start_object_store.matchId, match_start_object_store.team1Name, match_start_object_store.team2Name
+
+    `,
+    ['match_start_object_store', 'player_stat_object_store', 'player_stat_object_store'],
+    ['matchId', 'team1Name', 'team2Name', 'team1Players', 'team2Players'],
+  );
+
+  export interface PlayerMetrics {
+    eliminations: number;
+    finalBlows: number;
+    deaths: number;
+    allDamageDealt: number;
+    heroDamageDealt: number;
+    barrierDamageDealt: number;
+    healingDealt: number;
+    healingReceived: number;
+    selfHealing: number;
+    damageTaken: number;
+    damageBlocked: number;
+    defensiveAssists: number;
+    offensiveAssists: number;
+    ultimatesEarned: number;
+    ultimatesUsed: number;
+    multikills: number;
+    multikillBest: number;
+    soloKills: number;
+    objectiveKills: number;
+    environmentalKills: number;
+    environmentalDeaths: number;
+    criticalHits: number;
+    scopedCriticalHitKills: number;
+    shotsFired: number;
+    shotsHit: number;
+    shotsMissed: number;
+    scopedShotsFired: number;
+    scopedShotsHit: number;
+    weaponAccuracy: number;
+  }
+
+  export const PLAYER_METRICS: (keyof PlayerMetrics)[] = [
+    'eliminations',
+    'finalBlows',
+    'deaths',
+    'allDamageDealt',
+    'heroDamageDealt',
+    'barrierDamageDealt',
+    'healingDealt',
+    'healingReceived',
+    'selfHealing',
+    'damageTaken',
+    'damageBlocked',
+    'defensiveAssists',
+    'offensiveAssists',
+    'ultimatesEarned',
+    'ultimatesUsed',
+    'multikills',
+    'multikillBest',
+    'soloKills',
+    'objectiveKills',
+    'environmentalKills',
+    'environmentalDeaths',
+    'criticalHits',
+    'scopedCriticalHitKills',
+    'shotsFired',
+    'shotsHit',
+    'shotsMissed',
+    'scopedShotsFired',
+    'scopedShotsHit',
+    'weaponAccuracy',
+  ];
+
+  export interface PlayerStatTotalsNodeData extends PlayerMetrics {
+    playerName: string;
+  }
+
+  export const player_stat_totals_node = makeAlaSQLNodeConfig<PlayerStatTotalsNodeData>(
+    'player_stat_totals',
+    'Player Stat Totals',
+    `SELECT
+      playerName,
+      SUM(eliminations) as eliminations,
+      SUM(finalBlows) as finalBlows,
+      SUM(deaths) as deaths,
+      SUM(allDamageDealt) as allDamageDealt,
+      SUM(heroDamageDealt) as heroDamageDealt,
+      SUM(barrierDamageDealt) as barrierDamageDealt,
+      SUM(healingDealt) as healingDealt,
+      SUM(healingReceived) as healingReceived,
+      SUM(selfHealing) as selfHealing,
+      SUM(damageTaken) as damageTaken,
+      SUM(damageBlocked) as damageBlocked,
+      SUM(defensiveAssists) as defensiveAssists,
+      SUM(offensiveAssists) as offensiveAssists,
+      SUM(ultimatesEarned) as ultimatesEarned,
+      SUM(ultimatesUsed) as ultimatesUsed,
+      SUM(multikills) as multikills,
+      SUM(multikillBest) as multikillBest,
+      SUM(soloKills) as soloKills,
+      SUM(objectiveKills) as objectiveKills,
+      SUM(environmentalKills) as environmentalKills,
+      SUM(environmentalDeaths) as environmentalDeaths,
+      SUM(criticalHits) as criticalHits,
+      SUM(scopedCriticalHitKills) as scopedCriticalHitKills,
+      SUM(shotsFired) as shotsFired,
+      SUM(shotsHit) as shotsHit,
+      SUM(shotsMissed) as shotsMissed,
+      SUM(scopedShotsFired) as scopedShotsFired,
+      SUM(scopedShotsHit) as scopedShotsHit
+    FROM ? as player_stat_expanded
+    GROUP BY playerName`,
+    ['player_stat_expanded'],
+    [
+      'playerName',
+      'eliminations',
+      'finalBlows',
+      'deaths',
+      'allDamageDealt',
+      'heroDamageDealt',
+      'barrierDamageDealt',
+      'healingDealt',
+      'healingReceived',
+      'selfHealing',
+      'damageTaken',
+      'damageBlocked',
+      'defensiveAssists',
+      'offensiveAssists',
+      'ultimatesEarned',
+      'ultimatesUsed',
+      'multikills',
+      'multikillBest',
+      'soloKills',
+      'objectiveKills',
+      'environmentalKills',
+      'environmentalDeaths',
+      'criticalHits',
+      'scopedCriticalHitKills',
+      'shotsFired',
+      'shotsHit',
+      'shotsMissed',
+      'scopedShotsFired',
+      'scopedShotsHit',
+    ],
+  );
+
+  export interface MatchData {
+    matchId: string;
+    logFileName: string;
+    fileModified: number;
+    dateString: string;
+    mapName: string;
+    gameMode: string;
+    team1Name: string;
+    team2Name: string;
+    team1Score: number;
+    team2Score: number;
+  }
+
+  export const match_data_node = makeAlaSQLNodeConfig<MatchData>(
+    'match_data',
+    'Match Data',
+    `SELECT 
+      match_object_store.matchId,
+      match_object_store.name as fileName,
+      match_object_store.modified as fileModified,
+      match_object_store.dateString,
+      match_start_object_store.mapName as map,
+      match_start_object_store.mapType as mode,
+      match_start_object_store.team1Name,
+      match_start_object_store.team2Name,
+      match_end_object_store.team1Score,
+      match_end_object_store.team2Score
+    FROM ? as match_object_store
+    JOIN ? as match_end_object_store ON match_object_store.matchId = match_end_object_store.matchId
+    JOIN ? as match_start_object_store ON match_object_store.matchId = match_start_object_store.matchId
+    `,
+    ['match_object_store', 'match_end_object_store', 'match_start_object_store'],
+    ['matchId', 'logFileName', 'fileModified', 'dateString', 'mapName', 'gameMode', 'team1Name', 'team2Name', 'team1Score', 'team2Score'],
+  );
+
+const FUNCTION_NODES = [
   {
     name: 'team_ultimate_advantage',
     displayName: 'Team Ultimate Advantage',
@@ -1666,15 +1987,15 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
     columnNames: ['matchId', 'matchTime', 'team1Name', 'team2Name', 'team1Count', 'team2Count', 'teamWithAdvantage', 'diff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(data['ultimate_charged_object_store'] as UltimateCharged[]).map((e) => ({...e, type: 'charged'})),
-        ...(data['ultimate_end_object_store'] as UltimateEnd[]).map((e) => ({...e, type: 'end'})),
-        ...(data['round_end_object_store'] as RoundEnd[]).map((e) => ({...e, type: 'round_end'})),
-        ...(data['round_start_object_store'] as RoundStart[]).map((e) => ({...e, type: 'round_start'})),
+        ...(data['ultimate_charged_object_store'] as UltimateChargedLogEvent[]).map((e) => ({...e, type: 'charged'})),
+        ...(data['ultimate_end_object_store'] as UltimateEndLogEvent[]).map((e) => ({...e, type: 'end'})),
+        ...(data['round_end_object_store'] as RoundEndLogEvent[]).map((e) => ({...e, type: 'round_end'})),
+        ...(data['round_start_object_store'] as RoundStartLogEvent[]).map((e) => ({...e, type: 'round_start'})),
       ];
 
       // Define mapTeams with number keys
-      const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
-        (data['match_start_object_store'] as MatchStart[]).map((match) => [match.matchId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
+      const mapTeams = new Map<string, {team1Name: string; team2Name: string}>(
+        (data['match_start_object_store'] as MatchStartLogEvent[]).map((match) => [match.matchId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
       );
 
       return processTeamAdvantageEvents(events, mapTeams, ultimateAdvantageConfig);
@@ -1689,15 +2010,15 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
     columnNames: ['matchId', 'matchTime', 'team1Name', 'team2Name', 'team1Count', 'team2Count', 'teamWithAdvantage', 'diff'],
     transform: async (data: DataNodeInputMap) => {
       const events = [
-        ...(data['kill_object_store'] as Kill[]).map((e) => ({...e, type: 'kill'})),
-        ...(data['hero_spawn_object_store'] as HeroSpawn[]).map((e) => ({...e, type: 'spawn'})),
-        ...(data['round_end_object_store'] as RoundEnd[]).map((e) => ({...e, type: 'round_end'})),
-        ...(data['round_start_object_store'] as RoundStart[]).map((e) => ({...e, type: 'round_start'})),
+        ...(data['kill_object_store'] as KillLogEvent[]).map((e) => ({...e, type: 'kill'})),
+        ...(data['hero_spawn_object_store'] as HeroSpawnLogEvent[]).map((e) => ({...e, type: 'spawn'})),
+        ...(data['round_end_object_store'] as RoundEndLogEvent[]).map((e) => ({...e, type: 'round_end'})),
+        ...(data['round_start_object_store'] as RoundStartLogEvent[]).map((e) => ({...e, type: 'round_start'})),
       ];
 
       // Define mapTeams with number keys
-      const mapTeams = new Map<number, {team1Name: string; team2Name: string}>(
-        (data['match_start_object_store'] as MatchStart[]).map((match) => [match.matchId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
+      const mapTeams = new Map<string, {team1Name: string; team2Name: string}>(
+        (data['match_start_object_store'] as MatchStartLogEvent[]).map((match) => [match.matchId, {team1Name: match.team1Name, team2Name: match.team2Name}]),
       );
 
       return processTeamAdvantageEvents(events, mapTeams, playerAliveAdvantageConfig);
@@ -1707,45 +2028,51 @@ const FUNCTION_NODES: FunctionNodeConfig[] = [
   },
 ];
 
-// Ensure processTeamAdvantageEvents accepts a Map with number keys
-function processTeamAdvantageEvents(
-  events: any[],
-  mapTeams: Map<number, { team1Name: string; team2Name: string }>,
-  config: any
-) {
-  // Implementation of the function
-}
 
 export const initializeDataManager = (dataManager: DataManager) => {
   console.log('Initializing Data Manager');
   DATA_COLUMNS.forEach((col) => !dataManager.hasColumn(col.name) && dataManager.registerColumn(col));
 
-  const allNodes = [indexedDbNode, ...FILE_PARSING_NODES, ...OBJECT_STORE_NODES, ...ALASQL_NODES, ...FUNCTION_NODES];
+  const allNodes = [indexedDbNode, ...FILE_PARSING_NODES, ...OBJECT_STORE_NODES, 
+    ultimate_events_node,
+    player_interaction_events_node,
+    unique_player_names_node,
+    unique_map_names_node,
+    unique_map_ids_node,
+    unique_game_modes_node,
+    team_names_node,
+    unique_team_names_node,
+    player_stat_expanded_node,
+    matches_grouped_by_date_node,
+    team_players_by_match_node,
+    player_stat_totals_node,
+    match_data_node,
+    ...FUNCTION_NODES];
   allNodes.forEach((node) => {
     if (dataManager.hasNode(node.name)) {
       return;
     }
     if (node.type === 'IndexedDBNode') {
-      const requiredObjectStores = allNodes.filter((n) => n.type === 'ObjectStoreNode').map((n) => (n as ObjectStoreNodeConfig).objectStore);
+      const requiredObjectStores = allNodes.filter((n) => n.type === 'ObjectStoreNode').map((n) => (n as ObjectStoreNodeConfig<unknown>).objectStore);
       const configWithObjectStores: IndexedDBNodeConfig = {...(node as IndexedDBNodeConfig), objectStores: requiredObjectStores};
       dataManager.registerNode(new IndexedDBNode(configWithObjectStores));
     }
     const nodeColumns = node.columnNames.map((name) => dataManager.getColumn(name));
     if (node.type === 'InputNode') {
-      const inputNode = node as InputNodeConfig;
+      const inputNode = node as InputNodeConfig<unknown>;
     
       dataManager.registerNode(new InputNode(inputNode.name, inputNode.displayName, inputNode.outputType, nodeColumns, inputNode.behavior));
     }
     if (node.type === 'ObjectStoreNode') {
-      const objectStoreNode = node as ObjectStoreNodeConfig;
+      const objectStoreNode = node as ObjectStoreNodeConfig<unknown>;
       dataManager.registerNode(new ObjectStoreNode(objectStoreNode.name, objectStoreNode.displayName, nodeColumns, objectStoreNode.objectStore, objectStoreNode.source, objectStoreNode.behavior));
     }
     if (node.type === 'AlaSQLNode') {
-      const alaSQLNode = node as AlaSQLNodeConfig;
+      const alaSQLNode = node as AlaSQLNodeConfig<unknown>;
       dataManager.registerNode(new AlaSQLNode(alaSQLNode.name, alaSQLNode.displayName, alaSQLNode.sql, alaSQLNode.sources, nodeColumns));
     }
     if (node.type === 'FunctionNode') {
-      const functionNode = node as FunctionNodeConfig;
+      const functionNode = node as FunctionNodeConfig<object>;
       dataManager.registerNode(new FunctionNode(functionNode.name, functionNode.displayName, functionNode.transform, functionNode.sources, nodeColumns, functionNode.outputType));
     }
   });
