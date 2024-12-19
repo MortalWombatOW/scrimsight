@@ -2,7 +2,7 @@ import { Button, Popover, Typography } from '@mui/material';
 import { ColorKey } from '../../theme';
 import { useState } from 'react';
 
-const IconAndText = ({
+const IconAndTextButton = ({
   variant,
   icon,
   text,
@@ -11,6 +11,7 @@ const IconAndText = ({
   dynamic,
   colorKey,
   onClick,
+  fontSize,
 }: {
   variant?: 'contained' | 'outlined' | 'text';
   icon: React.ReactElement;
@@ -20,6 +21,7 @@ const IconAndText = ({
   dynamic?: boolean;
   colorKey?: ColorKey;
   onClick?: () => void;
+  fontSize?: string;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -42,7 +44,7 @@ const IconAndText = ({
           maxWidth: 'fit-content',
         }}>
         {dynamic && icon}
-        {!dynamic && <Typography sx={{ paddingLeft: 2, fontWeight: 'bold' }}>{text}</Typography>}
+        {!dynamic && <Typography sx={{ paddingLeft: 2, fontWeight: 'bold', fontSize: fontSize || '1rem' }}>{text}</Typography>}
       </Button>
       {dynamic && (
         <Popover
@@ -75,4 +77,4 @@ const IconAndText = ({
   );
 };
 
-export default IconAndText;
+export default IconAndTextButton;

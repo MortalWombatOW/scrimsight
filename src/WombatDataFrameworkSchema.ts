@@ -383,8 +383,10 @@ const DATA_COLUMNS: DataColumn[] = [
   makeDataColumn('mapDuration', 'Map Duration', 'The duration of the map.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('mapEndTime', 'Map End Time', 'The time the map ended.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('matchId', 'Map ID', 'The ID of the map, generated from the input log file.', 'none', 'string', stringFormatter, stringComparator),
+  makeDataColumn('map', 'Map', 'The name of the map.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mapName', 'Map Name', 'The name of the map.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mapStartTime', 'Map Start Time', 'The time the map started.', 's', 'number', numberFormatter, numberComparator),
+  makeDataColumn('mode', 'Mode', 'The game mode of the map.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('mapType', 'Map Type', 'The type of the map.', 'none', 'string', stringFormatter, stringComparator),
   makeDataColumn('matchTime', 'Match Time (s)', 'The time in seconds since the start of the match.', 's', 'number', timeFormatter, numberComparator),
   makeDataColumn('matchTimeRemaining', 'Match Time Remaining (s)', 'The time remaining in the match.', 's', 'number', timeFormatter, numberComparator),
@@ -1946,11 +1948,11 @@ export const player_stat_expanded_node = makeAlaSQLNodeConfig<PlayerStatExpanded
 
   export interface MatchData {
     matchId: string;
-    logFileName: string;
+    fileName: string;
     fileModified: number;
     dateString: string;
-    mapName: string;
-    gameMode: string;
+    map: string;
+    mode: string;
     team1Name: string;
     team2Name: string;
     team1Score: number;
@@ -1976,7 +1978,7 @@ export const player_stat_expanded_node = makeAlaSQLNodeConfig<PlayerStatExpanded
     JOIN ? as match_start_object_store ON match_object_store.matchId = match_start_object_store.matchId
     `,
     ['match_object_store', 'match_end_object_store', 'match_start_object_store'],
-    ['matchId', 'logFileName', 'fileModified', 'dateString', 'mapName', 'gameMode', 'team1Name', 'team2Name', 'team1Score', 'team2Score'],
+    ['matchId', 'fileName', 'fileModified', 'dateString', 'map', 'mode', 'team1Name', 'team2Name', 'team1Score', 'team2Score'],
   );
 
 const FUNCTION_NODES = [

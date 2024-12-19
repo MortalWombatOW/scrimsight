@@ -1,12 +1,12 @@
-import IconAndText from "./IconAndText";
+import IconAndTextButton from "./IconAndText";
 import type { Meta, StoryObj } from "@storybook/react";
 import HealingIcon from "~/components/Icons/HealingIcon";
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 import WarningIcon from '@mui/icons-material/Warning';
 
-const meta: Meta<typeof IconAndText> = {
-  component: IconAndText,
+const meta: Meta<typeof IconAndTextButton> = {
+  component: IconAndTextButton,
   argTypes: {
     variant: {
       control: 'select',
@@ -24,7 +24,7 @@ const meta: Meta<typeof IconAndText> = {
 
 export default meta;
 
-type Story = StoryObj<typeof IconAndText>;
+type Story = StoryObj<typeof IconAndTextButton>;
 
 export const Default: Story = {
   args: {

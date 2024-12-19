@@ -1,6 +1,6 @@
 
 import WidgetContainer from '../../WidgetContainer';
-import WidgetProvider, { useWidgetBidders } from '../../WidgetProvider';
+import WidgetProvider, { useWidgetRegistry } from '../../WidgetProvider';
 import IntentControls from '~/components/ControlPanel/IntentControls';
 import { Intent } from '~/Widget';
 import { OverwatchHero, OverwatchMap, OverwatchMode } from '~/lib/data/hero';
@@ -10,18 +10,18 @@ import { Card, CardContent, CardHeader } from '@mui/material';
 import { PLAYER_METRICS } from '~/WombatDataFrameworkSchema';
 
 
-const Outline: React.FC<{ intent: Intent }> = ({ intent }) => {
-  const widgetRegistry = useWidgetBidders();
+// const Outline: React.FC<{ intent: Intent }> = ({ intent }) => {
+//   const widgetRegistry = useWidgetRegistry();
 
-  const relevantWidgets = useMemo(() => widgetRegistry.getScoredBids(intent), [widgetRegistry, intent]);
+//   const relevantWidgets = useMemo(() => widgetRegistry.getScoredBids(intent), [widgetRegistry, intent]);
 
-  return <Card style={{ marginBottom: 10 }}>
-    <CardHeader title="Outline" />
-    <CardContent>
-      {relevantWidgets.map((widget) => <div>{widget.displayName}</div>)}
-    </CardContent>
-  </Card>;
-};
+//   return <Card style={{ marginBottom: 10 }}>
+//     <CardHeader title="Outline" />
+//     <CardContent>
+//       {relevantWidgets.map((widget) => <div>{widget.displayName}</div>)}
+//     </CardContent>
+//   </Card>;
+// };
 
 
 const HomeDashboard = () => {
@@ -44,14 +44,14 @@ const HomeDashboard = () => {
   };
 
   return (
-    <WidgetProvider>
+    <WidgetProvider widgetGridWidth={300} widgetGridHeight={200}>
       <div>
         <div>
           <IntentControls intent={intent} setIntent={setIntent} possibleValues={possibleValues} size='small' />
         </div>
 
         <div style={{ padding: '50px' }}>
-          <Outline intent={intent} />
+          {/* <Outline intent={intent} /> */}
           <WidgetContainer intent={intent} />
         </div>
       </div>

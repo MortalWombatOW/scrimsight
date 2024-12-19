@@ -14,7 +14,8 @@ const ChordDiagramWidgetBidder: WidgetBidder = (intent) => {
     description: `A diagram showing the flow of kills in ${matchId}`,
     gridColumnSpan: 2,
     gridRowSpan: 2,
-    widget: <ChordDiagram matchId={matchId} />,
+    widget: ChordDiagram,
+    widgetProps: { matchId: matchId },
   }));
 };
 

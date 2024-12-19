@@ -4,7 +4,7 @@ import { WidgetBid, WidgetBidder } from "~/Widget";
 
 
 const BarChartBidder: WidgetBidder = (intent) => {
-  const bids: WidgetBid[] = [];
+  const bids: WidgetBid<any>[] = [];
   if (intent.metric === undefined) {
     return bids;
   }
@@ -20,7 +20,8 @@ const BarChartBidder: WidgetBidder = (intent) => {
           },
           gridColumnSpan: 2,
           gridRowSpan: 2,
-          widget: <PlayerStatTotalBarChart metricName={metricName} />,
+          widget: PlayerStatTotalBarChart,
+          widgetProps: { metricName: metricName },
         }
       );
     }

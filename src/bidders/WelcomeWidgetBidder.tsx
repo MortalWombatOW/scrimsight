@@ -13,7 +13,8 @@ const WelcomeWidgetBidder: WidgetBidder = (intent) => {
       description: 'A welcome message',
       gridColumnSpan: 1,
       gridRowSpan: 1,
-      widget: <WelcomeWidget />,
+      widget: WelcomeWidget,
+      widgetProps: {},
       scorePrior: 1,
     },
   ];

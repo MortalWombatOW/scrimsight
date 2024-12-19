@@ -3,28 +3,16 @@ import WidgetRegistry from "./WidgetRegistry";
 // Widget Context
 const WidgetContext = createContext<WidgetRegistry | null>(null);
 
-export const useWidgetBidders = () => {
-  const bidders = useContext(WidgetContext);
-  if (!bidders) {
-    throw new Error('useWidgetBidders must be used within a WidgetProvider');
+export const useWidgetRegistry = () => {
+  const registry = useContext(WidgetContext);
+  if (!registry) {
+    throw new Error('useWidgetRegistry must be used within a WidgetProvider');
   }
-  return bidders;
+  return registry;
 };
 
-const WidgetProvider: React.FC<{ children: React.ReactNode | React.ReactNode[] }> = ({ children }) => {
-  const registry = useMemo(() => new WidgetRegistry(), []); // Create once
-
-    // Example Widget Registration (move these inside the provider)
-    // const MyWidget: WidgetComponent<{ score: number }> = ({ data, columns }) => {
-    //   // ... render widget using data
-    // };
-
-    // registry.registerWidget('my-widget', {
-    //   component: MyWidget,
-    //   intent: { matchId: '*', hero: 'Reaper' },
-    //   dataNode: 'player_scores', // Example DataNode
-    // });
-    // // ... register other widgets
+const WidgetProvider: React.FC<{ children: React.ReactNode | React.ReactNode[], widgetGridWidth: number, widgetGridHeight: number }> = ({ children, widgetGridWidth, widgetGridHeight }) => {
+  const registry = useMemo(() => new WidgetRegistry(widgetGridWidth, widgetGridHeight), [widgetGridWidth, widgetGridHeight]); // Create once
 
   return (
     <WidgetContext.Provider value={registry}>

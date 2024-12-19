@@ -12,7 +12,8 @@ const MatchListBidder: WidgetBidder = (intent: Intent) => {
     description: 'A list of all matches',
     gridColumnSpan: 3,
     gridRowSpan: 1,
-    widget: <MatchList />,
+    widget: MatchList,
+    widgetProps: {},
     intent: intent,
   }]
 };

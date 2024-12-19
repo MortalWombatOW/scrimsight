@@ -13,6 +13,9 @@ type ScoredWidgetBid = WidgetBid & {
 }
 
 class WidgetRegistry {
+  readonly widgetGridWidth: number;
+  readonly widgetGridHeight: number;
+
   private bidders: WidgetBidder[] = [
     UploaderWidgetBidder,
     MetricCardWidgetBidder,
@@ -21,6 +24,11 @@ class WidgetRegistry {
     ChordDiagramWidgetBidder,
     BarChartBidder,
   ];
+
+  constructor(widgetGridWidth: number, widgetGridHeight: number) {
+    this.widgetGridWidth = widgetGridWidth;
+    this.widgetGridHeight = widgetGridHeight;
+  }
 
   getBids(intent: Intent): WidgetBid[] {
     return this.bidders.flatMap(bidder => bidder(intent));

@@ -1,10 +1,10 @@
-import { Card, CardMedia, CardContent, Box, Typography, ButtonBase, Button } from '@mui/material';
-import { useWombatData, useWombatDataManager } from 'wombat-data-framework';
+import { Card, CardContent, Box, Typography, ButtonBase, Button } from '@mui/material';
+import { useWombatData } from 'wombat-data-framework';
 import { MatchEndLogEvent, matches_grouped_by_date_node, MatchesGroupedByDateNodeData, MatchStartLogEvent } from '../../WombatDataFrameworkSchema';
 import { mapNameToFileName } from '../../lib/string';
 // import {useNavigate} from 'react-router-dom';
 import './MapsList.scss';
-import FileLoader from '~/components/FileLoader/FileLoader';
+import { useWidgetRegistry } from '~/WidgetProvider';
 
 const MapRow = ({ matchId }: { matchId: string }) => {
   // const navigate = useNavigate();
@@ -87,24 +87,23 @@ const MapRow = ({ matchId }: { matchId: string }) => {
 };
 
 const MatchList = () => {
-  const dataManager = useWombatDataManager();
 
   const matchesByDate = useWombatData<MatchesGroupedByDateNodeData>(matches_grouped_by_date_node.name);
 
   console.log('matchesByDate', matchesByDate.data);
 
-  // if (matchesByDate.data.length === 0) {
-  //   return null;
-  // }
+  const widgetRegistry = useWidgetRegistry();
+
+  // This is a 2x1 widget
+  const width = widgetRegistry.widgetGridWidth * 2;
+  const height = widgetRegistry.widgetGridHeight;
 
   return (
     <>
-      <CardContent>
+      <CardContent style={{ width: width, height: height }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Typography variant="h3" gutterBottom>Matches</Typography></div>
-        <FileLoader onSubmit={(files) => {
-          dataManager.setInputForInputNode('log_file_input', files);
-        }} />
+          <Typography variant="h3" gutterBottom>Most Recent Scrim</Typography></div>
+
         <Button variant="contained" color="primary">
           See All Matches
         </Button>

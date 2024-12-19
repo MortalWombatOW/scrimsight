@@ -92,13 +92,14 @@ export function intentSimilarity(intent1: Intent, intent2: Intent): number {
 }
 
 
-export interface WidgetBid {
+export interface WidgetBid<T> {
   id: string;
   displayName: string;
   description: string;
   gridColumnSpan: number | "last-line";
   gridRowSpan: number | "last-line";
-  widget: React.ReactNode;
+  widget: React.FC<T>;
+  widgetProps: T;
   scorePrior?: number;
   intent: Intent;
 }

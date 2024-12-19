@@ -1,11 +1,11 @@
 import { SingleBarChart } from "~/components/Charts/SingleBarChart";
 
 import { useWombatData } from "wombat-data-framework";
-import { player_stat_totals_node, PlayerStatTotalsNodeData } from "~/WombatDataFrameworkSchema";
+import { player_stat_totals_node, PlayerMetrics, PlayerStatTotalsNodeData } from "~/WombatDataFrameworkSchema";
 import { CardContent, Typography } from "@mui/material";
 
 interface PlayerStatTotalBarChartProps {
-  metricName: keyof Omit<PlayerStatTotalsNodeData, 'playerName'>;
+  metricName: keyof PlayerMetrics;
 }
 
 export const PlayerStatTotalBarChart: React.FC<PlayerStatTotalBarChartProps> = ({ metricName }) => {
