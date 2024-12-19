@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useWidgetRegistry } from "./WidgetProvider";
-import { Intent, WidgetBid } from "./Widget";
+import { WidgetBid } from "./Widget";
 import { Card } from "@mui/material";
+import { useIntent } from "~/contexts/IntentContext";
 
 interface WidgetCardProps {
   bid: WidgetBid<object>;
@@ -13,18 +14,14 @@ const WidgetCard: React.FC<WidgetCardProps> = ({ bid }) => {
     width: 'fit-content',
     gridColumnEnd: `span ${bid.gridColumnSpan}`,
     gridRowEnd: `span ${bid.gridRowSpan}`,
-    border: '1px solid #e0e0e0',
-    borderRadius: 10,
   }} className="dashboard-item primary">
     <bid.widget {...bid.widgetProps} />
   </Card>;
 }
 
-interface WidgetContainerProps {
-  intent: Intent;
-}
+const WidgetContainer: React.FC = () => {
 
-const WidgetContainer: React.FC<WidgetContainerProps> = ({ intent }) => {
+  const { intent } = useIntent();
 
   const widgetRegistry = useWidgetRegistry();
 

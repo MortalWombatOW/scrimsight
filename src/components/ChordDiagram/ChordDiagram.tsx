@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useWombatData, useWombatDataManager } from 'wombat-data-framework';
+import React, { useState, useRef } from 'react';
+import { useWombatData } from 'wombat-data-framework';
 import { getColorgorical } from '../../lib/color';
-import { MatchEndLogEvent, MatchStartLogEvent } from '../../WombatDataFrameworkSchema';
+import { MatchData } from '../../WombatDataFrameworkSchema';
 import { PathTooltip } from 'react-path-tooltip'; // import the package
 import useWindowSize from '../../hooks/useWindowSize';
 import { Card, CardContent, Container } from '@mui/material';
 import { Typography } from '@mui/material';
 import { PlayerInteractionEvent } from '../MapTimeline/types/timeline.types';
+import { useWidgetRegistry } from '~/WidgetProvider';
 
 interface ChordDataEntry {
   sourcePlayerName: string;
@@ -254,26 +255,27 @@ const Chord: React.FC<{
   };
 
 const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
-  const dataManager = useWombatDataManager();
   const svgRef = useRef<SVGSVGElement>(null);
-  // const [team1Name, setTeam1Name] = useState<string>('');
-  // const [team2Name, setTeam2Name] = useState<string>('');
-  // const [team1Players, setTeam1Players] = useState<string[]>([]);
-  // const [team2Players, setTeam2Players] = useState<string[]>([]);
-  // const [playerRoleMap, setPlayerRoleMap] = useState<{ [playerName: string]: string }>({});
 
-  const matchData = useWombatData<{ name: string, timeString: string, matchId: string }>('match_object_store', { initialFilter: { matchId } });
-  const matchStartData = useWombatData<MatchStartLogEvent>('match_start_object_store', { initialFilter: { matchId } });
-  const matchEndData = useWombatData<MatchEndLogEvent>('match_end_object_store', { initialFilter: { matchId } });
-  const playerInteractionEventsData = useWombatData<PlayerInteractionEvent>('player_interaction_events', { initialFilter: { matchId } });
+  const matchData = useWombatData<MatchData>('match_data', { initialFilter: { matchId } }).data[0];
+  const playerInteractionEventsData = useWombatData<PlayerInteractionEvent>('player_interaction_events', { initialFilter: { matchId } }).data;
 
+  console.log('matchData', matchData);
 
-  const { mapName, team1Name, team2Name } = matchStartData.data.find((row) => row['matchId'] === matchId) || { mapName: '', mapType: '', team1Name: '', team2Name: '' };
+  const team1Name = matchData?.team1Name || '';
+  const team2Name = matchData?.team2Name || '';
+  const team1Players = matchData?.team1Players || [];
+  const team2Players = matchData?.team2Players || [];
 
 
-  const chordData = transformDataToChordFormat(playerInteractionEventsData.data);
+  const chordData = transformDataToChordFormat(playerInteractionEventsData);
 
-  const { width } = useWindowSize();
+  console.log('chordData', chordData);
+
+  const widgetRegistry = useWidgetRegistry();
+  const width = widgetRegistry.widgetGridWidth;
+
+  // const { width } = useWindowSize();
 
   const padding = width / 8;
 
@@ -339,7 +341,9 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
     currentAngle += deathsAngleSpan;
   });
 
-  const averageAngle = [...team1Players, ...team2Players].reduce((sum, player) => sum + playerAngles[player].killsStartAngle, 0) / (team1Players.length + team2Players.length);
+  console.log('playerAngles', playerAngles);
+
+  const averageAngle = players.length > 0 ? players.reduce((sum, player) => sum + playerAngles[player].killsStartAngle, 0) / players.length : 0;
 
   console.log('averageAngle', averageAngle);
 
@@ -424,7 +428,7 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
           );
         })}
 
-        {Object.entries(groupedData).map(([source, interactions]) =>
+        {players.length > 0 && Object.entries(groupedData).map(([source, interactions]) =>
           interactions.map((interaction, index) => (
             <Chord
               key={`${source}-${interaction.targetPlayerName}-${index}`}
@@ -471,9 +475,9 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
               <text x={x} y={y} fontSize="0.7em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Players.includes(player) ? team2Name : team1Name)}>
                 {player}
               </text>
-              <text x={x} y={y + 10} fontSize="0.5em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Players.includes(player) ? team2Name : team1Name)}>
+              {/* <text x={x} y={y + 10} fontSize="0.5em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Players.includes(player) ? team2Name : team1Name)}>
                 {playerRoleMap[player]}
-              </text>
+              </text> */}
             </g>
           );
         })}
@@ -504,13 +508,6 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
           />
         </g>
       </svg>
-      <Card variant="outlined" style={{ margin: '1em' }}>
-        <CardContent>
-          <Typography variant="body2" style={{ marginTop: '10px' }} color="text.secondary">
-            This diagram shows the interactions between players in the map. The size of the arcs represent the number of kills and deaths of each player.
-          </Typography>
-        </CardContent>
-      </Card>
     </Container>
   );
 };

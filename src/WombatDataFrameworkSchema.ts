@@ -1957,6 +1957,8 @@ export const player_stat_expanded_node = makeAlaSQLNodeConfig<PlayerStatExpanded
     team2Name: string;
     team1Score: number;
     team2Score: number;
+    team1Players: string[];
+    team2Players: string[];
   }
 
   export const match_data_node = makeAlaSQLNodeConfig<MatchData>(
@@ -1965,20 +1967,23 @@ export const player_stat_expanded_node = makeAlaSQLNodeConfig<PlayerStatExpanded
     `SELECT 
       match_object_store.matchId,
       match_object_store.name as fileName,
-      match_object_store.modified as fileModified,
+      match_object_store.fileModified,
       match_object_store.dateString,
       match_start_object_store.mapName as map,
       match_start_object_store.mapType as mode,
       match_start_object_store.team1Name,
       match_start_object_store.team2Name,
       match_end_object_store.team1Score,
-      match_end_object_store.team2Score
+      match_end_object_store.team2Score,
+      team_players_by_match.team1Players,
+      team_players_by_match.team2Players
     FROM ? as match_object_store
     JOIN ? as match_end_object_store ON match_object_store.matchId = match_end_object_store.matchId
     JOIN ? as match_start_object_store ON match_object_store.matchId = match_start_object_store.matchId
+    JOIN ? as team_players_by_match ON match_object_store.matchId = team_players_by_match.matchId
     `,
-    ['match_object_store', 'match_end_object_store', 'match_start_object_store'],
-    ['matchId', 'fileName', 'fileModified', 'dateString', 'map', 'mode', 'team1Name', 'team2Name', 'team1Score', 'team2Score'],
+    ['match_object_store', 'match_end_object_store', 'match_start_object_store', 'team_players_by_match'],
+    ['matchId', 'fileName', 'fileModified', 'dateString', 'map', 'mode', 'team1Name', 'team2Name', 'team1Score', 'team2Score', 'team1Players', 'team2Players'],
   );
 
 const FUNCTION_NODES = [

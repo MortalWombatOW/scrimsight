@@ -1,10 +1,11 @@
-import { Card, CardContent, Box, Typography, ButtonBase, Button } from '@mui/material';
+import { Card, CardContent, Box, Typography, ButtonBase } from '@mui/material';
 import { useWombatData } from 'wombat-data-framework';
 import { MatchEndLogEvent, matches_grouped_by_date_node, MatchesGroupedByDateNodeData, MatchStartLogEvent } from '../../WombatDataFrameworkSchema';
 import { mapNameToFileName } from '../../lib/string';
 // import {useNavigate} from 'react-router-dom';
 import './MapsList.scss';
 import { useWidgetRegistry } from '~/WidgetProvider';
+import { useIntent } from '~/contexts/IntentContext';
 
 const MapRow = ({ matchId }: { matchId: string }) => {
   // const navigate = useNavigate();
@@ -12,6 +13,8 @@ const MapRow = ({ matchId }: { matchId: string }) => {
   const matchData = useWombatData<{ name: string, timeString: string, matchId: string }>('match_object_store');
   const matchStartData = useWombatData<MatchStartLogEvent>('match_start_object_store');
   const matchEndData = useWombatData<MatchEndLogEvent>('match_end_object_store');
+
+  const { intent, updateIntent } = useIntent();
 
   if (matchStartData.data.length === 0 || matchEndData.data.length === 0 || matchData.data.length === 0) {
     return null;
@@ -28,6 +31,7 @@ const MapRow = ({ matchId }: { matchId: string }) => {
   const handleClick = () => {
     // TODO: Implement navigation or action when card is clicked
     console.log(`Clicked match ${matchId}`);
+    updateIntent('matchId', Array.from(new Set([...(intent.matchId || []), matchId])));
   };
 
   return (
@@ -98,31 +102,24 @@ const MatchList = () => {
   const width = widgetRegistry.widgetGridWidth * 2;
   const height = widgetRegistry.widgetGridHeight;
 
+  const mostRecentScrim = matchesByDate.data[0];
+
   return (
     <>
       <CardContent style={{ width: width, height: height }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Typography variant="h3" gutterBottom>Most Recent Scrim</Typography></div>
+        <Typography variant="h3" gutterBottom>Most Recent Scrim: {new Date(mostRecentScrim?.dateString).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</Typography>
 
-        <Button variant="contained" color="primary">
-          See All Matches
-        </Button>
-        {matchesByDate.data.map((dateMatches) => (
-          <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', gap: 2, marginTop: 10 }}>
-            <Typography variant="h4" gutterBottom>{dateMatches.dateString}</Typography>
 
-            <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 10, marginTop: '10px' }}>
 
-              {dateMatches.matchIds.map((matchId, index) => (
+          {mostRecentScrim?.matchIds.map((matchId, index) => (
 
-                index < 3 && (
-                  <MapRow matchId={matchId} key={matchId} />
-                )
+            index < 3 && (
+              <MapRow matchId={matchId} key={matchId} />
+            )
 
-              ))}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
       </CardContent>
     </>

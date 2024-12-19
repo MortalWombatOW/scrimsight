@@ -8,13 +8,11 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
-import { Intent } from "~/Widget";
 import { useWombatData, useWombatDataManager } from "wombat-data-framework";
-import { PlayerMetrics } from "~/WombatDataFrameworkSchema";
+import { MatchFileInfo, PlayerMetrics } from "~/WombatDataFrameworkSchema";
+import { useIntent } from '~/contexts/IntentContext';
 
 interface IntentControlsProps {
-  intent: Intent;
-  setIntent: (newIntent: Intent) => void;
   possibleValues: {
     players: string[];
     matches: string[];
@@ -34,46 +32,11 @@ const formatTime = (seconds: number) => {
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
 };
 
-const validateIntent = (intent: Intent): Intent => {
-  if (intent.matchId && intent.matchId.length === 0) {
-    delete intent.matchId;
-  }
-  if (intent.playerName && intent.playerName.length === 0) {
-    delete intent.playerName;
-  }
-  if (intent.playerRole && intent.playerRole.length === 0) {
-    delete intent.playerRole;
-  }
-  if (intent.team && intent.team.length === 0) {
-    delete intent.team;
-  }
-  if (intent.hero && intent.hero.length === 0) {
-    delete intent.hero;
-  }
-  if (intent.metric && intent.metric.length === 0) {
-    delete intent.metric;
-  }
-  if (intent.mode && intent.mode.length === 0) {
-    delete intent.mode;
-  }
-  if (intent.mapName && intent.mapName.length === 0) {
-    delete intent.mapName;
-  }
-  if (intent.matchId === undefined || intent.matchId.length > 1) {
-    delete intent.time;
-  }
-  return intent;
-};
-
 const IntentControls: React.FC<IntentControlsProps> = ({
-  intent,
-  setIntent,
   possibleValues,
   size = 'large'
 }) => {
-  const updateIntent = <K extends keyof Intent>(key: K, value: Intent[K]) => {
-    setIntent(validateIntent({ ...intent, [key]: value }));
-  };
+  const { intent, updateIntent } = useIntent();
 
   const hasMap = intent.matchId !== undefined;
   const hasDate = intent.date !== undefined;

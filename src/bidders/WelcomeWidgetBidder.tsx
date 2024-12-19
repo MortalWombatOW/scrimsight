@@ -1,4 +1,5 @@
 import { WidgetBidder } from "~/Widget";
+import { useWidgetRegistry } from "~/WidgetProvider";
 
 const WelcomeWidgetBidder: WidgetBidder = (intent) => {
   // only bid in the default intent
@@ -21,7 +22,8 @@ const WelcomeWidgetBidder: WidgetBidder = (intent) => {
 };
 
 const WelcomeWidget: React.FC = () => {
-  return <div style={{ padding: '20px' }}>Welcome to Scrimsight! Add your <a href="https://workshop.codes/scrimtime" target="_blank" rel="noopener noreferrer">ScrimTime</a> logs to get started.</div>;
+  const widgetRegistry = useWidgetRegistry();
+  return <div style={{ padding: '20px', width: widgetRegistry.widgetGridWidth, height: widgetRegistry.widgetGridHeight }}>Welcome to Scrimsight! Add your <a href="https://workshop.codes/scrimtime" target="_blank" rel="noopener noreferrer">ScrimTime</a> logs to get started.</div>;
 };
 
 export default WelcomeWidgetBidder;

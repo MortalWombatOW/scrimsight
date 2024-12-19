@@ -13,8 +13,6 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import ArticleIcon from '@mui/icons-material/Article';
-import IconAndTextButton from '~/components/Common/IconAndText';
 import { useWidgetRegistry } from '~/WidgetProvider';
 import { useWombatData } from 'wombat-data-framework';
 import { MatchData } from '~/WombatDataFrameworkSchema';

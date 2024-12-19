@@ -1,13 +1,10 @@
-
 import WidgetContainer from '../../WidgetContainer';
-import WidgetProvider, { useWidgetRegistry } from '../../WidgetProvider';
+import WidgetProvider from '../../WidgetProvider';
 import IntentControls from '~/components/ControlPanel/IntentControls';
-import { Intent } from '~/Widget';
 import { OverwatchHero, OverwatchMap, OverwatchMode } from '~/lib/data/hero';
-import { useMemo, useState } from 'react';
 import { useWombatDataNode } from 'wombat-data-framework';
-import { Card, CardContent, CardHeader } from '@mui/material';
 import { PLAYER_METRICS } from '~/WombatDataFrameworkSchema';
+import { IntentProvider } from '~/contexts/IntentContext';
 
 
 // const Outline: React.FC<{ intent: Intent }> = ({ intent }) => {
@@ -25,8 +22,6 @@ import { PLAYER_METRICS } from '~/WombatDataFrameworkSchema';
 
 
 const HomeDashboard = () => {
-  const [intent, setIntent] = useState<Intent>({});
-
   const [playersNode] = useWombatDataNode('unique_player_names');
   const [mapNamesNode] = useWombatDataNode('unique_map_names');
   const [matchIdsNode] = useWombatDataNode('unique_map_ids');
@@ -45,16 +40,17 @@ const HomeDashboard = () => {
 
   return (
     <WidgetProvider widgetGridWidth={300} widgetGridHeight={200}>
-      <div>
+      <IntentProvider>
         <div>
-          <IntentControls intent={intent} setIntent={setIntent} possibleValues={possibleValues} size='small' />
-        </div>
+          <div>
+            <IntentControls possibleValues={possibleValues} size='small' />
+          </div>
 
-        <div style={{ padding: '50px' }}>
-          {/* <Outline intent={intent} /> */}
-          <WidgetContainer intent={intent} />
+          <div style={{ padding: '50px' }}>
+            <WidgetContainer />
+          </div>
         </div>
-      </div>
+      </IntentProvider>
     </WidgetProvider>
   );
 };
