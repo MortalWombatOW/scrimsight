@@ -7,7 +7,7 @@ import WelcomeWidgetBidder from "~/bidders/WelcomeWidgetBidder";
 import MatchListBidder from "~/bidders/MatchListBidder";
 import ChordDiagramWidgetBidder from "~/bidders/ChordDiagramWidgetBidder";
 import BarChartBidder from "~/bidders/BarChartBidder";
-
+import KillsTableWidgetBidder from "~/bidders/KillsTableBidder";
 type ScoredWidgetBid = WidgetBid & {
   score: number;
 }
@@ -23,6 +23,7 @@ class WidgetRegistry {
     MatchListBidder,
     ChordDiagramWidgetBidder,
     BarChartBidder,
+    KillsTableWidgetBidder,
   ];
 
   constructor(widgetGridWidth: number, widgetGridHeight: number) {

@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import WidgetRegistry from "./WidgetRegistry";
-// Widget Context
-const WidgetContext = createContext<WidgetRegistry | null>(null);
+import { WidgetContext } from "~/WidgetContext";
+
 
 export const useWidgetRegistry = () => {
   const registry = useContext(WidgetContext);

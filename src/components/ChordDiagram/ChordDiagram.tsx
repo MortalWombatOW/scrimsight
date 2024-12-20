@@ -2,10 +2,8 @@ import React, { useState, useRef } from 'react';
 import { useWombatData } from 'wombat-data-framework';
 import { getColorgorical } from '../../lib/color';
 import { MatchData } from '../../WombatDataFrameworkSchema';
-import { PathTooltip } from 'react-path-tooltip'; // import the package
-import useWindowSize from '../../hooks/useWindowSize';
-import { Card, CardContent, Container } from '@mui/material';
-import { Typography } from '@mui/material';
+import { PathTooltip } from 'react-path-tooltip';
+import { Container } from '@mui/material';
 import { PlayerInteractionEvent } from '../MapTimeline/types/timeline.types';
 import { useWidgetRegistry } from '~/WidgetProvider';
 
@@ -275,8 +273,6 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   const widgetRegistry = useWidgetRegistry();
   const width = widgetRegistry.widgetGridWidth;
 
-  // const { width } = useWindowSize();
-
   const padding = width / 8;
 
   const outerRadius = width / 4;
@@ -312,11 +308,23 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
 
   Object.entries(groupedData).forEach(([, interactions]) => interactions.sort((a, b) => a.value - b.value).sort((a, b) => players.indexOf(b.targetPlayerName) - players.indexOf(a.targetPlayerName)));
   const playerAngles: {
-    [player: string]: { killsStartAngle: number; killsEndAngle: number; totalKills: number; currentKills: number; deathsStartAngle: number; deathsEndAngle: number; totalDeaths: number; currentDeaths: number };
+    [player: string]: {
+      killsStartAngle: number;
+      killsEndAngle: number;
+      totalKills: number;
+      currentKills: number;
+      deathsStartAngle: number;
+      deathsEndAngle: number;
+      totalDeaths: number;
+      currentDeaths: number
+    };
   } = {};
-  let currentAngle = 0;
-  const totalValue = chordData.reduce((sum, entry) => sum + entry.value, 0) * 2;
 
+  const numPlayers = players.length;
+  const totalValue = chordData.reduce((sum, entry) => sum + entry.value, 0) * 2;
+  const angleSpacing = 0; // Add spacing between segments
+
+  let currentAngle = 0;
   players.forEach((player) => {
     const playerValue = groupedData[player]?.reduce<number>((sum, interaction: ChordDataEntry) => sum + interaction.value, 0) ?? 0;
     const toPlayerValue = Object.values(groupedData).reduce(
@@ -324,24 +332,24 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
       0,
     );
 
+    // Adjust angle calculations to prevent overlap
     const killsAngleSpan = (playerValue / totalValue) * 360;
     const deathsAngleSpan = (toPlayerValue / totalValue) * 360;
 
     playerAngles[player] = {
-      killsStartAngle: currentAngle + killsAngleSpan / 2,
+      killsStartAngle: currentAngle,
       killsEndAngle: currentAngle + killsAngleSpan,
       totalKills: playerValue,
       currentKills: 0,
       deathsStartAngle: currentAngle + killsAngleSpan,
-      deathsEndAngle: currentAngle + killsAngleSpan + (1 * deathsAngleSpan) / 2,
+      deathsEndAngle: currentAngle + killsAngleSpan + deathsAngleSpan,
       totalDeaths: toPlayerValue,
       currentDeaths: 0,
     };
-    currentAngle += killsAngleSpan;
-    currentAngle += deathsAngleSpan;
+
+    currentAngle += killsAngleSpan + deathsAngleSpan + angleSpacing;
   });
 
-  console.log('playerAngles', playerAngles);
 
   const averageAngle = players.length > 0 ? players.reduce((sum, player) => sum + playerAngles[player].killsStartAngle, 0) / players.length : 0;
 
@@ -355,6 +363,9 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
     playerAngle.deathsStartAngle += nudgeAngle;
     playerAngle.deathsEndAngle += nudgeAngle;
   });
+
+  console.log('playerAngles', playerAngles);
+
 
   const handleArcHover = (event: React.MouseEvent<SVGPathElement>) => {
     if (svgRef.current) {
@@ -377,9 +388,6 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
       setHoveredTarget(null);
     }
   };
-
-  // const team1AverageAngle = team1Players.reduce((sum, player) => sum + playerAngles[player].killsStartAngle, 0) / team1Players.length;
-  // const team2AverageAngle = team2Players.reduce((sum, player) => sum + playerAngles[player].deathsEndAngle, 0) / team2Players.length;
 
   const team1LabelAngle = 70;
   const team2LabelAngle = 110;
@@ -475,9 +483,6 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
               <text x={x} y={y} fontSize="0.7em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Players.includes(player) ? team2Name : team1Name)}>
                 {player}
               </text>
-              {/* <text x={x} y={y + 10} fontSize="0.5em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Players.includes(player) ? team2Name : team1Name)}>
-                {playerRoleMap[player]}
-              </text> */}
             </g>
           );
         })}
