@@ -121,13 +121,10 @@ const PlayerArc: React.FC<{
     const { x: deathsStartX, y: deathsStartY } = getCoords(deathsStartAngle, paddedRadius);
     const { x: deathsEndX, y: deathsEndY } = getCoords(deathsEndAngle, paddedRadius);
 
-    const labelOffset = 40;
-    const killsLabelAngle = (killsStartAngle + killsEndAngle) / 2;
-    const killsLabelX = (killsStartX + killsEndX) / 2 + labelOffset * Math.cos(Math.PI * (killsLabelAngle / 180));
-    const killsLabelY = (killsStartY + killsEndY) / 2 + labelOffset * Math.sin(Math.PI * (killsLabelAngle / 180));
-    const deathsLabelAngle = (deathsStartAngle + deathsEndAngle) / 2;
-    const deathsLabelX = (deathsStartX + deathsEndX) / 2 + labelOffset * Math.cos(Math.PI * (deathsLabelAngle / 180));
-    const deathsLabelY = (deathsStartY + deathsEndY) / 2 + labelOffset * Math.sin(Math.PI * (deathsLabelAngle / 180));
+    // Calculate center angle for the combined label
+    const centerAngle = (killsStartAngle + deathsEndAngle) / 2;
+    const labelOffset = 30;
+    const { x: labelX, y: labelY } = getCoords(centerAngle, paddedRadius + labelOffset);
 
     const killsArcRef = useRef<SVGPathElement>(null);
     const deathsArcRef = useRef<SVGPathElement>(null);
@@ -136,18 +133,21 @@ const PlayerArc: React.FC<{
       <g key={playerName}>
         <g data-source={playerName} onMouseEnter={handleArcHover} onMouseLeave={handleArcLeave} opacity={isHovering ? (hoveredSource === playerName ? 1 : 0.3) : 1}>
           <path ref={killsArcRef} d={`M${killsStartX},${killsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${killsEndX},${killsEndY}`} fill="none" stroke={getColorgorical(playerTeam)} strokeWidth={strokeWidth} />
-
-          <text x={killsLabelX} y={killsLabelY} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.6em">
-            {totalKills} kills
-          </text>
         </g>
         <g data-target={playerName} onMouseEnter={handleArcHover} onMouseLeave={handleArcLeave} opacity={isHovering ? (hoveredTarget === playerName ? 1 : 0.3) : 1}>
           <path ref={deathsArcRef} d={`M${deathsStartX},${deathsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${deathsEndX},${deathsEndY}`} fill="none" stroke={getColorgorical(otherTeam)} strokeWidth={strokeWidth} />
+        </g>
 
-          <text x={deathsLabelX} y={deathsLabelY} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.6em">
-            {totalDeaths} deaths
+        {/* Combined label group */}
+        <g>
+          <text x={labelX} y={labelY - 5} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.6em">
+            {playerName}
+          </text>
+          <text x={labelX} y={labelY + 5} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.6em">
+            {totalKills}K / {totalDeaths}D
           </text>
         </g>
+
         <PathTooltip svgRef={svgRef} pathRef={killsArcRef} tip={`${playerName} kills: ${totalKills}`} />
         <PathTooltip svgRef={svgRef} pathRef={deathsArcRef} tip={`${playerName} deaths: ${totalDeaths}`} />
       </g>
@@ -272,14 +272,6 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   console.log('outerRadius', outerRadius);
   console.log('innerRadius', innerRadius);
 
-  const getLabelPosition = (angle: number) => {
-    const labelRadius = outerRadius + 50;
-    return {
-      x: outerRadius + labelRadius * Math.cos(Math.PI * (angle / 180)) + padding,
-      y: outerRadius + labelRadius * Math.sin(Math.PI * (angle / 180)) + padding,
-    };
-  };
-
   const getCoords = (angle: number, radius: number) => {
     return {
       x: size / 2 + radius * Math.cos(Math.PI * (angle / 180)),
@@ -389,19 +381,6 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
     }
   };
 
-  const team1LabelAngle = 70;
-  const team2LabelAngle = 110;
-
-  const teamLabelScale = 1.7;
-  const { x: team1LabelX, y: team1LabelY } = getCoords(team1LabelAngle, teamLabelScale * innerRadius);
-  const { x: team2LabelX, y: team2LabelY } = getCoords(team2LabelAngle, teamLabelScale * innerRadius);
-
-
-  const team1TotalKills = team1Players.reduce((sum, player) => sum + playerAngles[player].totalKills, 0);
-  const team2TotalKills = team2Players.reduce((sum, player) => sum + playerAngles[player].totalKills, 0);
-
-  const teamsAverageY = (team1LabelY + team2LabelY) / 2;
-  const xDistBetweenTeams = Math.abs(team1LabelX - team2LabelX);
 
   return (
     <Container>
@@ -460,54 +439,6 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
             />
           )),
         )}
-
-        {players.map((player) => {
-          const { killsStartAngle: startAngle, deathsEndAngle: endAngle } = playerAngles[player];
-          const labelAngle = (startAngle + endAngle) / 2;
-          const { x, y } = getLabelPosition(labelAngle);
-          return (
-            <g
-              key={player}
-              onMouseEnter={() => {
-                setHoveredSource(player);
-                setHoveredTarget(player);
-              }}
-              onMouseLeave={() => {
-                setHoveredSource(null);
-                setHoveredTarget(null);
-              }}>
-              <text x={x} y={y} fontSize="0.7em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Players.includes(player) ? team2Name : team1Name)}>
-                {player}
-              </text>
-            </g>
-          );
-        })}
-        <g key="team1Label">
-          <text x={team1LabelX} y={team1LabelY} fontSize="0.7em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)}>
-            {team1Name}
-          </text>
-          <text x={team1LabelX} y={team1LabelY + 20} fontSize="0.5em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)}>
-            {team1TotalKills} kills
-          </text>
-        </g>
-        <g key="team2Label">
-          <text x={team2LabelX} y={team2LabelY} fontSize="0.7em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)}>
-            {team2Name}
-          </text>
-          <text x={team2LabelX} y={team2LabelY + 20} fontSize="0.5em" textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)}>
-            {team2TotalKills} kills
-          </text>
-        </g>
-        <g key="teamsKillBalance">
-          <rect x={team2LabelX + xDistBetweenTeams / 3 + 50} y={teamsAverageY} width={((team2TotalKills / (team1TotalKills + team2TotalKills)) * xDistBetweenTeams) / 3} height={30} fill={getColorgorical(team2Name)} />
-          <rect
-            x={team2LabelX + xDistBetweenTeams / 6 + ((team2TotalKills / (team1TotalKills + team2TotalKills)) * xDistBetweenTeams) / 3 + 50}
-            y={teamsAverageY}
-            width={((team1TotalKills / (team1TotalKills + team2TotalKills)) * xDistBetweenTeams) / 3}
-            height={30}
-            fill={getColorgorical(team1Name)}
-          />
-        </g>
       </svg>
     </Container>
   );
