@@ -239,6 +239,98 @@ const Chord: React.FC<{
     );
   };
 
+// Add new Legend component
+const Legend: React.FC<{
+  team1Name: string,
+  team2Name: string,
+  centerX: number,
+  bottomY: number
+}> = ({ team1Name, team2Name, centerX, bottomY }) => {
+  const legendY = bottomY + 40;
+  const legendWidth = 300; // Width for text wrapping
+  const itemSpacing = 20; // Vertical spacing between items
+
+  return (
+    <g className="legend">
+      <g transform={`translate(${centerX - legendWidth / 2}, ${legendY})`}>
+        {/* Team 1 kills */}
+        <rect
+          x="0"
+          y="0"
+          width="15"
+          height="8"
+          fill={getColorgorical(team1Name)}
+        />
+        <text
+          x="25"
+          y="7"
+          fontSize="12"
+          fill="#8F9BA8"
+        >
+          Kills by {team1Name}
+        </text>
+
+        {/* Team 2 kills */}
+        <rect
+          x="0"
+          y={itemSpacing}
+          width="15"
+          height="8"
+          fill={getColorgorical(team2Name)}
+        />
+        <text
+          x="25"
+          y={itemSpacing + 7}
+          fontSize="12"
+          fill="#8F9BA8"
+        >
+          Kills by {team2Name}
+        </text>
+
+        {/* Interaction lines */}
+        <g transform={`translate(0, ${itemSpacing * 2})`}>
+          <path
+            d="M0,4 C10,4 20,12 30,12"
+            stroke={`${getColorgorical(team1Name)}80`}
+            fill="none"
+            strokeWidth="2"
+          />
+          <path
+            d="M0,4 C10,4 20,-4 30,-4"
+            stroke={`${getColorgorical(team2Name)}80`}
+            fill="none"
+            strokeWidth="2"
+          />
+          <text
+            x="40"
+            y="7"
+            fontSize="12"
+            fill="#8F9BA8"
+          >
+            <tspan x="40" dy="0">Connecting killed player and killer</tspan>
+            <tspan x="40" dy="14">(thickness indicates number of kills between those players)</tspan>
+          </text>
+        </g>
+
+        {/* Tick marks */}
+        <g transform={`translate(0, ${itemSpacing * 4})`}>
+          <line x1="0" y1="0" x2="0" y2="8" stroke="#8F9BA8" strokeWidth="1" />
+          <line x1="5" y1="0" x2="5" y2="8" stroke="#8F9BA8" strokeWidth="1" />
+          <line x1="10" y1="0" x2="10" y2="8" stroke="#8F9BA8" strokeWidth="1" />
+          <text
+            x="25"
+            y="7"
+            fontSize="12"
+            fill="#8F9BA8"
+          >
+            Each tick represents one kill
+          </text>
+        </g>
+      </g>
+    </g>
+  );
+};
+
 const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -270,7 +362,7 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   const getCoords = (angle: number, radius: number) => {
     return {
       x: widgetRegistry.widgetGridWidth * gridColumnCount / 2 + radius * Math.cos(Math.PI * (angle / 180)),
-      y: widgetRegistry.widgetGridHeight * gridRowCount / 2 + radius * Math.sin(Math.PI * (angle / 180)),
+      y: widgetRegistry.widgetGridHeight * gridRowCount / 2 - 40 + radius * Math.sin(Math.PI * (angle / 180)),
     };
   };
 
@@ -361,7 +453,7 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
 
 
   return (
-    <svg ref={svgRef} width={widgetRegistry.widgetGridWidth * gridColumnCount} height={widgetRegistry.widgetGridHeight * gridRowCount} style={{ display: 'block', margin: '0 auto' }}>
+    <svg ref={svgRef} width={widgetRegistry.widgetGridWidth * gridColumnCount} height={(widgetRegistry.widgetGridHeight * gridRowCount)}>
       {Object.entries(playerAngles).map(([playerName, angles]) => {
         const { killsStartAngle, killsEndAngle, deathsStartAngle, deathsEndAngle } = angles;
         return (
@@ -417,6 +509,13 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
         <text x={team2LabelCoords.x} y={team2LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="1em" fontWeight="bold">{team2Name}</text>
         <text x={team2LabelCoords.x} y={team2LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="0.8em" fontWeight="bold">{totalTeam2Kills} kills</text>
       </g>
+
+      <Legend
+        team1Name={team1Name}
+        team2Name={team2Name}
+        centerX={170}
+        bottomY={widgetRegistry.widgetGridHeight * gridRowCount - 140}
+      />
     </svg>
   );
 };
