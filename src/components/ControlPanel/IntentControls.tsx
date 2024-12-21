@@ -9,7 +9,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import { useWombatData, useWombatDataManager } from "wombat-data-framework";
-import { MatchFileInfo, PlayerMetrics } from "~/WombatDataFrameworkSchema";
+import { MatchData, MatchFileInfo, PlayerMetrics } from "~/WombatDataFrameworkSchema";
 import { useIntent } from '~/contexts/IntentContext';
 
 interface IntentControlsProps {
@@ -45,15 +45,17 @@ const IntentControls: React.FC<IntentControlsProps> = ({
 
   const hasTime = intent.time !== undefined;
 
-  const matchData = useWombatData<MatchFileInfo>('match_object_store');
+  const matchFileInfo = useWombatData<MatchFileInfo>('match_object_store');
+  const matchData = useWombatData<MatchData>('match_data');
 
   const endDate = Math.ceil(new Date().getTime() / (1000 * 60 * 60 * 24));
 
-  const startDate = matchData.data.length > 0 ? (matchData.data.map((match) => new Date(match.dateString)).sort()[0].getTime() / (1000 * 60 * 60 * 24)) : endDate - 365;
+  const startDate = matchFileInfo.data.length > 0 ? (matchFileInfo.data.map((match) => new Date(match.dateString)).sort()[0].getTime() / (1000 * 60 * 60 * 24)) : endDate - 365;
 
   console.log('startDate', startDate);
   console.log('endDate', endDate);
   console.log('matchData', matchData.data);
+  console.log('matchFileInfo', matchFileInfo.data);
 
 
   return (
@@ -76,6 +78,17 @@ const IntentControls: React.FC<IntentControlsProps> = ({
         label="Matches"
         noOptionsText="No matches found"
         size={size}
+        optionLabel={(option) => {
+          // team1Name team1Score - team2Name team2Score - mapName mode
+          const match = matchData.data.find((match) => match.matchId === option);
+          if (!match) return option;
+          return `${match.team1Name} vs ${match.team2Name} on ${match.map} (${match.mode})`;
+        }}
+        optionSubLabel={(option) => {
+          const match = matchData.data.find((match) => match.matchId === option);
+          if (!match) return 'Unknown match';
+          return `Score: ${match.team1Score} - ${match.team2Score} Date: ${match.dateString}`;
+        }}
       />
 
       <IconAutocomplete

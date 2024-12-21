@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React from "react";
 import UploaderWidgetBidder from "./bidders/UploaderWidgetBidder";
 import MetricCardWidgetBidder from "./bidders/MetricCardWidgetBidder";
 import { WidgetBidder, Intent, WidgetBid, intentSimilarity } from "./Widget";
@@ -8,7 +8,9 @@ import MatchListBidder from "~/bidders/MatchListBidder";
 import ChordDiagramWidgetBidder from "~/bidders/ChordDiagramWidgetBidder";
 import BarChartBidder from "~/bidders/BarChartBidder";
 import KillsTableWidgetBidder from "~/bidders/KillsTableBidder";
-type ScoredWidgetBid = WidgetBid & {
+import ScatterChartBidder from "~/bidders/ScatterChartBidder";
+
+type ScoredWidgetBid<T> = WidgetBid<T> & {
   score: number;
 }
 
@@ -23,6 +25,7 @@ class WidgetRegistry {
     MatchListBidder,
     ChordDiagramWidgetBidder,
     BarChartBidder,
+    ScatterChartBidder,
     KillsTableWidgetBidder,
   ];
 
@@ -31,17 +34,17 @@ class WidgetRegistry {
     this.widgetGridHeight = widgetGridHeight;
   }
 
-  getBids(intent: Intent): WidgetBid[] {
+  getBids(intent: Intent): WidgetBid<any>[] {
     return this.bidders.flatMap(bidder => bidder(intent));
   }
 
-  getScore(bid: WidgetBid, intent: Intent): number {
+  getScore(bid: WidgetBid<any>, intent: Intent): number {
     return (bid.scorePrior ?? 0) + intentSimilarity(bid.intent, intent);
   }
 
-  getScoredBids(intent: Intent): ScoredWidgetBid[] {
-    const bids: WidgetBid[] = this.getBids(intent);
-    const scoredBids: ScoredWidgetBid[] = bids.map(bid => ({
+  getScoredBids(intent: Intent): ScoredWidgetBid<any>[] {
+    const bids: WidgetBid<any>[] = this.getBids(intent);
+    const scoredBids: ScoredWidgetBid<any>[] = bids.map(bid => ({
       ...bid,
       score: this.getScore(bid, intent),
     }));
@@ -50,15 +53,6 @@ class WidgetRegistry {
 
     return scoredBids;
   }
-
-  getWidgets(intent: Intent): React.ReactNode[] {
-    const scoredBids: ScoredWidgetBid[] = this.getScoredBids(intent);
-  
-    console.log(scoredBids);
-
-    return scoredBids.map(widget => widget.widget);
-  }
-
 
 }
 

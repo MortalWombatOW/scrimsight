@@ -4,3 +4,6 @@ export interface SingleKeySingleValueData<T extends object> {
   data: T[];
 }
 
+export interface SingleKeyDoubleValueData<T extends object> extends SingleKeySingleValueData<T> {
+  valueKey2: keyof T extends string ? keyof T : never;
+}

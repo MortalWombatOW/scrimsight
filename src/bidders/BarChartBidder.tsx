@@ -1,5 +1,7 @@
+import { WombatDataOptions } from "wombat-data-framework";
 import { PlayerStatTotalBarChart } from "~/components/Card/PlayerStatTotalBarChart";
 import { WidgetBid, WidgetBidder } from "~/Widget";
+import { PlayerStatTotalsNodeData } from "~/WombatDataFrameworkSchema";
 
 
 
@@ -8,7 +10,9 @@ const BarChartBidder: WidgetBidder = (intent) => {
   if (intent.metric === undefined) {
     return bids;
   }
-  if (intent.matchId === undefined) {
+  if (intent.matchId === undefined || intent.matchId.length === 1) {
+    // const dataOptions: WombatDataOptions<PlayerStatTotalsNodeData> | undefined = intent.matchId?.length === 1 ? { initialFilter: { matchId: intent.matchId?.[0] } } : undefined;
+    // console.log(dataOptions);
     for (const metricName of intent.metric) {
       bids.push(
         {

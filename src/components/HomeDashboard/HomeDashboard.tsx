@@ -39,7 +39,7 @@ const HomeDashboard = () => {
   };
 
   return (
-    <WidgetProvider widgetGridWidth={300} widgetGridHeight={200}>
+    <WidgetProvider widgetGridWidth={300} widgetGridHeight={300}>
       <IntentProvider>
         <div>
           <div>

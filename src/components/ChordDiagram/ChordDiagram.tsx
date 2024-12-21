@@ -52,8 +52,8 @@ const getArcPath = (sourceStartAngle: number, sourceEndAngle: number, targetStar
 
   const averageAngle = (sourceStartAngle + sourceEndAngle + targetStartAngle + targetEndAngle) / 4;
 
-  const { x: sourceEndToTargetStartControlPointX, y: sourceEndToTargetStartControlPointY } = getCoords(averageAngle, innerRadius / 6);
-  const { x: targetStartToTargetEndControlPointX, y: targetStartToTargetEndControlPointY } = getCoords(averageAngle, innerRadius / 6);
+  const { x: sourceEndToTargetStartControlPointX, y: sourceEndToTargetStartControlPointY } = getCoords(averageAngle, 0);
+  const { x: targetStartToTargetEndControlPointX, y: targetStartToTargetEndControlPointY } = getCoords(averageAngle, 0);
 
   let path = '';
   // path components
@@ -84,12 +84,9 @@ const PlayerArc: React.FC<{
   killsEndAngle: number;
   deathsStartAngle: number;
   deathsEndAngle: number;
-  handleArcHover: (event: React.MouseEvent<SVGPathElement>) => void;
-  handleArcLeave: (event: React.MouseEvent<SVGPathElement>) => void;
-  isHovering: boolean;
-  isInteractionHovering: boolean;
-  hoveredSource: string | null;
-  hoveredTarget: string | null;
+  highlight: boolean;
+  onMouseOver: () => void;
+  onMouseLeave: () => void;
   svgRef: React.RefObject<SVGSVGElement>;
   totalKills: number;
   totalDeaths: number;
@@ -103,53 +100,76 @@ const PlayerArc: React.FC<{
   killsEndAngle,
   deathsStartAngle,
   deathsEndAngle,
-  handleArcHover,
-  handleArcLeave,
-  isHovering,
-  hoveredSource,
-  hoveredTarget,
-  svgRef,
   totalKills,
   totalDeaths,
   getCoords,
+  highlight,
+  onMouseOver,
+  onMouseLeave,
 }) => {
-    const strokeWidth = 5;
+    const strokeWidth = 20;
     const paddedRadius = innerRadius + strokeWidth / 2;
+
+    const outerArcWidth = 10;
+    const outerArcRadius = paddedRadius + strokeWidth / 2 + outerArcWidth / 2;
 
     const { x: killsStartX, y: killsStartY } = getCoords(killsStartAngle, paddedRadius);
     const { x: killsEndX, y: killsEndY } = getCoords(killsEndAngle, paddedRadius);
     const { x: deathsStartX, y: deathsStartY } = getCoords(deathsStartAngle, paddedRadius);
     const { x: deathsEndX, y: deathsEndY } = getCoords(deathsEndAngle, paddedRadius);
+    const { x: outerArcStartX, y: outerArcStartY } = getCoords(killsStartAngle, outerArcRadius);
+    const { x: outerArcEndX, y: outerArcEndY } = getCoords(deathsEndAngle, outerArcRadius);
 
     // Calculate center angle for the combined label
     const centerAngle = (killsStartAngle + deathsEndAngle) / 2;
-    const labelOffset = 30;
+    const labelOffset = 50;
     const { x: labelX, y: labelY } = getCoords(centerAngle, paddedRadius + labelOffset);
+    const { x: labelAnchorX, y: labelAnchorY } = getCoords(centerAngle, paddedRadius + labelOffset - 25);
+    const { x: arcOutsideCenterX, y: arcOutsideCenterY } = getCoords(centerAngle, innerRadius + strokeWidth + 5);
 
-    const killsArcRef = useRef<SVGPathElement>(null);
-    const deathsArcRef = useRef<SVGPathElement>(null);
+    const totalAngle = deathsEndAngle - killsStartAngle;
+    const numTicks = totalKills + totalDeaths;
+    const anglePerTick = totalAngle / numTicks;
+    const ticks = Array.from({ length: numTicks }).map((_, index) => killsStartAngle + index * anglePerTick).map((angle) => {
+      const { x: innerCoordX, y: innerCoordY } = getCoords(angle, innerRadius);
+      const { x: outerCoordX, y: outerCoordY } = getCoords(angle, innerRadius + strokeWidth);
+      return {
+        innerCoord: { x: innerCoordX, y: innerCoordY },
+        outerCoord: { x: outerCoordX, y: outerCoordY },
+      };
+    });
+
+
 
     return (
-      <g key={playerName}>
-        <g data-source={playerName} onMouseEnter={handleArcHover} onMouseLeave={handleArcLeave} opacity={isHovering ? (hoveredSource === playerName ? 1 : 0.3) : 1}>
-          <path ref={killsArcRef} d={`M${killsStartX},${killsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${killsEndX},${killsEndY}`} fill="none" stroke={getColorgorical(playerTeam)} strokeWidth={strokeWidth} />
+      <g key={playerName} onMouseEnter={onMouseOver} onMouseLeave={onMouseLeave}>
+        <g>
+          <path d={`M${killsStartX},${killsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${killsEndX},${killsEndY}`} fill="none" stroke={getColorgorical(playerTeam)} strokeWidth={strokeWidth} />
         </g>
-        <g data-target={playerName} onMouseEnter={handleArcHover} onMouseLeave={handleArcLeave} opacity={isHovering ? (hoveredTarget === playerName ? 1 : 0.3) : 1}>
-          <path ref={deathsArcRef} d={`M${deathsStartX},${deathsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${deathsEndX},${deathsEndY}`} fill="none" stroke={getColorgorical(otherTeam)} strokeWidth={strokeWidth} />
+        <g>
+          <path d={`M${deathsStartX},${deathsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${deathsEndX},${deathsEndY}`} fill="none" stroke={getColorgorical(otherTeam)} strokeWidth={strokeWidth} />
+        </g>
+
+        {ticks.map((tick, index) => (
+          <g key={index}>
+            <line x1={tick.innerCoord.x} y1={tick.innerCoord.y} x2={tick.outerCoord.x} y2={tick.outerCoord.y} stroke="black" strokeWidth={1} opacity={0.8} />
+          </g>
+        ))}
+
+        <g>
+          <path d={`M${outerArcStartX},${outerArcStartY} A${outerArcRadius},${outerArcRadius} 0 0,1 ${outerArcEndX},${outerArcEndY}`} fill="none" stroke={getColorgorical(playerTeam)} strokeWidth={outerArcWidth} />
         </g>
 
         {/* Combined label group */}
         <g>
-          <text x={labelX} y={labelY - 5} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.6em">
+          <text x={labelX} y={labelY - 7} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.7em" fontWeight={highlight ? 'bold' : 'normal'}>
             {playerName}
           </text>
-          <text x={labelX} y={labelY + 5} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.6em">
+          <text x={labelX} y={labelY + 7} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.7em" fontWeight={highlight ? 'bold' : 'normal'}>
             {totalKills}K / {totalDeaths}D
           </text>
         </g>
-
-        <PathTooltip svgRef={svgRef} pathRef={killsArcRef} tip={`${playerName} kills: ${totalKills}`} />
-        <PathTooltip svgRef={svgRef} pathRef={deathsArcRef} tip={`${playerName} deaths: ${totalDeaths}`} />
+        <line x1={labelAnchorX} y1={labelAnchorY} x2={arcOutsideCenterX} y2={arcOutsideCenterY} stroke={getColorgorical(playerTeam)} strokeWidth={1} />
       </g>
     );
   };
@@ -167,13 +187,7 @@ const Chord: React.FC<{
   getTargetCurrentValue: () => number;
   addTargetCurrentValue: (value: number) => void;
   innerRadius: number;
-  handleArcHover: (event: React.MouseEvent<SVGPathElement>) => void;
-  handleArcLeave: (event: React.MouseEvent<SVGPathElement>) => void;
-  isHovering: boolean;
-  isInteractionHovering: boolean;
-  hoveredSource: string | null;
-  hoveredTarget: string | null;
-  svgRef: React.RefObject<SVGSVGElement>;
+  highlightState: 'highlight' | 'normal' | 'hidden';
   getCoords: (angle: number, radius: number) => { x: number; y: number };
 }> = ({
   interaction,
@@ -188,13 +202,7 @@ const Chord: React.FC<{
   getTargetCurrentValue,
   addTargetCurrentValue,
   innerRadius,
-  handleArcHover,
-  handleArcLeave,
-  isHovering,
-  isInteractionHovering,
-  hoveredSource,
-  hoveredTarget,
-  svgRef,
+  highlightState,
   getCoords,
 }) => {
     const color = getColorgorical(interaction.sourceTeamName);
@@ -210,9 +218,6 @@ const Chord: React.FC<{
     addSourceCurrentValue(interaction.value);
     addTargetCurrentValue(interaction.value);
 
-    const source = interaction.sourcePlayerName;
-    const target = interaction.targetPlayerName;
-
     const arcRef = useRef<SVGPathElement>(null);
 
     return (
@@ -220,17 +225,16 @@ const Chord: React.FC<{
         <path
           ref={arcRef}
           d={getArcPath(interactionSourceStartAngle, interactionSourceEndAngle, interactionTargetStartAngle, interactionTargetEndAngle, innerRadius, getCoords)}
-          fill={color}
-          stroke="white"
+          // fill={`${color}30`}
+          // stroke={`${color}80`}
+          style={{
+            fill: highlightState === 'highlight' ? `${color}90` : highlightState === 'normal' ? `${color}30` : `${color}00`,
+            stroke: highlightState === 'highlight' ? `${color}` : highlightState === 'normal' ? `${color}80` : `${color}00`,
+            transition: 'all 0.3s ease',
+          }}
           strokeWidth={1}
-          data-source={source}
-          data-target={interaction.targetPlayerName}
-          onMouseEnter={handleArcHover}
-          onMouseLeave={handleArcLeave}
-          opacity={isHovering ? ((isInteractionHovering ? hoveredSource === source && hoveredTarget === target : hoveredSource === source || hoveredTarget === interaction.targetPlayerName) ? 1 : 0.) : 0}
+          opacity={1}
         />
-
-        <PathTooltip svgRef={svgRef} pathRef={arcRef} tip={`${interaction.value} kills on ${interaction.targetPlayerName} by ${interaction.sourcePlayerName}`} />
       </g>
     );
   };
@@ -254,28 +258,19 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   console.log('chordData', chordData);
 
   const widgetRegistry = useWidgetRegistry();
-  const size = Math.min(widgetRegistry.widgetGridWidth, widgetRegistry.widgetGridHeight);
+  const gridRowCount = 2;
+  const gridColumnCount = 2;
+  const size = Math.min(widgetRegistry.widgetGridWidth * gridColumnCount, widgetRegistry.widgetGridHeight * gridRowCount);
 
-  const padding = size / 8;
+  const radius = size / 3.4;
 
-  const arcThickness = 2;
-  const outerRadius = size / 4;
-  const innerRadius = outerRadius - arcThickness;
-  const [hoveredSource, setHoveredSource] = useState<string | null>(null);
-  const [hoveredTarget, setHoveredTarget] = useState<string | null>(null);
-  const isHovering = hoveredSource !== null || hoveredTarget !== null;
-  const isInteractionHovering = hoveredSource !== null && hoveredTarget !== null;
+  const [highlightedPlayer, setHighlightedPlayer] = useState<string | null>(null);
 
-
-  console.log('size', size);
-  console.log('padding', padding);
-  console.log('outerRadius', outerRadius);
-  console.log('innerRadius', innerRadius);
 
   const getCoords = (angle: number, radius: number) => {
     return {
-      x: size / 2 + radius * Math.cos(Math.PI * (angle / 180)),
-      y: size / 2 + radius * Math.sin(Math.PI * (angle / 180)),
+      x: widgetRegistry.widgetGridWidth * gridColumnCount / 2 + radius * Math.cos(Math.PI * (angle / 180)),
+      y: widgetRegistry.widgetGridHeight * gridRowCount / 2 + radius * Math.sin(Math.PI * (angle / 180)),
     };
   };
 
@@ -347,7 +342,7 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
 
   console.log('averageAngle', averageAngle);
 
-  const nudgeAngle = averageAngle - 270;
+  const nudgeAngle = 90 + angleSpacing / 2;
 
   Object.values(playerAngles).forEach((playerAngle) => {
     playerAngle.killsStartAngle += nudgeAngle;
@@ -359,88 +354,70 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   console.log('playerAngles', playerAngles);
 
 
-  const handleArcHover = (event: React.MouseEvent<SVGPathElement>) => {
-    if (svgRef.current) {
-      const path = event.currentTarget;
-      const sourcePlayerName = path.dataset.source as string;
-      const targetPlayerName = path.dataset.target as string;
-
-      if (sourcePlayerName) {
-        setHoveredSource(sourcePlayerName);
-      }
-      if (targetPlayerName) {
-        setHoveredTarget(targetPlayerName);
-      }
-    }
-  };
-
-  const handleArcLeave = () => {
-    if (svgRef.current) {
-      setHoveredSource(null);
-      setHoveredTarget(null);
-    }
-  };
+  const team1LabelCoords = getCoords(225, radius + 100);
+  const team2LabelCoords = getCoords(315, radius + 100);
+  const totalTeam1Kills = chordData.filter((interaction) => interaction.sourceTeamName === team1Name).reduce((sum, interaction) => sum + interaction.value, 0);
+  const totalTeam2Kills = chordData.filter((interaction) => interaction.sourceTeamName === team2Name).reduce((sum, interaction) => sum + interaction.value, 0);
 
 
   return (
-    <Container>
-      <svg ref={svgRef} width={widgetRegistry.widgetGridWidth} height={widgetRegistry.widgetGridHeight} style={{ display: 'block', margin: '0 auto' }}>
-        {Object.entries(playerAngles).map(([playerName, angles]) => {
-          const { killsStartAngle, killsEndAngle, deathsStartAngle, deathsEndAngle } = angles;
-          return (
-            <PlayerArc
-              key={playerName}
-              playerName={playerName}
-              innerRadius={innerRadius}
-              playerTeam={team1Players.includes(playerName) ? team1Name : team2Name}
-              otherTeam={team1Players.includes(playerName) ? team2Name : team1Name}
-              killsStartAngle={killsStartAngle}
-              killsEndAngle={killsEndAngle}
-              deathsStartAngle={deathsStartAngle}
-              deathsEndAngle={deathsEndAngle}
-              handleArcHover={handleArcHover}
-              handleArcLeave={handleArcLeave}
-              isHovering={isHovering}
-              isInteractionHovering={isInteractionHovering}
-              hoveredSource={hoveredSource}
-              hoveredTarget={hoveredTarget}
-              svgRef={svgRef}
-              totalKills={angles.totalKills}
-              totalDeaths={angles.totalDeaths}
-              getCoords={getCoords}
-            />
-          );
-        })}
+    <svg ref={svgRef} width={widgetRegistry.widgetGridWidth * gridColumnCount} height={widgetRegistry.widgetGridHeight * gridRowCount} style={{ display: 'block', margin: '0 auto' }}>
+      {Object.entries(playerAngles).map(([playerName, angles]) => {
+        const { killsStartAngle, killsEndAngle, deathsStartAngle, deathsEndAngle } = angles;
+        return (
+          <PlayerArc
+            key={playerName}
+            playerName={playerName}
+            innerRadius={radius}
+            playerTeam={team1Players.includes(playerName) ? team1Name : team2Name}
+            otherTeam={team1Players.includes(playerName) ? team2Name : team1Name}
+            killsStartAngle={killsStartAngle}
+            killsEndAngle={killsEndAngle}
+            deathsStartAngle={deathsStartAngle}
+            deathsEndAngle={deathsEndAngle}
+            highlight={highlightedPlayer === playerName}
+            onMouseOver={() => setHighlightedPlayer(playerName)}
+            onMouseLeave={() => setHighlightedPlayer(null)}
+            svgRef={svgRef}
+            totalKills={angles.totalKills}
+            totalDeaths={angles.totalDeaths}
+            getCoords={getCoords}
+          />
+        );
+      })}
 
-        {players.length > 0 && Object.entries(groupedData).map(([source, interactions]) =>
-          interactions.map((interaction, index) => (
-            <Chord
-              key={`${source}-${interaction.targetPlayerName}-${index}`}
-              interaction={interaction}
-              sourceStart={playerAngles[source].killsStartAngle}
-              sourceEnd={playerAngles[source].killsEndAngle}
-              sourceValue={playerAngles[source].totalKills}
-              getSourceCurrentValue={() => playerAngles[source].currentKills}
-              addSourceCurrentValue={(value) => (playerAngles[source].currentKills += value)}
-              targetStart={playerAngles[interaction.targetPlayerName].deathsStartAngle}
-              targetEnd={playerAngles[interaction.targetPlayerName].deathsEndAngle}
-              targetValue={playerAngles[interaction.targetPlayerName].totalDeaths}
-              getTargetCurrentValue={() => playerAngles[interaction.targetPlayerName].currentDeaths}
-              addTargetCurrentValue={(value) => (playerAngles[interaction.targetPlayerName].currentDeaths += value)}
-              innerRadius={innerRadius}
-              handleArcHover={handleArcHover}
-              handleArcLeave={handleArcLeave}
-              isHovering={isHovering}
-              isInteractionHovering={isInteractionHovering}
-              hoveredSource={hoveredSource}
-              hoveredTarget={hoveredTarget}
-              svgRef={svgRef}
-              getCoords={getCoords}
-            />
-          )),
-        )}
-      </svg>
-    </Container>
+      {players.length > 0 && Object.entries(groupedData).map(([source, interactions]) =>
+        interactions.map((interaction, index) => (
+          <Chord
+            key={`${source}-${interaction.targetPlayerName}-${index}`}
+            interaction={interaction}
+            sourceStart={playerAngles[source].killsStartAngle}
+            sourceEnd={playerAngles[source].killsEndAngle}
+            sourceValue={playerAngles[source].totalKills}
+            getSourceCurrentValue={() => playerAngles[source].currentKills}
+            addSourceCurrentValue={(value) => (playerAngles[source].currentKills += value)}
+            targetStart={playerAngles[interaction.targetPlayerName].deathsStartAngle}
+            targetEnd={playerAngles[interaction.targetPlayerName].deathsEndAngle}
+            targetValue={playerAngles[interaction.targetPlayerName].totalDeaths}
+            getTargetCurrentValue={() => playerAngles[interaction.targetPlayerName].currentDeaths}
+            addTargetCurrentValue={(value) => (playerAngles[interaction.targetPlayerName].currentDeaths += value)}
+            innerRadius={radius}
+            highlightState={(highlightedPlayer === interaction.targetPlayerName || highlightedPlayer === interaction.sourcePlayerName) ? 'highlight' : highlightedPlayer === null ? 'normal' : 'hidden'}
+            getCoords={getCoords}
+          />
+        )),
+      )}
+
+      <g>
+        <text x={team1LabelCoords.x} y={team1LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="1em" fontWeight="bold">{team1Name}</text>
+        <text x={team1LabelCoords.x} y={team1LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="0.8em" fontWeight="bold">{totalTeam1Kills} kills</text>
+      </g>
+
+      <g>
+        <text x={team2LabelCoords.x} y={team2LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="1em" fontWeight="bold">{team2Name}</text>
+        <text x={team2LabelCoords.x} y={team2LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="0.8em" fontWeight="bold">{totalTeam2Kills} kills</text>
+      </g>
+    </svg>
   );
 };
 
