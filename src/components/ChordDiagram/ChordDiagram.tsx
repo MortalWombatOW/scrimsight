@@ -47,13 +47,33 @@ const transformDataToChordFormat = (data: PlayerInteractionEvent[]): ChordDataEn
 const getArcPath = (sourceStartAngle: number, sourceEndAngle: number, targetStartAngle: number, targetEndAngle: number, innerRadius: number, getCoords: (angle: number, radius: number) => { x: number; y: number }) => {
   const { x: sourceStartX, y: sourceStartY } = getCoords(sourceStartAngle, innerRadius);
   const { x: sourceEndX, y: sourceEndY } = getCoords(sourceEndAngle, innerRadius);
-  const { x: targetStartX, y: targetStartY } = getCoords(targetStartAngle, innerRadius);
-  const { x: targetEndX, y: targetEndY } = getCoords(targetEndAngle, innerRadius);
 
-  const averageAngle = (sourceStartAngle + sourceEndAngle + targetStartAngle + targetEndAngle) / 4;
+  // const averageAngle = (sourceStartAngle + sourceEndAngle + targetStartAngle + targetEndAngle) / 4;
 
-  const { x: sourceEndToTargetStartControlPointX, y: sourceEndToTargetStartControlPointY } = getCoords(averageAngle, 0);
-  const { x: targetStartToTargetEndControlPointX, y: targetStartToTargetEndControlPointY } = getCoords(averageAngle, 0);
+  // const { x: sourceEndToTargetStartControlPointX, y: sourceEndToTargetStartControlPointY } = getCoords(averageAngle, 0);
+  // const { x: targetStartToTargetEndControlPointX, y: targetStartToTargetEndControlPointY } = getCoords(averageAngle, 0);
+
+  const arrowAngle = (targetStartAngle + targetEndAngle) / 2;
+  const arrowWingSetback = 1.5 * (targetEndAngle - targetStartAngle);
+
+  const { x: arrowTipX, y: arrowTipY } = getCoords(arrowAngle, innerRadius);
+  const { x: arrowStartWingX, y: arrowStartWingY } = getCoords(targetStartAngle, innerRadius - arrowWingSetback);
+  const { x: arrowEndWingX, y: arrowEndWingY } = getCoords(targetEndAngle, innerRadius - arrowWingSetback);
+
+  const origin = getCoords(0, 0);
+
+  const controlPointX = (sourceEndX + arrowTipX + origin.x) / 3;
+  const controlPointY = (sourceEndY + arrowTipY + origin.y) / 3;
+
+  const sourceEndToTargetStartControlPointX = controlPointX;
+  const sourceEndToTargetStartControlPointY = controlPointY;
+
+  const targetStartToTargetEndControlPointX = controlPointX;
+  const targetStartToTargetEndControlPointY = controlPointY;
+
+
+
+
 
   let path = '';
   // path components
@@ -64,11 +84,10 @@ const getArcPath = (sourceStartAngle: number, sourceEndAngle: number, targetStar
   // 2. draw an arc to the source end point
   path += ` A${innerRadius},${innerRadius} 0 0,1 ${sourceEndX},${sourceEndY}`;
   // 3. draw a quadratic curve to the target start point
-  path += ` Q${sourceEndToTargetStartControlPointX},${sourceEndToTargetStartControlPointY} ${targetStartX},${targetStartY}`;
-  // // 4. draw an line to the target arrow point and then a line to the target end point
-  // path += ` L${targetArrowX},${targetArrowY} L${targetEndX},${targetEndY}`;
-  // 4. draw an arc to the target end point
-  path += ` A${innerRadius},${innerRadius} 0 0,1 ${targetEndX},${targetEndY}`;
+  path += ` Q${sourceEndToTargetStartControlPointX},${sourceEndToTargetStartControlPointY} ${arrowStartWingX},${arrowStartWingY}`;
+  // 4. draw the arrow
+  path += ` L${arrowTipX},${arrowTipY} L${arrowEndWingX},${arrowEndWingY}`;
+
   // 5. draw a quadratic curve back to the source start point
   path += ` Q${targetStartToTargetEndControlPointX},${targetStartToTargetEndControlPointY} ${sourceStartX},${sourceStartY}`;
 
@@ -107,10 +126,10 @@ const PlayerArc: React.FC<{
   onMouseOver,
   onMouseLeave,
 }) => {
-    const strokeWidth = 20;
+    const strokeWidth = 5;
     const paddedRadius = innerRadius + strokeWidth / 2;
 
-    const outerArcWidth = 10;
+    const outerArcWidth = 5;
     const outerArcRadius = paddedRadius + strokeWidth / 2 + outerArcWidth / 2;
 
     const { x: killsStartX, y: killsStartY } = getCoords(killsStartAngle, paddedRadius);
@@ -220,6 +239,9 @@ const Chord: React.FC<{
 
     const arcRef = useRef<SVGPathElement>(null);
 
+    const startCoords = getCoords((interactionSourceStartAngle + interactionSourceEndAngle) / 2, innerRadius - 35);
+    const endCoords = getCoords((interactionTargetStartAngle + interactionTargetEndAngle) / 2, innerRadius - 35);
+
     return (
       <g>
         <path
@@ -235,6 +257,32 @@ const Chord: React.FC<{
           strokeWidth={1}
           opacity={1}
         />
+        <text
+          x={startCoords.x}
+          y={startCoords.y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize="0.7em"
+          style={{
+            fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
+            transition: 'all 0.3s ease',
+          }}
+        >
+          {interaction.value} kills on {interaction.targetPlayerName}
+        </text>
+        <text
+          x={endCoords.x}
+          y={endCoords.y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize="0.7em"
+          style={{
+            fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
+            transition: 'all 0.3s ease',
+          }}
+        >
+          {interaction.value} deaths from {interaction.sourcePlayerName}
+        </text>
       </g>
     );
   };
@@ -354,7 +402,7 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   const gridColumnCount = 2;
   const size = Math.min(widgetRegistry.widgetGridWidth * gridColumnCount, widgetRegistry.widgetGridHeight * gridRowCount);
 
-  const radius = size / 3.4;
+  const radius = size / 3;
 
   const [highlightedPlayer, setHighlightedPlayer] = useState<string | null>(null);
 
@@ -400,16 +448,24 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
 
   const numPlayers = players.length;
   const totalValue = chordData.reduce((sum, entry) => sum + entry.value, 0) * 2;
-  const angleSpacing = 8; // Add spacing between segments
-  const totalAngle = 360 - (numPlayers * angleSpacing);
+  const anglePaddingBetweenTeams = 30;
+  const anglePaddingBetweenPlayerArcs = 8;
+  const totalAngle = 360 - (numPlayers * anglePaddingBetweenPlayerArcs) - anglePaddingBetweenTeams * 2;
 
   let currentAngle = 0;
+  let currentTeam = team1Name;
   players.forEach((player) => {
     const playerValue = groupedData[player]?.reduce<number>((sum, interaction: ChordDataEntry) => sum + interaction.value, 0) ?? 0;
     const toPlayerValue = Object.values(groupedData).reduce(
       (sum, interactions) => sum + interactions.filter((interaction: ChordDataEntry) => interaction.targetPlayerName === player).reduce<number>((sum2, interaction) => sum2 + interaction.value, 0),
       0,
     );
+
+    const playerTeam = team1Players.includes(player) ? team1Name : team2Name;
+    if (playerTeam !== currentTeam) {
+      currentTeam = playerTeam;
+      currentAngle += anglePaddingBetweenTeams;
+    }
 
     // Adjust angle calculations to prevent overlap
     const killsAngleSpan = (playerValue / totalValue) * totalAngle;
@@ -426,7 +482,7 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
       currentDeaths: 0,
     };
 
-    currentAngle += killsAngleSpan + deathsAngleSpan + angleSpacing;
+    currentAngle += killsAngleSpan + deathsAngleSpan + anglePaddingBetweenPlayerArcs;
   });
 
 
@@ -434,7 +490,7 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
 
   console.log('averageAngle', averageAngle);
 
-  const nudgeAngle = 90 + angleSpacing / 2;
+  const nudgeAngle = 90 + anglePaddingBetweenPlayerArcs / 2 + anglePaddingBetweenTeams / 2
 
   Object.values(playerAngles).forEach((playerAngle) => {
     playerAngle.killsStartAngle += nudgeAngle;

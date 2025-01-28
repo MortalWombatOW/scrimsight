@@ -14,13 +14,13 @@ import { useIntent } from '~/contexts/IntentContext';
 
 interface IntentControlsProps {
   possibleValues: {
-    players: string[];
-    matches: string[];
-    maps: OverwatchMap[];
-    modes: OverwatchMode[];
-    teams: string[];
-    heroes: OverwatchHero[];
-    metrics: (keyof PlayerMetrics)[];
+    players?: string[];
+    matches?: string[];
+    maps?: OverwatchMap[];
+    modes?: OverwatchMode[];
+    teams?: string[];
+    heroes?: OverwatchHero[];
+    metrics?: (keyof PlayerMetrics)[];
   };
   size?: 'small' | 'large';
 }
@@ -37,6 +37,13 @@ const IntentControls: React.FC<IntentControlsProps> = ({
   size = 'large'
 }) => {
   const { intent, updateIntent } = useIntent();
+
+  const hasPlayers = possibleValues.players !== undefined;
+  const hasMatches = possibleValues.matches !== undefined;
+  const hasMaps = possibleValues.maps !== undefined;
+  const hasTeams = possibleValues.teams !== undefined;
+  const hasHeroes = possibleValues.heroes !== undefined;
+  const hasMetrics = possibleValues.metrics !== undefined;
 
   const hasMap = intent.matchId !== undefined;
   const hasDate = intent.date !== undefined;
@@ -60,86 +67,98 @@ const IntentControls: React.FC<IntentControlsProps> = ({
 
   return (
     <Box sx={{ margin: 1, display: 'flex', flexDirection: 'row', gap: 2, flexWrap: 'wrap' }}>
-      <IconAutocomplete
-        options={possibleValues.players}
-        selected={intent.playerName || []}
-        onChange={(value) => updateIntent('playerName', value)}
-        icon={<PersonIcon />}
-        label="Players"
-        noOptionsText="No players found"
-        size={size}
-      />
+      {hasPlayers && (
+        <IconAutocomplete
+          options={possibleValues.players}
+          selected={intent.playerName || []}
+          onChange={(value) => updateIntent('playerName', value)}
+          icon={<PersonIcon />}
+          label="Players"
+          noOptionsText="No players found"
+          size={size}
+        />
+      )}
 
-      <IconAutocomplete
-        options={possibleValues.matches}
-        selected={intent.matchId || []}
-        onChange={(value) => updateIntent('matchId', value)}
-        icon={<LocationOnIcon />}
-        label="Matches"
-        noOptionsText="No matches found"
-        size={size}
-        optionLabel={(option) => {
-          // team1Name team1Score - team2Name team2Score - mapName mode
-          const match = matchData.data.find((match) => match.matchId === option);
-          if (!match) return option;
-          return `${match.team1Name} vs ${match.team2Name} on ${match.map} (${match.mode})`;
-        }}
-        optionSubLabel={(option) => {
-          const match = matchData.data.find((match) => match.matchId === option);
-          if (!match) return 'Unknown match';
-          return `Score: ${match.team1Score} - ${match.team2Score} Date: ${match.dateString}`;
-        }}
-      />
+      {hasMatches && (
+        <IconAutocomplete
+          options={possibleValues.matches}
+          selected={intent.matchId || []}
+          onChange={(value) => updateIntent('matchId', value)}
+          icon={<LocationOnIcon />}
+          label="Matches"
+          noOptionsText="No matches found"
+          size={size}
+          optionLabel={(option) => {
+            // team1Name team1Score - team2Name team2Score - mapName mode
+            const match = matchData.data.find((match) => match.matchId === option);
+            if (!match) return option;
+            return `${match.team1Name} vs ${match.team2Name} on ${match.map} (${match.mode})`;
+          }}
+          optionSubLabel={(option) => {
+            const match = matchData.data.find((match) => match.matchId === option);
+            if (!match) return 'Unknown match';
+            return `Score: ${match.team1Score} - ${match.team2Score} Date: ${match.dateString}`;
+          }}
+        />
+      )}
 
-      <IconAutocomplete
-        options={possibleValues.maps}
-        selected={intent.mapName || []}
-        onChange={(value) => updateIntent('mapName', value)}
-        icon={<LocationOnIcon />}
-        label="Maps"
-        noOptionsText="No maps found"
-        size={size}
-      />
+      {hasMaps && (
+        <IconAutocomplete
+          options={possibleValues.maps}
+          selected={intent.mapName || []}
+          onChange={(value) => updateIntent('mapName', value)}
+          icon={<LocationOnIcon />}
+          label="Maps"
+          noOptionsText="No maps found"
+          size={size}
+        />
+      )}
 
-      <IconAutocomplete
-        options={possibleValues.teams}
-        selected={intent.team || []}
-        onChange={(value) => updateIntent('team', value)}
-        icon={<GroupsIcon />}
-        label="Teams"
-        noOptionsText="No teams found"
-        size={size}
-      />
+      {hasTeams && (
+        <IconAutocomplete
+          options={possibleValues.teams}
+          selected={intent.team || []}
+          onChange={(value) => updateIntent('team', value)}
+          icon={<GroupsIcon />}
+          label="Teams"
+          noOptionsText="No teams found"
+          size={size}
+        />
+      )}
 
-      <RoleControl
-        selectedRoles={intent.playerRole || []}
-        onChange={(value) => updateIntent('playerRole', value)}
-        size={size}
-      />
+      {hasHeroes && (
+        <RoleControl
+          selectedRoles={intent.playerRole || []}
+          onChange={(value) => updateIntent('playerRole', value)}
+          size={size}
+        />
+      )}
 
+      {hasHeroes && (
+        <IconAutocomplete
+          options={possibleValues.heroes}
+          selected={intent.hero || []}
+          onChange={(value) => updateIntent('hero', value as OverwatchHero[])}
+          icon={<SportsEsportsIcon />}
+          label="Heroes"
+          noOptionsText="No heroes found"
+          size={size}
+        />
+      )}
 
-      <IconAutocomplete
-        options={possibleValues.heroes}
-        selected={intent.hero || []}
-        onChange={(value) => updateIntent('hero', value as OverwatchHero[])}
-        icon={<SportsEsportsIcon />}
-        label="Heroes"
-        noOptionsText="No heroes found"
-        size={size}
-      />
-
-      <IconAutocomplete
-        options={possibleValues.metrics}
-        selected={intent.metric || []}
-        onChange={(value) => updateIntent('metric', value as (keyof PlayerMetrics)[])}
-        icon={<ShowChartIcon />}
-        label="Metrics"
-        noOptionsText="No metrics found"
-        size={size}
-        optionLabel={(option) => dataManager.getColumn(option).displayName}
-        optionSubLabel={(option) => dataManager.getColumn(option).description}
-      />
-
+      {hasMetrics && possibleValues.metrics && (
+        <IconAutocomplete
+          options={possibleValues.metrics}
+          selected={intent.metric || []}
+          onChange={(value) => updateIntent('metric', value as (keyof PlayerMetrics)[])}
+          icon={<ShowChartIcon />}
+          label="Metrics"
+          noOptionsText="No metrics found"
+          size={size}
+          optionLabel={(option) => dataManager.getColumn(option).displayName}
+          optionSubLabel={(option) => dataManager.getColumn(option).description}
+        />
+      )}
 
 
       {hasDate ? (

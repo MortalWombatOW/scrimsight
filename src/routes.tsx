@@ -1,8 +1,12 @@
 import React from 'react';
 import Home from './pages/Home/Home';
-import {QueriesPage} from 'wombat-data-framework';
+import { QueriesPage } from 'wombat-data-framework';
 import HomeIcon from '@mui/icons-material/Home';
 import BugReportIcon from '@mui/icons-material/BugReport';
+import EventIcon from '@mui/icons-material/Event';
+import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import ReviewMatches from '~/pages/ReviewMatches/ReviewMatches';
 export interface ScrimsightRoute {
   path: string[];
   component: () => JSX.Element;
@@ -17,6 +21,24 @@ const routes: ScrimsightRoute[] = [
     component: Home,
     name: 'Home',
     icon: <HomeIcon />,
+  },
+  {
+    path: ['/matches'],
+    component: ReviewMatches,
+    name: 'Matches',
+    icon: <EventIcon />,
+  },
+  {
+    path: ['/review/:matchId'],
+    component: Home,
+    name: 'Review Match',
+    icon: <TroubleshootIcon />,
+  },
+  {
+    path: ['/trends'],
+    component: Home,
+    name: 'Trends',
+    icon: <TrendingUpIcon />,
   },
 
   // {
