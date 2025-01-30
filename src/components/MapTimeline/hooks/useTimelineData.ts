@@ -17,8 +17,22 @@ export const useTimelineData = (matchId: string): TimelineData | null => {
   const [aliveAdvantageNode] = useWombatDataNode('team_alive_advantage');
 
   if (!matchStartNode || !playerEventsNode || !interactionEventsNode || !roundTimesNode || !ultimateEventsNode || !mapTimesNode || !ultimateAdvantageNode || !aliveAdvantageNode) {
-    console.error(`Missing data nodes for map ${matchId}`);
-    return null;
+    return {
+      team1Name: '',
+      team2Name: '',
+      team1EventsByPlayer: {},
+      team2EventsByPlayer: {},
+      team1InteractionEventsByPlayer: {},
+      team2InteractionEventsByPlayer: {},
+      team1UltimateEventsByPlayer: {},
+      team2UltimateEventsByPlayer: {},
+      mapStartTime: 0,
+      mapEndTime: 0,
+      roundTimes: [],
+      eventTimes: [],
+      ultimateAdvantageData: [],
+      aliveAdvantageData: [],
+    };
   }
 
   const matchStart = matchStartNode.getOutput<MatchStart[]>().find((row) => row['matchId'] === matchId);

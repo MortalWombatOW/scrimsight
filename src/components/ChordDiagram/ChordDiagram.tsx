@@ -394,10 +394,7 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
 
   console.log('chordData', chordData);
 
-  const widgetRegistry = useWidgetRegistry();
-  const gridRowCount = 2;
-  const gridColumnCount = 2;
-  const size = Math.min(widgetRegistry.widgetGridWidth * gridColumnCount, widgetRegistry.widgetGridHeight * gridRowCount);
+  const size = 300;
 
   const radius = size / 3;
 
@@ -406,8 +403,8 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
 
   const getCoords = (angle: number, radius: number) => {
     return {
-      x: widgetRegistry.widgetGridWidth * gridColumnCount / 2 + radius * Math.cos(Math.PI * (angle / 180)),
-      y: widgetRegistry.widgetGridHeight * gridRowCount / 2 - 40 + radius * Math.sin(Math.PI * (angle / 180)),
+      x: size / 2 + radius * Math.cos(Math.PI * (angle / 180)),
+      y: size / 2 - 40 + radius * Math.sin(Math.PI * (angle / 180)),
     };
   };
 
