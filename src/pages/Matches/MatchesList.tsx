@@ -57,9 +57,8 @@ const MatchInfo = ({ map, mode, imageUrl }: {
   </Grid>
 );
 
-const TeamSection = ({ name, score, players }: {
+const TeamSection = ({ name, players }: {
   name: string;
-  score: number;
   players: string[];
 }) => (
   <>

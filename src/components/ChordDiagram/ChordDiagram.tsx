@@ -2,10 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useWombatData } from 'wombat-data-framework';
 import { getColorgorical } from '../../lib/color';
 import { MatchData } from '../../WombatDataFrameworkSchema';
-import { PathTooltip } from 'react-path-tooltip';
-import { Container } from '@mui/material';
 import { PlayerInteractionEvent } from '../MapTimeline/types/timeline.types';
-import { useWidgetRegistry } from '~/WidgetProvider';
 
 interface ChordDataEntry {
   sourcePlayerName: string;

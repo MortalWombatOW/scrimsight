@@ -111,7 +111,7 @@ const MatchHeader = ({
 );
 
 // Subcomponent for score display
-const ScoreRow = ({ team1Name, team2Name, team1Score, team2Score }: any) => (
+const ScoreRow = ({ team1Name, team2Name, team1Score, team2Score }: { team1Name: string; team2Name: string; team1Score: number; team2Score: number }) => (
   <Grid container spacing={2}>
     <Grid item xs={6}>
       <Typography variant="body1">{team1Name}</Typography>
@@ -129,7 +129,7 @@ const ScoreRow = ({ team1Name, team2Name, team1Score, team2Score }: any) => (
 );
 
 // Subcomponent for metadata row
-const MetaRow = ({ fileModified, name }: any) => (
+const MetaRow = ({ fileModified, name }: { fileModified: number; name: string }) => (
   <Grid container spacing={2}>
     <Grid item xs={6}>
       <Typography variant="body2" color="text.secondary">

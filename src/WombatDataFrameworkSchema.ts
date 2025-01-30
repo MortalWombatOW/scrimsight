@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {ultimateAdvantageConfig, playerAliveAdvantageConfig} from './lib/AdvantageTrackers';
 import {processTeamAdvantageEvents} from './lib/TeamAdvantageTracker';
 import {

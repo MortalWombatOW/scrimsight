@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import type { Meta, StoryObj } from "@storybook/react";
 import TimeRangeSlider from "./TimeRangeSlider";
 import React from "react";
@@ -71,11 +72,11 @@ export const DateRange: Story = {
 export const InteractiveTimeRange: Story = {
   render: () => {
     const [value, setValue] = React.useState<[number, number]>([540, 1020]);
-    
+
     return (
       <div>
         <h3>Time Range Selection</h3>
-        <TimeRangeSlider 
+        <TimeRangeSlider
           value={value}
           onChange={setValue}
           min={0}
@@ -103,11 +104,11 @@ export const InteractiveDateRange: Story = {
   render: () => {
     const today = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
     const [value, setValue] = React.useState<[number, number]>([today - 7, today]);
-    
+
     return (
       <div>
         <h3>Date Range Selection</h3>
-        <TimeRangeSlider 
+        <TimeRangeSlider
           value={value}
           onChange={setValue}
           min={today - 30}
@@ -146,35 +147,35 @@ export const InteractiveCombined: Story = {
   render: () => {
     const [mode, setMode] = React.useState<'time' | 'date'>('time');
     const today = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
-    
+
     const [timeValue, setTimeValue] = React.useState<[number, number]>([540, 1020]);
     const [dateValue, setDateValue] = React.useState<[number, number]>([today - 7, today]);
-    
-    const config = mode === 'time' 
+
+    const config = mode === 'time'
       ? {
-          value: timeValue,
-          onChange: setTimeValue,
-          min: 0,
-          max: 1440,
-          minDistance: 60,
-          renderLabel: formatTime,
-        }
+        value: timeValue,
+        onChange: setTimeValue,
+        min: 0,
+        max: 1440,
+        minDistance: 60,
+        renderLabel: formatTime,
+      }
       : {
-          value: dateValue,
-          onChange: setDateValue,
-          min: today - 30,
-          max: today,
-          minDistance: 1,
-          renderLabel: formatDate,
-        };
-    
+        value: dateValue,
+        onChange: setDateValue,
+        min: today - 30,
+        max: today,
+        minDistance: 1,
+        renderLabel: formatDate,
+      };
+
     return (
       <div>
         <div style={{ marginBottom: '1rem' }}>
           <label>
-            Mode: 
-            <select 
-              value={mode} 
+            Mode:
+            <select
+              value={mode}
               onChange={(e) => setMode(e.target.value as 'time' | 'date')}
               style={{ marginLeft: '0.5rem' }}
             >
@@ -185,7 +186,7 @@ export const InteractiveCombined: Story = {
         </div>
         <TimeRangeSlider {...config} />
         <div style={{ marginTop: '1rem', fontFamily: 'monospace' }}>
-          {mode === 'time' 
+          {mode === 'time'
             ? `Selected Time: ${formatTime(timeValue[0])} - ${formatTime(timeValue[1])}`
             : `Selected Dates: ${formatDate(dateValue[0])} - ${formatDate(dateValue[1])}`
           }

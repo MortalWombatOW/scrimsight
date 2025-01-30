@@ -1,11 +1,10 @@
-import { WombatDataOptions } from "wombat-data-framework";
 import { PlayerStatTotalBarChart } from "~/components/Card/PlayerStatTotalBarChart";
 import { WidgetBid, WidgetBidder } from "~/Widget";
-import { PlayerStatTotalsNodeData } from "~/WombatDataFrameworkSchema";
 
 
 
 const BarChartBidder: WidgetBidder = (intent) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const bids: WidgetBid<any>[] = [];
   if (intent.metric === undefined) {
     return bids;

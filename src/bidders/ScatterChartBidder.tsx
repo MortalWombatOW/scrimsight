@@ -4,7 +4,8 @@ import { WidgetBid, WidgetBidder } from "~/Widget";
 
 
 const ScatterChartBidder: WidgetBidder = (intent) => {
-  const bids: WidgetBid<any>[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bids: WidgetBid<zany>[] = [];
   if (intent.metric === undefined) {
     return bids;
   }
