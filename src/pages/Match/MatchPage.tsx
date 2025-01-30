@@ -8,9 +8,8 @@ import { mapNameToFileName } from '../../lib/string';
 import { MatchStartLogEvent, MatchEndLogEvent } from '../../WombatDataFrameworkSchema';
 import { useWombatData } from 'wombat-data-framework';
 
-const MapPage = () => {
-  const { matchId: matchIdString } = useParams();
-  const matchId = Number(matchIdString);
+export const MatchPage = () => {
+  const { matchId } = useParams();
 
   const [tab, setTab] = useQueryParam('tab', withDefault(StringParam, 'timeline'));
 
@@ -80,4 +79,3 @@ const MapPage = () => {
   );
 };
 
-export default MapPage;
