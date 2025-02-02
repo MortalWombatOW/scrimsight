@@ -1,153 +1,99 @@
-import { useWombatData } from "wombat-data-framework";
-import { mapNameToFileName } from "~/lib/string";
-import { MatchData } from "~/WombatDataFrameworkSchema";
-import { Box, Card, CardActionArea, Typography, Grid, Avatar, Skeleton } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import React from 'react';
+import { useAtom } from 'jotai';
+import { type MatchData, matchDataAtom } from '~/atoms';
+import { Card, CardContent, Typography, Grid, Box, CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { getColorgorical } from '~/lib/color';
+import { mapNameToFileName } from '~/lib/string';
 
-const MatchRowSkeleton = () => (
-  <Card sx={{ mb: 2, width: '100%' }}>
-    <Box sx={{ p: 2 }}>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={2}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Skeleton variant="rounded" width={60} height={60} />
-            <Box>
-              <Skeleton variant="text" width={100} height={24} />
-              <Skeleton variant="text" width={80} height={20} />
-            </Box>
-          </Box>
-        </Grid>
-        <Grid item xs={4}>
-          <Skeleton variant="text" width={120} height={28} />
-          <Skeleton variant="text" width={180} height={20} />
-        </Grid>
-        <Grid item xs={2}>
-          <Skeleton variant="text" width={60} height={32} />
-        </Grid>
-        <Grid item xs={3}>
-          <Skeleton variant="text" width={120} height={28} />
-          <Skeleton variant="text" width={180} height={20} />
-        </Grid>
-        <Grid item xs={1}>
-          <Skeleton variant="text" width={60} height={20} />
-        </Grid>
-      </Grid>
-    </Box>
-  </Card>
-);
-
-const MatchInfo = ({ map, mode, imageUrl }: {
-  map: string;
-  mode: string;
-  imageUrl: string;
-}) => (
-  <Grid item xs={2}>
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-      <Avatar src={imageUrl} variant="rounded" sx={{ width: 60, height: 60 }} />
-      <Box>
-        <Typography variant="subtitle1" fontWeight="bold">
-          {map}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {mode}
-        </Typography>
-      </Box>
-    </Box>
-  </Grid>
-);
-
-const TeamSection = ({ name, players }: {
-  name: string;
-  players: string[];
-}) => (
-  <>
-    <Typography variant="h6" component="div">
-      {name}
-    </Typography>
-    <Typography variant="body2" color="text.secondary">
-      {players.length > 0 ? players.join(", ") : "No players"}
-    </Typography>
-  </>
-);
-
-const MatchRow = ({ matchId }: { matchId: string }) => {
+const MatchCard: React.FC<MatchData> = ({
+  matchId,
+  map,
+  mode,
+  team1Name,
+  team2Name,
+  team1Score,
+  team2Score,
+  dateString,
+}) => {
   const navigate = useNavigate();
-  const { data, isLoading } = useWombatData<MatchData>('match_data', {
-    initialFilter: { matchId }
-  });
-
-  const match = data[0];
-  const imageUrl = mapNameToFileName(match?.map || '', false);
-
-  console.log("MatchRow", { isLoading, match });
-  if (isLoading || !match) {
-    return <MatchRowSkeleton />;
-  }
-
-  const handleClick = () => navigate(`/matches/${matchId}`);
 
   return (
-    <Card sx={{ mb: 2, width: '100%' }}>
-      <CardActionArea onClick={handleClick}>
-        <Box sx={{ p: 2 }}>
-          <Grid container spacing={2} alignItems="center">
-            <MatchInfo
-              map={match.map}
-              mode={match.mode}
-              imageUrl={imageUrl}
-            />
+    <Card
+      onClick={() => navigate(`/match/${matchId}`)}
+      sx={{
+        cursor: 'pointer',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        overflow: 'visible',
+        border: '1px solid',
+        borderColor: 'info.main',
+        transition: 'all 0.2s ease-in-out',
+        background: `linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(${mapNameToFileName(map, false)})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        '&:hover': {
+          borderColor: 'primary.main',
+          transform: 'scale(1.02)',
+        },
+      }}
+    >
+      <CardContent>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Typography variant="h5" gutterBottom style={{ color: getColorgorical(team1Name) }}>
+              {team1Name}
+            </Typography>
+            <Typography variant="h3" style={{ color: getColorgorical(team1Name) }}>
+              {team1Score}
+            </Typography>
+          </Box>
 
-            <Grid item xs={4}>
-              <TeamSection
-                name={match.team1Name}
-                score={match.team1Score}
-                players={match.team1Players}
-              />
-            </Grid>
-
-            <Grid item xs={2}>
-              <Typography variant="h5" textAlign="center" fontWeight="bold">
-                {match.team1Score} - {match.team2Score}
-              </Typography>
-            </Grid>
-
-            <Grid item xs={3}>
-              <TeamSection
-                name={match.team2Name}
-                score={match.team2Score}
-                players={match.team2Players}
-              />
-            </Grid>
-
-            <Grid item xs={1}>
-              <Typography variant="body2" color="text.secondary">
-                {formatDistanceToNow(new Date(match.dateString), { addSuffix: true })}
-              </Typography>
-            </Grid>
-          </Grid>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Typography variant="h5" gutterBottom style={{ color: getColorgorical(team2Name) }}>
+              {team2Name}
+            </Typography>
+            <Typography variant="h3" style={{ color: getColorgorical(team2Name) }}>
+              {team2Score}
+            </Typography>
+          </Box>
         </Box>
-      </CardActionArea>
+        <Typography variant="h5" gutterBottom>
+          {map} - {mode}
+        </Typography>
+        <Typography variant="h6">{dateString}</Typography>
+      </CardContent>
     </Card>
   );
 };
 
 export const MatchesList = () => {
-  const { data, isLoading } = useWombatData<MatchData>('match_data', {
-    initialSortColumn: 'fileModified',
-    initialSortDirection: 'desc'
-  });
+  const [matchData] = useAtom(matchDataAtom);
+
+  if (!matchData) {
+    return (
+      <Box display="flex" justifyContent="center" mt={4}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  // Sort matches by date (most recent first)
+  const sortedMatches = [...matchData].sort((a, b) => 
+    new Date(b.dateString).getTime() - new Date(a.dateString).getTime()
+  );
 
   return (
-    <Box sx={{ width: '100%', p: 2 }}>
-      {isLoading ? (
-        Array(3).fill(null).map((_, index) => <MatchRowSkeleton key={index} />)
-      ) : (
-        data.map((match) => (
-          <MatchRow matchId={match.matchId} key={match.matchId} />
-        ))
-      )}
-    </Box>
+    <Grid container spacing={2}>
+      {sortedMatches.map((match) => (
+        <Grid item xs={12} sm={6} md={4} key={match.matchId}>
+          <MatchCard {...match} />
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 

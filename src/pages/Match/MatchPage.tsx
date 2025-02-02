@@ -3,10 +3,10 @@ import { useParams } from 'react-router-dom';
 import { CircularProgress, Card, CardContent, CardMedia, Container, Divider, Grid, Tab, Tabs, Typography, Box } from '@mui/material';
 import { StringParam, useQueryParam, withDefault } from 'use-query-params';
 import MapTimeline from '../../components/MapTimeline/MapTimeline';
-import ChordDiagram from '../../components/ChordDiagram/ChordDiagram';
+import { ChordDiagram } from '../../components/ChordDiagram/ChordDiagram';
 import { mapNameToFileName } from '../../lib/string';
-import { MatchStartLogEvent, MatchEndLogEvent } from '../../WombatDataFrameworkSchema';
-import { useWombatData } from 'wombat-data-framework';
+import { useAtom } from 'jotai';
+import { matchStartExtractorAtom, matchEndExtractorAtom, matchDataAtom } from '~/atoms';
 
 // Valid tab values for type safety
 type MatchTab = 'timeline' | 'statistics' | 'interactions';
@@ -17,9 +17,13 @@ export const MatchPage = () => {
   const [tab, setTab] = useQueryParam('tab', withDefault(StringParam, 'timeline'));
 
   // Data fetching hooks
-  const matchStart = useWombatData<MatchStartLogEvent>('match_start_object_store', { initialFilter: { matchId } });
-  const matchEnd = useWombatData<MatchEndLogEvent>('match_end_object_store', { initialFilter: { matchId } });
-  const matchMeta = useWombatData<{ name: string; fileModified: number }>('match_object_store', { initialFilter: { matchId } });
+  const [matchStarts] = useAtom(matchStartExtractorAtom);
+  const [matchEnds] = useAtom(matchEndExtractorAtom);
+  const [matchData] = useAtom(matchDataAtom);
+
+  const matchStart = matchStarts?.find(m => m.matchId === matchId);
+  const matchEnd = matchEnds?.find(m => m.matchId === matchId);
+  const match = matchData?.find(m => m.matchId === matchId);
 
   // Validate tab parameter
   useEffect(() => {
@@ -29,7 +33,7 @@ export const MatchPage = () => {
   }, [tab, setTab]);
 
   // Show loader while data is loading
-  if (!matchStart.data[0] || !matchEnd.data[0] || !matchMeta.data[0]) {
+  if (!matchStart || !matchEnd || !match) {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
         <CircularProgress />
@@ -38,9 +42,9 @@ export const MatchPage = () => {
   }
 
   // Destructure data after loading check
-  const { mapName, mapType, team1Name, team2Name } = matchStart.data[0];
-  const { team1Score, team2Score } = matchEnd.data[0];
-  const { name, fileModified } = matchMeta.data[0];
+  const { mapName, mapType, team1Name, team2Name } = matchStart;
+  const { team1Score, team2Score } = matchEnd;
+  const { fileName: name, fileModified } = match;
 
   return (
     <Container>
@@ -168,4 +172,6 @@ const TabContent = ({ tab, matchId }: { tab: MatchTab; matchId: string }) => {
       return null;
   }
 };
+
+export default MatchPage;
 

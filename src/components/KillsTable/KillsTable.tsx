@@ -9,10 +9,9 @@ import {
   Paper,
   Tooltip
 } from '@mui/material';
-import { useWombatData } from 'wombat-data-framework';
+import { useAtom } from 'jotai';
 import { getColorgorical } from '../../lib/color';
-import { MatchData } from '../../WombatDataFrameworkSchema';
-import { PlayerInteractionEvent } from '../MapTimeline/types/timeline.types';
+import { matchDataAtom, playerInteractionEventsAtom } from '~/atoms';
 import {
   transformPlayerInteractions,
   createKillMatrix,
@@ -24,24 +23,19 @@ interface KillsTableProps {
 }
 
 const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
-  const matchData = useWombatData<MatchData>('match_data', {
-    initialFilter: { matchId }
-  }).data[0];
+  const [matchData] = useAtom(matchDataAtom);
+  const [playerInteractionEvents] = useAtom(playerInteractionEventsAtom);
 
-  const playerInteractionEventsData = useWombatData<PlayerInteractionEvent>(
-    'player_interaction_events',
-    { initialFilter: { matchId } }
-  ).data;
+  const match = matchData?.find(m => m.matchId === matchId);
+  const interactions = playerInteractionEvents?.filter(e => e.matchId === matchId) ?? [];
 
-  console.log('playerInteractionEventsData', playerInteractionEventsData);
+  if (!match) return null;
 
-  if (!matchData) return null;
-
-  const { team1Name, team2Name, team1Players, team2Players } = matchData;
+  const { team1Name, team2Name, team1Players, team2Players } = match;
   const players = [...team1Players, ...team2Players];
 
-  const interactions = transformPlayerInteractions(playerInteractionEventsData);
-  const killMatrix = createKillMatrix(interactions, players);
+  const processedInteractions = transformPlayerInteractions(interactions);
+  const killMatrix = createKillMatrix(processedInteractions, players);
   const playerTotals = calculatePlayerTotals(killMatrix);
 
   const getPlayerTeam = (player: string) =>

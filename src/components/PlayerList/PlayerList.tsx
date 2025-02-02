@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
-import { useWombatData } from 'wombat-data-framework';
+import { useAtom } from 'jotai';
+import { playerStatExpandedAtom } from '~/atoms';
 import './PlayerList.scss';
 
 interface PlayerStats {
@@ -48,14 +49,16 @@ const PlayerRow = ({ playerName, matchCount, playerRole }: PlayerStats) => {
 };
 
 const PlayerList = () => {
-  const playerStatData = useWombatData<{ playerName: string; playerRole: string; matchId: string }>('player_stat_expanded');
+  const [playerStats] = useAtom(playerStatExpandedAtom);
 
   // Process the data to count unique matches per player
-  const playerStats = React.useMemo(() => {
-    const playerMatches = new Map<string, Set<number>>();
+  const processedStats = React.useMemo(() => {
+    if (!playerStats) return [];
+
+    const playerMatches = new Map<string, Set<string>>();
     const playerRoles = new Map<string, string>();
 
-    playerStatData.data.forEach((stat) => {
+    playerStats.forEach((stat) => {
       if (!playerMatches.has(stat.playerName)) {
         playerMatches.set(stat.playerName, new Set());
         playerRoles.set(stat.playerName, stat.playerRole);
@@ -71,13 +74,11 @@ const PlayerList = () => {
 
     // Sort by match count descending
     return stats.sort((a, b) => b.matchCount - a.matchCount);
-  }, [playerStatData.data]);
-
-  console.log('playerStats', playerStats);
+  }, [playerStats]);
 
   return (
     <>
-      {playerStats.map((stats) => (
+      {processedStats.map((stats) => (
         <PlayerRow key={stats.playerName} {...stats} />
       ))}
     </>

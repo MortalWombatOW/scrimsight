@@ -1,129 +1,54 @@
-import { Card, CardContent, Box, Typography, ButtonBase } from '@mui/material';
-import { useWombatData } from 'wombat-data-framework';
-import { MatchEndLogEvent, matches_grouped_by_date_node, MatchesGroupedByDateNodeData, MatchStartLogEvent } from '../../WombatDataFrameworkSchema';
-import { mapNameToFileName } from '../../lib/string';
-// import {useNavigate} from 'react-router-dom';
-import './MapsList.scss';
-import { useWidgetRegistry } from '~/WidgetProvider';
-import { useIntent } from '~/contexts/IntentContext';
+import { useAtom } from 'jotai';
+import { 
+  matchesGroupedByDateAtom,
+  matchStartExtractorAtom,
+  matchEndExtractorAtom
+} from '~/atoms';
+import { Box, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-const MapRow = ({ matchId }: { matchId: string }) => {
-  // const navigate = useNavigate();
+const MapsList = () => {
+  const navigate = useNavigate();
+  const [matchesGroupedByDate] = useAtom(matchesGroupedByDateAtom);
+  const [matchStarts] = useAtom(matchStartExtractorAtom);
+  const [matchEnds] = useAtom(matchEndExtractorAtom);
 
-  const matchData = useWombatData<{ name: string, timeString: string, matchId: string }>('match_object_store');
-  const matchStartData = useWombatData<MatchStartLogEvent>('match_start_object_store');
-  const matchEndData = useWombatData<MatchEndLogEvent>('match_end_object_store');
-
-  const { intent, updateIntent } = useIntent();
-
-  if (matchStartData.data.length === 0 || matchEndData.data.length === 0 || matchData.data.length === 0) {
-    return null;
-  }
-
-  console.log('matchStartData', matchStartData.data);
-  console.log('matchEndData', matchEndData.data);
-  console.log('matchData', matchData.data);
-
-  const { mapName, mapType, team1Name, team2Name } = matchStartData.data.find((row) => row['matchId'] === matchId) || { mapName: 'loading', mapType: 'loading', team1Name: 'loading', team2Name: 'loading' };
-  const { team1Score, team2Score } = matchEndData.data.find((row) => row['matchId'] === matchId) || { team1Score: 0, team2Score: 0 };
-  const { timeString } = matchData.data.find((row) => row['matchId'] === matchId) || { name: '', timeString: '' };
-
-  const handleClick = () => {
-    // TODO: Implement navigation or action when card is clicked
-    console.log(`Clicked match ${matchId}`);
-    updateIntent('matchId', Array.from(new Set([...(intent.matchId || []), matchId])));
+  const handleMapClick = (matchId: string) => {
+    navigate(`/match/${matchId}`);
   };
 
   return (
-    <ButtonBase
-      onClick={handleClick}
-      sx={{
-        display: 'block',
-        textAlign: 'left',
-        width: 200,
-        '&:hover': {
-          '& .MuiCard-root': {
-            borderColor: 'primary.main',
-            transform: 'scale(1.02)',
-            transition: 'transform 0.2s ease-in-out'
-          }
-        }
-      }}
-    >
-      <Card sx={{
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        borderColor: 'info.main',
-        borderWidth: 1,
-        borderStyle: 'solid',
-        transition: 'all 0.2s ease-in-out',
-        background: `linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url(${mapNameToFileName(mapName, false)})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center top'
-      }}>
-        <CardContent>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Typography variant="h5" gutterBottom>
-                {team1Name}
-              </Typography>
-              <Typography variant="h3">
-                {team1Score}
-              </Typography>
-            </Box>
+    <Box sx={{
+      overflow: 'auto',
+    }}>
+      {matchesGroupedByDate?.map(({ dateString, matchIds }) => (
+        <Box key={dateString} sx={{ marginBottom: 2 }}>
+          <Typography variant="h6">{dateString}</Typography>
+          <List>
+            {matchIds.map((matchId) => {
+              const matchStart = matchStarts?.find((m) => m.matchId === matchId);
+              const matchEnd = matchEnds?.find((m) => m.matchId === matchId);
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Typography variant="h5" gutterBottom>
-                {team2Name}
-              </Typography>
-              <Typography variant="h3">
-                {team2Score}
-              </Typography>
-            </Box>
-          </Box>
-          <Typography variant="h5" gutterBottom>{mapName} - {mapType}</Typography>
-          <Typography variant="h6">{timeString}</Typography>
-        </CardContent>
-      </Card>
-    </ButtonBase>
+              if (!matchStart || !matchEnd) return null;
+
+              return (
+                <ListItem
+                  key={matchId}
+                  onClick={() => handleMapClick(matchId)}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  <ListItemText
+                    primary={`${matchStart.mapName} - ${matchStart.mapType}`}
+                    secondary={`${matchStart.team1Name} (${matchEnd.team1Score}) vs ${matchStart.team2Name} (${matchEnd.team2Score})`}
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
+        </Box>
+      ))}
+    </Box>
   );
 };
 
-const MatchList = () => {
-
-  const matchesByDate = useWombatData<MatchesGroupedByDateNodeData>(matches_grouped_by_date_node.name);
-
-  console.log('matchesByDate', matchesByDate.data);
-
-  const widgetRegistry = useWidgetRegistry();
-
-  // This is a 2x1 widget
-  const width = widgetRegistry.widgetGridWidth * 2;
-  const height = widgetRegistry.widgetGridHeight;
-
-  const mostRecentScrim = matchesByDate.data[0];
-
-  return (
-    <>
-      <CardContent style={{ width: width, height: height }}>
-        <Typography variant="h3" gutterBottom>Most Recent Scrim: {new Date(mostRecentScrim?.dateString).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</Typography>
-
-
-        <div style={{ display: 'flex', flexDirection: 'row', gap: 10, marginTop: '10px' }}>
-
-          {mostRecentScrim?.matchIds.map((matchId, index) => (
-
-            index < 3 && (
-              <MapRow matchId={matchId} key={matchId} />
-            )
-
-          ))}
-        </div>
-
-      </CardContent>
-    </>
-  );
-};
-
-export default MatchList;
+export default MapsList;

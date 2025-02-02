@@ -1,0 +1,33 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "typescript",
+			"tsconfig": "tsconfig.json",
+			"option": "watch",
+			"problemMatcher": [
+				"$tsc-watch"
+			],
+			"group": "build",
+			"label": "tsc: watch - scrimsight/tsconfig.json"
+		},
+		{
+			"type": "npm",
+			"script": "lint",
+			"path": ".",
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"label": "npm: eslint - scrimsight",
+			"group": "build"
+		},
+		{
+			"type": "npm",
+			"script": "build-graph",
+			"path": ".",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: build-graph - scrimsight",
+		}
+	]
+}

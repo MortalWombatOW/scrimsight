@@ -1,3 +1,4 @@
+import React from 'react';
 import { Autocomplete, Box, Checkbox, Chip, TextField, Typography } from "@mui/material";
 
 
@@ -13,7 +14,7 @@ interface IconAutocompleteProps {
   optionSubLabel?: (option: string) => string;
 }
 
-const IconAutocomplete: React.FC<IconAutocompleteProps> = ({ options, selected, onChange, icon, noOptionsText, label, size, optionLabel, optionSubLabel }) => {
+export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({ options, selected, onChange, icon, noOptionsText, label, size, optionLabel, optionSubLabel }) => {
   return (<Autocomplete
     style={{ width: '100%', minWidth: size === 'large' ? 300 : 200, maxWidth: size === 'large' ? 500 : 300 }}
     size={size === 'large' ? 'medium' : 'small'}
@@ -59,15 +60,19 @@ const IconAutocomplete: React.FC<IconAutocompleteProps> = ({ options, selected, 
           {...params}
           label={label}
           variant="outlined"
-          // This is broken due to https://github.com/mui/material-ui/issues/22103
-          // InputProps={{
-          //   ...params.InputProps,
-          //   startAdornment: (
-          //     <InputAdornment position="start">
-          //       {icon}
-          //     </InputAdornment>
-          //   )
-          // }}  
+          InputProps={{
+            ...params.InputProps,
+            startAdornment: (
+              <>
+                {icon && (
+                  <Box sx={{ mr: 1, color: 'action.active' }}>
+                    {icon}
+                  </Box>
+                )}
+                {params.InputProps.startAdornment}
+              </>
+            ),
+          }}
           fullWidth
         />
       </div>
@@ -83,5 +88,3 @@ const IconAutocomplete: React.FC<IconAutocompleteProps> = ({ options, selected, 
 
   />);
 };
-
-export default IconAutocomplete;

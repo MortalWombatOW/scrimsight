@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Dialog, Typography } from '@mui/material';
 import { useWombatDataManager } from 'wombat-data-framework';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import FileLoader from '~/components/FileLoader/FileLoader';
+import { FileLoader } from '~/components/FileLoader/FileLoader';
 
 const Uploader: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -20,7 +20,7 @@ const Uploader: React.FC = () => {
         </Typography>
       </Button>
       <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
-        <FileLoader onSubmit={(files) => {
+        <FileLoader onSubmit={(files: File[]) => {
           setModalOpen(false);
           dataManager.setInputForInputNode('log_file_input', files);
         }} />

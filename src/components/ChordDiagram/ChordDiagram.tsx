@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { useWombatData } from 'wombat-data-framework';
+import { useAtom } from 'jotai';
 import { getColorgorical } from '../../lib/color';
-import { MatchData } from '../../WombatDataFrameworkSchema';
-import { PlayerInteractionEvent } from '../MapTimeline/types/timeline.types';
+import { matchDataAtom, type PlayerInteractionEvent, playerInteractionEventsAtom } from '~/atoms';
 
 interface ChordDataEntry {
   sourcePlayerName: string;
@@ -376,21 +375,28 @@ const Legend: React.FC<{
   );
 };
 
-const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
+// Constants for SVG dimensions
+const SVG_WIDTH = 800;
+const SVG_HEIGHT = 600;
+
+export const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
+  const [matchData] = useAtom(matchDataAtom);
+  const [playerInteractions] = useAtom(playerInteractionEventsAtom);
+
+  const match = matchData?.find(m => m.matchId === matchId);
+  const interactions = playerInteractions?.filter(i => i.matchId === matchId) ?? [];
+
+  if (!match) return null;
+
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const matchData = useWombatData<MatchData>('match_data', { initialFilter: { matchId } }).data[0];
-  const playerInteractionEventsData = useWombatData<PlayerInteractionEvent>('player_interaction_events', { initialFilter: { matchId } }).data;
-
-  console.log('matchData', matchData);
-
-  const team1Name = matchData?.team1Name || '';
-  const team2Name = matchData?.team2Name || '';
-  const team1Players = matchData?.team1Players || [];
-  const team2Players = matchData?.team2Players || [];
+  const team1Name = match.team1Name || '';
+  const team2Name = match.team2Name || '';
+  const team1Players = match.team1Players || [];
+  const team2Players = match.team2Players || [];
 
 
-  const chordData = transformDataToChordFormat(playerInteractionEventsData);
+  const chordData = transformDataToChordFormat(interactions);
 
   console.log('chordData', chordData);
 
@@ -503,71 +509,71 @@ const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
 
 
   return (
-    <svg ref={svgRef} width={widgetRegistry.widgetGridWidth * gridColumnCount} height={(widgetRegistry.widgetGridHeight * gridRowCount)}>
-      {Object.entries(playerAngles).map(([playerName, angles]) => {
-        const { killsStartAngle, killsEndAngle, deathsStartAngle, deathsEndAngle } = angles;
-        return (
-          <PlayerArc
-            key={playerName}
-            playerName={playerName}
-            innerRadius={radius}
-            playerTeam={team1Players.includes(playerName) ? team1Name : team2Name}
-            otherTeam={team1Players.includes(playerName) ? team2Name : team1Name}
-            killsStartAngle={killsStartAngle}
-            killsEndAngle={killsEndAngle}
-            deathsStartAngle={deathsStartAngle}
-            deathsEndAngle={deathsEndAngle}
-            highlight={highlightedPlayer === playerName}
-            onMouseOver={() => setHighlightedPlayer(playerName)}
-            onMouseLeave={() => setHighlightedPlayer(null)}
-            svgRef={svgRef}
-            totalKills={angles.totalKills}
-            totalDeaths={angles.totalDeaths}
-            getCoords={getCoords}
-          />
-        );
-      })}
+    <svg ref={svgRef} width={SVG_WIDTH} height={SVG_HEIGHT}>
+      <g transform={`translate(${SVG_WIDTH / 2}, ${SVG_HEIGHT / 2})`}>
+        {Object.entries(playerAngles).map(([playerName, angles]) => {
+          const { killsStartAngle, killsEndAngle, deathsStartAngle, deathsEndAngle } = angles;
+          return (
+            <PlayerArc
+              key={playerName}
+              playerName={playerName}
+              innerRadius={radius}
+              playerTeam={team1Players.includes(playerName) ? team1Name : team2Name}
+              otherTeam={team1Players.includes(playerName) ? team2Name : team1Name}
+              killsStartAngle={killsStartAngle}
+              killsEndAngle={killsEndAngle}
+              deathsStartAngle={deathsStartAngle}
+              deathsEndAngle={deathsEndAngle}
+              highlight={highlightedPlayer === playerName}
+              onMouseOver={() => setHighlightedPlayer(playerName)}
+              onMouseLeave={() => setHighlightedPlayer(null)}
+              svgRef={svgRef}
+              totalKills={angles.totalKills}
+              totalDeaths={angles.totalDeaths}
+              getCoords={getCoords}
+            />
+          );
+        })}
 
-      {players.length > 0 && Object.entries(groupedData).map(([source, interactions]) =>
-        interactions.map((interaction, index) => (
-          <Chord
-            key={`${source}-${interaction.targetPlayerName}-${index}`}
-            interaction={interaction}
-            sourceStart={playerAngles[source].killsStartAngle}
-            sourceEnd={playerAngles[source].killsEndAngle}
-            sourceValue={playerAngles[source].totalKills}
-            getSourceCurrentValue={() => playerAngles[source].currentKills}
-            addSourceCurrentValue={(value) => (playerAngles[source].currentKills += value)}
-            targetStart={playerAngles[interaction.targetPlayerName].deathsStartAngle}
-            targetEnd={playerAngles[interaction.targetPlayerName].deathsEndAngle}
-            targetValue={playerAngles[interaction.targetPlayerName].totalDeaths}
-            getTargetCurrentValue={() => playerAngles[interaction.targetPlayerName].currentDeaths}
-            addTargetCurrentValue={(value) => (playerAngles[interaction.targetPlayerName].currentDeaths += value)}
-            innerRadius={radius}
-            highlightState={(highlightedPlayer === interaction.targetPlayerName || highlightedPlayer === interaction.sourcePlayerName) ? 'highlight' : highlightedPlayer === null ? 'normal' : 'hidden'}
-            getCoords={getCoords}
-          />
-        )),
-      )}
+        {players.length > 0 && Object.entries(groupedData).map(([source, interactions]) =>
+          interactions.map((interaction, index) => (
+            <Chord
+              key={`${source}-${interaction.targetPlayerName}-${index}`}
+              interaction={interaction}
+              sourceStart={playerAngles[source].killsStartAngle}
+              sourceEnd={playerAngles[source].killsEndAngle}
+              sourceValue={playerAngles[source].totalKills}
+              getSourceCurrentValue={() => playerAngles[source].currentKills}
+              addSourceCurrentValue={(value) => (playerAngles[source].currentKills += value)}
+              targetStart={playerAngles[interaction.targetPlayerName].deathsStartAngle}
+              targetEnd={playerAngles[interaction.targetPlayerName].deathsEndAngle}
+              targetValue={playerAngles[interaction.targetPlayerName].totalDeaths}
+              getTargetCurrentValue={() => playerAngles[interaction.targetPlayerName].currentDeaths}
+              addTargetCurrentValue={(value) => (playerAngles[interaction.targetPlayerName].currentDeaths += value)}
+              innerRadius={radius}
+              highlightState={(highlightedPlayer === interaction.targetPlayerName || highlightedPlayer === interaction.sourcePlayerName) ? 'highlight' : highlightedPlayer === null ? 'normal' : 'hidden'}
+              getCoords={getCoords}
+            />
+          )),
+        )}
 
-      <g>
-        <text x={team1LabelCoords.x} y={team1LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="1em" fontWeight="bold">{team1Name}</text>
-        <text x={team1LabelCoords.x} y={team1LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="0.8em" fontWeight="bold">{totalTeam1Kills} kills</text>
+        <g>
+          <text x={team1LabelCoords.x} y={team1LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="1em" fontWeight="bold">{team1Name}</text>
+          <text x={team1LabelCoords.x} y={team1LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="0.8em" fontWeight="bold">{totalTeam1Kills} kills</text>
+        </g>
+
+        <g>
+          <text x={team2LabelCoords.x} y={team2LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="1em" fontWeight="bold">{team2Name}</text>
+          <text x={team2LabelCoords.x} y={team2LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="0.8em" fontWeight="bold">{totalTeam2Kills} kills</text>
+        </g>
+
+        <Legend
+          team1Name={team1Name}
+          team2Name={team2Name}
+          centerX={170}
+          bottomY={SVG_HEIGHT - 140}
+        />
       </g>
-
-      <g>
-        <text x={team2LabelCoords.x} y={team2LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="1em" fontWeight="bold">{team2Name}</text>
-        <text x={team2LabelCoords.x} y={team2LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="0.8em" fontWeight="bold">{totalTeam2Kills} kills</text>
-      </g>
-
-      <Legend
-        team1Name={team1Name}
-        team2Name={team2Name}
-        centerX={170}
-        bottomY={widgetRegistry.widgetGridHeight * gridRowCount - 140}
-      />
     </svg>
   );
 };
-
-export default ChordDiagram;

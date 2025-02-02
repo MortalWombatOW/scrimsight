@@ -1,39 +1,22 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import type { Meta, StoryObj } from "@storybook/react";
-import IconAutocomplete from "./IconAutocomplete";
-import React from "react";
+import { IconAutocomplete } from './IconAutocomplete';
+import React, { useState } from "react";
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PersonIcon from '@mui/icons-material/Person';
+import { Box } from '@mui/material';
 
-const meta: Meta<typeof IconAutocomplete> = {
+const meta = {
   component: IconAutocomplete,
+  parameters: {
+    layout: 'centered',
+  },
   argTypes: {
     options: {
-      control: 'array',
-      description: 'Array of available options',
-    },
-    selected: {
-      control: 'array',
-      description: 'Array of currently selected options',
-    },
-    onChange: {
-      action: 'selection changed',
-      description: 'Callback when selected options change',
-    },
-    icon: {
-      control: 'object',
-      description: 'Icon component to display in the input',
-    },
-    label: {
-      control: 'text',
-      description: 'Label text for the input field',
-    },
-    noOptionsText: {
-      control: 'text',
-      description: 'Text to display when no options match',
+      description: 'Array of options to display',
     },
   },
-};
+} satisfies Meta<typeof IconAutocomplete>;
 
 export default meta;
 
@@ -56,43 +39,57 @@ const samplePlayers = [
   'Twilight',
 ];
 
-// Empty state for locations
+const Template: Story = {
+  render: (args) => {
+    const [selected, setSelected] = useState<string[]>([]);
+    return (
+      <Box sx={{ width: 300 }}>
+        <IconAutocomplete
+          {...args}
+          selected={selected}
+          onChange={setSelected}
+        />
+      </Box>
+    );
+  }
+};
+
+export const Default: Story = {
+  ...Template,
+  args: {
+    options: ['Kings Row', 'Hanamura', 'Numbani'],
+  }
+};
+
 export const EmptyLocations: Story = {
   args: {
     options: sampleLocations,
-    selected: [],
-    onChange: () => {},
+    onChange: (newValue: string[]) => console.log('Changed:', newValue),
     icon: <LocationOnIcon />,
     label: "Select Maps",
     noOptionsText: "No maps found",
   },
 };
 
-// With some location selections
 export const WithLocationSelections: Story = {
+  ...Template,
   args: {
-    options: sampleLocations,
+    options: ['Kings Row', 'Hanamura', 'Numbani'],
     selected: ['Kings Row', 'Hanamura'],
-    onChange: () => {},
-    icon: <LocationOnIcon />,
-    label: "Select Maps",
-    noOptionsText: "No maps found",
-  },
+  }
 };
 
-// Players example with PersonIcon
 export const PlayersSelection: Story = {
+  ...Template,
   args: {
     options: samplePlayers,
     selected: ['Striker', 'Proper'],
-    onChange: () => {},
     icon: <PersonIcon />,
     label: "Select Players",
     noOptionsText: "No players found",
-  },
+  }
 };
 
-// Interactive demo with state management
 export const Interactive: Story = {
   render: () => {
     const [selected, setSelected] = React.useState<string[]>([]);

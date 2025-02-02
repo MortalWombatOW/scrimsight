@@ -3,7 +3,6 @@ import {Card, Typography, CircularProgress, CardActionArea} from '@mui/material'
 import useMetric, {MetricData} from '../../hooks/useMetrics';
 import './Card.scss';
 import {Bar, BarChart, XAxis} from 'recharts';
-import { useWombatDataManager } from 'wombat-data-framework';
 
 interface MetricCardProps {
   columnName: string;
@@ -35,29 +34,34 @@ const MetricChange = ({metric}: {metric: MetricData}) => {
 
 const SmallHistogram = ({metric}: {metric: MetricData}) => {
   const histogram = metric.histogram;
-  console.log('metric', metric);
   return (
     <BarChart width={500} height={200} data={histogram}>
       <Bar dataKey="count" fill="#119911" />
       <Bar dataKey="compareCount" fill="#8884d8" strokeDasharray="3 3" />
-      <XAxis dataKey="bin" interval="preserveStartEnd" tickLine={false} label={{value: metric.column.displayName + ' distribution', position: 'insideBottom'}} height={50} />
+      <XAxis 
+        dataKey="bin" 
+        interval="preserveStartEnd" 
+        tickLine={false} 
+        label={{
+          value: metric.column.displayName + ' distribution', 
+          position: 'insideBottom'
+        }} 
+        height={50} 
+      />
     </BarChart>
   );
 };
 
 const MetricCard: React.FC<MetricCardProps> = ({columnName, slice, compareToOther}) => {
   const [expanded, setExpanded] = useState(false);
-  const dataManager = useWombatDataManager();
   const metric = useMetric(columnName, slice, compareToOther);
-  console.log('MetricCard', metric);
 
-  const isValidColumn = dataManager.hasColumn(columnName);
-  console.log('columns', dataManager.getColumns());
-
-  if (!isValidColumn) {
-    return <Card className="MetricCard dashboard-item" sx={{overflow: 'visible'}}>
-      <Typography variant="h5">Invalid column name: {columnName}</Typography>
-    </Card>;
+  if (!metric) {
+    return (
+      <Card className="MetricCard dashboard-item" sx={{overflow: 'visible'}}>
+        <Typography variant="h5">Invalid column name: {columnName}</Typography>
+      </Card>
+    );
   }
 
   const isLoading = metric.significance === 'unknown';

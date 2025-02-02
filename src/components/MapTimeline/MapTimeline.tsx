@@ -1,4 +1,4 @@
-import React, { useState, useCallback} from 'react';
+import React, { useState, useCallback } from 'react';
 import {Container, Grid, LinearProgress} from '@mui/material';
 import {useTimelineData} from './hooks/useTimelineData';
 import {useTimelineDimensions} from './hooks/useTimelineDimensions';
@@ -132,13 +132,13 @@ const getDefaultRowConfigs = (timelineData: TimelineData | null): TimelineRowCon
 
 const MapTimeline: React.FC<MapTimelineProps> = ({matchId}) => {
   const timelineData = useTimelineData(matchId);
-  const dimensions = useTimelineDimensions(timelineData?.mapStartTime ?? 0, timelineData?.mapEndTime ?? 100);
+  const dimensions = useTimelineDimensions(timelineData?.startTime ?? 0, timelineData?.endTime ?? 100);
 
   const {handleMouseUp, handleMouseMove} = useTimelineWindow({
     windowStartTime: dimensions.windowStartTime,
     windowEndTime: dimensions.windowEndTime,
-    mapStartTime: timelineData?.mapStartTime ?? 0,
-    mapEndTime: timelineData?.mapEndTime ?? 100,
+    mapStartTime: timelineData?.startTime ?? 0,
+    mapEndTime: timelineData?.endTime ?? 100,
     setWindowStartTime: dimensions.setWindowStartTime,
     setWindowEndTime: dimensions.setWindowEndTime,
     xToTime: dimensions.xToTime,

@@ -1,21 +1,23 @@
 import { SingleBarChart } from "~/components/Charts/SingleBarChart";
-
-import { useWombatData, WombatDataOptions } from "wombat-data-framework";
-import { player_stat_totals_node, PlayerMetrics, PlayerStatTotalsNodeData } from "~/WombatDataFrameworkSchema";
+import { useAtom } from "jotai";
+import { type PlayerStatTotals, playerStatTotalsAtom } from "~/atoms";
 import { CardContent, Typography } from "@mui/material";
 
 interface PlayerStatTotalBarChartProps {
-  metricName: keyof PlayerMetrics;
-  dataOptions?: WombatDataOptions<PlayerStatTotalsNodeData>;
+  metricName: keyof Omit<PlayerStatTotals, 'playerName'>;
 }
 
-export const PlayerStatTotalBarChart: React.FC<PlayerStatTotalBarChartProps> = ({ metricName, dataOptions }) => {
-  const playerStatTotalData = useWombatData<PlayerStatTotalsNodeData>(player_stat_totals_node.name, dataOptions);
+export const PlayerStatTotalBarChart: React.FC<PlayerStatTotalBarChartProps> = ({ metricName }) => {
+  const [playerStatTotals] = useAtom(playerStatTotalsAtom);
 
   return (
     <CardContent>
       <Typography variant="h3">{metricName}</Typography>
-      <SingleBarChart categoryKey={'playerName'} valueKey={metricName} data={playerStatTotalData.data} />
+      <SingleBarChart 
+        categoryKey={'playerName'} 
+        valueKey={metricName} 
+        data={playerStatTotals ?? []} 
+      />
     </CardContent>
   );
 };

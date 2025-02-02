@@ -1,18 +1,16 @@
-import { Meta, StoryFn } from '@storybook/react';
-import FileLoader from './FileLoader'; // Adjust the path if needed
+import type { Meta, StoryObj } from '@storybook/react';
+import { FileLoader } from './FileLoader';
 
 const meta: Meta<typeof FileLoader> = {
   component: FileLoader,
+  parameters: {
+    layout: 'centered',
+  },
 };
 
 export default meta;
+type Story = StoryObj<typeof FileLoader>;
 
-const Template: StoryFn<typeof FileLoader> = (args) => <FileLoader {...args} />;
-
-export const Default = Template.bind({});
-Default.args = {
-  onSubmit: (files) => {
-    console.log('Files submitted:', files);
-    alert(`Files submitted. Check the console for details.`);
-  },
+export const Default: Story = {
+  args: {},
 };

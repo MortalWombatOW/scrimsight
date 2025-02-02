@@ -1,4 +1,6 @@
 import {ReactNode} from 'react';
+import { TeamUltimateAdvantage } from '~/atoms/teamUltimateAdvantageAtom';
+import { TeamAliveAdvantage } from '~/atoms/teamAliveAdvantageAtom';
 
 export interface MatchStart {
   matchId: string;
@@ -121,20 +123,20 @@ export interface UltimateAdvantageChartProps {
 }
 
 export interface TimelineData {
-  mapStartTime: number;
-  mapEndTime: number;
   team1Name: string;
   team2Name: string;
-  team1EventsByPlayer: Record<string, PlayerEvent[]>;
-  team2EventsByPlayer: Record<string, PlayerEvent[]>;
-  team1InteractionEventsByPlayer: Record<string, PlayerInteractionEvent[]>;
-  team2InteractionEventsByPlayer: Record<string, PlayerInteractionEvent[]>;
-  team1UltimateEventsByPlayer: Record<string, UltimateEvent[]>;
-  team2UltimateEventsByPlayer: Record<string, UltimateEvent[]>;
+  team1EventsByPlayer: { [playerName: string]: PlayerEvent[] };
+  team2EventsByPlayer: { [playerName: string]: PlayerEvent[] };
+  team1InteractionEventsByPlayer: { [playerName: string]: PlayerInteractionEvent[] };
+  team2InteractionEventsByPlayer: { [playerName: string]: PlayerInteractionEvent[] };
+  team1UltimateEventsByPlayer: { [playerName: string]: UltimateEvent[] };
+  team2UltimateEventsByPlayer: { [playerName: string]: UltimateEvent[] };
+  startTime: number;
+  endTime: number;
   roundTimes: RoundTimes[];
   eventTimes: number[];
-  ultimateAdvantageData: TeamAdvantageData[];
-  aliveAdvantageData: TeamAdvantageData[];
+  ultimateAdvantageData: TeamUltimateAdvantage[];
+  aliveAdvantageData: TeamAliveAdvantage[];
 }
 
 export interface TimelineDimensions {
