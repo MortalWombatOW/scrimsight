@@ -20,7 +20,7 @@ declare global {
 import { Container, Typography, Box, Button, List, ListItem, Paper, IconButton } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
 import { logFileInputAtom, logFileInputMutationAtom } from '../../atoms/logFileInputAtom';
-import React, { ChangeEvent } from 'react';
+import { ChangeEvent } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export const AddFilesPage = () => {

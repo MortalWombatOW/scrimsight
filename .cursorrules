@@ -2,10 +2,11 @@
 
 Components & Naming
 
-- Use functional components with `"use client"` if needed.
 - Name in PascalCase under `src/components/`.
 - Keep them small, typed with interfaces.
 - Prioritize readability over brevity.
+- Components should have very limited logic, prefer to use atoms and jotai to manage state.
+- Components should take as few props as possible, and use atoms to get other data they need that is not passed in props.
 
 Data
 
@@ -15,6 +16,7 @@ Data
 - Each atom file has an output interface defined at the top of the file.
 - Use highly readable and logical code to implement atoms, don't be afraid to add comments.
 - Do the processing directly, don't use alasql or any other library to process data.
+- When using an atom, remember to import its type instead of declaring a new interface.
 
 Icons
 
@@ -39,5 +41,4 @@ Additional
 IMPORTANT:
 - When given a task, always restate the task in your own words, and then ask for confirmation.
 - Then, provide a few high level options for how to complete the task, and ask for the best option.
-- Before you make any changes, always write a detailed, step-by-step plan for the changes you're going to make in `.cursor-tasks` in markdown format, including the objective and an outline of the steps you'll take, and then ask for confirmation.
 - After all changes are made, ALWAYS build the project with `npm run build`. Ignore warnings, fix errors.

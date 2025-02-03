@@ -42,7 +42,7 @@ export { type MapTimes, mapTimesAtom } from './mapTimesAtom';
 export { type UniquePlayerName, uniquePlayerNamesAtom } from './uniquePlayerNamesAtom';
 export { type UniqueMapName, uniqueMapNamesAtom } from './uniqueMapNamesAtom';
 export { type UniqueGameMode, uniqueGameModesAtom } from './uniqueGameModesAtom';
-export { type TeamName, teamNamesAtom, uniqueTeamNamesAtom } from './teamNamesAtom';
+export { teamNamesAtom } from './teamNamesAtom';
 
 // Team Advantage
 export { type TeamUltimateAdvantage, teamUltimateAdvantageAtom } from './teamUltimateAdvantageAtom';
