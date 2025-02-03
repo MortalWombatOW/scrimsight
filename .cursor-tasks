@@ -2,26 +2,6 @@
 
 
 
-## Objective
-Remove widget and intent-related code and fix build errors
-
-## Steps
-1. Remove Widget and Intent Related Files
-   - Delete IntentControls and related stories
-   - Delete WidgetProvider and related files
-   - Remove Intent context
-
-2. Clean up ChordDiagram Component
-   - Remove widget registry references
-   - Fix SVG dimensions
-
-3. Clean up Imports
-   - Remove unused type imports
-   - Fix missing module references
-
-4. Clean up File Structure
-   - Remove any remaining widget/intent related files
-   - Update any components that depended on these
 
 
 ## Objective

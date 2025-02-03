@@ -9,15 +9,24 @@ import { MatchPage } from './pages/Match/MatchPage';
 import { AppProvider } from '@toolpad/core/react-router-dom';
 
 import { MatchesPage } from './pages/Matches/Matches';
+import { AddFilesPage } from './pages/AddFiles/AddFilesPage';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { Suspense } from 'react';
 
 const App = () => {
   const theme = createTheme(themeDef);
   const navigation: NavigationPageItem[] = [
     {
       kind: 'page',
-      segment: '/',
+      segment: '',
       title: 'Matches',
       icon: <div />,
+    },
+    {
+      kind: 'page',
+      segment: 'add-files',
+      title: 'Add Files',
+      icon: <FileUploadIcon />,
     },
   ];
 
@@ -27,12 +36,16 @@ const App = () => {
         <CssBaseline />
         <QueryParamProvider adapter={ReactRouter6Adapter}>
           <AppProvider navigation={navigation} branding={{ logo: <div />, title: 'SCRIMSIGHT' }} theme={theme}>
-        <DashboardLayout>
-          <Routes>
-            <Route path="/" element={<MatchesPage />} />
-            <Route path="/match/:matchId" element={<MatchPage />} />
-          </Routes></DashboardLayout>
-      </AppProvider>
+            <DashboardLayout>
+              <Suspense fallback={<div>Loading...</div>}>
+              <Routes>
+                <Route path="/" element={<MatchesPage />} />
+                <Route path="/match/:matchId" element={<MatchPage />} />
+                <Route path="/add-files" element={<AddFilesPage />} />
+              </Routes>
+              </Suspense>
+            </DashboardLayout>
+          </AppProvider>
         </QueryParamProvider>
       </ThemeProvider>
     </Router>
