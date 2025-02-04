@@ -62,7 +62,7 @@ export type OverwatchMap = 'Antarctic Peninsula' | 'Busan' | 'Ilios' | 'Lijiang 
 | 'Blizzard World' | 'Eichenwalde' | 'Hollywood' | 'King\'s Row' | 'Midtown' | 'Numbani' | 'Paraiso' 
 | 'Colosseo' | 'Esperanca' | 'New Queen Street' | 'Runasapi' | 'Hanaoka' | 'Throne of Anubis';
 
-export const getRoleFromHero = (hero: OverwatchHero): OverwatchRole => {
+export const getRoleFromHero = (hero: string): OverwatchRole => {
   if (TANK_HEROES.includes(hero as typeof TANK_HEROES[number])) return 'tank';
   if (DAMAGE_HEROES.includes(hero as typeof DAMAGE_HEROES[number])) return 'damage';
   if (SUPPORT_HEROES.includes(hero as typeof SUPPORT_HEROES[number])) return 'support';

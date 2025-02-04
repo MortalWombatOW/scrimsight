@@ -1,4 +1,4 @@
-import { atom } from 'jotai';
+import { Atom, atom } from 'jotai';
 import { matchStartExtractorAtom } from './matchStartExtractorAtom';
 import { matchEndExtractorAtom } from './matchEndExtractorAtom';
 import { roundTimesAtom } from './roundTimesAtom';
@@ -16,12 +16,12 @@ export interface MapTimes {
 /**
  * Atom that combines match start, end, and round events to calculate map times
  */
-export const mapTimesAtom = atom(async (get) => {
+export const mapTimesAtom: Atom<Promise<MapTimes[]>> = atom(async (get) => {
   const matchStarts = await get(matchStartExtractorAtom);
   const matchEnds = await get(matchEndExtractorAtom);
   const roundTimes = await get(roundTimesAtom);
 
-  if (!matchStarts || !matchEnds || !roundTimes) return null;
+  if (!matchStarts || !matchEnds || !roundTimes) return [];
 
   return matchStarts.map((start) => {
     const end = matchEnds.find((e) => e.matchId === start.matchId);

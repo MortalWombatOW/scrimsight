@@ -1,5 +1,30 @@
 # .cursorrules
 
+Project Overview
+- Scrimsight is a web app for analyzing data from Overwatch Scrims. It is built with React, Typescript, and Material-UI. 
+- The project is organized into several main folders:
+  - `src/components`: Reusable React components
+  - `src/atoms`: State management using Jotai
+  - `src/pages`: Page components
+  - `src/lib`: Utility functions and types
+
+App Structure
+
+- The app is a single page app with a sidebar.
+- The sidebar has links to the different pages.
+- The main content area is where the page content is displayed.
+- Pages
+| Page name | Description                                                                                             | Page sections                                                                                     |
+|-----------|---------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| Home      | The home page of Scrimsight, showing an overview of everything with modules linking out to other pages. | Files, matches, teams, players                                                                    |
+| Files     | Lets users add and manage files to be analyzed.                                                         | Add from directory, add files directly, view and manage files                                     |
+| Teams     | Shows all of the teams and aggregate stats about them.                                                  | Team name, record, all players                                                                    |
+| Team      | Shows info about a specific team                                                                        | Team name, record and match history, all players by role, compositions played                     |
+| Matches   | Shows all matches added.                                                                                | Match list, calendar view, search and filter matches                                              |
+| Match     | Shows info for a specific match.                                                                        | Match info, map type, teams, score, player stats, match timeline                                  |
+| Players   | Shows all players                                                                                       | Player name, win/loss record, teams they're on, top heroes                                        |
+| Player    | Info for a specific player.                                                                             | Player name, win/loss record, teams theyre on, matches they're in, heroes they played with stats. |
+
 Components & Naming
 
 - Name in PascalCase under `src/components/`.
@@ -41,4 +66,6 @@ Additional
 IMPORTANT:
 - When given a task, always restate the task in your own words, and then ask for confirmation.
 - Then, provide a few high level options for how to complete the task, and ask for the best option.
+- Search the components folder for existing components that could be used to complete the task. If there is no existing component and it makes sense to use elsewhere, create a new component there.
+- Search the atoms folder for existing atoms with data that could be used to complete the task. If there is no existing atom, create a new atom there to compute the data needed.
 - After all changes are made, ALWAYS build the project with `npm run build`. Ignore warnings, fix errors.

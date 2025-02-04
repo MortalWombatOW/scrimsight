@@ -4,11 +4,13 @@ import { teamNamesAtom } from '../../atoms/teamNamesAtom';
 import { teamStatsAtom } from '../../atoms/teamStatsAtom';
 import { allPlayersForTeamAtom } from '../../atoms/allPlayersForTeamAtom';
 import { matchDataAtom } from '../../atoms/matchDataAtom';
-import { Box, Typography, List, ListItem, ListItemText, Divider, Card, CardContent, Grid } from '@mui/material';
+import { Box, Typography, List, ListItem, ListItemText, Card, CardContent, Grid } from '@mui/material';
 import { MatchData } from '../../atoms/matchDataAtom';
 import { TeamStats } from '../../atoms/teamStatsAtom';
 import { TeamPlayers } from '../../atoms/allPlayersForTeamAtom';
 import { StatCard } from '../../components/Card/StatCard';
+import { TeamCompositions } from './TeamCompositions';
+
 export const TeamPage = () => {
   const { teamName } = useParams();
   const [teamNames] = useAtom(teamNamesAtom);
@@ -56,6 +58,7 @@ export const TeamPage = () => {
           </List>
         </CardContent>
       </Card>
+      <TeamCompositions teamName={teamNameSafe} />
       <Card>
         <CardContent>
           <Typography variant="h5">Games Played</Typography>
