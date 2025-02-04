@@ -220,68 +220,64 @@ const Chord: React.FC<{
   highlightState,
   getCoords,
 }) => {
-    const color = getColorgorical(interaction.sourceTeamName);
+  const arcRef = useRef<SVGPathElement>(null);
+  const color = getColorgorical(interaction.sourceTeamName);
 
-    const sourceCurrentValue = getSourceCurrentValue();
-    const targetCurrentValue = getTargetCurrentValue();
+  const sourceCurrentValue = getSourceCurrentValue();
+  const targetCurrentValue = getTargetCurrentValue();
 
-    const interactionSourceStartAngle = sourceStart + (sourceCurrentValue / sourceValue) * (sourceEnd - sourceStart);
-    const interactionSourceEndAngle = sourceStart + ((sourceCurrentValue + interaction.value) / sourceValue) * (sourceEnd - sourceStart);
-    const interactionTargetStartAngle = targetStart + (targetCurrentValue / targetValue) * (targetEnd - targetStart);
-    const interactionTargetEndAngle = targetStart + ((targetCurrentValue + interaction.value) / targetValue) * (targetEnd - targetStart);
+  const interactionSourceStartAngle = sourceStart + (sourceCurrentValue / sourceValue) * (sourceEnd - sourceStart);
+  const interactionSourceEndAngle = sourceStart + ((sourceCurrentValue + interaction.value) / sourceValue) * (sourceEnd - sourceStart);
+  const interactionTargetStartAngle = targetStart + (targetCurrentValue / targetValue) * (targetEnd - targetStart);
+  const interactionTargetEndAngle = targetStart + ((targetCurrentValue + interaction.value) / targetValue) * (targetEnd - targetStart);
 
-    addSourceCurrentValue(interaction.value);
-    addTargetCurrentValue(interaction.value);
+  addSourceCurrentValue(interaction.value);
+  addTargetCurrentValue(interaction.value);
 
-    const arcRef = useRef<SVGPathElement>(null);
+  const startCoords = getCoords((interactionSourceStartAngle + interactionSourceEndAngle) / 2, innerRadius - 35);
+  const endCoords = getCoords((interactionTargetStartAngle + interactionTargetEndAngle) / 2, innerRadius - 35);
 
-    const startCoords = getCoords((interactionSourceStartAngle + interactionSourceEndAngle) / 2, innerRadius - 35);
-    const endCoords = getCoords((interactionTargetStartAngle + interactionTargetEndAngle) / 2, innerRadius - 35);
-
-    return (
-      <g>
-        <path
-          ref={arcRef}
-          d={getArcPath(interactionSourceStartAngle, interactionSourceEndAngle, interactionTargetStartAngle, interactionTargetEndAngle, innerRadius, getCoords)}
-          // fill={`${color}30`}
-          // stroke={`${color}80`}
-          style={{
-            fill: highlightState === 'highlight' ? `${color}90` : highlightState === 'normal' ? `${color}30` : `${color}00`,
-            stroke: highlightState === 'highlight' ? `${color}` : highlightState === 'normal' ? `${color}80` : `${color}00`,
-            transition: 'all 0.3s ease',
-          }}
-          strokeWidth={1}
-          opacity={1}
-        />
-        <text
-          x={startCoords.x}
-          y={startCoords.y}
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize="0.7em"
-          style={{
-            fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
-            transition: 'all 0.3s ease',
-          }}
-        >
-          {interaction.value} kills on {interaction.targetPlayerName}
-        </text>
-        <text
-          x={endCoords.x}
-          y={endCoords.y}
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize="0.7em"
-          style={{
-            fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
-            transition: 'all 0.3s ease',
-          }}
-        >
-          {interaction.value} deaths from {interaction.sourcePlayerName}
-        </text>
-      </g>
-    );
-  };
+  return (
+    <g>
+      <path
+        ref={arcRef}
+        d={getArcPath(interactionSourceStartAngle, interactionSourceEndAngle, interactionTargetStartAngle, interactionTargetEndAngle, innerRadius, getCoords)}
+        style={{
+          fill: highlightState === 'highlight' ? `${color}90` : highlightState === 'normal' ? `${color}30` : `${color}00`,
+          stroke: highlightState === 'highlight' ? `${color}` : highlightState === 'normal' ? `${color}80` : `${color}00`,
+          strokeWidth: 1,
+          transition: 'fill 0.2s ease-in-out, stroke 0.2s ease-in-out',
+        }}
+      />
+      <text
+        x={startCoords.x}
+        y={startCoords.y}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize="0.7em"
+        style={{
+          fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
+          transition: 'all 0.3s ease',
+        }}
+      >
+        {interaction.value} kills on {interaction.targetPlayerName}
+      </text>
+      <text
+        x={endCoords.x}
+        y={endCoords.y}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize="0.7em"
+        style={{
+          fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
+          transition: 'all 0.3s ease',
+        }}
+      >
+        {interaction.value} deaths from {interaction.sourcePlayerName}
+      </text>
+    </g>
+  );
+};
 
 // Add new Legend component
 const Legend: React.FC<{
@@ -381,20 +377,24 @@ const SVG_HEIGHT = 600;
 
 export const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   const [matchData] = useAtom(matchDataAtom);
-  const [playerInteractions] = useAtom(playerInteractionEventsAtom);
-
-  const match = matchData?.find(m => m.matchId === matchId);
-  const interactions = playerInteractions?.filter(i => i.matchId === matchId) ?? [];
-
-  if (!match) return null;
-
+  const [playerInteractionEvents] = useAtom(playerInteractionEventsAtom);
+  const [highlightedPlayer, setHighlightedPlayer] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
+  if (!matchData || !playerInteractionEvents) {
+    return <div>Loading...</div>;
+  }
+
+  const match = matchData.find(m => m.matchId === matchId);
+  if (!match) {
+    return <div>Match not found</div>;
+  }
+
+  const interactions = playerInteractionEvents.filter(i => i.matchId === matchId);
   const team1Name = match.team1Name || '';
   const team2Name = match.team2Name || '';
   const team1Players = match.team1Players || [];
   const team2Players = match.team2Players || [];
-
 
   const chordData = transformDataToChordFormat(interactions);
 
@@ -403,9 +403,6 @@ export const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
   const size = 300;
 
   const radius = size / 3;
-
-  const [highlightedPlayer, setHighlightedPlayer] = useState<string | null>(null);
-
 
   const getCoords = (angle: number, radius: number) => {
     return {

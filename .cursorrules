@@ -68,4 +68,5 @@ IMPORTANT:
 - Then, provide a few high level options for how to complete the task, and ask for the best option.
 - Search the components folder for existing components that could be used to complete the task. If there is no existing component and it makes sense to use elsewhere, create a new component there.
 - Search the atoms folder for existing atoms with data that could be used to complete the task. If there is no existing atom, create a new atom there to compute the data needed.
+- Fix linting errors and warnings as you go.
 - After all changes are made, ALWAYS build the project with `npm run build`. Ignore warnings, fix errors.

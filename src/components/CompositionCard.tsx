@@ -1,5 +1,5 @@
 import { Card, CardContent, Grid, Typography, Box, Avatar } from '@mui/material';
-import { getHeroImage, getRoleFromHero, getRankForRole } from '../lib/data/hero';
+import { getHeroImage, getRoleFromHero, getRankForRole, OverwatchRole } from '../lib/data/hero';
 import { formatDuration } from '../lib/time';
 import RoleIcon from './Common/RoleIcon';
 
@@ -19,14 +19,16 @@ export const CompositionCard = ({ heroes, timePlayed }: CompositionCardProps) =>
                 const role = getRoleFromHero(hero);
                 acc[role] = [...(acc[role] || []), hero].sort();
                 return acc;
-              }, {} as Record<string, string[]>)
+              }, {} as Record<OverwatchRole, string[]>)
             )
-            .sort(([a], [b]) => getRankForRole(a) - getRankForRole(b))
+            .sort(([a], [b]) => getRankForRole(a as OverwatchRole) - getRankForRole(b as OverwatchRole))
             .map(([role, roleHeroes]) => (
               <Grid item key={role}>
                 <Box display="flex" flexDirection="column" alignItems="center" gap={0.5}>
                   <Box display="flex" alignItems="center" gap={0.5}>
-                    <RoleIcon role={role} color="primary" sx={{ fontSize: '1rem' }} />
+                    <Box sx={{ fontSize: '1rem' }}>
+                      <RoleIcon role={role} color="primary" />
+                    </Box>
                     <Typography variant="caption" color="text.secondary">
                       {role.charAt(0).toUpperCase() + role.slice(1)}
                     </Typography>

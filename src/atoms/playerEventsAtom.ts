@@ -1,4 +1,4 @@
-import { atom } from 'jotai';
+import { Atom, atom } from 'jotai';
 import { defensiveAssistExtractorAtom } from './defensiveAssistExtractorAtom';
 import { offensiveAssistExtractorAtom } from './offensiveAssistExtractorAtom';
 import { heroSpawnExtractorAtom } from './heroSpawnExtractorAtom';
@@ -21,7 +21,7 @@ export interface PlayerEvent {
 /**
  * Atom that combines various player events
  */
-export const playerEventsAtom = atom(async (get) => {
+export const playerEventsAtom: Atom<Promise<PlayerEvent[]>> = atom(async (get) => {
   const defensiveAssists = await get(defensiveAssistExtractorAtom);
   const offensiveAssists = await get(offensiveAssistExtractorAtom);
   const heroSpawns = await get(heroSpawnExtractorAtom);
@@ -30,7 +30,7 @@ export const playerEventsAtom = atom(async (get) => {
   const ability2Used = await get(ability2UsedExtractorAtom);
 
   if (!defensiveAssists || !offensiveAssists || !heroSpawns || !heroSwaps || !ability1Used || !ability2Used) {
-    return null;
+    return [];
   }
 
   const events: PlayerEvent[] = [
