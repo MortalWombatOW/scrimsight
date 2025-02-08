@@ -25,6 +25,46 @@ App Structure
 | Players   | Shows all players                                                                                       | Player name, win/loss record, teams they're on, top heroes                                        |
 | Player    | Info for a specific player.                                                                             | Player name, win/loss record, teams theyre on, matches they're in, heroes they played with stats. |
 
+Player Metrics:
+scope: total, per 10 minutes, per match, per hero, and per map (and all combinations of breakdowns, for example, per 10 minutes per hero per map)
+
+Player Metrics Groups:
+
+1. Combat Performance
+- Description: Core combat effectiveness metrics
+- Primary: Eliminations
+- Secondary: Final blows, deaths, KDR, solo kills, environmental kills/deaths, multikills, objective kills
+
+2. Damage Output
+- Description: All damage-related metrics
+- Primary: Hero damage dealt
+- Secondary: All damage dealt, barrier damage, critical hits, damage efficiency, damage to block ratio
+
+3. Healing & Survival
+- Description: Healing and survivability metrics
+- Primary: Healing dealt
+- Secondary: Healing received, self healing, damage taken, defensive assists, survival time
+
+4. Accuracy & Weapon Stats
+- Description: Shooting precision metrics
+- Primary: Weapon accuracy
+- Secondary: Critical hit accuracy, scoped accuracy, shots fired/hit/missed
+
+5. Ultimate Economy
+- Description: Ultimate ability usage metrics
+- Primary: Ultimates used
+- Secondary: Ultimates earned, ultimate efficiency (used/earned ratio), ultimate impact
+
+6. Ability Usage
+- Description: Regular ability performance
+- Primary: Ability combo efficiency (from ability1/2Used atoms)
+- Secondary: Ability usage rate, ability kill participation
+
+7. Role-Specific Metrics
+- Description: Role-dependent performance
+- Primary: Role effectiveness score (calculated from role-specific events)
+- Secondary: Tank: damage blocked; Support: defensive assists; DPS: solo kill ratio
+
 Components & Naming
 
 - Name in PascalCase under `src/components/`.

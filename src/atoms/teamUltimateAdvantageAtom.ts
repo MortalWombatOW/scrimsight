@@ -1,11 +1,11 @@
 import { atom } from 'jotai';
 import { ultimateAdvantageConfig } from '../lib/AdvantageTrackers';
 import { processTeamAdvantageEvents, TimelineEvent } from '../lib/TeamAdvantageTracker';
-import { matchStartExtractorAtom } from './matchStartExtractorAtom';
-import { ultimateChargedExtractorAtom } from './ultimateChargedExtractorAtom';
-import { ultimateEndExtractorAtom } from './ultimateEndExtractorAtom';
-import { roundEndExtractorAtom } from './roundEndExtractorAtom';
-import { roundStartExtractorAtom } from './roundStartExtractorAtom';
+import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
+import { ultimateChargedExtractorAtom } from './event_extractors/ultimateChargedExtractorAtom';
+import { ultimateEndExtractorAtom } from './event_extractors/ultimateEndExtractorAtom';
+import { roundEndExtractorAtom } from './event_extractors/roundEndExtractorAtom';
+import { roundStartExtractorAtom } from './event_extractors/roundStartExtractorAtom';
 
 /**
  * Interface for team ultimate advantage events

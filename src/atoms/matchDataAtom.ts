@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
-import { matchExtractorAtom } from './matchExtractorAtom';
-import { matchStartExtractorAtom } from './matchStartExtractorAtom';
-import { matchEndExtractorAtom } from './matchEndExtractorAtom';
-import { playerStatExtractorAtom } from './playerStatExtractorAtom';
+import { matchExtractorAtom } from './event_extractors/matchExtractorAtom';
+import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
+import { matchEndExtractorAtom } from './event_extractors/matchEndExtractorAtom';
+import { playerStatExtractorAtom } from './event_extractors/playerStatExtractorAtom';
 
 /**
  * Interface for combined match data

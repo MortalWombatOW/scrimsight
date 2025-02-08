@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { playerStatExtractorAtom } from './playerStatExtractorAtom';
+import { playerStatExtractorAtom } from './event_extractors/playerStatExtractorAtom';
 
 /**
  * Interface for unique player names

@@ -1,11 +1,11 @@
 import { atom } from 'jotai';
 import { playerAliveAdvantageConfig } from '../lib/AdvantageTrackers';
 import { processTeamAdvantageEvents, TimelineEvent } from '../lib/TeamAdvantageTracker';
-import { matchStartExtractorAtom } from './matchStartExtractorAtom';
-import { killExtractorAtom } from './killExtractorAtom';
-import { heroSpawnExtractorAtom } from './heroSpawnExtractorAtom';
-import { roundEndExtractorAtom } from './roundEndExtractorAtom';
-import { roundStartExtractorAtom } from './roundStartExtractorAtom';
+import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
+import { killExtractorAtom } from './event_extractors/killExtractorAtom';
+import { heroSpawnExtractorAtom } from './event_extractors/heroSpawnExtractorAtom';
+import { roundEndExtractorAtom } from './event_extractors/roundEndExtractorAtom';
+import { roundStartExtractorAtom } from './event_extractors/roundStartExtractorAtom';
 
 /**
  * Interface for team alive advantage events

@@ -19,7 +19,7 @@ declare global {
 
 import Button from '@mui/material/Button';
 import { useAtom } from 'jotai';
-import { logFileInputMutationAtom } from '../atoms/logFileInputAtom';
+import { logFileInputMutationAtom } from '../atoms/files';
 
 export const LoadFilesButton = () => {
   const [, setFiles] = useAtom(logFileInputMutationAtom);

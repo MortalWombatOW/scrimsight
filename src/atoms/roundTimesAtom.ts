@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
-import { roundStartExtractorAtom } from './roundStartExtractorAtom';
-import { roundEndExtractorAtom } from './roundEndExtractorAtom';
-import { setupCompleteExtractorAtom } from './setupCompleteExtractorAtom';
+import { roundStartExtractorAtom } from './event_extractors/roundStartExtractorAtom';
+import { roundEndExtractorAtom } from './event_extractors/roundEndExtractorAtom';
+import { setupCompleteExtractorAtom } from './event_extractors/setupCompleteExtractorAtom';
 
 /**
  * Interface for round times data

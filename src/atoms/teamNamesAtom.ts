@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { matchStartExtractorAtom } from './matchStartExtractorAtom';
+import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
 
 
 /**

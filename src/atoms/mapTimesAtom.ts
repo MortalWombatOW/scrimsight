@@ -1,6 +1,6 @@
 import { Atom, atom } from 'jotai';
-import { matchStartExtractorAtom } from './matchStartExtractorAtom';
-import { matchEndExtractorAtom } from './matchEndExtractorAtom';
+import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
+import { matchEndExtractorAtom } from './event_extractors/matchEndExtractorAtom';
 import { roundTimesAtom } from './roundTimesAtom';
 
 /**

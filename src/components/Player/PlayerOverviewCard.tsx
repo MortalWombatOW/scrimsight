@@ -1,18 +1,32 @@
-import { Card, CardContent, Typography, Box, Grid, Chip, Avatar } from '@mui/material';
-import { type SinglePlayerStats } from '../../atoms/singlePlayerStatsAtom';
-import { type MatchData } from '../../atoms/matchDataAtom';
-import { PersonOutline, EmojiEvents, Event, Timeline, Stars, Bolt } from '@mui/icons-material';
+import { Box, Card, CardContent, Typography, Grid, Chip, Avatar } from '@mui/material';
+import { PersonOutline, EmojiEvents, Timeline, Bolt, Stars } from '@mui/icons-material';
+import { useAtomValue } from 'jotai';
+import { playerStatsByPlayerAtom, playerStatsByPlayerAndHeroAtom } from '../../atoms/metrics/playerMetricsAtoms';
 import { getHeroImage } from '../../lib/data/hero';
 
 interface PlayerOverviewCardProps {
-  stats: SinglePlayerStats;
+  playerName: string;
 }
 
-export const PlayerOverviewCard = ({ stats }: PlayerOverviewCardProps) => {
-  const totalGames = stats.matches.length;
-  const wins = stats.matches.filter((m: MatchData) => (m.team1Players.includes(stats.playerName) && m.team1Score > m.team2Score) || (m.team2Players.includes(stats.playerName) && m.team2Score > m.team1Score)).length;
-  const winRate = totalGames > 0 ? ((wins / totalGames) * 100).toFixed(1) : '0';
-  const kdr = stats.deaths > 0 ? (stats.eliminations / stats.deaths).toFixed(2) : stats.eliminations.toString();
+export const PlayerOverviewCard = ({ playerName }: PlayerOverviewCardProps) => {
+  const { rows: playerStats } = useAtomValue(playerStatsByPlayerAtom);
+  const { rows: heroStats } = useAtomValue(playerStatsByPlayerAndHeroAtom);
+  
+  const playerOverallStats = playerStats.find(stat => stat.playerName === playerName);
+  const playerHeroStats = heroStats.filter(stat => stat.playerName === playerName);
+
+  if (!playerOverallStats) {
+    return null;
+  }
+
+  // Calculate top heroes by eliminations
+  const topHeroes = playerHeroStats
+    .sort((a, b) => b.eliminations - a.eliminations)
+    .slice(0, 3)
+    .map(stat => stat.playerHero);
+
+  // Calculate win rate (this would need to be added to the metrics)
+  const winRate = '50.0'; // Placeholder until we add win/loss tracking
 
   return (
     <Card elevation={2}>
@@ -20,7 +34,7 @@ export const PlayerOverviewCard = ({ stats }: PlayerOverviewCardProps) => {
         <Box display="flex" alignItems="center" mb={2}>
           <PersonOutline sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
           <Typography variant="h4" component="h1">
-            {stats.playerName}
+            {playerName}
           </Typography>
         </Box>
 
@@ -41,27 +55,15 @@ export const PlayerOverviewCard = ({ stats }: PlayerOverviewCardProps) => {
 
           <Grid item xs={12} sm={6} md={3}>
             <Box display="flex" alignItems="center">
-              <Event sx={{ mr: 1, color: 'warning.main' }} />
-              <Box>
-                <Typography variant="body2" color="text.secondary">
-                  Games Played
-                </Typography>
-                <Typography variant="h6">
-                  {totalGames}
-                </Typography>
-              </Box>
-            </Box>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Box display="flex" alignItems="center">
               <Timeline sx={{ mr: 1, color: 'warning.main' }} />
               <Box>
                 <Typography variant="body2" color="text.secondary">
                   K/D Ratio
                 </Typography>
                 <Typography variant="h6">
-                  {kdr}
+                  {playerOverallStats.deaths > 0 
+                    ? (playerOverallStats.eliminations / playerOverallStats.deaths).toFixed(2) 
+                    : playerOverallStats.eliminations.toString()}
                 </Typography>
               </Box>
             </Box>
@@ -75,7 +77,7 @@ export const PlayerOverviewCard = ({ stats }: PlayerOverviewCardProps) => {
                   Final Blows
                 </Typography>
                 <Typography variant="h6">
-                  {stats.finalBlows}
+                  {playerOverallStats.finalBlows}
                 </Typography>
               </Box>
             </Box>
@@ -89,7 +91,7 @@ export const PlayerOverviewCard = ({ stats }: PlayerOverviewCardProps) => {
                   Eliminations
                 </Typography>
                 <Typography variant="h6">
-                  {stats.eliminations}
+                  {playerOverallStats.eliminations}
                 </Typography>
               </Box>
             </Box>
@@ -101,7 +103,7 @@ export const PlayerOverviewCard = ({ stats }: PlayerOverviewCardProps) => {
                 Top Heroes
               </Typography>
               <Box display="flex" gap={1} flexWrap="wrap">
-                {stats.topHeroes.slice(0, 3).map((hero: string) => (
+                {topHeroes.map((hero) => (
                   <Chip
                     key={hero}
                     avatar={<Avatar src={getHeroImage(hero)} />}
