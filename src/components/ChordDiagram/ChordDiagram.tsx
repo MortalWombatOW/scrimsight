@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { getColorgorical } from '../../lib/color';
-import { matchDataAtom, playerInteractionEventsAtom } from '../../atoms';
+import { matchDataAtom, PlayerInteractionEvent, playerInteractionEventsAtom } from '../../atoms';
 
-type PlayerInteractionEvent = any; // TODO: Replace 'any' with the proper type
 
 interface ChordDataEntry {
   sourcePlayerName: string;
@@ -228,64 +227,64 @@ const Chord: React.FC<{
   highlightState,
   getCoords,
 }) => {
-  const arcRef = useRef<SVGPathElement>(null);
-  const color = getColorgorical(interaction.sourceTeamName);
+    const arcRef = useRef<SVGPathElement>(null);
+    const color = getColorgorical(interaction.sourceTeamName);
 
-  const sourceCurrentValue = getSourceCurrentValue();
-  const targetCurrentValue = getTargetCurrentValue();
+    const sourceCurrentValue = getSourceCurrentValue();
+    const targetCurrentValue = getTargetCurrentValue();
 
-  const interactionSourceStartAngle = sourceStart + (sourceCurrentValue / sourceValue) * (sourceEnd - sourceStart);
-  const interactionSourceEndAngle = sourceStart + ((sourceCurrentValue + interaction.value) / sourceValue) * (sourceEnd - sourceStart);
-  const interactionTargetStartAngle = targetStart + (targetCurrentValue / targetValue) * (targetEnd - targetStart);
-  const interactionTargetEndAngle = targetStart + ((targetCurrentValue + interaction.value) / targetValue) * (targetEnd - targetStart);
+    const interactionSourceStartAngle = sourceStart + (sourceCurrentValue / sourceValue) * (sourceEnd - sourceStart);
+    const interactionSourceEndAngle = sourceStart + ((sourceCurrentValue + interaction.value) / sourceValue) * (sourceEnd - sourceStart);
+    const interactionTargetStartAngle = targetStart + (targetCurrentValue / targetValue) * (targetEnd - targetStart);
+    const interactionTargetEndAngle = targetStart + ((targetCurrentValue + interaction.value) / targetValue) * (targetEnd - targetStart);
 
-  addSourceCurrentValue(interaction.value);
-  addTargetCurrentValue(interaction.value);
+    addSourceCurrentValue(interaction.value);
+    addTargetCurrentValue(interaction.value);
 
-  const startCoords = getCoords((interactionSourceStartAngle + interactionSourceEndAngle) / 2, innerRadius - 35);
-  const endCoords = getCoords((interactionTargetStartAngle + interactionTargetEndAngle) / 2, innerRadius - 35);
+    const startCoords = getCoords((interactionSourceStartAngle + interactionSourceEndAngle) / 2, innerRadius - 35);
+    const endCoords = getCoords((interactionTargetStartAngle + interactionTargetEndAngle) / 2, innerRadius - 35);
 
-  return (
-    <g>
-      <path
-        ref={arcRef}
-        d={getArcPath(interactionSourceStartAngle, interactionSourceEndAngle, interactionTargetStartAngle, interactionTargetEndAngle, innerRadius, getCoords)}
-        style={{
-          fill: highlightState === 'highlight' ? `${color}90` : highlightState === 'normal' ? `${color}30` : `${color}00`,
-          stroke: highlightState === 'highlight' ? `${color}` : highlightState === 'normal' ? `${color}80` : `${color}00`,
-          strokeWidth: 1,
-          transition: 'fill 0.2s ease-in-out, stroke 0.2s ease-in-out',
-        }}
-      />
-      <text
-        x={startCoords.x}
-        y={startCoords.y}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize="0.7em"
-        style={{
-          fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
-          transition: 'all 0.3s ease',
-        }}
-      >
-        {interaction.value} kills on {interaction.targetPlayerName}
-      </text>
-      <text
-        x={endCoords.x}
-        y={endCoords.y}
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize="0.7em"
-        style={{
-          fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
-          transition: 'all 0.3s ease',
-        }}
-      >
-        {interaction.value} deaths from {interaction.sourcePlayerName}
-      </text>
-    </g>
-  );
-};
+    return (
+      <g>
+        <path
+          ref={arcRef}
+          d={getArcPath(interactionSourceStartAngle, interactionSourceEndAngle, interactionTargetStartAngle, interactionTargetEndAngle, innerRadius, getCoords)}
+          style={{
+            fill: highlightState === 'highlight' ? `${color}90` : highlightState === 'normal' ? `${color}30` : `${color}00`,
+            stroke: highlightState === 'highlight' ? `${color}` : highlightState === 'normal' ? `${color}80` : `${color}00`,
+            strokeWidth: 1,
+            transition: 'fill 0.2s ease-in-out, stroke 0.2s ease-in-out',
+          }}
+        />
+        <text
+          x={startCoords.x}
+          y={startCoords.y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize="0.7em"
+          style={{
+            fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
+            transition: 'all 0.3s ease',
+          }}
+        >
+          {interaction.value} kills on {interaction.targetPlayerName}
+        </text>
+        <text
+          x={endCoords.x}
+          y={endCoords.y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize="0.7em"
+          style={{
+            fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
+            transition: 'all 0.3s ease',
+          }}
+        >
+          {interaction.value} deaths from {interaction.sourcePlayerName}
+        </text>
+      </g>
+    );
+  };
 
 // Add new Legend component
 const Legend: React.FC<{
@@ -384,6 +383,18 @@ interface ChordDiagramProps {
   matchId: string;
 }
 
+interface PlayerAngles {
+  killsStartAngle: number;
+  killsEndAngle: number;
+  totalKills: number;
+  currentKills: number;
+  deathsStartAngle: number;
+  deathsEndAngle: number;
+  totalDeaths: number;
+  currentDeaths: number;
+}
+
+
 export const ChordDiagram = ({ matchId }: ChordDiagramProps): JSX.Element => {
   const [matchData] = useAtom(matchDataAtom);
   const [playerInteractionEvents] = useAtom(playerInteractionEventsAtom);
@@ -397,7 +408,7 @@ export const ChordDiagram = ({ matchId }: ChordDiagramProps): JSX.Element => {
       if (entries.length === 0) return;
       const entry = entries[0];
       const { width, height } = entry.contentRect;
-      setDimensions({ width, height: height - 6.5  });
+      setDimensions({ width, height: height - 6.5 });
     });
     if (containerRef.current) {
       observer.observe(containerRef.current);
@@ -454,17 +465,9 @@ export const ChordDiagram = ({ matchId }: ChordDiagramProps): JSX.Element => {
   );
 
   Object.entries(groupedData).forEach(([, interactions]) => interactions.sort((a, b) => a.value - b.value).sort((a, b) => players.indexOf(b.targetPlayerName) - players.indexOf(a.targetPlayerName)));
+
   const playerAngles: {
-    [player: string]: {
-      killsStartAngle: number;
-      killsEndAngle: number;
-      totalKills: number;
-      currentKills: number;
-      deathsStartAngle: number;
-      deathsEndAngle: number;
-      totalDeaths: number;
-      currentDeaths: number
-    };
+    [player: string]: PlayerAngles
   } = {};
 
 
@@ -536,7 +539,7 @@ export const ChordDiagram = ({ matchId }: ChordDiagramProps): JSX.Element => {
       {dimensions.width > 0 && dimensions.height > 0 && (
         <svg ref={svgRef} width={dimensions.width} height={dimensions.height}>
           <g transform={`translate(${dimensions.width / 2}, ${dimensions.height / 2})`}>
-            {Object.entries(playerAngles).map(([playerName, angles]: [string, any]) => {
+            {Object.entries(playerAngles).map(([playerName, angles]: [string, PlayerAngles]) => {
               const { killsStartAngle, killsEndAngle, deathsStartAngle, deathsEndAngle } = angles;
               return (
                 <PlayerArc
