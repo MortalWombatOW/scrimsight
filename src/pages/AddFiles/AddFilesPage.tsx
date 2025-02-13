@@ -17,15 +17,16 @@ declare global {
   }
 }
 
-import { Container, Typography, Box, Button, List, ListItem, Paper, IconButton } from '@mui/material';
+import { Container, Typography, Box, Button, List, ListItem, Paper, IconButton, Switch } from '@mui/material';
 import { useAtom, useAtomValue } from 'jotai';
 import { logFileInputAtom, logFileInputMutationAtom } from '../../atoms/files';
 import { ChangeEvent } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import { sampleDataEnabledAtom } from '../../atoms/files/sampleDataAtoms';
 export const AddFilesPage = () => {
   const [, setFiles] = useAtom(logFileInputMutationAtom);
   const logFileInput = useAtomValue(logFileInputAtom);
+  const [sampleDataEnabled, setSampleDataEnabled] = useAtom(sampleDataEnabledAtom);
 
   const handleAddDirectory = async () => {
     try {
@@ -75,8 +76,14 @@ export const AddFilesPage = () => {
       </Typography>
       <Box sx={{ mb: 4, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
         <Typography variant="h6" gutterBottom>
-          Add Directory (Chrome Only)
+          Sample Data
         </Typography>
+        <Switch
+          checked={sampleDataEnabled}
+          onChange={(e) => setSampleDataEnabled(e.target.checked)}
+        />
+      </Box>
+      <Box sx={{ mb: 4, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
         <Button
           variant="contained"
           color="primary"
@@ -127,6 +134,6 @@ export const AddFilesPage = () => {
           ))}
         </List>
       </Paper>
-    </Container>
+    </Container >
   );
 }; 

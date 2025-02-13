@@ -9,7 +9,7 @@ import { HeroDistributionChart } from './components/HeroDistributionChart';
 import { HeroPoolAnalysis } from './components/HeroPoolAnalysis';
 import { PlayerPerformanceMetrics } from './components/PlayerPerformanceMetrics';
 import { StatCard } from '../../components/Card/StatCard';
-import { 
+import {
   People as PeopleIcon,
   Timeline as TimelineIcon,
   LocalHospital as HealingIcon,
@@ -43,7 +43,7 @@ export const PlayersPage = () => {
   return (
     <Container maxWidth="xl">
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h2" gutterBottom>
           Players
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>

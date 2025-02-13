@@ -6,7 +6,7 @@ import MapTimeline from '../../components/MapTimeline/MapTimeline';
 import { ChordDiagram } from '../../components/ChordDiagram/ChordDiagram';
 import { mapNameToFileName } from '../../lib/string';
 import { useAtom } from 'jotai';
-import { matchStartExtractorAtom, matchEndExtractorAtom, matchDataAtom } from '~/atoms';
+import { matchStartExtractorAtom, matchEndExtractorAtom, matchDataAtom } from '../../atoms';
 
 // Valid tab values for type safety
 type MatchTab = 'timeline' | 'statistics' | 'interactions';
@@ -21,9 +21,9 @@ export const MatchPage = () => {
   const [matchEnds] = useAtom(matchEndExtractorAtom);
   const [matchData] = useAtom(matchDataAtom);
 
-  const matchStart = matchStarts?.find(m => m.matchId === matchId);
-  const matchEnd = matchEnds?.find(m => m.matchId === matchId);
-  const match = matchData?.find(m => m.matchId === matchId);
+  const matchStart = matchStarts?.find((m: { matchId: string; mapName: string; mapType: string; team1Name: string; team2Name: string }) => m.matchId === matchId);
+  const matchEnd = matchEnds?.find((m: { matchId: string; team1Score: number; team2Score: number }) => m.matchId === matchId);
+  const match = matchData?.find((m: { matchId: string; fileName: string; fileModified: number }) => m.matchId === matchId);
 
   // Validate tab parameter
   useEffect(() => {
@@ -69,7 +69,7 @@ export const MatchPage = () => {
   );
 };
 
-// Subcomponent for match header card
+// Updated MatchHeader component
 const MatchHeader = ({
   mapName,
   mapType,
@@ -89,24 +89,25 @@ const MatchHeader = ({
   fileModified: number;
   name: string;
 }) => (
-  <Card sx={{ width: '100%', minWidth: '500px', marginBottom: '1em' }}>
+  <Card sx={{ mb: 3, borderRadius: 2, boxShadow: 3 }}>
     <Grid container spacing={2}>
-      <Grid item xs={2}>
-        <CardMedia component="img" image={mapNameToFileName(mapName, false)} sx={{ height: '100%' }} />
+      {/* Image section: full width on xs, 4 columns on sm and up */}
+      <Grid item xs={12} sm={4}>
+        <CardMedia
+          component="img"
+          image={mapNameToFileName(mapName, false)}
+          sx={{ width: '100%', height: 'auto', objectFit: 'cover', borderRadius: 1 }}
+        />
       </Grid>
-      <Grid item xs={10}>
+      {/* Content section */}
+      <Grid item xs={12} sm={8}>
         <CardContent>
-          <Typography variant="h6" component="div">
+          <Typography variant="h5" component="div">
             {mapName} ({mapType})
           </Typography>
-          <Divider sx={{ my: 1 }} />
-          <ScoreRow
-            team1Name={team1Name}
-            team2Name={team2Name}
-            team1Score={team1Score}
-            team2Score={team2Score}
-          />
-          <Divider sx={{ my: 1 }} />
+          <Divider sx={{ my: 2 }} />
+          <ScoreRow team1Name={team1Name} team2Name={team2Name} team1Score={team1Score} team2Score={team2Score} />
+          <Divider sx={{ my: 2 }} />
           <MetaRow fileModified={fileModified} name={name} />
         </CardContent>
       </Grid>
@@ -148,10 +149,16 @@ const MetaRow = ({ fileModified, name }: { fileModified: number; name: string })
   </Grid>
 );
 
-// Subcomponent for tab navigation
+// Updated TabNavigation component
 const TabNavigation = ({ tab, setTab }: { tab: MatchTab; setTab: (value: string) => void }) => (
-  <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: '1em' }}>
-    <Tabs value={tab} onChange={(_e, value) => setTab(value)}>
+  <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+    <Tabs
+      value={tab}
+      onChange={(_e, newValue) => setTab(newValue)}
+      indicatorColor="primary"
+      textColor="primary"
+      variant="fullWidth"
+    >
       <Tab label="Timeline" value="timeline" />
       <Tab label="Statistics" value="statistics" />
       <Tab label="Interactions" value="interactions" />
@@ -159,11 +166,20 @@ const TabNavigation = ({ tab, setTab }: { tab: MatchTab; setTab: (value: string)
   </Box>
 );
 
-// Subcomponent for tab content
+// Updated TabContent for 'statistics' case
 const TabContent = ({ tab, matchId }: { tab: MatchTab; matchId: string }) => {
   switch (tab) {
     case 'statistics':
-      return <div>Statistics</div>;
+      return (
+        <Card sx={{ p: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            Match Statistics
+          </Typography>
+          <Typography variant="body1">
+            Statistics visualization coming soon...
+          </Typography>
+        </Card>
+      );
     case 'timeline':
       return <MapTimeline matchId={matchId} />;
     case 'interactions':

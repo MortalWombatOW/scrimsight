@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 import { parseFile } from '../../lib/data/uploadfile';
 import { stringHash } from '../../lib/string';
 import { logFileLoaderAtom } from './logFileLoaderAtom';
-
+import { sampleDataAtom } from './sampleDataAtoms';
 /**
  * Interface for the log file parser atom's output
  */
@@ -21,8 +21,12 @@ export interface LogFileParserOutput {
  */
 export const logFileParserAtom = atom(async (get): Promise<LogFileParserOutput[]> => {
   const loadedFiles = await get(logFileLoaderAtom);
-  
-  return loadedFiles.map((file) => {
+  const sampleData = get(sampleDataAtom);
+
+  console.log('loadedFiles', loadedFiles);
+  console.log('sampleData', sampleData);
+
+  return [...loadedFiles, ...sampleData].map((file) => {
     const { logs } = parseFile(file.fileContent);
     return {
       fileName: file.fileName,

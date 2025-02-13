@@ -38,7 +38,7 @@ export const TeamsVisualization = ({ teams }: TeamsVisualizationProps) => {
               label={{ value: 'Number of Teams', angle: -90, position: 'insideLeft' }}
             />
             <Tooltip 
-              formatter={(value: number, name: string) => [value, 'Teams']}
+              formatter={(value: number, _name: string) => [value, 'Teams']}
               labelFormatter={(label: number) => `${label} Wins`}
             />
             <Bar 

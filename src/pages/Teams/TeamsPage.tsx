@@ -20,7 +20,7 @@ export const TeamsPage = () => {
 
   // Filter and sort teams
   const filteredAndSortedTeams = teamStats
-    .filter(team => 
+    .filter(team =>
       team.teamName.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => {
@@ -39,7 +39,7 @@ export const TeamsPage = () => {
   return (
     <Container maxWidth="xl">
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h2" gutterBottom>
           Teams
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>

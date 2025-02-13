@@ -1,13 +1,21 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { getColorgorical } from '../../lib/color';
-import { matchDataAtom, type PlayerInteractionEvent, playerInteractionEventsAtom } from '~/atoms';
+import { matchDataAtom, playerInteractionEventsAtom } from '../../atoms';
+
+type PlayerInteractionEvent = any; // TODO: Replace 'any' with the proper type
 
 interface ChordDataEntry {
   sourcePlayerName: string;
   sourceTeamName: string;
   targetPlayerName: string;
   value: number;
+}
+
+interface Interaction extends ChordDataEntry {
+  targetPlayerName: string;
+  sourcePlayerName: string;
+  // Add other properties if needed
 }
 
 const transformDataToChordFormat = (data: PlayerInteractionEvent[]): ChordDataEntry[] => {
@@ -371,15 +379,33 @@ const Legend: React.FC<{
   );
 };
 
-// Constants for SVG dimensions
-const SVG_WIDTH = 800;
-const SVG_HEIGHT = 600;
+// Define the props for the ChordDiagram component
+interface ChordDiagramProps {
+  matchId: string;
+}
 
-export const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
+export const ChordDiagram = ({ matchId }: ChordDiagramProps): JSX.Element => {
   const [matchData] = useAtom(matchDataAtom);
   const [playerInteractionEvents] = useAtom(playerInteractionEventsAtom);
   const [highlightedPlayer, setHighlightedPlayer] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 300, height: 300 });
+
+  useEffect(() => {
+    const observer = new ResizeObserver(entries => {
+      if (entries.length === 0) return;
+      const entry = entries[0];
+      const { width, height } = entry.contentRect;
+      setDimensions({ width, height: height - 6.5  });
+    });
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   if (!matchData || !playerInteractionEvents) {
     return <div>Loading...</div>;
@@ -506,71 +532,75 @@ export const ChordDiagram: React.FC<{ matchId: string }> = ({ matchId }) => {
 
 
   return (
-    <svg ref={svgRef} width={SVG_WIDTH} height={SVG_HEIGHT}>
-      <g transform={`translate(${SVG_WIDTH / 2}, ${SVG_HEIGHT / 2})`}>
-        {Object.entries(playerAngles).map(([playerName, angles]) => {
-          const { killsStartAngle, killsEndAngle, deathsStartAngle, deathsEndAngle } = angles;
-          return (
-            <PlayerArc
-              key={playerName}
-              playerName={playerName}
-              innerRadius={radius}
-              playerTeam={team1Players.includes(playerName) ? team1Name : team2Name}
-              otherTeam={team1Players.includes(playerName) ? team2Name : team1Name}
-              killsStartAngle={killsStartAngle}
-              killsEndAngle={killsEndAngle}
-              deathsStartAngle={deathsStartAngle}
-              deathsEndAngle={deathsEndAngle}
-              highlight={highlightedPlayer === playerName}
-              onMouseOver={() => setHighlightedPlayer(playerName)}
-              onMouseLeave={() => setHighlightedPlayer(null)}
-              svgRef={svgRef}
-              totalKills={angles.totalKills}
-              totalDeaths={angles.totalDeaths}
-              getCoords={getCoords}
+    <div ref={containerRef} style={{ width: '100%', minHeight: '300px', maxHeight: '100%' }}>
+      {dimensions.width > 0 && dimensions.height > 0 && (
+        <svg ref={svgRef} width={dimensions.width} height={dimensions.height}>
+          <g transform={`translate(${dimensions.width / 2}, ${dimensions.height / 2})`}>
+            {Object.entries(playerAngles).map(([playerName, angles]: [string, any]) => {
+              const { killsStartAngle, killsEndAngle, deathsStartAngle, deathsEndAngle } = angles;
+              return (
+                <PlayerArc
+                  key={playerName}
+                  playerName={playerName}
+                  innerRadius={radius}
+                  playerTeam={team1Players.includes(playerName) ? team1Name : team2Name}
+                  otherTeam={team1Players.includes(playerName) ? team2Name : team1Name}
+                  killsStartAngle={killsStartAngle}
+                  killsEndAngle={killsEndAngle}
+                  deathsStartAngle={deathsStartAngle}
+                  deathsEndAngle={deathsEndAngle}
+                  highlight={highlightedPlayer === playerName}
+                  onMouseOver={() => setHighlightedPlayer(playerName)}
+                  onMouseLeave={() => setHighlightedPlayer(null)}
+                  svgRef={svgRef}
+                  totalKills={angles.totalKills}
+                  totalDeaths={angles.totalDeaths}
+                  getCoords={getCoords}
+                />
+              );
+            })}
+
+            {players.length > 0 && Object.entries(groupedData).map(([source, interactions]: [string, Interaction[]]) =>
+              interactions.map((interaction: Interaction, index: number) => (
+                <Chord
+                  key={`${source}-${interaction.targetPlayerName}-${index}`}
+                  interaction={interaction}
+                  sourceStart={playerAngles[source].killsStartAngle}
+                  sourceEnd={playerAngles[source].killsEndAngle}
+                  sourceValue={playerAngles[source].totalKills}
+                  getSourceCurrentValue={() => playerAngles[source].currentKills}
+                  addSourceCurrentValue={(value) => (playerAngles[source].currentKills += value)}
+                  targetStart={playerAngles[interaction.targetPlayerName].deathsStartAngle}
+                  targetEnd={playerAngles[interaction.targetPlayerName].deathsEndAngle}
+                  targetValue={playerAngles[interaction.targetPlayerName].totalDeaths}
+                  getTargetCurrentValue={() => playerAngles[interaction.targetPlayerName].currentDeaths}
+                  addTargetCurrentValue={(value) => (playerAngles[interaction.targetPlayerName].currentDeaths += value)}
+                  innerRadius={radius}
+                  highlightState={(highlightedPlayer === interaction.targetPlayerName || highlightedPlayer === interaction.sourcePlayerName) ? 'highlight' : highlightedPlayer === null ? 'normal' : 'hidden'}
+                  getCoords={getCoords}
+                />
+              )),
+            )}
+
+            <g>
+              <text x={team1LabelCoords.x} y={team1LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="1em" fontWeight="bold">{team1Name}</text>
+              <text x={team1LabelCoords.x} y={team1LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="0.8em" fontWeight="bold">{totalTeam1Kills} kills</text>
+            </g>
+
+            <g>
+              <text x={team2LabelCoords.x} y={team2LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="1em" fontWeight="bold">{team2Name}</text>
+              <text x={team2LabelCoords.x} y={team2LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="0.8em" fontWeight="bold">{totalTeam2Kills} kills</text>
+            </g>
+
+            <Legend
+              team1Name={team1Name}
+              team2Name={team2Name}
+              centerX={170}
+              bottomY={dimensions.height - 140}
             />
-          );
-        })}
-
-        {players.length > 0 && Object.entries(groupedData).map(([source, interactions]) =>
-          interactions.map((interaction, index) => (
-            <Chord
-              key={`${source}-${interaction.targetPlayerName}-${index}`}
-              interaction={interaction}
-              sourceStart={playerAngles[source].killsStartAngle}
-              sourceEnd={playerAngles[source].killsEndAngle}
-              sourceValue={playerAngles[source].totalKills}
-              getSourceCurrentValue={() => playerAngles[source].currentKills}
-              addSourceCurrentValue={(value) => (playerAngles[source].currentKills += value)}
-              targetStart={playerAngles[interaction.targetPlayerName].deathsStartAngle}
-              targetEnd={playerAngles[interaction.targetPlayerName].deathsEndAngle}
-              targetValue={playerAngles[interaction.targetPlayerName].totalDeaths}
-              getTargetCurrentValue={() => playerAngles[interaction.targetPlayerName].currentDeaths}
-              addTargetCurrentValue={(value) => (playerAngles[interaction.targetPlayerName].currentDeaths += value)}
-              innerRadius={radius}
-              highlightState={(highlightedPlayer === interaction.targetPlayerName || highlightedPlayer === interaction.sourcePlayerName) ? 'highlight' : highlightedPlayer === null ? 'normal' : 'hidden'}
-              getCoords={getCoords}
-            />
-          )),
-        )}
-
-        <g>
-          <text x={team1LabelCoords.x} y={team1LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="1em" fontWeight="bold">{team1Name}</text>
-          <text x={team1LabelCoords.x} y={team1LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team1Name)} fontSize="0.8em" fontWeight="bold">{totalTeam1Kills} kills</text>
-        </g>
-
-        <g>
-          <text x={team2LabelCoords.x} y={team2LabelCoords.y - 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="1em" fontWeight="bold">{team2Name}</text>
-          <text x={team2LabelCoords.x} y={team2LabelCoords.y + 10} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(team2Name)} fontSize="0.8em" fontWeight="bold">{totalTeam2Kills} kills</text>
-        </g>
-
-        <Legend
-          team1Name={team1Name}
-          team2Name={team2Name}
-          centerX={170}
-          bottomY={SVG_HEIGHT - 140}
-        />
-      </g>
-    </svg>
+          </g>
+        </svg>
+      )}
+    </div>
   );
 };

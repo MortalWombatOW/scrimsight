@@ -3,26 +3,30 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { Suspense } from 'react';
-import routes, { navigationItemsAtom } from './routes';
-import { useAtomValue } from 'jotai';
 import { Layout } from './components/Layout/Layout';
 import { themeDef } from './theme';
+import { HomePage } from './pages/Home';
+import { AddFilesPage } from './pages/AddFiles/AddFilesPage';
+import { MatchesPage } from './pages/Matches';
+import { PlayersPage } from './pages/Players/PlayersPage';
+import { TeamsPage } from './pages/Teams';
 
 const App = () => {
   const theme = createTheme(themeDef);
-  const navigationItems = useAtomValue(navigationItemsAtom);
 
   return (
     <Router>
       <ThemeProvider theme={theme}>
         <QueryParamProvider adapter={ReactRouter6Adapter}>
           <Suspense fallback={<div>Loading...</div>}>
-          <Layout navigationItems={navigationItems}>
+          <Layout>
             <Suspense fallback={<div>Loading...</div>}>
               <Routes>
-                {routes.map((route) => (
-                  <Route key={route.path} path={route.path} element={<route.component />} />
-                ))}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/matches" element={<MatchesPage />} />
+                <Route path="/players" element={<PlayersPage />} />
+                <Route path="/teams" element={<TeamsPage />} />
+                <Route path="/files" element={<AddFilesPage />} />
               </Routes>
             </Suspense>
           </Layout>
