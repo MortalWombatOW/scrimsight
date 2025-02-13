@@ -58,8 +58,7 @@
     "sass": "^1.81.0",
     "stream-browserify": "^3.0.0",
     "use-query-params": "^2.2.1",
-    "uuid-readable": "^0.0.2",
-    "wombat-data-framework": "file:../wombat-data-framework"
+    "uuid-readable": "^0.0.2"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.2",
