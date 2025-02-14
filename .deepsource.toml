@@ -1,0 +1,18 @@
+version = 1
+
+exclude_patterns = [
+    "public/**",
+    "build/**",
+    "node_modules/**",
+]
+
+[[analyzers]]
+name = "javascript"
+enabled = true
+
+  [analyzers.meta]
+  plugins = ["react"]
+  style_guide = "airbnb"
+  dialect = "typescript"
+
+[[transformers]]
