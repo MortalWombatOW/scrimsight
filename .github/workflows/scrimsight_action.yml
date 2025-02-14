@@ -11,3 +11,4 @@ jobs:
       - uses: MortalWombatOW/scrimsight-action@main
         with:
           gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
