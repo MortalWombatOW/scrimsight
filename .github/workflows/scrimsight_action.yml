@@ -12,3 +12,17 @@ jobs:
         with:
           gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          standards: '[
+      {
+        "shortname": "Components take keys not data",
+        "description": "React components only take as minimal input as possible...",
+        "positiveExample": "const PlayerDetailedStats = ({ playerName }) => {\n  const stats = useAtomValue(playerStatsAtom);\n  const playerStats = rows.find((stats) => stats.playerName === playerName); // ...\n}",
+        "negativeExample": "const PlayerDetailedStats = ({ playerStats }) => {\n  // ..."
+      },
+      {
+        "shortname": "Reusable component location",
+        "description": "Components used more than once should be in top-level components folder",
+        "positiveExample": "The component is in src/components/SharedTooltip.tsx can be used across the app.",
+        "negativeExample": "The component is in src/features/analytics/charts/CustomTooltip.jsx should not be used outside of the folder src/features/analytics/charts/"
+      }
+    ]'
