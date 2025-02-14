@@ -1,0 +1,12 @@
+name: Scrimsight Review
+on: [pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: MortalWombatOW/scrimsight-action@v1
+        with:
+          gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
