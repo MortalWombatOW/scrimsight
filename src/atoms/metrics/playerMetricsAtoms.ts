@@ -1,20 +1,41 @@
 import { atom } from "jotai";
 import { playerStatExpandedAtom, PlayerStats } from "../playerStatExpandedAtom";
-import { groupByAtom, Metric, MetricAtom } from "./createAggregateAtoms";
+import { groupByAtom, MetricAtom } from "./createAggregateAtoms";
+import { heroPlaytimeAtom } from './heroPlaytimeAtom';
 
 type PlayerStatsCategoryKeys = 'matchId' | 'roundNumber' | 'playerTeam' | 'playerName' | 'playerHero' | 'playerRole';
-type PlayerStatsNumericalKeys = Exclude<keyof PlayerStats, PlayerStatsCategoryKeys | 'type'>;
+type PlayerStatsNumericalKeys = Exclude<keyof PlayerStats, PlayerStatsCategoryKeys | 'type'> | 'playtime';
 
 // The most granular data, which is the player stats for each round.
-export const playerStatsBaseAtom: MetricAtom<PlayerStats, PlayerStatsCategoryKeys, PlayerStatsNumericalKeys> = atom(async (get) => {
+export const playerStatsBaseAtom: MetricAtom<PlayerStats & { playtime: number }, PlayerStatsCategoryKeys, PlayerStatsNumericalKeys> = atom(async (get) => {
   const playerStats = await get(playerStatExpandedAtom);
+  const playtimeData = await get(heroPlaytimeAtom);
 
-  const metric: Metric<PlayerStats, PlayerStatsCategoryKeys, PlayerStatsNumericalKeys> = {
-    categoryKeys: ['matchId', 'roundNumber', 'playerTeam', 'playerName', 'playerHero', 'playerRole'],
-    numericalKeys: ['eliminations', 'finalBlows', 'deaths', 'allDamageDealt', 'barrierDamageDealt', 'heroDamageDealt', 'healingDealt', 'healingReceived', 'selfHealing', 'damageTaken', 'damageBlocked', 'defensiveAssists', 'offensiveAssists', 'ultimatesEarned', 'ultimatesUsed', 'multikillBest', 'multikills', 'soloKills', 'objectiveKills', 'environmentalKills', 'environmentalDeaths', 'criticalHits', 'criticalHitAccuracy', 'scopedAccuracy', 'scopedCriticalHitAccuracy', 'scopedCriticalHitKills', 'shotsFired', 'shotsHit', 'shotsMissed', 'scopedShotsFired', 'scopedShotsHit', 'weaponAccuracy', 'heroTimePlayed'],
-    rows: playerStats 
+  // Create a playtime lookup map
+  const playtimeMap = new Map<string, number>();
+  for (const pt of playtimeData.rows) {
+    const key = `${pt.playerName}-${pt.matchId}-${pt.roundNumber}-${pt.hero}`;
+    playtimeMap.set(key, pt.playtime);
+  }
+
+  // Merge playtime into player stats
+  const mergedStats = playerStats.map(stat => ({
+    ...stat,
+    playtime: playtimeMap.get(
+      `${stat.playerName}-${stat.matchId}-${stat.roundNumber}-${stat.playerHero}`
+    ) || 0
+  }));
+
+  return {
+    categoryKeys: ['matchId', 'roundNumber', 'playerTeam', 'playerName', 'playerHero', 'playerRole'] as PlayerStatsCategoryKeys[],
+    numericalKeys: [
+      ...(playerStats[0] ? Object.keys(playerStats[0]).filter(k => 
+        !['matchId', 'roundNumber', 'playerTeam', 'playerName', 'playerHero', 'playerRole', 'type'].includes(k)
+      ) as PlayerStatsNumericalKeys[] : []),
+      'playtime'
+    ] as PlayerStatsNumericalKeys[],
+    rows: mergedStats
   };
-  return metric;
 });
 
 // The numerical keys are the same for all of these, but the category keys are different. Order does not matter for the category keys, e.g. ['playerName', 'playerTeam'] is the same as ['playerTeam', 'playerName'].
