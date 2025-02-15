@@ -1,21 +1,19 @@
 import { Box, Tooltip, Paper, TextField, MenuItem, InputAdornment } from '@mui/material';
-import { 
-  DataGrid, 
-  GridColDef, 
-  GridRenderCellParams, 
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
   GridToolbar
 } from '@mui/x-data-grid';
 import { useAtomValue } from 'jotai';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { playerStatsBaseAtom } from '../../../atoms/metrics/playerMetricsAtoms';
-import { PlayerStats } from '../../../atoms/playerStatExpandedAtom';
+import { playerStatsByPlayerAtom } from '../../../atoms/metrics/playerMetricsAtoms';
 import { Search as SearchIcon } from '@mui/icons-material';
 
 interface PlayerRow {
   id: number;
   playerName: string;
-  playerRole: string;
   eliminations: number;
   deaths: number;
   heroDamageDealt: number;
@@ -25,21 +23,21 @@ interface PlayerRow {
 }
 
 export const PlayerStatsGrid = () => {
-  const playerStats = useAtomValue(playerStatsBaseAtom);
+  const playerStats = useAtomValue(playerStatsByPlayerAtom);
   const navigate = useNavigate();
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const columns: GridColDef<PlayerRow>[] = [
-    { 
-      field: 'playerName', 
-      headerName: 'Player', 
+    {
+      field: 'playerName',
+      headerName: 'Player',
       flex: 1,
       minWidth: 150,
       renderCell: (params: GridRenderCellParams<PlayerRow>) => (
         <Tooltip title="Click to view player details">
           <Box
-            sx={{ 
+            sx={{
               cursor: 'pointer',
               '&:hover': {
                 textDecoration: 'underline',
@@ -56,21 +54,21 @@ export const PlayerStatsGrid = () => {
       ),
     },
     { field: 'playerRole', headerName: 'Role', width: 120 },
-    { 
-      field: 'eliminations', 
-      headerName: 'Eliminations', 
-      type: 'number', 
+    {
+      field: 'eliminations',
+      headerName: 'Eliminations',
+      type: 'number',
       width: 130,
       valueFormatter: (value: number) => value?.toLocaleString() ?? '0',
     },
-    { 
-      field: 'deaths', 
-      headerName: 'Deaths', 
-      type: 'number', 
+    {
+      field: 'deaths',
+      headerName: 'Deaths',
+      type: 'number',
       width: 130,
       valueFormatter: (value: number) => value?.toLocaleString() ?? '0',
     },
-    { 
+    {
       field: 'kdr',
       headerName: 'K/D Ratio',
       type: 'number',
@@ -81,47 +79,45 @@ export const PlayerStatsGrid = () => {
       },
       valueFormatter: (value: number) => value?.toFixed(2) ?? '0.00',
     },
-    { 
-      field: 'heroDamageDealt', 
-      headerName: 'Hero Damage', 
-      type: 'number', 
+    {
+      field: 'heroDamageDealt',
+      headerName: 'Hero Damage',
+      type: 'number',
       width: 130,
       valueFormatter: (value: number) => value?.toLocaleString() ?? '0',
     },
-    { 
-      field: 'healingDealt', 
-      headerName: 'Healing', 
-      type: 'number', 
+    {
+      field: 'healingDealt',
+      headerName: 'Healing',
+      type: 'number',
       width: 130,
       valueFormatter: (value: number) => value?.toLocaleString() ?? '0',
     },
-    { 
-      field: 'ultimatesEarned', 
-      headerName: 'Ultimates Earned', 
-      type: 'number', 
+    {
+      field: 'ultimatesEarned',
+      headerName: 'Ultimates Earned',
+      type: 'number',
       width: 150,
       valueFormatter: (value: number) => value?.toLocaleString() ?? '0',
     },
-    { 
-      field: 'weaponAccuracy', 
-      headerName: 'Accuracy', 
-      type: 'number', 
+    {
+      field: 'weaponAccuracy',
+      headerName: 'Accuracy',
+      type: 'number',
       width: 130,
-      valueFormatter: (value: number) => 
+      valueFormatter: (value: number) =>
         value != null ? `${(value * 100).toFixed(1)}%` : '0%',
     },
   ];
 
   const rows: PlayerRow[] = playerStats?.rows
-    .filter((player: PlayerStats) => {
-      const matchesRole = roleFilter === 'all' || player.playerRole === roleFilter;
+    .filter((player) => {
       const matchesSearch = player.playerName.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesRole && matchesSearch;
+      return matchesSearch;
     })
-    .map((player: PlayerStats, index: number) => ({
+    .map((player, index: number) => ({
       id: index,
       playerName: player.playerName,
-      playerRole: player.playerRole || 'Unknown',
       eliminations: player.eliminations,
       deaths: player.deaths,
       heroDamageDealt: player.heroDamageDealt,
