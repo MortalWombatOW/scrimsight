@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import _import from 'eslint-plugin-import';
 import tsParser from '@typescript-eslint/parser';
 import unusedImports from 'eslint-plugin-unused-imports';
+import stylistic from '@stylistic/eslint-plugin';
 
 export default [
   {
@@ -17,6 +18,7 @@ export default [
       'react-hooks': reactHooks,
       import: _import,
       'unused-imports': unusedImports,
+      stylistic,
     },
     languageOptions: {
       parser: tsParser,
@@ -45,6 +47,14 @@ export default [
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       'unused-imports/no-unused-imports': 'error',
+      'stylistic/indent': ['error', 2],
+      'stylistic/max-len': ['error', {
+        'code': 5000,
+        'ignoreUrls': true,
+        'ignoreComments': false,
+        'ignoreTrailingComments': false,
+        'ignorePattern': '^import\\s.+\\sfrom\\s.+\\s;',
+      }],
     },
   },
   {

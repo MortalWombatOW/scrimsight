@@ -172,63 +172,63 @@ const MapTimeline: React.FC<MapTimelineProps> = ({matchId}) => {
             {!timelineData || !dimensions.width ? (
               <LinearProgress />
             ) : (
-                <div style={{position: 'relative'}} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp}>
-                  <PixiWrapper width={dimensions.width || 0} height={totalHeight}>
-                    {rowConfigs.map((config, index) => {
-                      const y = rowConfigs.slice(0, index).reduce((sum, c) => sum + c.height, 0);
+              <div style={{position: 'relative'}} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp}>
+                <PixiWrapper width={dimensions.width || 0} height={totalHeight}>
+                  {rowConfigs.map((config, index) => {
+                    const y = rowConfigs.slice(0, index).reduce((sum, c) => sum + c.height, 0);
 
-                      const commonProps = {
-                        width: dimensions.width || 0,
-                        height: config.height,
-                        y,
-                        dimensions,
-                        labelWidth,
-                        onLabelWidthChange: setLabelWidth,
-                        onDelete: () => handleDeleteRow(config.id),
-                      };
+                    const commonProps = {
+                      width: dimensions.width || 0,
+                      height: config.height,
+                      y,
+                      dimensions,
+                      labelWidth,
+                      onLabelWidthChange: setLabelWidth,
+                      onDelete: () => handleDeleteRow(config.id),
+                    };
 
-                      switch (config.type) {
-                        case 'player':
-                          if (config.data.type !== 'player') break;
-                          return (
-                            <PlayerTimelineRow
-                              key={config.id}
-                              {...commonProps}
-                              label={config.data.playerName}
-                              playerName={config.data.playerName}
-                              playerEvents={(timelineData[`${config.data.team}EventsByPlayer` as keyof TimelineData] as Record<string, PlayerEvent[]>)?.[config.data.playerName] ?? []}
-                              interactionEvents={(timelineData[`${config.data.team}InteractionEventsByPlayer` as keyof TimelineData] as Record<string, PlayerInteractionEvent[]>)?.[config.data.playerName] ?? []}
-                              ultimateEvents={(timelineData[`${config.data.team}UltimateEventsByPlayer` as keyof TimelineData] as Record<string, UltimateEvent[]>)?.[config.data.playerName] ?? []}
-                              useWindowScale={config.useWindowScale}
-                            />
-                          );
+                    switch (config.type) {
+                      case 'player':
+                        if (config.data.type !== 'player') break;
+                        return (
+                          <PlayerTimelineRow
+                            key={config.id}
+                            {...commonProps}
+                            label={config.data.playerName}
+                            playerName={config.data.playerName}
+                            playerEvents={(timelineData[`${config.data.team}EventsByPlayer` as keyof TimelineData] as Record<string, PlayerEvent[]>)?.[config.data.playerName] ?? []}
+                            interactionEvents={(timelineData[`${config.data.team}InteractionEventsByPlayer` as keyof TimelineData] as Record<string, PlayerInteractionEvent[]>)?.[config.data.playerName] ?? []}
+                            ultimateEvents={(timelineData[`${config.data.team}UltimateEventsByPlayer` as keyof TimelineData] as Record<string, UltimateEvent[]>)?.[config.data.playerName] ?? []}
+                            useWindowScale={config.useWindowScale}
+                          />
+                        );
 
-                        case 'round':
-                          return <RoundTimelineRow key={config.id} {...commonProps} label="Rounds" timelineData={timelineData} useWindowScale={config.useWindowScale} />;
+                      case 'round':
+                        return <RoundTimelineRow key={config.id} {...commonProps} label="Rounds" timelineData={timelineData} useWindowScale={config.useWindowScale} />;
 
-                        case 'teamAdvantage':
-                          if (config.data.type !== 'teamAdvantage') break;
-                          return <TeamAdvantageRow key={config.id} {...commonProps} data={config.data.values} label={config.data.label} useWindowScale={config.useWindowScale} />;
+                      case 'teamAdvantage':
+                        if (config.data.type !== 'teamAdvantage') break;
+                        return <TeamAdvantageRow key={config.id} {...commonProps} data={config.data.values} label={config.data.label} useWindowScale={config.useWindowScale} />;
 
-                        case 'eventMap':
-                          return <EventMapRow key={config.id} {...commonProps} label="Events" timelineData={timelineData} useWindowScale={config.useWindowScale} />;
+                      case 'eventMap':
+                        return <EventMapRow key={config.id} {...commonProps} label="Events" timelineData={timelineData} useWindowScale={config.useWindowScale} />;
 
-                        case 'spacing':
-                          return null;
+                      case 'spacing':
+                        return null;
 
-                        case 'header':
-                          if (config.data.type !== 'header') break;
-                          return <HeaderRow key={config.id} {...commonProps} label={config.data.text} text={config.data.text} />;
+                      case 'header':
+                        if (config.data.type !== 'header') break;
+                        return <HeaderRow key={config.id} {...commonProps} label={config.data.text} text={config.data.text} />;
 
-                        case 'timeLabels':
-                          return <TimeLabelsRow key={config.id} {...commonProps} label="" useWindowScale={config.useWindowScale} />;
+                      case 'timeLabels':
+                        return <TimeLabelsRow key={config.id} {...commonProps} label="" useWindowScale={config.useWindowScale} />;
 
-                        default:
-                          return null;
-                      }
-                    })}
-                  </PixiWrapper>
-                </div>
+                      default:
+                        return null;
+                    }
+                  })}
+                </PixiWrapper>
+              </div>
             )}
           </Grid>
         </Grid>

@@ -24,5 +24,11 @@ jobs:
         "description": "Components used more than once should be in top-level components folder",
         "positiveExample": "The component is in src/components/SharedTooltip.tsx can be used across the app.",
         "negativeExample": "The component is in src/features/analytics/charts/CustomTooltip.jsx should not be used outside of the folder src/features/analytics/charts/"
+      },
+      {
+        "shortname": "Every component should have a story",
+        "description": "Every component should have a corresponding story in the same folder.",
+        "positiveExample": "The component is in src/components/SharedTooltip.tsx and has a story in src/components/SharedTooltip.stories.tsx.",
+        "negativeExample": "The component is in src/components/SharedTooltip.tsx but does not have a story in src/components/SharedTooltip.stories.tsx."
       }
     ]'

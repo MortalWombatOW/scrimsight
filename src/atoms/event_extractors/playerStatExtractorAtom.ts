@@ -7,7 +7,7 @@ export interface PlayerStatLogEvent {
   matchId: string;
   type: string;
   matchTime: number;
-  roundNumber: number;
+  roundNumber: string;
   playerTeam: string;
   playerName: string;
   playerHero: string;
@@ -43,7 +43,7 @@ export interface PlayerStatLogEvent {
   scopedShotsFired: number;
   scopedShotsHit: number;
   weaponAccuracy: number;
-  heroTimePlayed: number;
+  // heroTimePlayed: number; // This is always 0 in the log files
 }
 
 /**

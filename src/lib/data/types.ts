@@ -532,7 +532,7 @@ const LOG_SPEC: LogSpec = {
     key: 'player_stat',
     fields: [
       ...commmonFields,
-      {displayName: 'Round Number', key: 'roundNumber', dataType: 'number'},
+      {displayName: 'Round Number', key: 'roundNumber', dataType: 'string'},
       ...playerFields,
       {displayName: 'Eliminations', key: 'eliminations', dataType: 'number'},
       {displayName: 'Final Blows', key: 'finalBlows', dataType: 'number'},
