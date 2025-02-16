@@ -21,31 +21,31 @@ export const CompositionCard = ({ heroes, timePlayed }: CompositionCardProps) =>
                 return acc;
               }, {} as Record<OverwatchRole, string[]>)
             )
-            .sort(([a], [b]) => getRankForRole(a as OverwatchRole) - getRankForRole(b as OverwatchRole))
-            .map(([role, roleHeroes]) => (
-              <Grid item key={role}>
-                <Box display="flex" flexDirection="column" alignItems="center" gap={0.5}>
-                  <Box display="flex" alignItems="center" gap={0.5}>
-                    <Box sx={{ fontSize: '1rem' }}>
-                      <RoleIcon role={role} color="primary" />
+              .sort(([a], [b]) => getRankForRole(a as OverwatchRole) - getRankForRole(b as OverwatchRole))
+              .map(([role, roleHeroes]) => (
+                <Grid item key={role}>
+                  <Box display="flex" flexDirection="column" alignItems="center" gap={0.5}>
+                    <Box display="flex" alignItems="center" gap={0.5}>
+                      <Box sx={{ fontSize: '1rem' }}>
+                        <RoleIcon role={role} color="primary" />
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                      </Typography>
                     </Box>
-                    <Typography variant="caption" color="text.secondary">
-                      {role.charAt(0).toUpperCase() + role.slice(1)}
-                    </Typography>
+                    <Box display="flex" gap={0.5}>
+                      {roleHeroes.map((hero) => (
+                        <Avatar
+                          key={hero}
+                          src={getHeroImage(hero)}
+                          sx={{ width: 32, height: 32 }}
+                          alt={hero}
+                        />
+                      ))}
+                    </Box>
                   </Box>
-                  <Box display="flex" gap={0.5}>
-                    {roleHeroes.map((hero) => (
-                      <Avatar
-                        key={hero}
-                        src={getHeroImage(hero)}
-                        sx={{ width: 32, height: 32 }}
-                        alt={hero}
-                      />
-                    ))}
-                  </Box>
-                </Box>
-              </Grid>
-            ))}
+                </Grid>
+              ))}
           </Grid>
         </Grid>
         <Grid item xs={12}>

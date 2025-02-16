@@ -19,17 +19,17 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <QueryParamProvider adapter={ReactRouter6Adapter}>
           <Suspense fallback={<div>Loading...</div>}>
-          <Layout>
-            <Suspense fallback={<div>Loading...</div>}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/matches" element={<MatchesPage />} />
-                <Route path="/players" element={<PlayersPage />} />
-                <Route path="/teams" element={<TeamsPage />} />
-                <Route path="/files" element={<AddFilesPage />} />
-              </Routes>
-            </Suspense>
-          </Layout>
+            <Layout>
+              <Suspense fallback={<div>Loading...</div>}>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/matches" element={<MatchesPage />} />
+                  <Route path="/players" element={<PlayersPage />} />
+                  <Route path="/teams" element={<TeamsPage />} />
+                  <Route path="/files" element={<AddFilesPage />} />
+                </Routes>
+              </Suspense>
+            </Layout>
           </Suspense>
         </QueryParamProvider>
       </ThemeProvider>

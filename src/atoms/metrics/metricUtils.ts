@@ -1,6 +1,5 @@
 import { atom, Atom } from "jotai";
 
-
 export type Metric<T extends object, C extends keyof T, N extends keyof T> = {
   categoryKeys: C[];
   numericalKeys: N[];
@@ -58,34 +57,3 @@ export function groupByAtom<T extends object, C extends keyof T, N extends keyof
 
   return newAtom;
 }
-
-
-// function getCombinations(valuesArray: string[])
-// {
-// var combi = [];
-// var temp = [];
-// var slent = Math.pow(2, valuesArray.length);
-
-// for (var i = 0; i < slent; i++)
-// {
-//     temp = [];
-//     for (var j = 0; j < valuesArray.length; j++)
-//     {
-//         if ((i & Math.pow(2, j)))
-//         {
-//             temp.push(valuesArray[j]);
-//         }
-//     }
-//     if (temp.length > 0)
-//     {
-//         combi.push(temp);
-//     }
-// }
-
-// combi.sort((a, b) => a.length - b.length);
-// console.log(combi.join("\n"));
-// return combi;
-// }
-
-// export function buildAllAggregateAtoms<T extends object>(metricAtom: MetricAtom<T>)
-// }

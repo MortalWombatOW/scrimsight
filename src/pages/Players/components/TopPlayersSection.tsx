@@ -1,19 +1,19 @@
 import { Grid, Paper, Typography, Box, Avatar } from '@mui/material';
 import { useAtomValue } from 'jotai';
-import { playerStatsBaseAtom } from '../../../atoms/metrics/playerMetricsAtoms';
-import { PlayerStats } from '../../../atoms/playerStatExpandedAtom';
+import { playerStatsByPlayerAtom, PlayerStats, PlayerStatsNumericalKeys } from '../../../atoms/metrics/playerMetricsAtoms';
 import { Link } from 'react-router-dom';
+import { Grouped } from '../../../atoms/metrics/metricUtils';
 
 interface TopPlayerCardProps {
   title: string;
-  player: PlayerStats;
+  player: Grouped<PlayerStats, 'playerName', PlayerStatsNumericalKeys>;
   metric: string;
   value: number;
   color: string;
 }
 
 const TopPlayerCard = ({ title, player, metric, value, color }: TopPlayerCardProps) => (
-  <Paper sx={{ 
+  <Paper sx={{
     p: 2,
     height: '100%',
     transition: 'transform 0.2s',
@@ -31,9 +31,6 @@ const TopPlayerCard = ({ title, player, metric, value, color }: TopPlayerCardPro
           <Typography variant="subtitle1">
             {player.playerName}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {player.playerRole || 'Unknown Role'}
-          </Typography>
         </Box>
       </Box>
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -49,7 +46,7 @@ const TopPlayerCard = ({ title, player, metric, value, color }: TopPlayerCardPro
 );
 
 export const TopPlayersSection = () => {
-  const playerStats = useAtomValue(playerStatsBaseAtom);
+  const playerStats = useAtomValue(playerStatsByPlayerAtom);
   const players = playerStats?.rows || [];
 
   if (players.length === 0) {
@@ -61,19 +58,19 @@ export const TopPlayersSection = () => {
   }
 
   // Find top players in different categories
-  const topDamage = players.reduce((prev, current) => 
+  const topDamage = players.reduce((prev, current) =>
     prev.heroDamageDealt > current.heroDamageDealt ? prev : current
   );
 
-  const topHealing = players.reduce((prev, current) => 
+  const topHealing = players.reduce((prev, current) =>
     prev.healingDealt > current.healingDealt ? prev : current
   );
 
-  const topEliminations = players.reduce((prev, current) => 
+  const topEliminations = players.reduce((prev, current) =>
     prev.eliminations > current.eliminations ? prev : current
   );
 
-  const topAccuracy = players.reduce((prev, current) => 
+  const topAccuracy = players.reduce((prev, current) =>
     prev.weaponAccuracy > current.weaponAccuracy ? prev : current
   );
 

@@ -70,6 +70,7 @@
     "@storybook/react": "^8.4.6",
     "@storybook/react-vite": "^8.4.6",
     "@storybook/test": "^8.4.6",
+    "@stylistic/eslint-plugin": "^3.1.0",
     "@types/eslint": "^8.56.2",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",

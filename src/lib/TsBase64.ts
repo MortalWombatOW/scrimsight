@@ -86,10 +86,10 @@ export class TsBase64 {
     return !urisafe
       ? _encode(String(u))
       : _encode(String(u))
-          .replace(/[+\/]/g, (m0) => {
-            return m0 == '+' ? '-' : '_';
-          })
-          .replace(/=/g, '');
+        .replace(/[+\/]/g, (m0) => {
+          return m0 == '+' ? '-' : '_';
+        })
+        .replace(/=/g, '');
   }
 
   public static EncodeURI(u: string): string {
