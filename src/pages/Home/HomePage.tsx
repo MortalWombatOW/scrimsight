@@ -1,6 +1,8 @@
 import { Container, Card, CardContent, CardActions, Button, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-
+import { matchDataAtom } from '../../atoms';
+import { useAtomValue } from 'jotai';
+import ZeroState from './ZeroState';
 export const HomePage = (): JSX.Element => {
   const modules = [
     {
@@ -24,6 +26,13 @@ export const HomePage = (): JSX.Element => {
       route: '/players'
     }
   ];
+
+  const matchData = useAtomValue(matchDataAtom);
+  const hasData = matchData.length > 0;
+
+  if (!hasData) {
+    return <ZeroState />;
+  }
 
   return (
     <div>
@@ -53,7 +62,6 @@ export const HomePage = (): JSX.Element => {
           </Card>
         ))}
       </Container>
-
     </div>
   );
 };
