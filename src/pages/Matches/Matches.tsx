@@ -1,11 +1,11 @@
-import { Title, Divider, Space, Group, MultiSelect, Text, Paper, Stack, Grid, Avatar, Center, Progress, Tooltip, Image, AvatarGroup, Loader, Button } from '@mantine/core';
+import { Title, Divider, Space, Group, MultiSelect, Text, Paper, Stack, Grid, Avatar, Center, Tooltip, Image, Loader, Button } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useAtomValue } from 'jotai';
 import { matchDataAtom } from '../../atoms/matchDataAtom';
 import { teamNamesAtom } from '../../atoms/teamNamesAtom';
 import { uniquePlayerNamesAtom } from '../../atoms/uniquePlayerNamesAtom';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Suspense, useState, useMemo } from 'react';
+import { Suspense, useMemo } from 'react';
 import { uniqueMapNamesAtom } from '../../atoms/uniqueMapNamesAtom';
 import { mapNameToFileName } from '../../lib/string';
 import { scrimAtom } from '../../atoms/scrimAtom';

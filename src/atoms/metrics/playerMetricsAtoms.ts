@@ -2,7 +2,6 @@ import { useAtomValue, atom } from "jotai";
 import { playerStatExpandedAtom } from "../playerStatExpandedAtom";
 import { groupByAtom, Grouped, MetricAtom } from "./metricUtils";
 import { heroPlaytimeAtom } from './heroPlaytimeAtom';
-import { useMemo } from 'react';
 
 type PlayerStatsCategoryKeys = 'matchId' | 'roundNumber' | 'playerTeam' | 'playerName' | 'playerHero' | 'playerRole';
 

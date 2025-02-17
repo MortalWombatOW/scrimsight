@@ -1,4 +1,4 @@
-import { AppShell, Divider, NavLink, Stack } from '@mantine/core';
+import { AppShell, NavLink, Stack } from '@mantine/core';
 import { useLocation, Link } from 'react-router-dom';
 import { uniquePlayerNamesAtom, scrimAtom, teamNamesAtom } from '../../atoms';
 import { useAtomValue } from 'jotai';
@@ -8,7 +8,7 @@ import { MdOutlinePersonOutline } from "react-icons/md";
 import { MdOutlineEmojiEvents } from "react-icons/md";
 import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
-import { useDocumentTitle, useFavicon } from '@mantine/hooks';
+import { useDocumentTitle } from '@mantine/hooks';
 import { TbVs } from "react-icons/tb";
 
 const getTitle = (pathname: string) => {

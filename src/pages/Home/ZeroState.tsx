@@ -5,7 +5,7 @@ import { sampleDataEnabledAtom } from '../../atoms/files/sampleDataAtoms';
 import { Link } from 'react-router-dom';
 const ZeroState = () => {
 
-  const [sampleDataEnabled, setSampleDataEnabled] = useAtom(sampleDataEnabledAtom);
+  const [_, setSampleDataEnabled] = useAtom(sampleDataEnabledAtom);
 
   return (
     <Center h="calc(100vh - 68px - 32px)">
