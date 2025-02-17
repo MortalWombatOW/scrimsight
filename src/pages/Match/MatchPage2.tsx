@@ -77,8 +77,8 @@ export const MatchPage2 = () => {
   if (!matchData) {
     throw new Error('No match data');
   }
-  const teamStats = useStats(['playerTeam'], { matchId: [matchId] });
-  const playerStats = useStats(['playerName'], { matchId: [matchId] });
+  // const teamStats = useStats(['playerTeam'], { matchId: [matchId] });
+  // const playerStats = useStats(['playerName'], { matchId: [matchId] });
 
   return (
     <div>

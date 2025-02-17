@@ -35,12 +35,12 @@ const ZeroState = () => {
         <Dropzone
           onDrop={handleDrop}
           accept={['text/*', '.txt']}
-          styles={(theme) => ({
+          styles={{
             root: {
               borderWidth: 2,
               padding: 20
             }
-          })}
+          }}
         >
           <Group justify="center" gap="xl" style={{ pointerEvents: 'none' }}>
             <Dropzone.Accept>
