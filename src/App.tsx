@@ -14,6 +14,7 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/charts/styles.css';
 import '@mantine/carousel/styles.css';
+import '@mantine/dropzone/styles.css';
 import { MantineColorsTuple, MantineProvider, createTheme } from '@mantine/core';
 import { MatchPage } from './pages/Match';
 import { PlayerPage } from './pages/Player';
