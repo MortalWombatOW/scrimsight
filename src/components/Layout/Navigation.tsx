@@ -1,6 +1,6 @@
-import { AppShell, NavLink, Stack } from '@mantine/core';
+import { AppShell, Divider, NavLink, Stack } from '@mantine/core';
 import { useLocation, Link } from 'react-router-dom';
-import { uniquePlayerNamesAtom, matchDataAtom, teamNamesAtom } from '../../atoms';
+import { uniquePlayerNamesAtom, scrimAtom, teamNamesAtom } from '../../atoms';
 import { useAtomValue } from 'jotai';
 import { MdArrowBack } from "react-icons/md";
 import { RiTeamLine } from "react-icons/ri";
@@ -9,7 +9,7 @@ import { MdOutlineEmojiEvents } from "react-icons/md";
 import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { useDocumentTitle, useFavicon } from '@mantine/hooks';
-
+import { TbVs } from "react-icons/tb";
 
 const getTitle = (pathname: string) => {
   if (pathname === '/') {
@@ -50,7 +50,7 @@ const getTitle = (pathname: string) => {
 export const Navigation = () => {
   const location = useLocation();
 
-  const matchData = useAtomValue(matchDataAtom);
+  const scrims = useAtomValue(scrimAtom);
   const playerNames = useAtomValue(uniquePlayerNamesAtom);
   const teamNames = useAtomValue(teamNamesAtom);
 
@@ -64,7 +64,7 @@ export const Navigation = () => {
 
   return (
     <AppShell.Navbar p="md">
-      <Stack>
+      <Stack gap={0}>
         {(isRoot || isFiles) && (
           <>
             <NavLink
@@ -77,7 +77,7 @@ export const Navigation = () => {
               component={Link}
               to="/matches"
               label="Matches"
-              leftSection={<MdOutlineEmojiEvents />}
+              leftSection={<TbVs />}
             />
             <NavLink
               component={Link}
@@ -110,15 +110,21 @@ export const Navigation = () => {
               label="Back"
               leftSection={<MdArrowBack />}
             />
-            {matchData.map((match) => (
+            <NavLink
+              component={Link}
+              to="/matches"
+              label="Browse Matches"
+              leftSection={<MdOutlineEmojiEvents />}
+            />
+            {scrims.map((scrim) => (
               <NavLink
-                key={match.matchId}
+                h={24}
+                key={scrim.dateString}
                 component={Link}
-                to={`/matches/${match.matchId}`}
-                label={`${match.team1Name} vs ${match.team2Name}`}
-                description={`${match.map} (${match.dateString})`}
+                to={`/matches?teams=${encodeURIComponent(scrim.team1Name)},${encodeURIComponent(scrim.team2Name)}`}
+                label={`${scrim.team1Name} vs ${scrim.team2Name}`}
                 leftSection={<MdOutlineEmojiEvents />}
-                active={location.pathname === `/matches/${match.matchId}`}
+                active={location.pathname === `/matches?teams=${encodeURIComponent(scrim.team1Name)},${encodeURIComponent(scrim.team2Name)}`}
               />
             ))}
           </>
@@ -131,8 +137,15 @@ export const Navigation = () => {
               label="Back"
               leftSection={<MdArrowBack />}
             />
+            <NavLink
+              component={Link}
+              to="/players"
+              label="Browse Players"
+              leftSection={<MdOutlinePersonOutline />}
+            />
             {playerNames.map((name) => (
               <NavLink
+                h={24}
                 key={name}
                 component={Link}
                 to={`/players/${name}`}
@@ -151,8 +164,15 @@ export const Navigation = () => {
               label="Back"
               leftSection={<MdArrowBack />}
             />
+            <NavLink
+              component={Link}
+              to="/teams"
+              label="Browse Teams"
+              leftSection={<RiTeamLine />}
+            />
             {teamNames.map((name) => (
               <NavLink
+                h={24}
                 key={name}
                 component={Link}
                 to={`/teams/${name}`}
