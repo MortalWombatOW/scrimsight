@@ -1,4 +1,4 @@
-import { atom } from "jotai";
+import { useAtomValue, atom } from "jotai";
 import { playerStatExpandedAtom } from "../playerStatExpandedAtom";
 import { groupByAtom, Grouped, MetricAtom } from "./metricUtils";
 import { heroPlaytimeAtom } from './heroPlaytimeAtom';
@@ -87,6 +87,20 @@ const playerStatsBaseAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, 
 // The numerical keys are the same for all of these, but the category keys are different. Order does not matter for the category keys, e.g. ['playerName', 'playerTeam'] is the same as ['playerTeam', 'playerName'].
 
 
+function filterBaseAtom<T extends PlayerStatsCategoryKeys>(metricAtom: typeof playerStatsBaseAtom, filter: Record<T, string[]>): typeof playerStatsBaseAtom {
+  const newAtom = atom(async (get) => {
+    const { categoryKeys, numericalKeys, rows } = await get(metricAtom);
+    return {
+      categoryKeys,
+      numericalKeys,
+      rows: rows.filter((row) => {
+        return Object.keys(filter).every((key) => filter[key as T].includes(row[key as T]));
+      })
+    };
+  });
+
+  return newAtom;
+}
 
 function addDerivedMetrics<T extends PlayerStatsCategoryKeys>(metricAtom: MetricAtom<Grouped<PlayerStatsBase, T, PlayerStatsBaseNumericalKeys>, T, PlayerStatsBaseNumericalKeys>): MetricAtom<Grouped<PlayerStats, T, PlayerStatsNumericalKeys>, T, PlayerStatsNumericalKeys> {
   const newAtom = atom(async (get) => {
@@ -104,6 +118,7 @@ function addDerivedMetrics<T extends PlayerStatsCategoryKeys>(metricAtom: Metric
 
     for (const row of rows) {
       const playtime = row.playtime;
+
       const newRow: Grouped<PlayerStats, T, PlayerStatsNumericalKeys> = {
         ...row,
         eliminationsPer10Minutes: row.eliminations / (playtime / 600),
@@ -148,6 +163,58 @@ function addDerivedMetrics<T extends PlayerStatsCategoryKeys>(metricAtom: Metric
   return newAtom;
 }
 
+function onlyDominantRole(
+  metricAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys>
+): typeof metricAtom {
+  const newAtom = atom(async (get) => {
+    const { categoryKeys, numericalKeys, rows } = await get(metricAtom);
+    
+    // Calculate dominant roles per player per match per round
+    const dominantRoles = new Map<string, string>();
+    const rolePlaytimes = new Map<string, Map<string, number>>();
+
+    // First pass: accumulate playtime per role per player-match
+    for (const row of rows) {
+      const playerMatchRoundKey = `${row.playerName}-${row.matchId}-${row.roundNumber}`;
+      const currentPlaytime = rolePlaytimes.get(playerMatchRoundKey)?.get(row.playerRole) || 0;
+      
+      if (!rolePlaytimes.has(playerMatchRoundKey)) {
+        rolePlaytimes.set(playerMatchRoundKey, new Map());
+      }
+      rolePlaytimes.get(playerMatchRoundKey)!.set(row.playerRole, currentPlaytime + row.playtime);
+    }
+
+    // Determine dominant role for each player-match
+    rolePlaytimes.forEach((roles, playerMatchRoundKey) => {
+      let maxPlaytime = -Infinity;
+      let dominantRole = '';
+      
+      roles.forEach((playtime, role) => {
+        if (playtime > maxPlaytime) {
+          maxPlaytime = playtime;
+          dominantRole = role;
+        }
+      });
+      
+      dominantRoles.set(playerMatchRoundKey, dominantRole);
+    });
+
+    // Filter rows to only include dominant roles
+    const filteredRows = rows.filter(row => {
+      const playerMatchRoundKey = `${row.playerName}-${row.matchId}-${row.roundNumber}`;
+      return row.playerRole === dominantRoles.get(playerMatchRoundKey);
+    });
+
+    return {
+      categoryKeys,
+      numericalKeys,
+      rows: filteredRows
+    };
+  });
+
+  return newAtom as typeof metricAtom;
+}
+
 // Totals for a player
 export const playerStatsByPlayerAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['playerName']));
 // Totals for each hero
@@ -179,3 +246,39 @@ export const playerStatsByPlayerAndHeroAtom = addDerivedMetrics(groupByAtom(play
 
 // Totals for each player broken down by team
 export const playerStatsByPlayerAndTeamAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['playerName', 'playerTeam']));
+
+// Totals for each player broken down by match and role
+export const playerStatsByMatchIdAndPlayerNameAndRoleAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['matchId', 'playerName', 'playerRole']));
+
+export const playerStatsByMatchIdAndPlayerNameAndRoleAndTeamAndHeroAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['matchId', 'playerName', 'playerRole', 'playerTeam', 'playerHero']));
+
+
+export const getStatsAtom =  <T extends PlayerStatsCategoryKeys>(groupBy: PlayerStatsCategoryKeys[], filter?: Record<T, string[]>) => {
+  if (filter) {
+    return addDerivedMetrics(groupByAtom(onlyDominantRole(filterBaseAtom(playerStatsBaseAtom, filter)), groupBy));
+  } else {
+    return addDerivedMetrics(groupByAtom(onlyDominantRole(playerStatsBaseAtom), groupBy));
+  }
+}
+
+const statsAtomCache = new Map<string, MetricAtom<any, any, any>>();
+
+export const useStats = <T extends PlayerStatsCategoryKeys>(
+  groupBy: PlayerStatsCategoryKeys[],
+  filter?: Record<T, string[]>,
+  sortBy?: PlayerStatsNumericalKeys,
+  sortDirection?: 'asc' | 'desc' 
+) => {
+  const cacheKey = JSON.stringify({ groupBy, filter, sortBy, sortDirection });
+  const statsAtom = statsAtomCache.has(cacheKey) ? statsAtomCache.get(cacheKey)! : getStatsAtom(groupBy, filter);
+  if (!statsAtomCache.has(cacheKey)) {
+    statsAtomCache.set(cacheKey, statsAtom);
+  }
+  const stats = useAtomValue(statsAtom);
+  if (sortBy) {
+    stats.rows.sort((a, b) => {
+      return sortDirection === 'asc' ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy];
+    });
+  }
+  return stats;
+};

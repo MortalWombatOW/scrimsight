@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { createTheme, ThemeProvider } from '@mui/material';
+import { ThemeProvider, createTheme as createMuiTheme } from '@mui/material';
 import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { Suspense } from 'react';
@@ -10,30 +10,61 @@ import { AddFilesPage } from './pages/AddFiles/AddFilesPage';
 import { MatchesPage } from './pages/Matches';
 import { PlayersPage } from './pages/Players/PlayersPage';
 import { TeamsPage } from './pages/Teams';
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
+import '@mantine/charts/styles.css';
+import '@mantine/carousel/styles.css';
+import { MantineColorsTuple, MantineProvider, createTheme } from '@mantine/core';
+import { MatchPage } from './pages/Match';
+import { PlayerPage } from './pages/Player';
+import { TeamPage } from './pages/Team';
 
 const App = () => {
-  const theme = createTheme(themeDef);
+  const theme = createMuiTheme(themeDef);
+  const myColor: MantineColorsTuple = [
+    '#fff4e1',
+    '#ffe8cc',
+    '#fed09b',
+    '#fdb766',
+    '#fca13a',
+    '#fc931d',
+    '#fc8c0c',
+    '#e17800',
+    '#c86a00',
+    '#af5a00'
+  ];
+
+  const mtheme = createTheme({
+    fontFamily: 'Poppins, sans-serif',
+    colors: {
+      myColor,
+    },
+    primaryColor: 'myColor',
+  });
 
   return (
-    <Router>
-      <ThemeProvider theme={theme}>
-        <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <Suspense fallback={<div>Loading...</div>}>
+    <MantineProvider defaultColorScheme="dark" theme={mtheme}>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <QueryParamProvider adapter={ReactRouter6Adapter}>
             <Layout>
               <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/matches" element={<MatchesPage />} />
+                  <Route path="/matches/:matchId" element={<MatchPage />} />
                   <Route path="/players" element={<PlayersPage />} />
+                  <Route path="/players/:playerName" element={<PlayerPage />} />
                   <Route path="/teams" element={<TeamsPage />} />
+                  <Route path="/teams/:teamId" element={<TeamPage />} />
                   <Route path="/files" element={<AddFilesPage />} />
                 </Routes>
               </Suspense>
             </Layout>
-          </Suspense>
-        </QueryParamProvider>
-      </ThemeProvider>
-    </Router>
+          </QueryParamProvider>
+        </ThemeProvider>
+      </Router>
+    </MantineProvider>
   );
 };
 
