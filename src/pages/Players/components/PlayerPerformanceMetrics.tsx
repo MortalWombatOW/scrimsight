@@ -1,7 +1,6 @@
 import { Box, Paper, Typography } from '@mui/material';
 import { useAtomValue } from 'jotai';
-import { playerStatsBaseAtom } from '../../../atoms/metrics/playerMetricsAtoms';
-import { PlayerStats } from '../../../atoms/playerStatExpandedAtom';
+import { playerStatsByPlayerAtom } from '../../../atoms/metrics/playerMetricsAtoms';
 
 const numericFields = [
   'eliminations',
@@ -19,13 +18,13 @@ const numericFields = [
 type NumericField = typeof numericFields[number];
 
 export const PlayerPerformanceMetrics = () => {
-  const playerStats = useAtomValue(playerStatsBaseAtom);
+  const playerStats = useAtomValue(playerStatsByPlayerAtom);
   const playerStatsRows = playerStats?.rows || [];
 
   const calculateAverages = () => {
     if (playerStatsRows.length === 0) return null;
 
-    const totals = playerStatsRows.reduce((acc: Record<NumericField, number>, curr: PlayerStats) => {
+    const totals = playerStatsRows.reduce((acc, curr) => {
       numericFields.forEach((field) => {
         acc[field] = (acc[field] || 0) + (curr[field] || 0);
       });
@@ -62,7 +61,7 @@ export const PlayerPerformanceMetrics = () => {
               {key.replace(/([A-Z])/g, ' $1').trim()}
             </Typography>
             <Typography variant="h6">
-              {key === 'weaponAccuracy' 
+              {key === 'weaponAccuracy'
                 ? `${(value * 100).toFixed(1)}%`
                 : value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
             </Typography>

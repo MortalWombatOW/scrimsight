@@ -1,7 +1,6 @@
 import { Container, Grid, Typography, Paper, Box, Tabs, Tab } from '@mui/material';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { useState } from 'react';
-import { playerStatsBaseAtom } from '../../atoms/metrics/playerMetricsAtoms';
 import { uniquePlayerNamesAtom } from '../../atoms/uniquePlayerNamesAtom';
 import { PlayerStatsGrid } from './components/PlayerStatsGrid';
 import { TopPlayersSection } from './components/TopPlayersSection';
@@ -11,27 +10,17 @@ import { PlayerPerformanceMetrics } from './components/PlayerPerformanceMetrics'
 import { StatCard } from '../../components/Card/StatCard';
 import {
   People as PeopleIcon,
-  Timeline as TimelineIcon,
-  LocalHospital as HealingIcon,
   Security as TankIcon,
   Whatshot as DamageIcon,
   Support as SupportIcon
 } from '@mui/icons-material';
 
 export const PlayersPage = () => {
-  const [players] = useAtom(uniquePlayerNamesAtom);
-  const playerStats = useAtomValue(playerStatsBaseAtom);
-  const playerStatsRows = playerStats?.rows || [];
+  const players = useAtomValue(uniquePlayerNamesAtom);
   const [selectedTab, setSelectedTab] = useState(0);
 
   // Calculate overall statistics
   const totalPlayers = players?.length || 0;
-  const avgDamagePerMatch = playerStatsRows.length > 0
-    ? Math.round(playerStatsRows.reduce((acc, p) => acc + p.heroDamageDealt, 0) / playerStatsRows.length)
-    : 0;
-  const avgHealingPerMatch = playerStatsRows.length > 0
-    ? Math.round(playerStatsRows.reduce((acc, p) => acc + p.healingDealt, 0) / playerStatsRows.length)
-    : 0;
 
   // Role distribution (mock data for now, should be replaced with actual data)
   const roleDistribution = {
@@ -82,22 +71,6 @@ export const PlayersPage = () => {
             value={roleDistribution.support.toString()}
             icon={<SupportIcon />}
             color="success.main"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2}>
-          <StatCard
-            title="Avg. Damage"
-            value={avgDamagePerMatch.toLocaleString()}
-            icon={<TimelineIcon />}
-            color="warning.main"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2}>
-          <StatCard
-            title="Avg. Healing"
-            value={avgHealingPerMatch.toLocaleString()}
-            icon={<HealingIcon />}
-            color="secondary.main"
           />
         </Grid>
       </Grid>

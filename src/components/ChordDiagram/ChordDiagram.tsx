@@ -129,72 +129,72 @@ const PlayerArc: React.FC<{
   onMouseOver,
   onMouseLeave,
 }) => {
-    const strokeWidth = 5;
-    const paddedRadius = innerRadius + strokeWidth / 2;
+  const strokeWidth = 5;
+  const paddedRadius = innerRadius + strokeWidth / 2;
 
-    const outerArcWidth = 5;
-    const outerArcRadius = paddedRadius + strokeWidth / 2 + outerArcWidth / 2;
+  const outerArcWidth = 5;
+  const outerArcRadius = paddedRadius + strokeWidth / 2 + outerArcWidth / 2;
 
-    const { x: killsStartX, y: killsStartY } = getCoords(killsStartAngle, paddedRadius);
-    const { x: killsEndX, y: killsEndY } = getCoords(killsEndAngle, paddedRadius);
-    const { x: deathsStartX, y: deathsStartY } = getCoords(deathsStartAngle, paddedRadius);
-    const { x: deathsEndX, y: deathsEndY } = getCoords(deathsEndAngle, paddedRadius);
-    const { x: outerArcStartX, y: outerArcStartY } = getCoords(killsStartAngle, outerArcRadius);
-    const { x: outerArcEndX, y: outerArcEndY } = getCoords(deathsEndAngle, outerArcRadius);
+  const { x: killsStartX, y: killsStartY } = getCoords(killsStartAngle, paddedRadius);
+  const { x: killsEndX, y: killsEndY } = getCoords(killsEndAngle, paddedRadius);
+  const { x: deathsStartX, y: deathsStartY } = getCoords(deathsStartAngle, paddedRadius);
+  const { x: deathsEndX, y: deathsEndY } = getCoords(deathsEndAngle, paddedRadius);
+  const { x: outerArcStartX, y: outerArcStartY } = getCoords(killsStartAngle, outerArcRadius);
+  const { x: outerArcEndX, y: outerArcEndY } = getCoords(deathsEndAngle, outerArcRadius);
 
-    // Calculate center angle for the combined label
-    const centerAngle = (killsStartAngle + deathsEndAngle) / 2;
-    const labelOffset = 50;
-    const { x: labelX, y: labelY } = getCoords(centerAngle, paddedRadius + labelOffset);
-    const { x: labelAnchorX, y: labelAnchorY } = getCoords(centerAngle, paddedRadius + labelOffset - 25);
-    const { x: arcOutsideCenterX, y: arcOutsideCenterY } = getCoords(centerAngle, innerRadius + strokeWidth + 5);
+  // Calculate center angle for the combined label
+  const centerAngle = (killsStartAngle + deathsEndAngle) / 2;
+  const labelOffset = 50;
+  const { x: labelX, y: labelY } = getCoords(centerAngle, paddedRadius + labelOffset);
+  const { x: labelAnchorX, y: labelAnchorY } = getCoords(centerAngle, paddedRadius + labelOffset - 25);
+  const { x: arcOutsideCenterX, y: arcOutsideCenterY } = getCoords(centerAngle, innerRadius + strokeWidth + 5);
 
-    const totalAngle = deathsEndAngle - killsStartAngle;
-    const numTicks = totalKills + totalDeaths;
-    const anglePerTick = totalAngle / numTicks;
-    const ticks = Array.from({ length: numTicks }).map((_, index) => killsStartAngle + index * anglePerTick).map((angle) => {
-      const { x: innerCoordX, y: innerCoordY } = getCoords(angle, innerRadius);
-      const { x: outerCoordX, y: outerCoordY } = getCoords(angle, innerRadius + strokeWidth);
-      return {
-        innerCoord: { x: innerCoordX, y: innerCoordY },
-        outerCoord: { x: outerCoordX, y: outerCoordY },
-      };
-    });
+  const totalAngle = deathsEndAngle - killsStartAngle;
+  const numTicks = totalKills + totalDeaths;
+  const anglePerTick = totalAngle / numTicks;
+  const ticks = Array.from({ length: numTicks }).map((_, index) => killsStartAngle + index * anglePerTick).map((angle) => {
+    const { x: innerCoordX, y: innerCoordY } = getCoords(angle, innerRadius);
+    const { x: outerCoordX, y: outerCoordY } = getCoords(angle, innerRadius + strokeWidth);
+    return {
+      innerCoord: { x: innerCoordX, y: innerCoordY },
+      outerCoord: { x: outerCoordX, y: outerCoordY },
+    };
+  });
 
 
 
-    return (
-      <g key={playerName} onMouseEnter={onMouseOver} onMouseLeave={onMouseLeave}>
-        <g>
-          <path d={`M${killsStartX},${killsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${killsEndX},${killsEndY}`} fill="none" stroke={getColorgorical(playerTeam)} strokeWidth={strokeWidth} />
-        </g>
-        <g>
-          <path d={`M${deathsStartX},${deathsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${deathsEndX},${deathsEndY}`} fill="none" stroke={getColorgorical(otherTeam)} strokeWidth={strokeWidth} />
-        </g>
-
-        {ticks.map((tick, index) => (
-          <g key={index}>
-            <line x1={tick.innerCoord.x} y1={tick.innerCoord.y} x2={tick.outerCoord.x} y2={tick.outerCoord.y} stroke="black" strokeWidth={1} opacity={0.8} />
-          </g>
-        ))}
-
-        <g>
-          <path d={`M${outerArcStartX},${outerArcStartY} A${outerArcRadius},${outerArcRadius} 0 0,1 ${outerArcEndX},${outerArcEndY}`} fill="none" stroke={getColorgorical(playerTeam)} strokeWidth={outerArcWidth} />
-        </g>
-
-        {/* Combined label group */}
-        <g>
-          <text x={labelX} y={labelY - 7} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.7em" fontWeight={highlight ? 'bold' : 'normal'}>
-            {playerName}
-          </text>
-          <text x={labelX} y={labelY + 7} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.7em" fontWeight={highlight ? 'bold' : 'normal'}>
-            {totalKills}K / {totalDeaths}D
-          </text>
-        </g>
-        <line x1={labelAnchorX} y1={labelAnchorY} x2={arcOutsideCenterX} y2={arcOutsideCenterY} stroke={getColorgorical(playerTeam)} strokeWidth={1} />
+  return (
+    <g key={playerName} onMouseEnter={onMouseOver} onMouseLeave={onMouseLeave}>
+      <g>
+        <path d={`M${killsStartX},${killsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${killsEndX},${killsEndY}`} fill="none" stroke={getColorgorical(playerTeam)} strokeWidth={strokeWidth} />
       </g>
-    );
-  };
+      <g>
+        <path d={`M${deathsStartX},${deathsStartY} A${paddedRadius},${paddedRadius} 0 0,1 ${deathsEndX},${deathsEndY}`} fill="none" stroke={getColorgorical(otherTeam)} strokeWidth={strokeWidth} />
+      </g>
+
+      {ticks.map((tick, index) => (
+        <g key={index}>
+          <line x1={tick.innerCoord.x} y1={tick.innerCoord.y} x2={tick.outerCoord.x} y2={tick.outerCoord.y} stroke="black" strokeWidth={1} opacity={0.8} />
+        </g>
+      ))}
+
+      <g>
+        <path d={`M${outerArcStartX},${outerArcStartY} A${outerArcRadius},${outerArcRadius} 0 0,1 ${outerArcEndX},${outerArcEndY}`} fill="none" stroke={getColorgorical(playerTeam)} strokeWidth={outerArcWidth} />
+      </g>
+
+      {/* Combined label group */}
+      <g>
+        <text x={labelX} y={labelY - 7} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.7em" fontWeight={highlight ? 'bold' : 'normal'}>
+          {playerName}
+        </text>
+        <text x={labelX} y={labelY + 7} textAnchor="middle" dominantBaseline="central" fill={getColorgorical(playerTeam)} fontSize="0.7em" fontWeight={highlight ? 'bold' : 'normal'}>
+          {totalKills}K / {totalDeaths}D
+        </text>
+      </g>
+      <line x1={labelAnchorX} y1={labelAnchorY} x2={arcOutsideCenterX} y2={arcOutsideCenterY} stroke={getColorgorical(playerTeam)} strokeWidth={1} />
+    </g>
+  );
+};
 
 const Chord: React.FC<{
   interaction: ChordDataEntry;
@@ -227,64 +227,64 @@ const Chord: React.FC<{
   highlightState,
   getCoords,
 }) => {
-    const arcRef = useRef<SVGPathElement>(null);
-    const color = getColorgorical(interaction.sourceTeamName);
+  const arcRef = useRef<SVGPathElement>(null);
+  const color = getColorgorical(interaction.sourceTeamName);
 
-    const sourceCurrentValue = getSourceCurrentValue();
-    const targetCurrentValue = getTargetCurrentValue();
+  const sourceCurrentValue = getSourceCurrentValue();
+  const targetCurrentValue = getTargetCurrentValue();
 
-    const interactionSourceStartAngle = sourceStart + (sourceCurrentValue / sourceValue) * (sourceEnd - sourceStart);
-    const interactionSourceEndAngle = sourceStart + ((sourceCurrentValue + interaction.value) / sourceValue) * (sourceEnd - sourceStart);
-    const interactionTargetStartAngle = targetStart + (targetCurrentValue / targetValue) * (targetEnd - targetStart);
-    const interactionTargetEndAngle = targetStart + ((targetCurrentValue + interaction.value) / targetValue) * (targetEnd - targetStart);
+  const interactionSourceStartAngle = sourceStart + (sourceCurrentValue / sourceValue) * (sourceEnd - sourceStart);
+  const interactionSourceEndAngle = sourceStart + ((sourceCurrentValue + interaction.value) / sourceValue) * (sourceEnd - sourceStart);
+  const interactionTargetStartAngle = targetStart + (targetCurrentValue / targetValue) * (targetEnd - targetStart);
+  const interactionTargetEndAngle = targetStart + ((targetCurrentValue + interaction.value) / targetValue) * (targetEnd - targetStart);
 
-    addSourceCurrentValue(interaction.value);
-    addTargetCurrentValue(interaction.value);
+  addSourceCurrentValue(interaction.value);
+  addTargetCurrentValue(interaction.value);
 
-    const startCoords = getCoords((interactionSourceStartAngle + interactionSourceEndAngle) / 2, innerRadius - 35);
-    const endCoords = getCoords((interactionTargetStartAngle + interactionTargetEndAngle) / 2, innerRadius - 35);
+  const startCoords = getCoords((interactionSourceStartAngle + interactionSourceEndAngle) / 2, innerRadius - 35);
+  const endCoords = getCoords((interactionTargetStartAngle + interactionTargetEndAngle) / 2, innerRadius - 35);
 
-    return (
-      <g>
-        <path
-          ref={arcRef}
-          d={getArcPath(interactionSourceStartAngle, interactionSourceEndAngle, interactionTargetStartAngle, interactionTargetEndAngle, innerRadius, getCoords)}
-          style={{
-            fill: highlightState === 'highlight' ? `${color}90` : highlightState === 'normal' ? `${color}30` : `${color}00`,
-            stroke: highlightState === 'highlight' ? `${color}` : highlightState === 'normal' ? `${color}80` : `${color}00`,
-            strokeWidth: 1,
-            transition: 'fill 0.2s ease-in-out, stroke 0.2s ease-in-out',
-          }}
-        />
-        <text
-          x={startCoords.x}
-          y={startCoords.y}
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize="0.7em"
-          style={{
-            fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
-            transition: 'all 0.3s ease',
-          }}
-        >
-          {interaction.value} kills on {interaction.targetPlayerName}
-        </text>
-        <text
-          x={endCoords.x}
-          y={endCoords.y}
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize="0.7em"
-          style={{
-            fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
-            transition: 'all 0.3s ease',
-          }}
-        >
-          {interaction.value} deaths from {interaction.sourcePlayerName}
-        </text>
-      </g>
-    );
-  };
+  return (
+    <g>
+      <path
+        ref={arcRef}
+        d={getArcPath(interactionSourceStartAngle, interactionSourceEndAngle, interactionTargetStartAngle, interactionTargetEndAngle, innerRadius, getCoords)}
+        style={{
+          fill: highlightState === 'highlight' ? `${color}90` : highlightState === 'normal' ? `${color}30` : `${color}00`,
+          stroke: highlightState === 'highlight' ? `${color}` : highlightState === 'normal' ? `${color}80` : `${color}00`,
+          strokeWidth: 1,
+          transition: 'fill 0.2s ease-in-out, stroke 0.2s ease-in-out',
+        }}
+      />
+      <text
+        x={startCoords.x}
+        y={startCoords.y}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize="0.7em"
+        style={{
+          fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
+          transition: 'all 0.3s ease',
+        }}
+      >
+        {interaction.value} kills on {interaction.targetPlayerName}
+      </text>
+      <text
+        x={endCoords.x}
+        y={endCoords.y}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize="0.7em"
+        style={{
+          fill: highlightState === 'highlight' ? `#ffffff` : `#ffffff00`,
+          transition: 'all 0.3s ease',
+        }}
+      >
+        {interaction.value} deaths from {interaction.sourcePlayerName}
+      </text>
+    </g>
+  );
+};
 
 // Add new Legend component
 const Legend: React.FC<{

@@ -1,2 +1,2 @@
-export * from './createAggregateAtoms';
+export * from './metricUtils';
 export * from './playerMetricsAtoms';
