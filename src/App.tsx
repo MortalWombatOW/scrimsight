@@ -16,10 +16,9 @@ import '@mantine/charts/styles.css';
 import '@mantine/carousel/styles.css';
 import '@mantine/dropzone/styles.css';
 import { MantineColorsTuple, MantineProvider, createTheme } from '@mantine/core';
-import { MatchPage } from './pages/Match';
 import { PlayerPage } from './pages/Player';
 import { TeamPage } from './pages/Team';
-
+import { MatchPage2 } from './pages/Match/MatchPage2';
 const App = () => {
   const theme = createMuiTheme(themeDef);
   const myColor: MantineColorsTuple = [
@@ -53,7 +52,7 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/matches" element={<MatchesPage />} />
-                  <Route path="/matches/:matchId" element={<MatchPage />} />
+                  <Route path="/matches/:matchId" element={<MatchPage2 />} />
                   <Route path="/players" element={<PlayersPage />} />
                   <Route path="/players/:playerName" element={<PlayerPage />} />
                   <Route path="/teams" element={<TeamsPage />} />
