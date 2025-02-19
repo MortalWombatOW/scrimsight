@@ -1,6 +1,6 @@
 import { AppShell, NavLink, Stack } from '@mantine/core';
 import { useLocation, Link } from 'react-router-dom';
-import { uniquePlayerNamesAtom, scrimAtom, teamNamesAtom } from '../../atoms';
+import { uniquePlayerNamesAtom, scrimAtom, teamNamesAtom, matchDataAtom } from '../../atoms';
 import { useAtomValue } from 'jotai';
 import { MdArrowBack } from "react-icons/md";
 import { RiTeamLine } from "react-icons/ri";
@@ -53,6 +53,7 @@ export const Navigation = () => {
   const scrims = useAtomValue(scrimAtom);
   const playerNames = useAtomValue(uniquePlayerNamesAtom);
   const teamNames = useAtomValue(teamNamesAtom);
+  const matchData = useAtomValue(matchDataAtom);
 
   const isRoot = location.pathname === '/';
   const isMatches = location.pathname.startsWith('/matches');
@@ -117,15 +118,28 @@ export const Navigation = () => {
               leftSection={<MdOutlineEmojiEvents />}
             />
             {scrims.map((scrim) => (
-              <NavLink
-                h={24}
-                key={scrim.dateString}
-                component={Link}
-                to={`/matches?teams=${encodeURIComponent(scrim.team1Name)},${encodeURIComponent(scrim.team2Name)}`}
-                label={`${scrim.team1Name} vs ${scrim.team2Name}`}
-                leftSection={<MdOutlineEmojiEvents />}
-                active={location.pathname === `/matches?teams=${encodeURIComponent(scrim.team1Name)},${encodeURIComponent(scrim.team2Name)}`}
-              />
+              <Stack gap="xs">
+                <NavLink
+                  disabled
+                  h={24}
+                  key={scrim.dateString}
+                  component={Link}
+                  to={`/matches?teams=${encodeURIComponent(scrim.team1Name)},${encodeURIComponent(scrim.team2Name)}`}
+                  label={`${scrim.team1Name} vs ${scrim.team2Name}`}
+                  active={location.pathname === `/matches?teams=${encodeURIComponent(scrim.team1Name)},${encodeURIComponent(scrim.team2Name)}`}
+                />
+                {scrim.matchIds.map((matchId) => (
+                  <NavLink
+                    h={24}
+                    key={matchId}
+                    component={Link}
+                    to={`/matches/${matchId}`}
+                    label={`${matchData.find((match) => match.matchId === matchId)?.map ?? 'Unknown Map'} (${matchData.find((match) => match.matchId === matchId)?.team1Score} - ${matchData.find((match) => match.matchId === matchId)?.team2Score})`}
+                    leftSection={<MdOutlineEmojiEvents />}
+                    active={location.pathname === `/matches/${matchId}`}
+                  />
+                ))}
+              </Stack>
             ))}
           </>
         )}
