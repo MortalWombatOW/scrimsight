@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Navigation } from './Navigation';
-import { AppShell, Burger, Title, Group, Loader, Center, ActionIcon, Menu, Anchor, Button } from '@mantine/core';
+import { AppShell, Burger, Group, Loader, Center, ActionIcon, Menu, Anchor, Button, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Suspense } from 'react';
 import { FaDiscord } from "react-icons/fa";
@@ -61,9 +61,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             size="sm"
           />
           <Button component={Link} to="/" variant='transparent'>
-            <Title order={2} c="myColor" style={{ fontFamily: "sintony" }}>
-              Scrimsight
-            </Title>
+            <Text fw={900} fz={24} component="span" variant="gradient" gradient={{ from: 'orange', to: 'yellow' }} style={{ fontFamily: "Goldman" }}>SCRIMSIGHT</Text>
           </Button>
           <DiscordButton />
           <UserMenu />

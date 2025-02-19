@@ -147,6 +147,133 @@ const MatchCard = React.memo(({ matchId, playerFilter }: MatchCardProps) => {
   );
 });
 
+interface TeamScoreRowProps {
+  teamName: string;
+  matchIds: string[];
+  matchData: {
+    matchId: string;
+    team1Score: number;
+    team2Score: number;
+    fileModified: string;
+  }[];
+  wins: number;
+  teamColor: string;
+  teamNameWidth: number;
+  matchScoreWidth: number;
+  finalScoreWidth: number;
+  isTeam1: boolean;
+}
+
+const TeamScoreRow = React.memo(({
+  teamName,
+  matchIds,
+  matchData,
+  wins,
+  teamColor,
+  teamNameWidth,
+  matchScoreWidth,
+  finalScoreWidth,
+  isTeam1
+}: TeamScoreRowProps) => {
+  return (
+    <Grid>
+      <Grid.Col span={teamNameWidth}>
+        <Group>
+          <Avatar color={teamColor}>{teamName.split(' ').map((name) => name[0]).join('')}</Avatar>
+          <Text fw={900}>{teamName}</Text>
+        </Group>
+      </Grid.Col>
+      <Grid.Col span={matchScoreWidth}>
+        <Grid grow>
+          {matchIds.map((matchId) => {
+            const match = matchData.find((match) => match.matchId === matchId);
+            return (
+              <Grid.Col key={matchId} span={1}>
+                <Paper bg="gray.9" p="xs" ta="center">
+                  <Text>{isTeam1 ? match?.team1Score : match?.team2Score}</Text>
+                </Paper>
+              </Grid.Col>
+            );
+          })}
+        </Grid>
+      </Grid.Col>
+      <Grid.Col span={finalScoreWidth}>
+        <Paper bg={`${teamColor}.9`} p="xs" ta="center" >
+          <Text fw={900}>{wins}</Text>
+        </Paper>
+      </Grid.Col>
+    </Grid>
+  );
+});
+
+interface ScrimHeaderProps {
+  scrim: {
+    team1Name: string;
+    team2Name: string;
+    team1Wins: number;
+    team2Wins: number;
+    matchIds: string[];
+  };
+  matchData: {
+    matchId: string;
+    team1Score: number;
+    team2Score: number;
+    fileModified: string;
+  }[];
+}
+
+const ScrimHeader = React.memo(({ scrim, matchData }: ScrimHeaderProps) => {
+
+  const teamNameWidth = 4;
+  const matchScoreWidth = 4;
+  const finalScoreWidth = 1;
+  const metadataWidth = 4;
+  return (
+    <Stack gap="xs">
+      <Grid>
+        <Grid.Col span={teamNameWidth} />
+        <Grid.Col span={matchScoreWidth}>
+          <Grid grow>
+            {scrim.matchIds.map((_, index) => {
+              return (
+                <Grid.Col span={1}>
+                  <Text size="sm">Match {index + 1}</Text>
+                </Grid.Col>
+              );
+            })}
+          </Grid>
+        </Grid.Col>
+        <Grid.Col span={finalScoreWidth}>
+          <Text>Final Score</Text>
+        </Grid.Col>
+        <Grid.Col span={metadataWidth} />
+      </Grid>
+      <TeamScoreRow
+        isTeam1={true}
+        teamName={scrim.team1Name}
+        matchIds={scrim.matchIds}
+        matchData={matchData}
+        wins={scrim.team1Wins}
+        teamColor="blue"
+        teamNameWidth={teamNameWidth}
+        matchScoreWidth={matchScoreWidth}
+        finalScoreWidth={finalScoreWidth}
+      />
+      <TeamScoreRow
+        isTeam1={false}
+        teamName={scrim.team2Name}
+        matchIds={scrim.matchIds}
+        matchData={matchData}
+        wins={scrim.team2Wins}
+        teamColor="red"
+        teamNameWidth={teamNameWidth}
+        matchScoreWidth={matchScoreWidth}
+        finalScoreWidth={finalScoreWidth}
+      />
+    </Stack >
+  );
+});
+
 interface MatchDateGroupProps {
   dateString: string;
   teamFilter: string[];
@@ -189,38 +316,7 @@ const MatchDateGroup = React.memo(({ dateString, dateRange, teamFilter, playerFi
           <Suspense fallback={<Loader />}>
             <Paper key={scrim.dateString} bg="dark.8" p="md" mb="lg">
               <Stack>
-                <Grid>
-                  <Grid.Col span={5}>
-                    <Stack>
-                      <Center><Avatar color="blue">{scrim.team1Name.split(' ').map((name) => name[0]).join('')}</Avatar></Center>
-                      <Center><Text fw={900}>{scrim.team1Name}</Text></Center>
-                    </Stack>
-                  </Grid.Col>
-                  <Grid.Col span={2}>
-                    <Group grow>
-                      <Paper bg="blue.9" p="xs" ta="center" >
-                        <Text fw={900}>{scrim.team1Wins}</Text>
-                      </Paper>
-                      <Paper bg="red.9" p="xs" ta="center">
-                        <Text fw={900}>{scrim.team2Wins}</Text>
-                      </Paper>
-                    </Group>
-                    <Space h="lg" />
-                    <Center>
-                      <Group>
-                        <CiClock1 />
-                        <Text>{new Date(matchData.find((match) => match.matchId === scrim.matchIds[0])!.fileModified).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}</Text>
-                      </Group>
-                    </Center>
-                  </Grid.Col>
-                  <Grid.Col span={5}>
-                    <Stack>
-                      <Center><Avatar color="red">{scrim.team2Name.split(' ').map((name) => name[0]).join('')}</Avatar></Center>
-                      <Center><Text fw={900}>{scrim.team2Name}</Text></Center>
-                    </Stack>
-                  </Grid.Col>
-
-                </Grid>
+                <ScrimHeader scrim={scrim} matchData={matchData} />
                 {scrim.matchIds.filter((matchId) => filteredMatches.some((match) => match.matchId === matchId)).map((matchId) => (
                   <Suspense fallback={<Loader />}>
                     <MatchCard key={matchId} matchId={matchId} playerFilter={playerFilter} />

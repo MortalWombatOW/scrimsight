@@ -2,17 +2,28 @@ import { Center, Title, Stack, Text, Group, Button, Space, Anchor } from '@manti
 import { GoLinkExternal } from "react-icons/go";
 import { useAtom } from 'jotai';
 import { sampleDataEnabledAtom } from '../../atoms/files/sampleDataAtoms';
-import { Link } from 'react-router-dom';
-const ZeroState = () => {
+import { Dropzone } from '@mantine/dropzone';
+import { MdOutlineFileOpen } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
+import { logFileInputMutationAtom } from '../../atoms/files';
 
+const ZeroState = () => {
   const [_, setSampleDataEnabled] = useAtom(sampleDataEnabledAtom);
+  const [__, setFiles] = useAtom(logFileInputMutationAtom);
+
+  const handleDrop = (files: File[]) => {
+    const filteredFiles = files.filter(file =>
+      (file.type && file.type.startsWith('text')) || file.name.endsWith('.txt')
+    );
+    setFiles(filteredFiles);
+  };
 
   return (
     <Center h="calc(100vh - 68px - 32px)">
-      <Stack>
+      <Stack w={600}>
         <Center>
           <Title order={1} fw={900} fz={64} c="white" ta="center">Welcome to&nbsp;
-            <Text fw={900} fz={64} component="span" variant="gradient" gradient={{ from: 'orange', to: 'yellow' }}>Scrimsight</Text>
+            <Text fw={900} fz={80} component="span" variant="gradient" gradient={{ from: 'orange', to: 'yellow' }} style={{ fontFamily: "Goldman" }}>SCRIMSIGHT</Text>
           </Title>
         </Center>
         <Center>
@@ -21,14 +32,40 @@ const ZeroState = () => {
           </Text>
         </Center>
         <Space h="md" />
+        <Dropzone
+          onDrop={handleDrop}
+          accept={['text/*', '.txt']}
+          styles={{
+            root: {
+              borderWidth: 2,
+              padding: 20
+            }
+          }}
+        >
+          <Group justify="center" gap="xl" style={{ pointerEvents: 'none' }}>
+            <Dropzone.Accept>
+              <MdOutlineFileOpen size={50} />
+            </Dropzone.Accept>
+            <Dropzone.Reject>
+              <IoMdClose size={50} />
+            </Dropzone.Reject>
+            <Dropzone.Idle>
+              <MdOutlineFileOpen size={50} />
+            </Dropzone.Idle>
+
+            <Stack gap="xs">
+              <Text size="xl" inline>
+                Drag files here or click to select
+              </Text>
+              <Text size="sm" c="dimmed" inline>
+                Upload your ScrimTime log files to get started
+              </Text>
+            </Stack>
+          </Group>
+        </Dropzone>
         <Center>
           <Group>
-            <Button component={Link} to="/files">
-              Add files
-            </Button>
-            <Text>
-              or
-            </Text>
+            <Text>or</Text>
             <Button onClick={() => setSampleDataEnabled(true)}>
               Explore example data
             </Button>
