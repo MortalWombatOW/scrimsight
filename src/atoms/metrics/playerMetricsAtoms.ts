@@ -2,6 +2,7 @@ import { useAtomValue, atom } from "jotai";
 import { playerStatExpandedAtom } from "../playerStatExpandedAtom";
 import { groupByAtom, Grouped, MetricAtom } from "./metricUtils";
 import { heroPlaytimeAtom } from './heroPlaytimeAtom';
+import { OverwatchRole, getRankForRole } from "../../lib/data/hero";
 
 type PlayerStatsCategoryKeys = 'matchId' | 'roundNumber' | 'playerTeam' | 'playerName' | 'playerHero' | 'playerRole';
 
@@ -16,7 +17,8 @@ type PlayerStatsDerivedNumericalKeys = 'eliminationsPer10Minutes' | 'finalBlowsP
 | 'heroDamageDealtPer10Minutes' | 'healingDealtPer10Minutes' | 'healingReceivedPer10Minutes' | 'selfHealingPer10Minutes' | 'damageTakenPer10Minutes'
 | 'damageBlockedPer10Minutes' | 'defensiveAssistsPer10Minutes' | 'offensiveAssistsPer10Minutes' | 'ultimatesEarnedPer10Minutes' | 'ultimatesUsedPer10Minutes'
 | 'multikillsPer10Minutes' | 'soloKillsPer10Minutes' | 'objectiveKillsPer10Minutes' | 'environmentalKillsPer10Minutes' | 'environmentalDeathsPer10Minutes'
-| 'criticalHitsPer10Minutes' | 'shotsFiredPer10Minutes' | 'shotsHitPer10Minutes' | 'shotsMissedPer10Minutes' | 'scopedShotsFiredPer10Minutes' | 'scopedShotsHitPer10Minutes' | 'weaponAccuracy' | 'scopedWeaponAccuracy';
+| 'criticalHitsPer10Minutes' | 'shotsFiredPer10Minutes' | 'shotsHitPer10Minutes' | 'shotsMissedPer10Minutes' | 'scopedShotsFiredPer10Minutes' | 'scopedShotsHitPer10Minutes'
+| 'weaponAccuracy' | 'scopedWeaponAccuracy' | 'utility' | 'criticalHitRate';
 
 export type PlayerStats = PlayerStatsBase & {[k in PlayerStatsDerivedNumericalKeys]: number};
 
@@ -114,7 +116,7 @@ function addDerivedMetrics<T extends PlayerStatsCategoryKeys>(metricAtom: Metric
       'damageBlockedPer10Minutes', 'defensiveAssistsPer10Minutes', 'offensiveAssistsPer10Minutes', 'ultimatesEarnedPer10Minutes',
       'ultimatesUsedPer10Minutes', 'multikillsPer10Minutes', 'soloKillsPer10Minutes', 'objectiveKillsPer10Minutes', 'environmentalKillsPer10Minutes',
       'environmentalDeathsPer10Minutes', 'criticalHitsPer10Minutes', 'shotsFiredPer10Minutes', 'shotsHitPer10Minutes', 'shotsMissedPer10Minutes', 'scopedShotsFiredPer10Minutes',
-      'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy'];
+      'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'utility', 'criticalHitRate'];
 
     for (const row of rows) {
       const playtime = row.playtime;
@@ -149,6 +151,8 @@ function addDerivedMetrics<T extends PlayerStatsCategoryKeys>(metricAtom: Metric
         scopedShotsHitPer10Minutes: row.scopedShotsHit / (playtime / 600),
         weaponAccuracy: row.shotsHit / row.shotsFired,
         scopedWeaponAccuracy: row.scopedShotsHit / row.scopedShotsFired,
+        criticalHitRate: row.criticalHits / row.shotsFired,
+        utility: 0.05 * row.heroDamageDealt + 0.05 * row.healingDealt + 0.5 * row.finalBlows + 0.25 * row.eliminations + 0.1 * row.defensiveAssists + 0.1 * row.offensiveAssists - 0.5 * row.deaths + 0.05 * row.damageBlocked
       }
       newRows.push(newRow);
     }
@@ -205,12 +209,16 @@ function onlyDominantRole(
       return row.playerRole === dominantRoles.get(playerMatchRoundKey);
     });
 
+    // sort by role using getRankForRole
+    filteredRows.sort((a, b) => getRankForRole(a.playerRole as OverwatchRole) - getRankForRole(b.playerRole as OverwatchRole));
+
     return {
       categoryKeys,
       numericalKeys,
       rows: filteredRows
     };
   });
+
 
   return newAtom as typeof metricAtom;
 }

@@ -38,6 +38,7 @@ const App = () => {
     fontFamily: 'Poppins, sans-serif',
     colors: {
       myColor,
+      redDark: ['#0e0c0c', '#251010', '#3d1515', '#541919', '#6c1d1d', '#832222', '#9b2626', '#b22a2a', '#ca2f2f', '#e13333'],
     },
     primaryColor: 'myColor',
   });

@@ -4,6 +4,7 @@ import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorA
 import { matchEndExtractorAtom } from './event_extractors/matchEndExtractorAtom';
 import { playerStatExtractorAtom } from './event_extractors/playerStatExtractorAtom';
 import { mapTimesAtom } from './mapTimesAtom';
+import { roundEndExtractorAtom } from './event_extractors/roundEndExtractorAtom';
 /**
  * Interface for combined match data
  */
@@ -21,6 +22,7 @@ export interface MatchData {
   team1Players: string[];
   team2Players: string[];
   duration: number;
+  roundWinners: ('team1' | 'team2' | 'draw')[];
 }
 
 /**
@@ -32,6 +34,7 @@ export const matchDataAtom = atom(async (get): Promise<MatchData[]> => {
   const matchEnds = await get(matchEndExtractorAtom);
   const playerStats = await get(playerStatExtractorAtom);
   const mapTimes = await get(mapTimesAtom);
+  const roundEnds = await get(roundEndExtractorAtom);
 
   return matchInfo.map(info => {
     const start = matchStarts.find(s => s.matchId === info.matchId);
@@ -43,11 +46,13 @@ export const matchDataAtom = atom(async (get): Promise<MatchData[]> => {
     const team1Players = Array.from(new Set(
       stats.filter(s => s.playerTeam === start?.team1Name)
         .map(s => s.playerName)
-    ));
+    ))
     const team2Players = Array.from(new Set(
       stats.filter(s => s.playerTeam === start?.team2Name)
         .map(s => s.playerName)
     ));
+
+    const roundWinners = roundEnds.filter(r => r.matchId === info.matchId).sort((a, b) => a.roundNumber - b.roundNumber).map(r => r.team1Score > r.team2Score ? 'team1' : r.team1Score < r.team2Score ? 'team2' : 'draw');
 
     return {
       matchId: info.matchId,
@@ -63,6 +68,7 @@ export const matchDataAtom = atom(async (get): Promise<MatchData[]> => {
       team1Players,
       team2Players,
       duration: mapTime?.duration ?? 0,
+      roundWinners,
     };
   });
 }); 

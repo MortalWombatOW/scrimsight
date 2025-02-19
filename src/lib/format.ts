@@ -16,16 +16,21 @@ export const prettyFormat = (val: number | string | undefined, decimals = 2): st
     return '∞';
   }
   if (val > 1000000) {
-    return prettyFormat(val / 1000000) + 'm';
+    return prettyFormat(val / 1000000, decimals) + 'm';
   }
   if (val > 1000) {
-    return prettyFormat(val / 1000) + 'k';
+    return prettyFormat(val / 1000, decimals) + 'k';
   }
   if (val % 1 === 0) {
     return val.toFixed(0);
   }
   return val.toFixed(decimals);
 };
+
+export const camelCaseToWords = (s: string) => {
+  const result = s.replace(/([A-Z])/g, ' $1');
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
 
 export const formatTime = (val: number) => {
   const hours = Math.floor(val / 3600);

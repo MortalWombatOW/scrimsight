@@ -23,7 +23,7 @@ const ZeroState = () => {
       <Stack w={600}>
         <Center>
           <Title order={1} fw={900} fz={64} c="white" ta="center">Welcome to&nbsp;
-            <Text fw={900} fz={64} component="span" variant="gradient" gradient={{ from: 'orange', to: 'yellow' }}>Scrimsight</Text>
+            <Text fw={900} fz={80} component="span" variant="gradient" gradient={{ from: 'orange', to: 'yellow' }} style={{ fontFamily: "Goldman" }}>SCRIMSIGHT</Text>
           </Title>
         </Center>
         <Center>

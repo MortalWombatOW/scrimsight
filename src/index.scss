@@ -45,6 +45,10 @@
   }
 }
 
+.recharts-tooltip-wrapper{
+  z-index: 1000;
+}
+
 .hover-underline-animation {
   display: inline-block;
   position: relative;
