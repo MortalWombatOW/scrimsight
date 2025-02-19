@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import { matchDataAtom, useStats } from "../../atoms";
-import { Title, Group, Grid, Paper, Center, Stack, Text, Space, Progress, Tooltip, NumberFormatter, Avatar, SimpleGrid, Box, Overlay } from "@mantine/core";
+import { Title, Group, Grid, Paper, Center, Stack, Text, Progress, Tooltip, Avatar, SimpleGrid, Box, Overlay } from "@mantine/core";
 import { camelCaseToWords, formatTime, prettyFormat } from "../../lib/format";
 import { mapNameToFileName } from "../../lib/string";
 import { Image } from "@mantine/core";
@@ -17,29 +17,6 @@ import { GoTrophy } from "react-icons/go";
 import { FiMapPin } from "react-icons/fi";
 import { BarChart } from "@mantine/charts";
 
-const StatComparisonBar = ({ team1Name, team2Name, team1Value, team2Value, label }: { team1Name: string, team2Name: string, team1Value: number, team2Value: number, label: string }) => {
-  const total = team1Value + team2Value;
-  const team1Percentage = team1Value / total * 100;
-  const team2Percentage = team2Value / total * 100;
-
-  return (
-    <Stack gap="0">
-      <Text>{label}</Text>
-      <Progress.Root size="20" >
-        <Tooltip label={`${team1Name}: ${prettyFormat(team1Value)} ${label.toLowerCase()}`}>
-          <Progress.Section value={team1Percentage} color="blue">
-            <Progress.Label>{team1Name}: <NumberFormatter value={team1Value} thousandSeparator decimalScale={0} /></Progress.Label>
-          </Progress.Section>
-        </Tooltip>
-        <Tooltip label={`${team2Name}: ${prettyFormat(team2Value)} ${label.toLowerCase()}`}>
-          <Progress.Section value={team2Percentage} color="red">
-            <Progress.Label>{team2Name}: <NumberFormatter value={team2Value} thousandSeparator decimalScale={0} /></Progress.Label>
-          </Progress.Section>
-        </Tooltip>
-      </Progress.Root>
-    </Stack>
-  )
-}
 
 const TeamStatsComparison = ({ matchId }: { matchId: string }) => {
   const matchData = useAtomValue(matchDataAtom).find((match) => match.matchId === matchId);

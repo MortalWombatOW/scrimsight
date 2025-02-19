@@ -1,7 +1,7 @@
 import { Title, Divider, Space, Group, MultiSelect, Text, Paper, Stack, Grid, Avatar, Center, Tooltip, Image, Loader, Button } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useAtomValue } from 'jotai';
-import { matchDataAtom } from '../../atoms/matchDataAtom';
+import { MatchData, matchDataAtom } from '../../atoms/matchDataAtom';
 import { teamNamesAtom } from '../../atoms/teamNamesAtom';
 import { uniquePlayerNamesAtom } from '../../atoms/uniquePlayerNamesAtom';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -13,7 +13,6 @@ import { useStats } from '../../atoms/metrics/playerMetricsAtoms';
 import { getHeroImage } from '../../lib/data/hero';
 import { formatTime } from '../../lib/format';
 import { CiMap } from "react-icons/ci";
-import { CiClock1 } from "react-icons/ci";
 import React from 'react';
 interface PlayerCardProps {
   playerName: string;
@@ -150,12 +149,7 @@ const MatchCard = React.memo(({ matchId, playerFilter }: MatchCardProps) => {
 interface TeamScoreRowProps {
   teamName: string;
   matchIds: string[];
-  matchData: {
-    matchId: string;
-    team1Score: number;
-    team2Score: number;
-    fileModified: string;
-  }[];
+  matchData: MatchData[];
   wins: number;
   teamColor: string;
   teamNameWidth: number;
@@ -214,12 +208,7 @@ interface ScrimHeaderProps {
     team2Wins: number;
     matchIds: string[];
   };
-  matchData: {
-    matchId: string;
-    team1Score: number;
-    team2Score: number;
-    fileModified: string;
-  }[];
+  matchData: MatchData[];
 }
 
 const ScrimHeader = React.memo(({ scrim, matchData }: ScrimHeaderProps) => {
