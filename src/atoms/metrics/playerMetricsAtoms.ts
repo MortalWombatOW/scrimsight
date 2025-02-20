@@ -4,7 +4,7 @@ import { groupByAtom, Grouped, MetricAtom } from "./metricUtils";
 import { heroPlaytimeAtom } from './heroPlaytimeAtom';
 import { OverwatchRole, getRankForRole } from "../../lib/data/hero";
 
-type PlayerStatsCategoryKeys = 'matchId' | 'roundNumber' | 'playerTeam' | 'playerName' | 'playerHero' | 'playerRole';
+export type PlayerStatsCategoryKeys = 'matchId' | 'roundNumber' | 'playerTeam' | 'playerName' | 'playerHero' | 'playerRole';
 
 type PlayerStatsBaseNumericalKeys = 'playtime' | 'eliminations' | 'finalBlows' | 'deaths' | 'allDamageDealt' | 'barrierDamageDealt'
 | 'heroDamageDealt' | 'healingDealt' | 'healingReceived' | 'selfHealing' | 'damageTaken' 
@@ -23,6 +23,61 @@ type PlayerStatsDerivedNumericalKeys = 'eliminationsPer10Minutes' | 'finalBlowsP
 export type PlayerStats = PlayerStatsBase & {[k in PlayerStatsDerivedNumericalKeys]: number};
 
 export type PlayerStatsNumericalKeys = PlayerStatsBaseNumericalKeys | PlayerStatsDerivedNumericalKeys;
+
+const playerStatsBaseNumericalKeys: PlayerStatsBaseNumericalKeys[] = [
+  'playtime',
+  'eliminations',
+  'finalBlows', 
+  'deaths',
+  'allDamageDealt',
+  'barrierDamageDealt',
+  'heroDamageDealt',
+  'healingDealt',
+  'healingReceived',
+  'selfHealing',
+  'damageTaken',
+  'damageBlocked',
+  'defensiveAssists',
+  'offensiveAssists',
+  'ultimatesEarned',
+  'ultimatesUsed',
+  'multikills',
+  'soloKills',
+  'objectiveKills',
+  'environmentalKills',
+  'environmentalDeaths',
+  'criticalHits',
+  'shotsFired',
+  'shotsHit',
+  'shotsMissed',
+  'scopedShotsFired',
+  'scopedShotsHit',
+];
+
+const playerStatsDerivedNumericalKeys: PlayerStatsDerivedNumericalKeys[] = [
+  'eliminationsPer10Minutes', 'finalBlowsPer10Minutes',
+      'deathsPer10Minutes', 'allDamageDealtPer10Minutes', 'barrierDamageDealtPer10Minutes', 'heroDamageDealtPer10Minutes',
+      'healingDealtPer10Minutes', 'healingReceivedPer10Minutes', 'selfHealingPer10Minutes', 'damageTakenPer10Minutes',
+      'damageBlockedPer10Minutes', 'defensiveAssistsPer10Minutes', 'offensiveAssistsPer10Minutes', 'ultimatesEarnedPer10Minutes',
+      'ultimatesUsedPer10Minutes', 'multikillsPer10Minutes', 'soloKillsPer10Minutes', 'objectiveKillsPer10Minutes', 'environmentalKillsPer10Minutes',
+      'environmentalDeathsPer10Minutes', 'criticalHitsPer10Minutes', 'shotsFiredPer10Minutes', 'shotsHitPer10Minutes', 'shotsMissedPer10Minutes', 'scopedShotsFiredPer10Minutes',
+      'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'utility', 'criticalHitRate'
+];
+
+
+export const playerStatsNumericalKeys = [
+  ...playerStatsBaseNumericalKeys,
+  ...playerStatsDerivedNumericalKeys,
+] as PlayerStatsNumericalKeys[];
+
+export const playerStatsCategoryKeys: PlayerStatsCategoryKeys[] = [
+      'matchId',
+      'roundNumber', 
+      'playerTeam',
+      'playerName',
+      'playerHero',
+      'playerRole'
+    ];
 
 // The most granular data, which is the player stats for each round.
 const playerStatsBaseAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = atom(async (get) => {
@@ -45,43 +100,8 @@ const playerStatsBaseAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, 
   }));
 
   return {
-    categoryKeys: [
-      'matchId',
-      'roundNumber', 
-      'playerTeam',
-      'playerName',
-      'playerHero',
-      'playerRole'
-    ] as PlayerStatsCategoryKeys[],
-    numericalKeys: [
-      'playtime',
-      'eliminations',
-      'finalBlows', 
-      'deaths',
-      'allDamageDealt',
-      'barrierDamageDealt',
-      'heroDamageDealt',
-      'healingDealt',
-      'healingReceived', 
-      'selfHealing',
-      'damageTaken',
-      'damageBlocked',
-      'defensiveAssists',
-      'offensiveAssists',
-      'ultimatesEarned',
-      'ultimatesUsed',
-      'multikills',
-      'soloKills',
-      'objectiveKills',
-      'environmentalKills',
-      'environmentalDeaths',
-      'criticalHits',
-      'shotsFired',
-      'shotsHit',
-      'shotsMissed',
-      'scopedShotsFired',
-      'scopedShotsHit'
-    ] as PlayerStatsBaseNumericalKeys[],
+    categoryKeys: playerStatsCategoryKeys,
+    numericalKeys: playerStatsBaseNumericalKeys,
     rows: mergedStats
   };
 });
@@ -92,12 +112,15 @@ const playerStatsBaseAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, 
 function filterBaseAtom<T extends PlayerStatsCategoryKeys>(metricAtom: typeof playerStatsBaseAtom, filter: Record<T, string[]>): typeof playerStatsBaseAtom {
   const newAtom = atom(async (get) => {
     const { categoryKeys, numericalKeys, rows } = await get(metricAtom);
+
+    const filteredRows = rows.filter((row) => {
+      return Object.keys(filter).every((key) => filter[key as T].includes(row[key as T]));
+    });
+
     return {
       categoryKeys,
       numericalKeys,
-      rows: rows.filter((row) => {
-        return Object.keys(filter).every((key) => filter[key as T].includes(row[key as T]));
-      })
+      rows: filteredRows
     };
   });
 
@@ -106,17 +129,10 @@ function filterBaseAtom<T extends PlayerStatsCategoryKeys>(metricAtom: typeof pl
 
 function addDerivedMetrics<T extends PlayerStatsCategoryKeys>(metricAtom: MetricAtom<Grouped<PlayerStatsBase, T, PlayerStatsBaseNumericalKeys>, T, PlayerStatsBaseNumericalKeys>): MetricAtom<Grouped<PlayerStats, T, PlayerStatsNumericalKeys>, T, PlayerStatsNumericalKeys> {
   const newAtom = atom(async (get) => {
-    const { categoryKeys, numericalKeys, rows } = await get(metricAtom);
-    const newRows: Grouped<PlayerStats, T, PlayerStatsNumericalKeys>[] = [];
+    const { categoryKeys, rows } = await get(metricAtom);
 
-    const newNumericalKeys: PlayerStatsNumericalKeys[] = [...numericalKeys,
-      'eliminationsPer10Minutes', 'finalBlowsPer10Minutes',
-      'deathsPer10Minutes', 'allDamageDealtPer10Minutes', 'barrierDamageDealtPer10Minutes', 'heroDamageDealtPer10Minutes',
-      'healingDealtPer10Minutes', 'healingReceivedPer10Minutes', 'selfHealingPer10Minutes', 'damageTakenPer10Minutes',
-      'damageBlockedPer10Minutes', 'defensiveAssistsPer10Minutes', 'offensiveAssistsPer10Minutes', 'ultimatesEarnedPer10Minutes',
-      'ultimatesUsedPer10Minutes', 'multikillsPer10Minutes', 'soloKillsPer10Minutes', 'objectiveKillsPer10Minutes', 'environmentalKillsPer10Minutes',
-      'environmentalDeathsPer10Minutes', 'criticalHitsPer10Minutes', 'shotsFiredPer10Minutes', 'shotsHitPer10Minutes', 'shotsMissedPer10Minutes', 'scopedShotsFiredPer10Minutes',
-      'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'utility', 'criticalHitRate'];
+
+    const newRows: Grouped<PlayerStats, T, PlayerStatsNumericalKeys>[] = [];
 
     for (const row of rows) {
       const playtime = row.playtime;
@@ -159,7 +175,7 @@ function addDerivedMetrics<T extends PlayerStatsCategoryKeys>(metricAtom: Metric
 
     return {
       categoryKeys,
-      numericalKeys: newNumericalKeys,
+      numericalKeys: playerStatsNumericalKeys,
       rows: newRows
     };
   });

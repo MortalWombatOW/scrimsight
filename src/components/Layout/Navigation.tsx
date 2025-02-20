@@ -121,11 +121,10 @@ export const Navigation = () => {
               <Stack gap="xs">
                 <NavLink
                   disabled
-                  h={24}
+                  // h={24}
                   key={scrim.dateString}
-                  component={Link}
-                  to={`/matches?teams=${encodeURIComponent(scrim.team1Name)},${encodeURIComponent(scrim.team2Name)}`}
                   label={`${scrim.team1Name} vs ${scrim.team2Name}`}
+                  description={`${scrim.dateString}`}
                   active={location.pathname === `/matches?teams=${encodeURIComponent(scrim.team1Name)},${encodeURIComponent(scrim.team2Name)}`}
                 />
                 {scrim.matchIds.map((matchId) => (
