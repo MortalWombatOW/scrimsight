@@ -12,7 +12,7 @@ export type Grouped<T extends object, G extends keyof T, N extends keyof T> = Pi
 
 export function groupByAtom<T extends object, C extends keyof T, N extends keyof T, G extends C>(metricAtom: MetricAtom<T, C, N>, groupByCategoryKeys: G[]): MetricAtom<Grouped<T,G,N>, G, N> {
   const newAtom: MetricAtom<Grouped<T,G,N>, G, N> = atom(async (get) => {
-    const {numericalKeys, rows } = await get(metricAtom);
+    const {numericalKeys, rows} = await get(metricAtom);
 
     const newMetric: Metric<Grouped<T,G,N>, G, N> = {
       categoryKeys: groupByCategoryKeys,

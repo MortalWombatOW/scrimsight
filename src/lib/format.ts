@@ -29,7 +29,9 @@ export const prettyFormat = (val: number | string | undefined, decimals = 2): st
 
 export const camelCaseToWords = (s: string) => {
   const result = s.replace(/([A-Z])/g, ' $1');
-  return result.charAt(0).toUpperCase() + result.slice(1);
+  const output = result.charAt(0).toUpperCase() + result.slice(1);
+  // console.log("camelCaseToWords", s, output);
+  return output;
 }
 
 export const formatTime = (val: number) => {

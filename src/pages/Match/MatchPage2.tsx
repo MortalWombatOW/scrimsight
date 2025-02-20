@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import { matchDataAtom, useStats } from "../../atoms";
-import { Title, Group, Grid, Paper, Center, Stack, Text, Progress, Tooltip, Avatar, SimpleGrid, Box, Overlay } from "@mantine/core";
+import { PlayerStatsNumericalKeys, matchDataAtom, playerStatsNumericalKeys, useStats } from "../../atoms";
+import { Title, Group, Grid, Paper, Center, Stack, Text, Progress, Tooltip, Avatar, SimpleGrid, Box, Overlay, ColorSwatch, Select } from "@mantine/core";
 import { camelCaseToWords, formatTime, prettyFormat } from "../../lib/format";
 import { mapNameToFileName } from "../../lib/string";
 import { Image } from "@mantine/core";
@@ -9,32 +9,37 @@ import { IoMdCalendar } from "react-icons/io";
 import { MdAccessTime } from "react-icons/md";
 import { TbClockHour1 } from "react-icons/tb";
 import { getHeroImage } from "../../lib/data/hero";
-import { GiDeathSkull } from "react-icons/gi";
-import { LuSword } from "react-icons/lu";
-import { GiBullets } from "react-icons/gi";
-import { GiHealthNormal } from "react-icons/gi";
 import { GoTrophy } from "react-icons/go";
 import { FiMapPin } from "react-icons/fi";
-import { BarChart } from "@mantine/charts";
-
+import { BarChart, ScatterChart } from "@mantine/charts";
+import { useState } from "react";
+import KillsTable from "../../components/KillsTable/KillsTable";
 
 const TeamStatsComparison = ({ matchId }: { matchId: string }) => {
+
   const matchData = useAtomValue(matchDataAtom).find((match) => match.matchId === matchId);
   if (!matchData) {
     throw new Error('No match data');
   }
 
+
   const teamStats = useStats(['playerTeam'], { matchId: [matchId] });
 
   const statsToShow = ["finalBlows", "allDamageDealt", "healingDealt", "ultimatesUsed"];
 
-  const data: { stat: string, team1Value: number, team1Name: string, team2Value: number, team2Name: string }[] = statsToShow.map((stat) => ({
-    stat: camelCaseToWords(stat),
-    team1Value: teamStats.rows.find((stats) => stats.playerTeam === matchData.team1Name)?.[stat] ?? 0,
-    team1Name: matchData.team1Name,
-    team2Value: teamStats.rows.find((stats) => stats.playerTeam === matchData.team2Name)?.[stat] ?? 0,
-    team2Name: matchData.team2Name,
-  }));
+  const data: Record<string, number | string>[] = statsToShow.map((stat) => {
+    const label = camelCaseToWords(stat);
+    const row: Record<string, number | string> = {
+      stat: label,
+    };
+
+
+    for (const teamStat of teamStats.rows) {
+      row[teamStat.playerTeam] = teamStat[stat];
+    }
+
+    return row;
+  });
 
 
   console.log("data", data);
@@ -42,11 +47,7 @@ const TeamStatsComparison = ({ matchId }: { matchId: string }) => {
 
   return <Paper withBorder p="md">
     <Stack>
-      <Title order={2}>Team Stats Comparison</Title>
-      {/* <StatComparisonBar team1Name={matchData.team1Name} team2Name={matchData.team2Name} team1Value={team1Kills} team2Value={team2Kills} label="Kills" />
-      <StatComparisonBar team1Name={matchData.team1Name} team2Name={matchData.team2Name} team1Value={team1Damage} team2Value={team2Damage} label="Damage" />
-      <StatComparisonBar team1Name={matchData.team1Name} team2Name={matchData.team2Name} team1Value={team1Healing} team2Value={team2Healing} label="Healing" />
-      <StatComparisonBar team1Name={matchData.team1Name} team2Name={matchData.team2Name} team1Value={team1UltsUsed} team2Value={team2UltsUsed} label="Ultimates Used" /> */}
+      <Title order={2}>Team Stats</Title>
       {data.map((stat) => (
         <BarChart
           orientation="vertical"
@@ -54,9 +55,10 @@ const TeamStatsComparison = ({ matchId }: { matchId: string }) => {
           h={50}
           w={500}
           dataKey="stat"
+          // type="stacked"
           series={[
-            { name: "team1Value", color: "blue", label: matchData.team1Name },
-            { name: "team2Value", color: "red", label: matchData.team2Name },
+            { name: matchData.team1Name, color: "blue", label: matchData.team1Name, stackId: "team1" },
+            { name: matchData.team2Name, color: "red", label: matchData.team2Name, stackId: "team2" },
           ]}
           yAxisProps={{ width: 120 }}
           barProps={{
@@ -70,6 +72,18 @@ const TeamStatsComparison = ({ matchId }: { matchId: string }) => {
           valueLabelProps={{ position: 'inside', fill: 'white' }}
         />
       ))}
+      <Center>
+        <Group>
+          <Group>
+            <ColorSwatch size={16} color="var(--mantine-color-blue-7)" />
+            <Text size="xs">{matchData.team1Name}</Text>
+          </Group>
+          <Group>
+            <ColorSwatch size={16} color="var(--mantine-color-red-7)" />
+            <Text size="xs">{matchData.team2Name}</Text>
+          </Group>
+        </Group>
+      </Center>
     </Stack>
   </Paper>
 }
@@ -80,7 +94,6 @@ const StatBar = ({ label, value, formattedValue, maxValue, icon, color, width, h
     <Avatar size="sm" color={color ?? "myColor"}>{icon}</Avatar>
     <Tooltip label={<Text>{formattedValue} {label}</Text>}>
       <Box w={width} pos="relative">
-
         <Progress size={height} radius="xl" value={percentage} color={color ?? "myColor"} />
         <Overlay backgroundOpacity={0}>
           <Center><Text size="xs" lh={height} fw={700} c="white">{formattedValue} {showLabel && label}</Text></Center>
@@ -101,14 +114,24 @@ const PlayerStatsCard = ({ playerName, matchId }: { playerName: string, matchId:
 
   const heroImage = getHeroImage(heroStats[0].playerHero, true);
 
-  const roleIsSupport = playerStats.rows.find((stats) => stats.playerName === playerName)?.playerRole === "support";
+  const playerRole = playerStats.rows.find((stats) => stats.playerName === playerName)?.playerRole;
 
-  const getStat = (stat: string) => {
+  const getStat = (stat: string): number => {
     return playerStats.rows.find((stats) => stats.playerName === playerName)?.[stat] ?? 0;
   }
 
   const getMaxStat = (stat: string) => {
     return Math.max(...playerStats.rows.map((stats) => stats[stat]));
+  }
+
+  const statsToShow = ["finalBlows", "allDamageDealt", "ultimatesUsed"];
+
+  if (playerRole === "support") {
+    statsToShow.push("healingDealt");
+  }
+
+  if (playerRole === "tank") {
+    statsToShow.push("damageBlocked");
   }
 
   return <Paper withBorder p="md" w="fit-content" h="100%">
@@ -128,12 +151,33 @@ const PlayerStatsCard = ({ playerName, matchId }: { playerName: string, matchId:
         </SimpleGrid>
       </Stack>
       <Stack>
-        <StatBar label="Final Blows" showLabel width="200px" height="20px" value={getStat("finalBlows")} formattedValue={prettyFormat(getStat("finalBlows"))} maxValue={getMaxStat("finalBlows")} icon={<LuSword size={16} />} />
-        <StatBar label="Eliminations" showLabel width="200px" height="20px" value={getStat("eliminations")} formattedValue={prettyFormat(getStat("eliminations"))} maxValue={getMaxStat("eliminations")} icon={<LuSword size={16} />} />
-        <StatBar label="Deaths" showLabel width="200px" height="20px" value={getStat("deaths")} formattedValue={prettyFormat(getStat("deaths"))} maxValue={getMaxStat("deaths")} icon={<GiDeathSkull size={16} />} />
-        <StatBar label="Damage" showLabel width="200px" height="20px" value={getStat("allDamageDealt")} formattedValue={prettyFormat(getStat("allDamageDealt"))} maxValue={getMaxStat("allDamageDealt")} icon={<GiBullets size={16} />} />
-        {roleIsSupport && <StatBar label="Healing" showLabel width="200px" height="20px" value={getStat("healingDealt")} formattedValue={prettyFormat(getStat("healingDealt"))} maxValue={getMaxStat("healingDealt")} icon={<GiHealthNormal size={16} />} />}
-        <StatBar label="Ultimates Used" showLabel width="200px" height="20px" value={getStat("ultimatesUsed")} formattedValue={prettyFormat(getStat("ultimatesUsed"))} maxValue={getMaxStat("ultimatesUsed")} icon={<Text fw={700}>Q</Text>} />
+        {statsToShow.map((stat) => (
+          <BarChart
+            orientation="vertical"
+            h={25}
+            w={300}
+            data={[
+              { stat: camelCaseToWords(stat), value: getStat(stat) },
+            ]}
+            dataKey="stat"
+            series={[
+              { name: "value", color: "myColor" },
+            ]}
+            yAxisProps={{ width: 120 }}
+            barProps={{
+              radius: 5
+            }}
+            withBarValueLabel
+            tickLine="none"
+            strokeDasharray="0 1"
+            withXAxis={false}
+            valueFormatter={(value) => prettyFormat(value)}
+            valueLabelProps={{ position: 'inside', fill: 'white' }}
+            xAxisProps={{
+              domain: [0, getMaxStat(stat)]
+            }}
+          />
+        ))}
       </Stack>
     </Group>
   </Paper>
@@ -145,10 +189,10 @@ const PlayerStatsComparison = ({ matchId }: { matchId: string }) => {
   if (!matchData) {
     return null;
   }
-  return <Paper withBorder p="md">
+  return <Paper p="0">
     <Stack gap="md">
       <Stack>
-        <Title order={3}>{matchData.team1Name}</Title>
+        <Title order={3}>{matchData.team1Name} Players</Title>
         <Group align="flex-start">
           {playerStats.rows.filter((stats) => stats.playerTeam === matchData.team1Name).map((player) => (
             <PlayerStatsCard key={player.playerName} playerName={player.playerName} matchId={matchId} />
@@ -156,7 +200,7 @@ const PlayerStatsComparison = ({ matchId }: { matchId: string }) => {
         </Group>
       </Stack>
       <Stack>
-        <Title order={3}>{matchData.team2Name}</Title>
+        <Title order={3}>{matchData.team2Name} Players</Title>
         <Group align="flex-start">
           {playerStats.rows.filter((stats) => stats.playerTeam === matchData.team2Name).map((player) => (
             <PlayerStatsCard key={player.playerName} playerName={player.playerName} matchId={matchId} />
@@ -175,6 +219,138 @@ interface MatchScoreCardProps {
     team2Score: number;
     roundWinners: ("team1" | "team2" | "draw")[];
   };
+}
+
+const AllPlayerComparison = ({ matchId }: { matchId: string }) => {
+  const matchData = useAtomValue(matchDataAtom).find((match) => match.matchId === matchId);
+  if (!matchData) {
+    return null;
+  }
+  const playerStats = useStats(['playerName', "playerTeam"], { matchId: [matchId] });
+
+  console.log("playerStats", playerStats);
+
+  const [xStat, setXStat] = useState<PlayerStatsNumericalKeys>("finalBlows");
+  const [yStat, setYStat] = useState<PlayerStatsNumericalKeys>("deaths");
+
+  const team1Data = playerStats.rows.filter((stats) => stats.playerTeam === matchData.team1Name);
+  const team2Data = playerStats.rows.filter((stats) => stats.playerTeam === matchData.team2Name);
+
+  const data = [
+    ...team1Data.map((stats) => ({ color: "blue", name: stats.playerName, data: [stats] })),
+    ...team2Data.map((stats) => ({ color: "red", name: stats.playerName, data: [stats] })),
+  ];
+
+  return <Paper withBorder p="md">
+    <Stack align="flex-start">
+      <Title order={3}>Compare Players</Title>
+      <ScatterChart
+        h={500}
+        w="100%"
+        data={data}
+        dataKey={{ x: xStat, y: yStat }}
+        xAxisLabel={camelCaseToWords(xStat)}
+        yAxisLabel={camelCaseToWords(yStat)}
+        labels={{ x: camelCaseToWords(xStat), y: camelCaseToWords(yStat) }}
+        valueFormatter={(value) => prettyFormat(value)}
+        scatterProps={{
+          shape: (props: any) => {
+            console.log("props", props);
+            return (<g transform={`translate(${props.x + 5}, ${props.y + 5})`}>
+              <circle cx={0} cy={0} r={5} fill={props.playerTeam === matchData.team1Name ? "#1971c2" : "#e03131"} />
+              <text x={0} y={15} fill="grey" fontSize={12} dominantBaseline="middle" textAnchor="middle">{props.playerName}</text>
+            </g>);
+          }
+        }}
+      />
+      <Group>
+        <Select
+          label="X Metric"
+          data={playerStatsNumericalKeys.map((key) => ({ label: camelCaseToWords(key), value: key }))}
+          value={xStat}
+          onChange={(value) => setXStat(value as PlayerStatsNumericalKeys)}
+          allowDeselect={false}
+          searchable
+        />
+        <Select
+          label="Y Metric"
+          data={playerStatsNumericalKeys.map((key) => ({ label: camelCaseToWords(key), value: key }))}
+          value={yStat}
+          onChange={(value) => setYStat(value as PlayerStatsNumericalKeys)}
+          allowDeselect={false}
+          searchable
+        />
+      </Group>
+    </Stack>
+  </Paper>
+}
+
+const SingleStatPlayerComparison = ({ matchId }: { matchId: string }) => {
+  const matchData = useAtomValue(matchDataAtom).find((match) => match.matchId === matchId);
+  const playerStats = useStats(['playerName', "playerTeam"], { matchId: [matchId] });
+  const [stat, setStat] = useState<PlayerStatsNumericalKeys>("finalBlows");
+
+  if (!matchData) {
+    return null;
+  }
+
+  const team1Data = playerStats.rows.filter((stats) => stats.playerTeam === matchData.team1Name).sort((a, b) => b[stat] - a[stat]);
+  const team2Data = playerStats.rows.filter((stats) => stats.playerTeam === matchData.team2Name).sort((a, b) => b[stat] - a[stat]);
+
+  return <Paper withBorder p="md">
+    <Stack>
+      <Title order={3}>Compare Metric</Title>
+      <Select
+        data={playerStatsNumericalKeys.map((key) => ({ label: camelCaseToWords(key), value: key }))}
+        value={stat}
+        onChange={(value) => setStat(value as PlayerStatsNumericalKeys)}
+        allowDeselect={false}
+        searchable
+      />
+      <Title order={4}>{matchData.team1Name}</Title>
+      <BarChart
+        orientation="vertical"
+        h={150}
+        w="500px"
+        data={team1Data}
+        dataKey="playerName"
+        series={[
+          { name: stat, color: "myColor", label: 'playerName' },
+        ]}
+        yAxisProps={{ width: 120 }}
+        withBarValueLabel
+        valueFormatter={(value) => prettyFormat(value)}
+        valueLabelProps={{ position: 'inside', fill: 'white' }}
+        barProps={{
+          radius: 5
+        }}
+        tickLine="none"
+        strokeDasharray="0 1"
+        withXAxis={false}
+      />
+      <Title order={4}>{matchData.team2Name}</Title>
+      <BarChart
+        orientation="vertical"
+        h={150}
+        w="500px"
+        data={team2Data}
+        dataKey="playerName"
+        series={[
+          { name: stat, color: "myColor", label: 'playerName' },
+        ]}
+        yAxisProps={{ width: 120 }}
+        withBarValueLabel
+        valueFormatter={(value) => prettyFormat(value)}
+        valueLabelProps={{ position: 'inside', fill: 'white' }}
+        barProps={{
+          radius: 5
+        }}
+        tickLine="none"
+        strokeDasharray="0 1"
+        withXAxis={false}
+      />
+    </Stack>
+  </Paper>
 }
 
 const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
@@ -242,7 +418,7 @@ export const MatchPage2 = () => {
   // const playerStats = useStats(['playerName'], { matchId: [matchId] });
 
   return (
-    <Group>
+    <Group align="flex-start">
 
       <Paper withBorder p="0" w={350}>
         <Stack gap="0">
@@ -272,6 +448,9 @@ export const MatchPage2 = () => {
       <MatchScoreCard matchData={matchData} />
       <TeamStatsComparison matchId={matchId} />
       <PlayerStatsComparison matchId={matchId} />
+      <AllPlayerComparison matchId={matchId} />
+      <SingleStatPlayerComparison matchId={matchId} />
+      <KillsTable matchId={matchId} />
     </Group>
   );
 };
