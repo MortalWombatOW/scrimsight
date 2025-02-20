@@ -13,6 +13,7 @@ import { GoTrophy } from "react-icons/go";
 import { FiMapPin } from "react-icons/fi";
 import { BarChart, ScatterChart } from "@mantine/charts";
 import { useState } from "react";
+import KillsTable from "../../components/KillsTable/KillsTable";
 
 const TeamStatsComparison = ({ matchId }: { matchId: string }) => {
 
@@ -252,6 +253,15 @@ const AllPlayerComparison = ({ matchId }: { matchId: string }) => {
         yAxisLabel={camelCaseToWords(yStat)}
         labels={{ x: camelCaseToWords(xStat), y: camelCaseToWords(yStat) }}
         valueFormatter={(value) => prettyFormat(value)}
+        scatterProps={{
+          shape: (props: any) => {
+            console.log("props", props);
+            return (<g transform={`translate(${props.x + 5}, ${props.y + 5})`}>
+              <circle cx={0} cy={0} r={5} fill={props.playerTeam === matchData.team1Name ? "#1971c2" : "#e03131"} />
+              <text x={0} y={15} fill="grey" fontSize={12} dominantBaseline="middle" textAnchor="middle">{props.playerName}</text>
+            </g>);
+          }
+        }}
       />
       <Group>
         <Select
@@ -440,6 +450,7 @@ export const MatchPage2 = () => {
       <PlayerStatsComparison matchId={matchId} />
       <AllPlayerComparison matchId={matchId} />
       <SingleStatPlayerComparison matchId={matchId} />
+      <KillsTable matchId={matchId} />
     </Group>
   );
 };
