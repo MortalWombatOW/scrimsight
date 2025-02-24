@@ -1,19 +1,28 @@
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import { PlayerStatsNumericalKeys, matchDataAtom, playerStatsNumericalKeys, useStats } from "../../atoms";
-import { Title, Group, Grid, Paper, Center, Stack, Text, Progress, Tooltip, Avatar, SimpleGrid, Box, Overlay, ColorSwatch, Select } from "@mantine/core";
-import { camelCaseToWords, formatTime, prettyFormat } from "../../lib/format";
+import { MatchData, PlayerInteractionEvent, PlayerStatsNumericalKeys, matchDataAtom, playerInteractionEventsAtom, ultimateEventsAtom, playerEventsAtom, playerStatsNumericalKeys, useStats, uniquePlayerNamesAtom, mapTimesAtom, PlayerEvent } from "../../atoms";
+import { Title, Group, Grid, Paper, Center, Stack, Text, Progress, Tooltip, Avatar, SimpleGrid, Box, Overlay, ColorSwatch, Select, Transition } from "@mantine/core";
+import { camelCaseToAbbreviation, camelCaseToWords, formatTime, prettyFormat } from "../../lib/format";
 import { mapNameToFileName } from "../../lib/string";
 import { Image } from "@mantine/core";
-import { IoMdCalendar } from "react-icons/io";
+import { IoMdCalendar, IoMdClose } from "react-icons/io";
 import { MdAccessTime } from "react-icons/md";
 import { TbClockHour1 } from "react-icons/tb";
 import { getHeroImage } from "../../lib/data/hero";
 import { GoTrophy } from "react-icons/go";
 import { FiMapPin } from "react-icons/fi";
 import { BarChart, ScatterChart } from "@mantine/charts";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import KillsTable from "../../components/KillsTable/KillsTable";
+import { Canvas, useFrame } from '@react-three/fiber'
+import * as THREE from 'three';
+import { useHover, useInterval, usePrevious, useTimeout } from "@mantine/hooks";
+import { Line, Text as TextThree } from "@react-three/drei";
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import { PiSword } from "react-icons/pi";
+import { GiDeathSkull } from "react-icons/gi";
+import { FaHandsHelping } from "react-icons/fa";
+import { useElementSize, useEventListener, useMergedRef, useMouse, useSet } from "@mantine/hooks";
 
 const TeamStatsComparison = ({ matchId }: { matchId: string }) => {
 
@@ -103,14 +112,321 @@ const StatBar = ({ label, value, formattedValue, maxValue, icon, color, width, h
   </Group >
 }
 
+const InteractionEventAvatar = ({
+  event,
+  getX,
+  getY,
+  eventTypeToIconMap,
+  isHighlighted
+}: {
+  event: PlayerInteractionEvent,
+  getX: (time: number) => number,
+  getY: (playerName: string) => number,
+  eventTypeToIconMap: Record<string, JSX.Element>,
+  isHighlighted: boolean
+}) => {
+
+  return (
+    <Tooltip
+      label={
+        <Text>
+          {camelCaseToWords(event.playerInteractionEventType)}
+          {event.otherPlayerName ? ` vs ${event.otherPlayerName}` : ""}
+          ({event.playerHero})
+        </Text>
+      }
+    >
+      <Avatar
+        pos="absolute"
+        left={`calc(${getX(event.playerInteractionEventTime)}px - 12.5px)`}
+        top={`calc(${getY(event.playerName)}px - 12.5px)`}
+        size={isHighlighted ? "md" : "sm"}
+        src={eventTypeToIconMap[event.playerInteractionEventType as keyof typeof eventTypeToIconMap] === undefined
+          ? getHeroImage(event.playerHero, true)
+          : undefined}
+      >
+        {eventTypeToIconMap[event.playerInteractionEventType as keyof typeof eventTypeToIconMap]}
+      </Avatar>
+    </Tooltip>
+  );
+};
+
+const PlayerEventThree = ({
+  event,
+  getX,
+  getY,
+  isHighlighted
+}: {
+  event: PlayerEvent,
+  getX: (time: number) => number,
+  getY: (playerName: string) => number,
+  isHighlighted: boolean
+}) => {
+  return (
+    <mesh position={[getX(event.playerEventTime), getY(event.playerName), 0]}>
+      <boxGeometry args={[10, 10, 1]} />
+      <meshStandardMaterial color={isHighlighted ? "red" : "white"} />
+    </mesh>
+  );
+};
+
+const InteractionArrow = ({
+  startPos,
+  endPos,
+  color,
+  visible
+}: {
+  startPos: THREE.Vector3,
+  endPos: THREE.Vector3,
+  color: string,
+  visible: boolean
+}) => {
+  const geometryRef = useRef<THREE.BufferGeometry>(null);
+  const materialRef = useRef<THREE.LineBasicMaterial>(null);
+  const [opacity, setOpacity] = useState(1);
+  const [progress, setProgress] = useState(0);
+  // const { start, clear } = useTimeout(() => setOpacity(0), 1000);
+  const interval = useInterval(() => setProgress((p) => Math.min(p + 2, 100)), 16);
+
+  useEffect(() => {
+    if (visible) {
+      setProgress(0);
+      interval.start();
+      setOpacity(1);
+      // clear();
+    } else {
+      interval.stop();
+      // start();
+    }
+  }, [visible]);
+
+  useFrame(() => {
+    if (geometryRef.current && materialRef.current) {
+      const curve = new THREE.CatmullRomCurve3([
+        startPos,
+        new THREE.Vector3(
+          (startPos.x + endPos.x) / 2 + 50,
+          (startPos.y + endPos.y) / 2,
+          0
+        ),
+        endPos
+      ]);
+
+      const points = curve.getPoints(30);
+      const visiblePoints = points.slice(0, Math.floor(points.length * progress / 100));
+
+      geometryRef.current.setFromPoints(visiblePoints);
+    }
+  });
+
+  return (
+    <line>
+      <bufferGeometry ref={geometryRef} />
+      <lineBasicMaterial
+        ref={materialRef}
+        color={color}
+        opacity={opacity}
+        linewidth={2}
+      />
+    </line>
+  );
+};
+
+const PlayerInteractionEventThree = ({
+  event,
+  getX,
+  getY,
+  matchData,
+  isHighlighted
+}: {
+  event: PlayerInteractionEvent,
+  getX: (time: number) => number,
+  getY: (playerName: string) => number,
+  matchData: MatchData,
+  isHighlighted: boolean
+}) => {
+  const startPos = new THREE.Vector3(
+    getX(event.playerInteractionEventTime),
+    getY(event.playerName),
+    0
+  );
+  const endPos = new THREE.Vector3(
+    getX(event.playerInteractionEventTime),
+    getY(event.otherPlayerName),
+    0
+  );
+
+  const teamColor = matchData.team1Players.includes(event.playerName)
+    ? '#1971c2'
+    : '#e03131';
+
+  return (
+    <>
+      <InteractionArrow
+        startPos={startPos}
+        endPos={endPos}
+        color={teamColor}
+        visible={true}
+      />
+      <mesh position={startPos}>
+        <boxGeometry args={[10, 10, 1]} />
+        <meshStandardMaterial
+          color={isHighlighted ? teamColor : 'white'}
+          transparent
+          opacity={isHighlighted ? 1 : 0.5}
+        />
+      </mesh>
+      <mesh position={endPos}>
+        <boxGeometry args={[10, 10, 1]} />
+        <meshStandardMaterial
+          color={isHighlighted ? teamColor : 'white'}
+          transparent
+          opacity={isHighlighted ? 1 : 0.5}
+        />
+      </mesh>
+    </>
+  );
+};
+
+const Timeline = ({ matchData }: { matchData: MatchData }) => {
+  const mapTimes = useAtomValue(mapTimesAtom).find((match) => match.matchId === matchData.matchId);
+  const playerEvents = useAtomValue(playerEventsAtom).filter((event) => event.matchId === matchData.matchId);
+  const playerInteractionEvents = useAtomValue(playerInteractionEventsAtom).filter((event) => event.matchId === matchData.matchId);
+  const ultimateEvents = useAtomValue(ultimateEventsAtom).filter((event) => event.matchId === matchData.matchId);
+  const { ref, width } = useElementSize();
+  const uniquePlayerNames = useStats(['playerName'], { matchId: [matchData.matchId] });
+  const maxTime = mapTimes?.endTime ?? 0;
+  const minTime = mapTimes?.startTime ?? 0;
+  const timeRange = maxTime - minTime;
+  const { ref: namesBoxRef, width: namesBoxWidth } = useElementSize();
+  const leftOffset = namesBoxWidth + 90;
+  const topOffset = 40;
+
+
+  const playerOrder = [...matchData.team1Players, ...matchData.team2Players];
+  const height = playerOrder.length * 50 + topOffset;
+
+  const getX = (time: number) => (time - minTime) / timeRange * (width - leftOffset) - width / 2 + leftOffset;
+  const getY = (playerName: string) => playerOrder.findIndex((player) => player === playerName) * 50 + topOffset - height / 2;
+
+  const eventTypeToIconMap = {
+    "Died": <GiDeathSkull size={16} />,
+    "Killed player": <PiSword size={16} />,
+    "offensiveAssist": <FaHandsHelping size={16} />,
+    "defensiveAssist": <FaHandsHelping size={16} />,
+  };
+
+  const { ref: mouseRef, x: mouseX, y: mouseY } = useMouse();
+
+  const distanceThreshold = (5 / timeRange) * (width - leftOffset);
+
+  const pointsInRange = (x: number, range: number) => {
+    const mouseXDistance = Math.abs(mouseX - x - width / 2);
+    console.log("mouseXDistance", mouseXDistance);
+    console.log("range", range);
+    console.log("mouseX", mouseX);
+    console.log("x", x);
+    return mouseXDistance < range;
+  }
+
+  const highlightedEvents = playerEvents.filter((event) =>
+    pointsInRange(getX(event.playerEventTime), distanceThreshold)
+  );
+
+  const highlightedInteractionEvents = playerInteractionEvents.filter((event) =>
+    pointsInRange(getX(event.playerInteractionEventTime), distanceThreshold)
+  );
+
+  const highlightedUltimateEvents = ultimateEvents.filter((event) =>
+    pointsInRange(getX(event.ultimateStartTime), distanceThreshold) ||
+    pointsInRange(getX(event.ultimateEndTime), distanceThreshold)
+  );
+
+  console.log("highlightedEvents", highlightedEvents);
+
+  console.log("highlightedInteractionEvents", highlightedInteractionEvents);
+  console.log("highlightedUltimateEvents", highlightedUltimateEvents);
+  return <Paper withBorder p="md">
+    <Stack pos="relative" h={playerOrder.length * 50 + topOffset} ref={mouseRef}>
+      <Canvas orthographic ref={ref}>
+        <ambientLight />
+        <pointLight position={[10, 10, 10]} />
+        {playerOrder.map((player, index) => (
+          <>
+            <TextThree scale={12} position={[getX(0) - 10, getY(player), 0]} color="white" anchorX="right" anchorY="middle">{player}</TextThree>
+          </>
+        ))}
+        {playerEvents.map((event) => {
+          const isHighlighted = highlightedEvents.includes(event);
+          return (
+            <PlayerEventThree
+              key={JSON.stringify(event)}
+              event={event}
+              getX={getX}
+              getY={getY}
+              isHighlighted={isHighlighted}
+            />
+          );
+        })}
+        {playerInteractionEvents.map((event) => {
+          const isHighlighted = highlightedInteractionEvents.includes(event);
+          return (
+            <PlayerInteractionEventThree
+              key={JSON.stringify(event)}
+              event={event}
+              getX={getX}
+              getY={getY}
+              matchData={matchData}
+              isHighlighted={isHighlighted}
+            />
+          );
+        })}
+      </Canvas>
+    </Stack>
+  </Paper >
+}
+
 const PlayerStatsCard = ({ playerName, matchId }: { playerName: string, matchId: string }) => {
   const playerStats = useStats(['playerName', "playerTeam", "playerRole"], { matchId: [matchId] });
   const heroStats = useStats(['playerName', 'playerHero'], { matchId: [matchId] }, 'playtime', 'desc').rows.filter((stats) => stats.playerName === playerName);
+  const { hovered, ref } = useHover();
+  const lastHovered = usePrevious(hovered);
+  const [highlighted, setHighlighted] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const { start, clear } = useTimeout(([hovered]) => {
+    // console.log("hovered", hovered);
+    setHighlighted(hovered)
+  }, 1000);
+
+  const interval = useInterval(() => {
+    if (progress < 100) {
+      setProgress(progress + 20);
+    }
+  }, 100);
+
+  useEffect(() => {
+    console.log("hoveredsss", hovered);
+    if (lastHovered !== hovered) {
+      // console.log("hovered changed", hovered);
+      clear();
+      start(hovered);
+      setProgress(0);
+      interval.start();
+
+    }
+    if ((!hovered && !highlighted) || (hovered && highlighted)) {
+      clear();
+      setProgress(0);
+      interval.stop();
+    }
+  }, [hovered]);
+
   if (!playerStats || !heroStats) {
     throw new Error('No player stats');
   }
 
-  console.log("heroStats", heroStats);
+  // console.log("heroStats", heroStats);
 
   const heroImage = getHeroImage(heroStats[0].playerHero, true);
 
@@ -124,64 +440,98 @@ const PlayerStatsCard = ({ playerName, matchId }: { playerName: string, matchId:
     return Math.max(...playerStats.rows.map((stats) => stats[stat]));
   }
 
+  const getRanking = (stat: string): { rank: number, max: number, percentage: number } => {
+    const max = getMaxStat(stat);
+    const percentage = getStat(stat) / max * 100;
+    const rank = playerStats.rows.filter((stats) => stats[stat] > getStat(stat)).length + 1;
+    return { rank, max, percentage };
+  }
+
   const statsToShow = ["finalBlows", "allDamageDealt", "ultimatesUsed"];
 
+
+  if (playerRole === "damage") {
+
+    statsToShow.push("eliminations", "weaponAccuracy", "criticalHits");
+  }
+
   if (playerRole === "support") {
-    statsToShow.push("healingDealt");
+    statsToShow.push("healingDealt", "offensiveAssists", "defensiveAssists");
   }
 
   if (playerRole === "tank") {
     statsToShow.push("damageBlocked");
   }
 
-  return <Paper withBorder p="md" w="fit-content" h="100%">
-    <Group style={{ alignItems: "flex-start" }}>
-      <Stack>
-        <Group>
-          <Avatar src={heroImage} size="lg" />
-          <Stack gap="0">
-            <Title order={3}>{playerName}</Title>
-            <Text size="xs">{playerStats.rows.find((stats) => stats.playerName === playerName)?.playerTeam}</Text>
-          </Stack>
-        </Group>
-        <SimpleGrid cols={2}>
+  return <Transition transition="fade" mounted={true}>
+    {(transitionStyles) => <Paper withBorder p="md" w="fit-content" h="100%" ref={ref} style={{ ...transitionStyles }}>
+      <Group style={{ alignItems: "flex-start" }}>
+        <Stack>
+          <Group>
+            <Avatar src={heroImage} size="30" />
+            <Stack gap="0">
+              <Title order={5}>{playerName}</Title>
+              <Text size="xs">{playerStats.rows.find((stats) => stats.playerName === playerName)?.playerTeam}</Text>
+            </Stack>
+            <Group gap="0" style={{ alignItems: "flex-end" }}>
+              {(highlighted ? statsToShow : statsToShow.slice(0, 3)).map((stat) => (
+                <Tooltip key={stat} label={<Text>{playerName} is ranked #{getRanking(stat).rank} in {camelCaseToWords(stat)} this match</Text>}>
+                  <Stack key={stat} gap="0" w="50px">
+                    <Center><Avatar size={getRanking(stat).rank === 1 ? "md" : "sm"} color={getRanking(stat).rank === 1 ? "myColor" : "gray.5"}><Text size={getRanking(stat).rank === 1 ? "md" : "sm"}>#{getRanking(stat).rank}</Text></Avatar></Center>
+                    <Center><Text size="xs">{camelCaseToAbbreviation(stat)}</Text></Center>
+                  </Stack></Tooltip>
+              ))}
+            </Group>
+          </Group>
+          {/* <SimpleGrid cols={2}>
           {heroStats.map((stat) => (
             <StatBar key={stat.playerHero} label={`played on ${stat.playerHero}`} width="70px" height="20px" value={stat.playtime} formattedValue={formatTime(stat.playtime)} maxValue={Math.max(...heroStats.map((stats) => stats.playtime))} icon={<Avatar src={getHeroImage(stat.playerHero, true)} size="sm" />} color="myColor" />
           ))}
-        </SimpleGrid>
-      </Stack>
-      <Stack>
-        {statsToShow.map((stat) => (
-          <BarChart
-            orientation="vertical"
-            h={25}
-            w={300}
-            data={[
-              { stat: camelCaseToWords(stat), value: getStat(stat) },
-            ]}
-            dataKey="stat"
-            series={[
-              { name: "value", color: "myColor" },
-            ]}
-            yAxisProps={{ width: 120 }}
-            barProps={{
-              radius: 5
-            }}
-            withBarValueLabel
-            tickLine="none"
-            strokeDasharray="0 1"
-            withXAxis={false}
-            valueFormatter={(value) => prettyFormat(value)}
-            valueLabelProps={{ position: 'inside', fill: 'white' }}
-            xAxisProps={{
-              domain: [0, getMaxStat(stat)]
-            }}
-          />
-        ))}
-      </Stack>
-    </Group>
-  </Paper>
+        </SimpleGrid> */}
+
+          {(highlighted ? statsToShow : statsToShow.slice(0, 3)).map((stat) => (
+            <BarChart
+              orientation="vertical"
+              h={25}
+              w={300}
+              data={[
+                { stat: camelCaseToWords(stat), value: getStat(stat) },
+              ]}
+              dataKey="stat"
+              series={[
+                { name: "value", color: "myColor" },
+              ]}
+              yAxisProps={{ width: 80 }}
+              barProps={{
+                radius: 5
+              }}
+              withBarValueLabel
+              tickLine="none"
+              strokeDasharray="0 1"
+              withXAxis={false}
+              valueFormatter={(value) => prettyFormat(value)}
+              valueLabelProps={{ position: 'inside', fill: 'white' }}
+              xAxisProps={{
+                domain: [0, getMaxStat(stat)]
+              }}
+            />
+          ))}
+          {progress > 0 && progress < 100 && <Progress
+            size={2}
+            value={progress}
+            color="myColor"
+            m="0"
+            mb="-16px"
+          />}
+        </Stack>
+
+      </Group>
+    </Paper >
+    }
+  </Transition>
 }
+
+
 
 const PlayerStatsComparison = ({ matchId }: { matchId: string }) => {
   const matchData = useAtomValue(matchDataAtom).find((match) => match.matchId === matchId);
@@ -414,43 +764,68 @@ export const MatchPage2 = () => {
   if (!matchData) {
     return null;
   }
-  // const teamStats = useStats(['playerTeam'], { matchId: [matchId] });
-  // const playerStats = useStats(['playerName'], { matchId: [matchId] });
+  // const teamStats = useStats(['playerTeam'], {matchId: [matchId] });
+  // const playerStats = useStats(['playerName'], {matchId: [matchId] });
 
   return (
     <Group align="flex-start">
-
-      <Paper withBorder p="0" w={350}>
-        <Stack gap="0">
-          <Image src={mapNameToFileName(matchData.map, false)} radius="sm" h={200} w={350} />
-          <Group p="xs">
-            <FiMapPin />
-            <Title order={3}>{matchData.map} ({matchData.mode})</Title>
-          </Group>
-          <Group p="xs">
+      <Grid>
+        <Grid.Col span={{ base: 12, md: 8, sm: 12 }}>
+          <Paper withBorder w="100%" p="lg" bg="dark.6">
             <Group>
-              <IoMdCalendar />
-              <Text>{new Date(matchData.fileModified).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</Text>
+              <Stack gap="0">
+                <Image src={mapNameToFileName(matchData.map, false)} radius="sm" h={200} w="100%" />
+                <Group p="xs">
+                  <FiMapPin />
+                  <Title order={3}>{matchData.map} ({matchData.mode})</Title>
+                </Group>
+                <Group p="xs">
+                  <Group>
+                    <IoMdCalendar />
+                    <Text>{new Date(matchData.fileModified).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</Text>
+                  </Group>
+                  <Group>
+                    <MdAccessTime />
+                    <Text>{new Date(matchData.fileModified).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}</Text>
+                  </Group>
+                  <Group>
+                    <TbClockHour1 />
+                    <Text>{formatTime(matchData.duration)}</Text>
+                  </Group>
+                </Group>
+              </Stack>
             </Group>
             <Group>
-              <MdAccessTime />
-              <Text>{new Date(matchData.fileModified).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone })}</Text>
+              <PlayerStatsComparison matchId={matchId} />
+
+              <AllPlayerComparison matchId={matchId} />
             </Group>
-            <Group>
-              <TbClockHour1 />
-              <Text>{formatTime(matchData.duration)}</Text>
-            </Group>
-          </Group>
-        </Stack>
-      </Paper>
+            <Timeline matchData={matchData} />
+          </Paper>
+
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 4, sm: 12 }}>
+          <MatchScoreCard matchData={matchData} />
+
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 4, sm: 12 }}>
+          <TeamStatsComparison matchId={matchId} />
+        </Grid.Col>
+        {/* <Grid.Col span={{ base: 12, md: 4, sm: 12 }}>
+          <PlayerStatsComparison matchId={matchId} />
+        </Grid.Col> */}
+      </Grid>
+
+      {/* <Timeline matchData={matchData} /> */}
 
 
+      {/* 
       <MatchScoreCard matchData={matchData} />
       <TeamStatsComparison matchId={matchId} />
       <PlayerStatsComparison matchId={matchId} />
       <AllPlayerComparison matchId={matchId} />
       <SingleStatPlayerComparison matchId={matchId} />
-      <KillsTable matchId={matchId} />
-    </Group>
+      <KillsTable matchId={matchId} /> */}
+    </Group >
   );
 };

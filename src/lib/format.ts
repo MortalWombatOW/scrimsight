@@ -34,6 +34,10 @@ export const camelCaseToWords = (s: string) => {
   return output;
 }
 
+export const camelCaseToAbbreviation = (s: string) => {
+  return s.charAt(0).toUpperCase() + s.slice(1).replace(/([a-z])/g, '');
+}
+
 export const formatTime = (val: number) => {
   const hours = Math.floor(val / 3600);
   const minutes = Math.floor((val % 3600) / 60);
