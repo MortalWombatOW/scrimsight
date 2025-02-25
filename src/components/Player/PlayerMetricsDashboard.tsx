@@ -1,30 +1,50 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, LineChart, Line } from 'recharts';
-import { Box, Typography, Paper, Grid, Tabs, Tab } from '@mui/material';
-import { useAtomValue } from 'jotai';
-import { 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  LineChart,
+  Line,
+} from "recharts";
+import { Box, Typography, Paper, Grid, Tabs, Tab } from "@mui/material";
+import { useAtomValue } from "jotai";
+import {
   playerStatsByPlayerAtom,
   playerStatsByPlayerAndHeroAtom,
   playerStatsByPlayerAndRoleAtom,
-  playerStatsByMatchIdAndPlayerNameAtom
-} from '../../atoms/metrics/playerMetricsAtoms';
-import { useState } from 'react';
-import { StatCard } from '../Card/StatCard';
+  playerStatsByMatchIdAndPlayerNameAtom,
+} from "../../atoms/metrics/playerMetricsAtoms";
+import { useState } from "react";
+import { StatCard } from "../StatCard";
 
 interface MetricSectionProps {
   title: string;
   data: Array<{ name: string; value: number }>;
   colors: string[];
-  chartType?: 'bar' | 'pie' | 'line';
+  chartType?: "bar" | "pie" | "line";
 }
 
-const MetricSection = ({ title, data, colors, chartType = 'bar' }: MetricSectionProps) => (
+const MetricSection = ({
+  title,
+  data,
+  colors,
+  chartType = "bar",
+}: MetricSectionProps) => (
   <Paper sx={{ p: 2, mb: 3 }}>
-    <Typography variant="h6" gutterBottom>{title}</Typography>
+    <Typography variant="h6" gutterBottom>
+      {title}
+    </Typography>
     <Grid container spacing={3}>
-      <Grid item xs={12} md={chartType === 'line' ? 12 : 6}>
+      <Grid item xs={12} md={chartType === "line" ? 12 : 6}>
         <Box sx={{ height: 300 }}>
           <ResponsiveContainer width="100%" height="100%">
-            {chartType === 'bar' ? (
+            {chartType === "bar" ? (
               <BarChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -33,7 +53,7 @@ const MetricSection = ({ title, data, colors, chartType = 'bar' }: MetricSection
                 <Legend />
                 <Bar dataKey="value" fill={colors[0]} />
               </BarChart>
-            ) : chartType === 'pie' ? (
+            ) : chartType === "pie" ? (
               <PieChart>
                 <Pie
                   data={data}
@@ -64,18 +84,29 @@ const MetricSection = ({ title, data, colors, chartType = 'bar' }: MetricSection
   </Paper>
 );
 
-export const PlayerMetricsDashboard = ({ playerName }: { playerName: string }) => {
+export const PlayerMetricsDashboard = ({
+  playerName,
+}: {
+  playerName: string;
+}) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  
+
   const overallStats = useAtomValue(playerStatsByPlayerAtom);
   const heroStats = useAtomValue(playerStatsByPlayerAndHeroAtom);
   const roleStats = useAtomValue(playerStatsByPlayerAndRoleAtom);
   const matchStats = useAtomValue(playerStatsByMatchIdAndPlayerNameAtom);
 
-  const playerOverallStats = overallStats.rows.find(stat => stat.playerName === playerName);
-  const playerHeroStats = heroStats.rows.filter(stat => stat.playerName === playerName);
-  const playerRoleStats = roleStats.rows.filter(stat => stat.playerName === playerName);
-  const playerMatchStats = matchStats.rows.filter(stat => stat.playerName === playerName)
+  const playerOverallStats = overallStats.rows.find(
+    (stat) => stat.playerName === playerName
+  );
+  const playerHeroStats = heroStats.rows.filter(
+    (stat) => stat.playerName === playerName
+  );
+  const playerRoleStats = roleStats.rows.filter(
+    (stat) => stat.playerName === playerName
+  );
+  const playerMatchStats = matchStats.rows
+    .filter((stat) => stat.playerName === playerName)
     .sort((a, b) => a.matchId.localeCompare(b.matchId));
 
   if (!playerOverallStats) {
@@ -89,38 +120,44 @@ export const PlayerMetricsDashboard = ({ playerName }: { playerName: string }) =
     { title: "Damage", value: playerOverallStats.heroDamageDealt },
   ];
 
-  const heroData = playerHeroStats.map(stat => ({
+  const heroData = playerHeroStats.map((stat) => ({
     name: stat.playerHero,
-    value: stat.eliminations
+    value: stat.eliminations,
   }));
 
-  const roleData = playerRoleStats.map(stat => ({
+  const roleData = playerRoleStats.map((stat) => ({
     name: stat.playerRole,
-    value: stat.eliminations
+    value: stat.eliminations,
   }));
 
-  const matchHistoryData = playerMatchStats.map(stat => ({
+  const matchHistoryData = playerMatchStats.map((stat) => ({
     name: stat.matchId.slice(-8),
-    value: stat.eliminations
+    value: stat.eliminations,
   }));
 
   return (
     <Box sx={{ mt: 3 }}>
-      <Typography variant="h5" gutterBottom>Performance Metrics</Typography>
-      
+      <Typography variant="h5" gutterBottom>
+        Performance Metrics
+      </Typography>
+
       <Grid container spacing={2} sx={{ mb: 4 }}>
         {overallMetrics.map((metric, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
             <StatCard
               title={metric.title}
               value={metric.value.toString()}
-              color={index % 2 === 0 ? 'primary.main' : 'secondary.main'}
+              color={index % 2 === 0 ? "primary.main" : "secondary.main"}
             />
           </Grid>
         ))}
       </Grid>
 
-      <Tabs value={selectedTab} onChange={(_, newValue) => setSelectedTab(newValue)} sx={{ mb: 2 }}>
+      <Tabs
+        value={selectedTab}
+        onChange={(_, newValue) => setSelectedTab(newValue)}
+        sx={{ mb: 2 }}
+      >
         <Tab label="By Hero" />
         <Tab label="By Role" />
         <Tab label="Match History" />
@@ -130,7 +167,7 @@ export const PlayerMetricsDashboard = ({ playerName }: { playerName: string }) =
         <MetricSection
           title="Performance by Hero"
           data={heroData}
-          colors={['#8884d8', '#82ca9d']}
+          colors={["#8884d8", "#82ca9d"]}
           chartType="bar"
         />
       )}
@@ -139,7 +176,7 @@ export const PlayerMetricsDashboard = ({ playerName }: { playerName: string }) =
         <MetricSection
           title="Performance by Role"
           data={roleData}
-          colors={['#8884d8', '#82ca9d']}
+          colors={["#8884d8", "#82ca9d"]}
           chartType="pie"
         />
       )}
@@ -148,10 +185,10 @@ export const PlayerMetricsDashboard = ({ playerName }: { playerName: string }) =
         <MetricSection
           title="Match History Trends"
           data={matchHistoryData}
-          colors={['#8884d8', '#82ca9d']}
+          colors={["#8884d8", "#82ca9d"]}
           chartType="line"
         />
       )}
     </Box>
   );
-}; 
+};
