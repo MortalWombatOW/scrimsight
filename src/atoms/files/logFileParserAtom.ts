@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { parseFile } from '../../lib/data/uploadfile';
+import { parseFile } from './scrimtime';
 import { stringHash } from '../../lib/string';
 import { logFileLoaderAtom } from './logFileLoaderAtom';
 import { sampleDataAtom } from './sampleDataAtoms';
