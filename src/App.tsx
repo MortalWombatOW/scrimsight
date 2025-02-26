@@ -1,10 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ThemeProvider, createTheme as createMuiTheme } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { Suspense } from "react";
 import { Layout } from "./components/Layout/Layout";
-import { themeDef } from "./theme";
 import { HomePage } from "./pages/Home";
 import { AddFilesPage } from "./pages/AddFiles/AddFilesPage";
 import { MatchesPage } from "./pages/Matches";
@@ -27,7 +26,6 @@ import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 import { CallbackPage } from "./pages/Auth/CallbackPage";
 
 const App = () => {
-  const theme = createMuiTheme(themeDef);
   const myColor: MantineColorsTuple = [
     "#fff4e1",
     "#ffe8cc",
@@ -96,28 +94,23 @@ const App = () => {
     <AuthProvider {...oidcConfig}>
       <MantineProvider defaultColorScheme="dark" theme={mtheme}>
         <Router>
-          <ThemeProvider theme={theme}>
-            <QueryParamProvider adapter={ReactRouter6Adapter}>
-              <Layout>
-                <Suspense fallback={<div>Loading...</div>}>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/callback" element={<CallbackPage />} />
-                    <Route path="/matches" element={<MatchesPage />} />
-                    <Route path="/matches/:matchId" element={<MatchPage2 />} />
-                    <Route path="/players" element={<PlayersPage />} />
-                    <Route
-                      path="/players/:playerName"
-                      element={<PlayerPage />}
-                    />
-                    <Route path="/teams" element={<TeamsPage />} />
-                    <Route path="/teams/:teamId" element={<TeamPage />} />
-                    <Route path="/files" element={<AddFilesPage />} />
-                  </Routes>
-                </Suspense>
-              </Layout>
-            </QueryParamProvider>
-          </ThemeProvider>
+          <QueryParamProvider adapter={ReactRouter6Adapter}>
+            <Layout>
+              <Suspense fallback={<div>Loading...</div>}>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/callback" element={<CallbackPage />} />
+                  <Route path="/matches" element={<MatchesPage />} />
+                  <Route path="/matches/:matchId" element={<MatchPage2 />} />
+                  <Route path="/players" element={<PlayersPage />} />
+                  <Route path="/players/:playerName" element={<PlayerPage />} />
+                  <Route path="/teams" element={<TeamsPage />} />
+                  <Route path="/teams/:teamId" element={<TeamPage />} />
+                  <Route path="/files" element={<AddFilesPage />} />
+                </Routes>
+              </Suspense>
+            </Layout>
+          </QueryParamProvider>
         </Router>
       </MantineProvider>
     </AuthProvider>
