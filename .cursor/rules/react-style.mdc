@@ -1,6 +1,6 @@
 ---
-description: React Best Practices and Design Patterns
-globs: src/**
+description: Best Practices and Design Patterns
+globs: 
 ---
 
 
@@ -13,10 +13,17 @@ Project Overview
   - `src/atoms`: State management using Jotai. Almost all data logic and transformation should be done here.
   - `src/lib`: Utility functions and types
 
+Workflow:
+- The tasks are managed through the [index.md](mdc:tasks/index.md) and the tasks folder.
+- When starting a task, mark it on the list of tasks in index.md.
+- Confirm the details and write a step by step plan in a new file under /tasks.
+- When the work is done, make sure to update the new file with learnings.
+- Each change should be done in a new branch off of prod. Before branching, pull from prod.
+- Before submitting, always consider how to refactor the change to clean it up and reduce tech debt.
+
 React instructions:
 - Keep Components Small and Focused - each component should only be responsible for one thing.
 - Keep it DRY with Array Mapping - create an array of objects that hold all the necessary data and dynamically render them with a map function to avoid code repetition
 - Separation of concerns - make sure each part of the app only has one job to do.
 - Use Semantic Keys When Rendering Lists - make sure the key prop on a list element describes more than just the index.
 - Lazy-loading: use Suspense and React.lazy to maximize performance.
-- Each component must have a storybook entry in the same directory.

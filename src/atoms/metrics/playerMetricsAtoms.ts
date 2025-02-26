@@ -2,7 +2,7 @@ import { useAtomValue, atom } from "jotai";
 import { playerStatExpandedAtom } from "../playerStatExpandedAtom";
 import { groupByAtom, Grouped, MetricAtom } from "./metricUtils";
 import { heroPlaytimeAtom } from './heroPlaytimeAtom';
-import { OverwatchRole, getRankForRole } from "../../lib/data/hero";
+import { OverwatchRole, getRankForRole } from "../../lib/hero";
 
 export type PlayerStatsCategoryKeys = 'matchId' | 'roundNumber' | 'playerTeam' | 'playerName' | 'playerHero' | 'playerRole';
 
