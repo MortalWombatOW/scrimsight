@@ -1,11 +1,11 @@
-import { Grid } from '@mui/material';
-import { StatCard } from '../../../components/Card/StatCard';
+import { Grid } from "@mui/material";
+import { StatCard } from "../../../components/StatCard";
 import {
   Groups as TeamsIcon,
   EmojiEvents as WinsIcon,
   People as PlayersIcon,
-  SportsEsports as GamesIcon
-} from '@mui/icons-material';
+  SportsEsports as GamesIcon,
+} from "@mui/icons-material";
 
 interface TeamsSummaryStatsProps {
   totalTeams: number;
@@ -14,7 +14,12 @@ interface TeamsSummaryStatsProps {
   totalPlayers: number;
 }
 
-export const TeamsSummaryStats = ({ totalTeams, totalGames, totalWins, totalPlayers }: TeamsSummaryStatsProps) => {
+export const TeamsSummaryStats = ({
+  totalTeams,
+  totalGames,
+  totalWins,
+  totalPlayers,
+}: TeamsSummaryStatsProps) => {
   return (
     <Grid container spacing={3} sx={{ mb: 4 }}>
       <Grid item xs={12} sm={6} md={3}>
@@ -51,4 +56,4 @@ export const TeamsSummaryStats = ({ totalTeams, totalGames, totalWins, totalPlay
       </Grid>
     </Grid>
   );
-}; 
+};

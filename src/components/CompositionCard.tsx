@@ -1,14 +1,29 @@
-import { Card, CardContent, Grid, Typography, Box, Avatar } from '@mui/material';
-import { getHeroImage, getRoleFromHero, getRankForRole, OverwatchRole } from '../lib/data/hero';
-import { formatDuration } from '../lib/time';
-import RoleIcon from './Common/RoleIcon';
+import {
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  Box,
+  Avatar,
+} from "@mui/material";
+import {
+  getHeroImage,
+  getRoleFromHero,
+  getRankForRole,
+  OverwatchRole,
+} from "../lib/hero";
+import { formatDuration } from "../lib/format";
+import RoleIcon from "./Common/RoleIcon";
 
 interface CompositionCardProps {
   heroes: string[];
   timePlayed: number;
 }
 
-export const CompositionCard = ({ heroes, timePlayed }: CompositionCardProps) => (
+export const CompositionCard = ({
+  heroes,
+  timePlayed,
+}: CompositionCardProps) => (
   <Card sx={{ width: 300, m: 1 }}>
     <CardContent>
       <Grid container spacing={1}>
@@ -21,12 +36,21 @@ export const CompositionCard = ({ heroes, timePlayed }: CompositionCardProps) =>
                 return acc;
               }, {} as Record<OverwatchRole, string[]>)
             )
-              .sort(([a], [b]) => getRankForRole(a as OverwatchRole) - getRankForRole(b as OverwatchRole))
+              .sort(
+                ([a], [b]) =>
+                  getRankForRole(a as OverwatchRole) -
+                  getRankForRole(b as OverwatchRole)
+              )
               .map(([role, roleHeroes]) => (
                 <Grid item key={role}>
-                  <Box display="flex" flexDirection="column" alignItems="center" gap={0.5}>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    gap={0.5}
+                  >
                     <Box display="flex" alignItems="center" gap={0.5}>
-                      <Box sx={{ fontSize: '1rem' }}>
+                      <Box sx={{ fontSize: "1rem" }}>
                         <RoleIcon role={role} color="primary" />
                       </Box>
                       <Typography variant="caption" color="text.secondary">
@@ -56,4 +80,4 @@ export const CompositionCard = ({ heroes, timePlayed }: CompositionCardProps) =>
       </Grid>
     </CardContent>
   </Card>
-); 
+);

@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { readFileAsync } from '../../lib/data/uploadfile';
+import { readFileAsync } from './scrimtime';
 import { logFileInputAtom } from './logFileInputAtom';
 
 /**

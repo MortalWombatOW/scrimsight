@@ -34,9 +34,19 @@ export const camelCaseToWords = (s: string) => {
   return output;
 }
 
+export const camelCaseToAbbreviation = (s: string) => {
+  return s.charAt(0).toUpperCase() + s.slice(1).replace(/([a-z])/g, '');
+}
+
 export const formatTime = (val: number) => {
   const hours = Math.floor(val / 3600);
   const minutes = Math.floor((val % 3600) / 60);
   const seconds = Math.floor(val % 60);
   return `${hours > 0 ? hours + 'h ' : ''}${minutes > 0 ? minutes + 'm ' : ''}${seconds > 0 ? seconds + 's' : ''}`;
 };
+
+export const formatDuration = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds.toString().padStart(2, '0')}s`;
+}; 

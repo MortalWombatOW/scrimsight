@@ -1,19 +1,27 @@
-import { Container, Grid, Typography, Paper, Box, Tabs, Tab } from '@mui/material';
-import { useAtomValue } from 'jotai';
-import { useState } from 'react';
-import { uniquePlayerNamesAtom } from '../../atoms/uniquePlayerNamesAtom';
-import { PlayerStatsGrid } from './components/PlayerStatsGrid';
-import { TopPlayersSection } from './components/TopPlayersSection';
-import { HeroDistributionChart } from './components/HeroDistributionChart';
-import { HeroPoolAnalysis } from './components/HeroPoolAnalysis';
-import { PlayerPerformanceMetrics } from './components/PlayerPerformanceMetrics';
-import { StatCard } from '../../components/Card/StatCard';
+import {
+  Container,
+  Grid,
+  Typography,
+  Paper,
+  Box,
+  Tabs,
+  Tab,
+} from "@mui/material";
+import { useAtomValue } from "jotai";
+import { useState } from "react";
+import { uniquePlayerNamesAtom } from "../../atoms/uniquePlayerNamesAtom";
+import { PlayerStatsGrid } from "./components/PlayerStatsGrid";
+import { TopPlayersSection } from "./components/TopPlayersSection";
+import { HeroDistributionChart } from "./components/HeroDistributionChart";
+import { HeroPoolAnalysis } from "./components/HeroPoolAnalysis";
+import { PlayerPerformanceMetrics } from "./components/PlayerPerformanceMetrics";
+import { StatCard } from "../../components/StatCard";
 import {
   People as PeopleIcon,
   Security as TankIcon,
   Whatshot as DamageIcon,
-  Support as SupportIcon
-} from '@mui/icons-material';
+  Support as SupportIcon,
+} from "@mui/icons-material";
 
 export const PlayersPage = () => {
   const players = useAtomValue(uniquePlayerNamesAtom);
@@ -26,7 +34,7 @@ export const PlayersPage = () => {
   const roleDistribution = {
     tank: Math.round(totalPlayers * 0.2),
     damage: Math.round(totalPlayers * 0.5),
-    support: Math.round(totalPlayers * 0.3)
+    support: Math.round(totalPlayers * 0.3),
   };
 
   return (
@@ -79,7 +87,7 @@ export const PlayersPage = () => {
         <Tabs
           value={selectedTab}
           onChange={(_, newValue) => setSelectedTab(newValue)}
-          sx={{ borderBottom: 1, borderColor: 'divider' }}
+          sx={{ borderBottom: 1, borderColor: "divider" }}
         >
           <Tab label="Overview" />
           <Tab label="Performance" />
