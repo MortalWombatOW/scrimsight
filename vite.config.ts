@@ -4,15 +4,17 @@ import { resolve } from 'path';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { visualizer } from 'rollup-plugin-visualizer';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {  
   return {
     plugins: [
+      tailwindcss(),
       react(),
       tsconfigPaths(),
       visualizer({
-        open: true,
+        open: false,
         gzipSize: true,
       }) as Plugin,
     ],

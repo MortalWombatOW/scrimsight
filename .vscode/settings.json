@@ -45,5 +45,8 @@
     "**/node_modules": true,
     "**/dist": true
   },
-  "workbench.colorCustomizations": {}
+  "workbench.colorCustomizations": {},
+  "editor.quickSuggestions": {
+    "strings": "on"
+  }
 }

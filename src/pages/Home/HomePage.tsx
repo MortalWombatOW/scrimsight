@@ -63,6 +63,10 @@ export const HomePage = (): React.ReactNode => {
           marginTop: "-100px",
         }}
       >
+        <h2 className="text-2xl font-bold underline decoration-2 decoration-blue-500">
+          Explore
+        </h2>
+
         {modules.map((module) => (
           <Card key={module.title} sx={{ width: 275 }}>
             <CardContent>
