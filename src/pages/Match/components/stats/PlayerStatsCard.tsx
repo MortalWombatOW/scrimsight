@@ -14,12 +14,12 @@ import {
 import { BarChart } from "@mantine/charts";
 import { useHover, usePrevious, useTimeout, useInterval } from "@mantine/hooks";
 import { useStats } from "../../../../atoms";
-import { getHeroImage } from "../../../../lib/data/hero";
 import {
+  getHeroImage,
   camelCaseToAbbreviation,
   camelCaseToWords,
   prettyFormat,
-} from "../../../../lib/format";
+} from "../../../../lib";
 
 interface PlayerStatsCardProps {
   playerName: string;

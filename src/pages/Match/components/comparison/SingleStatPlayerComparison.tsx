@@ -8,7 +8,7 @@ import {
   playerStatsNumericalKeys,
   useStats,
 } from "../../../../atoms";
-import { camelCaseToWords, prettyFormat } from "../../../../lib/format";
+import { camelCaseToWords, prettyFormat } from "../../../../lib";
 
 interface SingleStatPlayerComparisonProps {
   matchId: string;

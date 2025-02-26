@@ -44,3 +44,9 @@ export const formatTime = (val: number) => {
   const seconds = Math.floor(val % 60);
   return `${hours > 0 ? hours + 'h ' : ''}${minutes > 0 ? minutes + 'm ' : ''}${seconds > 0 ? seconds + 's' : ''}`;
 };
+
+export const formatDuration = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}m ${remainingSeconds.toString().padStart(2, '0')}s`;
+}; 

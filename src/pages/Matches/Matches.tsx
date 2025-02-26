@@ -23,11 +23,10 @@ import { uniquePlayerNamesAtom } from "../../atoms/uniquePlayerNamesAtom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Suspense, useMemo } from "react";
 import { uniqueMapNamesAtom } from "../../atoms/uniqueMapNamesAtom";
-import { mapNameToFileName } from "../../lib/string";
+import { mapNameToFileName } from "../../lib";
 import { scrimAtom } from "../../atoms/scrimAtom";
 import { useStats } from "../../atoms/metrics/playerMetricsAtoms";
-import { getHeroImage } from "../../lib/hero";
-import { formatTime } from "../../lib/format";
+import { getHeroImage, formatTime } from "../../lib";
 import { CiMap } from "react-icons/ci";
 import React from "react";
 interface PlayerCardProps {

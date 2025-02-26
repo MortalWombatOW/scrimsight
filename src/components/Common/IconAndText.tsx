@@ -1,6 +1,6 @@
-import { Button, Popover, Typography } from '@mui/material';
-import { ColorKey } from '../../theme';
-import { useState } from 'react';
+import { Button, Popover, Typography } from "@mui/material";
+import { ColorKey } from "../../theme";
+import { useState } from "react";
 
 const IconAndTextButton = ({
   variant,
@@ -13,7 +13,7 @@ const IconAndTextButton = ({
   onClick,
   fontSize,
 }: {
-  variant?: 'contained' | 'outlined' | 'text';
+  variant?: "contained" | "outlined" | "text";
   icon: React.ReactElement;
   text: string;
   padding?: string;
@@ -28,47 +28,60 @@ const IconAndTextButton = ({
   return (
     <>
       <Button
-        variant={variant || 'contained'}
+        variant={variant || "contained"}
         onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
         onMouseLeave={() => setAnchorEl(null)}
         onClick={onClick}
         color={colorKey}
         startIcon={dynamic ? undefined : icon}
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          whiteSpace: 'nowrap',
-          borderRadius: borderRadius || '5px',
-          padding: padding || '0.5em',
-          lineHeight: '1.5em',
-          maxWidth: 'fit-content',
-        }}>
+          display: "flex",
+          alignItems: "center",
+          whiteSpace: "nowrap",
+          borderRadius: borderRadius || "5px",
+          padding: padding || "0.5em",
+          lineHeight: "1.5em",
+          maxWidth: "fit-content",
+        }}
+      >
         {dynamic && icon}
-        {!dynamic && <Typography sx={{ paddingLeft: 2, fontWeight: 'bold', fontSize: fontSize || '1rem' }}>{text}</Typography>}
+        {!dynamic && (
+          <Typography
+            sx={{
+              paddingLeft: 2,
+              fontWeight: "bold",
+              fontSize: fontSize || "1rem",
+            }}
+          >
+            {text}
+          </Typography>
+        )}
       </Button>
       {dynamic && (
         <Popover
           open={anchorEl !== null}
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
+            vertical: "bottom",
+            horizontal: "center",
           }}
           transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
+            vertical: "top",
+            horizontal: "center",
           }}
           onClose={() => setAnchorEl(null)}
           sx={{
-            pointerEvents: 'none',
+            pointerEvents: "none",
           }}
-          disableRestoreFocus>
+          disableRestoreFocus
+        >
           <Typography
             sx={{
               p: 1,
-              backgroundColor: colorKey + '.main',
-              color: colorKey + '.contrastText',
-            }}>
+              backgroundColor: colorKey + ".main",
+              color: colorKey + ".contrastText",
+            }}
+          >
             {text}
           </Typography>
         </Popover>

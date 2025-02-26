@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Original: https://github.com/michael-mcanulty/tsBase64
 
-export class TsBase64 {
+export class Base64 {
   private static _b64chars = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/`;
   private static _re_utob = /[\uD800-\uDBFF][\uDC00-\uDFFFF]|[^\x00-\x7F]/g;
 
@@ -20,7 +20,7 @@ export class TsBase64 {
 
   private static _cb_decode(cccc: string): string {
     const b64tab: Record<string, number> = {};
-    for (let i = 0, l = TsBase64._b64chars.length; i < l; i++) b64tab[TsBase64._b64chars.charAt(i)] = i;
+    for (let i = 0, l = Base64._b64chars.length; i < l; i++) b64tab[Base64._b64chars.charAt(i)] = i;
     const len = cccc.length,
       padlen = len % 4,
       n = (len > 0 ? b64tab[cccc.charAt(0)] << 18 : 0) | (len > 1 ? b64tab[cccc.charAt(1)] << 12 : 0) | (len > 2 ? b64tab[cccc.charAt(2)] << 6 : 0) | (len > 3 ? b64tab[cccc.charAt(3)] : 0),
@@ -32,7 +32,7 @@ export class TsBase64 {
   private static _cb_encode(ccc: string): string {
     const padlen = [0, 2, 1][ccc.length % 3],
       ord = (ccc.charCodeAt(0) << 16) | ((ccc.length > 1 ? ccc.charCodeAt(1) : 0) << 8) | (ccc.length > 2 ? ccc.charCodeAt(2) : 0),
-      chars = [TsBase64._b64chars.charAt(ord >>> 18), TsBase64._b64chars.charAt((ord >>> 12) & 63), padlen >= 2 ? '=' : TsBase64._b64chars.charAt((ord >>> 6) & 63), padlen >= 1 ? '=' : TsBase64._b64chars.charAt(ord & 63)];
+      chars = [Base64._b64chars.charAt(ord >>> 18), Base64._b64chars.charAt((ord >>> 12) & 63), padlen >= 2 ? '=' : Base64._b64chars.charAt((ord >>> 6) & 63), padlen >= 1 ? '=' : Base64._b64chars.charAt(ord & 63)];
     return chars.join('');
   }
 
@@ -63,7 +63,7 @@ export class TsBase64 {
   }
 
   private static _btou(b: any): string {
-    return b.replace(this._re_btou, this._cb_btou);
+    return b.replace(this._re_btou(), this._cb_btou);
   }
 
   private static _decode(a: string): string {

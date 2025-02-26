@@ -1,10 +1,16 @@
-import { useState } from 'react';
-import { useAtom } from 'jotai';
-import { teamCompositionsAtom } from '../../atoms/teamCompositionsAtom';
-import { Box, Typography, Grid, Avatar, Card, CardContent } from '@mui/material';
-import { formatDuration } from '../../lib/time';
-import { getRoleFromHero, getHeroImage } from '../../lib/data/hero';
-import RoleIcon from '../../components/Common/RoleIcon';
+import { useState } from "react";
+import { useAtom } from "jotai";
+import { teamCompositionsAtom } from "../../atoms/teamCompositionsAtom";
+import {
+  Box,
+  Typography,
+  Grid,
+  Avatar,
+  Card,
+  CardContent,
+} from "@mui/material";
+import { getRoleFromHero, getHeroImage, formatDuration } from "../../lib";
+import RoleIcon from "../../components/Common/RoleIcon";
 
 interface TeamCompositionsProps {
   teamName: string;
@@ -15,12 +21,17 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
   const [compositions] = useAtom(teamCompositionsAtom);
 
   const teamCompositions = compositions
-    .filter(c => c.teamName === teamName)
-    .filter(c => showAllCompositions || c.timePlayed > 60)
+    .filter((c) => c.teamName === teamName)
+    .filter((c) => showAllCompositions || c.timePlayed > 60)
     .sort((a, b) => b.timePlayed - a.timePlayed);
 
-  const maxTimePlayed = Math.max(...teamCompositions.map(c => c.timePlayed), 0);
-  const hasHiddenCompositions = compositions.some(c => c.teamName === teamName && c.timePlayed <= 60);
+  const maxTimePlayed = Math.max(
+    ...teamCompositions.map((c) => c.timePlayed),
+    0
+  );
+  const hasHiddenCompositions = compositions.some(
+    (c) => c.teamName === teamName && c.timePlayed <= 60
+  );
 
   return (
     <Card sx={{ mb: 3 }}>
@@ -31,22 +42,28 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
         {teamCompositions.length > 0 ? (
           <Box>
             {hasHiddenCompositions && (
-              <Typography 
-                variant="body2" 
-                sx={{ 
-                  cursor: 'pointer', 
-                  color: 'primary.main', 
+              <Typography
+                variant="body2"
+                sx={{
+                  cursor: "pointer",
+                  color: "primary.main",
                   mb: 2,
-                  '&:hover': { textDecoration: 'underline' }
+                  "&:hover": { textDecoration: "underline" },
                 }}
                 onClick={() => setShowAllCompositions(!showAllCompositions)}
               >
-                {showAllCompositions ? 'Show only significant compositions' : 'Show all compositions'}
+                {showAllCompositions
+                  ? "Show only significant compositions"
+                  : "Show all compositions"}
               </Typography>
             )}
 
-            <Grid container spacing={2} sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}>
-              {['tank', 'damage', 'support'].map((role) => (
+            <Grid
+              container
+              spacing={2}
+              sx={{ mb: 2, borderBottom: 1, borderColor: "divider" }}
+            >
+              {["tank", "damage", "support"].map((role) => (
                 <Grid item xs={3} key={role}>
                   <Box display="flex" alignItems="center" gap={1}>
                     <RoleIcon role={role} color="primary" />
@@ -67,10 +84,10 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
                 acc[role] = [...(acc[role] || []), hero].sort();
                 return acc;
               }, {} as Record<string, string[]>);
-              
+
               return (
                 <Grid container spacing={2} key={index} sx={{ py: 1 }}>
-                  {['tank', 'damage', 'support'].map((role) => (
+                  {["tank", "damage", "support"].map((role) => (
                     <Grid item xs={3} key={role}>
                       <Box display="flex" gap={1}>
                         {groupedHeroes[role]?.map((hero) => (
@@ -89,12 +106,16 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
                       <Box
                         sx={{
                           height: 8,
-                          bgcolor: 'primary.main',
-                          width: Math.max((composition.timePlayed / maxTimePlayed) * 200, 1) + 'px',
-                          borderRadius: 4
+                          bgcolor: "primary.main",
+                          width:
+                            Math.max(
+                              (composition.timePlayed / maxTimePlayed) * 200,
+                              1
+                            ) + "px",
+                          borderRadius: 4,
                         }}
                       />
-                      <Typography variant="body2" sx={{ whiteSpace: 'nowrap' }}>
+                      <Typography variant="body2" sx={{ whiteSpace: "nowrap" }}>
                         {formatDuration(composition.timePlayed)}
                       </Typography>
                     </Box>
@@ -111,4 +132,4 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
       </CardContent>
     </Card>
   );
-}; 
+};

@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { BarChart } from "@mantine/charts";
 import { matchDataAtom, useStats } from "../../../../atoms";
-import { camelCaseToWords, prettyFormat } from "../../../../lib/format";
+import { camelCaseToWords, prettyFormat } from "../../../../lib";
 
 interface TeamStatsComparisonProps {
   matchId: string;
