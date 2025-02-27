@@ -1,6 +1,7 @@
 ---
 description: Best Practices and Design Patterns
-globs: 
+globs: src/**/*.tsx
+alwaysApply: false
 ---
 
 

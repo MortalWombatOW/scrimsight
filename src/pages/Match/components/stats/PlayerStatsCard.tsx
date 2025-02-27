@@ -209,21 +209,21 @@ export const PlayerStatsCard = ({
   return (
     <div
       ref={ref}
-      className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700 h-full w-fit transition-opacity duration-300"
+      className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700 h-full w-full transition-all duration-300 hover:shadow-md"
     >
       <div className="flex items-start">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-start">
+        <div className="flex flex-col gap-3 w-full">
+          <div className="flex items-center mb-3">
             <img
               src={heroImage}
               alt={`Hero`}
-              className="w-8 h-8 rounded-full mr-2"
+              className="w-8 h-8 rounded-full mr-2 border border-gray-200 dark:border-gray-600"
             />
-            <div className="flex flex-col mr-2">
-              <h5 className="text-sm font-semibold text-gray-900 dark:text-white">
+            <div className="flex flex-col mr-3">
+              <h5 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                 {playerName}
               </h5>
-              <span className="text-xs text-gray-600 dark:text-gray-400">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
                 {
                   playerStats.rows.find(
                     (stats) => stats.playerName === playerName
@@ -231,87 +231,75 @@ export const PlayerStatsCard = ({
                 }
               </span>
             </div>
-            <div className="flex items-end space-x-1">
-              {(highlighted ? statsToShow : statsToShow.slice(0, 3)).map(
-                (stat) => (
-                  <div
-                    key={stat}
-                    className="w-12 flex flex-col items-center relative"
-                    onMouseEnter={() => setShowTooltip(stat)}
-                    onMouseLeave={() => setShowTooltip(null)}
-                  >
-                    <div className="flex justify-center">
-                      <div
-                        className={`
-                          flex items-center justify-center rounded-full
-                          ${
-                            getRanking(stat).rank === 1
-                              ? "bg-primary-500 w-8 h-8 text-white"
-                              : "bg-gray-300 dark:bg-gray-600 w-6 h-6 text-gray-800 dark:text-gray-200"
-                          }
-                        `}
-                      >
-                        <span
-                          className={`${
-                            getRanking(stat).rank === 1 ? "text-sm" : "text-xs"
-                          }`}
-                        >
-                          #{getRanking(stat).rank}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex justify-center">
-                      <span className="text-xs text-gray-600 dark:text-gray-400">
-                        {camelCaseToAbbreviation(stat)}
-                      </span>
-                    </div>
-                    {showTooltip === stat && (
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-2 bg-gray-800 text-white text-xs p-2 rounded shadow-lg z-10 whitespace-nowrap">
-                        {playerName} is ranked #{getRanking(stat).rank} in{" "}
-                        {camelCaseToWords(stat)} this match
-                      </div>
-                    )}
-                  </div>
-                )
-              )}
-            </div>
           </div>
 
-          {(highlighted ? statsToShow : statsToShow.slice(0, 3)).map((stat) => (
-            <div key={stat} className="h-[25px] w-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  layout="vertical"
-                  data={[
-                    { stat: camelCaseToWords(stat), value: getStat(stat) },
-                  ]}
-                  margin={{ top: 0, right: 30, left: 80, bottom: 0 }}
+          <div className="flex items-center justify-between mb-4">
+            {statsToShow.slice(0, 3).map((stat) => (
+              <div
+                key={stat}
+                className="flex flex-col items-center"
+                onMouseEnter={() => setShowTooltip(stat)}
+                onMouseLeave={() => setShowTooltip(null)}
+              >
+                <div
+                  className={`
+                    flex items-center justify-center rounded-full w-6 h-6
+                    ${
+                      getRanking(stat).rank === 1
+                        ? "bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-800"
+                        : "bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-200"
+                    }
+                  `}
                 >
-                  <XAxis type="number" domain={[0, getMaxStat(stat)]} hide />
-                  <YAxis
-                    type="category"
-                    dataKey="stat"
-                    width={80}
-                    tickLine={false}
-                  />
-                  <Bar
-                    dataKey="value"
-                    fill="#4F46E5"
-                    radius={5}
-                    label={{
-                      position: "right",
-                      formatter: (value: number) => prettyFormat(value),
-                      fill: "white",
+                  <span className="text-xs font-medium">
+                    #{getRanking(stat).rank}
+                  </span>
+                </div>
+                <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {camelCaseToAbbreviation(stat)}
+                </span>
+                {showTooltip === stat && (
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-1 bg-gray-800 text-white text-xs p-1 rounded shadow-lg z-10 whitespace-nowrap dark:bg-gray-700">
+                    {camelCaseToWords(stat)}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {statsToShow.slice(0, 3).map((stat, index) => (
+            <div key={stat} className="mb-3 last:mb-0">
+              <div className="flex flex-col">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-xs text-gray-600 dark:text-gray-400 capitalize">
+                    {stat === "finalBlows"
+                      ? "Final Blows"
+                      : stat === "allDamageDealt"
+                      ? "All Damage"
+                      : stat === "ultimatesUsed"
+                      ? "Ultimates Used"
+                      : camelCaseToWords(stat)}
+                  </span>
+                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                    {prettyFormat(getStat(stat))}
+                  </span>
+                </div>
+                <div className="h-[16px] w-full bg-gray-200 dark:bg-gray-700 rounded-sm overflow-hidden">
+                  <div
+                    className="h-full bg-gray-600 dark:bg-gray-500 rounded-sm"
+                    style={{
+                      width: `${Math.max(5, getRanking(stat).percentage)}%`,
                     }}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+                  ></div>
+                </div>
+              </div>
             </div>
           ))}
+
           {progress > 0 && progress < 100 && (
-            <div className="h-0.5 mt-0 -mb-4">
+            <div className="h-0.5 mt-1">
               <div
-                className="h-full bg-primary-500"
+                className="h-full bg-gray-600 dark:bg-gray-400"
                 style={{
                   width: `${progress}%`,
                   transition: "width 100ms linear",
