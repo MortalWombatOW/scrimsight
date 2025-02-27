@@ -2,7 +2,7 @@
 
 // Declare minimal types for the File System Access API
 interface FileSystemHandle {
-  kind: 'file' | 'directory';
+  kind: "file" | "directory";
   getFile?: () => Promise<File>;
 }
 
@@ -17,9 +17,8 @@ declare global {
   }
 }
 
-import Button from '@mui/material/Button';
-import { useAtom } from 'jotai';
-import { logFileInputMutationAtom } from '../atoms/files';
+import { useAtom } from "jotai";
+import { logFileInputMutationAtom } from "../atoms/files";
 
 export const LoadFilesButton = () => {
   const [, setFiles] = useAtom(logFileInputMutationAtom);
@@ -27,7 +26,9 @@ export const LoadFilesButton = () => {
   const handleLoadFiles = async () => {
     try {
       if (!window.showDirectoryPicker) {
-        console.error('File System Access API is not supported in this browser.');
+        console.error(
+          "File System Access API is not supported in this browser."
+        );
         return;
       }
       const directoryHandle = await window.showDirectoryPicker();
@@ -35,10 +36,13 @@ export const LoadFilesButton = () => {
 
       // Iterate over the directory entries
       for await (const entry of directoryHandle.values()) {
-        if (entry.kind === 'file' && entry.getFile) {
+        if (entry.kind === "file" && entry.getFile) {
           const file = await entry.getFile();
           // Check if the file is a text file by type or .txt extension
-          if ((file.type && file.type.startsWith('text')) || file.name.endsWith('.txt')) {
+          if (
+            (file.type && file.type.startsWith("text")) ||
+            file.name.endsWith(".txt")
+          ) {
             files.push(file);
           }
         }
@@ -47,13 +51,16 @@ export const LoadFilesButton = () => {
       // Update the logFileInput atom with the found text files
       setFiles(files);
     } catch (error) {
-      console.error('Error loading files:', error);
+      console.error("Error loading files:", error);
     }
   };
 
   return (
-    <Button onClick={handleLoadFiles} variant="contained" color="primary">
+    <button
+      onClick={handleLoadFiles}
+      className="bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-md shadow-sm transition-colors"
+    >
       Load Files
-    </Button>
+    </button>
   );
-}; 
+};

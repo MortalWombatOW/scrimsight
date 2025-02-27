@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useInterval } from "@mantine/hooks";
 
 interface InteractionArrowProps {
   startPos: THREE.Vector3;
@@ -9,6 +8,45 @@ interface InteractionArrowProps {
   color: string;
   visible: boolean;
 }
+
+// Custom hook to replace useInterval from Mantine
+const useInterval = (callback: () => void, delay: number) => {
+  const savedCallback = useRef<() => void>(callback);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Remember the latest callback
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval
+  const start = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    intervalRef.current = setInterval(() => {
+      savedCallback.current();
+    }, delay);
+  };
+
+  // Clear interval on unmount
+  const stop = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  return { start, stop };
+};
 
 export const InteractionArrow = ({
   startPos,
@@ -20,6 +58,7 @@ export const InteractionArrow = ({
   const materialRef = useRef<THREE.LineBasicMaterial>(null);
   const [opacity, setOpacity] = useState(1);
   const [progress, setProgress] = useState(0);
+
   const interval = useInterval(
     () => setProgress((p) => Math.min(p + 2, 100)),
     16
@@ -33,7 +72,7 @@ export const InteractionArrow = ({
     } else {
       interval.stop();
     }
-  }, [visible]);
+  }, [visible, interval]);
 
   useFrame(() => {
     if (geometryRef.current && materialRef.current) {

@@ -1,15 +1,13 @@
-import { Button, Popover, Typography } from "@mui/material";
-import { ColorKey } from "../../theme";
 import { useState } from "react";
 
 const IconAndTextButton = ({
-  variant,
+  variant = "contained",
   icon,
   text,
   padding,
   borderRadius,
   dynamic,
-  colorKey,
+  colorKey = "primary",
   onClick,
   fontSize,
 }: {
@@ -19,74 +17,78 @@ const IconAndTextButton = ({
   padding?: string;
   borderRadius?: string;
   dynamic?: boolean;
-  colorKey?: ColorKey;
+  colorKey?: string;
   onClick?: () => void;
   fontSize?: string;
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
+  // Map Material UI variants to Tailwind classes
+  const getVariantClasses = () => {
+    switch (variant) {
+      case "contained":
+        return `bg-${colorKey || "primary"}-500 text-white hover:bg-${
+          colorKey || "primary"
+        }-600`;
+      case "outlined":
+        return `border border-${colorKey || "primary"}-500 text-${
+          colorKey || "primary"
+        }-500 hover:bg-${colorKey || "primary"}-50`;
+      case "text":
+        return `text-${colorKey || "primary"}-500 hover:bg-${
+          colorKey || "primary"
+        }-50`;
+      default:
+        return `bg-${colorKey || "primary"}-500 text-white hover:bg-${
+          colorKey || "primary"
+        }-600`;
+    }
+  };
+
   return (
-    <>
-      <Button
-        variant={variant || "contained"}
+    <div className="relative">
+      <button
+        className={`flex items-center whitespace-nowrap max-w-fit ${getVariantClasses()}`}
+        style={{
+          borderRadius: borderRadius || "5px",
+          padding: padding || "0.5em",
+        }}
         onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
         onMouseLeave={() => setAnchorEl(null)}
         onClick={onClick}
-        color={colorKey}
-        startIcon={dynamic ? undefined : icon}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          whiteSpace: "nowrap",
-          borderRadius: borderRadius || "5px",
-          padding: padding || "0.5em",
-          lineHeight: "1.5em",
-          maxWidth: "fit-content",
-        }}
       >
-        {dynamic && icon}
-        {!dynamic && (
-          <Typography
-            sx={{
-              paddingLeft: 2,
-              fontWeight: "bold",
-              fontSize: fontSize || "1rem",
-            }}
-          >
-            {text}
-          </Typography>
+        {dynamic ? (
+          icon
+        ) : (
+          <>
+            <span className="mr-2">{icon}</span>
+            <span
+              className="pl-2 font-bold"
+              style={{ fontSize: fontSize || "1rem" }}
+            >
+              {text}
+            </span>
+          </>
         )}
-      </Button>
-      {dynamic && (
-        <Popover
-          open={anchorEl !== null}
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
+      </button>
+
+      {dynamic && anchorEl && (
+        <div
+          className={`absolute z-10 mt-1 p-2 rounded shadow-md bg-${
+            colorKey || "primary"
+          }-500 text-white`}
+          style={{
+            top: anchorEl.getBoundingClientRect().bottom,
+            left:
+              anchorEl.getBoundingClientRect().left +
+              anchorEl.getBoundingClientRect().width / 2,
+            transform: "translateX(-50%)",
           }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-          onClose={() => setAnchorEl(null)}
-          sx={{
-            pointerEvents: "none",
-          }}
-          disableRestoreFocus
         >
-          <Typography
-            sx={{
-              p: 1,
-              backgroundColor: colorKey + ".main",
-              color: colorKey + ".contrastText",
-            }}
-          >
-            {text}
-          </Typography>
-        </Popover>
+          {text}
+        </div>
       )}
-    </>
+    </div>
   );
 };
 

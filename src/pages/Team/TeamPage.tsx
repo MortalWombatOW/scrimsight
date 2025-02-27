@@ -4,16 +4,6 @@ import { teamNamesAtom } from "../../atoms/teamNamesAtom";
 import { teamStatsAtom } from "../../atoms/teamStatsAtom";
 import { allPlayersForTeamAtom } from "../../atoms/allPlayersForTeamAtom";
 import { matchDataAtom } from "../../atoms/matchDataAtom";
-import {
-  Box,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Card,
-  CardContent,
-  Grid,
-} from "@mui/material";
 import { MatchData } from "../../atoms/matchDataAtom";
 import { TeamStats } from "../../atoms/teamStatsAtom";
 import { TeamPlayers } from "../../atoms/allPlayersForTeamAtom";
@@ -52,65 +42,66 @@ export const TeamPage = () => {
   );
 
   return (
-    <Box p={3}>
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Typography variant="h1" sx={{ mb: 2 }}>
-            {teamNameDisplay}
-          </Typography>
+    <div className="p-6">
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-gray-800">
+        <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
+          {teamNameDisplay}
+        </h1>
 
-          <Grid container spacing={2} sx={{ width: "fit-content" }}>
-            <Grid item xs={4}>
-              <StatCard
-                title="Wins"
-                value={teamRecord.wins.toString()}
-                color="success.light"
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <StatCard
-                title="Draws"
-                value={teamRecord.draws.toString()}
-                color="warning.light"
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <StatCard
-                title="Losses"
-                value={teamRecord.losses.toString()}
-                color="error.light"
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Typography variant="h5">Players</Typography>
-          <List>
-            {teamPlayers.players.map((playerName: string) => (
-              <ListItem key={playerName}>
-                <ListItemText primary={playerName} />
-              </ListItem>
-            ))}
-          </List>
-        </CardContent>
-      </Card>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-fit">
+          <div>
+            <StatCard
+              title="Wins"
+              value={teamRecord.wins.toString()}
+              color="success.light"
+            />
+          </div>
+          <div>
+            <StatCard
+              title="Draws"
+              value={teamRecord.draws.toString()}
+              color="warning.light"
+            />
+          </div>
+          <div>
+            <StatCard
+              title="Losses"
+              value={teamRecord.losses.toString()}
+              color="error.light"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-gray-800">
+        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+          Players
+        </h2>
+        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+          {teamPlayers.players.map((playerName: string) => (
+            <li key={playerName} className="py-3">
+              <p className="text-gray-800 dark:text-gray-200">{playerName}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <TeamCompositions teamName={teamNameSafe} />
-      <Card>
-        <CardContent>
-          <Typography variant="h5">Games Played</Typography>
-          <List>
-            {teamMatches.map((match: MatchData) => (
-              <ListItem key={match.matchId}>
-                <ListItemText
-                  primary={`${match.team1Name} vs ${match.team2Name} - ${match.dateString}`}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </CardContent>
-      </Card>
-    </Box>
+
+      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
+        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+          Games Played
+        </h2>
+        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+          {teamMatches.map((match: MatchData) => (
+            <li key={match.matchId} className="py-3">
+              <p className="text-gray-800 dark:text-gray-200">
+                {`${match.team1Name} vs ${match.team2Name} - ${match.dateString}`}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 };

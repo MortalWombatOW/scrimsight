@@ -1,35 +1,37 @@
-import { useState } from 'react';
-import { useAtom } from 'jotai';
-import { Container, Typography, Box } from '@mui/material';
-import { teamStatsAtom } from '../../atoms/teamStatsAtom';
-import { TeamsSummaryStats } from './components/TeamsSummaryStats';
-import { TeamsFilter, SortOption } from './components/TeamsFilter';
-import { TeamsVisualization } from './components/TeamsVisualization';
-import { TeamsList } from './components/TeamsList';
+import { useState } from "react";
+import { useAtom } from "jotai";
+import { teamStatsAtom } from "../../atoms/teamStatsAtom";
+import { TeamsSummaryStats } from "./components/TeamsSummaryStats";
+import { TeamsFilter, SortOption } from "./components/TeamsFilter";
+import { TeamsVisualization } from "./components/TeamsVisualization";
+import { TeamsList } from "./components/TeamsList";
 
 export const TeamsPage = () => {
   const [teamStats] = useAtom(teamStatsAtom);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<SortOption>('name');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("name");
 
   // Calculate summary statistics
   const totalTeams = teamStats.length;
   const totalGames = teamStats.reduce((sum, team) => sum + team.gamesPlayed, 0);
   const totalWins = teamStats.reduce((sum, team) => sum + team.wins, 0);
-  const totalPlayers = new Set(teamStats.flatMap(team => team.players)).size;
+  const totalPlayers = new Set(teamStats.flatMap((team) => team.players)).size;
 
   // Filter and sort teams
   const filteredAndSortedTeams = teamStats
-    .filter(team =>
+    .filter((team) =>
       team.teamName.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => {
       switch (sortBy) {
-        case 'wins':
+        case "wins":
           return b.wins - a.wins;
-        case 'recent':
-          return (b.mostRecentGameDate?.getTime() || 0) - (a.mostRecentGameDate?.getTime() || 0);
-        case 'players':
+        case "recent":
+          return (
+            (b.mostRecentGameDate?.getTime() || 0) -
+            (a.mostRecentGameDate?.getTime() || 0)
+          );
+        case "players":
           return b.players.length - a.players.length;
         default:
           return a.teamName.localeCompare(b.teamName);
@@ -37,15 +39,15 @@ export const TeamsPage = () => {
     });
 
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h2" gutterBottom>
+    <div className="container mx-auto px-4 max-w-7xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
           Teams
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
           Overview of all teams and their performance
-        </Typography>
-      </Box>
+        </p>
+      </div>
 
       <TeamsSummaryStats
         totalTeams={totalTeams}
@@ -64,7 +66,6 @@ export const TeamsPage = () => {
       />
 
       <TeamsList teams={filteredAndSortedTeams} />
-    </Container>
+    </div>
   );
 };
-

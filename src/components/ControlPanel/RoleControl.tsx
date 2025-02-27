@@ -1,6 +1,5 @@
 import { OverwatchRole } from "../../lib";
 import RoleCheckbox from "./RoleCheckbox";
-import { FormControlLabel, FormGroup, Typography } from "@mui/material";
 
 interface RoleControlProps {
   selectedRoles: OverwatchRole[];
@@ -14,58 +13,56 @@ const RoleControl: React.FC<RoleControlProps> = ({
   size = "large",
 }) => {
   return (
-    <div style={{ marginLeft: 10, marginRight: 10 }}>
-      <Typography variant="h6">Roles</Typography>
-      <FormGroup row={size === "small"}>
-        <FormControlLabel
-          control={
-            <RoleCheckbox
-              role="tank"
-              checked={selectedRoles.includes("tank")}
-              onChange={(checked) =>
-                onChange(
-                  checked
-                    ? [...selectedRoles, "tank"]
-                    : selectedRoles.filter((r) => r !== "tank")
-                )
-              }
-            />
-          }
-          label={size === "large" ? "Tank" : ""}
-        />
-        <FormControlLabel
-          control={
-            <RoleCheckbox
-              role="damage"
-              checked={selectedRoles.includes("damage")}
-              onChange={(checked) =>
-                onChange(
-                  checked
-                    ? [...selectedRoles, "damage"]
-                    : selectedRoles.filter((r) => r !== "damage")
-                )
-              }
-            />
-          }
-          label={size === "large" ? "Damage" : ""}
-        />
-        <FormControlLabel
-          control={
-            <RoleCheckbox
-              role="support"
-              checked={selectedRoles.includes("support")}
-              onChange={(checked) =>
-                onChange(
-                  checked
-                    ? [...selectedRoles, "support"]
-                    : selectedRoles.filter((r) => r !== "support")
-                )
-              }
-            />
-          }
-          label={size === "large" ? "Support" : ""}
-        />
-      </FormGroup>
+    <div className="mx-2.5">
+      <h3 className="mb-2 text-lg font-medium">Roles</h3>
+      <div
+        className={`flex ${
+          size === "small" ? "flex-row space-x-4" : "flex-col space-y-2"
+        }`}
+      >
+        <label className="flex items-center">
+          <RoleCheckbox
+            role="tank"
+            checked={selectedRoles.includes("tank")}
+            onChange={(checked) =>
+              onChange(
+                checked
+                  ? [...selectedRoles, "tank"]
+                  : selectedRoles.filter((r) => r !== "tank")
+              )
+            }
+          />
+          {size === "large" && <span className="ml-2">Tank</span>}
+        </label>
+        <label className="flex items-center">
+          <RoleCheckbox
+            role="damage"
+            checked={selectedRoles.includes("damage")}
+            onChange={(checked) =>
+              onChange(
+                checked
+                  ? [...selectedRoles, "damage"]
+                  : selectedRoles.filter((r) => r !== "damage")
+              )
+            }
+          />
+          {size === "large" && <span className="ml-2">Damage</span>}
+        </label>
+        <label className="flex items-center">
+          <RoleCheckbox
+            role="support"
+            checked={selectedRoles.includes("support")}
+            onChange={(checked) =>
+              onChange(
+                checked
+                  ? [...selectedRoles, "support"]
+                  : selectedRoles.filter((r) => r !== "support")
+              )
+            }
+          />
+          {size === "large" && <span className="ml-2">Support</span>}
+        </label>
+      </div>
     </div>
   );
 };

@@ -1,8 +1,7 @@
-import { Box, Container, Grid } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { PlayerMetricsDashboard } from '../../components/Player/PlayerMetricsDashboard';
-import { PlayerDetailedStats } from '../../components/Player/PlayerDetailedStats';
-import { PlayerMatchHistory } from '../../components/Player/PlayerMatchHistory';
+import { useParams } from "react-router-dom";
+import { PlayerMetricsDashboard } from "../../components/Player/PlayerMetricsDashboard";
+import { PlayerDetailedStats } from "../../components/Player/PlayerDetailedStats";
+import { PlayerMatchHistory } from "../../components/Player/PlayerMatchHistory";
 
 export const PlayerPage = () => {
   const { playerName } = useParams<{ playerName: string }>();
@@ -12,23 +11,22 @@ export const PlayerPage = () => {
   }
 
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ mt: 4 }}>
-        <Grid container spacing={4}>
-          <Grid item xs={12}>
+    <div className="container mx-auto px-4 max-w-7xl">
+      <div className="mt-8">
+        <div className="flex flex-col space-y-8">
+          <div>
             <PlayerMetricsDashboard playerName={playerName} />
-          </Grid>
+          </div>
 
-          <Grid item xs={12}>
+          <div>
             <PlayerDetailedStats playerName={playerName} />
-          </Grid>
+          </div>
 
-          <Grid item xs={12}>
+          <div>
             <PlayerMatchHistory playerName={playerName} />
-          </Grid>
-        </Grid>
-      </Box>
-    </Container>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
-

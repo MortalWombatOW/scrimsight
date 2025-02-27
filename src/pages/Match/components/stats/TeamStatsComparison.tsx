@@ -1,14 +1,12 @@
 import { useAtomValue } from "jotai";
 import {
-  Title,
-  Paper,
-  Stack,
-  Text,
-  Center,
-  Group,
-  ColorSwatch,
-} from "@mantine/core";
-import { BarChart } from "@mantine/charts";
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 import { matchDataAtom, useStats } from "../../../../atoms";
 import { camelCaseToWords, prettyFormat } from "../../../../lib";
 
@@ -47,56 +45,70 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   });
 
   return (
-    <Paper withBorder p="md">
-      <Stack>
-        <Title order={2}>Team Stats</Title>
+    <div className="bg-white rounded-lg border border-gray-200 w-full p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+      <div className="flex flex-col gap-4">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+          Team Stats
+        </h2>
+
         {data.map((stat) => (
-          <BarChart
-            key={stat.stat.toString()}
-            orientation="vertical"
-            data={[stat]}
-            h={50}
-            w={500}
-            dataKey="stat"
-            series={[
-              {
-                name: matchData.team1Name,
-                color: "blue",
-                label: matchData.team1Name,
-                stackId: "team1",
-              },
-              {
-                name: matchData.team2Name,
-                color: "red",
-                label: matchData.team2Name,
-                stackId: "team2",
-              },
-            ]}
-            yAxisProps={{ width: 120 }}
-            barProps={{
-              radius: 5,
-            }}
-            withBarValueLabel
-            tickLine="none"
-            strokeDasharray="0 1"
-            withXAxis={false}
-            valueFormatter={(value) => prettyFormat(value)}
-            valueLabelProps={{ position: "inside", fill: "white" }}
-          />
+          <div key={stat.stat.toString()} className="h-[50px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                layout="vertical"
+                data={[stat]}
+                margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                <XAxis type="number" hide />
+                <YAxis
+                  type="category"
+                  dataKey="stat"
+                  width={120}
+                  tickLine={false}
+                />
+                <Bar
+                  dataKey={matchData.team1Name}
+                  fill="#1971c2"
+                  radius={5}
+                  label={{
+                    position: "center",
+                    formatter: (value: number) => prettyFormat(value),
+                    fill: "white",
+                  }}
+                />
+                <Bar
+                  dataKey={matchData.team2Name}
+                  fill="#e03131"
+                  radius={5}
+                  label={{
+                    position: "center",
+                    formatter: (value: number) => prettyFormat(value),
+                    fill: "white",
+                  }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         ))}
-        <Center>
-          <Group>
-            <Group>
-              <ColorSwatch size={16} color="var(--mantine-color-blue-7)" />
-              <Text size="xs">{matchData.team1Name}</Text>
-            </Group>
-            <Group>
-              <ColorSwatch size={16} color="var(--mantine-color-red-7)" />
-              <Text size="xs">{matchData.team2Name}</Text>
-            </Group>
-          </Group>
-        </Center>
-      </Stack>
-    </Paper>
+
+        <div className="flex justify-center">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-sm bg-blue-600"></div>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                {matchData.team1Name}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-sm bg-red-600"></div>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                {matchData.team2Name}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

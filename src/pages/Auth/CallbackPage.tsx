@@ -1,7 +1,6 @@
-import { useAuth } from 'react-oidc-context';
-import { Center, Loader, Text } from '@mantine/core';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from "react-oidc-context";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const CallbackPage = () => {
   const auth = useAuth();
@@ -9,21 +8,23 @@ export const CallbackPage = () => {
 
   useEffect(() => {
     if (auth.isAuthenticated) {
-      navigate('/');
+      navigate("/");
     }
   }, [auth.isAuthenticated, navigate]);
 
   if (auth.error) {
     return (
-      <Center style={{ height: '100vh' }}>
-        <Text color="red">Authentication Error: {auth.error.message}</Text>
-      </Center>
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-red-600 dark:text-red-400">
+          Authentication Error: {auth.error.message}
+        </p>
+      </div>
     );
   }
 
   return (
-    <Center style={{ height: '100vh' }}>
-      <Loader size="xl" />
-    </Center>
+    <div className="flex items-center justify-center h-screen">
+      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-500"></div>
+    </div>
   );
-}; 
+};

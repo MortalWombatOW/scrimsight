@@ -1,5 +1,4 @@
 import { useAtomValue } from "jotai";
-import { Group, Paper, Stack, Title } from "@mantine/core";
 import { matchDataAtom, useStats } from "../../../../atoms";
 import { PlayerStatsCard } from "./PlayerStatsCard";
 
@@ -22,11 +21,13 @@ export const PlayerStatsComparison = ({
   }
 
   return (
-    <Paper p="0">
-      <Stack gap="md">
-        <Stack>
-          <Title order={3}>{matchData.team1Name} Players</Title>
-          <Group align="flex-start">
+    <div className="bg-white rounded-lg border border-gray-200 w-full dark:bg-gray-800 dark:border-gray-700">
+      <div className="flex flex-col gap-6 p-4">
+        <div className="flex flex-col gap-4">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {matchData.team1Name} Players
+          </h3>
+          <div className="flex flex-wrap gap-4 items-start">
             {playerStats.rows
               .filter((stats) => stats.playerTeam === matchData.team1Name)
               .map((player) => (
@@ -36,11 +37,13 @@ export const PlayerStatsComparison = ({
                   matchId={matchId}
                 />
               ))}
-          </Group>
-        </Stack>
-        <Stack>
-          <Title order={3}>{matchData.team2Name} Players</Title>
-          <Group align="flex-start">
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {matchData.team2Name} Players
+          </h3>
+          <div className="flex flex-wrap gap-4 items-start">
             {playerStats.rows
               .filter((stats) => stats.playerTeam === matchData.team2Name)
               .map((player) => (
@@ -50,9 +53,9 @@ export const PlayerStatsComparison = ({
                   matchId={matchId}
                 />
               ))}
-          </Group>
-        </Stack>
-      </Stack>
-    </Paper>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

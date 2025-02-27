@@ -1,6 +1,3 @@
-import {Grid, Typography, Button} from '@mui/material';
-import {Box} from '@mui/system';
-
 const SplashRow = ({
   title,
   content,
@@ -24,41 +21,38 @@ const SplashRow = ({
   };
 }) => {
   return (
-    <Box
-      component="div"
+    <div
       style={{
-        display: 'flex',
-        width: '100%',
         backgroundColor: beforeBackgroundColor,
-      }}>
-      <Box
-        component="div"
+      }}
+      className="flex w-full"
+    >
+      <div
         style={{
-          display: 'flex',
-          width: '100%',
           backgroundColor: backgroundColor,
           color: textColor,
-          padding: '50px',
         }}
-        className={className}>
-        <Grid container>
-          <Grid item xs={8}>
-            <Typography variant="h3" sx={{marginBottom: '32px'}}>
-              {title}
-            </Typography>
-            <Typography variant="body1">{content}</Typography>
+        className={`flex w-full p-12 ${className || ""}`}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="md:col-span-8">
+            <h2 className="text-3xl font-bold mb-8">{title}</h2>
+            <p className="text-base">{content}</p>
             {button && (
-              <Button variant="contained" color="secondary" sx={{marginTop: '32px'}}>
-                {button?.text}
-              </Button>
+              <button
+                onClick={button.onClick}
+                className="mt-8 px-6 py-2 bg-secondary-500 text-white rounded-md hover:bg-secondary-600 transition-colors"
+              >
+                {button.text}
+              </button>
             )}
-          </Grid>
-          <Grid item xs={3}>
-            <Box component={'img'} src={image} style={{width: '100%'}} />
-          </Grid>
-        </Grid>
-      </Box>
-    </Box>
+          </div>
+          <div className="md:col-span-4">
+            <img src={image} alt={title} className="w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,16 +1,9 @@
 import React from "react";
-import {
-  Container,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Typography,
-} from "@mui/material";
 import { Link } from "react-router-dom";
 import { matchDataAtom } from "../../atoms";
 import { useAtomValue } from "jotai";
 import ZeroState from "./ZeroState";
+
 export const HomePage = (): React.ReactNode => {
   const modules = [
     {
@@ -47,44 +40,33 @@ export const HomePage = (): React.ReactNode => {
       <img
         src="/assets/fullpage/eqo.png"
         alt="Scrimsight"
-        style={{
-          width: "100%",
-          height: "auto",
-          maxHeight: "80vh",
-          objectFit: "cover",
-        }}
+        className="h-auto w-full max-h-[80vh] object-cover"
       />
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 2,
-          marginTop: "-100px",
-        }}
-      >
-        <h2 className="text-2xl font-bold underline decoration-2 decoration-blue-500">
-          Explore
-        </h2>
-
+      <div className="container mx-auto flex flex-wrap justify-between gap-4 -mt-24 px-4">
         {modules.map((module) => (
-          <Card key={module.title} sx={{ width: 275 }}>
-            <CardContent>
-              <Typography variant="h2" component="div">
+          <div
+            key={module.title}
+            className="w-64 bg-white rounded-lg shadow-md overflow-hidden dark:bg-gray-800"
+          >
+            <div className="p-4">
+              <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 {module.title}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
+              </h3>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
                 {module.description}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small" component={Link} to={module.route}>
+              </p>
+            </div>
+            <div className="px-4 py-3 bg-gray-50 dark:bg-gray-700">
+              <Link
+                to={module.route}
+                className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+              >
                 Explore {module.title}
-              </Button>
-            </CardActions>
-          </Card>
+              </Link>
+            </div>
+          </div>
         ))}
-      </Container>
+      </div>
     </div>
   );
 };

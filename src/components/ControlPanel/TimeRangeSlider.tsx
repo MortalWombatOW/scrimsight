@@ -1,5 +1,4 @@
-import { Slider } from "@mui/material";
-
+// TimeRangeSlider component
 interface TimeRangeSliderProps {
   value: [number, number];
   min: number;
@@ -9,17 +8,93 @@ interface TimeRangeSliderProps {
   onChange: (value: [number, number]) => void;
 }
 
-const TimeRangeSlider: React.FC<TimeRangeSliderProps> = ({ value, min, max, minDistance, renderLabel, onChange }) => {
+const TimeRangeSlider: React.FC<TimeRangeSliderProps> = ({
+  value,
+  min,
+  max,
+  minDistance,
+  renderLabel,
+  onChange,
+}) => {
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: 0 | 1
+  ) => {
+    const newValue = parseInt(event.target.value, 10);
+    const newValues = [...value] as [number, number];
 
-  const handleChange = (value: [number, number], activeThumb: number) => {
-    if (activeThumb === 0) {
-      onChange([Math.min(value[0], value[1] - minDistance), value[1]]);
+    if (index === 0) {
+      // Left thumb
+      newValues[0] = Math.min(newValue, value[1] - minDistance);
     } else {
-      onChange([value[0], Math.max(value[0] + minDistance, value[1])]);
+      // Right thumb
+      newValues[1] = Math.max(newValue, value[0] + minDistance);
     }
+
+    onChange(newValues);
   };
 
-  return <div style={{ width: '100%', minWidth: 300, maxWidth: 500 }}><Slider value={value} onChange={(_, value, activeThumb) => handleChange(value as [number, number], activeThumb)} min={min} max={max} valueLabelFormat={renderLabel} /></div>;
+  const getTrackStyle = () => {
+    const range = max - min;
+    const leftPercent = ((value[0] - min) / range) * 100;
+    const rightPercent = ((value[1] - min) / range) * 100;
+
+    return {
+      background: `linear-gradient(to right, 
+        #e5e7eb 0%, #e5e7eb ${leftPercent}%, 
+        #3b82f6 ${leftPercent}%, #3b82f6 ${rightPercent}%, 
+        #e5e7eb ${rightPercent}%, #e5e7eb 100%)`,
+    };
+  };
+
+  return (
+    <div className="w-full min-w-[300px] max-w-[500px] px-2 py-4 relative">
+      <div
+        className="h-1 w-full rounded-md bg-gray-200 mb-4"
+        style={getTrackStyle()}
+      ></div>
+
+      {/* Left thumb */}
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value[0]}
+        onChange={(e) => handleChange(e, 0)}
+        className="absolute top-3 w-full appearance-none bg-transparent pointer-events-none"
+        style={{
+          // Hide default track
+          WebkitAppearance: "none",
+          appearance: "none",
+          // Style the thumb
+          WebkitTapHighlightColor: "transparent",
+        }}
+      />
+
+      {/* Right thumb */}
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value[1]}
+        onChange={(e) => handleChange(e, 1)}
+        className="absolute top-3 w-full appearance-none bg-transparent pointer-events-none"
+        style={{
+          // Hide default track
+          WebkitAppearance: "none",
+          appearance: "none",
+          // Style the thumb
+          WebkitTapHighlightColor: "transparent",
+        }}
+      />
+
+      {/* Labels */}
+      <div className="flex justify-between mt-2">
+        <div>{renderLabel(value[0], 0)}</div>
+        <div>{renderLabel(value[1], 1)}</div>
+      </div>
+    </div>
+  );
 };
 
 export default TimeRangeSlider;

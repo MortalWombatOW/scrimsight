@@ -57,73 +57,78 @@ This task involves migrating the Scrimsight application from using Material UI a
 
 ### Basic Components
 
-- [ ] `src/components/StatCard.tsx` (Card, CardContent, Typography, Box)
-- [ ] `src/components/CompositionCard.tsx` (Box, Card, Typography, Stack)
-- [ ] `src/components/TeamCard.tsx` (Card, CardContent, Typography, Grid, Box, Avatar)
-- [ ] `src/components/Common/IconAndText.tsx` (Button, Popover, Typography)
-- [ ] `src/components/ControlPanel/RoleCheckbox.tsx` (Checkbox)
-- [ ] `src/components/ControlPanel/TimeRangeSlider.tsx` (Slider)
-- [ ] `src/components/LoadFilesButton.tsx` (Button)
-- [ ] `src/components/PlayerList/PlayerList.tsx` (Card, CardContent, Typography)
+- [x] `src/components/StatCard.tsx` (Card, CardContent, Typography, Box)
+- [x] `src/components/CompositionCard.tsx` (Box, Card, Typography, Stack)
+- [x] `src/components/TeamCard.tsx` (Card, CardContent, Typography, Grid, Box, Avatar)
+- [x] `src/components/Common/IconAndText.tsx` (Button, Popover, Typography)
+- [x] `src/components/ControlPanel/RoleCheckbox.tsx` (Checkbox)
+- [x] `src/components/ControlPanel/TimeRangeSlider.tsx` (Slider)
+- [x] `src/components/LoadFilesButton.tsx` (Button)
+- [x] `src/components/PlayerList/PlayerList.tsx` (Card, CardContent, Typography)
+- [x] `src/components/StatPercentage.tsx`
+- [x] `src/components/EmptyState.tsx`
+- [x] `src/components/SectionHeading.tsx`
+- [x] `src/components/SplitButton.tsx`
 
 ### Common Layout Components
 
-- [ ] `src/components/Layout/Layout.tsx` (AppShell, NavLink, Stack from Mantine)
-- [ ] `src/components/Layout/Navigation.tsx` (AppShell, NavLink, Stack from Mantine)
-- [ ] `src/components/ControlPanel/RoleControl.tsx` (FormControlLabel, FormGroup, Typography)
-- [ ] `src/components/ControlPanel/IconAutocomplete.tsx` (Autocomplete, Box, Checkbox, Chip, TextField, Typography)
-- [ ] `src/components/Common/RoleIcon.tsx` (Various icons from Material UI)
+- [x] `src/components/Layout/Layout.tsx` (AppShell, NavLink, Stack from Mantine)
+- [x] `src/components/Layout/Navigation.tsx` (AppShell, NavLink, Stack from Mantine)
+- [x] `src/components/ControlPanel/RoleControl.tsx` (FormControlLabel, FormGroup, Typography)
+- [x] `src/components/ControlPanel/IconAutocomplete.tsx` (Autocomplete, Box, Checkbox, Chip, TextField, Typography)
+- [x] `src/components/Common/RoleIcon.tsx` (Various icons from Material UI)
+- [x] `src/components/Layout/Header.tsx`
+- [x] `src/components/Layout/Sidebar.tsx`
+- [x] `src/components/Layout/Footer.tsx`
 
 ### Player Components
 
-- [ ] `src/components/Player/PlayerOverviewCard.tsx` (Box, Typography, Card, CardContent, Avatar, Grid from Material, various icons)
-- [ ] `src/components/Player/PlayerMatchHistory.tsx` (Card, CardContent, Typography, Grid)
-- [ ] `src/components/Player/PlayerDetailedStats.tsx` (Card, CardContent, Typography, Grid, Box, icons)
-- [ ] `src/components/Player/PlayerMetricsDashboard.tsx` (Box, Typography, Paper, Grid, Tabs, Tab)
+- [x] `src/components/Player/PlayerMatchHistory.tsx`
+- [x] `src/components/Player/PlayerDetailedStats.tsx`
+- [x] ~~`src/components/Player/PlayerComparisonDialog.tsx`~~
+- [x] ~~`src/components/Player/PlayerHeroBreakdown.tsx`~~
 
 ### Page Layouts
 
-- [ ] `src/pages/Home/HomePage.tsx` (Material UI components)
-- [ ] `src/pages/Home/ZeroState.tsx` (Mantine components)
-- [ ] `src/pages/Teams/TeamsPage.tsx` (Container, Typography, Box)
-- [ ] `src/pages/Teams/components/TeamsVisualization.tsx` (Paper, Typography, Box)
-- [ ] `src/pages/Teams/components/TeamsFilter.tsx` (Grid, Paper, TextField, MenuItem)
-- [ ] `src/pages/Teams/components/TeamsList.tsx` (Grid)
-- [ ] `src/pages/Teams/components/TeamsSummaryStats.tsx` (Grid, icons)
-- [ ] `src/pages/Player/PlayerPage.tsx` (Box, Container, Grid)
-- [ ] `src/pages/Players/PlayersPage.tsx` (Material UI components, icons)
+- [x] `src/pages/Home/HomePage.tsx`
+- [x] `src/pages/ZeroState/ZeroState.tsx`
+- [x] `src/pages/Teams/TeamsPage.tsx`
+- [x] `src/pages/Teams/components/TeamsFilter.tsx`
+- [x] `src/pages/Teams/components/TeamsList.tsx`
+- [x] `src/pages/Teams/components/TeamsSummaryStats.tsx`
+- [x] `src/pages/Player/PlayerPage.tsx`
+- [x] `src/pages/Players/PlayersPage.tsx`
 
 ### Complex Components
 
-- [ ] `src/pages/Players/components/PlayerStatsGrid.tsx` (Box, Tooltip, Paper, TextField, MenuItem, InputAdornment, DataGrid, SearchIcon)
-- [ ] `src/pages/Players/components/PlayerPerformanceMetrics.tsx` (Box, Paper, Typography)
-- [ ] `src/pages/Players/components/HeroPoolAnalysis.tsx` (Box, Paper, Typography, LinearProgress)
-- [ ] `src/pages/Players/components/TopPlayersSection.tsx` (Grid, Paper, Typography, Box, Avatar)
-- [ ] `src/pages/Players/components/HeroDistributionChart.tsx` (Box, Paper, Typography, PieChart)
-- [ ] `src/pages/SplashPage/SplashPage.tsx` (Box, Typography, Button)
-- [ ] `src/pages/SplashPage/SplashRow.tsx` (Grid, Typography, Button, Box)
-- [ ] `src/pages/Team/TeamCompositions.tsx` (Material UI components)
-- [ ] `src/pages/Team/TeamPage.tsx` (Material UI components)
-- [ ] `src/pages/AddFiles/AddFilesPage.tsx` (Container, Typography, Box, Button, List, ListItem, Paper, IconButton, Switch, DeleteIcon)
+- [x] `src/pages/Players/components/PlayerStatsGrid.tsx`
+- [x] `src/pages/Players/components/TopPlayersSection.tsx`
+- [x] `src/pages/Players/components/PlayerPerformanceMetrics.tsx`
+- [x] `src/pages/Players/components/HeroPoolAnalysis.tsx`
+- [x] `src/pages/Players/components/HeroDistributionChart.tsx`
+- [x] `src/pages/SplashPage/SplashPage.tsx`
+- [x] `src/pages/SplashPage/SplashRow.tsx`
+- [x] `src/pages/Team/TeamCompositions.tsx`
+- [x] `src/pages/Team/TeamPage.tsx`
+- [x] `src/pages/AddFiles/AddFilesPage.tsx`
 
 ### Mantine-specific Components
 
-- [ ] `src/pages/Match/components/comparison/SingleStatPlayerComparison.tsx` (Paper, Select, Stack, Title, BarChart)
-- [ ] `src/pages/Match/components/comparison/AllPlayerComparison.tsx` (Group, Paper, Select, Stack, Title, ScatterChart)
-- [ ] `src/pages/Match/components/timeline/Timeline.tsx` (Paper, Stack, hooks)
-- [ ] `src/pages/Match/components/stats/PlayerStatsComparison.tsx` (Group, Paper, Stack, Title)
-- [ ] `src/pages/Match/components/scorecard/MatchScoreCard.tsx` (Grid, Group, Paper, Stack, Text, Title)
-- [ ] `src/pages/Match/components/stats/PlayerStatsCard.tsx` (Mantine components, BarChart, hooks)
-- [ ] `src/pages/Match/components/stats/TeamStatsComparison.tsx` (Mantine components, BarChart)
-- [ ] `src/pages/Matches/Matches.tsx` (Mantine components, DatePickerInput)
-- [ ] `src/pages/Auth/CallbackPage.tsx` (Center, Loader, Text)
-- [ ] `src/components/KillsTable/KillsTable.tsx` (Paper, Group, Title, Stack, Text, Grid, Center)
-- [ ] `src/pages/Match/MatchPage2.tsx` (Title, Group, Grid, Paper, Stack, Text, Image)
+- [x] `src/pages/Match/components/comparison/SingleStatPlayerComparison.tsx`
+- [x] `src/pages/Match/components/comparison/AllPlayerComparison.tsx`
+- [x] `src/pages/Match/components/timeline/Timeline.tsx`
+- [x] `src/pages/Match/components/stats/PlayerStatsComparison.tsx`
+- [x] `src/pages/Match/components/scorecard/MatchScoreCard.tsx`
+- [x] `src/pages/Match/components/stats/PlayerStatsCard.tsx`
+- [x] `src/pages/Match/components/stats/TeamStatsComparison.tsx`
+- [x] `src/pages/Matches/Matches.tsx`
+- [x] `src/pages/Auth/CallbackPage.tsx`
+- [x] `src/components/KillsTable/KillsTable.tsx`
+- [x] `src/pages/Match/MatchPage2.tsx`
 
-### Theme Configuration (Last Step)
+### Theme Configuration
 
-- [ ] `.storybook/preview.tsx` (ThemeProvider, CssBaseline from Material UI)
-- [ ] `src/App.tsx` (ThemeProvider from Material UI, MantineProvider, createTheme from Mantine)
+- [x] `src/App.tsx` (removed ThemeProvider from Material UI, MantineProvider, and theme configuration)
 
 ## Success Criteria
 

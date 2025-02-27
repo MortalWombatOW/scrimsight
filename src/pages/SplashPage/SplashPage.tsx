@@ -1,52 +1,42 @@
-import {Box, Typography, Button} from '@mui/material';
-import SplashRow from './SplashRow';
+import SplashRow from "./SplashRow";
 
 const SplashPage = () => {
   return (
-    <Box component="div" style={{width: '100%'}}>
-
-      <Box
-        component="div"
-        style={{
-          marginLeft: '50px',
-          marginRight: '50px',
-        }}>
-        <Box component="div">
-          <Typography variant="h2" style={{marginBottom: '20px'}}>
+    <div className="w-full">
+      <div className="mx-12">
+        <div>
+          <h1 className="text-4xl font-bold mb-5">
             Do you manage or coach a competitive Overwatch team?
-          </Typography>
-          <Typography variant="body1" style={{marginBottom: '20px'}}>
-            Scrimsight takes the guesswork out of analyzing your team&apos;s performance. With detailed statistics and replay features, you can quickly identify and communicate the issues that are holding your team back and
-            make better-informed decisions to supercharge your team. Use Scrimsight to find the keys to victory for your team!
-          </Typography>
-        </Box>
-      </Box>
-      <Box
-        component="div"
+          </h1>
+          <p className="text-base mb-5">
+            Scrimsight takes the guesswork out of analyzing your team&apos;s
+            performance. With detailed statistics and replay features, you can
+            quickly identify and communicate the issues that are holding your
+            team back and make better-informed decisions to supercharge your
+            team. Use Scrimsight to find the keys to victory for your team!
+          </p>
+        </div>
+      </div>
+      <div
         style={{
-          width: '100%',
-          backgroundColor: '#F9A03F',
-        }}>
-        <Box
-          component="div"
+          backgroundColor: "#F9A03F",
+        }}
+        className="w-full"
+      >
+        <div
           style={{
-            width: '100%',
-            backgroundColor: '#f3f3f3',
-            display: 'flex',
-            paddingLeft: '50px',
-            paddingRight: '50px',
-            flexWrap: 'wrap',
-            marginTop: '50px',
-            paddingBottom: '32px',
-          }}>
-          <Button variant="contained" color="primary">
+            backgroundColor: "#f3f3f3",
+          }}
+          className="w-full flex flex-wrap px-12 mt-12 pb-8 gap-4"
+        >
+          <button className="px-6 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors">
             Explore example data
-          </Button>
-          <Button variant="contained" color="secondary">
+          </button>
+          <button className="px-6 py-2 bg-secondary-500 text-white rounded-md hover:bg-secondary-600 transition-colors">
             Get started with your data
-          </Button>
-        </Box>
-      </Box>
+          </button>
+        </div>
+      </div>
 
       <SplashRow
         title="Easy to set up"
@@ -56,7 +46,7 @@ const SplashPage = () => {
         backgroundColor="#F9A03F"
         textColor="black"
         button={{
-          text: 'Get started',
+          text: "Get started",
           onClick: () => {},
         }}
       />
@@ -68,7 +58,7 @@ const SplashPage = () => {
         backgroundColor="#001732"
         textColor="white"
         button={{
-          text: 'Learn more',
+          text: "Learn more",
           onClick: () => {},
         }}
       />
@@ -80,7 +70,7 @@ const SplashPage = () => {
         backgroundColor="#F9A03F"
         textColor="black"
         button={{
-          text: 'See an example',
+          text: "See an example",
           onClick: () => {},
         }}
       />
@@ -92,22 +82,21 @@ const SplashPage = () => {
         backgroundColor="#001732"
         textColor="white"
         button={{
-          text: 'Try it out',
+          text: "Try it out",
           onClick: () => {},
         }}
       />
-      <Box
-        component="div"
+      <div
         style={{
-          width: '100%',
-          backgroundColor: '#F9A03F',
-          display: 'flex',
-          justifyContent: 'center',
-          padding: '20px',
-        }}>
-        <Typography variant="body1">Terms of Service | Privacy Policy | © 2022 Andrew Gleeson</Typography>
-      </Box>
-    </Box>
+          backgroundColor: "#F9A03F",
+        }}
+        className="w-full flex justify-center p-5"
+      >
+        <p className="text-base">
+          Terms of Service | Privacy Policy | © 2022 Andrew Gleeson
+        </p>
+      </div>
+    </div>
   );
 };
 

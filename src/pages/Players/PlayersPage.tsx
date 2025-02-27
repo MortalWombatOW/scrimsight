@@ -1,12 +1,3 @@
-import {
-  Container,
-  Grid,
-  Typography,
-  Paper,
-  Box,
-  Tabs,
-  Tab,
-} from "@mui/material";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { uniquePlayerNamesAtom } from "../../atoms/uniquePlayerNamesAtom";
@@ -38,94 +29,119 @@ export const PlayersPage = () => {
   };
 
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h2" gutterBottom>
+    <div className="container mx-auto px-4 max-w-7xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
           Players
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
           Comprehensive player statistics and performance metrics
-        </Typography>
-      </Box>
+        </p>
+      </div>
 
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={2}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        <div>
           <StatCard
             title="Total Players"
             value={totalPlayers.toString()}
             icon={<PeopleIcon />}
             color="primary.main"
           />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2}>
+        </div>
+        <div>
           <StatCard
             title="Tank Players"
             value={roleDistribution.tank.toString()}
             icon={<TankIcon />}
             color="info.main"
           />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2}>
+        </div>
+        <div>
           <StatCard
             title="Damage Players"
             value={roleDistribution.damage.toString()}
             icon={<DamageIcon />}
             color="error.main"
           />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2}>
+        </div>
+        <div>
           <StatCard
             title="Support Players"
             value={roleDistribution.support.toString()}
             icon={<SupportIcon />}
             color="success.main"
           />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
 
-      <Paper sx={{ mb: 4 }}>
-        <Tabs
-          value={selectedTab}
-          onChange={(_, newValue) => setSelectedTab(newValue)}
-          sx={{ borderBottom: 1, borderColor: "divider" }}
-        >
-          <Tab label="Overview" />
-          <Tab label="Performance" />
-          <Tab label="Heroes" />
-        </Tabs>
+      <div className="bg-white rounded-lg shadow-md dark:bg-gray-800 mb-8">
+        <div className="border-b border-gray-200 dark:border-gray-700">
+          <nav className="-mb-px flex">
+            <button
+              className={`mr-2 inline-block px-4 py-2 ${
+                selectedTab === 0
+                  ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
+                  : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+              }`}
+              onClick={() => setSelectedTab(0)}
+            >
+              Overview
+            </button>
+            <button
+              className={`mr-2 inline-block px-4 py-2 ${
+                selectedTab === 1
+                  ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
+                  : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+              }`}
+              onClick={() => setSelectedTab(1)}
+            >
+              Performance
+            </button>
+            <button
+              className={`mr-2 inline-block px-4 py-2 ${
+                selectedTab === 2
+                  ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
+                  : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+              }`}
+              onClick={() => setSelectedTab(2)}
+            >
+              Heroes
+            </button>
+          </nav>
+        </div>
 
-        <Box sx={{ p: 3 }}>
+        <div className="p-6">
           {selectedTab === 0 && (
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
                 <TopPlayersSection />
-              </Grid>
-              <Grid item xs={12}>
+              </div>
+              <div>
                 <PlayerStatsGrid />
-              </Grid>
-            </Grid>
+              </div>
+            </div>
           )}
 
           {selectedTab === 1 && (
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
+            <div className="grid grid-cols-1 gap-6">
+              <div>
                 <PlayerPerformanceMetrics />
-              </Grid>
-            </Grid>
+              </div>
+            </div>
           )}
 
           {selectedTab === 2 && (
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
                 <HeroDistributionChart />
-              </Grid>
-              <Grid item xs={12} md={6}>
+              </div>
+              <div>
                 <HeroPoolAnalysis />
-              </Grid>
-            </Grid>
+              </div>
+            </div>
           )}
-        </Box>
-      </Paper>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 };

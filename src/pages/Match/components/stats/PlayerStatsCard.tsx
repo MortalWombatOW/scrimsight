@@ -1,18 +1,5 @@
-import { useEffect, useState } from "react";
-import {
-  Avatar,
-  Center,
-  Group,
-  Paper,
-  Progress,
-  Stack,
-  Text,
-  Title,
-  Tooltip,
-  Transition,
-} from "@mantine/core";
-import { BarChart } from "@mantine/charts";
-import { useHover, usePrevious, useTimeout, useInterval } from "@mantine/hooks";
+import { useEffect, useState, useRef } from "react";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { useStats } from "../../../../atoms";
 import {
   getHeroImage,
@@ -25,6 +12,109 @@ interface PlayerStatsCardProps {
   playerName: string;
   matchId: string;
 }
+
+// Custom useHover hook
+const useHover = () => {
+  const [hovered, setHovered] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const handleMouseEnter = () => setHovered(true);
+    const handleMouseLeave = () => setHovered(false);
+
+    element.addEventListener("mouseenter", handleMouseEnter);
+    element.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      element.removeEventListener("mouseenter", handleMouseEnter);
+      element.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
+  return { ref, hovered };
+};
+
+// Custom usePrevious hook
+const usePrevious = <T,>(value: T): T | undefined => {
+  const ref = useRef<T>(value);
+
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+
+  return ref.current;
+};
+
+// Custom useTimeout hook
+const useTimeout = (callback: (args: any[]) => void, delay: number) => {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const callbackRef = useRef(callback);
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  const start = (...args: any[]) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      callbackRef.current(args);
+    }, delay);
+  };
+
+  const clear = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return clear;
+  }, []);
+
+  return { start, clear };
+};
+
+// Custom useInterval hook
+const useInterval = (callback: () => void, delay: number) => {
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const callbackRef = useRef(callback);
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  const start = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    intervalRef.current = setInterval(() => {
+      callbackRef.current();
+    }, delay);
+  };
+
+  const stop = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  return { start, stop };
+};
 
 export const PlayerStatsCard = ({
   playerName,
@@ -43,6 +133,7 @@ export const PlayerStatsCard = ({
   const lastHovered = usePrevious(hovered);
   const [highlighted, setHighlighted] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
   const { start, clear } = useTimeout(([hovered]) => {
     setHighlighted(hovered);
@@ -66,7 +157,7 @@ export const PlayerStatsCard = ({
       setProgress(0);
       interval.stop();
     }
-  }, [hovered]);
+  }, [hovered, lastHovered, highlighted, clear, start, interval, progress]);
 
   if (!playerStats || !heroStats.length) {
     throw new Error("No player stats");
@@ -116,112 +207,120 @@ export const PlayerStatsCard = ({
   }
 
   return (
-    <Transition transition="fade" mounted={true}>
-      {(transitionStyles) => (
-        <Paper
-          withBorder
-          p="md"
-          w="fit-content"
-          h="100%"
-          ref={ref}
-          style={{ ...transitionStyles }}
-        >
-          <Group style={{ alignItems: "flex-start" }}>
-            <Stack>
-              <Group>
-                <Avatar src={heroImage} size="30" />
-                <Stack gap="0">
-                  <Title order={5}>{playerName}</Title>
-                  <Text size="xs">
-                    {
-                      playerStats.rows.find(
-                        (stats) => stats.playerName === playerName
-                      )?.playerTeam
-                    }
-                  </Text>
-                </Stack>
-                <Group gap="0" style={{ alignItems: "flex-end" }}>
-                  {(highlighted ? statsToShow : statsToShow.slice(0, 3)).map(
-                    (stat) => (
-                      <Tooltip
-                        key={stat}
-                        label={
-                          <Text>
-                            {playerName} is ranked #{getRanking(stat).rank} in{" "}
-                            {camelCaseToWords(stat)} this match
-                          </Text>
-                        }
-                      >
-                        <Stack key={stat} gap="0" w="50px">
-                          <Center>
-                            <Avatar
-                              size={getRanking(stat).rank === 1 ? "md" : "sm"}
-                              color={
-                                getRanking(stat).rank === 1
-                                  ? "myColor"
-                                  : "gray.5"
-                              }
-                            >
-                              <Text
-                                size={getRanking(stat).rank === 1 ? "md" : "sm"}
-                              >
-                                #{getRanking(stat).rank}
-                              </Text>
-                            </Avatar>
-                          </Center>
-                          <Center>
-                            <Text size="xs">
-                              {camelCaseToAbbreviation(stat)}
-                            </Text>
-                          </Center>
-                        </Stack>
-                      </Tooltip>
-                    )
-                  )}
-                </Group>
-              </Group>
-
+    <div
+      ref={ref}
+      className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700 h-full w-fit transition-opacity duration-300"
+    >
+      <div className="flex items-start">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-start">
+            <img
+              src={heroImage}
+              alt={`Hero`}
+              className="w-8 h-8 rounded-full mr-2"
+            />
+            <div className="flex flex-col mr-2">
+              <h5 className="text-sm font-semibold text-gray-900 dark:text-white">
+                {playerName}
+              </h5>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                {
+                  playerStats.rows.find(
+                    (stats) => stats.playerName === playerName
+                  )?.playerTeam
+                }
+              </span>
+            </div>
+            <div className="flex items-end space-x-1">
               {(highlighted ? statsToShow : statsToShow.slice(0, 3)).map(
                 (stat) => (
-                  <BarChart
+                  <div
                     key={stat}
-                    orientation="vertical"
-                    h={25}
-                    w={300}
-                    data={[
-                      { stat: camelCaseToWords(stat), value: getStat(stat) },
-                    ]}
-                    dataKey="stat"
-                    series={[{ name: "value", color: "myColor" }]}
-                    yAxisProps={{ width: 80 }}
-                    barProps={{
-                      radius: 5,
-                    }}
-                    withBarValueLabel
-                    tickLine="none"
-                    strokeDasharray="0 1"
-                    withXAxis={false}
-                    valueFormatter={(value) => prettyFormat(value)}
-                    valueLabelProps={{ position: "inside", fill: "white" }}
-                    xAxisProps={{
-                      domain: [0, getMaxStat(stat)],
-                    }}
-                  />
+                    className="w-12 flex flex-col items-center relative"
+                    onMouseEnter={() => setShowTooltip(stat)}
+                    onMouseLeave={() => setShowTooltip(null)}
+                  >
+                    <div className="flex justify-center">
+                      <div
+                        className={`
+                          flex items-center justify-center rounded-full
+                          ${
+                            getRanking(stat).rank === 1
+                              ? "bg-primary-500 w-8 h-8 text-white"
+                              : "bg-gray-300 dark:bg-gray-600 w-6 h-6 text-gray-800 dark:text-gray-200"
+                          }
+                        `}
+                      >
+                        <span
+                          className={`${
+                            getRanking(stat).rank === 1 ? "text-sm" : "text-xs"
+                          }`}
+                        >
+                          #{getRanking(stat).rank}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex justify-center">
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                        {camelCaseToAbbreviation(stat)}
+                      </span>
+                    </div>
+                    {showTooltip === stat && (
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-2 bg-gray-800 text-white text-xs p-2 rounded shadow-lg z-10 whitespace-nowrap">
+                        {playerName} is ranked #{getRanking(stat).rank} in{" "}
+                        {camelCaseToWords(stat)} this match
+                      </div>
+                    )}
+                  </div>
                 )
               )}
-              {progress > 0 && progress < 100 && (
-                <Progress
-                  size={2}
-                  value={progress}
-                  color="myColor"
-                  m="0"
-                  mb="-16px"
-                />
-              )}
-            </Stack>
-          </Group>
-        </Paper>
-      )}
-    </Transition>
+            </div>
+          </div>
+
+          {(highlighted ? statsToShow : statsToShow.slice(0, 3)).map((stat) => (
+            <div key={stat} className="h-[25px] w-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  layout="vertical"
+                  data={[
+                    { stat: camelCaseToWords(stat), value: getStat(stat) },
+                  ]}
+                  margin={{ top: 0, right: 30, left: 80, bottom: 0 }}
+                >
+                  <XAxis type="number" domain={[0, getMaxStat(stat)]} hide />
+                  <YAxis
+                    type="category"
+                    dataKey="stat"
+                    width={80}
+                    tickLine={false}
+                  />
+                  <Bar
+                    dataKey="value"
+                    fill="#4F46E5"
+                    radius={5}
+                    label={{
+                      position: "right",
+                      formatter: (value: number) => prettyFormat(value),
+                      fill: "white",
+                    }}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ))}
+          {progress > 0 && progress < 100 && (
+            <div className="h-0.5 mt-0 -mb-4">
+              <div
+                className="h-full bg-primary-500"
+                style={{
+                  width: `${progress}%`,
+                  transition: "width 100ms linear",
+                }}
+              ></div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };

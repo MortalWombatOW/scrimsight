@@ -1,8 +1,7 @@
 import { useAtomValue } from "jotai";
 import { Canvas } from "@react-three/fiber";
 import { Text as TextThree } from "@react-three/drei";
-import { useElementSize, useMouse } from "@mantine/hooks";
-import { Paper, Stack } from "@mantine/core";
+import { useRef, useState, useEffect } from "react";
 import {
   MatchData,
   mapTimesAtom,
@@ -16,6 +15,61 @@ interface TimelineProps {
   matchData: MatchData;
 }
 
+// Custom hook to replace useElementSize from Mantine
+const useElementSize = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    const updateSize = () => {
+      if (ref.current) {
+        setWidth(ref.current.offsetWidth);
+        setHeight(ref.current.offsetHeight);
+      }
+    };
+
+    updateSize();
+    window.addEventListener("resize", updateSize);
+
+    return () => {
+      window.removeEventListener("resize", updateSize);
+    };
+  }, []);
+
+  return { ref, width, height };
+};
+
+// Custom hook to replace useMouse from Mantine
+const useMouse = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        setX(event.clientX - rect.left);
+        setY(event.clientY - rect.top);
+      }
+    };
+
+    const element = ref.current;
+    if (element) {
+      element.addEventListener("mousemove", handleMouseMove);
+    }
+
+    return () => {
+      if (element) {
+        element.removeEventListener("mousemove", handleMouseMove);
+      }
+    };
+  }, []);
+
+  return { ref, x, y };
+};
+
 export const Timeline = ({ matchData }: TimelineProps) => {
   const mapTimes = useAtomValue(mapTimesAtom).find(
     (match) => match.matchId === matchData.matchId
@@ -27,7 +81,17 @@ export const Timeline = ({ matchData }: TimelineProps) => {
     playerInteractionEventsAtom
   ).filter((event) => event.matchId === matchData.matchId);
 
-  const { ref, width } = useElementSize();
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
+  const { ref: sizeRef, width } = useElementSize();
+
+  // Attach sizeRef to canvasContainerRef
+  useEffect(() => {
+    if (canvasContainerRef.current) {
+      if (sizeRef.current !== canvasContainerRef.current) {
+        sizeRef.current = canvasContainerRef.current;
+      }
+    }
+  }, [canvasContainerRef.current]);
 
   const maxTime = mapTimes?.endTime ?? 0;
   const minTime = mapTimes?.startTime ?? 0;
@@ -65,54 +129,58 @@ export const Timeline = ({ matchData }: TimelineProps) => {
   );
 
   return (
-    <Paper withBorder p="md">
-      <Stack
-        pos="relative"
-        h={playerOrder.length * 50 + topOffset}
+    <div className="bg-white rounded-lg border border-gray-200 w-full p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+      <div
+        className="relative"
+        style={{ height: `${playerOrder.length * 50 + topOffset}px` }}
         ref={mouseRef}
       >
-        <Canvas orthographic ref={ref}>
-          <ambientLight />
-          <pointLight position={[10, 10, 10]} />
-          {playerOrder.map((player) => (
-            <TextThree
-              key={player}
-              scale={12}
-              position={[getX(0) - 10, getY(player), 0]}
-              color="white"
-              anchorX="right"
-              anchorY="middle"
-            >
-              {player}
-            </TextThree>
-          ))}
-          {playerEvents.map((event) => {
-            const isHighlighted = highlightedEvents.includes(event);
-            return (
-              <PlayerEventThree
-                key={JSON.stringify(event)}
-                event={event}
-                getX={getX}
-                getY={getY}
-                isHighlighted={isHighlighted}
-              />
-            );
-          })}
-          {playerInteractionEvents.map((event) => {
-            const isHighlighted = highlightedInteractionEvents.includes(event);
-            return (
-              <PlayerInteractionEventThree
-                key={JSON.stringify(event)}
-                event={event}
-                getX={getX}
-                getY={getY}
-                matchData={matchData}
-                isHighlighted={isHighlighted}
-              />
-            );
-          })}
-        </Canvas>
-      </Stack>
-    </Paper>
+        <div ref={canvasContainerRef} className="w-full h-full">
+          <Canvas orthographic>
+            <ambientLight />
+            <pointLight position={[10, 10, 10]} />
+            {playerOrder.map((player) => (
+              <TextThree
+                key={player}
+                scale={12}
+                position={[getX(0) - 10, getY(player), 0]}
+                color="white"
+                anchorX="right"
+                anchorY="middle"
+              >
+                {player}
+              </TextThree>
+            ))}
+            {playerEvents.map((event) => {
+              const isHighlighted = highlightedEvents.includes(event);
+              return (
+                <PlayerEventThree
+                  key={JSON.stringify(event)}
+                  event={event}
+                  getX={getX}
+                  getY={getY}
+                  isHighlighted={isHighlighted}
+                />
+              );
+            })}
+            {playerInteractionEvents.map((event) => {
+              const isHighlighted = highlightedInteractionEvents.includes(
+                event
+              );
+              return (
+                <PlayerInteractionEventThree
+                  key={JSON.stringify(event)}
+                  event={event}
+                  getX={getX}
+                  getY={getY}
+                  matchData={matchData}
+                  isHighlighted={isHighlighted}
+                />
+              );
+            })}
+          </Canvas>
+        </div>
+      </div>
+    </div>
   );
 };

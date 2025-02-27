@@ -1,49 +1,76 @@
-import { Grid, Paper, Typography, Box, Avatar } from '@mui/material';
-import { useAtomValue } from 'jotai';
-import { playerStatsByPlayerAtom, PlayerStats, PlayerStatsNumericalKeys } from '../../../atoms/metrics/playerMetricsAtoms';
-import { Link } from 'react-router-dom';
-import { Grouped } from '../../../atoms/metrics/metricUtils';
+import { useAtomValue } from "jotai";
+import {
+  playerStatsByPlayerAtom,
+  PlayerStats,
+  PlayerStatsNumericalKeys,
+} from "../../../atoms/metrics/playerMetricsAtoms";
+import { Link } from "react-router-dom";
+import { Grouped } from "../../../atoms/metrics/metricUtils";
 
 interface TopPlayerCardProps {
   title: string;
-  player: Grouped<PlayerStats, 'playerName', PlayerStatsNumericalKeys>;
+  player: Grouped<PlayerStats, "playerName", PlayerStatsNumericalKeys>;
   metric: string;
   value: number;
   color: string;
 }
 
-const TopPlayerCard = ({ title, player, metric, value, color }: TopPlayerCardProps) => (
-  <Paper sx={{
-    p: 2,
-    height: '100%',
-    transition: 'transform 0.2s',
-    '&:hover': {
-      transform: 'translateY(-4px)',
+const TopPlayerCard = ({
+  title,
+  player,
+  metric,
+  value,
+  color,
+}: TopPlayerCardProps) => {
+  // Map Material UI color props to Tailwind CSS classes
+  const getColorClass = () => {
+    switch (color) {
+      case "primary.main":
+        return "text-primary-600 dark:text-primary-400";
+      case "secondary.main":
+        return "text-secondary-600 dark:text-secondary-400";
+      case "error.main":
+        return "text-red-600 dark:text-red-400";
+      case "warning.main":
+        return "text-amber-600 dark:text-amber-400";
+      case "info.main":
+        return "text-blue-600 dark:text-blue-400";
+      case "success.main":
+        return "text-green-600 dark:text-green-400";
+      default:
+        return "text-gray-600 dark:text-gray-400";
     }
-  }}>
-    <Typography variant="h6" gutterBottom color={color}>
-      {title}
-    </Typography>
-    <Box component={Link} to={`/players/${encodeURIComponent(player.playerName)}`} sx={{ textDecoration: 'none', color: 'inherit' }}>
-      <Box display="flex" alignItems="center" mb={2}>
-        <Avatar sx={{ mr: 2 }}>{player.playerName[0]}</Avatar>
-        <Box>
-          <Typography variant="subtitle1">
-            {player.playerName}
-          </Typography>
-        </Box>
-      </Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="body2" color="text.secondary">
-          {metric}
-        </Typography>
-        <Typography variant="h6" color={color}>
-          {typeof value === 'number' ? value.toLocaleString() : value}
-        </Typography>
-      </Box>
-    </Box>
-  </Paper>
-);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4 h-full transition-transform duration-200 hover:-translate-y-1 dark:bg-gray-800">
+      <h3 className={`text-lg font-semibold mb-2 ${getColorClass()}`}>
+        {title}
+      </h3>
+      <Link
+        to={`/players/${encodeURIComponent(player.playerName)}`}
+        className="block no-underline text-inherit"
+      >
+        <div className="flex items-center mb-4">
+          <div className="w-10 h-10 rounded-full bg-primary-500 text-white flex items-center justify-center mr-3 text-lg font-medium">
+            {player.playerName[0]}
+          </div>
+          <div>
+            <p className="text-base font-medium text-gray-900 dark:text-white">
+              {player.playerName}
+            </p>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400">{metric}</p>
+          <p className={`text-lg font-semibold ${getColorClass()}`}>
+            {typeof value === "number" ? value.toLocaleString() : value}
+          </p>
+        </div>
+      </Link>
+    </div>
+  );
+};
 
 export const TopPlayersSection = () => {
   const playerStats = useAtomValue(playerStatsByPlayerAtom);
@@ -51,9 +78,11 @@ export const TopPlayersSection = () => {
 
   if (players.length === 0) {
     return (
-      <Paper sx={{ p: 2 }}>
-        <Typography>No player data available</Typography>
-      </Paper>
+      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
+        <p className="text-gray-700 dark:text-gray-300">
+          No player data available
+        </p>
+      </div>
     );
   }
 
@@ -75,12 +104,12 @@ export const TopPlayersSection = () => {
   );
 
   return (
-    <Box>
-      <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+    <div>
+      <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
         Top Performers
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} lg={3}>
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div>
           <TopPlayerCard
             title="Top Damage"
             player={topDamage}
@@ -88,8 +117,8 @@ export const TopPlayersSection = () => {
             value={topDamage.heroDamageDealt}
             color="error.main"
           />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={3}>
+        </div>
+        <div>
           <TopPlayerCard
             title="Top Healing"
             player={topHealing}
@@ -97,8 +126,8 @@ export const TopPlayersSection = () => {
             value={topHealing.healingDealt}
             color="success.main"
           />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={3}>
+        </div>
+        <div>
           <TopPlayerCard
             title="Most Eliminations"
             player={topEliminations}
@@ -106,8 +135,8 @@ export const TopPlayersSection = () => {
             value={topEliminations.eliminations}
             color="primary.main"
           />
-        </Grid>
-        <Grid item xs={12} sm={6} lg={3}>
+        </div>
+        <div>
           <TopPlayerCard
             title="Best Accuracy"
             player={topAccuracy}
@@ -115,8 +144,8 @@ export const TopPlayersSection = () => {
             value={Math.round(topAccuracy.weaponAccuracy * 100)}
             color="warning.main"
           />
-        </Grid>
-      </Grid>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
-}; 
+};

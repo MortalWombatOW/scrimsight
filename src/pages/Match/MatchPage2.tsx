@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import { matchDataAtom } from "../../atoms";
-import { Title, Group, Grid, Paper, Stack, Text, Image } from "@mantine/core";
 import { formatTime, mapNameToFileName } from "../../lib";
 import { IoMdCalendar } from "react-icons/io";
 import { MdAccessTime } from "react-icons/md";
@@ -29,75 +28,67 @@ export const MatchPage2 = () => {
   }
 
   return (
-    <Group align="flex-start">
-      <Grid>
-        <Grid.Col span={{ base: 12, md: 8, sm: 12 }}>
-          <Paper withBorder w="100%" p="lg" bg="dark.6">
-            <Group>
-              <Stack gap="0">
-                <Image
-                  src={mapNameToFileName(matchData.map, false)}
-                  radius="sm"
-                  h={200}
-                  w="100%"
-                />
-                <Group p="xs">
-                  <FiMapPin />
-                  <Title order={3}>
-                    {matchData.map} ({matchData.mode})
-                  </Title>
-                </Group>
-                <Group p="xs">
-                  <Group>
-                    <IoMdCalendar />
-                    <Text>
-                      {new Date(matchData.fileModified).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        }
-                      )}
-                    </Text>
-                  </Group>
-                  <Group>
-                    <MdAccessTime />
-                    <Text>
-                      {new Date(matchData.fileModified).toLocaleTimeString(
-                        "en-US",
-                        {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          timeZone: Intl.DateTimeFormat().resolvedOptions()
-                            .timeZone,
-                        }
-                      )}
-                    </Text>
-                  </Group>
-                  <Group>
-                    <TbClockHour1 />
-                    <Text>{formatTime(matchData.duration)}</Text>
-                  </Group>
-                </Group>
-              </Stack>
-            </Group>
-            <Group>
-              <PlayerStatsComparison matchId={matchId} />
-              <AllPlayerComparison matchId={matchId} />
-            </Group>
-            <Timeline matchData={matchData} />
-          </Paper>
-        </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 4, sm: 12 }}>
-          <MatchScoreCard matchData={matchData} />
-        </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 4, sm: 12 }}>
-          <TeamStatsComparison matchId={matchId} />
-        </Grid.Col>
-      </Grid>
+    <div className="flex flex-col gap-6 items-center w-full max-w-4xl mx-auto">
+      {/* Map Header Section */}
+      <section className="bg-white border border-gray-200 p-6 rounded-lg w-full shadow-sm">
+        <img
+          src={mapNameToFileName(matchData.map, false)}
+          alt={matchData.map}
+          className="rounded-md h-[250px] w-full object-cover mb-4"
+        />
+        <div className="flex items-center mb-3">
+          <FiMapPin className="mr-2 text-gray-600" />
+          <h3 className="text-xl font-semibold text-gray-800">
+            {matchData.map} ({matchData.mode})
+          </h3>
+        </div>
+        <div className="flex flex-wrap gap-4">
+          <div className="flex items-center">
+            <IoMdCalendar className="mr-2 text-gray-600" />
+            <span className="text-gray-700">
+              {new Date(matchData.fileModified).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <MdAccessTime className="mr-2 text-gray-600" />
+            <span className="text-gray-700">
+              {new Date(matchData.fileModified).toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              })}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <TbClockHour1 className="mr-2 text-gray-600" />
+            <span className="text-gray-700">
+              {formatTime(matchData.duration)}
+            </span>
+          </div>
+        </div>
+      </section>
 
+      {/* Match  Section */}
+      <MatchScoreCard matchData={matchData} />
+
+      {/* Team Stats Section */}
+      <TeamStatsComparison matchId={matchId} />
+
+      {/* Player Stats Section */}
+      <PlayerStatsComparison matchId={matchId} />
+
+      {/* All Player Comparison */}
+      <AllPlayerComparison matchId={matchId} />
+
+      {/* Timeline Section */}
+      <Timeline matchData={matchData} />
+
+      {/* Single Stat Comparison */}
       <SingleStatPlayerComparison matchId={matchId} />
-    </Group>
+    </div>
   );
 };

@@ -12,7 +12,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { Box, Typography, Paper, Grid, Tabs, Tab } from "@mui/material";
+import { useState } from "react";
 import { useAtomValue } from "jotai";
 import {
   playerStatsByPlayerAtom,
@@ -20,7 +20,6 @@ import {
   playerStatsByPlayerAndRoleAtom,
   playerStatsByMatchIdAndPlayerNameAtom,
 } from "../../atoms/metrics/playerMetricsAtoms";
-import { useState } from "react";
 import { StatCard } from "../StatCard";
 
 interface MetricSectionProps {
@@ -36,52 +35,54 @@ const MetricSection = ({
   colors,
   chartType = "bar",
 }: MetricSectionProps) => (
-  <Paper sx={{ p: 2, mb: 3 }}>
-    <Typography variant="h6" gutterBottom>
+  <div className="mb-6 rounded-lg bg-white p-4 shadow-md dark:bg-gray-800">
+    <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
       {title}
-    </Typography>
-    <Grid container spacing={3}>
-      <Grid item xs={12} md={chartType === "line" ? 12 : 6}>
-        <Box sx={{ height: 300 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            {chartType === "bar" ? (
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill={colors[0]} />
-              </BarChart>
-            ) : chartType === "pie" ? (
-              <PieChart>
-                <Pie
-                  data={data}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  fill={colors[1]}
-                  label
-                />
-                <Tooltip />
-              </PieChart>
-            ) : (
-              <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="value" stroke={colors[0]} />
-              </LineChart>
-            )}
-          </ResponsiveContainer>
-        </Box>
-      </Grid>
-    </Grid>
-  </Paper>
+    </h3>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div
+        className={`h-[300px] ${
+          chartType === "line" ? "col-span-1 md:col-span-2" : ""
+        }`}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          {chartType === "bar" ? (
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value" fill={colors[0]} />
+            </BarChart>
+          ) : chartType === "pie" ? (
+            <PieChart>
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill={colors[1]}
+                label
+              />
+              <Tooltip />
+            </PieChart>
+          ) : (
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="value" stroke={colors[0]} />
+            </LineChart>
+          )}
+        </ResponsiveContainer>
+      </div>
+    </div>
+  </div>
 );
 
 export const PlayerMetricsDashboard = ({
@@ -110,7 +111,11 @@ export const PlayerMetricsDashboard = ({
     .sort((a, b) => a.matchId.localeCompare(b.matchId));
 
   if (!playerOverallStats) {
-    return <Typography>No data available for {playerName}</Typography>;
+    return (
+      <p className="text-gray-700 dark:text-gray-300">
+        No data available for {playerName}
+      </p>
+    );
   }
 
   const overallMetrics = [
@@ -136,32 +141,56 @@ export const PlayerMetricsDashboard = ({
   }));
 
   return (
-    <Box sx={{ mt: 3 }}>
-      <Typography variant="h5" gutterBottom>
+    <div className="mt-6">
+      <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
         Performance Metrics
-      </Typography>
+      </h2>
 
-      <Grid container spacing={2} sx={{ mb: 4 }}>
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         {overallMetrics.map((metric, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <StatCard
-              title={metric.title}
-              value={metric.value.toString()}
-              color={index % 2 === 0 ? "primary.main" : "secondary.main"}
-            />
-          </Grid>
+          <StatCard
+            key={index}
+            title={metric.title}
+            value={metric.value.toString()}
+            color={index % 2 === 0 ? "primary.main" : "secondary.main"}
+          />
         ))}
-      </Grid>
+      </div>
 
-      <Tabs
-        value={selectedTab}
-        onChange={(_, newValue) => setSelectedTab(newValue)}
-        sx={{ mb: 2 }}
-      >
-        <Tab label="By Hero" />
-        <Tab label="By Role" />
-        <Tab label="Match History" />
-      </Tabs>
+      <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+        <nav className="-mb-px flex">
+          <button
+            className={`mr-2 inline-block px-4 py-2 ${
+              selectedTab === 0
+                ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
+                : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+            }`}
+            onClick={() => setSelectedTab(0)}
+          >
+            By Hero
+          </button>
+          <button
+            className={`mr-2 inline-block px-4 py-2 ${
+              selectedTab === 1
+                ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
+                : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+            }`}
+            onClick={() => setSelectedTab(1)}
+          >
+            By Role
+          </button>
+          <button
+            className={`mr-2 inline-block px-4 py-2 ${
+              selectedTab === 2
+                ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
+                : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+            }`}
+            onClick={() => setSelectedTab(2)}
+          >
+            Match History
+          </button>
+        </nav>
+      </div>
 
       {selectedTab === 0 && (
         <MetricSection
@@ -189,6 +218,6 @@ export const PlayerMetricsDashboard = ({
           chartType="line"
         />
       )}
-    </Box>
+    </div>
   );
 };

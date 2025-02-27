@@ -1,5 +1,3 @@
-import { Card, CardContent, Typography, Box } from "@mui/material";
-
 interface StatCardProps {
   title: string;
   value: string;
@@ -7,34 +5,28 @@ interface StatCardProps {
   icon?: React.ReactNode;
 }
 
-export const StatCard: React.FC<StatCardProps> = ({ title, value, color, icon }) => {
+export const StatCard: React.FC<StatCardProps> = ({
+  title,
+  value,
+  color,
+  icon,
+}) => {
   return (
-    <Card sx={{ 
-      width: '100%', 
-      height: '100%', 
-      borderColor: color, 
-      borderWidth: 1, 
-      borderStyle: 'solid',
-      transition: 'transform 0.2s',
-      '&:hover': {
-        transform: 'translateY(-4px)',
-      }
-    }}>
-      <CardContent>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          {icon && (
-            <Box sx={{ color, mr: 1, display: 'flex', alignItems: 'center' }}>
-              {icon}
-            </Box>
-          )}
-          <Typography variant="subtitle2" color="text.secondary">
-            {title}
-          </Typography>
-        </Box>
-        <Typography variant="h4" sx={{ color }}>
-          {value}
-        </Typography>
-      </CardContent>
-    </Card>
+    <div
+      className="w-full h-full border rounded-md p-4 transition-transform duration-200 hover:-translate-y-1"
+      style={{ borderColor: color }}
+    >
+      <div className="flex items-center mb-2">
+        {icon && (
+          <div className="flex items-center mr-2" style={{ color }}>
+            {icon}
+          </div>
+        )}
+        <p className="text-sm font-medium text-gray-500">{title}</p>
+      </div>
+      <p className="text-2xl font-bold" style={{ color }}>
+        {value}
+      </p>
+    </div>
   );
 };
