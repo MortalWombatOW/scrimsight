@@ -28,15 +28,19 @@ export const PlayerStatsComparison = ({
         </h2>
       </div>
 
-      <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+      <div className="flex flex-wrap gap-4 mb-8">
         {playerStats.rows
           .filter((stats) => stats.playerTeam === matchData.team1Name)
           .map((player) => (
-            <PlayerStatsCard
+            <div
               key={player.playerName}
-              playerName={player.playerName}
-              matchId={matchId}
-            />
+              className="flex-1 min-w-[200px] max-w-[400px]"
+            >
+              <PlayerStatsCard
+                playerName={player.playerName}
+                matchId={matchId}
+              />
+            </div>
           ))}
       </div>
 
@@ -46,15 +50,19 @@ export const PlayerStatsComparison = ({
         </h2>
       </div>
 
-      <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="flex flex-wrap gap-4">
         {playerStats.rows
           .filter((stats) => stats.playerTeam === matchData.team2Name)
           .map((player) => (
-            <PlayerStatsCard
+            <div
               key={player.playerName}
-              playerName={player.playerName}
-              matchId={matchId}
-            />
+              className="flex-1 min-w-[300px] max-w-[400px]"
+            >
+              <PlayerStatsCard
+                playerName={player.playerName}
+                matchId={matchId}
+              />
+            </div>
           ))}
       </div>
     </>

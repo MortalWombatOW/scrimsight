@@ -129,35 +129,7 @@ export const PlayerStatsCard = ({
     "playtime",
     "desc"
   ).rows.filter((stats) => stats.playerName === playerName);
-  const { hovered, ref } = useHover();
-  const lastHovered = usePrevious(hovered);
-  const [highlighted, setHighlighted] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
-
-  const { start, clear } = useTimeout(([hovered]) => {
-    setHighlighted(hovered);
-  }, 1000);
-
-  const interval = useInterval(() => {
-    if (progress < 100) {
-      setProgress(progress + 20);
-    }
-  }, 100);
-
-  useEffect(() => {
-    if (lastHovered !== hovered) {
-      clear();
-      start(hovered);
-      setProgress(0);
-      interval.start();
-    }
-    if ((!hovered && !highlighted) || (hovered && highlighted)) {
-      clear();
-      setProgress(0);
-      interval.stop();
-    }
-  }, [hovered, lastHovered, highlighted, clear, start, interval, progress]);
 
   if (!playerStats || !heroStats.length) {
     throw new Error("No player stats");
@@ -192,25 +164,23 @@ export const PlayerStatsCard = ({
     return { rank, max, percentage };
   };
 
+  // Build list of stats to show - always include these 3
   const statsToShow = ["finalBlows", "allDamageDealt", "ultimatesUsed"];
 
+  // Add a 4th stat based on role
   if (playerRole === "damage") {
-    statsToShow.push("eliminations", "weaponAccuracy", "criticalHits");
-  }
-
-  if (playerRole === "support") {
-    statsToShow.push("healingDealt", "offensiveAssists", "defensiveAssists");
-  }
-
-  if (playerRole === "tank") {
+    statsToShow.push("eliminations");
+  } else if (playerRole === "support") {
+    statsToShow.push("healingDealt");
+  } else if (playerRole === "tank") {
     statsToShow.push("damageBlocked");
+  } else {
+    // Default 4th metric if role is unknown
+    statsToShow.push("eliminations");
   }
 
   return (
-    <div
-      ref={ref}
-      className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700 h-full w-full transition-all duration-300 hover:shadow-md"
-    >
+    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700 h-full w-full transition-all duration-300 hover:shadow-md">
       <div className="flex items-start">
         <div className="flex flex-col gap-3 w-full">
           <div className="flex items-center mb-3">
@@ -234,10 +204,10 @@ export const PlayerStatsCard = ({
           </div>
 
           <div className="flex items-center justify-between mb-4">
-            {statsToShow.slice(0, 3).map((stat) => (
+            {statsToShow.slice(0, 4).map((stat) => (
               <div
                 key={stat}
-                className="flex flex-col items-center"
+                className="flex flex-col items-center relative"
                 onMouseEnter={() => setShowTooltip(stat)}
                 onMouseLeave={() => setShowTooltip(null)}
               >
@@ -267,8 +237,8 @@ export const PlayerStatsCard = ({
             ))}
           </div>
 
-          {statsToShow.slice(0, 3).map((stat, index) => (
-            <div key={stat} className="mb-3 last:mb-0">
+          {statsToShow.slice(0, 4).map((stat) => (
+            <div key={stat} className="mb-0">
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-xs text-gray-600 dark:text-gray-400 capitalize">
@@ -295,18 +265,6 @@ export const PlayerStatsCard = ({
               </div>
             </div>
           ))}
-
-          {progress > 0 && progress < 100 && (
-            <div className="h-0.5 mt-1">
-              <div
-                className="h-full bg-gray-600 dark:bg-gray-400"
-                style={{
-                  width: `${progress}%`,
-                  transition: "width 100ms linear",
-                }}
-              ></div>
-            </div>
-          )}
         </div>
       </div>
     </div>

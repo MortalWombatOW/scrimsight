@@ -1,7 +1,7 @@
 import { useAtomValue } from "jotai";
 import { Canvas } from "@react-three/fiber";
 import { Text as TextThree } from "@react-three/drei";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import {
   MatchData,
   mapTimesAtom,
@@ -102,14 +102,20 @@ export const Timeline = ({ matchData }: TimelineProps) => {
   const playerOrder = [...matchData.team1Players, ...matchData.team2Players];
   const height = playerOrder.length * 50 + topOffset;
 
-  const getX = (time: number) =>
-    ((time - minTime) / timeRange) * (width - leftOffset) -
-    width / 2 +
-    leftOffset;
-  const getY = (playerName: string) =>
-    playerOrder.findIndex((player) => player === playerName) * 50 +
-    topOffset -
-    height / 2;
+  const getX = useMemo(
+    () => (time: number) =>
+      ((time - minTime) / timeRange) * (width - leftOffset) -
+      width / 2 +
+      leftOffset,
+    [minTime, maxTime, timeRange, width, leftOffset]
+  );
+  const getY = useMemo(
+    () => (playerName: string) =>
+      playerOrder.findIndex((player) => player === playerName) * 50 +
+      topOffset -
+      height / 2,
+    [playerOrder, topOffset, height]
+  );
 
   const { ref: mouseRef, x: mouseX } = useMouse();
 
