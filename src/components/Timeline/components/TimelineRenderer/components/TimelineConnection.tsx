@@ -41,7 +41,7 @@ export const TimelineConnection: React.FC<TimelineConnectionProps> = ({
   }, [sourcePosition, targetPosition]);
 
   // Animation using useFrame - only animate once
-  useFrame((_, delta) => {
+  useFrame(() => {
     // Only start animation if highlighted, not active, and not already completed
     if (isHighlighted && !animationRef.current.active && !animationComplete) {
       // Start animation when highlighted for the first time

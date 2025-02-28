@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import * as THREE from "three";
 import { TimelineEvent } from "../../../hooks";
 

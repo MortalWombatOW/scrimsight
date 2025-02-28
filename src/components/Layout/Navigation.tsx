@@ -9,7 +9,6 @@ import { useAtomValue } from "jotai";
 import { MdArrowBack } from "react-icons/md";
 import { RiTeamLine } from "react-icons/ri";
 import { MdOutlinePersonOutline } from "react-icons/md";
-import { MdOutlineEmojiEvents } from "react-icons/md";
 import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";

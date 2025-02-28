@@ -1,6 +1,5 @@
 import React from "react";
 import { Text } from "@react-three/drei";
-import * as THREE from "three";
 
 // Grayscale color palette for better UI
 const COLORS = {

@@ -41,7 +41,8 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
   layoutConfig,
 }) => {
   // Access three.js context
-  const { scene, camera, gl } = useThree();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { camera, gl } = useThree();
 
   // Ref for event markers to enable interactions
   const eventMarkers = useRef<Map<string, THREE.Object3D>>(new Map());

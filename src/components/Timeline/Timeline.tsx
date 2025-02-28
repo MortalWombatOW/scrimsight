@@ -46,12 +46,7 @@ export const Timeline: React.FC<{ matchId: string }> = ({ matchId }) => {
   );
 
   // Use the filters hook to manage filter state
-  const {
-    filters,
-    timeRangeStart,
-    timeRangeEnd,
-    handleTimeRangeChange,
-  } = useTimelineFilters({ mapTimes });
+  const { filters, handleTimeRangeChange } = useTimelineFilters({ mapTimes });
 
   // Loading state if data isn't available yet
   if (!mapTimes || !playerEvents || !playerInteractions) {
@@ -63,13 +58,12 @@ export const Timeline: React.FC<{ matchId: string }> = ({ matchId }) => {
   }
 
   // Process data for visualization using custom hook
-  const {
-    timelineData,
-    players,
-    teams,
-    eventTypes,
-    timeRange,
-  } = useTimelineData(mapTimes, playerEvents, playerInteractions, filters);
+  const { timelineData, timeRange } = useTimelineData(
+    mapTimes,
+    playerEvents,
+    playerInteractions,
+    filters
+  );
 
   // Use the selection hook to manage selection state
   const { selectedEvents, handleEventSelect } = useTimelineSelection({

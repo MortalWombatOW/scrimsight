@@ -1,5 +1,4 @@
-import { useEffect, useState, useRef } from "react";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { useState } from "react";
 import { useStats } from "../../../../atoms";
 import {
   getHeroImage,
@@ -12,109 +11,6 @@ interface PlayerStatsCardProps {
   playerName: string;
   matchId: string;
 }
-
-// Custom useHover hook
-const useHover = () => {
-  const [hovered, setHovered] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    const handleMouseEnter = () => setHovered(true);
-    const handleMouseLeave = () => setHovered(false);
-
-    element.addEventListener("mouseenter", handleMouseEnter);
-    element.addEventListener("mouseleave", handleMouseLeave);
-
-    return () => {
-      element.removeEventListener("mouseenter", handleMouseEnter);
-      element.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, []);
-
-  return { ref, hovered };
-};
-
-// Custom usePrevious hook
-const usePrevious = <T,>(value: T): T | undefined => {
-  const ref = useRef<T>(value);
-
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-
-  return ref.current;
-};
-
-// Custom useTimeout hook
-const useTimeout = (callback: (args: any[]) => void, delay: number) => {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const callbackRef = useRef(callback);
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
-  const start = (...args: any[]) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    timeoutRef.current = setTimeout(() => {
-      callbackRef.current(args);
-    }, delay);
-  };
-
-  const clear = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return clear;
-  }, []);
-
-  return { start, clear };
-};
-
-// Custom useInterval hook
-const useInterval = (callback: () => void, delay: number) => {
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const callbackRef = useRef(callback);
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
-  const start = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    intervalRef.current = setInterval(() => {
-      callbackRef.current();
-    }, delay);
-  };
-
-  const stop = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
-
-  return { start, stop };
-};
 
 export const PlayerStatsCard = ({
   playerName,
