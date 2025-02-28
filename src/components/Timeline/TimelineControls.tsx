@@ -91,7 +91,7 @@ export const TimelineControls: React.FC<TimelineControlsProps> = ({
   const rangeWidth = endPercent - startPercent;
 
   return (
-    <div className="ml-[100px]">
+    <div className="">
       <div className="flex justify-between items-center">
         <h4 className="text-sm font-medium text-gray-700">Time Range</h4>
         <button

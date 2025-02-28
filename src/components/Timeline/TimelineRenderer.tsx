@@ -1,15 +1,33 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Text } from "@react-three/drei";
+import {
+  OrbitControls,
+  Text,
+  Line,
+  QuadraticBezierLine,
+} from "@react-three/drei";
 import * as THREE from "three";
 import { TimelineData, TimelineEvent } from "./hooks/useTimelineData";
 import { formatTime } from "../../lib";
+
+// Configuration for timeline layout
+interface TimelineLayoutConfig {
+  topPadding: number;
+  bottomPadding: number;
+}
+
+// Default layout configuration
+const DEFAULT_LAYOUT_CONFIG: TimelineLayoutConfig = {
+  topPadding: 20,
+  bottomPadding: 50,
+};
 
 interface TimelineRendererProps {
   data: TimelineData;
   selectedEvents: string[];
   onEventSelect: (eventIds: string[]) => void;
   timeRangeFilter?: { start: number; end: number };
+  layoutConfig?: Partial<TimelineLayoutConfig>;
 }
 
 /**
@@ -20,6 +38,7 @@ export const TimelineRenderer: React.FC<TimelineRendererProps> = ({
   selectedEvents,
   onEventSelect,
   timeRangeFilter,
+  layoutConfig = {},
 }) => {
   // Canvas container dimensions
   const containerRef = useRef<HTMLDivElement>(null);
@@ -53,6 +72,31 @@ export const TimelineRenderer: React.FC<TimelineRendererProps> = ({
     far: 1000,
   });
 
+  // Merge custom layout config with defaults
+  const mergedLayoutConfig = useMemo(
+    () => ({
+      ...DEFAULT_LAYOUT_CONFIG,
+      ...layoutConfig,
+    }),
+    [layoutConfig]
+  );
+
+  // Add state to track animation timestamps for connections
+  const [animatingConnections, setAnimatingConnections] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  // Add a cleanup timer to remove completed animations after a delay
+  useEffect(() => {
+    if (Object.keys(animatingConnections).length === 0) return;
+
+    // We don't need a cleanup timer anymore since animations naturally complete
+    // and won't repeat due to the animationComplete state in AnimatedConnection
+
+    // Just maintain the animation state according to selections
+    return () => {}; // No cleanup needed
+  }, [animatingConnections, selectedEvents]);
+
   return (
     <div
       ref={containerRef}
@@ -61,19 +105,13 @@ export const TimelineRenderer: React.FC<TimelineRendererProps> = ({
     >
       {dimensions.width > 0 && dimensions.height > 0 && (
         <Canvas orthographic camera={cameraConfig.current}>
-          {/* <color attach="background" args={[0xf5f5f5]} /> */}
-          {/* <OrbitControls
-            enableRotate={false}
-            enableDamping
-            dampingFactor={0.1}
-            screenSpacePanning
-          /> */}
           <TimelineScene
             data={data}
             dimensions={dimensions}
             selectedEvents={selectedEvents}
             onEventSelect={onEventSelect}
             timeRangeFilter={timeRangeFilter}
+            layoutConfig={mergedLayoutConfig}
           />
         </Canvas>
       )}
@@ -88,7 +126,161 @@ interface TimelineSceneProps {
   selectedEvents: string[];
   onEventSelect: (eventIds: string[]) => void;
   timeRangeFilter?: { start: number; end: number };
+  layoutConfig: TimelineLayoutConfig;
 }
+
+// New AnimatedConnection component
+interface AnimatedConnectionProps {
+  sourcePosition: THREE.Vector3;
+  targetPosition: THREE.Vector3;
+  color: number;
+  isHighlighted: boolean;
+}
+
+const AnimatedConnection: React.FC<AnimatedConnectionProps> = ({
+  sourcePosition,
+  targetPosition,
+  color,
+  isHighlighted,
+}) => {
+  const [progress, setProgress] = useState(0);
+  const [animationComplete, setAnimationComplete] = useState(false);
+  const animationRef = useRef({ active: false, startTime: 0 });
+
+  // Calculate midpoint with an arc
+  const midPoint = useMemo(() => {
+    const mid = new THREE.Vector3()
+      .addVectors(sourcePosition, targetPosition)
+      .multiplyScalar(0.5);
+    // Add height to create an arc - higher if the points are far apart
+    const distance = sourcePosition.distanceTo(targetPosition);
+    const arcHeight = Math.min(distance * 0.3, 30); // Cap the height for very long connections
+    mid.y += arcHeight;
+    return mid;
+  }, [sourcePosition, targetPosition]);
+
+  // Animation using useFrame - only animate once
+  useFrame((_, delta) => {
+    // Only start animation if highlighted, not active, and not already completed
+    if (isHighlighted && !animationRef.current.active && !animationComplete) {
+      // Start animation when highlighted for the first time
+      animationRef.current = { active: true, startTime: Date.now() };
+      setProgress(0);
+    }
+
+    // If animation is active, update it
+    if (animationRef.current.active) {
+      // Calculate progress with easing function for smoother animation
+      const elapsed = (Date.now() - animationRef.current.startTime) / 1000;
+      const duration = 0.8; // Animation duration in seconds
+      const rawProgress = Math.min(elapsed / duration, 1);
+
+      // Use easeInOutCubic for smooth acceleration and deceleration
+      const easedProgress =
+        rawProgress < 0.5
+          ? 4 * rawProgress * rawProgress * rawProgress
+          : 1 - Math.pow(-2 * rawProgress + 2, 3) / 2;
+
+      setProgress(easedProgress);
+
+      // When animation completes
+      if (easedProgress >= 1) {
+        // Mark as complete and inactive
+        animationRef.current.active = false;
+        setAnimationComplete(true);
+      }
+    }
+  });
+
+  // Don't render anything if not highlighted and no progress
+  if (!isHighlighted && progress === 0) return null;
+
+  // Adjust line width based on highlighting
+  const lineWidth = isHighlighted ? 3 : 2;
+
+  // Fixed completed connection display
+  if (animationComplete || progress === 1) {
+    return (
+      <>
+        <QuadraticBezierLine
+          start={sourcePosition}
+          end={targetPosition}
+          mid={midPoint}
+          color={color}
+          lineWidth={lineWidth}
+          dashed={false}
+        />
+
+        {/* Visual feedback at source and target for completed connection */}
+        {isHighlighted && (
+          <>
+            <mesh position={sourcePosition}>
+              <ringGeometry args={[4, 5, 16]} />
+              <meshBasicMaterial color={color} transparent opacity={0.6} />
+            </mesh>
+            <mesh position={targetPosition}>
+              <ringGeometry args={[4, 5, 16]} />
+              <meshBasicMaterial color={color} transparent opacity={0.6} />
+            </mesh>
+          </>
+        )}
+      </>
+    );
+  }
+
+  // Calculate intermediate position with bezier curve
+  const currentPoint = new THREE.Vector3();
+  if (progress < 1) {
+    // Use quadratic bezier interpolation for smoother arcing
+    const t = progress;
+    const mt = 1 - t;
+
+    currentPoint.x =
+      mt * mt * sourcePosition.x +
+      2 * mt * t * midPoint.x +
+      t * t * targetPosition.x;
+    currentPoint.y =
+      mt * mt * sourcePosition.y +
+      2 * mt * t * midPoint.y +
+      t * t * targetPosition.y;
+    currentPoint.z =
+      mt * mt * sourcePosition.z +
+      2 * mt * t * midPoint.z +
+      t * t * targetPosition.z;
+  } else {
+    currentPoint.copy(targetPosition);
+  }
+
+  return (
+    <>
+      {/* Only show the path from source to current position */}
+      <QuadraticBezierLine
+        start={sourcePosition}
+        end={currentPoint}
+        mid={midPoint}
+        color={color}
+        lineWidth={lineWidth}
+        dashed={false}
+      />
+
+      {/* Animated particle */}
+      {progress > 0 && progress < 1 && (
+        <mesh position={currentPoint}>
+          <sphereGeometry args={[3, 16, 16]} />
+          <meshBasicMaterial color={color} transparent opacity={0.8} />
+        </mesh>
+      )}
+
+      {/* Visual feedback at source for animation in progress */}
+      {isHighlighted && (
+        <mesh position={sourcePosition}>
+          <ringGeometry args={[4, 5, 16]} />
+          <meshBasicMaterial color={color} transparent opacity={0.6} />
+        </mesh>
+      )}
+    </>
+  );
+};
 
 const TimelineScene: React.FC<TimelineSceneProps> = ({
   data,
@@ -96,6 +288,7 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
   selectedEvents,
   onEventSelect,
   timeRangeFilter,
+  layoutConfig,
 }) => {
   // Access three.js context
   const { scene, camera, gl } = useThree();
@@ -106,6 +299,22 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
   // Raycaster for interactions
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
+
+  // Add state to track animation timestamps for connections
+  const [animatingConnections, setAnimatingConnections] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  // Add a cleanup timer to remove completed animations after a delay
+  useEffect(() => {
+    if (Object.keys(animatingConnections).length === 0) return;
+
+    // We don't need a cleanup timer anymore since animations naturally complete
+    // and won't repeat due to the animationComplete state in AnimatedConnection
+
+    // Just maintain the animation state according to selections
+    return () => {}; // No cleanup needed
+  }, [animatingConnections, selectedEvents]);
 
   // Time scale function that respects the time range filter
   const timeScale = useMemo(() => {
@@ -118,18 +327,16 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
       : data.mapInfo.endTime;
     const timeRange = timeMax - timeMin || 1; // Prevent division by zero
 
-    // Adjust timeline to account for the space reserved for labels (40px offset)
-    const timelineWidth = dimensions.width - 100;
-    const xOffset = 100;
+    // Using full width for the timeline now that labels are above
+    const timelineWidth = dimensions.width;
 
     return (time: number): number => {
       // Clamp the time value to the filtered range
       const clampedTime = Math.max(timeMin, Math.min(timeMax, time));
-      // Map the time to x-coordinate within the viewport, accounting for the label space
+      // Map the time to x-coordinate within the viewport, using full width
       return (
         ((clampedTime - timeMin) / timeRange) * timelineWidth -
-        dimensions.width / 2 +
-        xOffset
+        dimensions.width / 2
       );
     };
   }, [data.mapInfo, dimensions.width, timeRangeFilter]);
@@ -137,34 +344,74 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
   // Calculate lane height
   const tickHeight = 50;
   const laneHeight =
-    (dimensions.height - tickHeight) / (data.playerLanes.length || 1);
-  const laneSpacing = laneHeight * 0.7;
+    (dimensions.height - layoutConfig.topPadding - layoutConfig.bottomPadding) /
+    (data.playerLanes.length || 1);
+  const laneSpacing = laneHeight * 0.5;
+
+  // Helper function to calculate Y position based on element type and index
+  const getYPosition = useMemo(() => {
+    const calculatePosition = (
+      type: "lane" | "label" | "tick",
+      index: number
+    ): number => {
+      const availableHeight =
+        dimensions.height -
+        layoutConfig.topPadding -
+        layoutConfig.bottomPadding;
+
+      switch (type) {
+        case "lane":
+          // Position the lane based on index, starting from top (adjusted by topPadding)
+          return (
+            dimensions.height / 2 -
+            layoutConfig.topPadding -
+            laneHeight * index -
+            laneHeight / 2
+          );
+
+        case "label":
+          // Position labels above their lanes
+          const lanePosition = calculatePosition("lane", index);
+          return lanePosition + laneHeight * 0.5;
+
+        case "tick":
+          // Position ticks below the last lane
+          return (
+            dimensions.height / 2 -
+            layoutConfig.topPadding -
+            laneHeight * data.playerLanes.length -
+            laneHeight * 0.2
+          );
+
+        default:
+          return 0;
+      }
+    };
+
+    return calculatePosition;
+  }, [dimensions.height, layoutConfig, laneHeight, data.playerLanes.length]);
 
   // Create player lane labels
   const playerLabels = useMemo(() => {
     return data.playerLanes.map((player, index) => {
-      const yPosition =
-        dimensions.height / 2 - laneHeight * index - laneHeight / 2;
-
-      // Position the label within the left side of the timeline instead of outside
-      const xPosition = -dimensions.width / 2 + 95;
+      const labelYPosition = getYPosition("label", index);
 
       return (
         <Text
           key={`label-${player.playerName}`}
-          position={[xPosition, yPosition, 0.2]} // Slightly above the lane for better visibility
+          position={[-dimensions.width / 2 + 5, labelYPosition, 0.2]} // Centered horizontally, above the lane
           fontSize={laneHeight * 0.4} // Proportional font size
           color="#333333"
-          anchorX="right" // Right-align text so it sits close to the timeline
+          anchorX="left" // Center-align text
           anchorY="middle" // Vertically center text
-          maxWidth={dimensions.width * 0.15} // Limit width to prevent long names from taking too much space
+          maxWidth={dimensions.width * 0.3} // Limit width to prevent long names from taking too much space
           overflowWrap="break-word" // Break text if needed
         >
           {player.playerName}
         </Text>
       );
     });
-  }, [data.playerLanes, dimensions.height, dimensions.width, laneHeight]);
+  }, [data.playerLanes, dimensions.width, laneHeight, getYPosition]);
 
   // Setup mouse handlers for interaction
   useEffect(() => {
@@ -200,15 +447,57 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
 
         if (selectedEventId) {
           // If shift key is pressed, add to selection
+          let newSelectedEvents: string[];
+
           if (event.shiftKey) {
-            onEventSelect([...selectedEvents, selectedEventId]);
+            // Add to existing selection if not already included
+            newSelectedEvents = selectedEvents.includes(selectedEventId)
+              ? selectedEvents
+              : [...selectedEvents, selectedEventId];
           } else {
-            onEventSelect([selectedEventId]);
+            // Replace selection if it's a new event, toggle off if it's already selected
+            newSelectedEvents =
+              selectedEvents.length === 1 &&
+              selectedEvents[0] === selectedEventId
+                ? [] // Deselect if clicking the same event
+                : [selectedEventId]; // Otherwise select just this event
+          }
+
+          // Check if this is actually a new selection
+          const isNewSelection =
+            newSelectedEvents.length !== selectedEvents.length ||
+            newSelectedEvents.some((id) => !selectedEvents.includes(id));
+
+          // Update the selected events
+          onEventSelect(newSelectedEvents);
+
+          // Only animate if this is a new selection
+          if (isNewSelection) {
+            // Clear previous animations from connections not related to current selection
+            setAnimatingConnections({});
+
+            // Find connections related to this event and mark them for animation
+            const newAnimatingConnections: { [key: string]: boolean } = {};
+
+            data.connections.forEach((conn) => {
+              // Only animate connections where this event is the source/initiator
+              if (conn.source === selectedEventId) {
+                const connKey = `${conn.source}-${conn.target}`;
+                newAnimatingConnections[connKey] = true;
+              }
+            });
+
+            // Set the new animations, replacing any existing ones
+            if (Object.keys(newAnimatingConnections).length > 0) {
+              setAnimatingConnections(newAnimatingConnections);
+            }
           }
         }
       } else {
         // Clear selection when clicking empty space
         onEventSelect([]);
+        // Clear animations
+        setAnimatingConnections({});
       }
     };
 
@@ -217,7 +506,7 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
     return () => {
       domElement.removeEventListener("click", handleClick);
     };
-  }, [camera, gl, onEventSelect, selectedEvents]);
+  }, [camera, data.connections, gl, onEventSelect, selectedEvents]);
 
   // Helper function to get a color for an event
   const getEventColor = (eventId: string): number => {
@@ -236,17 +525,15 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
   // Create player lanes
   const playerLanes = useMemo(() => {
     return data.playerLanes.map((player, index) => {
-      const yPosition =
-        dimensions.height / 2 - laneHeight * index - laneHeight / 2;
+      const yPosition = getYPosition("lane", index);
 
-      // Make the lane slightly narrower to accommodate for labels
-      const laneWidth = dimensions.width - 100; // Reduced width to leave space for labels
-      const xOffset = 100; // Shift lanes to the right to make space for labels
+      // Use full width for lanes now that labels are above
+      const laneWidth = dimensions.width;
 
       return (
         <mesh
           key={`lane-${player.playerName}`}
-          position={[xOffset / 2, yPosition, 0]}
+          position={[0, yPosition, 0]} // Centered horizontally
         >
           <planeGeometry args={[laneWidth, laneSpacing]} />
           <meshBasicMaterial
@@ -257,13 +544,7 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
         </mesh>
       );
     });
-  }, [
-    data.playerLanes,
-    dimensions.height,
-    dimensions.width,
-    laneHeight,
-    laneSpacing,
-  ]);
+  }, [data.playerLanes, dimensions.width, laneSpacing, getYPosition]);
 
   // Create event markers
   const eventElements = useMemo(() => {
@@ -275,12 +556,11 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
 
       // Calculate position
       const xPosition = timeScale(event.time);
-      const yPosition =
-        dimensions.height / 2 - laneHeight * playerIndex - laneHeight / 2;
+      const yPosition = getYPosition("lane", playerIndex);
 
       // Determine geometry type and size based on event type
       let geometryType: "circle" | "ring" | "box" | "triangle" = "circle";
-      let size = 1;
+      let size = 5;
 
       switch (event.type) {
         case "heroSpawn":
@@ -294,7 +574,6 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
         case "Killed player":
         case "Died":
           geometryType = "box";
-          size = 1.2;
           break;
         case "Dealt Damage":
         case "Received Damage":
@@ -352,55 +631,90 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
   }, [
     data.events,
     data.playerLanes,
-    dimensions.height,
     laneHeight,
     selectedEvents,
     timeScale,
+    getYPosition,
   ]);
 
   // Create connections between related events
   const connections = useMemo(() => {
-    return data.connections.map((connection, index) => {
+    // Filter connections to only show those related to selected events when there are selections
+    const relevantConnections =
+      selectedEvents.length > 0
+        ? data.connections.filter(
+            (conn) =>
+              selectedEvents.includes(conn.source) ||
+              selectedEvents.includes(conn.target)
+          )
+        : data.connections;
+
+    const renderedConnections = relevantConnections.map((connection, index) => {
       const sourceMarker = eventMarkers.current.get(connection.source);
       const targetMarker = eventMarkers.current.get(connection.target);
 
-      if (!sourceMarker || !targetMarker) return null;
+      if (!sourceMarker || !targetMarker) {
+        return null;
+      }
 
       const sourcePosition = sourceMarker.position;
       const targetPosition = targetMarker.position;
 
-      // Create points for the line
+      // Determine if this connection involves selected events
+      const isHighlighted =
+        selectedEvents.includes(connection.source) ||
+        selectedEvents.includes(connection.target);
+
+      // Check if this connection should be animated
+      const connectionKey = `${connection.source}-${connection.target}`;
+      const shouldAnimate = !!animatingConnections[connectionKey];
+
+      // Use animated connection when the connection should be animated
+      if (shouldAnimate) {
+        return (
+          <AnimatedConnection
+            key={`animated-connection-${connectionKey}`}
+            sourcePosition={
+              new THREE.Vector3(
+                sourcePosition.x,
+                sourcePosition.y,
+                sourcePosition.z
+              )
+            }
+            targetPosition={
+              new THREE.Vector3(
+                targetPosition.x,
+                targetPosition.y,
+                targetPosition.z
+              )
+            }
+            color={isHighlighted ? 0xff3366 : 0x3366ff}
+            isHighlighted={isHighlighted}
+          />
+        );
+      }
+
+      // Use regular connection for non-animated connections
+      // Create a directional line with an arrow pointing from source to target
       const points = [
         new THREE.Vector3(sourcePosition.x, sourcePosition.y, sourcePosition.z),
         new THREE.Vector3(targetPosition.x, targetPosition.y, targetPosition.z),
       ];
 
-      // Convert points to Float32Array for buffer geometry
-      const pointsArray = new Float32Array(
-        points.flatMap((p) => [p.x, p.y, p.z])
-      );
-
       return (
-        <line key={`connection-${index}`}>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              count={points.length}
-              array={pointsArray}
-              itemSize={3}
-              args={[pointsArray, 3]}
-            />
-          </bufferGeometry>
-          <lineBasicMaterial color={0x999999} transparent opacity={0.5} />
-        </line>
+        <Line
+          key={`connection-${connection.source}-${connection.target}`}
+          points={points}
+          color={isHighlighted ? 0xff3366 : 0x3366ff}
+          lineWidth={isHighlighted ? 3 : 1.5}
+          transparent={true}
+          opacity={isHighlighted ? 0.9 : 0.5}
+        />
       );
     });
-  }, [data.connections]);
 
-  // Frame update for hover effects
-  useFrame(() => {
-    // This could be used for animations or hover effects
-  });
+    return renderedConnections;
+  }, [data.connections, selectedEvents, animatingConnections]);
 
   // Generate time ticks with appropriate intervals based on time range
   const timeTicks = useMemo(() => {
@@ -432,10 +746,7 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
     }
 
     // Calculate the position for the time ticks bar (below the last lane)
-    const ticksYPosition =
-      dimensions.height / 2 -
-      laneHeight * data.playerLanes.length -
-      laneHeight * 0.2; // Position below the last lane
+    const ticksYPosition = getYPosition("tick", 0);
 
     // Generate ticks at regular intervals
     const ticks = [];
@@ -464,12 +775,11 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
     return ticks;
   }, [
     data.mapInfo,
-    data.playerLanes.length,
-    dimensions.height,
     dimensions.width,
     laneHeight,
     timeRangeFilter,
     timeScale,
+    getYPosition,
   ]);
 
   return (
