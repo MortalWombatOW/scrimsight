@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   OrbitControls,
@@ -7,8 +13,39 @@ import {
   QuadraticBezierLine,
 } from "@react-three/drei";
 import * as THREE from "three";
-import { TimelineData, TimelineEvent } from "./hooks/useTimelineData";
+import { TimelineData } from "./hooks/useTimelineData";
 import { formatTime } from "../../lib";
+
+// Grayscale color palette for better UI
+const COLORS = {
+  // Primary UI elements
+  background: 0xffffff,
+  alternatingLane1: 0xf5f5f5,
+  alternatingLane2: 0xebebeb,
+
+  // Text elements
+  labelText: 0x111111,
+  tickText: 0x333333,
+
+  // Interactive elements
+  defaultEvent: 0x777777,
+  selectedEvent: 0x222222,
+
+  // Connection colors
+  defaultConnection: 0x999999,
+  highlightedConnection: 0x444444,
+
+  // Feedback/state colors
+  hoverState: 0x666666,
+  activeAnimation: 0x333333,
+
+  // Event type colors (grayscale variants for different event types)
+  eventDefault: 0x777777,
+  eventAbility: 0x666666,
+  eventKill: 0x444444,
+  eventDamage: 0x555555,
+  eventHealing: 0x888888,
+};
 
 // Configuration for timeline layout
 interface TimelineLayoutConfig {
@@ -18,8 +55,8 @@ interface TimelineLayoutConfig {
 
 // Default layout configuration
 const DEFAULT_LAYOUT_CONFIG: TimelineLayoutConfig = {
-  topPadding: 20,
-  bottomPadding: 50,
+  topPadding: 30, // Slightly increased for better spacing
+  bottomPadding: 60, // Increased for better readability of time ticks
 };
 
 interface TimelineRendererProps {
@@ -100,11 +137,13 @@ export const TimelineRenderer: React.FC<TimelineRendererProps> = ({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full"
+      className="w-full h-full bg-gray-50" // Added light gray background for better contrast
       aria-label="Timeline visualization"
     >
       {dimensions.width > 0 && dimensions.height > 0 && (
         <Canvas orthographic camera={cameraConfig.current}>
+          {/* Added ambient light for better visibility */}
+          <ambientLight intensity={0.8} />
           <TimelineScene
             data={data}
             dimensions={dimensions}
@@ -195,8 +234,8 @@ const AnimatedConnection: React.FC<AnimatedConnectionProps> = ({
   // Don't render anything if not highlighted and no progress
   if (!isHighlighted && progress === 0) return null;
 
-  // Adjust line width based on highlighting
-  const lineWidth = isHighlighted ? 3 : 2;
+  // Adjust line width based on highlighting - increased for better visibility
+  const lineWidth = isHighlighted ? 4 : 2;
 
   // Fixed completed connection display
   if (animationComplete || progress === 1) {
@@ -215,12 +254,16 @@ const AnimatedConnection: React.FC<AnimatedConnectionProps> = ({
         {isHighlighted && (
           <>
             <mesh position={sourcePosition}>
-              <ringGeometry args={[4, 5, 16]} />
-              <meshBasicMaterial color={color} transparent opacity={0.6} />
+              <ringGeometry args={[4, 5.5, 32]} />{" "}
+              {/* Improved geometry resolution */}
+              <meshBasicMaterial color={color} transparent opacity={0.7} />{" "}
+              {/* Increased opacity for better visibility */}
             </mesh>
             <mesh position={targetPosition}>
-              <ringGeometry args={[4, 5, 16]} />
-              <meshBasicMaterial color={color} transparent opacity={0.6} />
+              <ringGeometry args={[4, 5.5, 32]} />{" "}
+              {/* Improved geometry resolution */}
+              <meshBasicMaterial color={color} transparent opacity={0.7} />{" "}
+              {/* Increased opacity for better visibility */}
             </mesh>
           </>
         )}
@@ -263,19 +306,23 @@ const AnimatedConnection: React.FC<AnimatedConnectionProps> = ({
         dashed={false}
       />
 
-      {/* Animated particle */}
+      {/* Animated particle - increased size for better visibility */}
       {progress > 0 && progress < 1 && (
         <mesh position={currentPoint}>
-          <sphereGeometry args={[3, 16, 16]} />
-          <meshBasicMaterial color={color} transparent opacity={0.8} />
+          <sphereGeometry args={[3.5, 24, 24]} />{" "}
+          {/* Improved geometry resolution */}
+          <meshBasicMaterial color={color} transparent opacity={0.85} />{" "}
+          {/* Increased opacity for better visibility */}
         </mesh>
       )}
 
       {/* Visual feedback at source for animation in progress */}
       {isHighlighted && (
         <mesh position={sourcePosition}>
-          <ringGeometry args={[4, 5, 16]} />
-          <meshBasicMaterial color={color} transparent opacity={0.6} />
+          <ringGeometry args={[4, 5.5, 32]} />{" "}
+          {/* Improved geometry resolution */}
+          <meshBasicMaterial color={color} transparent opacity={0.7} />{" "}
+          {/* Increased opacity for better visibility */}
         </mesh>
       )}
     </>
@@ -305,17 +352,6 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
     [key: string]: boolean;
   }>({});
 
-  // Add a cleanup timer to remove completed animations after a delay
-  useEffect(() => {
-    if (Object.keys(animatingConnections).length === 0) return;
-
-    // We don't need a cleanup timer anymore since animations naturally complete
-    // and won't repeat due to the animationComplete state in AnimatedConnection
-
-    // Just maintain the animation state according to selections
-    return () => {}; // No cleanup needed
-  }, [animatingConnections, selectedEvents]);
-
   // Time scale function that respects the time range filter
   const timeScale = useMemo(() => {
     // Use filter range if provided, otherwise use the full data range
@@ -342,81 +378,96 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
   }, [data.mapInfo, dimensions.width, timeRangeFilter]);
 
   // Calculate lane height
-  const tickHeight = 50;
   const laneHeight =
     (dimensions.height - layoutConfig.topPadding - layoutConfig.bottomPadding) /
     (data.playerLanes.length || 1);
   const laneSpacing = laneHeight * 0.5;
 
-  // Helper function to calculate Y position based on element type and index
-  const getYPosition = useMemo(() => {
-    const calculatePosition = (
-      type: "lane" | "label" | "tick",
-      index: number
-    ): number => {
-      const availableHeight =
-        dimensions.height -
-        layoutConfig.topPadding -
-        layoutConfig.bottomPadding;
-
+  // Function to calculate Y position for different elements
+  const getYPosition = useCallback(
+    (type: "lane" | "label" | "tick", index: number) => {
+      // Calculate based on the type of element
       switch (type) {
         case "lane":
-          // Position the lane based on index, starting from top (adjusted by topPadding)
+          // Position lanes evenly from top to bottom with padding
           return (
             dimensions.height / 2 -
             layoutConfig.topPadding -
-            laneHeight * index -
-            laneHeight / 2
+            (index + 0.5) * laneHeight
           );
-
         case "label":
-          // Position labels above their lanes
-          const lanePosition = calculatePosition("lane", index);
-          return lanePosition + laneHeight * 0.5;
-
-        case "tick":
-          // Position ticks below the last lane
+          // Position labels above their respective lanes
           return (
             dimensions.height / 2 -
             layoutConfig.topPadding -
-            laneHeight * data.playerLanes.length -
-            laneHeight * 0.2
+            (index + 0.5) * laneHeight +
+            laneHeight * 0.5
           );
-
+        case "tick":
+          // Position time ticks at the bottom of the timeline
+          return -dimensions.height / 2 + layoutConfig.bottomPadding / 2;
         default:
           return 0;
       }
-    };
+    },
+    [dimensions.height, laneHeight, layoutConfig]
+  );
 
-    return calculatePosition;
-  }, [dimensions.height, layoutConfig, laneHeight, data.playerLanes.length]);
+  // Add a cleanup timer to remove completed animations after a delay
+  useEffect(() => {
+    if (Object.keys(animatingConnections).length === 0) return;
 
-  // Create player lane labels
-  const playerLabels = useMemo(() => {
-    return data.playerLanes.map((player, index) => {
-      const labelYPosition = getYPosition("label", index);
+    // We don't need a cleanup timer anymore since animations naturally complete
+    // and won't repeat due to the animationComplete state in AnimatedConnection
 
-      return (
-        <Text
-          key={`label-${player.playerName}`}
-          position={[-dimensions.width / 2 + 5, labelYPosition, 0.2]} // Centered horizontally, above the lane
-          fontSize={laneHeight * 0.4} // Proportional font size
-          color="#333333"
-          anchorX="left" // Center-align text
-          anchorY="middle" // Vertically center text
-          maxWidth={dimensions.width * 0.3} // Limit width to prevent long names from taking too much space
-          overflowWrap="break-word" // Break text if needed
-        >
-          {player.playerName}
-        </Text>
-      );
-    });
-  }, [data.playerLanes, dimensions.width, laneHeight, getYPosition]);
+    // Just maintain the animation state according to selections
+    return () => {}; // No cleanup needed
+  }, [animatingConnections, selectedEvents]);
+
+  // Add state for hover feedback
+  const [hoveredEventId, setHoveredEventId] = useState<string | null>(null);
 
   // Setup mouse handlers for interaction
   useEffect(() => {
     const domElement = gl.domElement;
     if (!domElement) return;
+
+    // Track mouse position for hover effects
+    const handleMouseMove = (event: MouseEvent) => {
+      // Convert mouse position to normalized device coordinates
+      const rect = domElement.getBoundingClientRect();
+      mouse.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      // Update the raycaster
+      raycaster.current.setFromCamera(mouse.current, camera);
+
+      // Find intersections
+      const intersects = raycaster.current.intersectObjects(
+        Array.from(eventMarkers.current.values())
+      );
+
+      if (intersects.length > 0) {
+        const hoveredObject = intersects[0].object;
+        domElement.style.cursor = "pointer"; // Show pointer cursor on hover
+
+        // Find the event ID associated with the object
+        let newHoveredEventId: string | null = null;
+
+        for (const [id, object] of eventMarkers.current.entries()) {
+          if (object === hoveredObject) {
+            newHoveredEventId = id;
+            break;
+          }
+        }
+
+        // Update hover state
+        setHoveredEventId(newHoveredEventId);
+      } else {
+        domElement.style.cursor = "default";
+        setHoveredEventId(null);
+      }
+    };
 
     const handleClick = (event: MouseEvent) => {
       // Convert mouse position to normalized device coordinates
@@ -502,24 +553,43 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
     };
 
     domElement.addEventListener("click", handleClick);
+    domElement.addEventListener("mousemove", handleMouseMove);
 
     return () => {
       domElement.removeEventListener("click", handleClick);
+      domElement.removeEventListener("mousemove", handleMouseMove);
     };
   }, [camera, data.connections, gl, onEventSelect, selectedEvents]);
 
-  // Helper function to get a color for an event
-  const getEventColor = (eventId: string): number => {
-    // In a real implementation, we would assign colors based on event type
-    // For now, use a simple hash function to get a grayscale color
-    let hash = 0;
-    for (let i = 0; i < eventId.length; i++) {
-      hash = eventId.charCodeAt(i) + ((hash << 5) - hash);
+  // Helper function to get a color for an event - updated for grayscale
+  const getEventColor = (
+    eventId: string,
+    isHovered: boolean,
+    isSelected: boolean
+  ): number => {
+    if (isSelected) {
+      return COLORS.selectedEvent;
     }
 
-    // Convert to grayscale (between 0x666666 and 0xcccccc)
-    const grayscale = 0x666666 + (Math.abs(hash) % 0x666666);
-    return grayscale;
+    if (isHovered) {
+      return COLORS.hoverState;
+    }
+
+    // Use grayscale colors based on event type, determined by the first character of the ID
+    // This ensures consistent colors without using a complex hash function
+    const firstChar = eventId.charAt(0).toLowerCase();
+
+    if (firstChar >= "a" && firstChar <= "f") {
+      return COLORS.eventDefault;
+    } else if (firstChar >= "g" && firstChar <= "l") {
+      return COLORS.eventAbility;
+    } else if (firstChar >= "m" && firstChar <= "r") {
+      return COLORS.eventDamage;
+    } else if (firstChar >= "s" && firstChar <= "z") {
+      return COLORS.eventHealing;
+    } else {
+      return COLORS.eventKill;
+    }
   };
 
   // Create player lanes
@@ -537,14 +607,41 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
         >
           <planeGeometry args={[laneWidth, laneSpacing]} />
           <meshBasicMaterial
-            color={index % 2 === 0 ? 0xf0f0f0 : 0xe8e8e8}
+            color={
+              index % 2 === 0
+                ? COLORS.alternatingLane1
+                : COLORS.alternatingLane2
+            }
             transparent
-            opacity={0.5}
+            opacity={0.7} // Increased opacity for better visibility
           />
         </mesh>
       );
     });
   }, [data.playerLanes, dimensions.width, laneSpacing, getYPosition]);
+
+  // Create player lane labels
+  const playerLabels = useMemo(() => {
+    return data.playerLanes.map((player, index) => {
+      const labelYPosition = getYPosition("label", index);
+
+      return (
+        <Text
+          key={`label-${player.playerName}`}
+          position={[-dimensions.width / 2 + 10, labelYPosition, 0.2]} // Increased left margin
+          fontSize={laneHeight * 0.45} // Slightly larger font for better readability
+          color={COLORS.labelText} // Convert to hex
+          anchorX="left"
+          anchorY="middle"
+          maxWidth={dimensions.width * 0.3}
+          overflowWrap="break-word"
+          fontWeight="bold" // Added bold for better readability
+        >
+          {player.playerName}
+        </Text>
+      );
+    });
+  }, [data.playerLanes, dimensions.width, laneHeight, getYPosition]);
 
   // Create event markers
   const eventElements = useMemo(() => {
@@ -560,7 +657,7 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
 
       // Determine geometry type and size based on event type
       let geometryType: "circle" | "ring" | "box" | "triangle" = "circle";
-      let size = 5;
+      let size = 5.5; // Slightly increased for better visibility
 
       switch (event.type) {
         case "heroSpawn":
@@ -574,6 +671,7 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
         case "Killed player":
         case "Died":
           geometryType = "box";
+          size = 6; // Larger for important events
           break;
         case "Dealt Damage":
         case "Received Damage":
@@ -587,10 +685,11 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
           geometryType = "circle";
       }
 
-      // Determine color and scale based on selection state
+      // Determine color and scale based on selection and hover state
       const isSelected = selectedEvents.includes(event.id);
-      const color = isSelected ? 0x333333 : getEventColor(event.id);
-      const scale = isSelected ? 1.5 : 1;
+      const isHovered = hoveredEventId === event.id;
+      const color = getEventColor(event.id, isHovered, isSelected);
+      const scale = isSelected ? 1.6 : isHovered ? 1.3 : 1; // Different scales for selected/hovered
 
       // Create appropriate geometry based on type
       let geometry;
@@ -609,30 +708,54 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
           break;
       }
 
+      // Add an outline for selected/hovered items
+      const outlineOpacity = isSelected ? 0.9 : isHovered ? 0.6 : 0;
+
       return (
-        <mesh
-          key={event.id}
-          position={[xPosition, yPosition, 0.1]}
-          scale={[scale, scale, scale]}
-          userData={{ event }}
-          ref={(obj) => {
-            if (obj) {
-              eventMarkers.current.set(event.id, obj);
-            } else {
-              eventMarkers.current.delete(event.id);
-            }
-          }}
-        >
-          {geometry}
-          <meshBasicMaterial color={color} transparent opacity={0.8} />
-        </mesh>
+        <group key={event.id}>
+          {/* Outer highlight/outline for better selection visibility */}
+          {(isSelected || isHovered) && (
+            <mesh
+              position={[xPosition, yPosition, 0.05]}
+              scale={[scale * 1.2, scale * 1.2, 1]}
+            >
+              {geometry}
+              <meshBasicMaterial
+                color={isSelected ? COLORS.selectedEvent : COLORS.hoverState}
+                transparent
+                opacity={outlineOpacity}
+              />
+            </mesh>
+          )}
+
+          {/* Main event marker */}
+          <mesh
+            position={[xPosition, yPosition, 0.1]}
+            scale={[scale, scale, scale]}
+            userData={{ event }}
+            ref={(obj) => {
+              if (obj) {
+                eventMarkers.current.set(event.id, obj);
+              } else {
+                eventMarkers.current.delete(event.id);
+              }
+            }}
+          >
+            {geometry}
+            <meshBasicMaterial
+              color={color}
+              transparent
+              opacity={isSelected || isHovered ? 0.9 : 0.8}
+            />
+          </mesh>
+        </group>
       );
     });
   }, [
     data.events,
     data.playerLanes,
-    laneHeight,
     selectedEvents,
+    hoveredEventId,
     timeScale,
     getYPosition,
   ]);
@@ -688,7 +811,11 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
                 targetPosition.z
               )
             }
-            color={isHighlighted ? 0xff3366 : 0x3366ff}
+            color={
+              isHighlighted
+                ? COLORS.highlightedConnection
+                : COLORS.defaultConnection
+            }
             isHighlighted={isHighlighted}
           />
         );
@@ -705,7 +832,11 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
         <Line
           key={`connection-${connection.source}-${connection.target}`}
           points={points}
-          color={isHighlighted ? 0xff3366 : 0x3366ff}
+          color={
+            isHighlighted
+              ? COLORS.highlightedConnection
+              : COLORS.defaultConnection
+          }
           lineWidth={isHighlighted ? 3 : 1.5}
           transparent={true}
           opacity={isHighlighted ? 0.9 : 0.5}
@@ -762,13 +893,29 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
         <Text
           key={`tick-label-${time}`}
           position={[xPosition, ticksYPosition, 0]}
-          fontSize={laneHeight * 0.3}
-          color="#333333"
+          fontSize={laneHeight * 0.38} // Increased size for better readability
+          color={COLORS.tickText} // Convert to hex
           anchorX="center"
           anchorY="top"
+          fontWeight="bold"
         >
           {formatTime(time)}
         </Text>
+      );
+
+      // Add tick marks for better visual alignment
+      ticks.push(
+        <Line
+          key={`tick-line-${time}`}
+          points={[
+            new THREE.Vector3(xPosition, ticksYPosition + 2, 0),
+            new THREE.Vector3(xPosition, ticksYPosition + 7, 0),
+          ]}
+          color={COLORS.tickText}
+          lineWidth={1}
+          transparent={true}
+          opacity={0.7}
+        />
       );
     }
 
