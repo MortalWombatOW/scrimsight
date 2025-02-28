@@ -1,14 +1,5 @@
+import React from "react";
 import { useAtomValue } from "jotai";
-import {
-  Title,
-  Paper,
-  Stack,
-  Text,
-  Center,
-  Group,
-  ColorSwatch,
-} from "@mantine/core";
-import { BarChart } from "@mantine/charts";
 import { matchDataAtom, useStats } from "../../../../atoms";
 import { camelCaseToWords, prettyFormat } from "../../../../lib";
 
@@ -33,70 +24,153 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
     "ultimatesUsed",
   ];
 
-  const data: Record<string, number | string>[] = statsToShow.map((stat) => {
-    const label = camelCaseToWords(stat);
-    const row: Record<string, number | string> = {
-      stat: label,
+  // Get the team data in a structured format
+  const getTeamData = () => {
+    const result = {
+      [matchData.team1Name]: {} as Record<string, number>,
+      [matchData.team2Name]: {} as Record<string, number>,
     };
 
-    for (const teamStat of teamStats.rows) {
-      row[teamStat.playerTeam] = teamStat[stat];
+    for (const stat of statsToShow) {
+      for (const teamStat of teamStats.rows) {
+        const teamName = teamStat.playerTeam;
+        result[teamName][stat] = teamStat[stat] || 0;
+      }
     }
 
-    return row;
-  });
+    return result;
+  };
+
+  const teamData = getTeamData();
+
+  // Calculate which team has the higher value for each stat
+  const getWinnerTeam = (stat: string) => {
+    const team1Value = teamData[matchData.team1Name][stat] || 0;
+    const team2Value = teamData[matchData.team2Name][stat] || 0;
+
+    if (team1Value > team2Value) return matchData.team1Name;
+    if (team2Value > team1Value) return matchData.team2Name;
+    return null; // Tie
+  };
+
+  // Calculate percentage for visualization
+  const getPercentage = (team: string, stat: string) => {
+    const team1Value = teamData[matchData.team1Name][stat] || 0;
+    const team2Value = teamData[matchData.team2Name][stat] || 0;
+    const total = team1Value + team2Value;
+
+    if (total === 0) return 50; // Equal if both are 0
+
+    const value = teamData[team][stat] || 0;
+    return Math.max(10, Math.min(90, (value / total) * 100)); // Constraining between 10% and 90% for visibility
+  };
 
   return (
-    <Paper withBorder p="md">
-      <Stack>
-        <Title order={2}>Team Stats</Title>
-        {data.map((stat) => (
-          <BarChart
-            key={stat.stat.toString()}
-            orientation="vertical"
-            data={[stat]}
-            h={50}
-            w={500}
-            dataKey="stat"
-            series={[
-              {
-                name: matchData.team1Name,
-                color: "blue",
-                label: matchData.team1Name,
-                stackId: "team1",
-              },
-              {
-                name: matchData.team2Name,
-                color: "red",
-                label: matchData.team2Name,
-                stackId: "team2",
-              },
-            ]}
-            yAxisProps={{ width: 120 }}
-            barProps={{
-              radius: 5,
-            }}
-            withBarValueLabel
-            tickLine="none"
-            strokeDasharray="0 1"
-            withXAxis={false}
-            valueFormatter={(value) => prettyFormat(value)}
-            valueLabelProps={{ position: "inside", fill: "white" }}
-          />
-        ))}
-        <Center>
-          <Group>
-            <Group>
-              <ColorSwatch size={16} color="var(--mantine-color-blue-7)" />
-              <Text size="xs">{matchData.team1Name}</Text>
-            </Group>
-            <Group>
-              <ColorSwatch size={16} color="var(--mantine-color-red-7)" />
-              <Text size="xs">{matchData.team2Name}</Text>
-            </Group>
-          </Group>
-        </Center>
-      </Stack>
-    </Paper>
+    <div className="bg-white rounded-lg border border-gray-200 w-full p-6 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+      <div className="flex flex-col gap-6">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 pb-2 border-b border-gray-200 dark:border-gray-700">
+          Team Comparison
+        </h2>
+
+        <div className="grid grid-cols-7 gap-4">
+          {/* Header row */}
+          <div className="col-span-3 text-right">
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+              {matchData.team1Name}
+            </span>
+          </div>
+          <div className="col-span-1"></div> {/* Center spacer */}
+          <div className="col-span-3">
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+              {matchData.team2Name}
+            </span>
+          </div>
+          {/* Stat rows */}
+          {statsToShow.map((stat) => {
+            const team1Value = teamData[matchData.team1Name][stat] || 0;
+            const team2Value = teamData[matchData.team2Name][stat] || 0;
+            const winner = getWinnerTeam(stat);
+            const team1Percentage = getPercentage(matchData.team1Name, stat);
+            const team2Percentage = getPercentage(matchData.team2Name, stat);
+
+            return (
+              <React.Fragment key={stat}>
+                {/* Team 1 side */}
+                <div className="col-span-3 flex flex-col items-end">
+                  <div className="flex items-center justify-end w-full mb-1">
+                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200 mr-2">
+                      {prettyFormat(team1Value)}
+                    </span>
+                    {winner === matchData.team1Name && (
+                      <span className="text-xs px-1 py-0.5 bg-gray-600 text-white dark:bg-gray-200 dark:text-gray-800 rounded">
+                        +{prettyFormat(team1Value - team2Value)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="h-4 w-full bg-gray-100 dark:bg-gray-700 rounded-l-sm overflow-hidden relative">
+                    <div
+                      className={`h-full ${
+                        winner === matchData.team1Name
+                          ? "bg-gray-600 dark:bg-gray-300"
+                          : "bg-gray-400 dark:bg-gray-600"
+                      } absolute right-0 top-0`}
+                      style={{ width: `${team1Percentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Center label */}
+                <div className="col-span-1 flex items-center justify-center">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 text-center capitalize">
+                    {camelCaseToWords(stat)}
+                  </span>
+                </div>
+
+                {/* Team 2 side */}
+                <div className="col-span-3 flex flex-col">
+                  <div className="flex items-center w-full mb-1">
+                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200 ml-2">
+                      {prettyFormat(team2Value)}
+                    </span>
+                    {winner === matchData.team2Name && (
+                      <span className="text-xs px-1 py-0.5 bg-gray-600 text-white dark:bg-gray-200 dark:text-gray-800 rounded ml-2">
+                        +{prettyFormat(team2Value - team1Value)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="h-4 w-full bg-gray-100 dark:bg-gray-700 rounded-r-sm overflow-hidden relative">
+                    <div
+                      className={`h-full ${
+                        winner === matchData.team2Name
+                          ? "bg-gray-600 dark:bg-gray-300"
+                          : "bg-gray-400 dark:bg-gray-600"
+                      } absolute left-0 top-0`}
+                      style={{ width: `${team2Percentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        <div className="flex justify-center mt-2">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-gray-600 dark:bg-gray-300 rounded-sm"></div>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                Higher Value
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-gray-400 dark:bg-gray-600 rounded-sm"></div>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                Lower Value
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };

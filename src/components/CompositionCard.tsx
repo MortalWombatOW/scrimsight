@@ -1,12 +1,4 @@
 import {
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  Box,
-  Avatar,
-} from "@mui/material";
-import {
   getHeroImage,
   getRoleFromHero,
   getRankForRole,
@@ -24,11 +16,11 @@ export const CompositionCard = ({
   heroes,
   timePlayed,
 }: CompositionCardProps) => (
-  <Card sx={{ width: 300, m: 1 }}>
-    <CardContent>
-      <Grid container spacing={1}>
-        <Grid item xs={12}>
-          <Grid container spacing={1}>
+  <div className="w-[300px] m-1 border rounded-md shadow-sm">
+    <div className="p-4">
+      <div className="space-y-3">
+        <div>
+          <div className="flex flex-wrap gap-3">
             {Object.entries(
               heroes.reduce((acc, hero) => {
                 const role = getRoleFromHero(hero);
@@ -42,42 +34,35 @@ export const CompositionCard = ({
                   getRankForRole(b as OverwatchRole)
               )
               .map(([role, roleHeroes]) => (
-                <Grid item key={role}>
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    gap={0.5}
-                  >
-                    <Box display="flex" alignItems="center" gap={0.5}>
-                      <Box sx={{ fontSize: "1rem" }}>
-                        <RoleIcon role={role} color="primary" />
-                      </Box>
-                      <Typography variant="caption" color="text.secondary">
-                        {role.charAt(0).toUpperCase() + role.slice(1)}
-                      </Typography>
-                    </Box>
-                    <Box display="flex" gap={0.5}>
-                      {roleHeroes.map((hero) => (
-                        <Avatar
-                          key={hero}
-                          src={getHeroImage(hero)}
-                          sx={{ width: 32, height: 32 }}
-                          alt={hero}
-                        />
-                      ))}
-                    </Box>
-                  </Box>
-                </Grid>
+                <div key={role} className="flex flex-col items-center gap-1">
+                  <div className="flex items-center gap-1">
+                    <div className="text-base">
+                      <RoleIcon role={role} color="primary" />
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      {role.charAt(0).toUpperCase() + role.slice(1)}
+                    </span>
+                  </div>
+                  <div className="flex gap-1">
+                    {roleHeroes.map((hero) => (
+                      <img
+                        key={hero}
+                        src={getHeroImage(hero)}
+                        className="w-8 h-8 rounded-full"
+                        alt={hero}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
-          </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="body2" color="text.secondary">
+          </div>
+        </div>
+        <div>
+          <p className="text-sm text-gray-500">
             Play time: {formatDuration(timePlayed)}
-          </Typography>
-        </Grid>
-      </Grid>
-    </CardContent>
-  </Card>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 );

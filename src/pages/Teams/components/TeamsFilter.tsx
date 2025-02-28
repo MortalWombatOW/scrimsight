@@ -1,6 +1,4 @@
-import { Grid, Paper, TextField, MenuItem } from '@mui/material';
-
-export type SortOption = 'name' | 'wins' | 'recent' | 'players';
+export type SortOption = "name" | "wins" | "recent" | "players";
 
 interface TeamsFilterProps {
   searchQuery: string;
@@ -9,37 +7,43 @@ interface TeamsFilterProps {
   onSortChange: (value: SortOption) => void;
 }
 
-export const TeamsFilter = ({ searchQuery, onSearchChange, sortBy, onSortChange }: TeamsFilterProps) => {
+export const TeamsFilter = ({
+  searchQuery,
+  onSearchChange,
+  sortBy,
+  onSortChange,
+}: TeamsFilterProps) => {
   return (
-    <Paper sx={{ p: 2, mb: 3 }}>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} md={6}>
-          <TextField
-            fullWidth
-            label="Search Teams"
+    <div className="rounded-lg bg-white p-4 shadow-md mb-6 dark:bg-gray-800">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Search Teams
+          </label>
+          <input
+            type="text"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            variant="outlined"
-            size="small"
+            placeholder="Enter team name..."
           />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            fullWidth
-            select
-            label="Sort By"
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Sort By
+          </label>
+          <select
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value as SortOption)}
-            variant="outlined"
-            size="small"
           >
-            <MenuItem value="name">Team Name</MenuItem>
-            <MenuItem value="wins">Most Wins</MenuItem>
-            <MenuItem value="recent">Most Recent</MenuItem>
-            <MenuItem value="players">Most Players</MenuItem>
-          </TextField>
-        </Grid>
-      </Grid>
-    </Paper>
+            <option value="name">Team Name</option>
+            <option value="wins">Most Wins</option>
+            <option value="recent">Most Recent</option>
+            <option value="players">Most Players</option>
+          </select>
+        </div>
+      </div>
+    </div>
   );
-}; 
+};

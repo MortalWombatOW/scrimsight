@@ -1,6 +1,13 @@
-import { Paper, Typography, Box } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TeamStats } from '../../../atoms/teamStatsAtom';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { TeamStats } from "../../../atoms/teamStatsAtom";
 
 interface TeamsVisualizationProps {
   teams: TeamStats[];
@@ -17,38 +24,45 @@ export const TeamsVisualization = ({ teams }: TeamsVisualizationProps) => {
   const data = Object.entries(winCounts)
     .map(([wins, count]) => ({
       wins: Number(wins),
-      teams: count
+      teams: count,
     }))
     .sort((a, b) => a.wins - b.wins);
 
   return (
-    <Paper sx={{ p: 2, mb: 3 }}>
-      <Typography variant="h6" gutterBottom>
+    <div className="rounded-lg bg-white p-4 shadow-md mb-6 dark:bg-gray-800">
+      <h2 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
         Team Wins Distribution
-      </Typography>
-      <Box sx={{ width: '100%', height: 300 }}>
+      </h2>
+      <div className="w-full h-[300px]">
         <ResponsiveContainer>
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <BarChart
+            data={data}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
-              dataKey="wins" 
-              label={{ value: 'Number of Wins', position: 'insideBottom', offset: -5 }}
+            <XAxis
+              dataKey="wins"
+              label={{
+                value: "Number of Wins",
+                position: "insideBottom",
+                offset: -5,
+              }}
             />
-            <YAxis 
-              label={{ value: 'Number of Teams', angle: -90, position: 'insideLeft' }}
+            <YAxis
+              label={{
+                value: "Number of Teams",
+                angle: -90,
+                position: "insideLeft",
+              }}
             />
-            <Tooltip 
-              formatter={(value: number, _name: string) => [value, 'Teams']}
+            <Tooltip
+              formatter={(value: number, _name: string) => [value, "Teams"]}
               labelFormatter={(label: number) => `${label} Wins`}
             />
-            <Bar 
-              dataKey="teams" 
-              fill="#8884d8" 
-              name="Teams"
-            />
+            <Bar dataKey="teams" fill="#8884d8" name="Teams" />
           </BarChart>
         </ResponsiveContainer>
-      </Box>
-    </Paper>
+      </div>
+    </div>
   );
-}; 
+};

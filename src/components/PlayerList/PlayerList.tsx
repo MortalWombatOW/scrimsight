@@ -1,8 +1,7 @@
-import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
-import { useAtom } from 'jotai';
-import { playerStatExpandedAtom } from '~/atoms';
-import './PlayerList.scss';
+import React from "react";
+import { useAtom } from "jotai";
+import { playerStatExpandedAtom } from "~/atoms";
+import "./PlayerList.scss";
 
 interface PlayerStats {
   playerName: string;
@@ -12,39 +11,13 @@ interface PlayerStats {
 
 const PlayerRow = ({ playerName, matchCount, playerRole }: PlayerStats) => {
   return (
-    <Card
-      sx={{
-        width: '200px',
-        height: '200px',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflow: 'visible',
-        border: '1px solid',
-        borderColor: 'secondary.main',
-      }}
-      className="dashboard-item secondary">
-      <CardContent
-        sx={{
-          flexGrow: 1,
-          padding: '16px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <Typography variant="h5" align="center">
-          {playerName}
-        </Typography>
-        <Typography variant="body1" color="text.secondary" align="center">
-          {playerRole}
-        </Typography>
-        <Typography variant="h4" align="center">
-          {matchCount} matches
-        </Typography>
-      </CardContent>
-    </Card>
+    <div className="w-[200px] h-[200px] flex flex-col relative overflow-visible border border-secondary-500 dashboard-item secondary rounded-md">
+      <div className="flex-grow p-4 flex flex-col gap-2 items-center justify-center">
+        <h2 className="text-xl font-medium text-center">{playerName}</h2>
+        <p className="text-gray-500 text-center">{playerRole}</p>
+        <h3 className="text-2xl font-bold text-center">{matchCount} matches</h3>
+      </div>
+    </div>
   );
 };
 
@@ -66,11 +39,13 @@ const PlayerList = () => {
       playerMatches.get(stat.playerName)?.add(stat.matchId);
     });
 
-    const stats: PlayerStats[] = Array.from(playerMatches.entries()).map(([playerName, matches]) => ({
-      playerName,
-      matchCount: matches.size,
-      playerRole: playerRoles.get(playerName) || 'unknown',
-    }));
+    const stats: PlayerStats[] = Array.from(playerMatches.entries()).map(
+      ([playerName, matches]) => ({
+        playerName,
+        matchCount: matches.size,
+        playerRole: playerRoles.get(playerName) || "unknown",
+      })
+    );
 
     // Sort by match count descending
     return stats.sort((a, b) => b.matchCount - a.matchCount);

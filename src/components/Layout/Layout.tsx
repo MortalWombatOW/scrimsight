@@ -1,37 +1,26 @@
 import { Link } from "react-router-dom";
 import { Navigation } from "./Navigation";
-import {
-  AppShell,
-  Burger,
-  Group,
-  Loader,
-  Center,
-  ActionIcon,
-  Menu,
-  Button,
-  Text,
-  Switch,
-  Tooltip,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { Suspense, useEffect, useState } from "react";
 import { FaDiscord } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa6";
 import { useAuth } from "react-oidc-context";
 import { sampleDataEnabledAtom } from "../../atoms/files/sampleDataAtoms";
 import { useAtom } from "jotai";
+
 const DiscordButton = () => {
   // In a real app, this button might have more logic, like linking to a Discord server or community page.
   return (
-    <Tooltip label="Join our Discord Community">
-      <ActionIcon
-        variant="filled"
-        color="#5865f2"
-        style={{ marginLeft: "auto" }}
+    <div className="group relative ml-auto">
+      <button
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-[#5865f2] text-white hover:bg-[#4752c4]"
+        aria-label="Join our Discord Community"
       >
         <FaDiscord />
-      </ActionIcon>
-    </Tooltip>
+      </button>
+      <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+        Join our Discord Community
+      </div>
+    </div>
   );
 };
 
@@ -43,13 +32,13 @@ const UserMenu = ({
   onLogout: () => void;
 }) => {
   const [discordUsername, setDiscordUsername] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       if (auth.isAuthenticated && auth.user) {
         try {
           const userInfo = await fetch("https://discord.com/api/users/@me", {
-            // Changed endpoint to discord.com
             headers: {
               Authorization: `${auth.user.token_type} ${auth.user.access_token}`,
             },
@@ -58,21 +47,21 @@ const UserMenu = ({
             const userInfoJson = await userInfo.json();
             setDiscordUsername(
               userInfoJson.username + "#" + userInfoJson.discriminator
-            ); // Display username#discriminator
+            );
           } else {
             console.error(
               "Failed to fetch Discord user info:",
               userInfo.status,
               userInfo.statusText
             );
-            setDiscordUsername("User"); // Default username if fetch fails
+            setDiscordUsername("User");
           }
         } catch (error) {
           console.error("Error fetching Discord user info:", error);
-          setDiscordUsername("User"); // Default username on error
+          setDiscordUsername("User");
         }
       } else {
-        setDiscordUsername(null); // No username when not authenticated
+        setDiscordUsername(null);
       }
     };
 
@@ -80,30 +69,48 @@ const UserMenu = ({
   }, [auth.isAuthenticated, auth.user]);
 
   return (
-    <Menu shadow="md" width={200}>
-      <Menu.Target>
-        <ActionIcon style={{ marginRight: "12px" }} variant="hover">
-          <FaRegUser />
-        </ActionIcon>
-      </Menu.Target>
-      <Menu.Dropdown>
-        {discordUsername && <Menu.Label>{discordUsername}</Menu.Label>}{" "}
-        <Menu.Item component={Link} to="/account/settings">
-          Settings
-        </Menu.Item>
-        <Menu.Item component={Link} to="/account/plan">
-          Manage plan
-        </Menu.Item>
-        <Menu.Item color="red" onClick={onLogout}>
-          Logout
-        </Menu.Item>
-      </Menu.Dropdown>
-    </Menu>
+    <div className="relative mr-3">
+      <button
+        className="flex h-8 w-8 items-center justify-center rounded-full text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+      >
+        <FaRegUser />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800">
+          {discordUsername && (
+            <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
+              {discordUsername}
+            </div>
+          )}
+          <Link
+            to="/account/settings"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            Settings
+          </Link>
+          <Link
+            to="/account/plan"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+          >
+            Manage plan
+          </Link>
+          <button
+            onClick={onLogout}
+            className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
-  const [opened, { toggle }] = useDisclosure();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const auth = useAuth();
   const [sampleDataEnabled, setSampleDataEnabled] = useAtom(
     sampleDataEnabledAtom
@@ -120,94 +127,129 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     auth.activeNavigator === "signinSilent"
   ) {
     return (
-      <Center>
-        <Loader />
-      </Center>
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary-500"></div>
+      </div>
     );
   }
 
   if (auth.isLoading) {
     return (
-      <Center>
-        <Loader />
-      </Center>
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary-500"></div>
+      </div>
     );
   }
 
   if (auth.error) {
     alert(auth.error.message);
     return (
-      <Center>
-        <Text color="red">Authentication Error: {auth.error.message}</Text>
-      </Center>
-    ); // More user-friendly error
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-red-500">
+          Authentication Error: {auth.error.message}
+        </p>
+      </div>
+    );
   }
 
   return (
-    <AppShell
-      header={{ height: 68 }}
-      navbar={{
-        width: 300,
-        breakpoint: "sm",
-        collapsed: { mobile: !opened },
-      }}
-      padding="md"
-    >
-      <AppShell.Header>
-        <Group p="md" justify="space-between">
-          {" "}
-          {/* Use space-between to align items */}
-          <Group>
-            {" "}
-            {/* Group for Burger and SCRIMSIGHT */}
-            <Burger
-              opened={opened}
-              onClick={toggle}
-              hiddenFrom="sm"
-              size="sm"
-            />
-            <Button component={Link} to="/" variant="transparent">
-              <Text
-                fw={900}
-                fz={24}
-                component="span"
-                variant="gradient"
-                gradient={{ from: "orange", to: "yellow" }}
-                style={{ fontFamily: "Goldman" }}
+    <div className="flex h-screen flex-col">
+      {/* Header */}
+      <header className="h-[68px]">
+        <div className="flex h-full items-center justify-between px-4">
+          <div className="flex items-center">
+            {/* Mobile menu button */}
+            <button
+              className="mr-2 rounded p-1 text-gray-600 hover:bg-gray-100 focus:outline-none sm:hidden dark:text-gray-400 dark:hover:bg-gray-700"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <div className="space-y-1.5">
+                <div
+                  className={`h-0.5 w-6 bg-current transition ${
+                    isMobileMenuOpen ? "translate-y-2 rotate-45" : ""
+                  }`}
+                ></div>
+                <div
+                  className={`h-0.5 w-6 bg-current transition ${
+                    isMobileMenuOpen ? "opacity-0" : "opacity-100"
+                  }`}
+                ></div>
+                <div
+                  className={`h-0.5 w-6 bg-current transition ${
+                    isMobileMenuOpen ? "-translate-y-2 -rotate-45" : ""
+                  }`}
+                ></div>
+              </div>
+            </button>
+
+            {/* Logo */}
+            <Link to="/" className="focus:outline-none">
+              <span
+                className="text-2xl font-black"
+                style={{
+                  fontFamily: "Goldman",
+                }}
               >
                 SCRIMSIGHT
-              </Text>
-            </Button>
-          </Group>
-          <Group gap="md">
-            {" "}
-            {/* Group for right-aligned items */}
+              </span>
+            </Link>
+          </div>
+
+          {/* Right side buttons */}
+          <div className="flex items-center gap-4">
             <DiscordButton />
-            <Switch
-              label="Sample Data"
-              checked={sampleDataEnabled}
-              onChange={(event) => setSampleDataEnabled(event.target.checked)}
-            />
+
+            {/* Sample Data Toggle */}
+            <label className="inline-flex cursor-pointer items-center">
+              <span className="mr-2 text-sm">Sample Data</span>
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  className="peer sr-only"
+                  checked={sampleDataEnabled}
+                  onChange={(e) => setSampleDataEnabled(e.target.checked)}
+                />
+                <div className="h-6 w-11 rounded-full bg-gray-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-500 peer-checked:after:translate-x-full dark:bg-gray-600"></div>
+              </div>
+            </label>
+
+            {/* Auth Button */}
             {auth.isAuthenticated ? (
-              <UserMenu auth={auth} onLogout={handleLogout} /> // Pass auth and logout handler
+              <UserMenu auth={auth} onLogout={handleLogout} />
             ) : (
-              <Button onClick={() => void auth.signinRedirect()}>Login</Button>
+              <button
+                onClick={() => void auth.signinRedirect()}
+                className="rounded-md bg-primary-500 px-4 py-2 text-white hover:bg-primary-600"
+              >
+                Login
+              </button>
             )}
-          </Group>
-        </Group>
-      </AppShell.Header>{" "}
-      <AppShell.Navbar p="md">
-        <Suspense
-          fallback={
-            <Center>
-              <Loader />
-            </Center>
-          }
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar/Navigation */}
+        <aside
+          className={`p-4 transition-all bg-gray-100 sm:relative sm:block sm:w-[300px] ${
+            isMobileMenuOpen ? "w-full" : "hidden sm:block"
+          }`}
         >
-          <Navigation />
-        </Suspense>
-      </AppShell.Navbar>
-      <AppShell.Main>{children}</AppShell.Main>
-    </AppShell>
+          <Suspense
+            fallback={
+              <div className="flex h-full items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary-500"></div>
+              </div>
+            }
+          >
+            <Navigation closeMobileMenu={() => setIsMobileMenuOpen(false)} />
+          </Suspense>
+        </aside>
+
+        {/* Main content area */}
+        <main className="flex-1 overflow-auto p-4">{children}</main>
+      </div>
+    </div>
   );
 };

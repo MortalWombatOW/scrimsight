@@ -1,0 +1,249 @@
+---
+description: User Interface Guide
+globs: src/**/*.tsx
+alwaysApply: false
+---
+**I. Core Principles & Setup**
+
+1.  **Tailwind CSS Foundation:**
+    *   **Instruction:** Use Tailwind CSS for all styling.  Prioritize utility classes over custom CSS.
+    *   **Guideline:**  Familiarize yourself with Tailwind's core concepts (utility-first, responsive modifiers, configuration file).  If a style can be achieved with existing Tailwind classes, use them.
+
+2.  **Project Structure (Objective):**
+    *   **Instruction:**  Assume a component-based architecture (e.g., React, Vue, Angular).  Break the dashboard down into reusable components.
+    *   **Guideline:**  Each component should have a single, well-defined responsibility.  Examples: `Navbar`, `Sidebar`, `MetricCard`, `ChartContainer`, `Table`, `FormInput`, `Button`.
+
+**II. Layout & Spacing**
+
+4.  **Start with White Space (Objective):**
+    *   **Instruction:**  Begin layouts with generous padding and margins.  Reduce spacing iteratively, rather than adding it.
+    *   **Guideline:**  Use the defined spacing scale.  Err on the side of *too much* white space initially.
+
+5.  **Don't Fill the Whole Screen (Objective):**
+    *   **Instruction:**  Avoid making elements unnecessarily full-width.  Use `max-w-*` classes to constrain content width.
+    *   **Guideline:**  Consider the optimal width for readability and usability.  A narrow form doesn't need to span the entire screen.
+
+6.  **Spacing System (Objective):**
+    *   **Instruction:**  Use the defined spacing scale *exclusively* for margins and padding.
+    *   **Guideline:**  This ensures visual consistency.  Avoid arbitrary pixel values.
+
+7.  **Avoid Ambiguous Spacing (Objective):**
+    *   **Instruction:**  Ensure clear visual grouping through spacing.  The space *around* a group of related elements should be greater than the space *within* the group.
+    *   **Guideline:**  Use larger spacing values from the scale to separate groups, and smaller values within groups.
+
+8.  **Grids are Overrated (Objective):**
+    *   **Instruction:**  Avoid relying solely on a fixed-column grid system (like a 12-column grid) for all layout decisions.
+    *   **Guideline:**  Use flexbox (`flex`, `flex-col`, `justify-*`, `items-*`) and grid (`grid`, `grid-cols-*`, `gap-*`) strategically.  Consider fixed widths for elements like sidebars where appropriate.  Use `max-width` to prevent elements from becoming too wide.
+
+9. **Mobile First (Best Practice):**
+    *   **Instruction:** Start designing for smaller screens first, and then use Tailwind's responsive modifiers (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`) to adjust the layout for larger screens.
+    *   **Guideline:** This approach helps prioritize content and ensures a good experience on all devices.
+
+**III. Typography**
+
+10. **Type Scale (Objective):**
+    *   **Instruction:**  Use the defined type scale *exclusively* for font sizes.
+    *   **Guideline:**  Avoid arbitrary pixel values for font sizes.
+
+11. **Font Choice (Subjective - with Guidance):**
+    *   **Instruction:**  Choose a font family.  Prioritize readability and legibility.
+    *   **Guideline:**
+        *   Prefer neutral sans-serif fonts for UI elements.
+        *   Consider the system font stack for performance.
+        *   If using a custom font, ensure it has at least five weights (including italics).
+        *   Avoid condensed fonts with short x-heights for body text.
+        *   **Ask the user:** "What font family would you prefer?  (Provide a few options, including a system font stack option)"
+
+12. **Line Length (Objective):**
+    *   **Instruction:**  Keep line lengths between 45 and 75 characters for optimal readability.
+    *   **Guideline:**  Use `max-w-*` classes (e.g., `max-w-prose`) to control paragraph width.
+
+13. **Line Height (Objective - Proportional):**
+    *   **Instruction:**  Adjust line-height based on font size and line length.  Larger font sizes generally need smaller relative line-heights.  Longer lines need larger line-heights.
+    *   **Guideline:**  Use Tailwind's `leading-*` classes.  Start with `leading-normal` (1.5) for body text and adjust as needed.  For large headings, `leading-tight` (1) or `leading-snug` (1.25) might be appropriate.
+
+14. **Baseline Alignment (Objective):**
+    *   **Instruction:**  When mixing font sizes on a single line, align text to the baseline, not the vertical center.
+    *   **Guideline:**  Use `align-baseline` (or the appropriate flexbox/grid alignment properties).
+
+15. **Letter Spacing (Objective - with Guidance):**
+    *   **Instruction:**  Use default letter-spacing unless there's a specific reason to adjust it.
+    *   **Guideline:**
+        *   Slightly *decrease* letter-spacing for large headlines (using a font designed for body text).  Use Tailwind's `tracking-*` classes (e.g., `tracking-tight`).
+        *   Slightly *increase* letter-spacing for all-caps text (e.g., `tracking-wide`).
+
+16. **Text Alignment (Objective):**
+    *    **Instruction:** Left-align text for most cases.
+    *    **Guideline:**
+         *   Center-align short headlines or isolated text blocks.
+         *   Right-align numbers in tables.
+         *   Use justified text sparingly, and only with hyphenation enabled (requires custom CSS or a plugin).
+
+**IV. Color**
+
+17. **HSL Format (Objective):**
+    *   **Instruction:**  Use the HSL color format for all color definitions.
+    *   **Guideline:**  This makes it easier to create variations and understand color relationships.
+
+18. **Color Palette (Objective - Structure, Subjective - Choices):**
+    *   **Instruction:**  Use the defined color palette *exclusively*.
+    *   **Guideline:**
+        *   8-10 shades of grey.
+        *   A primary color (5-10 shades).
+        *   Accent colors (5-10 shades each) for success, warning, error, and other states.
+        *   **Ask the user:** "What primary color would you like to use? (Provide a few options, or allow a custom HSL value)"
+        *   **Ask the user:** "Do you need any specific accent colors beyond the standard success/warning/error states?"
+
+19. **Define Shades Up Front (Objective):**
+    *   **Instruction:**  Create lighter and darker shades of each color systematically, adjusting saturation as lightness changes.
+    *   **Guideline:**  Increase saturation as lightness moves away from 50%.  Consider rotating the hue slightly towards brighter/darker hues for more vibrant variations.
+
+20. **Greys Don't Have to Be Grey (Objective - Concept, Subjective - Choice):**
+    *   **Instruction:**  Consider adding a subtle hue to greys to create a warmer or cooler feel.
+    *   **Guideline:**
+        *   Add a blue hue for cool greys.
+        *   Add a yellow or orange hue for warm greys.
+        *   **Ask the user:** "Do you prefer warm, cool, or neutral greys?"
+
+21. **Accessibility (Objective):**
+    *   **Instruction:**  Ensure sufficient contrast between text and background colors.  Aim for a contrast ratio of at least 4.5:1 for normal text and 3:1 for large text.
+    *   **Guideline:**  Use a contrast checker tool (many are available online) to verify contrast ratios.  If necessary, flip the contrast (dark text on a light background instead of light text on a dark background).  Consider rotating the hue to improve contrast without sacrificing color.
+
+22. **Don't Rely on Color Alone (Objective):**
+    *   **Instruction:**  Always provide alternative ways to convey information that's also communicated through color.
+    *   **Guideline:**  Use icons, text labels, or other visual cues in addition to color.
+
+**V. Hierarchy & Emphasis**
+
+23. **Not All Elements Are Equal (Objective):**
+    *   **Instruction:**  Establish a clear visual hierarchy.  Emphasize important elements and de-emphasize secondary/tertiary elements.
+    *   **Guideline:**  Use size, weight, color, and spacing to create hierarchy.
+
+24. **Size Isn't Everything (Objective):**
+    *   **Instruction:**  Don't rely solely on font size to create hierarchy.  Use font weight and color as well.
+    *   **Guideline:**  Limit the number of font weights (e.g., normal, semibold).  Use a darker color for primary text and lighter greys for secondary/tertiary text.
+
+25. **Emphasize by De-emphasizing (Objective):**
+    *   **Instruction:**  If an element isn't standing out enough, consider de-emphasizing competing elements.
+    *   **Guideline:**  Reduce the contrast or opacity of less important elements.
+
+26. **Labels are a Last Resort (Objective):**
+    *   **Instruction:**  Avoid unnecessary labels when the meaning of data is clear from context or format.
+    *   **Guideline:**  Combine labels and values when possible (e.g., "12 left in stock" instead of "In stock: 12").  If labels are necessary, de-emphasize them (smaller size, lighter color).
+
+27. **Separate Visual Hierarchy from Document Hierarchy (Objective):**
+    *   **Instruction:**  Don't let HTML heading tags (h1-h6) dictate visual styling.  Style section titles based on their visual importance, not their semantic role.
+    *   **Guideline:**  Section titles often act more like labels and should be styled accordingly (smaller, less prominent).
+
+28. **Balance Weight and Contrast (Objective):**
+    *   **Instruction:**  Use contrast to compensate for weight, and vice versa.
+    *   **Guideline:**
+        *   Reduce the contrast of heavy elements (like solid icons) to balance them with lighter elements (like text).
+        *   Increase the weight (e.g., border width) of low-contrast elements to emphasize them.
+
+29. **Semantics are Secondary (for Actions) (Objective):**
+    *   **Instruction:**  Style actions (buttons, links) based on their importance in the hierarchy, not solely on their semantic meaning.
+    *   **Guideline:**
+        *   Primary actions: Solid, high-contrast background colors.
+        *   Secondary actions: Outline styles or lower-contrast backgrounds.
+        *   Tertiary actions: Style like links (often just underlined text).
+        *   Destructive actions:  May be styled as secondary or tertiary actions on the main page, but as primary actions in a confirmation step.
+
+**VI. Depth & Realism**
+
+30. **Emulate a Light Source (Objective):**
+    *   **Instruction:**  To create the illusion of raised or inset elements, simulate how light would interact with them.
+    *   **Guideline:**
+        *   Raised elements:  Add a lighter top border/shadow and a darker bottom shadow.
+        *   Inset elements:  Add a darker top inset shadow and a lighter bottom border/shadow.
+
+31. **Shadows to Convey Elevation (Objective):**
+    *   **Instruction:**  Use shadows to indicate the virtual distance of an element from the background.
+    *   **Guideline:**
+        *   Small, tight shadows:  Elements close to the background.
+        *   Larger, blurred shadows:  Elements further away.
+        *   Use the defined box-shadow system.
+
+32. **Two-Part Shadows (Objective - Technique):**
+    *    **Instruction:** Consider using two shadows on an element.
+    *    **Guideline:**
+         *   First shadow: Larger, softer, with a vertical offset (simulates direct light).
+         *   Second shadow: Tighter, darker, smaller offset (simulates ambient light occlusion).
+         *   Reduce the ambient light shadow as elevation increases.
+
+33. **Flat Design Depth (Objective):**
+     * **Instruction:** Even in flat designs, use color and overlapping to create a sense of depth.
+     * **Guideline:**
+        *   Lighter elements feel closer.
+        *   Darker elements feel further away.
+        *   Overlap elements to create layers.
+
+**VII. Images**
+
+34. **Use Good Photos (Objective):**
+    *   **Instruction:**  Use high-quality, well-lit, and appropriately composed images.
+    *   **Guideline:**  If user-uploaded images are not possible, source high-quality stock photography.
+
+35. **Consistent Contrast with Text (Objective):**
+    *   **Instruction:**  Ensure sufficient contrast between text and background images.
+    *   **Guideline:**
+        *   Add a semi-transparent overlay to the image.
+        *   Lower the image contrast (and adjust brightness).
+        *   Colorize the image.
+        *   Add a text shadow.
+
+36. **Intended Size (Objective):**
+    *   **Instruction:**  Avoid scaling images (especially icons and screenshots) significantly up or down from their intended size.
+    *   **Guideline:**
+        *   Don't scale up small icons.  Enclose them in a larger shape if needed.
+        *   Don't scale down detailed screenshots.  Take screenshots at a smaller screen size or create simplified illustrations.
+
+37. **User-Uploaded Content (Objective - Handling):**
+    *   **Instruction:**  Control the shape and size of user-uploaded images.
+    *   **Guideline:**
+        *   Use fixed-size containers and crop images to fit (e.g., `background-size: cover`).
+        *   Prevent background bleed with a subtle inner box shadow or a semi-transparent inner border.
+
+**VIII. Finishing Touches**
+
+38. **Supercharge the Defaults (Objective - Concept, Subjective - Application):**
+    *   **Instruction:**  Look for opportunities to enhance standard UI elements.
+    *   **Guideline:**
+        *   Replace bullet points with icons.
+        *   Style quotes as visual elements.
+        *   Customize links with underlines or color changes.
+        *   Use custom checkboxes and radio buttons.
+
+39. **Accent Borders (Objective - Technique, Subjective - Placement):**
+    *   **Instruction:**  Add colorful accent borders to elements to add visual interest.
+    *   **Guideline:**  Use sparingly.  Consider placement on cards, navigation items, alert messages, or under headlines.
+
+40. **Decorate Backgrounds (Objective - Concept, Subjective - Choice):**
+    *   **Instruction:**  Add subtle visual interest to backgrounds.
+    *   **Guideline:**
+        *   Change the background color.
+        *   Use a subtle gradient.
+        *   Add a repeating pattern.
+        *   Include simple shapes or illustrations.
+        *   Keep contrast low to maintain readability.
+
+41. **Don't Overlook Empty States (Objective):**
+    *   **Instruction:**  Design empty states thoughtfully.
+    *   **Guideline:**  Use images/illustrations and clear calls to action.  Hide unnecessary UI elements until there's content to display.
+
+42. **Use Fewer Borders (Objective):**
+    *   **Instruction:**  Avoid overusing borders for separation.
+    *   **Guideline:**
+        *   Use box shadows.
+        *   Use different background colors.
+        *   Increase spacing.
+
+43. **Think Outside the Box (Objective - Mindset):**
+    *   **Instruction:**  Challenge conventional UI patterns.
+    *   **Guideline:**  Don't be afraid to experiment with different layouts and styles for common components (dropdowns, tables, radio buttons, etc.).
+
+**IX. Continuous Improvement**
+
+44. **Analyze and Rebuild (Objective):**
+    *   **Instruction:**  Regularly analyze well-designed interfaces and try to recreate them from scratch.
+    *   **Guideline:**  This helps identify subtle design decisions and techniques.

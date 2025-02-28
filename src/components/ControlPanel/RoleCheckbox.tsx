@@ -1,4 +1,3 @@
-import { Checkbox } from "@mui/material";
 import RoleIcon from "../Common/RoleIcon";
 import { OverwatchRole } from "../../lib";
 
@@ -14,12 +13,21 @@ const RoleCheckbox: React.FC<RoleCheckboxProps> = ({
   onChange,
 }) => {
   return (
-    <Checkbox
-      icon={<RoleIcon role={role} />}
-      checkedIcon={<RoleIcon role={role} color="primary" />}
-      checked={checked}
-      onChange={(e) => onChange(e.target.checked)}
-    />
+    <label className="inline-flex items-center cursor-pointer">
+      <input
+        type="checkbox"
+        className="sr-only"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <div className="relative">
+        {checked ? (
+          <RoleIcon role={role} color="primary" />
+        ) : (
+          <RoleIcon role={role} />
+        )}
+      </div>
+    </label>
   );
 };
 

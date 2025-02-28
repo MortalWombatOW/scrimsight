@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { playerStatExtractorAtom, PlayerStatLogEvent } from './event_extractors/playerStatExtractorAtom';
-import {getRoleFromHero} from '../lib/data/hero';
+import {getRoleFromHero} from '../lib/hero';
 
 /**
  * Interface for expanded player stat events that includes role information

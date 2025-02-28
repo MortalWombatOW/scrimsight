@@ -1,6 +1,4 @@
-import React from 'react';
-import { Autocomplete, Box, Checkbox, Chip, TextField, Typography } from "@mui/material";
-
+import React, { useEffect, useRef, useState } from "react";
 
 interface IconAutocompleteProps {
   options: string[];
@@ -9,82 +7,162 @@ interface IconAutocompleteProps {
   icon: React.ReactNode;
   noOptionsText: string;
   label: string;
-  size?: 'small' | 'large';
+  size?: "small" | "large";
   optionLabel?: (option: string) => string;
   optionSubLabel?: (option: string) => string;
 }
 
-export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({ options, selected, onChange, icon, noOptionsText, label, size, optionLabel, optionSubLabel }) => {
-  return (<Autocomplete
-    style={{ width: '100%', minWidth: size === 'large' ? 300 : 200, maxWidth: size === 'large' ? 500 : 300 }}
-    size={size === 'large' ? 'medium' : 'small'}
-    multiple
-    // getOptionLabel={(option) =>
-    //   optionLabel ? optionLabel(option) : String(option)
-    // }
-    // filterOptions={(x) => x}
-    options={options}
-    autoComplete
-    // includeInputInList
-    value={selected}
-    disableCloseOnSelect
-    noOptionsText={noOptionsText}
-    onChange={(_, newValue: string[]) => {
-      onChange(newValue);
-    }}
-    renderOption={(props, option, { selected }) => {
-      const { key, ...optionProps } = props;
-      return (
-        <li key={key} {...optionProps}>
-          <Checkbox
-            icon={icon}
-            checkedIcon={icon}
-            style={{ marginRight: 8 }}
-            checked={selected}
-          />
-          <Box>
-            <Typography variant="body1">
-              {optionLabel ? optionLabel(option) : option}
-            </Typography>
-            <Typography variant="body2">
-              {optionSubLabel ? optionSubLabel(option) : null}
-            </Typography>
-          </Box>
-        </li>
-      );
-    }}
+export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
+  options,
+  selected,
+  onChange,
+  icon,
+  noOptionsText,
+  label,
+  size = "large",
+  optionLabel,
+  optionSubLabel,
+}) => {
+  const [inputValue, setInputValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-    renderInput={(params) => (
-      <div>
-        <TextField
-          {...params}
-          label={label}
-          variant="outlined"
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: (
-              <>
-                {icon && (
-                  <Box sx={{ mr: 1, color: 'action.active' }}>
-                    {icon}
-                  </Box>
-                )}
-                {params.InputProps.startAdornment}
-              </>
-            ),
-          }}
-          fullWidth
-        />
-      </div>
-    )}
-    renderTags={(value: readonly string[], getTagProps) =>
-      value.map((option: string, index: number) => {
-        const { key, ...tagProps } = getTagProps({ index });
-        return (
-          <Chip variant="outlined" label={optionLabel ? optionLabel(option) : option} key={key} {...tagProps} />
-        );
-      })
+  // Filter options based on input
+  const filteredOptions = options.filter((option) =>
+    (optionLabel ? optionLabel(option) : option)
+      .toLowerCase()
+      .includes(inputValue.toLowerCase())
+  );
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
     }
 
-  />);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [wrapperRef]);
+
+  // Handle selection toggle
+  const toggleOption = (option: string) => {
+    if (selected.includes(option)) {
+      onChange(selected.filter((item) => item !== option));
+    } else {
+      onChange([...selected, option]);
+    }
+  };
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    if (!isOpen) setIsOpen(true);
+  };
+
+  // Remove a selected tag
+  const removeTag = (option: string) => {
+    onChange(selected.filter((item) => item !== option));
+  };
+
+  return (
+    <div
+      ref={wrapperRef}
+      className={`relative ${
+        size === "large"
+          ? "w-full min-w-[300px] max-w-[500px]"
+          : "min-w-[200px] max-w-[300px]"
+      }`}
+    >
+      <div className="relative">
+        {/* Input field */}
+        <div className="relative flex flex-wrap items-center gap-1 rounded-md border border-gray-300 bg-white p-2 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:border-gray-600 dark:bg-gray-700">
+          {/* Icon */}
+          {icon && (
+            <span className="mr-2 text-gray-500 dark:text-gray-400">
+              {icon}
+            </span>
+          )}
+
+          {/* Selected tags */}
+          {selected.map((option) => (
+            <div
+              key={option}
+              className="flex items-center gap-1 rounded-full border border-gray-300 bg-gray-100 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800"
+            >
+              <span>{optionLabel ? optionLabel(option) : option}</span>
+              <button
+                type="button"
+                onClick={() => removeTag(option)}
+                className="font-bold hover:text-red-500"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+
+          {/* Input */}
+          <input
+            value={inputValue}
+            onChange={handleInputChange}
+            onFocus={() => setIsOpen(true)}
+            className={`flex-grow border-0 bg-transparent p-1 outline-none ${
+              size === "small" ? "text-sm" : ""
+            }`}
+            placeholder={selected.length > 0 ? "" : label}
+          />
+        </div>
+
+        {/* Floating label */}
+        <span className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+          {label}
+        </span>
+      </div>
+
+      {/* Dropdown */}
+      {isOpen && (
+        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-300 bg-white py-1 shadow-md dark:border-gray-600 dark:bg-gray-800">
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((option) => (
+              <li
+                key={option}
+                className="cursor-pointer px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={() => toggleOption(option)}
+              >
+                <div className="flex items-center">
+                  <div className="mr-2">{icon}</div>
+                  <div>
+                    <div
+                      className={
+                        selected.includes(option)
+                          ? "font-medium text-primary-600 dark:text-primary-400"
+                          : ""
+                      }
+                    >
+                      {optionLabel ? optionLabel(option) : option}
+                    </div>
+                    {optionSubLabel && (
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {optionSubLabel(option)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </li>
+            ))
+          ) : (
+            <li className="cursor-default px-3 py-2 text-gray-500 dark:text-gray-400">
+              {noOptionsText}
+            </li>
+          )}
+        </ul>
+      )}
+    </div>
+  );
 };

@@ -7,7 +7,6 @@ import {
   playerInteractionEventsAtom,
 } from "~/atoms";
 import { HeatMapGrid } from "react-grid-heatmap";
-import { Paper, Group, Title, Stack, Text, Grid, Center } from "@mantine/core";
 
 interface KillsTableProps {
   matchId: string;
@@ -137,34 +136,28 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
     team2Kills.push(row);
   }
   return (
-    <Paper withBorder p="md">
-      <Group>
-        <Stack>
-          <Title order={3} mb="md">
+    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+      <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col">
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
             Kills by {team1Name}
-          </Title>
-          <Grid mb="md">
-            <Grid.Col span={4}>
-              <Group justify="flex-end">
-                <Text
-                  size="xs"
-                  c="var(--chart-text-color, var(--mantine-color-dimmed))"
-                >
+          </h3>
+          <div className="grid grid-cols-12 mb-4">
+            <div className="col-span-4">
+              <div className="flex justify-end">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   Attackers
-                </Text>
-              </Group>
-            </Grid.Col>
-            <Grid.Col span={8}>
-              <Center>
-                <Text
-                  size="xs"
-                  c="var(--chart-text-color, var(--mantine-color-dimmed))"
-                >
+                </span>
+              </div>
+            </div>
+            <div className="col-span-8">
+              <div className="flex justify-center">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   Victims
-                </Text>
-              </Center>
-            </Grid.Col>
-          </Grid>
+                </span>
+              </div>
+            </div>
+          </div>
           <HeatMapGrid
             data={team1Kills}
             xLabels={team2Players}
@@ -172,9 +165,9 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
             cellHeight="30px"
             square
             cellRender={(_x, _y, value) => (
-              <Text size="sm" lh="30px" c="gray">
+              <span className="text-sm leading-[30px] text-gray-600 dark:text-gray-400">
                 {value}
-              </Text>
+              </span>
             )}
             xLabelsStyle={() => ({
               fontSize: ".7rem",
@@ -195,33 +188,27 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               margin: "3px",
             })}
           />
-        </Stack>
-        <Stack>
-          <Title order={3} mb="md">
+        </div>
+        <div className="flex flex-col">
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
             Kills by {team2Name}
-          </Title>
-          <Grid>
-            <Grid.Col span={4}>
-              <Group justify="flex-end">
-                <Text
-                  size="xs"
-                  c="var(--chart-text-color, var(--mantine-color-dimmed))"
-                >
+          </h3>
+          <div className="grid grid-cols-12">
+            <div className="col-span-4">
+              <div className="flex justify-end">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   Attackers
-                </Text>
-              </Group>
-            </Grid.Col>
-            <Grid.Col span={8}>
-              <Center>
-                <Text
-                  size="xs"
-                  c="var(--chart-text-color, var(--mantine-color-dimmed))"
-                >
+                </span>
+              </div>
+            </div>
+            <div className="col-span-8">
+              <div className="flex justify-center">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   Victims
-                </Text>
-              </Center>
-            </Grid.Col>
-          </Grid>
+                </span>
+              </div>
+            </div>
+          </div>
           <HeatMapGrid
             data={team2Kills}
             xLabels={team1Players}
@@ -229,9 +216,9 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
             cellHeight="30px"
             square
             cellRender={(_x, _y, value) => (
-              <Text size="sm" lh="30px" c="gray">
+              <span className="text-sm leading-[30px] text-gray-600 dark:text-gray-400">
                 {value}
-              </Text>
+              </span>
             )}
             xLabelsStyle={() => ({
               fontSize: ".7rem",
@@ -252,64 +239,9 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               margin: "3px",
             })}
           />
-        </Stack>
-      </Group>
-    </Paper>
-    // <TableContainer component={Paper}>
-    //   <Table size="small">
-    //     <TableHead>
-    //       <TableRow>
-    //         <TableCell>Kills \ Deaths</TableCell>
-    //         {players.map(player => (
-    //           <TableCell
-    //             key={player}
-    //             style={{
-    //               color: getColorgorical(getPlayerTeam(player)),
-    //               fontWeight: 'bold'
-    //             }}
-    //           >
-    //             {player}
-    //           </TableCell>
-    //         ))}
-    //         <TableCell>Total Kills</TableCell>
-    //       </TableRow>
-    //     </TableHead>
-    //     <TableBody>
-    //       {players.map(killer => (
-    //         <TableRow key={killer}>
-    //           <TableCell
-    //             style={{
-    //               color: getColorgorical(getPlayerTeam(killer)),
-    //               fontWeight: 'bold'
-    //             }}
-    //           >
-    //             {killer}
-    //           </TableCell>
-    //           {players.map(victim => (
-    //             <TableCell key={`${killer}-${victim}`}>
-    //               <Tooltip
-    //                 title={`${killer} killed ${victim} ${killMatrix[killer][victim]} times`}
-    //                 arrow
-    //               >
-    //                 <span>{killMatrix[killer][victim]}</span>
-    //               </Tooltip>
-    //             </TableCell>
-    //           ))}
-    //           <TableCell>{playerTotals[killer].kills}</TableCell>
-    //         </TableRow>
-    //       ))}
-    //       <TableRow>
-    //         <TableCell>Total Deaths</TableCell>
-    //         {players.map(player => (
-    //           <TableCell key={`total-deaths-${player}`}>
-    //             {playerTotals[player].deaths}
-    //           </TableCell>
-    //         ))}
-    //         <TableCell />
-    //       </TableRow>
-    //     </TableBody>
-    //   </Table>
-    // </TableContainer>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,6 +1,5 @@
-import { Grid } from '@mui/material';
-import TeamCard from '../../../components/TeamCard';
-import { TeamStats } from '../../../atoms/teamStatsAtom';
+import TeamCard from "../../../components/TeamCard";
+import { TeamStats } from "../../../atoms/teamStatsAtom";
 
 interface TeamsListProps {
   teams: TeamStats[];
@@ -8,12 +7,12 @@ interface TeamsListProps {
 
 export const TeamsList = ({ teams }: TeamsListProps) => {
   return (
-    <Grid container spacing={3}>
-      {teams.map(team => (
-        <Grid item xs={12} sm={6} lg={4} key={team.teamName}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {teams.map((team) => (
+        <div key={team.teamName}>
           <TeamCard teamName={team.teamName} />
-        </Grid>
+        </div>
       ))}
-    </Grid>
+    </div>
   );
-}; 
+};

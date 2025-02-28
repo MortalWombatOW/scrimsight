@@ -1,53 +1,123 @@
-import { AppShell, NavLink, Stack } from '@mantine/core';
-import { useLocation, Link } from 'react-router-dom';
-import { uniquePlayerNamesAtom, scrimAtom, teamNamesAtom, matchDataAtom } from '../../atoms';
-import { useAtomValue } from 'jotai';
+import { useLocation, Link } from "react-router-dom";
+import {
+  uniquePlayerNamesAtom,
+  scrimAtom,
+  teamNamesAtom,
+  matchDataAtom,
+} from "../../atoms";
+import { useAtomValue } from "jotai";
 import { MdArrowBack } from "react-icons/md";
 import { RiTeamLine } from "react-icons/ri";
 import { MdOutlinePersonOutline } from "react-icons/md";
 import { MdOutlineEmojiEvents } from "react-icons/md";
 import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
-import { useDocumentTitle } from '@mantine/hooks';
 import { TbVs } from "react-icons/tb";
+import { useEffect } from "react";
 
 const getTitle = (pathname: string) => {
-  if (pathname === '/') {
-    return 'Scrimsight';
+  if (pathname === "/") {
+    return "Scrimsight";
   }
 
-  if (pathname.startsWith('/matches')) {
-    if (pathname === '/matches') {
-      return 'Matches';
+  if (pathname.startsWith("/matches")) {
+    if (pathname === "/matches") {
+      return "Matches";
     }
 
-    return `Matches - ${pathname.split('/').pop()}`;
+    return `Matches - ${pathname.split("/").pop()}`;
   }
 
-  if (pathname.startsWith('/players')) {
-    if (pathname === '/players') {
-      return 'Players';
+  if (pathname.startsWith("/players")) {
+    if (pathname === "/players") {
+      return "Players";
     }
 
-    return `Players - ${pathname.split('/').pop()}`;
+    return `Players - ${pathname.split("/").pop()}`;
   }
 
-  if (pathname.startsWith('/teams')) {
-    if (pathname === '/teams') {
-      return 'Teams';
+  if (pathname.startsWith("/teams")) {
+    if (pathname === "/teams") {
+      return "Teams";
     }
 
-    return `Teams - ${pathname.split('/').pop()}`;
+    return `Teams - ${pathname.split("/").pop()}`;
   }
 
-  if (pathname.startsWith('/files')) {
-    return 'Files';
+  if (pathname.startsWith("/files")) {
+    return "Files";
   }
 
-  return 'Scrimsight';
-}
+  return "Scrimsight";
+};
 
-export const Navigation = () => {
+// Navigation link component
+const NavItem = ({
+  to,
+  label,
+  icon,
+  active = false,
+  disabled = false,
+  description = undefined,
+  compact = false,
+  closeMobileMenu,
+}: {
+  to: string;
+  label: string;
+  icon?: React.ReactNode;
+  active?: boolean;
+  disabled?: boolean;
+  description?: string;
+  compact?: boolean;
+  closeMobileMenu?: () => void;
+}) => {
+  const baseClasses =
+    "flex items-center gap-3 px-3 py-2 rounded-md transition-colors";
+  const activeClasses =
+    "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-300";
+  const inactiveClasses =
+    "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800";
+  const disabledClasses = "";
+
+  const classes = `
+    ${baseClasses}
+    ${active ? activeClasses : inactiveClasses}
+    ${disabled ? disabledClasses : ""}
+    ${compact ? "py-1" : ""}
+  `;
+
+  if (disabled) {
+    return (
+      <div className={classes}>
+        {icon && <span className="text-xl">{icon}</span>}
+        <div>
+          <div>{label}</div>
+          {description && (
+            <div className="text-xs text-gray-500">{description}</div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Link to={to} className={classes} onClick={closeMobileMenu}>
+      <span className="text-xl">{icon}</span>
+      <div>
+        <div>{label}</div>
+        {description && (
+          <div className="text-xs text-gray-500">{description}</div>
+        )}
+      </div>
+    </Link>
+  );
+};
+
+export const Navigation = ({
+  closeMobileMenu,
+}: {
+  closeMobileMenu: () => void;
+}) => {
   const location = useLocation();
 
   const scrims = useAtomValue(scrimAtom);
@@ -55,148 +125,155 @@ export const Navigation = () => {
   const teamNames = useAtomValue(teamNamesAtom);
   const matchData = useAtomValue(matchDataAtom);
 
-  const isRoot = location.pathname === '/';
-  const isMatches = location.pathname.startsWith('/matches');
-  const isPlayers = location.pathname.startsWith('/players');
-  const isTeams = location.pathname.startsWith('/teams');
-  const isFiles = location.pathname.startsWith('/files');
+  const isRoot = location.pathname === "/";
+  const isMatches = location.pathname.startsWith("/matches");
+  const isPlayers = location.pathname.startsWith("/players");
+  const isTeams = location.pathname.startsWith("/teams");
+  const isFiles = location.pathname.startsWith("/files");
 
-  useDocumentTitle(getTitle(location.pathname));
+  useEffect(() => {
+    document.title = getTitle(location.pathname);
+  }, [location.pathname]);
 
   return (
-    <AppShell.Navbar p="md">
-      <Stack gap={0}>
+    <nav className="h-full w-full overflow-y-auto">
+      <div className="flex flex-col space-y-1">
         {(isRoot || isFiles) && (
           <>
-            <NavLink
-              component={Link}
+            <NavItem
               to="/"
               label="Home"
-              leftSection={<AiOutlineHome />}
+              icon={<AiOutlineHome />}
+              active={location.pathname === "/"}
+              closeMobileMenu={closeMobileMenu}
             />
-            <NavLink
-              component={Link}
+            <NavItem
               to="/matches"
               label="Matches"
-              leftSection={<TbVs />}
+              icon={<TbVs />}
+              active={location.pathname === "/matches"}
+              closeMobileMenu={closeMobileMenu}
             />
-            <NavLink
-              component={Link}
+            <NavItem
               to="/players"
               label="Players"
-              leftSection={<MdOutlinePersonOutline />}
+              icon={<MdOutlinePersonOutline />}
+              active={location.pathname === "/players"}
+              closeMobileMenu={closeMobileMenu}
             />
-
-            <NavLink
-              component={Link}
+            <NavItem
               to="/teams"
               label="Teams"
-              leftSection={<RiTeamLine />}
+              icon={<RiTeamLine />}
+              active={location.pathname === "/teams"}
+              closeMobileMenu={closeMobileMenu}
             />
-
-            <NavLink
-              component={Link}
+            <NavItem
               to="/files"
               label="Files"
-              leftSection={<FaRegFileAlt />}
+              icon={<FaRegFileAlt />}
               active={isFiles}
+              closeMobileMenu={closeMobileMenu}
             />
           </>
         )}
         {isMatches && (
           <>
-            <NavLink
-              component={Link}
-              to="/"
-              label="Back"
-              leftSection={<MdArrowBack />}
-            />
-            <NavLink
-              component={Link}
+            <NavItem to="/" label="Back" icon={<MdArrowBack />} />
+            <NavItem
               to="/matches"
               label="Browse Matches"
-              leftSection={<MdOutlineEmojiEvents />}
+              active={location.pathname === "/matches"}
+              closeMobileMenu={closeMobileMenu}
             />
-            {scrims.map((scrim) => (
-              <Stack gap="xs">
-                <NavLink
-                  disabled
-                  // h={24}
-                  key={scrim.dateString}
+            {scrims.map((scrim, index) => (
+              <div
+                key={`${scrim.dateString}-${index}`}
+                className="ml-2 mt-2 flex flex-col space-y-1"
+              >
+                <NavItem
+                  to=""
                   label={`${scrim.team1Name} vs ${scrim.team2Name}`}
                   description={`${scrim.dateString}`}
-                  active={location.pathname === `/matches?teams=${encodeURIComponent(scrim.team1Name)},${encodeURIComponent(scrim.team2Name)}`}
+                  disabled
+                  active={
+                    location.pathname ===
+                    `/matches?teams=${encodeURIComponent(
+                      scrim.team1Name
+                    )},${encodeURIComponent(scrim.team2Name)}`
+                  }
+                  closeMobileMenu={closeMobileMenu}
                 />
-                {scrim.matchIds.map((matchId) => (
-                  <NavLink
-                    h={24}
-                    key={matchId}
-                    component={Link}
-                    to={`/matches/${matchId}`}
-                    label={`${matchData.find((match) => match.matchId === matchId)?.map ?? 'Unknown Map'} (${matchData.find((match) => match.matchId === matchId)?.team1Score} - ${matchData.find((match) => match.matchId === matchId)?.team2Score})`}
-                    leftSection={<MdOutlineEmojiEvents />}
-                    active={location.pathname === `/matches/${matchId}`}
-                  />
-                ))}
-              </Stack>
+                <div className="ml-2 flex flex-col space-y-1">
+                  {scrim.matchIds.map((matchId) => (
+                    <NavItem
+                      key={matchId}
+                      to={`/matches/${matchId}`}
+                      label={`${
+                        matchData.find((match) => match.matchId === matchId)
+                          ?.map ?? "Unknown Map"
+                      } (${
+                        matchData.find((match) => match.matchId === matchId)
+                          ?.team1Score
+                      } - ${
+                        matchData.find((match) => match.matchId === matchId)
+                          ?.team2Score
+                      })`}
+                      active={location.pathname === `/matches/${matchId}`}
+                      compact
+                      closeMobileMenu={closeMobileMenu}
+                    />
+                  ))}
+                </div>
+              </div>
             ))}
           </>
         )}
         {isPlayers && (
           <>
-            <NavLink
-              component={Link}
-              to="/"
-              label="Back"
-              leftSection={<MdArrowBack />}
-            />
-            <NavLink
-              component={Link}
+            <NavItem to="/" label="Back" icon={<MdArrowBack />} />
+            <NavItem
               to="/players"
               label="Browse Players"
-              leftSection={<MdOutlinePersonOutline />}
+              icon={<MdOutlinePersonOutline />}
+              active={location.pathname === "/players"}
+              closeMobileMenu={closeMobileMenu}
             />
             {playerNames.map((name) => (
-              <NavLink
-                h={24}
+              <NavItem
                 key={name}
-                component={Link}
                 to={`/players/${name}`}
                 label={name}
-                leftSection={<MdOutlinePersonOutline />}
                 active={location.pathname === `/players/${name}`}
+                compact
+                closeMobileMenu={closeMobileMenu}
               />
             ))}
           </>
         )}
         {isTeams && (
           <>
-            <NavLink
-              component={Link}
-              to="/"
-              label="Back"
-              leftSection={<MdArrowBack />}
-            />
-            <NavLink
-              component={Link}
+            <NavItem to="/" label="Back" icon={<MdArrowBack />} />
+            <NavItem
               to="/teams"
               label="Browse Teams"
-              leftSection={<RiTeamLine />}
+              icon={<RiTeamLine />}
+              active={location.pathname === "/teams"}
+              closeMobileMenu={closeMobileMenu}
             />
             {teamNames.map((name) => (
-              <NavLink
-                h={24}
+              <NavItem
                 key={name}
-                component={Link}
                 to={`/teams/${name}`}
                 label={name}
-                leftSection={<RiTeamLine />}
                 active={location.pathname === `/teams/${name}`}
+                compact
+                closeMobileMenu={closeMobileMenu}
               />
             ))}
           </>
         )}
-      </Stack>
-    </AppShell.Navbar>
+      </div>
+    </nav>
   );
-}; 
+};

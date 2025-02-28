@@ -1,4 +1,3 @@
-import { Box, Paper, Typography, LinearProgress } from "@mui/material";
 import { useAtomValue } from "jotai";
 import { playerStatsByPlayerAndHeroAtom } from "../../../atoms/metrics/playerMetricsAtoms";
 import { getRoleFromHero, OverwatchRole } from "../../../lib";
@@ -80,71 +79,92 @@ export const HeroPoolAnalysis = () => {
 
   if (heroPoolStats.length === 0) {
     return (
-      <Paper sx={{ p: 2 }}>
-        <Typography>No hero pool data available</Typography>
-      </Paper>
+      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
+        <p className="text-gray-700 dark:text-gray-300">
+          No hero pool data available
+        </p>
+      </div>
     );
   }
 
   // Find the maximum matches for progress bar scaling
   const maxMatches = Math.max(...heroPoolStats.map((h) => h.matches));
 
+  // Role color mapping
+  const getRoleColor = (role: OverwatchRole) => {
+    switch (role) {
+      case "tank":
+        return "text-blue-600 dark:text-blue-400";
+      case "damage":
+        return "text-red-600 dark:text-red-400";
+      case "support":
+        return "text-green-600 dark:text-green-400";
+      default:
+        return "text-gray-600 dark:text-gray-400";
+    }
+  };
+
   return (
-    <Paper sx={{ p: 2 }}>
-      <Typography variant="h6" gutterBottom>
+    <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
+      <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
         Hero Pool Analysis
-      </Typography>
+      </h2>
 
       {roleOrder.map((role) => (
-        <Box key={role} sx={{ mb: 3 }}>
-          <Typography variant="subtitle1" sx={{ mb: 1, color: "primary.main" }}>
+        <div key={role} className="mb-6">
+          <h3 className={`text-lg font-medium mb-2 ${getRoleColor(role)}`}>
             {role.charAt(0).toUpperCase() + role.slice(1)}
-          </Typography>
+          </h3>
 
           {roleGroups[role]
             ?.sort((a, b) => b.matches - a.matches)
             .map((hero) => (
-              <Box key={hero.hero} sx={{ mb: 1 }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 0.5,
-                  }}
-                >
-                  <Typography variant="body2">{hero.hero}</Typography>
-                  <Typography variant="body2" color="text.secondary">
+              <div key={hero.hero} className="mb-3">
+                <div className="flex justify-between mb-1">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {hero.hero}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {hero.matches} matches
-                  </Typography>
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <LinearProgress
-                      variant="determinate"
-                      value={(hero.matches / maxMatches) * 100}
-                      sx={{ height: 8, borderRadius: 1 }}
-                    />
-                  </Box>
-                  <Box sx={{ display: "flex", gap: 2 }}>
-                    <Typography variant="caption" color="text.secondary">
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-grow">
+                    <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                      <div
+                        className={`h-2 rounded-full ${
+                          role === "tank"
+                            ? "bg-blue-500"
+                            : role === "damage"
+                            ? "bg-red-500"
+                            : "bg-green-500"
+                        }`}
+                        style={{
+                          width: `${(hero.matches / maxMatches) * 100}%`,
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {Math.round(hero.avgElims)} elims
-                    </Typography>
+                    </p>
                     {hero.role !== "support" && (
-                      <Typography variant="caption" color="text.secondary">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {Math.round(hero.avgDamage).toLocaleString()} dmg
-                      </Typography>
+                      </p>
                     )}
                     {hero.role === "support" && (
-                      <Typography variant="caption" color="text.secondary">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {Math.round(hero.avgHealing).toLocaleString()} heal
-                      </Typography>
+                      </p>
                     )}
-                  </Box>
-                </Box>
-              </Box>
+                  </div>
+                </div>
+              </div>
             ))}
-        </Box>
+        </div>
       ))}
-    </Paper>
+    </div>
   );
 };

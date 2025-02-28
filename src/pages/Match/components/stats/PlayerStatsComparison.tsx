@@ -1,5 +1,4 @@
 import { useAtomValue } from "jotai";
-import { Group, Paper, Stack, Title } from "@mantine/core";
 import { matchDataAtom, useStats } from "../../../../atoms";
 import { PlayerStatsCard } from "./PlayerStatsCard";
 
@@ -22,37 +21,50 @@ export const PlayerStatsComparison = ({
   }
 
   return (
-    <Paper p="0">
-      <Stack gap="md">
-        <Stack>
-          <Title order={3}>{matchData.team1Name} Players</Title>
-          <Group align="flex-start">
-            {playerStats.rows
-              .filter((stats) => stats.playerTeam === matchData.team1Name)
-              .map((player) => (
-                <PlayerStatsCard
-                  key={player.playerName}
-                  playerName={player.playerName}
-                  matchId={matchId}
-                />
-              ))}
-          </Group>
-        </Stack>
-        <Stack>
-          <Title order={3}>{matchData.team2Name} Players</Title>
-          <Group align="flex-start">
-            {playerStats.rows
-              .filter((stats) => stats.playerTeam === matchData.team2Name)
-              .map((player) => (
-                <PlayerStatsCard
-                  key={player.playerName}
-                  playerName={player.playerName}
-                  matchId={matchId}
-                />
-              ))}
-          </Group>
-        </Stack>
-      </Stack>
-    </Paper>
+    <>
+      <div className="border-b border-gray-200 dark:border-gray-700 py-2 mb-4">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+          {matchData.team1Name} Players
+        </h2>
+      </div>
+
+      <div className="flex flex-wrap gap-4 mb-8">
+        {playerStats.rows
+          .filter((stats) => stats.playerTeam === matchData.team1Name)
+          .map((player) => (
+            <div
+              key={player.playerName}
+              className="flex-1 min-w-[200px] max-w-[400px]"
+            >
+              <PlayerStatsCard
+                playerName={player.playerName}
+                matchId={matchId}
+              />
+            </div>
+          ))}
+      </div>
+
+      <div className="border-b border-gray-200 dark:border-gray-700 py-2 mb-4">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+          {matchData.team2Name} Players
+        </h2>
+      </div>
+
+      <div className="flex flex-wrap gap-4">
+        {playerStats.rows
+          .filter((stats) => stats.playerTeam === matchData.team2Name)
+          .map((player) => (
+            <div
+              key={player.playerName}
+              className="flex-1 min-w-[300px] max-w-[400px]"
+            >
+              <PlayerStatsCard
+                playerName={player.playerName}
+                matchId={matchId}
+              />
+            </div>
+          ))}
+      </div>
+    </>
   );
 };
