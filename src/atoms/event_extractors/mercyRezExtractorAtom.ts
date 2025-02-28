@@ -18,4 +18,8 @@ export interface MercyRezLogEvent {
 /**
  * Atom that extracts mercy rez events from the parsed log files
  */
-export const mercyRezExtractorAtom = createEventExtractorAtom<MercyRezLogEvent>('mercy_rez'); 
+export const mercyRezExtractorAtom = createEventExtractorAtom<MercyRezLogEvent>('mercy_rez', {
+  eventAbility: 'revivedHero',
+  revivedHero: 'revivedName',
+  revivedName: 'revivedTeam',
+}); 

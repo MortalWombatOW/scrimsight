@@ -186,9 +186,9 @@ export const Navigation = ({
               active={location.pathname === "/matches"}
               closeMobileMenu={closeMobileMenu}
             />
-            {scrims.map((scrim) => (
+            {scrims.map((scrim, index) => (
               <div
-                key={scrim.dateString}
+                key={`${scrim.dateString}-${index}`}
                 className="ml-2 mt-2 flex flex-col space-y-1"
               >
                 <NavItem

@@ -8,7 +8,7 @@ import { TbClockHour1 } from "react-icons/tb";
 import { FiMapPin } from "react-icons/fi";
 
 // Import the extracted components
-import { Timeline } from "./components/timeline/Timeline";
+import { Timeline } from "../../components/Timeline/Timeline";
 import { TeamStatsComparison } from "./components/stats/TeamStatsComparison";
 import { PlayerStatsComparison } from "./components/stats/PlayerStatsComparison";
 import { MatchScoreCard } from "./components/scorecard/MatchScoreCard";
@@ -85,7 +85,12 @@ export const MatchPage2 = () => {
       <AllPlayerComparison matchId={matchId} />
 
       {/* Timeline Section */}
-      <Timeline matchData={matchData} />
+      <section className="bg-white border border-gray-200 p-4 rounded-lg w-full shadow-sm">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">
+          Match Timeline
+        </h3>
+        <Timeline matchId={matchId} />
+      </section>
 
       {/* Single Stat Comparison */}
       <SingleStatPlayerComparison matchId={matchId} />
