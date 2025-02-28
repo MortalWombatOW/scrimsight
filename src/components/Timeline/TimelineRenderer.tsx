@@ -317,7 +317,6 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
   layoutConfig,
 }) => {
   // Access three.js context
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { camera, gl } = useThree();
 
   // Ref for event markers to enable interactions
@@ -327,8 +326,10 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
 
-  // Add state for hover feedback
-  const [hoveredEvent, setHoveredEvent] = useState<string | null>(null);
+  // Add state to track animation timestamps for connections
+  const [animatingConnections, setAnimatingConnections] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   // Time scale function that respects the time range filter
   const timeScale = useMemo(() => {
@@ -391,6 +392,20 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
     [dimensions.height, laneHeight, layoutConfig]
   );
 
+  // Add a cleanup timer to remove completed animations after a delay
+  useEffect(() => {
+    if (Object.keys(animatingConnections).length === 0) return;
+
+    // We don't need a cleanup timer anymore since animations naturally complete
+    // and won't repeat due to the animationComplete state in AnimatedConnection
+
+    // Just maintain the animation state according to selections
+    return () => {}; // No cleanup needed
+  }, [animatingConnections, selectedEvents]);
+
+  // Add state for hover feedback
+  const [hoveredEventId, setHoveredEventId] = useState<string | null>(null);
+
   // Setup mouse handlers for interaction
   useEffect(() => {
     const domElement = gl.domElement;
@@ -426,10 +441,10 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
         }
 
         // Update hover state
-        setHoveredEvent(newHoveredEventId);
+        setHoveredEventId(newHoveredEventId);
       } else {
         domElement.style.cursor = "default";
-        setHoveredEvent(null);
+        setHoveredEventId(null);
       }
     };
 
@@ -478,12 +493,41 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
                 : [selectedEventId]; // Otherwise select just this event
           }
 
+          // Check if this is actually a new selection
+          const isNewSelection =
+            newSelectedEvents.length !== selectedEvents.length ||
+            newSelectedEvents.some((id) => !selectedEvents.includes(id));
+
           // Update the selected events
           onEventSelect(newSelectedEvents);
+
+          // Only animate if this is a new selection
+          if (isNewSelection) {
+            // Clear previous animations from connections not related to current selection
+            setAnimatingConnections({});
+
+            // Find connections related to this event and mark them for animation
+            const newAnimatingConnections: { [key: string]: boolean } = {};
+
+            data.connections.forEach((conn) => {
+              // Only animate connections where this event is the source/initiator
+              if (conn.source === selectedEventId) {
+                const connKey = `${conn.source}-${conn.target}`;
+                newAnimatingConnections[connKey] = true;
+              }
+            });
+
+            // Set the new animations, replacing any existing ones
+            if (Object.keys(newAnimatingConnections).length > 0) {
+              setAnimatingConnections(newAnimatingConnections);
+            }
+          }
         }
       } else {
         // Clear selection when clicking empty space
         onEventSelect([]);
+        // Clear animations
+        setAnimatingConnections({});
       }
     };
 
@@ -622,7 +666,7 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
 
       // Determine color and scale based on selection and hover state
       const isSelected = selectedEvents.includes(event.id);
-      const isHovered = hoveredEvent === event.id;
+      const isHovered = hoveredEventId === event.id;
       const color = getEventColor(event.id, isHovered, isSelected);
       const scale = isSelected ? 1.6 : isHovered ? 1.3 : 1; // Different scales for selected/hovered
 
@@ -690,7 +734,7 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
     data.events,
     data.playerLanes,
     selectedEvents,
-    hoveredEvent,
+    hoveredEventId,
     timeScale,
     getYPosition,
   ]);
@@ -723,24 +767,64 @@ const TimelineScene: React.FC<TimelineSceneProps> = ({
         selectedEvents.includes(connection.source) ||
         selectedEvents.includes(connection.target);
 
-      // Use animated connection when the connection is highlighted
+      // Check if this connection should be animated
+      const connectionKey = `${connection.source}-${connection.target}`;
+      const shouldAnimate = !!animatingConnections[connectionKey];
+
+      // Use animated connection when the connection should be animated
+      if (shouldAnimate) {
+        return (
+          <AnimatedConnection
+            key={`animated-connection-${connectionKey}`}
+            sourcePosition={
+              new THREE.Vector3(
+                sourcePosition.x,
+                sourcePosition.y,
+                sourcePosition.z
+              )
+            }
+            targetPosition={
+              new THREE.Vector3(
+                targetPosition.x,
+                targetPosition.y,
+                targetPosition.z
+              )
+            }
+            color={
+              isHighlighted
+                ? COLORS.highlightedConnection
+                : COLORS.defaultConnection
+            }
+            isHighlighted={isHighlighted}
+          />
+        );
+      }
+
+      // Use regular connection for non-animated connections
+      // Create a directional line with an arrow pointing from source to target
+      const points = [
+        new THREE.Vector3(sourcePosition.x, sourcePosition.y, sourcePosition.z),
+        new THREE.Vector3(targetPosition.x, targetPosition.y, targetPosition.z),
+      ];
+
       return (
-        <AnimatedConnection
-          key={`animated-connection-${connection.source}-${connection.target}`}
-          sourcePosition={sourcePosition}
-          targetPosition={targetPosition}
+        <Line
+          key={`connection-${connection.source}-${connection.target}`}
+          points={points}
           color={
             isHighlighted
               ? COLORS.highlightedConnection
               : COLORS.defaultConnection
           }
-          isHighlighted={isHighlighted}
+          lineWidth={isHighlighted ? 3 : 1.5}
+          transparent={true}
+          opacity={isHighlighted ? 0.9 : 0.5}
         />
       );
     });
 
     return renderedConnections;
-  }, [data.connections, selectedEvents]);
+  }, [data.connections, selectedEvents, animatingConnections]);
 
   // Generate time ticks with appropriate intervals based on time range
   const timeTicks = useMemo(() => {

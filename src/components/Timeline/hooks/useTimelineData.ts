@@ -266,17 +266,22 @@ function processPlayerInteractionEvents(events: PlayerInteractionEvent[]): Timel
   // Keep a counter for events with the same basic identifiers
   const eventCounts = new Map<string, number>();
   
-  return events.map(event => {
+  // First pass: create all events and track their IDs
+  const allEvents = events.map(event => {
     // Create a base key to track duplicates
-    const baseKey = `${event.matchId}_${event.playerName}_${event.otherPlayerName}_${event.playerInteractionEventType}_${event.playerInteractionEventTime}`;
+    const baseKey = `${event.matchId}_${event.playerName}_${event.playerInteractionEventType}_${event.playerInteractionEventTime}`;
     
     // Get current count or initialize to 0
     const count = eventCounts.get(baseKey) || 0;
+    
     // Increment for next time
     eventCounts.set(baseKey, count + 1);
     
     // Add the counter to ensure uniqueness
     const id = `interaction_${baseKey}_${count}`;
+    
+    // Store the related key for connection tracking
+    const relatedKey = `${event.matchId}_${event.otherPlayerName}_${event.playerInteractionEventTime}`;
     
     return {
       id,
@@ -285,13 +290,71 @@ function processPlayerInteractionEvents(events: PlayerInteractionEvent[]): Timel
       playerName: event.playerName,
       playerTeam: event.playerTeam,
       playerHero: event.playerHero,
+      relatedEvents: [] as string[], // Initialize as empty string array
       relatedPlayerName: event.otherPlayerName,
-      relatedPlayerTeam: event.playerTeam,
-      relatedPlayerHero: '',
+      relatedPlayerTeam: event.playerTeam, // Assuming same team, may need to adjust based on data
+      relatedPlayerHero: '', // Would need additional data to determine this
       metadata: { 
         raw: event,
-        relatedKey: `${event.matchId}_${event.otherPlayerName}_${event.playerInteractionEventTime}`
+        relatedKey // Store the related key for the second pass
       }
     };
   });
+  
+  // Create a map of events by player name and time for quick lookup
+  const eventsByPlayerAndTime = new Map<string, TimelineEvent[]>();
+  
+  allEvents.forEach(event => {
+    // Create lookup key based on player and time
+    const lookupKey = `${event.metadata?.raw.matchId}_${event.playerName}_${event.time}`;
+    
+    if (!eventsByPlayerAndTime.has(lookupKey)) {
+      eventsByPlayerAndTime.set(lookupKey, []);
+    }
+    
+    eventsByPlayerAndTime.get(lookupKey)?.push(event);
+  });
+  
+  // Second pass: establish connections between related events
+  allEvents.forEach(event => {
+    if (!event.relatedPlayerName) return;
+    
+    // Find corresponding events from the other player at the same time
+    const otherPlayerKey = `${event.metadata?.raw.matchId}_${event.relatedPlayerName}_${event.time}`;
+    const otherPlayerEvents = eventsByPlayerAndTime.get(otherPlayerKey) || [];
+    
+    // Connect events based on their types
+    // Each connection type needs a specific rule
+    otherPlayerEvents.forEach(otherEvent => {
+      // Check for related event types
+      if (isRelatedInteractionType(event.type, otherEvent.type)) {
+        // Add connection
+        if (!event.relatedEvents) {
+          event.relatedEvents = [] as string[];
+        }
+        if (Array.isArray(event.relatedEvents)) {
+          event.relatedEvents.push(otherEvent.id);
+        }
+      }
+    });
+  });
+  
+  return allEvents;
+}
+
+// Helper function to determine if two interaction types are related
+function isRelatedInteractionType(type1: string, type2: string): boolean {
+  // Define pairs of related interaction types
+  const relatedPairs = [
+    ['Killed player', 'Died'],
+    ['Dealt Damage', 'Received Damage'],
+    ['Dealt Healing', 'Received Healing'],
+    ['Resurrected Player', 'Resurrected'],
+    ['Demeched', 'Destroyed mech'],
+  ];
+  
+  // Check if this pair exists in the related pairs list
+  return relatedPairs.some(([a, b]) => 
+    (type1 === a && type2 === b) || (type1 === b && type2 === a)
+  );
 } 
