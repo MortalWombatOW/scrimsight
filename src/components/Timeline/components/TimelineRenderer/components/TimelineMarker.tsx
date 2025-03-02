@@ -1,6 +1,8 @@
 import React from "react";
 import * as THREE from "three";
+import { Html } from "@react-three/drei";
 import { TimelineEvent } from "../../../hooks";
+import { getHeroImage } from "../../../../../lib/hero";
 
 // Grayscale color palette for better UI
 const COLORS = {
@@ -40,8 +42,11 @@ export const TimelineMarker: React.FC<TimelineMarkerProps> = ({
   onRegisterMarker,
 }) => {
   // Determine marker appearance based on event type
-  const size = 2.5;
+  const size = 6;
   const scale = isSelected || isHovered ? 1.2 : 1;
+
+  // Check if this is a hero spawn or swap event
+  const isHeroEvent = event.type === "heroSpawn" || event.type === "heroSwap";
 
   // Determine color based on event type
   let color = COLORS.eventDefault;
@@ -71,6 +76,11 @@ export const TimelineMarker: React.FC<TimelineMarkerProps> = ({
       break;
     case "damage":
       geometry = <boxGeometry args={[size * 1.5, size * 1.5, size]} />;
+      break;
+    case "heroSpawn":
+    case "heroSwap":
+      // Use a circle for hero events (the image will be displayed on top)
+      geometry = <circleGeometry args={[size, 32]} />;
       break;
     default:
       geometry = <circleGeometry args={[size, 3]} />;
@@ -115,6 +125,26 @@ export const TimelineMarker: React.FC<TimelineMarkerProps> = ({
           opacity={isSelected || isHovered ? 0.9 : 0.8}
         />
       </mesh>
+
+      {/* Hero image for hero spawn and swap events */}
+      {isHeroEvent && event.playerHero && (
+        <Html
+          position={[xPosition, yPosition, 0.2]}
+          center
+          sprite
+          transform
+          distanceFactor={100}
+          style={{
+            width: `${size * 16}px`,
+            height: `${size * 16}px`,
+            borderRadius: "50%",
+            backgroundImage: `url(${getHeroImage(event.playerHero)})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            border: "none",
+          }}
+        />
+      )}
     </group>
   );
 };

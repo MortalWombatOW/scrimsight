@@ -6,7 +6,7 @@ import {
   PlayerInteractionEvent,
   playerInteractionEventsAtom,
 } from "~/atoms";
-import { HeatMapGrid } from "react-grid-heatmap";
+import HeatmapGrid from "~/components/Heatmap/HeatmapGrid";
 
 interface KillsTableProps {
   matchId: string;
@@ -158,13 +158,13 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               </div>
             </div>
           </div>
-          <HeatMapGrid
+          <HeatmapGrid
             data={team1Kills}
             xLabels={team2Players}
             yLabels={team1Players}
             cellHeight="30px"
             square
-            cellRender={(_x, _y, value) => (
+            cellRender={(_x: number, _y: number, value: number) => (
               <span className="text-sm leading-[30px] text-gray-600 dark:text-gray-400">
                 {value}
               </span>
@@ -180,7 +180,7 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               fontSize: ".7rem",
               marginTop: "6px",
             })}
-            cellStyle={(_x, _y, ratio) => ({
+            cellStyle={(_x: number, _y: number, ratio: number) => ({
               background: `rgb(200, 106, 0, ${ratio})`,
               fontSize: ".8rem",
               color: `rgb(0, 0, 0, ${ratio / 2 + 0.4})`,
@@ -209,13 +209,13 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               </div>
             </div>
           </div>
-          <HeatMapGrid
+          <HeatmapGrid
             data={team2Kills}
             xLabels={team1Players}
             yLabels={team2Players}
             cellHeight="30px"
             square
-            cellRender={(_x, _y, value) => (
+            cellRender={(_x: number, _y: number, value: number) => (
               <span className="text-sm leading-[30px] text-gray-600 dark:text-gray-400">
                 {value}
               </span>
@@ -231,7 +231,7 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               fontSize: ".7rem",
               marginTop: "6px",
             })}
-            cellStyle={(_x, _y, ratio) => ({
+            cellStyle={(_x: number, _y: number, ratio: number) => ({
               background: `rgb(200, 106, 0, ${ratio})`,
               fontSize: ".8rem",
               color: `rgb(0, 0, 0, ${ratio / 2 + 0.4})`,

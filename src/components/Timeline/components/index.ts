@@ -1,3 +1,3 @@
 export { TimelineRenderer } from './TimelineRenderer';
-export { TimelineControls } from './TimelineControls';
-export { TimelineDetails } from './TimelineDetails'; 
+export { TimelineDetails } from './TimelineDetails';
+export { TimelineSegments } from './TimelineSegments'; 

@@ -1,65 +1,64 @@
 import { useState, useCallback } from 'react';
-import type { TimelineData } from './useTimelineData';
+import { TimelineData, TimelineSegment } from './useTimelineData';
 
 interface UseTimelineSelectionProps {
   data: TimelineData;
 }
 
-interface UseTimelineSelectionResult {
+export interface UseTimelineSelectionResult {
   selectedEvents: string[];
+  selectedSegments: TimelineSegment[];
   handleEventSelect: (eventIds: string[]) => void;
+  handleSegmentSelect: (segmentIds: string[]) => void;
   clearSelection: () => void;
-  isEventSelected: (eventId: string) => boolean;
-  getSelectedEventData: () => any[];
 }
 
 /**
- * Custom hook for managing timeline event selection
- * Extracts selection logic from the Timeline component
+ * Custom hook for managing timeline selection state
  */
 export function useTimelineSelection({ data }: UseTimelineSelectionProps): UseTimelineSelectionResult {
-  // State for selected events
+  // State for selected events and segments
   const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+  const [selectedSegments, setSelectedSegments] = useState<TimelineSegment[]>([]);
 
-  // Handle event selection from the visualization
-  const handleEventSelect = useCallback(
-    (eventIds: string[]) => {
-      // Only update if the selection has changed
-      if (
-        selectedEvents.length !== eventIds.length ||
-        !selectedEvents.every((event) => eventIds.includes(event))
-      ) {
-        setSelectedEvents(eventIds);
-      }
-    },
-    [selectedEvents]
-  );
-
-  // Clear all selected events
-  const clearSelection = useCallback(() => {
-    setSelectedEvents([]);
+  // Handle event selection
+  const handleEventSelect = useCallback((eventIds: string[]) => {
+    setSelectedEvents(eventIds);
+    
+    // Clear segment selection when selecting events
+    if (eventIds.length > 0) {
+      setSelectedSegments([]);
+    }
   }, []);
 
-  // Check if a specific event is selected
-  const isEventSelected = useCallback(
-    (eventId: string) => {
-      return selectedEvents.includes(eventId);
-    },
-    [selectedEvents]
-  );
+  // Handle segment selection
+  const handleSegmentSelect = useCallback((segmentIds: string[]) => {
+    if (!data || !data.segments) return;
+    
+    // Find the selected segments in the data
+    const segments = segmentIds.map(id => 
+      data.segments.find(segment => segment.id === id)
+    ).filter((segment): segment is TimelineSegment => segment !== undefined);
+    
+    setSelectedSegments(segments);
+    
+    // Clear event selection when selecting segments
+    if (segments.length > 0) {
+      setSelectedEvents([]);
+    }
+  }, [data]);
 
-  // Get the full data for selected events
-  const getSelectedEventData = useCallback(() => {
-    return selectedEvents
-      .map((id) => data.events.find((event) => event.id === id))
-      .filter((event) => event !== undefined);
-  }, [selectedEvents, data.events]);
+  // Clear all selections
+  const clearSelection = useCallback(() => {
+    setSelectedEvents([]);
+    setSelectedSegments([]);
+  }, []);
 
   return {
     selectedEvents,
+    selectedSegments,
     handleEventSelect,
-    clearSelection,
-    isEventSelected,
-    getSelectedEventData
+    handleSegmentSelect,
+    clearSelection
   };
 } 

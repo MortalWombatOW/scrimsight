@@ -1,6 +1,7 @@
 import React from "react";
 import type { TimelineData, TimelineEvent } from "../../hooks";
 import { formatTime } from "../../../../lib";
+import { getHeroImage } from "../../../../lib/hero";
 
 interface TimelineDetailsProps {
   selectedEvents: string[];
@@ -75,7 +76,14 @@ export const TimelineDetails: React.FC<TimelineDetailsProps> = ({
               {event.playerHero && (
                 <>
                   <div className="text-gray-600">Hero:</div>
-                  <div>{event.playerHero}</div>
+                  <div className="flex items-center">
+                    <img
+                      src={getHeroImage(event.playerHero)}
+                      alt={event.playerHero}
+                      className="w-6 h-6 mr-1 rounded-full"
+                    />
+                    {event.playerHero}
+                  </div>
                 </>
               )}
 
@@ -84,6 +92,21 @@ export const TimelineDetails: React.FC<TimelineDetailsProps> = ({
                 <>
                   <div className="text-gray-600">Related Player:</div>
                   <div>{event.relatedPlayerName}</div>
+                </>
+              )}
+
+              {/* Related hero info */}
+              {event.relatedPlayerHero && (
+                <>
+                  <div className="text-gray-600">Related Hero:</div>
+                  <div className="flex items-center">
+                    <img
+                      src={getHeroImage(event.relatedPlayerHero)}
+                      alt={event.relatedPlayerHero}
+                      className="w-6 h-6 mr-1 rounded-full"
+                    />
+                    {event.relatedPlayerHero}
+                  </div>
                 </>
               )}
 
@@ -119,8 +142,15 @@ export const TimelineDetails: React.FC<TimelineDetailsProps> = ({
                       className="text-sm bg-gray-50 p-1 rounded"
                     >
                       <div className="flex justify-between">
-                        <span>
-                          {relatedEvent.type} - {relatedEvent.playerName}
+                        <span className="flex items-center">
+                          {relatedEvent.type} -{relatedEvent.playerName}
+                          {relatedEvent.playerHero && (
+                            <img
+                              src={getHeroImage(relatedEvent.playerHero)}
+                              alt={relatedEvent.playerHero}
+                              className="w-4 h-4 mx-1 rounded-full"
+                            />
+                          )}
                         </span>
                         <span className="text-gray-500 text-xs">
                           {formatTime(relatedEvent.time)}

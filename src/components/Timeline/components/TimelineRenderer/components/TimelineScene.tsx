@@ -87,7 +87,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
   const laneHeight =
     (dimensions.height - layoutConfig.topPadding - layoutConfig.bottomPadding) /
     (data.playerLanes.length || 1);
-  const laneSpacing = laneHeight * 0.5;
+  const laneSpacing = laneHeight * 0.1;
 
   // Function to calculate Y position for different elements
   const getYPosition = useCallback(

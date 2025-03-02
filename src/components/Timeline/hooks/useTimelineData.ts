@@ -1,7 +1,10 @@
 import { useMemo } from 'react';
 import { MapTimes } from '../../../atoms/mapTimesAtom';
+import { RoundTimes } from '../../../atoms/roundTimesAtom';
+import { Teamfight } from '../../../atoms/teamfightsAtom';
 import { PlayerEvent } from '../../../atoms/derived_events/playerEventsAtom';
 import { PlayerInteractionEvent } from '../../../atoms/derived_events/playerInteractionEventsAtom';
+import { getRoleFromHero, getRankForRole } from '../../../lib/hero';
 
 // Interface for timeline event object
 export interface TimelineEvent {
@@ -26,9 +29,19 @@ export interface TimelineFilters {
   timeRange: { start: number; end: number };
 }
 
+// Interface for timeline segments (match times, round times, teamfights)
+export interface TimelineSegment {
+  id: string;
+  type: 'Match' | 'Round' | 'Teamfight';
+  startTime: number;
+  endTime: number;
+  metadata?: Record<string, any>;
+}
+
 // Interface for processed timeline data
 export interface TimelineData {
   events: TimelineEvent[];
+  segments: TimelineSegment[];
   connections: Array<{ source: string; target: string; type: string }>;
   playerLanes: Array<{ playerName: string; team: string; hero: string }>;
   mapInfo: {
@@ -46,7 +59,9 @@ export function useTimelineData(
   mapTimes: MapTimes,
   playerEvents: PlayerEvent[],
   playerInteractions: PlayerInteractionEvent[],
-  filters: TimelineFilters
+  filters: TimelineFilters,
+  roundTimes: RoundTimes[] = [],
+  teamfights: Teamfight[] = []
 ) {
 
   // Process all events
@@ -111,34 +126,90 @@ export function useTimelineData(
     return { start: mapTimes.startTime, end: mapTimes.endTime };
   }, [mapTimes]);
 
+  // Process time segments (match times, round times, teamfights)
+  const segments = useMemo(() => {
+    const timeSegments: TimelineSegment[] = [
+      // Match segment
+      {
+        id: `match-${mapTimes.matchId}`,
+        type: 'Match',
+        startTime: mapTimes.startTime,
+        endTime: mapTimes.endTime,
+        metadata: { matchId: mapTimes.matchId }
+      },
+      // Round segments
+      ...roundTimes.map(round => ({
+        id: `round-${round.matchId}-${round.roundNumber}`,
+        type: 'Round' as const,
+        startTime: round.roundStartTime,
+        endTime: round.roundEndTime,
+        metadata: {
+          roundNumber: round.roundNumber,
+          setupCompleteTime: round.roundSetupCompleteTime
+        }
+      })),
+      // Teamfight segments
+      ...teamfights.map(teamfight => {
+        // Find events that occurred during this teamfight
+        const teamfightEvents = allEvents.filter(
+          event => event.time >= teamfight.startTime && event.time <= teamfight.endTime
+        );
+        
+        return {
+          id: `teamfight-${teamfight.matchId}-${teamfight.startTime}`,
+          type: 'Teamfight' as const,
+          startTime: teamfight.startTime,
+          endTime: teamfight.endTime,
+          metadata: { 
+            duration: teamfight.duration,
+            events: teamfightEvents
+          }
+        };
+      })
+    ];
+    
+    return timeSegments;
+  }, [mapTimes, roundTimes, teamfights, allEvents]);
+
   // Apply filters to events
   const filteredEvents = useMemo(() => {
-    return allEvents.filter(event => {
-      // Filter by player
-      if (filters.players.length > 0 && 
-          !filters.players.includes(event.playerName || '') &&
-          !filters.players.includes(event.relatedPlayerName || '')) {
+    if (!allEvents) return [];
+
+    return allEvents.filter((event) => {
+      // Apply time range filter
+      if (
+        event.time < filters.timeRange.start ||
+        event.time > filters.timeRange.end
+      ) {
         return false;
       }
-      
-      // Filter by team
-      if (filters.teams.length > 0 && 
-          !filters.teams.includes(event.playerTeam || '') &&
-          !filters.teams.includes(event.relatedPlayerTeam || '')) {
+
+      // Apply player filter
+      if (
+        filters.players.length > 0 &&
+        event.playerName &&
+        !filters.players.includes(event.playerName)
+      ) {
         return false;
       }
-      
-      // Filter by event type
-      if (filters.eventTypes.length > 0 && 
-          !filters.eventTypes.includes(event.type)) {
+
+      // Apply team filter
+      if (
+        filters.teams.length > 0 &&
+        event.playerTeam &&
+        !filters.teams.includes(event.playerTeam)
+      ) {
         return false;
       }
-      
-      // Filter by time range
-      if (event.time < filters.timeRange.start || event.time > filters.timeRange.end) {
+
+      // Apply event type filter
+      if (
+        filters.eventTypes.length > 0 &&
+        !filters.eventTypes.includes(event.type)
+      ) {
         return false;
       }
-      
+
       return true;
     });
   }, [allEvents, filters]);
@@ -194,30 +265,43 @@ export function useTimelineData(
       }
     });
     
-    // Sort by team and then player name
+    // Sort by team and then by role rank (tank=1, damage=2, support=3)
     return Array.from(uniquePlayers.values()).sort((a, b) => {
+      // First sort by team
       if (a.team !== b.team) return a.team.localeCompare(b.team);
+      
+      // Then sort by role rank if heroes are available
+      if (a.hero && b.hero) {
+        try {
+          const roleA = getRoleFromHero(a.hero);
+          const roleB = getRoleFromHero(b.hero);
+          return getRankForRole(roleA) - getRankForRole(roleB);
+        } catch (e) {
+          // If there's an error determining roles, fall back to player name
+          console.warn("Error determining role:", e);
+        }
+      }
+      
+      // Fall back to player name if no hero info
       return a.playerName.localeCompare(b.playerName);
     });
   }, [allEvents]);
 
-  // Build the final timeline data object
-  const timelineData: TimelineData = useMemo(() => {
-    // Use mapTimes for overall info
-    const mapInfo = mapTimes || {
-      matchId: '',
-      startTime: 0,
-      endTime: 0,
-      duration: 0
-    };
-    
+  // Combine all data for the timeline
+  const timelineData = useMemo(() => {
     return {
       events: filteredEvents,
+      segments,
       connections,
       playerLanes,
-      mapInfo
+      mapInfo: {
+        matchId: mapTimes.matchId,
+        startTime: mapTimes.startTime,
+        endTime: mapTimes.endTime,
+        duration: mapTimes.duration,
+      },
     };
-  }, [filteredEvents, connections, playerLanes, mapTimes]);
+  }, [filteredEvents, segments, connections, playerLanes, mapTimes]);
 
   return {
     timelineData,
