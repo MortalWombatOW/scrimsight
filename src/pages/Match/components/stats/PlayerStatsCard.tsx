@@ -79,7 +79,7 @@ export const PlayerStatsCard = ({
     <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700 h-full w-full transition-all duration-300 hover:shadow-md">
       <div className="flex items-start">
         <div className="flex flex-col gap-3 w-full">
-          <div className="flex items-center mb-3">
+          <div className="flex items-center mb-1">
             <img
               src={heroImage}
               alt={`Hero`}
@@ -99,7 +99,7 @@ export const PlayerStatsCard = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-1">
             {statsToShow.slice(0, 4).map((stat) => (
               <div
                 key={stat}

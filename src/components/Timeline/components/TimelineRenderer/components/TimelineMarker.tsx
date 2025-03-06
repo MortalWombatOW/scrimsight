@@ -1,32 +1,13 @@
 import React from "react";
 import * as THREE from "three";
 import { Html } from "@react-three/drei";
-import { TimelineEvent } from "../../../hooks";
 import { getHeroImage } from "../../../../../lib/hero";
-
-// Grayscale color palette for better UI
-const COLORS = {
-  // Interactive elements
-  defaultEvent: 0x777777,
-  selectedEvent: 0x222222,
-
-  // Feedback/state colors
-  hoverState: 0x666666,
-
-  // Event type colors (grayscale variants for different event types)
-  eventDefault: 0x777777,
-  eventAbility: 0x666666,
-  eventKill: 0x444444,
-  eventDamage: 0x555555,
-  eventHealing: 0x888888,
-};
+import { PlayerEvent } from "../../../../../atoms";
 
 interface TimelineMarkerProps {
-  event: TimelineEvent;
+  event: PlayerEvent;
   xPosition: number;
   yPosition: number;
-  isSelected: boolean;
-  isHovered: boolean;
   onRegisterMarker: (id: string, obj: THREE.Object3D) => void;
 }
 
@@ -37,93 +18,37 @@ export const TimelineMarker: React.FC<TimelineMarkerProps> = ({
   event,
   xPosition,
   yPosition,
-  isSelected,
-  isHovered,
   onRegisterMarker,
 }) => {
   // Determine marker appearance based on event type
   const size = 6;
-  const scale = isSelected || isHovered ? 1.2 : 1;
 
   // Check if this is a hero spawn or swap event
-  const isHeroEvent = event.type === "heroSpawn" || event.type === "heroSwap";
+  const isHeroEvent =
+    event.playerEventType === "heroSpawn" ||
+    event.playerEventType === "heroSwap";
 
   // Determine color based on event type
-  let color = COLORS.eventDefault;
-  switch (event.type) {
-    case "ability":
-      color = COLORS.eventAbility;
-      break;
-    case "kill":
-      color = COLORS.eventKill;
-      break;
-    case "damage":
-      color = COLORS.eventDamage;
-      break;
-    case "healing":
-      color = COLORS.eventHealing;
-      break;
-  }
+  let color = "#838383";
 
   // Determine shape based on event type
-  let geometry;
-  switch (event.type) {
-    case "ability":
-      geometry = <circleGeometry args={[size, 32]} />;
-      break;
-    case "kill":
-      geometry = <ringGeometry args={[size * 0.5, size, 32]} />;
-      break;
-    case "damage":
-      geometry = <boxGeometry args={[size * 1.5, size * 1.5, size]} />;
-      break;
-    case "heroSpawn":
-    case "heroSwap":
-      // Use a circle for hero events (the image will be displayed on top)
-      geometry = <circleGeometry args={[size, 32]} />;
-      break;
-    default:
-      geometry = <circleGeometry args={[size, 3]} />;
-      break;
-  }
-
-  // Add an outline for selected/hovered items
-  const outlineOpacity = isSelected ? 0.9 : isHovered ? 0.6 : 0;
+  let geometry = <circleGeometry args={[size, size]} />;
 
   return (
     <group>
-      {/* Outer highlight/outline for better selection visibility */}
-      {(isSelected || isHovered) && (
-        <mesh
-          position={[xPosition, yPosition, 0.05]}
-          scale={[scale * 1.2, scale * 1.2, 1]}
-        >
-          {geometry}
-          <meshBasicMaterial
-            color={isSelected ? COLORS.selectedEvent : COLORS.hoverState}
-            transparent
-            opacity={outlineOpacity}
-          />
-        </mesh>
-      )}
-
       {/* Main event marker */}
       <mesh
         position={[xPosition, yPosition, 0.1]}
-        scale={[scale, scale, scale]}
+        scale={[1, 1, 1]}
         userData={{ event }}
         ref={(obj) => {
           if (obj) {
-            onRegisterMarker(event.id, obj);
+            onRegisterMarker(JSON.stringify(event), obj);
           }
         }}
       >
         {geometry}
-        <meshBasicMaterial
-          color={color}
-          transparent
-          opacity={isSelected || isHovered ? 0.9 : 0.8}
-        />
+        <meshBasicMaterial color={color} transparent opacity={1} />
       </mesh>
 
       {/* Hero image for hero spawn and swap events */}

@@ -14,3 +14,4 @@ export * from './uniqueGameModesAtom';
 export * from './uniqueMapNamesAtom';
 export * from './uniquePlayerNamesAtom';
 export * from './scrimAtom';
+export * from './teamfightsAtom';

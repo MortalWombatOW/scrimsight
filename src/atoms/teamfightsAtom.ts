@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
-import { playerInteractionEventsAtom} from './derived_events';
-
+import { PlayerInteractionEvent, playerInteractionEventsAtom} from './derived_events';
+import { ultimateEventsAtom } from './derived_events/ultimateEventsAtom';
+import { matchDataAtom } from './matchDataAtom';
 const TEAMFIGHT_BUFFER_TIME = 5; // seconds
 const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
 
@@ -11,210 +12,173 @@ export interface Teamfight {
   startTime: number;
   endTime: number;
   duration: number;
-  killCount?: number;
-  teamAKills?: number;
-  teamBKills?: number;
-  involvedPlayers?: string[];
+  team1Kills: number;
+  team2Kills: number;
+  // names of players
+  team1PlayersWithUltimatesChargedAtStart: string[];
+  team2PlayersWithUltimatesChargedAtStart: string[];
+  team1PlayersWithUltimatesUsed: string[];
+  team2PlayersWithUltimatesUsed: string[];
 }
 
 export const teamfightsAtom = atom(async (get) => {
   const playerInteractionEvents = await get(playerInteractionEventsAtom);
   
+
+  // use this to compute which players had an ultimate at the teamfight start or used it during the teamfight
+  const ultimateEvents = await get(ultimateEventsAtom);
+
+  // can get the team names from matchData.team1Name and matchData.team2Name
+  const matchDatas = await get(matchDataAtom);
+  
   // Extract death events as markers for teamfights
-  const deathEvents = playerInteractionEvents.filter(event => 
-    event.playerInteractionEventType === 'Died'
+  const killEvents = playerInteractionEvents.filter(event => 
+    event.playerInteractionEventType === 'Killed player'
   );
 
   // Group death events by matchId
-  const deathsByMatch: Record<string, Array<{
-    time: number, 
-    playerName: string, 
-    playerTeam: string,
-    killerName?: string,
-    killerTeam?: string
-  }>> = {};
-  
-  deathEvents.forEach(event => {
-    const { 
-      matchId, 
-      playerInteractionEventTime,
-      playerName,
-      playerTeam,
-      otherPlayerName
-    } = event;
-    
-    if (!deathsByMatch[matchId]) {
-      deathsByMatch[matchId] = [];
+  const killEventsByMatch: Record<string, PlayerInteractionEvent[]> = killEvents.reduce((acc, event) => {
+    const { matchId } = event;
+    if (!acc[matchId]) {
+      acc[matchId] = [];
     }
-    
-    // For the killer's team, use the opposite of the player who died
-    // In Overwatch, kills are always between opposing teams
-    const killerTeam = playerTeam === 'Blue' ? 'Red' : 'Blue';
-    
-    deathsByMatch[matchId].push({
-      time: playerInteractionEventTime,
-      playerName, // The player who died
-      playerTeam, // The team of the player who died
-      killerName: otherPlayerName, // The player who got the kill
-      killerTeam // The team of the player who got the kill
-    });
-  });
+    acc[matchId].push(event);
+    return acc;
+  }, {} as Record<string, PlayerInteractionEvent[]>);
   
-  const teamfights: Teamfight[] = [];
+  const teamfightsPass1: Pick<Teamfight, 'matchId' | 'startTime' | 'endTime' | 'duration' | 'team1Kills' | 'team2Kills'>[] = [];
   
-  // Process each match
-  Object.entries(deathsByMatch).forEach(([matchId, deaths]) => {
+  // First pass: process kills to identify teamfights
+  Object.entries(killEventsByMatch).forEach(([matchId, killEvents]) => {
     // Sort deaths chronologically
-    deaths.sort((a, b) => a.time - b.time);
-    const deathTimes = deaths.map(d => d.time);
+    killEvents.sort((a, b) => a.playerInteractionEventTime - b.playerInteractionEventTime);
+    
+    const matchData = matchDatas.find(matchData => matchData.matchId === matchId);
+    if (!matchData) {
+      console.error(`No match data found for matchId: ${matchId}`);
+      return;
+    }
     
     // Find teamfight periods
     let teamfightStartTime: number | null = null;
-    let teamfightDeaths: typeof deaths = [];
+    let teamfightKills: typeof killEvents = [];
     
-    for (let i = 0; i < deaths.length; i++) {
-      const currentDeath = deaths[i];
-      const currentTime = currentDeath.time;
+    for (let i = 0; i < killEvents.length; i++) {
+      const currentKill = killEvents[i];
+      const currentTime = currentKill.playerInteractionEventTime;
       
       // If this is the first death or there was a long gap before this death,
       // start a new teamfight
       if (teamfightStartTime === null || 
-          (i > 0 && currentTime - deaths[i-1].time > TEAMFIGHT_BUFFER_TIME)) {
+          (i > 0 && currentTime - killEvents[i-1].playerInteractionEventTime > TEAMFIGHT_BUFFER_TIME)) {
         
         // If we had an ongoing teamfight, end it before the gap
         if (teamfightStartTime !== null && i > 0) {
-          const endTime = deaths[i-1].time + TEAMFIGHT_PADDING;
+          const endTime = killEvents[i-1].playerInteractionEventTime + TEAMFIGHT_PADDING;
           const startTime = Math.max(0, teamfightStartTime - TEAMFIGHT_PADDING);
           
-          // Count kills by team
-          const teamCounts: Record<string, number> = {};
-          const involvedPlayers = new Set<string>();
+          let team1Kills = 0;
+          let team2Kills = 0;
           
-          teamfightDeaths.forEach(death => {
-            // Track all players involved
-            involvedPlayers.add(death.playerName);
-            if (death.killerName) {
-              involvedPlayers.add(death.killerName);
-            }
-            
-            // Count kills by team
-            if (death.killerTeam) {
-              teamCounts[death.killerTeam] = (teamCounts[death.killerTeam] || 0) + 1;
+          teamfightKills.forEach(kill => {
+            if (kill.playerTeam === matchData.team1Name) {
+              team1Kills++;
+            } else {
+              team2Kills++;
             }
           });
           
-          // Get the two teams with most kills (normally just 2 teams)
-          const teams = Object.keys(teamCounts).sort((a, b) => 
-            teamCounts[b] - teamCounts[a]
-          );
+      
           
-          teamfights.push({
+          teamfightsPass1.push({
             matchId,
             startTime: startTime,
             endTime,
             duration: endTime - startTime,
-            killCount: teamfightDeaths.length,
-            teamAKills: teams[0] ? teamCounts[teams[0]] : 0,
-            teamBKills: teams[1] ? teamCounts[teams[1]] : 0,
-            involvedPlayers: Array.from(involvedPlayers)
+            team1Kills,
+            team2Kills,
           });
         }
         
         // Start a new teamfight
         teamfightStartTime = currentTime;
-        teamfightDeaths = [currentDeath];
+        teamfightKills = [currentKill];
       } else {
         // Continue the current teamfight
-        teamfightDeaths.push(currentDeath);
+        teamfightKills.push(currentKill);
       }
       
       // If this is the last death, end the current teamfight
-      if (i === deaths.length - 1 && teamfightStartTime !== null) {
+      if (i === killEvents.length - 1 && teamfightStartTime !== null) {
         const startTime = Math.max(0, teamfightStartTime - TEAMFIGHT_PADDING);
         const endTime = currentTime + TEAMFIGHT_PADDING;
         
         // Count kills by team
-        const teamCounts: Record<string, number> = {};
-        const involvedPlayers = new Set<string>();
+        let team1Kills = 0;
+        let team2Kills = 0;
         
-        teamfightDeaths.forEach(death => {
-          // Track all players involved
-          involvedPlayers.add(death.playerName);
-          if (death.killerName) {
-            involvedPlayers.add(death.killerName);
-          }
-          
-          // Count kills by team
-          if (death.killerTeam) {
-            teamCounts[death.killerTeam] = (teamCounts[death.killerTeam] || 0) + 1;
+        teamfightKills.forEach(kill => {
+          if (kill.playerTeam === matchData.team1Name) {
+            team1Kills++;
+          } else {
+            team2Kills++;
           }
         });
         
-        // Get the two teams with most kills (normally just 2 teams)
-        const teams = Object.keys(teamCounts).sort((a, b) => 
-          teamCounts[b] - teamCounts[a]
-        );
-        
-        teamfights.push({
+        teamfightsPass1.push({
           matchId,
           startTime,
           endTime,
           duration: endTime - startTime,
-          killCount: teamfightDeaths.length,
-          teamAKills: teams[0] ? teamCounts[teams[0]] : 0,
-          teamBKills: teams[1] ? teamCounts[teams[1]] : 0,
-          involvedPlayers: Array.from(involvedPlayers)
+          team1Kills,
+          team2Kills,
         });
       }
     }
   });
-  
-  // Merge teamfights that are very close together
-  const mergedTeamfights: Teamfight[] = [];
-  const MERGE_THRESHOLD = TEAMFIGHT_BUFFER_TIME * 1.5; // If teamfights are this close, merge them
-  
-  // Sort all teamfights by match and start time
-  const sortedTeamfights = teamfights.sort((a, b) => {
-    if (a.matchId !== b.matchId) {
-      return a.matchId.localeCompare(b.matchId);
+
+  const teamfights = teamfightsPass1.flatMap(t => {
+    const matchData = matchDatas.find(matchData => matchData.matchId === t.matchId);
+    if (!matchData) {
+      console.error(`No match data found for matchId: ${t.matchId}`);
+      return [];
     }
-    return a.startTime - b.startTime;
+    const team1PlayersWithUltimatesChargedAtStart = ultimateEvents.filter(ultimateEvent => 
+      ultimateEvent.matchId === t.matchId &&
+      ultimateEvent.playerTeam === matchData.team1Name &&
+      ultimateEvent.ultimateChargedTime <= t.startTime &&
+      ultimateEvent.ultimateStartTime >= t.endTime
+    ).map(event => event.playerName);
+    
+    const team2PlayersWithUltimatesChargedAtStart = ultimateEvents.filter(ultimateEvent => 
+      ultimateEvent.matchId === t.matchId &&
+      ultimateEvent.playerTeam === matchData.team2Name &&
+      ultimateEvent.ultimateChargedTime <= t.startTime &&
+      ultimateEvent.ultimateStartTime >= t.endTime
+    ).map(event => event.playerName);
+
+    const team1PlayersWithUltimatesUsed = ultimateEvents.filter(ultimateEvent => 
+      ultimateEvent.matchId === t.matchId &&
+      ultimateEvent.playerTeam === matchData.team1Name &&
+      ultimateEvent.ultimateStartTime >= t.startTime &&
+      ultimateEvent.ultimateStartTime <= t.endTime
+    ).map(event => event.playerName);
+    
+    const team2PlayersWithUltimatesUsed = ultimateEvents.filter(ultimateEvent => 
+      ultimateEvent.matchId === t.matchId &&
+      ultimateEvent.playerTeam === matchData.team2Name &&
+      ultimateEvent.ultimateStartTime >= t.startTime &&
+      ultimateEvent.ultimateStartTime <= t.endTime
+    ).map(event => event.playerName);
+
+    return [{
+      ...t,
+      team1PlayersWithUltimatesChargedAtStart,
+      team2PlayersWithUltimatesChargedAtStart,
+      team1PlayersWithUltimatesUsed,
+      team2PlayersWithUltimatesUsed,
+    }];
   });
   
-  let currentTeamfight: Teamfight | null = null;
-  
-  sortedTeamfights.forEach(teamfight => {
-    if (!currentTeamfight || 
-        teamfight.matchId !== currentTeamfight.matchId || 
-        teamfight.startTime - currentTeamfight.endTime > MERGE_THRESHOLD) {
-      // This is a new teamfight or one from a different match
-      if (currentTeamfight) {
-        mergedTeamfights.push(currentTeamfight);
-      }
-      currentTeamfight = {...teamfight};
-    } else {
-      // Merge with the current teamfight
-      currentTeamfight.endTime = teamfight.endTime;
-      currentTeamfight.duration = currentTeamfight.endTime - currentTeamfight.startTime;
-      currentTeamfight.killCount = (currentTeamfight.killCount || 0) + (teamfight.killCount || 0);
-      currentTeamfight.teamAKills = (currentTeamfight.teamAKills || 0) + (teamfight.teamAKills || 0);
-      currentTeamfight.teamBKills = (currentTeamfight.teamBKills || 0) + (teamfight.teamBKills || 0);
-      
-      // Merge involved players
-      if (currentTeamfight.involvedPlayers && teamfight.involvedPlayers) {
-        const allPlayers = new Set([
-          ...currentTeamfight.involvedPlayers, 
-          ...teamfight.involvedPlayers
-        ]);
-        currentTeamfight.involvedPlayers = Array.from(allPlayers);
-      }
-    }
-  });
-  
-  // Don't forget to add the last teamfight
-  if (currentTeamfight) {
-    mergedTeamfights.push(currentTeamfight);
-  }
-  
-  return mergedTeamfights;
+  return teamfights;
 });

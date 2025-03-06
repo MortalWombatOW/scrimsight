@@ -8,11 +8,12 @@ const COLORS = {
   alternatingLane2: 0xebebeb,
 
   // Text elements
-  labelText: 0x111111,
+  labelText: 0x444444,
 };
 
 interface TimelineLaneProps {
-  playerName: string;
+  title: string;
+  description: string;
   index: number;
   yPosition: number;
   labelYPosition: number;
@@ -26,7 +27,8 @@ interface TimelineLaneProps {
  * Component for rendering player lanes and labels in the timeline
  */
 export const TimelineLane: React.FC<TimelineLaneProps> = ({
-  playerName,
+  title,
+  description,
   index,
   yPosition,
   labelYPosition,
@@ -60,7 +62,16 @@ export const TimelineLane: React.FC<TimelineLaneProps> = ({
         overflowWrap="break-word"
         fontWeight="bold"
       >
-        {playerName}
+        {title}
+      </Text>
+      <Text
+        position={[leftMargin, labelYPosition - fontSize * 0.8, 0.2]}
+        fontSize={fontSize * 0.8}
+        color={COLORS.labelText}
+        anchorX="left"
+        anchorY="middle"
+      >
+        {description}
       </Text>
     </>
   );

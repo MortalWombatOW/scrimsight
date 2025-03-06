@@ -28,7 +28,7 @@ export const PlayerStatsComparison = ({
         </h2>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-8">
+      <div className="flex flex-wrap gap-4 mb-4">
         {playerStats.rows
           .filter((stats) => stats.playerTeam === matchData.team1Name)
           .map((player) => (
@@ -56,7 +56,7 @@ export const PlayerStatsComparison = ({
           .map((player) => (
             <div
               key={player.playerName}
-              className="flex-1 min-w-[300px] max-w-[400px]"
+              className="flex-1 min-w-[200px] max-w-[400px]"
             >
               <PlayerStatsCard
                 playerName={player.playerName}

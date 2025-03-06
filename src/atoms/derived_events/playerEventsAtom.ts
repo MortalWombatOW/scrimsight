@@ -10,6 +10,7 @@ import { ability2UsedExtractorAtom } from '../event_extractors/ability2UsedExtra
  * Interface for combined player events
  */
 export interface PlayerEvent {
+  id: string;
   matchId: string;
   playerEventTime: number;
   playerName: string;
@@ -34,7 +35,8 @@ export const playerEventsAtom: Atom<Promise<PlayerEvent[]>> = atom(async (get) =
   }
 
   const events: PlayerEvent[] = [
-    ...defensiveAssists.map(e => ({
+    ...defensiveAssists.map((e, i) => ({
+      id: `${e.matchId}-${e.matchTime}-${e.playerName}-${e.playerHero}-defensiveAssist-${i}`,
       matchId: e.matchId,
       playerEventTime: e.matchTime,
       playerName: e.playerName,
@@ -42,7 +44,8 @@ export const playerEventsAtom: Atom<Promise<PlayerEvent[]>> = atom(async (get) =
       playerEventType: 'defensiveAssist',
       playerHero: e.playerHero
     })),
-    ...offensiveAssists.map(e => ({
+    ...offensiveAssists.map((e, i) => ({
+      id: `${e.matchId}-${e.matchTime}-${e.playerName}-${e.playerHero}-offensiveAssist-${i}`,
       matchId: e.matchId,
       playerEventTime: e.matchTime,
       playerName: e.playerName,
@@ -50,7 +53,8 @@ export const playerEventsAtom: Atom<Promise<PlayerEvent[]>> = atom(async (get) =
       playerEventType: 'offensiveAssist',
       playerHero: e.playerHero
     })),
-    ...heroSpawns.map(e => ({
+    ...heroSpawns.map((e, i) => ({
+      id: `${e.matchId}-${e.matchTime}-${e.playerName}-${e.playerHero}-heroSpawn-${i}`,
       matchId: e.matchId,
       playerEventTime: e.matchTime,
       playerName: e.playerName,
@@ -58,7 +62,8 @@ export const playerEventsAtom: Atom<Promise<PlayerEvent[]>> = atom(async (get) =
       playerEventType: 'heroSpawn',
       playerHero: e.playerHero
     })),
-    ...heroSwaps.map(e => ({
+    ...heroSwaps.map((e, i) => ({
+      id: `${e.matchId}-${e.matchTime}-${e.playerName}-${e.playerHero}-heroSwap-${i}`,
       matchId: e.matchId,
       playerEventTime: e.matchTime,
       playerName: e.playerName,
@@ -66,7 +71,8 @@ export const playerEventsAtom: Atom<Promise<PlayerEvent[]>> = atom(async (get) =
       playerEventType: 'heroSwap',
       playerHero: e.playerHero
     })),
-    ...ability1Used.map(e => ({
+    ...ability1Used.map((e, i) => ({
+      id: `${e.matchId}-${e.matchTime}-${e.playerName}-${e.playerHero}-ability1Used-${i}`,
       matchId: e.matchId,
       playerEventTime: e.matchTime,
       playerName: e.playerName,
@@ -74,7 +80,8 @@ export const playerEventsAtom: Atom<Promise<PlayerEvent[]>> = atom(async (get) =
       playerEventType: 'ability1Used',
       playerHero: e.playerHero
     })),
-    ...ability2Used.map(e => ({
+    ...ability2Used.map((e, i) => ({
+      id: `${e.matchId}-${e.matchTime}-${e.playerName}-${e.playerHero}-ability2Used-${i}`,
       matchId: e.matchId,
       playerEventTime: e.matchTime,
       playerName: e.playerName,

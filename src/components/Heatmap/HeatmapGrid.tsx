@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 export interface HeatmapGridProps {
   /**
@@ -32,16 +32,6 @@ export interface HeatmapGridProps {
   square?: boolean;
 
   /**
-   * Position of X-axis labels
-   */
-  xLabelsPos?: "top" | "bottom";
-
-  /**
-   * Position of Y-axis labels
-   */
-  yLabelsPos?: "left" | "right";
-
-  /**
    * Custom cell renderer
    */
   cellRender?: (x: number, y: number, value: number) => React.ReactNode;
@@ -60,6 +50,11 @@ export interface HeatmapGridProps {
    * Custom Y-label styling
    */
   yLabelsStyle?: (index: number) => React.CSSProperties;
+
+  /**
+   * Function to generate tooltip text when hovering over a cell
+   */
+  hoverText?: (xLabel: string, yLabel: string, value: number) => string;
 }
 
 export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
@@ -69,12 +64,11 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
   cellHeight = "2rem",
   onClick,
   square = false,
-  xLabelsPos = "top",
-  yLabelsPos = "left",
   cellRender,
   cellStyle,
   xLabelsStyle,
   yLabelsStyle,
+  hoverText,
 }) => {
   // Find the maximum value in the data to calculate ratios
   const maxValue = useMemo(() => {
@@ -92,53 +86,28 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
   // Calculate the width of each cell if square is true
   const cellWidth = square ? cellHeight : "1fr";
 
-  // Determine the grid template based on label positions
-  const gridTemplateAreas = useMemo(() => {
-    const hasXLabels = xLabels.length > 0;
-    const hasYLabels = yLabels.length > 0;
-
-    const xLabelArea = hasXLabels
-      ? xLabelsPos === "top"
-        ? '"x-labels"'
-        : '"x-labels-bottom"'
-      : "";
-    const yLabelLeftArea =
-      hasYLabels && yLabelsPos === "left" ? "y-labels" : ".";
-    const yLabelRightArea =
-      hasYLabels && yLabelsPos === "right" ? "y-labels-right" : ".";
-
-    const mainGridArea = `"${yLabelLeftArea} grid ${yLabelRightArea}"`;
-
-    if (hasXLabels) {
-      if (xLabelsPos === "top") {
-        return `${xLabelArea} ${mainGridArea}`;
-      } else {
-        return `${mainGridArea} ${xLabelArea}`;
-      }
-    }
-
-    return mainGridArea;
-  }, [xLabels.length, yLabels.length, xLabelsPos, yLabelsPos]);
-
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       <div
         className="grid"
         style={{
-          gridTemplateAreas,
-          gridTemplateColumns:
-            yLabelsPos === "left" ? "auto 1fr auto" : "1fr auto",
-          gridTemplateRows: xLabelsPos === "top" ? "auto 1fr" : "1fr auto",
+          display: "grid",
+          gridTemplateColumns: yLabels.length > 0 ? "auto 1fr" : "1fr",
+          gridTemplateRows: xLabels.length > 0 ? "auto 1fr" : "1fr",
         }}
       >
+        {/* Empty cell in top-left corner when both x and y labels exist */}
+        {xLabels.length > 0 && yLabels.length > 0 && (
+          <div style={{ gridColumn: "1", gridRow: "1" }}></div>
+        )}
+
         {/* X-axis labels */}
         {xLabels.length > 0 && (
           <div
-            className={`grid grid-flow-col auto-cols-fr ${
-              xLabelsPos === "top" ? "self-end" : "self-start"
-            }`}
+            className="grid grid-flow-col auto-cols-fr self-end"
             style={{
-              gridArea: xLabelsPos === "top" ? "x-labels" : "x-labels-bottom",
+              gridColumn: "2",
+              gridRow: "1",
               gridTemplateColumns: `repeat(${xLabels.length}, ${cellWidth})`,
             }}
           >
@@ -154,11 +123,14 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
           </div>
         )}
 
-        {/* Y-axis labels - left */}
-        {yLabels.length > 0 && yLabelsPos === "left" && (
+        {/* Y-axis labels */}
+        {yLabels.length > 0 && (
           <div
-            className="flex flex-col justify-center"
-            style={{ gridArea: "y-labels" }}
+            className="flex flex-col justify-center mt-0.5"
+            style={{
+              gridColumn: "1",
+              gridRow: "2",
+            }}
           >
             {yLabels.map((label, index) => (
               <div
@@ -179,7 +151,8 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
         <div
           className="grid"
           style={{
-            gridArea: "grid",
+            gridColumn: "2",
+            gridRow: "2",
             gridTemplateColumns: `repeat(${
               data[0]?.length || 0
             }, ${cellWidth})`,
@@ -189,14 +162,16 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
           {data.map((row, y) =>
             row.map((value, x) => {
               const ratio = maxValue > 0 ? value / maxValue : 0;
+              const xLabel = x < xLabels.length ? xLabels[x] : `${x}`;
+              const yLabel = y < yLabels.length ? yLabels[y] : `${y}`;
 
               return (
                 <div
                   key={`cell-${y}-${x}`}
-                  className="flex items-center justify-center border border-gray-200"
+                  className="flex items-center justify-center border border-gray-200 relative group"
                   style={{
                     height: cellHeight,
-                    background: `rgba(12, 160, 44, ${ratio})`,
+                    background: `rgba(120, 120, 120, ${ratio})`,
                     cursor: onClick ? "pointer" : "default",
                     ...(cellStyle ? cellStyle(x, y, ratio) : {}),
                   }}
@@ -205,32 +180,16 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
                   tabIndex={onClick ? 0 : undefined}
                 >
                   {cellRender ? cellRender(x, y, value) : value}
+                  {hoverText && (
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none bg-gray-800 text-white text-sm rounded px-2 py-1 mt-1 shadow-lg max-w-xs text-center whitespace-normal">
+                      {hoverText(xLabel, yLabel, value)}
+                    </div>
+                  )}
                 </div>
               );
             })
           )}
         </div>
-
-        {/* Y-axis labels - right */}
-        {yLabels.length > 0 && yLabelsPos === "right" && (
-          <div
-            className="flex flex-col justify-center"
-            style={{ gridArea: "y-labels-right" }}
-          >
-            {yLabels.map((label, index) => (
-              <div
-                key={`y-label-right-${index}`}
-                className="py-1 pl-2 text-left overflow-hidden text-ellipsis whitespace-nowrap"
-                style={{
-                  height: cellHeight,
-                  ...(yLabelsStyle ? yLabelsStyle(index) : {}),
-                }}
-              >
-                {label}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

@@ -13,6 +13,9 @@ import { TeamPage } from "./pages/Team";
 import { MatchPage2 } from "./pages/Match/MatchPage2";
 import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 import { CallbackPage } from "./pages/Auth/CallbackPage";
+import { TimelinePage } from "./pages/Match/TimelinePage";
+import { MatchOverviewPage } from "./pages/Match/MatchOverviewPage";
+import { MatchStatComparisonPage } from "./pages/Match/MatchStatComparisonPage";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -46,10 +49,17 @@ const App = () => {
                 }
               >
                 <Routes>
-                  <Route path="/" element={<HomePage />} />
+                  <Route path="/" index element={<HomePage />} />
                   <Route path="/callback" element={<CallbackPage />} />
                   <Route path="/matches" element={<MatchesPage />} />
-                  <Route path="/matches/:matchId" element={<MatchPage2 />} />
+                  <Route path="/matches/:matchId" element={<MatchPage2 />}>
+                    <Route index element={<MatchOverviewPage />} />
+                    <Route path="timeline" element={<TimelinePage />} />
+                    <Route
+                      path="compare"
+                      element={<MatchStatComparisonPage />}
+                    />
+                  </Route>
                   <Route path="/players" element={<PlayersPage />} />
                   <Route path="/players/:playerName" element={<PlayerPage />} />
                   <Route path="/teams" element={<TeamsPage />} />

@@ -2,6 +2,8 @@ import React, { useMemo } from "react";
 import { Text, Line } from "@react-three/drei";
 import * as THREE from "three";
 import { formatTime } from "../../../../../lib";
+import { useAtomValue } from "jotai";
+import { teamfightsAtom } from "../../../../../atoms/teamfightsAtom";
 
 // Grayscale color palette for better UI
 const COLORS = {
@@ -10,6 +12,7 @@ const COLORS = {
 };
 
 interface TimelineAxisProps {
+  matchId: string;
   timeScale: (time: number) => number;
   startTime: number;
   endTime: number;
@@ -21,12 +24,20 @@ interface TimelineAxisProps {
  * Component for rendering time axis with ticks and labels
  */
 export const TimelineAxis: React.FC<TimelineAxisProps> = ({
+  matchId,
   timeScale,
   startTime,
   endTime,
   ticksYPosition,
   tickInterval,
 }) => {
+  const teamfights = useAtomValue(teamfightsAtom).filter(
+    (teamfight) =>
+      teamfight.endTime >= startTime &&
+      teamfight.startTime <= endTime &&
+      teamfight.matchId === matchId
+  );
+
   // Generate time ticks based on the time range
   const ticks = useMemo(() => {
     const result = [];
@@ -144,7 +155,50 @@ export const TimelineAxis: React.FC<TimelineAxisProps> = ({
     return result;
   }, [startTime, endTime, tickInterval, timeScale, ticksYPosition]);
 
-  return <>{ticks}</>;
+  const teamfightLines = useMemo(() => {
+    return teamfights.map((teamfight) => {
+      return (
+        <group key={`teamfight-group-${teamfight.startTime}`}>
+          <Line
+            key={`teamfight-line-${teamfight.startTime}`}
+            points={[
+              new THREE.Vector3(
+                timeScale(teamfight.startTime),
+                ticksYPosition + 10,
+                0
+              ),
+              new THREE.Vector3(
+                timeScale(teamfight.endTime),
+                ticksYPosition + 10,
+                0
+              ),
+            ]}
+            color={COLORS.tickText}
+            lineWidth={1}
+            transparent={true}
+            opacity={0.7}
+          />
+          <Text
+            position={[timeScale(teamfight.startTime), ticksYPosition + 10, 0]}
+            fontSize={8}
+            color={COLORS.tickText}
+            anchorX="left"
+            anchorY="bottom"
+            fontWeight="bold"
+          >
+            Teamfight
+          </Text>
+        </group>
+      );
+    });
+  }, [teamfights, timeScale, ticksYPosition]);
+
+  return (
+    <>
+      {ticks}
+      {teamfightLines}
+    </>
+  );
 };
 
 export default TimelineAxis;

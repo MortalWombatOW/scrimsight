@@ -92,6 +92,7 @@ alwaysApply: false
             Submit
           </button>
           ```
+
 2.  **Project Structure (Objective):**
     *   **Instruction:**  Assume a component-based architecture with React.  Break the dashboard down into reusable components.
     *   **Guideline:**  Each component should have a single, well-defined responsibility.  Examples: `Navbar`, `Sidebar`, `MetricCard`, `ChartContainer`, `Table`, `FormInput`, `Button`.

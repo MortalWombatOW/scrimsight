@@ -7,25 +7,34 @@ import React, {
 } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { TimelineData } from "../../../hooks";
 import TimelineMarker from "./TimelineMarker";
 import TimelineConnection from "./TimelineConnection";
 import TimelineLane from "./TimelineLane";
 import TimelineAxis from "./TimelineAxis";
-
-// Configuration for timeline layout
-interface TimelineLayoutConfig {
-  topPadding: number;
-  bottomPadding: number;
+import { useAtomValue } from "jotai";
+import {
+  PlayerEvent,
+  playerEventsAtom,
+} from "../../../../../atoms/derived_events/playerEventsAtom";
+import { playerInteractionEventsAtom } from "../../../../../atoms/derived_events/playerInteractionEventsAtom";
+import { ultimateEventsAtom } from "../../../../../atoms";
+import { matchDataAtom } from "../../../../../atoms/matchDataAtom";
+import {
+  getRankForRole,
+  getRoleFromHero,
+  OverwatchRole,
+} from "../../../../../lib";
+import { playerLivesAtom } from "../../../../../atoms/playerLivesAtom";
+import { Line } from "@react-three/drei";
+export interface TimelineLane {
+  title: string;
+  description: string;
 }
 
 interface TimelineSceneProps {
-  data: TimelineData;
+  matchId: string;
+  currentTimeRange: { start: number; end: number };
   dimensions: { width: number; height: number };
-  selectedEvents: string[];
-  onEventSelect: (eventIds: string[]) => void;
-  timeRangeFilter?: { start: number; end: number };
-  layoutConfig: TimelineLayoutConfig;
 }
 
 /**
@@ -33,13 +42,80 @@ interface TimelineSceneProps {
  * Manages the 3D scene and coordinates all visual elements
  */
 export const TimelineScene: React.FC<TimelineSceneProps> = ({
-  data,
+  matchId,
+  currentTimeRange,
   dimensions,
-  selectedEvents,
-  onEventSelect,
-  timeRangeFilter,
-  layoutConfig,
 }) => {
+  const matchData = useAtomValue(matchDataAtom).find(
+    (match) => match.matchId === matchId
+  );
+
+  const allPlayerEvents = useAtomValue(playerEventsAtom).filter(
+    (event) => event.matchId === matchId
+  );
+  const playerEvents = useMemo(() => {
+    return allPlayerEvents.filter(
+      (event) =>
+        event.playerEventTime >= currentTimeRange.start &&
+        event.playerEventTime <= currentTimeRange.end
+    );
+  }, [allPlayerEvents, matchId, currentTimeRange]);
+
+  const playerInteractions = useAtomValue(playerInteractionEventsAtom).filter(
+    (event) =>
+      event.matchId === matchId &&
+      event.playerInteractionEventTime >= currentTimeRange.start &&
+      event.playerInteractionEventTime <= currentTimeRange.end
+  );
+
+  const playerLives = useAtomValue(playerLivesAtom).filter(
+    (event) =>
+      event.matchId === matchId &&
+      event.endTime >= currentTimeRange.start &&
+      event.startTime <= currentTimeRange.end
+  );
+
+  const ultimateEvents = useAtomValue(ultimateEventsAtom).filter(
+    (event) =>
+      event.matchId === matchId &&
+      (event.ultimateEndTime >= currentTimeRange.start ||
+        event.ultimateStartTime <= currentTimeRange.end)
+  );
+
+  const lanes = useMemo(() => {
+    if (!matchData) return [];
+    const playerInfo = new Map<
+      string,
+      { name: string; role: string; teamName: string }
+    >();
+    allPlayerEvents.forEach((event) => {
+      if (!playerInfo.has(event.playerName)) {
+        playerInfo.set(event.playerName, {
+          name: event.playerName,
+          role: getRoleFromHero(event.playerHero),
+          teamName: event.playerTeam,
+        });
+      }
+    });
+
+    const team1Name = matchData.team1Name;
+
+    const playerList = Array.from(playerInfo.values());
+    playerList.sort((a, b) => {
+      if (a.teamName === b.teamName) {
+        return (
+          getRankForRole(a.role as OverwatchRole) -
+          getRankForRole(b.role as OverwatchRole)
+        );
+      }
+      return a.teamName === team1Name ? -1 : 1;
+    });
+
+    return playerList.map((player) => ({
+      title: player.name,
+      description: `${player.role} - ${player.teamName}`,
+    }));
+  }, [playerEvents, matchData]);
   // Access three.js context
   const { camera, gl } = useThree();
 
@@ -50,26 +126,16 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
 
-  // Add state to track animation timestamps for connections
-  const [animatingConnections, setAnimatingConnections] = useState<{
-    [key: string]: boolean;
-  }>({});
-
   // Add state for hover feedback
   const [hoveredEventId, setHoveredEventId] = useState<string | null>(null);
 
   // Time scale function that respects the time range filter
   const timeScale = useMemo(() => {
     // Use filter range if provided, otherwise use the full data range
-    const timeMin = timeRangeFilter
-      ? timeRangeFilter.start
-      : data.mapInfo.startTime;
-    const timeMax = timeRangeFilter
-      ? timeRangeFilter.end
-      : data.mapInfo.endTime;
+    const timeMin = currentTimeRange.start;
+    const timeMax = currentTimeRange.end;
     const timeRange = timeMax - timeMin || 1; // Prevent division by zero
 
-    // Using full width for the timeline now that labels are above
     const timelineWidth = dimensions.width;
 
     return (time: number): number => {
@@ -81,12 +147,10 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
         dimensions.width / 2
       );
     };
-  }, [data.mapInfo, dimensions.width, timeRangeFilter]);
+  }, [matchId, currentTimeRange, dimensions.width]);
 
   // Calculate lane height
-  const laneHeight =
-    (dimensions.height - layoutConfig.topPadding - layoutConfig.bottomPadding) /
-    (data.playerLanes.length || 1);
+  const laneHeight = (dimensions.height - 40) / (lanes.length || 1);
   const laneSpacing = laneHeight * 0.1;
 
   // Function to calculate Y position for different elements
@@ -96,27 +160,22 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
       switch (type) {
         case "lane":
           // Position lanes evenly from top to bottom with padding
-          return (
-            dimensions.height / 2 -
-            layoutConfig.topPadding -
-            (index + 0.5) * laneHeight
-          );
+          return dimensions.height / 2 - (index + 0.5) * laneHeight;
         case "label":
           // Position labels above their respective lanes
           return (
             dimensions.height / 2 -
-            layoutConfig.topPadding -
             (index + 0.5) * laneHeight +
-            laneHeight * 0.5
+            laneHeight * 0.3
           );
         case "tick":
           // Position time ticks at the bottom of the timeline
-          return -dimensions.height / 2 + layoutConfig.bottomPadding / 2;
+          return -dimensions.height / 2 + 20;
         default:
           return 0;
       }
     },
-    [dimensions.height, laneHeight, layoutConfig]
+    [dimensions.height, laneHeight]
   );
 
   // Register an event marker with the ref map
@@ -161,235 +220,107 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
       }
     };
 
-    // Handle click events for selection
-    const handleClick = (event: MouseEvent) => {
-      // Update the raycaster
-      raycaster.current.setFromCamera(mouse.current, camera);
-
-      // Find intersections
-      const intersects = raycaster.current.intersectObjects(
-        Array.from(eventMarkers.current.values())
-      );
-
-      if (intersects.length > 0) {
-        // Get all intersected events
-        const intersectedEvents = intersects
-          .map((intersection) => intersection.object.userData.event)
-          .filter((event) => event !== undefined)
-          .map((event) => event.id);
-
-        // If no events were found (shouldn't happen), return
-        if (intersectedEvents.length === 0) return;
-
-        // If shift key is pressed, add to selection
-        let newSelectedEvents: string[];
-
-        if (event.shiftKey) {
-          // Add all intersected events to existing selection if not already included
-          newSelectedEvents = [...selectedEvents];
-
-          // Add each intersected event if not already in selection
-          intersectedEvents.forEach((eventId) => {
-            if (!newSelectedEvents.includes(eventId)) {
-              newSelectedEvents.push(eventId);
-            }
-          });
-        } else {
-          // If we're clicking on a single already-selected event with no shift key,
-          // deselect it. Otherwise, select all intersected events.
-          if (
-            intersectedEvents.length === 1 &&
-            selectedEvents.length === 1 &&
-            selectedEvents[0] === intersectedEvents[0]
-          ) {
-            newSelectedEvents = []; // Deselect if clicking the same single event
-          } else {
-            newSelectedEvents = [...intersectedEvents]; // Select all intersected events
-          }
-        }
-
-        // Check if this is actually a new selection
-        const isNewSelection =
-          newSelectedEvents.length !== selectedEvents.length ||
-          newSelectedEvents.some((id) => !selectedEvents.includes(id)) ||
-          selectedEvents.some((id) => !newSelectedEvents.includes(id));
-
-        // Update the selected events
-        onEventSelect(newSelectedEvents);
-
-        // Only animate if this is a new selection
-        if (isNewSelection) {
-          // Clear previous animations from connections not related to current selection
-          setAnimatingConnections({});
-
-          // Find connections related to these events and mark them for animation
-          const newAnimatingConnections: { [key: string]: boolean } = {};
-
-          data.connections.forEach((conn) => {
-            // Animate connections where any of the selected events is the source
-            if (newSelectedEvents.includes(conn.source)) {
-              const connKey = `${conn.source}-${conn.target}`;
-              newAnimatingConnections[connKey] = true;
-            }
-          });
-
-          // Set the new animations, replacing any existing ones
-          if (Object.keys(newAnimatingConnections).length > 0) {
-            setAnimatingConnections(newAnimatingConnections);
-          }
-        }
-      } else {
-        // Clear selection when clicking empty space
-        onEventSelect([]);
-        // Clear animations
-        setAnimatingConnections({});
-      }
-    };
-
     // Add event listeners
     domElement.addEventListener("mousemove", handleMouseMove);
-    domElement.addEventListener("click", handleClick);
 
     // Cleanup
     return () => {
       domElement.removeEventListener("mousemove", handleMouseMove);
-      domElement.removeEventListener("click", handleClick);
       domElement.style.cursor = "default";
     };
-  }, [
-    camera,
-    gl,
-    hoveredEventId,
-    onEventSelect,
-    selectedEvents,
-    data.connections,
-  ]);
+  }, [camera, gl, hoveredEventId]);
 
   // Render player lanes
   const playerLanes = useMemo(() => {
-    return data.playerLanes.map((player, index) => {
+    return lanes.map((lane, index) => {
       const yPosition = getYPosition("lane", index);
       const labelYPosition = getYPosition("label", index);
 
       return (
         <TimelineLane
-          key={`lane-${player.playerName}`}
-          playerName={player.playerName}
+          key={`lane-${lane.title}`}
+          title={lane.title}
+          description={lane.description}
           index={index}
           yPosition={yPosition}
           labelYPosition={labelYPosition}
           laneWidth={dimensions.width}
           laneSpacing={laneSpacing}
-          fontSize={laneHeight * 0.45}
+          fontSize={laneHeight * 0.2}
           leftMargin={-dimensions.width / 2 + 10}
         />
       );
     });
-  }, [
-    data.playerLanes,
-    dimensions.width,
-    laneHeight,
-    laneSpacing,
-    getYPosition,
-  ]);
+  }, [lanes, dimensions.width, laneHeight, laneSpacing, getYPosition]);
 
   // Render event markers
   const eventElements = useMemo(() => {
-    return data.events.map((event) => {
-      const playerIndex = data.playerLanes.findIndex(
-        (p) => p.playerName === event.playerName
-      );
+    return playerEvents.map((event) => {
+      const playerIndex = lanes.findIndex((p) => p.title === event.playerName);
 
       if (playerIndex === -1) return null;
 
-      const xPosition = timeScale(event.time);
+      const xPosition = timeScale(event.playerEventTime);
       const yPosition = getYPosition("lane", playerIndex);
-      const isSelected = selectedEvents.includes(event.id);
-      const isHovered = hoveredEventId === event.id;
 
       return (
         <TimelineMarker
-          key={`event-${event.id}`}
+          key={event.id}
           event={event}
           xPosition={xPosition}
           yPosition={yPosition}
-          isSelected={isSelected}
-          isHovered={isHovered}
           onRegisterMarker={registerMarker}
         />
       );
     });
   }, [
-    data.events,
-    data.playerLanes,
+    playerEvents,
+    lanes,
     timeScale,
     getYPosition,
-    selectedEvents,
     hoveredEventId,
     registerMarker,
   ]);
 
   // Render connections between events
   const connections = useMemo(() => {
-    return data.connections.map((connection) => {
-      const sourceEvent = data.events.find((e) => e.id === connection.source);
-      const targetEvent = data.events.find((e) => e.id === connection.target);
-
-      if (!sourceEvent || !targetEvent) return null;
-
-      const sourcePlayerIndex = data.playerLanes.findIndex(
-        (p) => p.playerName === sourceEvent.playerName
+    return playerInteractions.map((interaction) => {
+      const sourcePlayerIndex = lanes.findIndex(
+        (p) => p.title === interaction.playerName
       );
-      const targetPlayerIndex = data.playerLanes.findIndex(
-        (p) => p.playerName === targetEvent.playerName
+      const targetPlayerIndex = lanes.findIndex(
+        (p) => p.title === interaction.otherPlayerName
       );
 
       if (sourcePlayerIndex === -1 || targetPlayerIndex === -1) return null;
 
-      const sourceX = timeScale(sourceEvent.time);
+      const x = timeScale(interaction.playerInteractionEventTime);
       const sourceY = getYPosition("lane", sourcePlayerIndex);
-      const targetX = timeScale(targetEvent.time);
       const targetY = getYPosition("lane", targetPlayerIndex);
 
-      const sourcePosition = new THREE.Vector3(sourceX, sourceY, 0.05);
-      const targetPosition = new THREE.Vector3(targetX, targetY, 0.05);
+      const sourcePosition = new THREE.Vector3(x, sourceY, 0.05);
+      const targetPosition = new THREE.Vector3(x, targetY, 0.05);
 
-      const connectionKey = `${connection.source}-${connection.target}`;
-      const isHighlighted =
-        selectedEvents.includes(connection.source) ||
-        selectedEvents.includes(connection.target) ||
-        animatingConnections[connectionKey];
+      const connectionKey = JSON.stringify(interaction);
 
       return (
         <TimelineConnection
           key={connectionKey}
           sourcePosition={sourcePosition}
           targetPosition={targetPosition}
-          isHighlighted={isHighlighted}
+          interaction={interaction}
         />
       );
     });
-  }, [
-    data.connections,
-    data.events,
-    data.playerLanes,
-    timeScale,
-    getYPosition,
-    selectedEvents,
-    animatingConnections,
-  ]);
+  }, [playerInteractions, lanes, timeScale, getYPosition]);
 
   // Calculate time ticks
   const timeTicks = useMemo(() => {
     const ticksYPosition = getYPosition("tick", 0);
 
     // Calculate appropriate tick interval based on time range
-    const timeMin = timeRangeFilter
-      ? timeRangeFilter.start
-      : data.mapInfo.startTime;
-    const timeMax = timeRangeFilter
-      ? timeRangeFilter.end
-      : data.mapInfo.endTime;
+    const timeMin = currentTimeRange.start;
+    const timeMax = currentTimeRange.end;
     const timeRange = timeMax - timeMin;
 
     // Determine tick interval based on time range
@@ -412,6 +343,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
 
     return (
       <TimelineAxis
+        matchId={matchId}
         timeScale={timeScale}
         startTime={timeMin}
         endTime={timeMax}
@@ -419,12 +351,36 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
         tickInterval={tickInterval}
       />
     );
-  }, [data.mapInfo, timeScale, timeRangeFilter, getYPosition]);
+  }, [currentTimeRange, timeScale, getYPosition]);
 
   return (
     <>
       {/* Player lanes */}
       {playerLanes}
+
+      {playerLives.map((life) => (
+        <Line
+          points={[
+            new THREE.Vector3(
+              timeScale(life.startTime),
+              getYPosition(
+                "lane",
+                lanes.findIndex((p) => p.title === life.playerName)
+              ),
+              0.05
+            ),
+            new THREE.Vector3(
+              timeScale(life.endTime),
+              getYPosition(
+                "lane",
+                lanes.findIndex((p) => p.title === life.playerName)
+              ),
+              0.05
+            ),
+          ]}
+          color={0x000000}
+        />
+      ))}
 
       {/* Event markers */}
       {eventElements}

@@ -17,6 +17,7 @@ export interface PlayerInteractionEvent {
   otherPlayerName: string;
   playerInteractionEventTime: number;
   playerInteractionEventType: string;
+  direction: 'incoming' | 'outgoing';
 }
 
 /**
@@ -31,7 +32,8 @@ function fromMercyRez(event: MercyRezLogEvent): PlayerInteractionEvent[] {
       playerHero: event.revivedHero,
       otherPlayerName: event.mercyName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Resurrected'
+      playerInteractionEventType: 'Resurrected',
+      direction: 'incoming'
     },
     {
       matchId: event.matchId,
@@ -40,7 +42,8 @@ function fromMercyRez(event: MercyRezLogEvent): PlayerInteractionEvent[] {
       playerHero: 'Mercy',
       otherPlayerName: event.revivedName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Resurrected Player'
+      playerInteractionEventType: 'Resurrected Player',
+      direction: 'outgoing'
     }
   ];
 }
@@ -57,8 +60,9 @@ function fromDvaDemech(event: DvaDemechLogEvent): PlayerInteractionEvent[] {
       playerHero: event.victimHero,
       otherPlayerName: event.attackerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Demeched'
-    }
+      playerInteractionEventType: 'Demeched',
+      direction: 'incoming'
+    },
   ];
 }
 
@@ -74,7 +78,8 @@ function fromDvaRemech(event: DvaRemechLogEvent): PlayerInteractionEvent[] {
       playerHero: event.playerHero,
       otherPlayerName: event.playerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Remeched'
+      playerInteractionEventType: 'Remeched',
+      direction: 'incoming'
     }
   ];
 }
@@ -91,7 +96,8 @@ function fromKill(event: KillLogEvent): PlayerInteractionEvent[] {
       playerHero: event.attackerHero,
       otherPlayerName: event.victimName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Killed player'
+      playerInteractionEventType: 'Killed player',
+      direction: 'outgoing'
     },
     {
       matchId: event.matchId,
@@ -100,7 +106,8 @@ function fromKill(event: KillLogEvent): PlayerInteractionEvent[] {
       playerHero: event.victimHero,
       otherPlayerName: event.attackerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Died'
+      playerInteractionEventType: 'Died',
+      direction: 'incoming'
     }
   ];
 }
@@ -117,7 +124,8 @@ function fromDamage(event: DamageLogEvent): PlayerInteractionEvent[] {
       playerHero: event.attackerHero,
       otherPlayerName: event.victimName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Dealt Damage'
+      playerInteractionEventType: 'Dealt Damage',
+      direction: 'outgoing'
     },
     {
       matchId: event.matchId,
@@ -126,7 +134,8 @@ function fromDamage(event: DamageLogEvent): PlayerInteractionEvent[] {
       playerHero: event.victimHero,
       otherPlayerName: event.attackerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Received Damage'
+      playerInteractionEventType: 'Received Damage',
+      direction: 'incoming'
     }
   ];
 }
@@ -143,7 +152,8 @@ function fromHealing(event: HealingLogEvent): PlayerInteractionEvent[] {
       playerHero: event.healerHero,
       otherPlayerName: event.healeeName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Dealt Healing'
+      playerInteractionEventType: 'Dealt Healing',
+      direction: 'outgoing'
     },
     {
       matchId: event.matchId,
@@ -152,7 +162,8 @@ function fromHealing(event: HealingLogEvent): PlayerInteractionEvent[] {
       playerHero: event.healeeHero,
       otherPlayerName: event.healerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Received Healing'
+      playerInteractionEventType: 'Received Healing',
+      direction: 'incoming'
     }
   ];
 }
