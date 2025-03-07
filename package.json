@@ -67,6 +67,7 @@
     "jest": "^29.7.0",
     "jotai": "^2.12.1",
     "jstat": "^1.9.6",
+    "lucide-react": "^0.477.0",
     "oidc-client-ts": "^3.1.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",

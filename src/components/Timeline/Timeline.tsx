@@ -1,42 +1,42 @@
-import React, { useState } from "react";
-import { TimelineRenderer, TimelineSegments } from "./components";
-import { TimelineEvents } from "./components/TimelineEvents";
+import React from "react";
+import { TimelineProvider } from "./TimelineContext";
+import { TimelineTable } from "./TimelineTable";
+import { TimelineEvents } from "./TimelineEvents";
+import { TimelineDisplay } from "./TimelineDisplay";
+import { TimelineControls } from "./TimelineControls";
+
 /**
  * Timeline component for visualizing match flow
  * This component acts as the container for the entire timeline visualization,
  * integrating THREE.js rendering with React UI controls
  */
 export const Timeline: React.FC<{ matchId: string }> = ({ matchId }) => {
-  const [currentTimeRange, setCurrentTimeRange] = useState({
-    start: 0,
-    end: 100,
-  });
-
-  const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(
-    null
+  return (
+    <TimelineProvider matchId={matchId}>
+      <TimelineContent />
+    </TimelineProvider>
   );
+};
+
+const TimelineContent: React.FC = () => {
+  // These context values will be used in child components
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
   return (
-    <div className="flex flex-row flex-wrap">
-      <div className="flex flex-col w-full">
-        {/* Main visualization container */}
-        <div className="flex-grow relative h-[600px]">
-          <TimelineRenderer
-            matchId={matchId}
-            currentTimeRange={currentTimeRange}
-          />
-        </div>
-
-        {/* Time segments navigation panel with integrated controls */}
-        <TimelineSegments
-          matchId={matchId}
-          selectedSegmentId={selectedSegmentId}
-          setSelectedSegmentId={setSelectedSegmentId}
-          currentTimeRange={currentTimeRange}
-          setCurrentTimeRange={setCurrentTimeRange}
-        />
+    <div className="grid grid-cols-2 gap-4">
+      <div className="col-span-2 row-span-1 border border-gray-300 rounded-md">
+        <TimelineControls />
       </div>
-      <TimelineEvents matchId={matchId} currentTimeRange={currentTimeRange} />
+      <div className="col-span-2 row-span-1 border border-gray-300 rounded-md overflow-hidden">
+        <TimelineDisplay />
+      </div>
+      <div className="col-span-2 sm:col-span-1 border border-gray-300 rounded-md">
+        <TimelineTable />
+      </div>
+
+      <div className="col-span-2 sm:col-span-1 border border-gray-300 rounded-md">
+        <TimelineEvents />
+      </div>
     </div>
   );
 };

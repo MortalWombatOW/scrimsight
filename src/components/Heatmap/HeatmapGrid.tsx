@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 
 export interface HeatmapGridProps {
   /**
@@ -181,7 +181,7 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
                 >
                   {cellRender ? cellRender(x, y, value) : value}
                   {hoverText && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none bg-gray-800 text-white text-sm rounded px-2 py-1 mt-1 shadow-lg max-w-xs text-center whitespace-normal">
+                    <div className="absolutebottom-0 left-1/2 transform -translate-x-1/2 translate-y-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none bg-gray-800 text-white text-sm rounded px-2 py-1 mt-1 shadow-lg max-w-xs text-center whitespace-normal">
                       {hoverText(xLabel, yLabel, value)}
                     </div>
                   )}

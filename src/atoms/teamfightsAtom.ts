@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 import { PlayerInteractionEvent, playerInteractionEventsAtom} from './derived_events';
 import { ultimateEventsAtom } from './derived_events/ultimateEventsAtom';
 import { matchDataAtom } from './matchDataAtom';
-const TEAMFIGHT_BUFFER_TIME = 5; // seconds
+const TEAMFIGHT_BUFFER_TIME = 10; // seconds
 const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
 
 // A teamfight is a period of time where a teams are engaged in a fight.
