@@ -6,7 +6,7 @@ import {
   PlayerInteractionEvent,
   playerInteractionEventsAtom,
 } from "~/atoms";
-import { HeatMapGrid } from "react-grid-heatmap";
+import HeatmapGrid from "~/components/Heatmap/HeatmapGrid";
 
 interface KillsTableProps {
   matchId: string;
@@ -142,15 +142,15 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
           <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
             Kills by {team1Name}
           </h3>
-          <div className="grid grid-cols-12 mb-4">
-            <div className="col-span-4">
+          <div className="grid grid-cols-12 mb-8">
+            <div className="col-span-3">
               <div className="flex justify-end">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   Attackers
                 </span>
               </div>
             </div>
-            <div className="col-span-8">
+            <div className="col-span-9">
               <div className="flex justify-center">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   Victims
@@ -158,13 +158,16 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               </div>
             </div>
           </div>
-          <HeatMapGrid
+          <HeatmapGrid
             data={team1Kills}
             xLabels={team2Players}
             yLabels={team1Players}
             cellHeight="30px"
             square
-            cellRender={(_x, _y, value) => (
+            hoverText={(xLabel, yLabel, value) =>
+              `${yLabel} killed ${xLabel} ${value} times`
+            }
+            cellRender={(_x: number, _y: number, value: number) => (
               <span className="text-sm leading-[30px] text-gray-600 dark:text-gray-400">
                 {value}
               </span>
@@ -178,10 +181,10 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
             })}
             yLabelsStyle={() => ({
               fontSize: ".7rem",
-              marginTop: "6px",
+              marginTop: "1px",
             })}
-            cellStyle={(_x, _y, ratio) => ({
-              background: `rgb(200, 106, 0, ${ratio})`,
+            cellStyle={(_x: number, _y: number, ratio: number) => ({
+              background: `rgb(120, 120, 120, ${ratio})`,
               fontSize: ".8rem",
               color: `rgb(0, 0, 0, ${ratio / 2 + 0.4})`,
               border: "none",
@@ -189,19 +192,19 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
             })}
           />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col mr-8">
           <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
             Kills by {team2Name}
           </h3>
-          <div className="grid grid-cols-12">
-            <div className="col-span-4">
+          <div className="grid grid-cols-12 mb-8">
+            <div className="col-span-3">
               <div className="flex justify-end">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   Attackers
                 </span>
               </div>
             </div>
-            <div className="col-span-8">
+            <div className="col-span-9">
               <div className="flex justify-center">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   Victims
@@ -209,13 +212,16 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               </div>
             </div>
           </div>
-          <HeatMapGrid
+          <HeatmapGrid
             data={team2Kills}
             xLabels={team1Players}
             yLabels={team2Players}
             cellHeight="30px"
             square
-            cellRender={(_x, _y, value) => (
+            hoverText={(xLabel, yLabel, value) =>
+              `${yLabel} killed ${xLabel} ${value} times`
+            }
+            cellRender={(_x: number, _y: number, value: number) => (
               <span className="text-sm leading-[30px] text-gray-600 dark:text-gray-400">
                 {value}
               </span>
@@ -229,10 +235,10 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
             })}
             yLabelsStyle={() => ({
               fontSize: ".7rem",
-              marginTop: "6px",
+              marginTop: "1px",
             })}
-            cellStyle={(_x, _y, ratio) => ({
-              background: `rgb(200, 106, 0, ${ratio})`,
+            cellStyle={(_x: number, _y: number, ratio: number) => ({
+              background: `rgb(120, 120, 120, ${ratio})`,
               fontSize: ".8rem",
               color: `rgb(0, 0, 0, ${ratio / 2 + 0.4})`,
               border: "none",

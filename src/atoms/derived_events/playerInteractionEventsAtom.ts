@@ -10,6 +10,7 @@ import { HealingLogEvent, healingExtractorAtom } from '../event_extractors/heali
  * Interface for combined player interaction events
  */
 export interface PlayerInteractionEvent {
+  id: string;
   matchId: string;
   playerName: string;
   playerTeam: string;
@@ -17,30 +18,35 @@ export interface PlayerInteractionEvent {
   otherPlayerName: string;
   playerInteractionEventTime: number;
   playerInteractionEventType: string;
+  direction: 'incoming' | 'outgoing';
 }
 
 /**
  * Helper function to convert a mercy rez event to the common format
  */
-function fromMercyRez(event: MercyRezLogEvent): PlayerInteractionEvent[] {
+function fromMercyRez(event: MercyRezLogEvent, i: number): PlayerInteractionEvent[] {
   return [
     {
+      id: `${event.matchId}-${event.matchTime}-${event.revivedName}-${event.mercyName}-resurrected-${i}`,
       matchId: event.matchId,
       playerName: event.revivedName,
       playerTeam: event.revivedTeam,
       playerHero: event.revivedHero,
       otherPlayerName: event.mercyName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Resurrected'
+      playerInteractionEventType: 'Resurrected',
+      direction: 'incoming'
     },
     {
+      id: `${event.matchId}-${event.matchTime}-${event.mercyName}-${event.revivedName}-resurrected-${i}`,
       matchId: event.matchId,
       playerName: event.mercyName,
       playerTeam: event.mercyTeam,
       playerHero: 'Mercy',
       otherPlayerName: event.revivedName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Resurrected Player'
+      playerInteractionEventType: 'Resurrected Player',
+      direction: 'outgoing'
     }
   ];
 }
@@ -48,33 +54,37 @@ function fromMercyRez(event: MercyRezLogEvent): PlayerInteractionEvent[] {
 /**
  * Helper function to convert a D.Va demech event to the common format
  */
-function fromDvaDemech(event: DvaDemechLogEvent): PlayerInteractionEvent[] {
+function fromDvaDemech(event: DvaDemechLogEvent, i: number): PlayerInteractionEvent[] {
   return [
     {
+      id: `${event.matchId}-${event.matchTime}-${event.victimName}-${event.attackerName}-demeched-${i}`,
       matchId: event.matchId,
       playerName: event.victimName,
       playerTeam: event.victimTeam,
       playerHero: event.victimHero,
       otherPlayerName: event.attackerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Demeched'
-    }
+      playerInteractionEventType: 'Demeched',
+      direction: 'incoming'
+    },
   ];
 }
 
 /**
  * Helper function to convert a D.Va remech event to the common format
  */
-function fromDvaRemech(event: DvaRemechLogEvent): PlayerInteractionEvent[] {
+function fromDvaRemech(event: DvaRemechLogEvent, i: number): PlayerInteractionEvent[] {
   return [
     {
+      id: `${event.matchId}-${event.matchTime}-${event.playerName}-${event.playerName}-remeched-${i}`,
       matchId: event.matchId,
       playerName: event.playerName,
       playerTeam: event.playerTeam,
       playerHero: event.playerHero,
       otherPlayerName: event.playerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Remeched'
+      playerInteractionEventType: 'Remeched',
+      direction: 'incoming'
     }
   ];
 }
@@ -82,25 +92,29 @@ function fromDvaRemech(event: DvaRemechLogEvent): PlayerInteractionEvent[] {
 /**
  * Helper function to convert a kill event to the common format
  */
-function fromKill(event: KillLogEvent): PlayerInteractionEvent[] {
+function fromKill(event: KillLogEvent, i: number): PlayerInteractionEvent[] {
   return [
     {
+      id: `${event.matchId}-${event.matchTime}-${event.attackerName}-${event.victimName}-killed-${i}`,
       matchId: event.matchId,
       playerName: event.attackerName,
       playerTeam: event.attackerTeam,
       playerHero: event.attackerHero,
       otherPlayerName: event.victimName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Killed player'
+      playerInteractionEventType: 'Killed player',
+      direction: 'outgoing'
     },
     {
+      id: `${event.matchId}-${event.matchTime}-${event.victimName}-${event.attackerName}-died-${i}`,
       matchId: event.matchId,
       playerName: event.victimName,
       playerTeam: event.victimTeam,
       playerHero: event.victimHero,
       otherPlayerName: event.attackerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Died'
+      playerInteractionEventType: 'Died',
+      direction: 'incoming'
     }
   ];
 }
@@ -108,25 +122,29 @@ function fromKill(event: KillLogEvent): PlayerInteractionEvent[] {
 /**
  * Helper function to convert a damage event to the common format
  */
-function fromDamage(event: DamageLogEvent): PlayerInteractionEvent[] {
+function fromDamage(event: DamageLogEvent, i: number): PlayerInteractionEvent[] {
   return [
     {
+      id: `${event.matchId}-${event.matchTime}-${event.attackerName}-${event.victimName}-dealtDamage-${i}`,
       matchId: event.matchId,
       playerName: event.attackerName,
       playerTeam: event.attackerTeam,
       playerHero: event.attackerHero,
       otherPlayerName: event.victimName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Dealt Damage'
+      playerInteractionEventType: 'Dealt Damage',
+      direction: 'outgoing'
     },
     {
+      id: `${event.matchId}-${event.matchTime}-${event.victimName}-${event.attackerName}-receivedDamage-${i}`,
       matchId: event.matchId,
       playerName: event.victimName,
       playerTeam: event.victimTeam,
       playerHero: event.victimHero,
       otherPlayerName: event.attackerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Received Damage'
+      playerInteractionEventType: 'Received Damage',
+      direction: 'incoming'
     }
   ];
 }
@@ -134,25 +152,29 @@ function fromDamage(event: DamageLogEvent): PlayerInteractionEvent[] {
 /**
  * Helper function to convert a healing event to the common format
  */
-function fromHealing(event: HealingLogEvent): PlayerInteractionEvent[] {
+function fromHealing(event: HealingLogEvent, i: number): PlayerInteractionEvent[] {
   return [
     {
-      matchId: event.matchId,
+      id: `${event.matchId}-${event.matchTime}-${event.healerName}-${event.healeeName}-healed-${i}`,
+        matchId: event.matchId,
       playerName: event.healerName,
       playerTeam: event.healerTeam,
       playerHero: event.healerHero,
       otherPlayerName: event.healeeName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Dealt Healing'
+      playerInteractionEventType: 'Dealt Healing',
+      direction: 'outgoing'
     },
     {
+      id: `${event.matchId}-${event.matchTime}-${event.healeeName}-${event.healerName}-receivedHealing-${i}`,
       matchId: event.matchId,
       playerName: event.healeeName,
       playerTeam: event.healeeTeam,
       playerHero: event.healeeHero,
       otherPlayerName: event.healerName,
       playerInteractionEventTime: event.matchTime,
-      playerInteractionEventType: 'Received Healing'
+      playerInteractionEventType: 'Received Healing',
+      direction: 'incoming'
     }
   ];
 }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useAtomValue } from "jotai";
 import {
   ScatterChart,
@@ -8,7 +8,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   Label,
-  ZAxis,
 } from "recharts";
 import {
   PlayerStatsNumericalKeys,

@@ -39,6 +39,9 @@ export const camelCaseToAbbreviation = (s: string) => {
 }
 
 export const formatTime = (val: number) => {
+  if (val === 0) {
+    return '0s';
+  }
   const hours = Math.floor(val / 3600);
   const minutes = Math.floor((val % 3600) / 60);
   const seconds = Math.floor(val % 60);

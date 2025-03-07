@@ -7,6 +7,7 @@ import { ultimateEndExtractorAtom } from '../event_extractors/ultimateEndExtract
  * Interface for combined ultimate events
  */
 export interface UltimateEvent {
+  id: string;
   matchId: string;
   playerName: string;
   playerTeam: string;
@@ -51,6 +52,7 @@ export const ultimateEventsAtom = atom(async (get): Promise<UltimateEvent[]> => 
     if (!end) return [];
 
     return [{
+      id: `${charged.matchId}-${charged.matchTime}-${charged.playerName}-${charged.playerHero}-ultimateCharged`,
       matchId: charged.matchId,
       playerName: charged.playerName,
       playerTeam: charged.playerTeam,

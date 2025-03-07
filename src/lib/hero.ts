@@ -66,7 +66,7 @@ export const getRoleFromHero = (hero: string): OverwatchRole => {
   if (TANK_HEROES.includes(hero as typeof TANK_HEROES[number])) return 'tank';
   if (DAMAGE_HEROES.includes(hero as typeof DAMAGE_HEROES[number])) return 'damage';
   if (SUPPORT_HEROES.includes(hero as typeof SUPPORT_HEROES[number])) return 'support';
-  throw new Error(`Unknown hero: ${hero}`);
+  throw new Error(`Unknown hero: ${hero} (${hero.length} characters)`);
 };
 
 export const getRankForRole = (role: OverwatchRole): number => {

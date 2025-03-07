@@ -5,15 +5,161 @@ alwaysApply: false
 ---
 **I. Core Principles & Setup**
 
-1.  **Tailwind CSS Foundation:**
-    *   **Instruction:** Use Tailwind CSS for all styling.  Prioritize utility classes over custom CSS.
-    *   **Guideline:**  Familiarize yourself with Tailwind's core concepts (utility-first, responsive modifiers, configuration file).  If a style can be achieved with existing Tailwind classes, use them.
+1.  **CSS Foundation:**
+    *   **Instruction:** Use DaisyUI and Tailwind CSS for all styling. Prioritize DaisyUI classes first, then Tailwind utility classes over custom CSS.
+    *   **Guideline:**  
+        * **Priority Order:**
+          1. DaisyUI component classes (e.g., `btn`, `card`, `modal`)
+          2. DaisyUI modifier classes (e.g., `btn-primary`, `card-bordered`)
+          3. Tailwind utility classes (e.g., `flex`, `p-4`, `text-lg`)
+          4. Inline custom CSS as a last resort (using `style={{...}}` in React)
+        
+        * **DaisyUI Component Usage:**
+          ```jsx
+          {/* Instead of this (Tailwind only): */}
+          <button className="inline-block cursor-pointer rounded-md bg-gray-800 px-4 py-3 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-900">
+            Button
+          </button>
+
+          {/* Use this (DaisyUI): */}
+          <button className="btn">Button</button>
+          ```
+        
+        * **DaisyUI Modifier Examples:**
+          ```jsx
+          <button className="btn btn-primary">Primary Button</button>
+          <button className="btn btn-outline btn-secondary">Secondary Outline</button>
+          <button className="btn btn-ghost btn-sm">Small Ghost Button</button>
+          ```
+          
+          Common DaisyUI modifiers include:
+          - Colors: `primary`, `secondary`, `accent`, `info`, `success`, `warning`, `error`
+          - Sizes: `btn-xs`, `btn-sm`, `btn-md`, `btn-lg`
+          - Variants: `outline`, `ghost`, `link`
+        
+        * **Adding Tailwind Utilities:**
+          ```jsx
+          <button className="btn btn-primary w-64 rounded-full shadow-lg">
+            Wide Rounded Button
+          </button>
+          ```
+        
+        * **Custom CSS (Last Resort):**
+          ```jsx
+          <button 
+            className="btn btn-primary" 
+            style={{
+              backgroundImage: "linear-gradient(45deg, var(--p) 0%, var(--pc) 100%)",
+              textShadow: "0px 1px 2px rgba(0,0,0,0.2)"
+            }}
+          >
+            Custom Styled Button
+          </button>
+          ```
+        
+        * **Practical Component Example:**
+          ```jsx
+          <div className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+            <figure className="px-4 pt-4">
+              <img src="image.jpg" alt="Product" className="rounded-xl h-48 w-full object-cover" />
+            </figure>
+            <div className="card-body">
+              <h2 className="card-title text-primary">Product Name</h2>
+              <p className="text-gray-600">Product description goes here</p>
+              <div className="card-actions justify-end mt-4">
+                <button className="btn btn-primary">Buy Now</button>
+              </div>
+            </div>
+          </div>
+          ```
+        
+        * **Handling Style Conflicts:**
+          When classes target the same CSS property, the last one in the stylesheet wins.
+          Use the `!` modifier to make a utility `!important`:
+          ```jsx
+          <div className="bg-blue-500 bg-red-500!">Red background will win</div>
+          ```
+        
+        * **Code Organization:**
+          Group related classes for better readability:
+          ```jsx
+          <button className="
+            btn btn-primary                     {/* Component base + variant */}
+            w-full md:w-auto                    {/* Width/responsive */}
+            text-lg font-bold                   {/* Typography */}
+            shadow-lg hover:shadow-xl           {/* Effects */}
+          ">
+            Submit
+          </button>
+          ```
 
 2.  **Project Structure (Objective):**
-    *   **Instruction:**  Assume a component-based architecture (e.g., React, Vue, Angular).  Break the dashboard down into reusable components.
+    *   **Instruction:**  Assume a component-based architecture with React.  Break the dashboard down into reusable components.
     *   **Guideline:**  Each component should have a single, well-defined responsibility.  Examples: `Navbar`, `Sidebar`, `MetricCard`, `ChartContainer`, `Table`, `FormInput`, `Button`.
 
 **II. Layout & Spacing**
+
+3.  **DaisyUI Layout Components:**
+    *   **Instruction:** Utilize DaisyUI layout components as the foundation of your layouts before applying Tailwind's utility classes.
+    *   **Guideline:**
+        * **Key DaisyUI Layout Components:**
+          - `card`: For content containers with optional header/footer
+          - `hero`: For large banner/header sections
+          - `divider`: For separating content sections
+          - `drawer`: For side navigation and off-canvas content
+          - `footer`: For page footer sections
+          - `stack`: For stacking elements with optional overlay
+          - `indicator`: For badges and indicators on elements
+        
+        * **Layout Component Examples:**
+          ```jsx
+          {/* Card with responsive side layout */}
+          <div className="card lg:card-side bg-base-100 shadow-xl">
+            <figure className="w-full lg:w-1/3">
+              <img src="image.jpg" alt="Album" className="h-full w-full object-cover" />
+            </figure>
+            <div className="card-body lg:w-2/3">
+              <h2 className="card-title">Album Title</h2>
+              <p>Click the button to listen to this album now.</p>
+              <div className="card-actions justify-end">
+                <button className="btn btn-primary">Listen</button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Hero with overlay content */}
+          <div className="hero min-h-screen" style={{ backgroundImage: 'url(/images/hero.jpg)' }}>
+            <div className="hero-overlay bg-opacity-60"></div>
+            <div className="hero-content text-center text-neutral-content">
+              <div className="max-w-md">
+                <h1 className="mb-5 text-5xl font-bold">Hello there</h1>
+                <p className="mb-5">Your hero message goes here. Keep it concise and compelling.</p>
+                <button className="btn btn-primary">Get Started</button>
+              </div>
+            </div>
+          </div>
+          ```
+        
+        * **Responsive Layout with DaisyUI:**
+          - Use Tailwind's responsive modifiers (`sm:`, `md:`, `lg:`, etc.) with DaisyUI classes
+          - For mobile-first design, start with mobile layout then add responsive modifiers
+          ```jsx
+          <div className="drawer lg:drawer-open">
+            <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+            <div className="drawer-content">
+              {/* Page content here */}
+              <label htmlFor="my-drawer" className="btn btn-primary drawer-button lg:hidden">Open drawer</label>
+            </div> 
+            <div className="drawer-side">
+              <label htmlFor="my-drawer" className="drawer-overlay"></label>
+              <ul className="menu p-4 w-80 bg-base-200 text-base-content">
+                {/* Sidebar content here */}
+                <li><a>Sidebar Item 1</a></li>
+                <li><a>Sidebar Item 2</a></li>
+              </ul>
+            </div>
+          </div>
+          ```
 
 4.  **Start with White Space (Objective):**
     *   **Instruction:**  Begin layouts with generous padding and margins.  Reduce spacing iteratively, rather than adding it.
@@ -247,3 +393,274 @@ alwaysApply: false
 44. **Analyze and Rebuild (Objective):**
     *   **Instruction:**  Regularly analyze well-designed interfaces and try to recreate them from scratch.
     *   **Guideline:**  This helps identify subtle design decisions and techniques.
+
+**X. Form Elements & Input Components**
+
+45. **DaisyUI Form Components:**
+    *   **Instruction:** Use DaisyUI's form components for consistent input styling and better user experience.
+    *   **Guideline:**
+        * **Key Form Components:**
+          - `input`: Base text input
+          - `textarea`: Multi-line text input
+          - `select`: Dropdown selector
+          - `checkbox`: Checkboxes  
+          - `radio`: Radio buttons
+          - `toggle`: Toggle switches
+          - `range`: Range sliders
+          - `file-input`: File upload inputs
+          - `form-control`: Container for inputs and labels
+          - `label`: Text labels for form elements
+        
+        * **Basic Form Example:**
+          ```jsx
+          <div className="form-control w-full max-w-md">
+            <label className="label">
+              <span className="label-text">Email address</span>
+            </label>
+            <input type="email" placeholder="your@email.com" className="input input-bordered input-primary w-full" />
+            <label className="label">
+              <span className="label-text-alt">We'll never share your email</span>
+            </label>
+          </div>
+          ```
+        
+        * **Input Variants:**
+          - Sizes: `input-lg`, `input-md`, `input-sm`, `input-xs`
+          - Styles: `input-bordered`, `input-ghost`, `input-primary`, etc.
+          ```jsx
+          <div className="flex flex-col gap-4">
+            <input type="text" placeholder="Default" className="input input-bordered w-full" />
+            <input type="text" placeholder="Primary" className="input input-bordered input-primary w-full" />
+            <input type="text" placeholder="Secondary" className="input input-bordered input-secondary w-full" />
+            <input type="text" placeholder="Accent" className="input input-bordered input-accent w-full" />
+            <input type="text" placeholder="Info" className="input input-bordered input-info w-full" />
+            <input type="text" placeholder="Success" className="input input-bordered input-success w-full" />
+            <input type="text" placeholder="Warning" className="input input-bordered input-warning w-full" />
+            <input type="text" placeholder="Error" className="input input-bordered input-error w-full" />
+          </div>
+          ```
+        
+        * **Input Groups & Complex Forms:**
+          ```jsx
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Your bio</span>
+            </label>
+            <textarea className="textarea textarea-bordered h-24" placeholder="Tell us about yourself"></textarea>
+          </div>
+          
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">Remember me</span> 
+              <input type="checkbox" className="checkbox checkbox-primary" />
+            </label>
+          </div>
+          
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Pick a file</span>
+            </label>
+            <input type="file" className="file-input file-input-bordered w-full" />
+          </div>
+          ```
+        
+        * **Validation States:**
+          - Use `input-error`, `input-success`, etc. for validation states
+          - Combine with `label-text-alt` for error messages
+          ```jsx
+          <div className="form-control w-full max-w-md">
+            <label className="label">
+              <span className="label-text">Password</span>
+            </label>
+            <input type="password" className="input input-bordered input-error w-full" />
+            <label className="label">
+              <span className="label-text-alt text-error">Password must be at least 8 characters</span>
+            </label>
+          </div>
+          ```
+
+46. **DaisyUI Data Display Components:**
+    *   **Instruction:** Utilize DaisyUI's data display components to present information consistently.
+    *   **Guideline:**
+        * **Key Data Components:**
+          - `table`: For tabular data
+          - `stat`: For displaying key metrics
+          - `card`: For content containers
+          - `collapse`: For expandable content
+          - `badge`: For labels and status indicators
+          - `avatar`: For user images
+          - `tooltip`: For supplementary information
+        
+        * **Data Display Examples:**
+          ```jsx
+          {/* Stats display */}
+          <div className="stats shadow">
+            <div className="stat">
+              <div className="stat-figure text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+              </div>
+              <div className="stat-title">Total Likes</div>
+              <div className="stat-value text-primary">25.6K</div>
+              <div className="stat-desc">21% more than last month</div>
+            </div>
+          </div>
+          
+          {/* Table display */}
+          <div className="overflow-x-auto">
+            <table className="table table-zebra">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Job</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>1</th>
+                  <td>Cy Ganderton</td>
+                  <td>Quality Control Specialist</td>
+                  <td><div className="badge badge-success">Active</div></td>
+                </tr>
+                <tr>
+                  <th>2</th>
+                  <td>Hart Hagerty</td>
+                  <td>Desktop Support Technician</td>
+                  <td><div className="badge badge-warning">Pending</div></td>
+                </tr>
+                <tr>
+                  <th>3</th>
+                  <td>Brice Swyre</td>
+                  <td>Tax Accountant</td>
+                  <td><div className="badge badge-error">Inactive</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          ```
+
+**XI. Theming & Color Management**
+
+47. **DaisyUI Themes:**
+    *   **Instruction:** Leverage DaisyUI's theming system for consistent colors and easy dark/light mode support.
+    *   **Guideline:**
+        * **Built-in Themes:**
+          DaisyUI comes with 20+ pre-designed themes including:
+          - `light` (default)
+          - `dark`
+          - `cupcake`
+          - `bumblebee`
+          - `emerald`
+          - `corporate`
+          - `synthwave`
+          - `retro`
+          - And many more
+        
+        * **Using Themes:**
+          - Apply themes by adding the theme name to the `<html>` or `<body>` tag:
+            ```html
+            <html data-theme="dark">
+            ```
+          - For React applications, you can toggle themes with state:
+            ```jsx
+            function ThemeSwitcher() {
+              const [theme, setTheme] = useState('light');
+              
+              const toggleTheme = () => {
+                const newTheme = theme === 'light' ? 'dark' : 'light';
+                setTheme(newTheme);
+                document.documentElement.setAttribute('data-theme', newTheme);
+              };
+              
+              return (
+                <button className="btn" onClick={toggleTheme}>
+                  Toggle {theme === 'light' ? 'Dark' : 'Light'} Mode
+                </button>
+              );
+            }
+            ```
+        
+        * **Theme Controller Component:**
+          DaisyUI provides a theme controller component:
+          ```jsx
+          <div className="dropdown">
+            <div tabIndex={0} role="button" className="btn m-1">
+              Theme
+              <svg width="12px" height="12px" className="h-2 w-2 fill-current opacity-60 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2048"><path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path></svg>
+            </div>
+            <ul tabIndex={0} className="dropdown-content z-[1] p-2 shadow-2xl bg-base-300 rounded-box w-52">
+              <li><input type="radio" name="theme-dropdown" className="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Default" value="default"/></li>
+              <li><input type="radio" name="theme-dropdown" className="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Light" value="light"/></li>
+              <li><input type="radio" name="theme-dropdown" className="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dark" value="dark"/></li>
+              <li><input type="radio" name="theme-dropdown" className="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Cupcake" value="cupcake"/></li>
+            </ul>
+          </div>
+          ```
+        
+        * **Theme Color Variables:**
+          DaisyUI themes provide CSS variables for consistent color usage:
+          - `--p`: Primary color
+          - `--s`: Secondary color
+          - `--a`: Accent color
+          - `--n`: Neutral color
+          - `--b1`, `--b2`, `--b3`: Base colors (background)
+          - `--bc`: Base content color (text)
+          - `--in`: Info color
+          - `--su`: Success color
+          - `--wa`: Warning color
+          - `--er`: Error color
+          
+          Usage:
+          ```jsx
+          <div style={{ backgroundColor: 'var(--p)', color: 'var(--pc)' }}>
+            This div uses the primary color with appropriate contrast text
+          </div>
+          ```
+        
+        * **Responsive Theming:**
+          - Combine with media queries for automatic light/dark modes:
+          ```css
+          @media (prefers-color-scheme: dark) {
+            html {
+              data-theme: "dark";
+            }
+          }
+          ```
+
+48. **Color Usage Best Practices:**
+    *   **Instruction:** Follow a consistent pattern for color usage with DaisyUI's semantic color system. IMPORTANT: for development, we want everything to be greyscale to simplify decisions. Do not use any non-greyscale colors.
+    *   **Guideline:**
+        * **Semantic Color Usage:**
+          - `primary`: Main brand color, used for primary actions and key UI elements
+          - `secondary`: Complementary color, used for secondary actions and less prominent elements
+          - `accent`: Highlight color, used sparingly for emphasis
+          - `neutral`: Neutral color, used for text, backgrounds, and UI elements
+          - `base`: Background color for the page/components
+          - `info`: Informational elements (blue)
+          - `success`: Success states/actions (green)
+          - `warning`: Warning states/actions (yellow/orange)
+          - `error`: Error states/destructive actions (red)
+        
+        * **Color Application Examples:**
+          ```jsx
+          {/* Primary actions */}
+          <button className="btn btn-primary">Save Changes</button>
+          
+          {/* Secondary actions */}
+          <button className="btn btn-secondary">View Details</button>
+          
+          {/* Destructive actions */}
+          <button className="btn btn-error">Delete Account</button>
+          
+          {/* Status indicators */}
+          <div className="badge badge-success">Active</div>
+          <div className="badge badge-warning">Pending</div>
+          <div className="badge badge-error">Failed</div>
+          
+          {/* Alerts and notifications */}
+          <div className="alert alert-info">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>New software update available.</span>
+          </div>
+          ```

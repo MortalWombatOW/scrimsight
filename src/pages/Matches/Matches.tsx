@@ -29,7 +29,7 @@ const PlayerCard = ({
   );
 
   return (
-    <div className={`rounded-md p-2 bg-gray-800 dark:bg-gray-900`}>
+    <div className="card bg-base-300 p-2 mb-1">
       <div className="flex items-center">
         <div className="relative group">
           <img
@@ -37,14 +37,10 @@ const PlayerCard = ({
             alt={playerStats.rows[0].playerHero}
             className="h-6 w-6 rounded-lg mr-2"
           />
-          <div
-            className="absolute bottom-full left-1/2 transform -translate-x-1/2 -translate-y-1 
-                           hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1 z-10 whitespace-nowrap"
-          >
-            {tooltipContent}
+          <div className="tooltip tooltip-top" data-tip={tooltipContent}>
+            <span className="text-sm text-base-content">{playerName}</span>
           </div>
         </div>
-        <span className="text-sm text-white">{playerName}</span>
       </div>
     </div>
   );
@@ -63,7 +59,7 @@ const MatchCard = ({ matchId }: { matchId: string }) => {
   }
 
   return (
-    <div className="bg-gray-800 dark:bg-gray-900 border border-gray-700 dark:border-gray-800 p-4 rounded-lg mb-2">
+    <div className="card bg-base-200 border border-base-300 p-4 rounded-lg mb-4 shadow-md">
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-4">
           <div className="flex justify-center">
@@ -113,38 +109,34 @@ const MatchCard = ({ matchId }: { matchId: string }) => {
           </div>
         </div>
         <div className="col-span-4">
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-3 items-center">
             <div className="flex justify-center">
               <img
                 src={mapNameToFileName(match.map, false)}
                 alt={match.map}
-                className="h-[100px] w-[100px] rounded-md"
+                className="h-[100px] w-[100px] rounded-md shadow-sm"
               />
             </div>
-            <div className="flex justify-center">
-              <div className="flex items-center space-x-2">
-                <CiMap />
-                <span className="text-white">{match.map}</span>
+            <div className="badge badge-lg badge-outline gap-2">
+              <CiMap className="h-4 w-4" />
+              <span>{match.map}</span>
+            </div>
+            <div className="stats shadow-md bg-base-300">
+              <div className="stat place-items-center">
+                <div className="stat-title text-xs">Team 1</div>
+                <div className="stat-value text-xl">{match.team1Score}</div>
+              </div>
+              <div className="stat place-items-center">
+                <div className="stat-title text-xs">Team 2</div>
+                <div className="stat-value text-xl">{match.team2Score}</div>
               </div>
             </div>
-            <div className="flex justify-center">
-              <div className="flex space-x-2">
-                <div className="bg-blue-900 p-2 text-center">
-                  <span className="text-white">{match.team1Score}</span>
-                </div>
-                <div className="bg-red-900 p-2 text-center">
-                  <span className="text-white">{match.team2Score}</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <button
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                onClick={() => navigate(`/matches/${matchId}`)}
-              >
-                View Match
-              </button>
-            </div>
+            <button
+              className="btn btn-outline mt-2"
+              onClick={() => navigate(`/matches/${matchId}`)}
+            >
+              View Match
+            </button>
           </div>
         </div>
         <div className="col-span-4">
@@ -204,7 +196,6 @@ interface TeamScoreRowProps {
   matchIds: string[];
   matchData: MatchData[];
   wins: number;
-  teamColor: string;
   teamNameWidth: number;
   matchScoreWidth: number;
   finalScoreWidth: number;
@@ -216,7 +207,6 @@ const TeamScoreRow = ({
   matchIds,
   matchData,
   wins,
-  teamColor,
   teamNameWidth,
   matchScoreWidth,
   finalScoreWidth,
@@ -236,10 +226,10 @@ const TeamScoreRow = ({
     <div className="flex items-center">
       <div className="flex justify-end" style={{ width: `${teamNameWidth}px` }}>
         <div
-          className={`${teamColor} px-2 py-1 rounded flex justify-center items-center`}
+          className="bg-base-300 px-3 py-2 rounded-md flex justify-center items-center"
           style={{ minWidth: "120px" }}
         >
-          <span className="text-white">{teamName}</span>
+          <span className="font-medium">{teamName}</span>
         </div>
       </div>
       <div
@@ -249,20 +239,20 @@ const TeamScoreRow = ({
         {opponentScores.map((scoreObj, i) => (
           <div
             key={i}
-            className={`flex justify-center items-center px-2 border-l border-gray-700 ${
-              scoreObj.won ? "bg-green-900/30" : "bg-red-900/30"
+            className={`flex justify-center items-center px-2 border-l border-base-300 ${
+              scoreObj.won ? "bg-base-200" : "bg-base-100"
             }`}
             style={{ width: `${matchScoreWidth}px` }}
           >
-            <span className="text-white">{scoreObj.score}</span>
+            <span>{scoreObj.score}</span>
           </div>
         ))}
       </div>
       <div
-        className={`flex justify-center items-center border-l border-gray-700 ${teamColor}`}
+        className="flex justify-center items-center border-l border-base-300 bg-base-300"
         style={{ width: `${finalScoreWidth}px` }}
       >
-        <span className="text-white font-semibold">{wins}</span>
+        <span className="font-semibold">{wins}</span>
       </div>
     </div>
   );
@@ -285,14 +275,16 @@ const ScrimHeader = ({ scrim, matchData }: ScrimHeaderProps) => {
   const finalScoreWidth = 80;
 
   return (
-    <div className="bg-gray-800 dark:bg-gray-900 rounded-t-lg overflow-hidden">
+    <div className="bg-base-100 rounded-t-lg overflow-hidden shadow-sm">
       <div className="flex">
         <div
           className="flex justify-end"
           style={{ width: `${teamNameWidth}px` }}
         >
-          <div className="px-2 py-1">
-            <span className="text-gray-400 text-sm">Team</span>
+          <div className="px-3 py-2">
+            <span className="text-base-content/70 text-sm font-medium">
+              Team
+            </span>
           </div>
         </div>
         <div
@@ -302,18 +294,22 @@ const ScrimHeader = ({ scrim, matchData }: ScrimHeaderProps) => {
           {scrim.matchIds.map((_, i) => (
             <div
               key={i}
-              className="flex justify-center items-center px-2 border-l border-gray-700"
+              className="flex justify-center items-center px-2 border-l border-base-300"
               style={{ width: `${matchScoreWidth}px` }}
             >
-              <span className="text-gray-400 text-sm">Match {i + 1}</span>
+              <span className="text-base-content/70 text-sm">
+                Match {i + 1}
+              </span>
             </div>
           ))}
         </div>
         <div
-          className="flex justify-center items-center border-l border-gray-700"
+          className="flex justify-center items-center border-l border-base-300"
           style={{ width: `${finalScoreWidth}px` }}
         >
-          <span className="text-gray-400 text-sm">Final</span>
+          <span className="text-base-content/70 text-sm font-medium">
+            Final
+          </span>
         </div>
       </div>
       <TeamScoreRow
@@ -321,7 +317,6 @@ const ScrimHeader = ({ scrim, matchData }: ScrimHeaderProps) => {
         matchIds={scrim.matchIds}
         matchData={matchData}
         wins={scrim.team1Wins}
-        teamColor="bg-blue-700"
         teamNameWidth={teamNameWidth}
         matchScoreWidth={matchScoreWidth}
         finalScoreWidth={finalScoreWidth}
@@ -332,7 +327,6 @@ const ScrimHeader = ({ scrim, matchData }: ScrimHeaderProps) => {
         matchIds={scrim.matchIds}
         matchData={matchData}
         wins={scrim.team2Wins}
-        teamColor="bg-red-700"
         teamNameWidth={teamNameWidth}
         matchScoreWidth={matchScoreWidth}
         finalScoreWidth={finalScoreWidth}
@@ -348,44 +342,44 @@ const MatchDateGroup = ({ dateString }: { dateString: string }) => {
 
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {dateString}
-      </h2>
+      <h2 className="text-xl font-semibold mb-4">{dateString}</h2>
       <Suspense
         fallback={
           <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
+            <span className="loading loading-spinner loading-md"></span>
           </div>
         }
       >
-        {scrims.map((scrim) => (
-          <div
-            key={`${scrim.team1Name}-${scrim.team2Name}-${scrim.dateString}`}
-            className="mb-4"
-          >
-            <div className="bg-gray-800 dark:bg-gray-900 rounded-lg overflow-hidden">
-              <ScrimHeader scrim={scrim} matchData={matchData} />
-              <div className="p-4">
-                {scrim.matchIds
-                  .filter((matchId) =>
-                    matchData.some((match) => match.matchId === matchId)
-                  )
-                  .map((matchId) => (
-                    <Suspense
-                      key={matchId}
-                      fallback={
-                        <div className="flex justify-center py-8">
-                          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
-                        </div>
-                      }
-                    >
-                      <MatchCard matchId={matchId} />
-                    </Suspense>
-                  ))}
+        <div className="space-y-6">
+          {scrims.map((scrim) => (
+            <div
+              key={`${scrim.team1Name}-${scrim.team2Name}-${scrim.dateString}`}
+              className="card bg-base-100 shadow-lg overflow-hidden"
+            >
+              <div className="card-body p-0">
+                <ScrimHeader scrim={scrim} matchData={matchData} />
+                <div className="p-4">
+                  {scrim.matchIds
+                    .filter((matchId) =>
+                      matchData.some((match) => match.matchId === matchId)
+                    )
+                    .map((matchId) => (
+                      <Suspense
+                        key={matchId}
+                        fallback={
+                          <div className="flex justify-center py-4">
+                            <span className="loading loading-spinner loading-md"></span>
+                          </div>
+                        }
+                      >
+                        <MatchCard matchId={matchId} />
+                      </Suspense>
+                    ))}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </Suspense>
     </div>
   );
@@ -393,7 +387,6 @@ const MatchDateGroup = ({ dateString }: { dateString: string }) => {
 
 export const MatchesPage = () => {
   const navigate = useNavigate();
-
   const matchData = useAtomValue(matchDataAtom);
 
   if (matchData.length === 0) {
@@ -406,14 +399,14 @@ export const MatchesPage = () => {
   ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-        Matches
-      </h1>
+    <div className="container mx-auto px-4 py-6 max-w-5xl">
+      <h1 className="text-3xl font-bold mb-6">Matches</h1>
 
-      {uniqueDates.map((dateString) => (
-        <MatchDateGroup key={dateString} dateString={dateString} />
-      ))}
+      <div className="divide-y divide-base-300">
+        {uniqueDates.map((dateString) => (
+          <MatchDateGroup key={dateString} dateString={dateString} />
+        ))}
+      </div>
     </div>
   );
 };

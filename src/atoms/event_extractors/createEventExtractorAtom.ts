@@ -15,7 +15,7 @@ function extractEventType<T>(type: string, logs: { specName: string; data: objec
  * @param eventType The type of event to extract (e.g., 'match_start', 'match_end')
  * @returns An atom that will extract and return an array of events of the specified type
  */
-export function createEventExtractorAtom<T extends { matchId?: string}>(eventType: string, columnRemapping?: Record<keyof Partial<T>, keyof Partial<T>>) {
+export function createEventExtractorAtom<T extends { matchId?: string}>(eventType: string, columnRemapping?: Partial<Record<keyof T, keyof T> >) {
   return atom(async (get): Promise<T[]> => {
     const parsedFiles = await get(logFileParserAtom);
     
@@ -33,10 +33,15 @@ export function createEventExtractorAtom<T extends { matchId?: string}>(eventTyp
     return data.map(event => {
       const newEvent = { ...event };
       Object.keys(columnRemapping).forEach((key) => {
-        newEvent[columnRemapping[key as keyof T]] = event[key as keyof T];
+        const newKey = columnRemapping[key as keyof T] ? columnRemapping[key as keyof T] as keyof T : null;
+        if (newKey) {
+          newEvent[newKey] = event[key as keyof T];
+        } else {
+          console.error("columnRemapping", columnRemapping);
+          console.error("key", key);
+          console.error("event", event);
+        }
       });
-      console.log("previous event", event);
-      console.log("new event", newEvent);
       return newEvent;
     });
   });

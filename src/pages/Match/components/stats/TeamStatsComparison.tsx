@@ -66,111 +66,86 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 w-full p-6 shadow-sm dark:bg-gray-800 dark:border-gray-700">
-      <div className="flex flex-col gap-6">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 pb-2 border-b border-gray-200 dark:border-gray-700">
-          Team Comparison
-        </h2>
-
-        <div className="grid grid-cols-7 gap-4">
-          {/* Header row */}
-          <div className="col-span-3 text-right">
-            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-              {matchData.team1Name}
-            </span>
-          </div>
-          <div className="col-span-1"></div> {/* Center spacer */}
-          <div className="col-span-3">
-            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-              {matchData.team2Name}
-            </span>
-          </div>
-          {/* Stat rows */}
-          {statsToShow.map((stat) => {
-            const team1Value = teamData[matchData.team1Name][stat] || 0;
-            const team2Value = teamData[matchData.team2Name][stat] || 0;
-            const winner = getWinnerTeam(stat);
-            const team1Percentage = getPercentage(matchData.team1Name, stat);
-            const team2Percentage = getPercentage(matchData.team2Name, stat);
-
-            return (
-              <React.Fragment key={stat}>
-                {/* Team 1 side */}
-                <div className="col-span-3 flex flex-col items-end">
-                  <div className="flex items-center justify-end w-full mb-1">
-                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200 mr-2">
-                      {prettyFormat(team1Value)}
-                    </span>
-                    {winner === matchData.team1Name && (
-                      <span className="text-xs px-1 py-0.5 bg-gray-600 text-white dark:bg-gray-200 dark:text-gray-800 rounded">
-                        +{prettyFormat(team1Value - team2Value)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="h-4 w-full bg-gray-100 dark:bg-gray-700 rounded-l-sm overflow-hidden relative">
-                    <div
-                      className={`h-full ${
-                        winner === matchData.team1Name
-                          ? "bg-gray-600 dark:bg-gray-300"
-                          : "bg-gray-400 dark:bg-gray-600"
-                      } absolute right-0 top-0`}
-                      style={{ width: `${team1Percentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Center label */}
-                <div className="col-span-1 flex items-center justify-center">
-                  <span className="text-xs text-gray-500 dark:text-gray-400 text-center capitalize">
-                    {camelCaseToWords(stat)}
-                  </span>
-                </div>
-
-                {/* Team 2 side */}
-                <div className="col-span-3 flex flex-col">
-                  <div className="flex items-center w-full mb-1">
-                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200 ml-2">
-                      {prettyFormat(team2Value)}
-                    </span>
-                    {winner === matchData.team2Name && (
-                      <span className="text-xs px-1 py-0.5 bg-gray-600 text-white dark:bg-gray-200 dark:text-gray-800 rounded ml-2">
-                        +{prettyFormat(team2Value - team1Value)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="h-4 w-full bg-gray-100 dark:bg-gray-700 rounded-r-sm overflow-hidden relative">
-                    <div
-                      className={`h-full ${
-                        winner === matchData.team2Name
-                          ? "bg-gray-600 dark:bg-gray-300"
-                          : "bg-gray-400 dark:bg-gray-600"
-                      } absolute left-0 top-0`}
-                      style={{ width: `${team2Percentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </React.Fragment>
-            );
-          })}
-        </div>
-
-        <div className="flex justify-center mt-2">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-gray-600 dark:bg-gray-300 rounded-sm"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-400">
-                Higher Value
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-gray-400 dark:bg-gray-600 rounded-sm"></div>
-              <span className="text-xs text-gray-600 dark:text-gray-400">
-                Lower Value
-              </span>
-            </div>
-          </div>
-        </div>
+    <div className="grid grid-cols-7 gap-4 bg-white rounded-lg border border-gray-200 w-full max-w-[800px] p-2 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+      {/* Header row */}
+      <div className="col-span-3 text-right">
+        <span className="text-md font-semibold text-gray-800 dark:text-gray-200">
+          {matchData.team1Name}
+        </span>
       </div>
+      <div className="col-span-1"></div> {/* Center spacer */}
+      <div className="col-span-3">
+        <span className="text-md font-semibold text-gray-800 dark:text-gray-200">
+          {matchData.team2Name}
+        </span>
+      </div>
+      {/* Stat rows */}
+      {statsToShow.map((stat) => {
+        const team1Value = teamData[matchData.team1Name][stat] || 0;
+        const team2Value = teamData[matchData.team2Name][stat] || 0;
+        const winner = getWinnerTeam(stat);
+        const team1Percentage = getPercentage(matchData.team1Name, stat);
+        const team2Percentage = getPercentage(matchData.team2Name, stat);
+
+        return (
+          <React.Fragment key={stat}>
+            {/* Team 1 side */}
+            <div className="col-span-3 flex flex-col items-end">
+              <div className="flex items-center justify-end w-full mb-1">
+                <span className="text-sm font-medium text-gray-800 dark:text-gray-200 mr-2">
+                  {prettyFormat(team1Value)}
+                </span>
+                {winner === matchData.team1Name && (
+                  <span className="text-xs px-1 py-0.5 bg-gray-600 text-white dark:bg-gray-200 dark:text-gray-800 rounded">
+                    +{prettyFormat(team1Value - team2Value)}
+                  </span>
+                )}
+              </div>
+              <div className="h-4 w-full bg-gray-100 dark:bg-gray-700 rounded-l-sm overflow-hidden relative">
+                <div
+                  className={`h-full ${
+                    winner === matchData.team1Name
+                      ? "bg-gray-600 dark:bg-gray-300"
+                      : "bg-gray-400 dark:bg-gray-600"
+                  } absolute right-0 top-0`}
+                  style={{ width: `${team1Percentage}%` }}
+                ></div>
+              </div>
+            </div>
+
+            {/* Center label */}
+            <div className="col-span-1 flex items-center justify-center">
+              <span className="text-xs text-gray-500 dark:text-gray-400 text-center capitalize">
+                {camelCaseToWords(stat)}
+              </span>
+            </div>
+
+            {/* Team 2 side */}
+            <div className="col-span-3 flex flex-col">
+              <div className="flex items-center w-full mb-1">
+                <span className="text-sm font-medium text-gray-800 dark:text-gray-200 ml-2">
+                  {prettyFormat(team2Value)}
+                </span>
+                {winner === matchData.team2Name && (
+                  <span className="text-xs px-1 py-0.5 bg-gray-600 text-white dark:bg-gray-200 dark:text-gray-800 rounded ml-2">
+                    +{prettyFormat(team2Value - team1Value)}
+                  </span>
+                )}
+              </div>
+              <div className="h-4 w-full bg-gray-100 dark:bg-gray-700 rounded-r-sm overflow-hidden relative">
+                <div
+                  className={`h-full ${
+                    winner === matchData.team2Name
+                      ? "bg-gray-600 dark:bg-gray-300"
+                      : "bg-gray-400 dark:bg-gray-600"
+                  } absolute left-0 top-0`}
+                  style={{ width: `${team2Percentage}%` }}
+                ></div>
+              </div>
+            </div>
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 };

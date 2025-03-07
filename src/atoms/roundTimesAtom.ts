@@ -47,5 +47,5 @@ export const roundTimesAtom = atom(async (get): Promise<RoundTimes[]> => {
       roundEndTime: end.matchTime,
       roundDuration: end.matchTime - setup.matchTime
     }];
-  });
+  }).sort((a, b) => a.matchId !== b.matchId ? a.matchId.localeCompare(b.matchId) : a.roundNumber - b.roundNumber);
 }); 
