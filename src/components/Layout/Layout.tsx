@@ -248,7 +248,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         </aside>
 
         {/* Main content area */}
-        <main className="flex-1 overflow-auto p-4">{children}</main>
+        <main
+          className={`flex-1 overflow-auto p-4 ${
+            isMobileMenuOpen ? "hidden" : ""
+          }`}
+        >
+          {children}
+        </main>
       </div>
     </div>
   );
