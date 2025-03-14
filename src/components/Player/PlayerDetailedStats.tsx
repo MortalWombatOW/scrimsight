@@ -26,17 +26,17 @@ const StatCard = ({ title, value, icon, color }: StatCardProps) => {
       case "success.main":
         return "text-green-500 dark:text-green-400";
       default:
-        return "text-gray-500 dark:text-gray-400";
+        return "text-base-500 dark:text-base-400";
     }
   };
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800">
+    <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-base-800">
       <div className="mb-2 flex items-center">
         <span className={`mr-2 ${getColorClass()}`}>{icon}</span>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
+        <p className="text-sm text-base-500 dark:text-base-400">{title}</p>
       </div>
-      <p className="text-lg font-semibold text-gray-900 dark:text-white">
+      <p className="text-lg font-semibold text-base-900 dark:text-white">
         {typeof value === "number" ? value.toLocaleString() : value}
       </p>
     </div>
@@ -55,13 +55,13 @@ export const PlayerDetailedStats = ({
 
   if (!playerStats) {
     return (
-      <div className="text-gray-700 dark:text-gray-300">Player not found</div>
+      <div className="text-base-700 dark:text-base-300">Player not found</div>
     );
   }
 
   return (
-    <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
-      <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+    <div className="rounded-lg bg-white p-6 shadow-md dark:bg-base-800">
+      <h2 className="mb-4 text-xl font-semibold text-base-900 dark:text-white">
         Detailed Statistics
       </h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

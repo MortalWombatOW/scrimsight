@@ -35,8 +35,8 @@ const MetricSection = ({
   colors,
   chartType = "bar",
 }: MetricSectionProps) => (
-  <div className="mb-6 rounded-lg bg-white p-4 shadow-md dark:bg-gray-800">
-    <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
+  <div className="mb-6 rounded-lg bg-white p-4 shadow-md dark:bg-base-800">
+    <h3 className="mb-3 text-lg font-semibold text-base-900 dark:text-white">
       {title}
     </h3>
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -112,7 +112,7 @@ export const PlayerMetricsDashboard = ({
 
   if (!playerOverallStats) {
     return (
-      <p className="text-gray-700 dark:text-gray-300">
+      <p className="text-base-700 dark:text-base-300">
         No data available for {playerName}
       </p>
     );
@@ -142,7 +142,7 @@ export const PlayerMetricsDashboard = ({
 
   return (
     <div className="mt-6">
-      <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+      <h2 className="mb-4 text-2xl font-bold text-base-900 dark:text-white">
         Performance Metrics
       </h2>
 
@@ -157,13 +157,13 @@ export const PlayerMetricsDashboard = ({
         ))}
       </div>
 
-      <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="mb-4 border-b border-base-200 dark:border-base-700">
         <nav className="-mb-px flex">
           <button
             className={`mr-2 inline-block px-4 py-2 ${
               selectedTab === 0
                 ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+                : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
             }`}
             onClick={() => setSelectedTab(0)}
           >
@@ -173,7 +173,7 @@ export const PlayerMetricsDashboard = ({
             className={`mr-2 inline-block px-4 py-2 ${
               selectedTab === 1
                 ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+                : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
             }`}
             onClick={() => setSelectedTab(1)}
           >
@@ -183,7 +183,7 @@ export const PlayerMetricsDashboard = ({
             className={`mr-2 inline-block px-4 py-2 ${
               selectedTab === 2
                 ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+                : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
             }`}
             onClick={() => setSelectedTab(2)}
           >

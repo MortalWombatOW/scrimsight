@@ -22,8 +22,8 @@ export const PlayerStatsComparison = ({
 
   return (
     <>
-      <div className="border-b border-gray-200 dark:border-gray-700 py-2 mb-4">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+      <div className="border-b border-base-200 dark:border-base-700 py-2 mb-4">
+        <h2 className="text-xl font-semibold text-base-800 dark:text-base-200">
           {matchData.team1Name} Players
         </h2>
       </div>
@@ -44,8 +44,8 @@ export const PlayerStatsComparison = ({
           ))}
       </div>
 
-      <div className="border-b border-gray-200 dark:border-gray-700 py-2 mb-4">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+      <div className="border-b border-base-200 dark:border-base-700 py-2 mb-4">
+        <h2 className="text-xl font-semibold text-base-800 dark:text-base-200">
           {matchData.team2Name} Players
         </h2>
       </div>

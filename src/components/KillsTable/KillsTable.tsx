@@ -136,23 +136,23 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
     team2Kills.push(row);
   }
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <div className="bg-white rounded-lg border border-base-200 p-4 shadow-sm dark:bg-base-800 dark:border-base-700">
       <div className="flex flex-col md:flex-row gap-6">
         <div className="flex flex-col">
-          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+          <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
             Kills by {team1Name}
           </h3>
           <div className="grid grid-cols-12 mb-8">
             <div className="col-span-3">
               <div className="flex justify-end">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-xs text-base-500 dark:text-base-400">
                   Attackers
                 </span>
               </div>
             </div>
             <div className="col-span-9">
               <div className="flex justify-center">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-xs text-base-500 dark:text-base-400">
                   Victims
                 </span>
               </div>
@@ -168,7 +168,12 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               `${yLabel} killed ${xLabel} ${value} times`
             }
             cellRender={(_x: number, _y: number, value: number) => (
-              <span className="text-sm leading-[30px] text-gray-600 dark:text-gray-400">
+              <span
+                className="text-sm leading-[30px] text-base-600 dark:text-base-400"
+                style={{
+                  marginLeft: "90px",
+                }}
+              >
                 {value}
               </span>
             )}
@@ -189,24 +194,25 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               color: `rgb(0, 0, 0, ${ratio / 2 + 0.4})`,
               border: "none",
               margin: "3px",
+              marginLeft: "0px",
             })}
           />
         </div>
         <div className="flex flex-col mr-8">
-          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+          <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
             Kills by {team2Name}
           </h3>
           <div className="grid grid-cols-12 mb-8">
             <div className="col-span-3">
               <div className="flex justify-end">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-xs text-base-500 dark:text-base-400">
                   Attackers
                 </span>
               </div>
             </div>
             <div className="col-span-9">
               <div className="flex justify-center">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-xs text-base-500 dark:text-base-400">
                   Victims
                 </span>
               </div>
@@ -222,7 +228,7 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               `${yLabel} killed ${xLabel} ${value} times`
             }
             cellRender={(_x: number, _y: number, value: number) => (
-              <span className="text-sm leading-[30px] text-gray-600 dark:text-gray-400">
+              <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
                 {value}
               </span>
             )}
@@ -230,7 +236,7 @@ const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
               fontSize: ".7rem",
               rotate: "-45deg",
               marginBottom: "0.7rem",
-              marginLeft: "6px",
+              marginLeft: "8px",
               overflow: "visible",
             })}
             yLabelsStyle={() => ({

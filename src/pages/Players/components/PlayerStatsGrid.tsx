@@ -42,7 +42,7 @@ export const PlayerStatsGrid = () => {
           }}
         >
           {params.row.playerName || "Unknown"}
-          <div className="absolute left-0 bottom-full mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap">
+          <div className="absolute left-0 bottom-full mb-2 px-2 py-1 bg-base-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap">
             Click to view player details
           </div>
         </div>
@@ -125,14 +125,14 @@ export const PlayerStatsGrid = () => {
       })) || [];
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 h-[600px] w-full dark:bg-gray-800">
+    <div className="bg-white rounded-lg shadow-md p-4 h-[600px] w-full dark:bg-base-800">
       <div className="flex flex-wrap gap-4 mb-4">
         <div className="w-full md:w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-base-700 dark:text-base-300 mb-1">
             Role
           </label>
           <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            className="w-full px-3 py-2 border border-base-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-base-700 dark:border-base-600 dark:text-white"
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
           >
@@ -143,16 +143,16 @@ export const PlayerStatsGrid = () => {
           </select>
         </div>
         <div className="w-full md:w-[300px]">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-base-700 dark:text-base-300 mb-1">
             Search Players
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <SearchIcon className="h-5 w-5 text-gray-400" />
+              <SearchIcon className="h-5 w-5 text-base-400" />
             </div>
             <input
               type="text"
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className="w-full pl-10 pr-3 py-2 border border-base-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-base-700 dark:border-base-600 dark:text-white"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by player name..."

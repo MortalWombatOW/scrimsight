@@ -31,10 +31,10 @@ export const PlayersPage = () => {
   return (
     <div className="container mx-auto px-4 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold mb-2 text-base-900 dark:text-white">
           Players
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
+        <p className="text-lg text-base-600 dark:text-base-400">
           Comprehensive player statistics and performance metrics
         </p>
       </div>
@@ -74,14 +74,14 @@ export const PlayersPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md dark:bg-gray-800 mb-8">
-        <div className="border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white rounded-lg shadow-md dark:bg-base-800 mb-8">
+        <div className="border-b border-base-200 dark:border-base-700">
           <nav className="-mb-px flex">
             <button
               className={`mr-2 inline-block px-4 py-2 ${
                 selectedTab === 0
                   ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                  : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+                  : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
               }`}
               onClick={() => setSelectedTab(0)}
             >
@@ -91,7 +91,7 @@ export const PlayersPage = () => {
               className={`mr-2 inline-block px-4 py-2 ${
                 selectedTab === 1
                   ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                  : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+                  : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
               }`}
               onClick={() => setSelectedTab(1)}
             >
@@ -101,7 +101,7 @@ export const PlayersPage = () => {
               className={`mr-2 inline-block px-4 py-2 ${
                 selectedTab === 2
                   ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                  : "text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300"
+                  : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
               }`}
               onClick={() => setSelectedTab(2)}
             >

@@ -17,7 +17,7 @@ alwaysApply: false
         * **DaisyUI Component Usage:**
           ```jsx
           {/* Instead of this (Tailwind only): */}
-          <button className="inline-block cursor-pointer rounded-md bg-gray-800 px-4 py-3 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-900">
+          <button className="inline-block cursor-pointer rounded-md bg-base-800 px-4 py-3 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-base-900">
             Button
           </button>
 
@@ -65,7 +65,7 @@ alwaysApply: false
             </figure>
             <div className="card-body">
               <h2 className="card-title text-primary">Product Name</h2>
-              <p className="text-gray-600">Product description goes here</p>
+              <p className="text-base-600">Product description goes here</p>
               <div className="card-actions justify-end mt-4">
                 <button className="btn btn-primary">Buy Now</button>
               </div>

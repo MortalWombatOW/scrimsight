@@ -43,8 +43,8 @@ export const TeamPage = () => {
 
   return (
     <div className="p-6">
-      <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-gray-800">
-        <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-base-800">
+        <h1 className="text-3xl font-bold mb-4 text-base-900 dark:text-white">
           {teamNameDisplay}
         </h1>
 
@@ -73,14 +73,14 @@ export const TeamPage = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-gray-800">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-base-800">
+        <h2 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
           Players
         </h2>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+        <ul className="divide-y divide-base-200 dark:divide-base-700">
           {teamPlayers.players.map((playerName: string) => (
             <li key={playerName} className="py-3">
-              <p className="text-gray-800 dark:text-gray-200">{playerName}</p>
+              <p className="text-base-800 dark:text-base-200">{playerName}</p>
             </li>
           ))}
         </ul>
@@ -88,14 +88,14 @@ export const TeamPage = () => {
 
       <TeamCompositions teamName={teamNameSafe} />
 
-      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-base-800">
+        <h2 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
           Games Played
         </h2>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+        <ul className="divide-y divide-base-200 dark:divide-base-700">
           {teamMatches.map((match: MatchData) => (
             <li key={match.matchId} className="py-3">
-              <p className="text-gray-800 dark:text-gray-200">
+              <p className="text-base-800 dark:text-base-200">
                 {`${match.team1Name} vs ${match.team2Name} - ${match.dateString}`}
               </p>
             </li>

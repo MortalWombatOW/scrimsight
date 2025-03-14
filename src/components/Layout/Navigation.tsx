@@ -8,18 +8,18 @@ import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";
 import { useEffect } from "react";
 import RoleIcon from "../Common/RoleIcon";
+import { CiMap } from "react-icons/ci";
 
 const getTitle = (pathname: string) => {
   if (pathname === "/") {
     return "Scrimsight";
   }
 
-  if (pathname.startsWith("/matches")) {
-    if (pathname === "/matches") {
-      return "Matches";
+  if (pathname.startsWith("/scrims")) {
+    if (pathname === "/scrims") {
+      return "Scrims";
     }
-
-    return `Matches - ${pathname.split("/").pop()}`;
+    return `Scrims - ${pathname.split("/").pop()}`;
   }
 
   if (pathname.startsWith("/players")) {
@@ -80,7 +80,7 @@ export const Navigation = ({
             <summary>
               <Link
                 to={item.link}
-                className="flex flex-col items-start"
+                className="flex flex-col items-start rounded-md border-b border-base-200 p-2 hover:border-base-300"
                 onClick={closeMobileMenu}
               >
                 <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export const Navigation = ({
                   <span className="text-sm font-medium">{item.title}</span>
                 </div>
                 {item.subtitle && (
-                  <span className="text-xs text-gray-500">{item.subtitle}</span>
+                  <span className="text-xs text-base-500">{item.subtitle}</span>
                 )}
               </Link>
             </summary>
@@ -101,7 +101,7 @@ export const Navigation = ({
       <li key={item.title}>
         <Link
           to={item.link}
-          className="flex flex-col items-start"
+          className="flex flex-col items-start rounded-md p-2"
           onClick={closeMobileMenu}
         >
           <div className="flex items-center gap-2">
@@ -109,7 +109,7 @@ export const Navigation = ({
             <span className="text-sm font-medium">{item.title}</span>
           </div>
           {item.subtitle && (
-            <span className="text-xs text-gray-500">{item.subtitle}</span>
+            <span className="text-xs text-base-500">{item.subtitle}</span>
           )}
         </Link>
       </li>
@@ -118,41 +118,27 @@ export const Navigation = ({
 
   return (
     <nav className="h-full w-full overflow-y-auto">
-      <ul className="menu menu-md bg-base-100 rounded-box w-full gap-2 ">
-        {/* Home is always visible */}
-        <li>
-          <Link
-            to="/"
-            className={location.pathname === "/" ? "active font-semibold" : ""}
-            onClick={closeMobileMenu}
-          >
-            <span className="text-xl">
-              <AiOutlineHome />
-            </span>
-            Home
-          </Link>
-        </li>
+      <ul className="menu menu-md bg-base-100 rounded-box w-full gap-2">
         {renderMenuItem({
-          title: "Matches",
-          link: "/matches",
+          title: "Home",
+          link: "/",
+          icon: <AiOutlineHome />,
+        })}
+        {renderMenuItem({
+          title: "Scrims",
+          link: "/scrims",
           icon: <TbVs />,
           children: scrims.map((scrim) => ({
             title: `${scrim.team1Name} vs ${scrim.team2Name}`,
             subtitle: scrim.dateString,
-            link: `/matches/${scrim.matchIds[0]}`,
-            children: scrim.matchIds.flatMap((matchId) => {
-              const match = matchData.find(
-                (match) => match.matchId === matchId
-              );
-              if (!match) {
-                return [];
-              }
-              return [
-                {
-                  title: `${match.map} (${match.team1Score} - ${match.team2Score})`,
-                  link: `/matches/${matchId}`,
-                },
-              ];
+            link: `/scrims/${scrim.team1Name}--${scrim.team2Name}--${scrim.dateString}`,
+            children: scrim.matchIds.map((matchId) => {
+              const match = matchData.find((m) => m.matchId === matchId);
+              return {
+                title: `${match?.map} (${match?.team1Score}-${match?.team2Score})`,
+                link: `/matches/${matchId}`,
+                icon: <CiMap className="text-sm" />,
+              };
             }),
           })),
         })}

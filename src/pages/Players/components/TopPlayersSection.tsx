@@ -38,12 +38,12 @@ const TopPlayerCard = ({
       case "success.main":
         return "text-green-600 dark:text-green-400";
       default:
-        return "text-gray-600 dark:text-gray-400";
+        return "text-base-600 dark:text-base-400";
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 h-full transition-transform duration-200 hover:-translate-y-1 dark:bg-gray-800">
+    <div className="bg-white rounded-lg shadow-md p-4 h-full transition-transform duration-200 hover:-translate-y-1 dark:bg-base-800">
       <h3 className={`text-lg font-semibold mb-2 ${getColorClass()}`}>
         {title}
       </h3>
@@ -56,13 +56,13 @@ const TopPlayerCard = ({
             {player.playerName[0]}
           </div>
           <div>
-            <p className="text-base font-medium text-gray-900 dark:text-white">
+            <p className="text-base font-medium text-base-900 dark:text-white">
               {player.playerName}
             </p>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">{metric}</p>
+          <p className="text-sm text-base-500 dark:text-base-400">{metric}</p>
           <p className={`text-lg font-semibold ${getColorClass()}`}>
             {typeof value === "number" ? value.toLocaleString() : value}
           </p>
@@ -78,8 +78,8 @@ export const TopPlayersSection = () => {
 
   if (players.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
-        <p className="text-gray-700 dark:text-gray-300">
+      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-base-800">
+        <p className="text-base-700 dark:text-base-300">
           No player data available
         </p>
       </div>
@@ -105,7 +105,7 @@ export const TopPlayersSection = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
+      <h2 className="text-xl font-semibold mb-6 text-base-900 dark:text-white">
         Top Performers
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

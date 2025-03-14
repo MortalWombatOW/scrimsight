@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { Layout } from "./components/Layout/Layout";
 import { HomePage } from "./pages/Home";
 import { AddFilesPage } from "./pages/AddFiles/AddFilesPage";
-import { MatchesPage } from "./pages/Matches";
+import { ScrimsPage } from "./pages/Scrims/ScrimsPage";
 import { PlayersPage } from "./pages/Players/PlayersPage";
 import { TeamsPage } from "./pages/Teams";
 import { PlayerPage } from "./pages/Player";
@@ -16,6 +16,7 @@ import { CallbackPage } from "./pages/Auth/CallbackPage";
 import { TimelinePage } from "./pages/Match/TimelinePage";
 import { MatchOverviewPage } from "./pages/Match/MatchOverviewPage";
 import { MatchStatComparisonPage } from "./pages/Match/MatchStatComparisonPage";
+import { ScrimPage } from "./pages/Scrim/ScrimPage";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -39,7 +40,7 @@ const App = () => {
     <AuthProvider {...oidcConfig}>
       <Router>
         <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <div className="font-poppins min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+          <div className="font-poppins min-h-screen bg-base-200 dark:bg-base-900 text-base-900 dark:text-white">
             <Layout>
               <Suspense
                 fallback={
@@ -51,7 +52,8 @@ const App = () => {
                 <Routes>
                   <Route path="/" index element={<HomePage />} />
                   <Route path="/callback" element={<CallbackPage />} />
-                  <Route path="/matches" element={<MatchesPage />} />
+                  <Route path="/scrims" element={<ScrimsPage />} />
+                  <Route path="/scrims/:scrimId" element={<ScrimPage />} />
                   <Route path="/matches/:matchId" element={<MatchPage2 />}>
                     <Route index element={<MatchOverviewPage />} />
                     <Route path="timeline" element={<TimelinePage />} />

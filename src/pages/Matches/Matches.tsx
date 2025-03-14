@@ -8,7 +8,7 @@ import { useStats } from "../../atoms/metrics/playerMetricsAtoms";
 import { getHeroImage, formatTime } from "../../lib";
 import { CiMap } from "react-icons/ci";
 
-const PlayerCard = ({
+export const PlayerCard = ({
   playerName,
   matchId,
 }: {
@@ -46,7 +46,7 @@ const PlayerCard = ({
   );
 };
 
-const MatchCard = ({ matchId }: { matchId: string }) => {
+export const MatchCard = ({ matchId }: { matchId: string }) => {
   const matchData = useAtomValue(matchDataAtom);
   const match = matchData.find((match) => match.matchId === matchId);
   const playerStats = useStats(["playerName", "playerRole", "playerTeam"], {
@@ -399,7 +399,7 @@ export const MatchesPage = () => {
   ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-5xl">
+    <div className="container mx-auto px-4  max-w-5xl">
       <h1 className="text-3xl font-bold mb-6">Matches</h1>
 
       <div className="divide-y divide-base-300">

@@ -66,16 +66,16 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   };
 
   return (
-    <div className="grid grid-cols-7 gap-4 bg-white rounded-lg border border-gray-200 w-full max-w-[800px] p-2 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <div className="grid grid-cols-7 gap-4 bg-white rounded-lg border border-base-200 w-full max-w-[800px] p-2 shadow-sm dark:bg-base-800 dark:border-base-700">
       {/* Header row */}
       <div className="col-span-3 text-right">
-        <span className="text-md font-semibold text-gray-800 dark:text-gray-200">
+        <span className="text-md font-semibold text-base-800 dark:text-base-200">
           {matchData.team1Name}
         </span>
       </div>
       <div className="col-span-1"></div> {/* Center spacer */}
       <div className="col-span-3">
-        <span className="text-md font-semibold text-gray-800 dark:text-gray-200">
+        <span className="text-md font-semibold text-base-800 dark:text-base-200">
           {matchData.team2Name}
         </span>
       </div>
@@ -92,21 +92,21 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
             {/* Team 1 side */}
             <div className="col-span-3 flex flex-col items-end">
               <div className="flex items-center justify-end w-full mb-1">
-                <span className="text-sm font-medium text-gray-800 dark:text-gray-200 mr-2">
+                <span className="text-sm font-medium text-base-800 dark:text-base-200 mr-2">
                   {prettyFormat(team1Value)}
                 </span>
                 {winner === matchData.team1Name && (
-                  <span className="text-xs px-1 py-0.5 bg-gray-600 text-white dark:bg-gray-200 dark:text-gray-800 rounded">
+                  <span className="text-xs px-1 py-0.5 bg-base-600 text-white dark:bg-base-200 dark:text-base-800 rounded">
                     +{prettyFormat(team1Value - team2Value)}
                   </span>
                 )}
               </div>
-              <div className="h-4 w-full bg-gray-100 dark:bg-gray-700 rounded-l-sm overflow-hidden relative">
+              <div className="h-4 w-full bg-base-100 dark:bg-base-700 rounded-l-sm overflow-hidden relative">
                 <div
                   className={`h-full ${
                     winner === matchData.team1Name
-                      ? "bg-gray-600 dark:bg-gray-300"
-                      : "bg-gray-400 dark:bg-gray-600"
+                      ? "bg-base-600 dark:bg-base-300"
+                      : "bg-base-400 dark:bg-base-600"
                   } absolute right-0 top-0`}
                   style={{ width: `${team1Percentage}%` }}
                 ></div>
@@ -115,7 +115,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
 
             {/* Center label */}
             <div className="col-span-1 flex items-center justify-center">
-              <span className="text-xs text-gray-500 dark:text-gray-400 text-center capitalize">
+              <span className="text-xs text-base-500 dark:text-base-400 text-center capitalize">
                 {camelCaseToWords(stat)}
               </span>
             </div>
@@ -123,21 +123,21 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
             {/* Team 2 side */}
             <div className="col-span-3 flex flex-col">
               <div className="flex items-center w-full mb-1">
-                <span className="text-sm font-medium text-gray-800 dark:text-gray-200 ml-2">
+                <span className="text-sm font-medium text-base-800 dark:text-base-200 ml-2">
                   {prettyFormat(team2Value)}
                 </span>
                 {winner === matchData.team2Name && (
-                  <span className="text-xs px-1 py-0.5 bg-gray-600 text-white dark:bg-gray-200 dark:text-gray-800 rounded ml-2">
+                  <span className="text-xs px-1 py-0.5 bg-base-600 text-white dark:bg-base-200 dark:text-base-800 rounded ml-2">
                     +{prettyFormat(team2Value - team1Value)}
                   </span>
                 )}
               </div>
-              <div className="h-4 w-full bg-gray-100 dark:bg-gray-700 rounded-r-sm overflow-hidden relative">
+              <div className="h-4 w-full bg-base-100 dark:bg-base-700 rounded-r-sm overflow-hidden relative">
                 <div
                   className={`h-full ${
                     winner === matchData.team2Name
-                      ? "bg-gray-600 dark:bg-gray-300"
-                      : "bg-gray-400 dark:bg-gray-600"
+                      ? "bg-base-600 dark:bg-base-300"
+                      : "bg-base-400 dark:bg-base-600"
                   } absolute left-0 top-0`}
                   style={{ width: `${team2Percentage}%` }}
                 ></div>

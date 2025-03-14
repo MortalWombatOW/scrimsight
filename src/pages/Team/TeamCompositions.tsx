@@ -26,8 +26,8 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
   );
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-gray-800">
-      <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+    <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-base-800">
+      <h2 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
         Team Compositions
       </h2>
       {teamCompositions.length > 0 ? (
@@ -43,19 +43,19 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
             </p>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4 pb-2 border-b border-base-200 dark:border-base-700">
             {["tank", "damage", "support"].map((role) => (
               <div className="md:col-span-3" key={role}>
                 <div className="flex items-center gap-2">
                   <RoleIcon role={role} color="primary" />
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <p className="text-sm font-medium text-base-700 dark:text-base-300">
                     {role.charAt(0).toUpperCase() + role.slice(1)}
                   </p>
                 </div>
               </div>
             ))}
             <div className="md:col-span-3">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <p className="text-sm font-medium text-base-700 dark:text-base-300">
                 Time Played
               </p>
             </div>
@@ -99,7 +99,7 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
                           ) + "px",
                       }}
                     />
-                    <p className="text-sm text-gray-600 whitespace-nowrap dark:text-gray-400">
+                    <p className="text-sm text-base-600 whitespace-nowrap dark:text-base-400">
                       {formatDuration(composition.timePlayed)}
                     </p>
                   </div>
@@ -109,7 +109,7 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
           })}
         </div>
       ) : (
-        <p className="text-gray-500 dark:text-gray-400">
+        <p className="text-base-500 dark:text-base-400">
           No composition data available
         </p>
       )}

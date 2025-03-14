@@ -39,7 +39,7 @@ export const CompositionCard = ({
                     <div className="text-base">
                       <RoleIcon role={role} color="primary" />
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-base-500">
                       {role.charAt(0).toUpperCase() + role.slice(1)}
                     </span>
                   </div>
@@ -58,7 +58,7 @@ export const CompositionCard = ({
           </div>
         </div>
         <div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-base-500">
             Play time: {formatDuration(timePlayed)}
           </p>
         </div>

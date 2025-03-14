@@ -76,20 +76,20 @@ export const PlayerStatsCard = ({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm dark:bg-gray-800 dark:border-gray-700 h-full w-full transition-all duration-300 hover:shadow-md">
+    <div className="bg-white rounded-lg border border-base-200 p-4 shadow-sm dark:bg-base-800 dark:border-base-700 h-full w-full transition-all duration-300 hover:shadow-md">
       <div className="flex items-start">
         <div className="flex flex-col gap-3 w-full">
           <div className="flex items-center mb-1">
             <img
               src={heroImage}
               alt={`Hero`}
-              className="w-8 h-8 rounded-full mr-2 border border-gray-200 dark:border-gray-600"
+              className="w-8 h-8 rounded-full mr-2 border border-base-200 dark:border-base-600"
             />
             <div className="flex flex-col mr-3">
-              <h5 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+              <h5 className="text-sm font-semibold text-base-800 dark:text-base-200">
                 {playerName}
               </h5>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-base-500 dark:text-base-400">
                 {
                   playerStats.rows.find(
                     (stats) => stats.playerName === playerName
@@ -112,8 +112,8 @@ export const PlayerStatsCard = ({
                     flex items-center justify-center rounded-full w-6 h-6
                     ${
                       getRanking(stat).rank === 1
-                        ? "bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-800"
-                        : "bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-gray-200"
+                        ? "bg-base-800 text-white dark:bg-base-200 dark:text-base-800"
+                        : "bg-base-200 text-base-800 dark:bg-base-600 dark:text-base-200"
                     }
                   `}
                 >
@@ -121,11 +121,11 @@ export const PlayerStatsCard = ({
                     #{getRanking(stat).rank}
                   </span>
                 </div>
-                <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <span className="text-xs text-base-500 dark:text-base-400 mt-1">
                   {camelCaseToAbbreviation(stat)}
                 </span>
                 {showTooltip === stat && (
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-1 bg-gray-800 text-white text-xs p-1 rounded shadow-lg z-10 whitespace-nowrap dark:bg-gray-700">
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-1 bg-base-800 text-white text-xs p-1 rounded shadow-lg z-10 whitespace-nowrap dark:bg-base-700">
                     {camelCaseToWords(stat)}
                   </div>
                 )}
@@ -137,7 +137,7 @@ export const PlayerStatsCard = ({
             <div key={stat} className="mb-0">
               <div className="flex flex-col">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs text-gray-600 dark:text-gray-400 capitalize">
+                  <span className="text-xs text-base-600 dark:text-base-400 capitalize">
                     {stat === "finalBlows"
                       ? "Final Blows"
                       : stat === "allDamageDealt"
@@ -146,13 +146,13 @@ export const PlayerStatsCard = ({
                       ? "Ultimates Used"
                       : camelCaseToWords(stat)}
                   </span>
-                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  <span className="text-sm font-medium text-base-800 dark:text-base-200">
                     {prettyFormat(getStat(stat))}
                   </span>
                 </div>
-                <div className="h-[16px] w-full bg-gray-200 dark:bg-gray-700 rounded-sm overflow-hidden">
+                <div className="h-[16px] w-full bg-base-200 dark:bg-base-700 rounded-sm overflow-hidden">
                   <div
-                    className="h-full bg-gray-600 dark:bg-gray-500 rounded-sm"
+                    className="h-full bg-base-600 dark:bg-base-500 rounded-sm"
                     style={{
                       width: `${Math.max(5, getRanking(stat).percentage)}%`,
                     }}

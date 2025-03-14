@@ -41,10 +41,10 @@ export const PlayerOverviewCard = ({ playerName }: PlayerOverviewCardProps) => {
   const winRate = "50.0"; // Placeholder until we add win/loss tracking
 
   return (
-    <div className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
+    <div className="rounded-lg bg-white p-6 shadow-md dark:bg-base-800">
       <div className="mb-6 flex items-center">
         <PersonOutline className="mr-3 text-4xl text-primary-500 dark:text-primary-400" />
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-base-900 dark:text-white">
           {playerName}
         </h1>
       </div>
@@ -54,7 +54,7 @@ export const PlayerOverviewCard = ({ playerName }: PlayerOverviewCardProps) => {
         <div className="flex items-center">
           <EmojiEvents className="mr-3 text-green-500 dark:text-green-400" />
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Win Rate</p>
+            <p className="text-sm text-base-500 dark:text-base-400">Win Rate</p>
             <p className="text-lg font-semibold">{winRate}%</p>
           </div>
         </div>
@@ -63,7 +63,7 @@ export const PlayerOverviewCard = ({ playerName }: PlayerOverviewCardProps) => {
         <div className="flex items-center">
           <Timeline className="mr-3 text-amber-500 dark:text-amber-400" />
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-base-500 dark:text-base-400">
               K/D Ratio
             </p>
             <p className="text-lg font-semibold">
@@ -80,7 +80,7 @@ export const PlayerOverviewCard = ({ playerName }: PlayerOverviewCardProps) => {
         <div className="flex items-center">
           <Stars className="mr-3 text-secondary-500 dark:text-secondary-400" />
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-base-500 dark:text-base-400">
               Final Blows
             </p>
             <p className="text-lg font-semibold">
@@ -93,7 +93,7 @@ export const PlayerOverviewCard = ({ playerName }: PlayerOverviewCardProps) => {
         <div className="flex items-center">
           <Bolt className="mr-3 text-red-500 dark:text-red-400" />
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-base-500 dark:text-base-400">
               Eliminations
             </p>
             <p className="text-lg font-semibold">
@@ -104,7 +104,7 @@ export const PlayerOverviewCard = ({ playerName }: PlayerOverviewCardProps) => {
 
         {/* Top Heroes */}
         <div>
-          <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mb-2 text-sm text-base-500 dark:text-base-400">
             Top Heroes
           </p>
           <div className="flex flex-wrap gap-2">

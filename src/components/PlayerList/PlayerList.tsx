@@ -14,7 +14,7 @@ const PlayerRow = ({ playerName, matchCount, playerRole }: PlayerStats) => {
     <div className="w-[200px] h-[200px] flex flex-col relative overflow-visible border border-secondary-500 dashboard-item secondary rounded-md">
       <div className="flex-grow p-4 flex flex-col gap-2 items-center justify-center">
         <h2 className="text-xl font-medium text-center">{playerName}</h2>
-        <p className="text-gray-500 text-center">{playerRole}</p>
+        <p className="text-base-500 text-center">{playerRole}</p>
         <h3 className="text-2xl font-bold text-center">{matchCount} matches</h3>
       </div>
     </div>

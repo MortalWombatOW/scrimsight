@@ -84,7 +84,7 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
   }, [data]);
 
   // Calculate the width of each cell if square is true
-  const cellWidth = square ? cellHeight : "1fr";
+  const cellWidth = cellHeight;
 
   return (
     <div className="w-full relative">
@@ -92,8 +92,10 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
         className="grid"
         style={{
           display: "grid",
-          gridTemplateColumns: yLabels.length > 0 ? "auto 1fr" : "1fr",
-          gridTemplateRows: xLabels.length > 0 ? "auto 1fr" : "1fr",
+          gridTemplateColumns:
+            yLabels.length > 0 ? `auto ${cellWidth}px` : `${cellWidth}px`,
+          gridTemplateRows:
+            xLabels.length > 0 ? `auto ${cellHeight}px` : `${cellHeight}px`,
         }}
       >
         {/* Empty cell in top-left corner when both x and y labels exist */}
@@ -168,9 +170,10 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
               return (
                 <div
                   key={`cell-${y}-${x}`}
-                  className="flex items-center justify-center border border-gray-200 relative group"
+                  className="flex items-center justify-center border border-base-200 relative group"
                   style={{
                     height: cellHeight,
+                    width: cellWidth,
                     background: `rgba(120, 120, 120, ${ratio})`,
                     cursor: onClick ? "pointer" : "default",
                     ...(cellStyle ? cellStyle(x, y, ratio) : {}),
@@ -181,7 +184,7 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
                 >
                   {cellRender ? cellRender(x, y, value) : value}
                   {hoverText && (
-                    <div className="absolutebottom-0 left-1/2 transform -translate-x-1/2 translate-y-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none bg-gray-800 text-white text-sm rounded px-2 py-1 mt-1 shadow-lg max-w-xs text-center whitespace-normal">
+                    <div className="absolutebottom-0 left-1/2 transform -translate-x-1/2 translate-y-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none bg-base-800 text-white text-sm rounded px-2 py-1 mt-1 shadow-lg max-w-xs text-center whitespace-normal">
                       {hoverText(xLabel, yLabel, value)}
                     </div>
                   )}

@@ -42,8 +42,8 @@ export const PlayerPerformanceMetrics = () => {
 
   if (!averages) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
-        <p className="text-gray-700 dark:text-gray-300">
+      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-base-800">
+        <p className="text-base-700 dark:text-base-300">
           No performance data available
         </p>
       </div>
@@ -58,20 +58,20 @@ export const PlayerPerformanceMetrics = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
-      <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+    <div className="bg-white rounded-lg shadow-md p-4 dark:bg-base-800">
+      <h2 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
         Average Performance Metrics
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {Object.entries(averages).map(([key, value]) => (
           <div
             key={key}
-            className="p-3 border border-gray-200 rounded dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+            className="p-3 border border-base-200 rounded dark:border-base-700 hover:bg-base-50 dark:hover:bg-base-700"
           >
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-base-500 dark:text-base-400">
               {formatLabel(key)}
             </p>
-            <p className="text-lg font-semibold text-gray-900 dark:text-white">
+            <p className="text-lg font-semibold text-base-900 dark:text-white">
               {key === "weaponAccuracy"
                 ? `${(value * 100).toFixed(1)}%`
                 : value.toLocaleString(undefined, { maximumFractionDigits: 2 })}

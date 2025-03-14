@@ -22,7 +22,7 @@ export const StatCard: React.FC<StatCardProps> = ({
             {icon}
           </div>
         )}
-        <p className="text-sm font-medium text-gray-500">{title}</p>
+        <p className="text-sm font-medium text-base-500">{title}</p>
       </div>
       <p className="text-2xl font-bold" style={{ color }}>
         {value}

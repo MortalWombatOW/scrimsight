@@ -79,8 +79,8 @@ export const HeroPoolAnalysis = () => {
 
   if (heroPoolStats.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
-        <p className="text-gray-700 dark:text-gray-300">
+      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-base-800">
+        <p className="text-base-700 dark:text-base-300">
           No hero pool data available
         </p>
       </div>
@@ -100,13 +100,13 @@ export const HeroPoolAnalysis = () => {
       case "support":
         return "text-green-600 dark:text-green-400";
       default:
-        return "text-gray-600 dark:text-gray-400";
+        return "text-base-600 dark:text-base-400";
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
-      <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+    <div className="bg-white rounded-lg shadow-md p-4 dark:bg-base-800">
+      <h2 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
         Hero Pool Analysis
       </h2>
 
@@ -121,16 +121,16 @@ export const HeroPoolAnalysis = () => {
             .map((hero) => (
               <div key={hero.hero} className="mb-3">
                 <div className="flex justify-between mb-1">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <p className="text-sm font-medium text-base-900 dark:text-white">
                     {hero.hero}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-base-500 dark:text-base-400">
                     {hero.matches} matches
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-grow">
-                    <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div className="w-full bg-base-200 rounded-full h-2 dark:bg-base-700">
                       <div
                         className={`h-2 rounded-full ${
                           role === "tank"
@@ -146,16 +146,16 @@ export const HeroPoolAnalysis = () => {
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-base-500 dark:text-base-400">
                       {Math.round(hero.avgElims)} elims
                     </p>
                     {hero.role !== "support" && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-base-500 dark:text-base-400">
                         {Math.round(hero.avgDamage).toLocaleString()} dmg
                       </p>
                     )}
                     {hero.role === "support" && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-base-500 dark:text-base-400">
                         {Math.round(hero.avgHealing).toLocaleString()} heal
                       </p>
                     )}
