@@ -1,32 +1,35 @@
-interface StatCardProps {
+import React from "react";
+
+export interface StatCardProps {
   title: string;
   value: string;
   color: string;
+  trend?: "positive" | "negative" | "neutral"; // Make trend optional
   icon?: React.ReactNode;
+  description?: string; // Add description prop
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
   title,
   value,
   color,
+  trend = "neutral", // Default value
   icon,
+  description
 }) => {
   return (
-    <div
-      className="w-full h-full border rounded-md p-4 transition-transform duration-200 hover:-translate-y-1"
-      style={{ borderColor: color }}
-    >
-      <div className="flex items-center mb-2">
-        {icon && (
-          <div className="flex items-center mr-2" style={{ color }}>
-            {icon}
+    <div className={`stats shadow bg-${color} text-${color}-content`}>
+      <div className="stat">
+        {icon && <div className="stat-figure">{icon}</div>}
+        <div className="stat-title">{title}</div>
+        <div className="stat-value">{value}</div>
+        {description && <div className="stat-desc">{description}</div>}
+        {trend !== "neutral" && (
+          <div className={`stat-desc text-${trend === "positive" ? "success" : "error"}`}>
+            {trend === "positive" ? "↗" : "↘"}
           </div>
         )}
-        <p className="text-sm font-medium text-base-500">{title}</p>
       </div>
-      <p className="text-2xl font-bold" style={{ color }}>
-        {value}
-      </p>
     </div>
   );
 };

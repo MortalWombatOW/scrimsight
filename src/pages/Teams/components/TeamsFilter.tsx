@@ -14,7 +14,7 @@ export const TeamsFilter = ({
   onSortChange,
 }: TeamsFilterProps) => {
   return (
-    <div className="rounded-lg bg-white p-4 shadow-md mb-6 dark:bg-base-800">
+    <div className="rounded-lg bg-base p-4 shadow-md mb-6 dark:bg-base-800">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
         <div>
           <label className="block text-sm font-medium text-base-700 dark:text-base-300 mb-1">

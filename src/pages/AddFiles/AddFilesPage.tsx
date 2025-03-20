@@ -93,7 +93,7 @@ export const AddFilesPage = () => {
             checked={sampleDataEnabled}
             onChange={(e) => setSampleDataEnabled(e.target.checked)}
           />
-          <div className="relative w-11 h-6 bg-base-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-800 rounded-full peer dark:bg-base-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-base-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-base-600 peer-checked:bg-primary-600"></div>
+          <div className="relative w-11 h-6 bg-base-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-800 rounded-full peer dark:bg-base-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base after:border-base-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-base-600 peer-checked:bg-primary-600"></div>
         </label>
       </div>
 
@@ -120,7 +120,7 @@ export const AddFilesPage = () => {
         <h2 className="text-lg font-semibold mb-2 text-base-900 dark:text-white">
           Upload Files
         </h2>
-        <label className="inline-block px-4 py-2 bg-white border border-base-300 rounded-md text-base-700 font-medium cursor-pointer hover:bg-base-50 dark:bg-base-800 dark:border-base-600 dark:text-base-200 dark:hover:bg-base-700 transition-colors">
+        <label className="inline-block px-4 py-2 bg-base border border-base-300 rounded-md text-base-700 font-medium cursor-pointer hover:bg-base-50 dark:bg-base-800 dark:border-base-600 dark:text-base-200 dark:hover:bg-base-700 transition-colors">
           Browse Files
           <input
             type="file"
@@ -132,7 +132,7 @@ export const AddFilesPage = () => {
         </label>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-base-800">
+      <div className="bg-base rounded-lg shadow-md p-4 dark:bg-base-800">
         <h2 className="text-lg font-semibold mb-4 text-base-900 dark:text-white">
           Files Added
         </h2>

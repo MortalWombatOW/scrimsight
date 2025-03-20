@@ -56,15 +56,15 @@ export const TimelineControls: React.FC = () => {
               style={{ width: `${segment.startTime * timeScale}%` }}
             ></div>
             <div
-              className={`h-2 ${
+              className={`h-2 bg-base-content ${
                 segment.startTime === mapTime.startTime &&
                 segment.endTime === mapTime.endTime
-                  ? "bg-base-600 rounded-full"
+                  ? "rounded-full"
                   : segment.startTime === mapTime.startTime
-                  ? "bg-base-600 rounded-l-full"
+                  ? "rounded-l-full"
                   : segment.endTime === mapTime.endTime
-                  ? "bg-base-600 rounded-r-full"
-                  : "bg-base-600"
+                  ? "rounded-r-full"
+                  : ""
               }`}
               style={{ width: `${Math.max(duration * timeScale, 1)}%` }}
             ></div>

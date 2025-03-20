@@ -26,7 +26,7 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
   );
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-base-800">
+    <div className="bg-base rounded-lg shadow-md p-4 mb-6 dark:bg-base-800">
       <h2 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
         Team Compositions
       </h2>

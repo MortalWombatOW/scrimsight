@@ -29,7 +29,7 @@ export const TeamsVisualization = ({ teams }: TeamsVisualizationProps) => {
     .sort((a, b) => a.wins - b.wins);
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow-md mb-6 dark:bg-base-800">
+    <div className="rounded-lg bg-base p-4 shadow-md mb-6 dark:bg-base-800">
       <h2 className="text-xl font-semibold mb-3 text-base-900 dark:text-white">
         Team Wins Distribution
       </h2>

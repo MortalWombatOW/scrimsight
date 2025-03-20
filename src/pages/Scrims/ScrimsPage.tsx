@@ -1,9 +1,15 @@
 import { useAtomValue } from "jotai";
-import { scrimAtom, matchDataAtom } from "../../atoms";
+import { matchDataAtom } from "../../atoms";
+import { scrimAtom } from "../../atoms/scrimAtom";
 import { useNavigate } from "react-router-dom";
-import { Suspense } from "react";
 import { formatTime } from "../../lib";
 import { CiMap } from "react-icons/ci";
+
+interface Scrim {
+  id: string;
+  matchIds: string[];
+  // Add other properties as needed
+}
 
 export const ScrimsPage = () => {
   const navigate = useNavigate();
@@ -21,7 +27,7 @@ export const ScrimsPage = () => {
       <h1 className="text-3xl font-bold mb-6">Scrims</h1>
 
       <div className="space-y-6">
-        {scrims.map((scrim) => (
+        {scrims.map((scrim: Scrim) => (
           <div
             key={`${scrim.team1Name}-${scrim.team2Name}-${scrim.dateString}`}
             className="card bg-base-100 shadow-xl"

@@ -1,12 +1,10 @@
-import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import { scrimAtom } from "../../atoms/scrimAtom";
-import { matchDataAtom } from "../../atoms/matchDataAtom";
-import { Suspense } from "react";
+import { scrimAtom, matchDataAtom } from "../../atoms";
 import { formatTime, mapNameToFileName } from "../../lib";
 import { CiMap } from "react-icons/ci";
 import { IoTimeOutline } from "react-icons/io5";
 import { TbTournament } from "react-icons/tb";
+import { Link, useParams } from "react-router-dom"; // Import the Link component
 
 export const ScrimPage = () => {
   const { scrimId } = useParams<{ scrimId: string }>();
@@ -137,9 +135,10 @@ export const ScrimPage = () => {
               const isDraw = match.team1Score === match.team2Score;
 
               return (
-                <div
+                <Link // Wrap the card in a Link
                   key={matchId}
-                  className="card bg-base-200 hover:bg-base-300 transition-all"
+                  to={`/matches/${matchId}`} // Link to the match page
+                  className="card bg-base-200 hover:bg-base-300 transition-colors block" // Added 'block' to make the entire card clickable
                 >
                   <div className="card-body p-4">
                     <div className="flex flex-col lg:flex-row gap-4">
@@ -181,7 +180,7 @@ export const ScrimPage = () => {
                         <div className="flex items-center justify-center gap-8 bg-base-300 p-4 rounded-lg">
                           <div
                             className={`text-center ${
-                              isTeam1Winner ? "text-primary" : ""
+                              isTeam1Winner ? "font-bold" : ""
                             }`}
                           >
                             <div className="text-xl font-bold">
@@ -196,7 +195,7 @@ export const ScrimPage = () => {
                           </div>
                           <div
                             className={`text-center ${
-                              isTeam2Winner ? "text-primary" : ""
+                              isTeam2Winner ? "font-bold" : ""
                             }`}
                           >
                             <div className="text-xl font-bold">
@@ -224,7 +223,7 @@ export const ScrimPage = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

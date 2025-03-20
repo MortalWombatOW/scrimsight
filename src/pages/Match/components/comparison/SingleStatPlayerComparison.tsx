@@ -20,6 +20,15 @@ interface SingleStatPlayerComparisonProps {
   matchId: string;
 }
 
+const chartStyle = {
+  bar: {
+    fill: "var(--color-base-content)",
+  },
+  background: {
+    fill: "var(--color-base-200)",
+  },
+};
+
 export const SingleStatPlayerComparison = ({
   matchId,
 }: SingleStatPlayerComparisonProps) => {
@@ -96,7 +105,7 @@ export const SingleStatPlayerComparison = ({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-3 border border-base-200 rounded shadow-md dark:bg-base-800 dark:border-base-700">
+        <div className="bg-base p-3 border border-base-200 rounded shadow-md dark:bg-base-800 dark:border-base-700">
           <p className="font-semibold text-base-800 dark:text-base-200 mb-1">
             {data.playerName}
           </p>
@@ -113,7 +122,7 @@ export const SingleStatPlayerComparison = ({
   };
 
   return (
-    <div className="bg-white rounded-lg border border-base-200 w-full p-6 shadow-sm dark:bg-base-800 dark:border-base-700">
+    <div className="bg-base rounded-lg border border-base-200 w-full p-6 shadow-sm dark:bg-base-800 dark:border-base-700">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-4 border-b border-base-200 dark:border-base-700">
           <h3 className="text-xl font-semibold text-base-900 dark:text-white">
@@ -176,12 +185,12 @@ export const SingleStatPlayerComparison = ({
                   />
                   <Bar
                     dataKey="value"
-                    fill="oklch(0.373 0.034 259.733)"
+                    style={chartStyle.bar}
                     radius={[0, 4, 4, 0]}
                     label={{
                       position: "right",
                       formatter: (value: number) => prettyFormat(value),
-                      fill: "#4b5563",
+                      fill: "var(--color-base-content)",
                       fontSize: 12,
                       fontWeight: "bold",
                     }}
@@ -223,12 +232,12 @@ export const SingleStatPlayerComparison = ({
                   />
                   <Bar
                     dataKey="value"
-                    fill="oklch(0.373 0.034 259.733)"
+                    style={chartStyle.bar}
                     radius={[0, 4, 4, 0]}
                     label={{
                       position: "right",
                       formatter: (value: number) => prettyFormat(value),
-                      fill: "#4b5563",
+                      fill: "var(--color-base-content)",
                       fontSize: 12,
                       fontWeight: "bold",
                     }}
@@ -288,13 +297,13 @@ export const SingleStatPlayerComparison = ({
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-base-200 dark:bg-base-800 dark:divide-base-700">
+              <tbody className="bg-base divide-y divide-base-200 dark:bg-base-800 dark:divide-base-700">
                 {sortedData.map((player, index) => (
                   <tr
                     key={player.playerName}
                     className={
                       index % 2 === 0
-                        ? "bg-white dark:bg-base-800"
+                        ? "bg-base dark:bg-base-800"
                         : "bg-base-50 dark:bg-base-750"
                     }
                   >

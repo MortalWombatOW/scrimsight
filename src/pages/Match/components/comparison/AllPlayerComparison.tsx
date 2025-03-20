@@ -30,6 +30,12 @@ interface PlayerDataPoint {
   [key: string]: any;
 }
 
+const chartStyle = {
+  scatter: {
+    fill: "var(--color-base-content)",
+  },
+};
+
 export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
   const matchData = useAtomValue(matchDataAtom).find(
     (match) => match.matchId === matchId
@@ -119,7 +125,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-3 border border-base-200 rounded shadow-md dark:bg-base-800 dark:border-base-700">
+        <div className="bg-base p-3 border border-base-200 rounded shadow-md dark:bg-base-800 dark:border-base-700">
           <p className="font-semibold text-base-800 dark:text-base-200 mb-1">
             {data.playerName}
           </p>
@@ -149,7 +155,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-base-200 w-full p-6 shadow-sm dark:bg-base-800 dark:border-base-700">
+    <div className="bg-base rounded-lg border border-base-200 w-full p-6 shadow-sm dark:bg-base-800 dark:border-base-700">
       <div className="flex flex-col gap-6">
         <h2 className="text-xl font-semibold text-base-800 dark:text-base-200 pb-2 border-b border-base-200 dark:border-base-700">
           Player Comparison
@@ -235,6 +241,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
               <Scatter
                 name={matchData.team1Name}
                 data={allPlayerData}
+                style={chartStyle.scatter}
                 shape={renderShape}
               />
             </ScatterChart>
@@ -304,13 +311,13 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-base-200 dark:bg-base-800 dark:divide-base-700">
+            <tbody className="bg-base divide-y divide-base-200 dark:bg-base-800 dark:divide-base-700">
               {sortedData.map((player, index) => (
                 <tr
                   key={player.playerName}
                   className={
                     index % 2 === 0
-                      ? "bg-white dark:bg-base-800"
+                      ? "bg-base dark:bg-base-800"
                       : "bg-base-50 dark:bg-base-750"
                   }
                 >

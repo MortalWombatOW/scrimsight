@@ -46,7 +46,7 @@ export const HomePage = (): React.ReactNode => {
         {modules.map((module) => (
           <div
             key={module.title}
-            className="w-64 bg-white rounded-lg shadow-md overflow-hidden dark:bg-base-800"
+            className="w-64 bg-base rounded-lg shadow-md overflow-hidden dark:bg-base-800"
           >
             <div className="p-4">
               <h3 className="text-xl font-medium text-base-900 dark:text-white">

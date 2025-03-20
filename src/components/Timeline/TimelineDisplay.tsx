@@ -88,8 +88,8 @@ export const TimelineDisplay: React.FC = () => {
   }) => {
     const borderColor =
       teamColor === "team1"
-        ? "border-base-600 bg-red-100"
-        : "border-base-500 bg-blue-100";
+        ? "border-red-600 bg-red-100"
+        : "border-blue-600 bg-blue-100";
 
     const activeEffect = active
       ? "scale-105 z-10 shadow-sm ring-1 ring-base-300 ring-opacity-50"
@@ -105,11 +105,11 @@ export const TimelineDisplay: React.FC = () => {
           className={`rounded-full border ${activeEffect} ${borderColor} flex-shrink-0`}
           style={{ padding: "2px" }}
         >
-          <img
+          {/* <img
             src={getHeroImage(hero)}
             alt={hero}
             className="w-5 h-5 rounded-full"
-          />
+          /> */}
         </div>
         <div className="flex flex-col ml-1.5">
           <div className="text-xs text-base-700 font-medium leading-none">
@@ -202,7 +202,7 @@ export const TimelineDisplay: React.FC = () => {
 
           {/* Event badges container */}
           <div
-            className="flex flex-col py-1 px-1.5 rounded bg-white bg-opacity-70 backdrop-blur-sm shadow-sm"
+            className="flex flex-col py-1 px-1.5 rounded bg-base bg-opacity-70 backdrop-blur-sm shadow-sm"
             style={{
               marginTop: isTeam1 ? `${yOffset - 5}px` : "0px",
               marginBottom: isTeam1 ? "0px" : `${-yOffset + 5}px`,

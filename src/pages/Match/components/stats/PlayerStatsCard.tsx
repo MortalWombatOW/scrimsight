@@ -6,6 +6,7 @@ import {
   camelCaseToWords,
   prettyFormat,
 } from "../../../../lib";
+import { ProgressBar } from "../../../../components/ProgressBar";
 
 interface PlayerStatsCardProps {
   playerName: string;
@@ -76,7 +77,7 @@ export const PlayerStatsCard = ({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-base-200 p-4 shadow-sm dark:bg-base-800 dark:border-base-700 h-full w-full transition-all duration-300 hover:shadow-md">
+    <div className="bg-base-100 rounded-lg border border-base-200 p-4 shadow-sm dark:bg-base-800 dark:border-base-700 h-full w-full transition-all duration-300 hover:shadow-md">
       <div className="flex items-start">
         <div className="flex flex-col gap-3 w-full">
           <div className="flex items-center mb-1">
@@ -150,14 +151,7 @@ export const PlayerStatsCard = ({
                     {prettyFormat(getStat(stat))}
                   </span>
                 </div>
-                <div className="h-[16px] w-full bg-base-200 dark:bg-base-700 rounded-sm overflow-hidden">
-                  <div
-                    className="h-full bg-base-600 dark:bg-base-500 rounded-sm"
-                    style={{
-                      width: `${Math.max(5, getRanking(stat).percentage)}%`,
-                    }}
-                  ></div>
-                </div>
+                <ProgressBar value={getRanking(stat).percentage} />
               </div>
             </div>
           ))}

@@ -82,7 +82,7 @@ export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
     >
       <div className="relative">
         {/* Input field */}
-        <div className="relative flex flex-wrap items-center gap-1 rounded-md border border-base-300 bg-white p-2 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:border-base-600 dark:bg-base-700">
+        <div className="relative flex flex-wrap items-center gap-1 rounded-md border border-base-300 bg-base p-2 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:border-base-600 dark:bg-base-700">
           {/* Icon */}
           {icon && (
             <span className="mr-2 text-base-500 dark:text-base-400">
@@ -120,14 +120,14 @@ export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
         </div>
 
         {/* Floating label */}
-        <span className="absolute -top-2 left-2 bg-white px-1 text-xs text-base-600 dark:bg-base-800 dark:text-base-400">
+        <span className="absolute -top-2 left-2 bg-base px-1 text-xs text-base-600 dark:bg-base-800 dark:text-base-400">
           {label}
         </span>
       </div>
 
       {/* Dropdown */}
       {isOpen && (
-        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-base-300 bg-white py-1 shadow-md dark:border-base-600 dark:bg-base-800">
+        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-base-300 bg-base py-1 shadow-md dark:border-base-600 dark:bg-base-800">
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (
               <li

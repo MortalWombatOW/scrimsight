@@ -79,7 +79,7 @@ const UserMenu = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-base-800">
+        <div className="absolute right-0 mt-2 w-48 rounded-md bg-base py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-base-800">
           {discordUsername && (
             <div className="px-4 py-2 text-sm text-base-500 dark:text-base-400">
               {discordUsername}
@@ -209,7 +209,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                   checked={sampleDataEnabled}
                   onChange={(e) => setSampleDataEnabled(e.target.checked)}
                 />
-                <div className="h-6 w-11 rounded-full bg-base-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-500 peer-checked:after:translate-x-full dark:bg-base-600"></div>
+                <div className="h-6 w-11 rounded-full bg-base-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-base after:transition-all after:content-[''] peer-checked:bg-primary-500 peer-checked:after:translate-x-full dark:bg-base-600"></div>
               </div>
             </label>
 

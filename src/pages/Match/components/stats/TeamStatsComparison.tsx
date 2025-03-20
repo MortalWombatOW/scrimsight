@@ -2,6 +2,7 @@ import React from "react";
 import { useAtomValue } from "jotai";
 import { matchDataAtom, useStats } from "../../../../atoms";
 import { camelCaseToWords, prettyFormat } from "../../../../lib";
+import { ProgressBar } from "../../../../components/ProgressBar";
 
 interface TeamStatsComparisonProps {
   matchId: string;
@@ -66,7 +67,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   };
 
   return (
-    <div className="grid grid-cols-7 gap-4 bg-white rounded-lg border border-base-200 w-full max-w-[800px] p-2 shadow-sm dark:bg-base-800 dark:border-base-700">
+    <div className="grid grid-cols-7 gap-4 bg-base-100 rounded-lg border border-base-200 w-full max-w-[800px] p-2 shadow-sm dark:bg-base-800 dark:border-base-700">
       {/* Header row */}
       <div className="col-span-3 text-right">
         <span className="text-md font-semibold text-base-800 dark:text-base-200">
@@ -101,16 +102,11 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
                   </span>
                 )}
               </div>
-              <div className="h-4 w-full bg-base-100 dark:bg-base-700 rounded-l-sm overflow-hidden relative">
-                <div
-                  className={`h-full ${
-                    winner === matchData.team1Name
-                      ? "bg-base-600 dark:bg-base-300"
-                      : "bg-base-400 dark:bg-base-600"
-                  } absolute right-0 top-0`}
-                  style={{ width: `${team1Percentage}%` }}
-                ></div>
-              </div>
+              <ProgressBar
+                value={team1Value}
+                maxValue={team1Value + team2Value}
+                className="rounded-l-sm"
+              />
             </div>
 
             {/* Center label */}
@@ -132,16 +128,12 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
                   </span>
                 )}
               </div>
-              <div className="h-4 w-full bg-base-100 dark:bg-base-700 rounded-r-sm overflow-hidden relative">
-                <div
-                  className={`h-full ${
-                    winner === matchData.team2Name
-                      ? "bg-base-600 dark:bg-base-300"
-                      : "bg-base-400 dark:bg-base-600"
-                  } absolute left-0 top-0`}
-                  style={{ width: `${team2Percentage}%` }}
-                ></div>
-              </div>
+              <ProgressBar
+                value={team2Value}
+                maxValue={team1Value + team2Value}
+                className="rounded-r-sm"
+                reverse={true}
+              />
             </div>
           </React.Fragment>
         );

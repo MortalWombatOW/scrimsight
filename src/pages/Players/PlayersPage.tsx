@@ -1,145 +1,65 @@
-import { useAtomValue } from "jotai";
 import { useState } from "react";
-import { uniquePlayerNamesAtom } from "../../atoms/uniquePlayerNamesAtom";
-import { PlayerStatsGrid } from "./components/PlayerStatsGrid";
-import { TopPlayersSection } from "./components/TopPlayersSection";
-import { HeroDistributionChart } from "./components/HeroDistributionChart";
-import { HeroPoolAnalysis } from "./components/HeroPoolAnalysis";
-import { PlayerPerformanceMetrics } from "./components/PlayerPerformanceMetrics";
-import { StatCard } from "../../components/StatCard";
-import {
-  People as PeopleIcon,
-  Security as TankIcon,
-  Whatshot as DamageIcon,
-  Support as SupportIcon,
-} from "@mui/icons-material";
+import { useStats } from "../../atoms/metrics/playerMetricsAtoms";
+import { PlayersOverview } from "./components/Overview/PlayersOverview";
+import { PlayersPerformance } from "./components/Performance/PlayersPerformance";
+import { PlayersHeroes } from "./components/Heroes/PlayersHeroes";
+import { ErrorMessage } from "../../components/Common/ErrorMessage";
+
+type ViewType = "overview" | "performance" | "heroes";
 
 export const PlayersPage = () => {
-  const players = useAtomValue(uniquePlayerNamesAtom);
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [activeView, setActiveView] = useState<ViewType>("overview");
+  const playerStats = useStats(["playerName"]);
 
-  // Calculate overall statistics
-  const totalPlayers = players?.length || 0;
+  if (!playerStats) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
-  // Role distribution (mock data for now, should be replaced with actual data)
-  const roleDistribution = {
-    tank: Math.round(totalPlayers * 0.2),
-    damage: Math.round(totalPlayers * 0.5),
-    support: Math.round(totalPlayers * 0.3),
-  };
+  if (playerStats.rows.length === 0) {
+    return (
+      <ErrorMessage message="No data available for players" />
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-base-900 dark:text-white">
-          Players
-        </h1>
-        <p className="text-lg text-base-600 dark:text-base-400">
-          Comprehensive player statistics and performance metrics
-        </p>
-      </div>
+    <div className="min-h-screen bg-base-100">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <header className="mb-8 bg-base-200 p-6 rounded-box">
+          <h1 className="text-3xl font-bold text-base-content">
+            Player Statistics
+          </h1>
+          <p className="mt-2 text-base-content/70">
+            Comprehensive analysis of player performance across all matches
+          </p>
+        </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-        <div>
-          <StatCard
-            title="Total Players"
-            value={totalPlayers.toString()}
-            icon={<PeopleIcon />}
-            color="primary.main"
-          />
-        </div>
-        <div>
-          <StatCard
-            title="Tank Players"
-            value={roleDistribution.tank.toString()}
-            icon={<TankIcon />}
-            color="info.main"
-          />
-        </div>
-        <div>
-          <StatCard
-            title="Damage Players"
-            value={roleDistribution.damage.toString()}
-            icon={<DamageIcon />}
-            color="error.main"
-          />
-        </div>
-        <div>
-          <StatCard
-            title="Support Players"
-            value={roleDistribution.support.toString()}
-            icon={<SupportIcon />}
-            color="success.main"
-          />
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-md dark:bg-base-800 mb-8">
-        <div className="border-b border-base-200 dark:border-base-700">
-          <nav className="-mb-px flex">
+        {/* Navigation */}
+        <div className="tabs tabs-boxed bg-base-200 p-1 mb-8">
+          {["overview", "performance", "heroes"].map((view) => (
             <button
-              className={`mr-2 inline-block px-4 py-2 ${
-                selectedTab === 0
-                  ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                  : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
-              }`}
-              onClick={() => setSelectedTab(0)}
+              key={view}
+              onClick={() => setActiveView(view as ViewType)}
+              className={`tab ${
+                activeView === view
+                  ? "tab-active bg-base-300"
+                  : "text-base-content/70 hover:text-base-content"
+              } capitalize`}
             >
-              Overview
+              {view}
             </button>
-            <button
-              className={`mr-2 inline-block px-4 py-2 ${
-                selectedTab === 1
-                  ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                  : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
-              }`}
-              onClick={() => setSelectedTab(1)}
-            >
-              Performance
-            </button>
-            <button
-              className={`mr-2 inline-block px-4 py-2 ${
-                selectedTab === 2
-                  ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                  : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
-              }`}
-              onClick={() => setSelectedTab(2)}
-            >
-              Heroes
-            </button>
-          </nav>
+          ))}
         </div>
 
-        <div className="p-6">
-          {selectedTab === 0 && (
-            <div className="grid grid-cols-1 gap-6">
-              <div>
-                <TopPlayersSection />
-              </div>
-              <div>
-                <PlayerStatsGrid />
-              </div>
-            </div>
-          )}
-
-          {selectedTab === 1 && (
-            <div className="grid grid-cols-1 gap-6">
-              <div>
-                <PlayerPerformanceMetrics />
-              </div>
-            </div>
-          )}
-
-          {selectedTab === 2 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <HeroDistributionChart />
-              </div>
-              <div>
-                <HeroPoolAnalysis />
-              </div>
-            </div>
-          )}
+        {/* Content */}
+        <div className="mt-8">
+          {activeView === "overview" && <PlayersOverview />}
+          {activeView === "performance" && <PlayersPerformance />}
+          {activeView === "heroes" && <PlayersHeroes />}
         </div>
       </div>
     </div>

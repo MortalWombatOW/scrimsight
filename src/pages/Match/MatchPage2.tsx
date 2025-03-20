@@ -26,7 +26,7 @@ export const MatchPage2 = () => {
   return (
     <div className="flex flex-col gap-6 items-left w-full mx-auto">
       <div className="flex flex-row gap-4 flex-wrap">
-        <section className="bg-white border border-base-200 p-6 rounded-lg w-fit h-fit shadow-sm flex flex-row flex-wrap gap-4">
+        <section className="bg-base-100 border border-base-200 p-6 rounded-lg w-fit h-fit shadow-sm flex flex-row flex-wrap gap-4">
           <img
             src={mapNameToFileName(matchData.map, false)}
             alt={matchData.map}
@@ -84,7 +84,7 @@ export const MatchPage2 = () => {
       </div>
 
       {/* navigation buttons */}
-      <div className="bg-white border border-base-200 rounded-lg shadow-sm dark:bg-base-800 dark:border-base-700">
+      <div className="bg-base-100 border border-base-200 rounded-lg shadow-sm dark:bg-base-800 dark:border-base-700">
         <div className="border-b border-base-200 dark:border-base-700">
           <nav className="-mb-px flex">
             <Link

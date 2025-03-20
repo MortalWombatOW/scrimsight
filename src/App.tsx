@@ -63,7 +63,10 @@ const App = () => {
                     />
                   </Route>
                   <Route path="/players" element={<PlayersPage />} />
-                  <Route path="/players/:playerName" element={<PlayerPage />} />
+                  <Route
+                    path="/players/:playerName"
+                    element={<PlayerPage />}
+                  ></Route>
                   <Route path="/teams" element={<TeamsPage />} />
                   <Route path="/teams/:teamId" element={<TeamPage />} />
                   <Route path="/files" element={<AddFilesPage />} />
