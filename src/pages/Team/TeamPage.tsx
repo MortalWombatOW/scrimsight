@@ -13,21 +13,21 @@ import { TeamCompositions } from "./components/TeamCompositions";
 import { ErrorMessage } from "../../components/Common/ErrorMessage";
 
 export const TeamPage = () => {
-  const { teamName } = useParams<{ teamName: string }>();
+  const { teamId } = useParams<{ teamId: string }>();
   const [teamNames] = useAtom(teamNamesAtom);
   const teamStats = useAtomValue(teamStatsAtom);
   const players = useAtomValue(allPlayersForTeamAtom);
   const matches = useAtomValue(matchDataAtom);
   const compositions = useAtomValue(teamCompositionsAtom);
 
-  if (!teamName) {
-    return <ErrorMessage message="Team name not provided" />;
+  if (!teamId) {
+    return <ErrorMessage message="Team ID not provided" />;
   }
 
-  const teamRecord = teamStats.find((stat) => stat.teamName === teamName);
-  const teamPlayers = players.find((team) => team.teamName === teamName);
+  const teamRecord = teamStats.find((stat) => stat.teamName === teamId);
+  const teamPlayers = players.find((team) => team.teamName === teamId);
   const teamMatches = matches.filter(
-    (match) => match.team1Name === teamName || match.team2Name === teamName
+    (match) => match.team1Name === teamId || match.team2Name === teamId
   );
 
   if (!teamRecord || !teamPlayers) {
@@ -35,7 +35,7 @@ export const TeamPage = () => {
   }
 
   const teamNameDisplay = String(
-    teamNames[teamName as keyof typeof teamNames] || teamName
+    teamNames[teamId as keyof typeof teamNames] || teamId
   );
 
   const winRate = (teamRecord.wins / teamRecord.gamesPlayed) * 100 || 0;
@@ -98,7 +98,7 @@ export const TeamPage = () => {
             aria-label="Players"
           />
           <div role="tabpanel" className="p-6">
-            <TeamPlayers players={teamPlayers.players} teamName={teamName} />
+            <TeamPlayers players={teamPlayers.players} teamName={teamId} />
           </div>
 
           <input
@@ -109,7 +109,7 @@ export const TeamPage = () => {
             aria-label="Matches"
           />
           <div role="tabpanel" className="p-6">
-            <TeamMatches matches={teamMatches} teamName={teamName} />
+            <TeamMatches matches={teamMatches} teamName={teamId} />
           </div>
 
           <input
@@ -122,9 +122,9 @@ export const TeamPage = () => {
           <div role="tabpanel" className="p-6">
             <TeamCompositions
               compositions={compositions.filter(
-                (comp) => comp.teamName === teamName
+                (comp) => comp.teamName === teamId
               )}
-              teamName={teamName}
+              teamName={teamId}
             />
           </div>
         </div>
