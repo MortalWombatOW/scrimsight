@@ -17,7 +17,7 @@ const DiscordButton = () => {
       >
         <FaDiscord />
       </button>
-      <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-base-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
         Join our Discord Community
       </div>
     </div>
@@ -71,7 +71,7 @@ const UserMenu = ({
   return (
     <div className="relative mr-3">
       <button
-        className="flex h-8 w-8 items-center justify-center rounded-full text-gray-700 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
+        className="flex h-8 w-8 items-center justify-center rounded-full text-base-700 hover:bg-base-200 dark:text-base-300 dark:hover:bg-base-700"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
@@ -79,27 +79,27 @@ const UserMenu = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-gray-800">
+        <div className="absolute right-0 mt-2 w-48 rounded-md bg-base py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:bg-base-800">
           {discordUsername && (
-            <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
+            <div className="px-4 py-2 text-sm text-base-500 dark:text-base-400">
               {discordUsername}
             </div>
           )}
           <Link
             to="/account/settings"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+            className="block px-4 py-2 text-sm text-base-700 hover:bg-base-100 dark:text-base-200 dark:hover:bg-base-700"
           >
             Settings
           </Link>
           <Link
             to="/account/plan"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+            className="block px-4 py-2 text-sm text-base-700 hover:bg-base-100 dark:text-base-200 dark:hover:bg-base-700"
           >
             Manage plan
           </Link>
           <button
             onClick={onLogout}
-            className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
+            className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-base-100 dark:text-red-400 dark:hover:bg-base-700"
           >
             Logout
           </button>
@@ -160,7 +160,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center">
             {/* Mobile menu button */}
             <button
-              className="mr-2 rounded p-1 text-gray-600 hover:bg-gray-100 focus:outline-none sm:hidden dark:text-gray-400 dark:hover:bg-gray-700"
+              className="mr-2 rounded p-1 text-base-600 hover:bg-base-100 focus:outline-none sm:hidden dark:text-base-400 dark:hover:bg-base-700"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <div className="space-y-1.5">
@@ -209,7 +209,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                   checked={sampleDataEnabled}
                   onChange={(e) => setSampleDataEnabled(e.target.checked)}
                 />
-                <div className="h-6 w-11 rounded-full bg-gray-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-500 peer-checked:after:translate-x-full dark:bg-gray-600"></div>
+                <div className="h-6 w-11 rounded-full bg-base-300 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-base after:transition-all after:content-[''] peer-checked:bg-primary-500 peer-checked:after:translate-x-full dark:bg-base-600"></div>
               </div>
             </label>
 
@@ -232,7 +232,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar/Navigation */}
         <aside
-          className={`p-4 transition-all bg-gray-100 sm:relative sm:block sm:w-[300px] ${
+          className={`p-4 transition-all sm:relative sm:block sm:w-[300px] ${
             isMobileMenuOpen ? "w-full" : "hidden sm:block"
           }`}
         >
@@ -248,7 +248,13 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         </aside>
 
         {/* Main content area */}
-        <main className="flex-1 overflow-auto p-4">{children}</main>
+        <main
+          className={`flex-1 overflow-auto p-4 ${
+            isMobileMenuOpen ? "hidden" : ""
+          }`}
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

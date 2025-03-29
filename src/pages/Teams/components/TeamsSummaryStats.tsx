@@ -1,10 +1,4 @@
 import { StatCard } from "../../../components/StatCard";
-import {
-  Groups as TeamsIcon,
-  EmojiEvents as WinsIcon,
-  People as PlayersIcon,
-  SportsEsports as GamesIcon,
-} from "@mui/icons-material";
 
 interface TeamsSummaryStatsProps {
   totalTeams: number;
@@ -20,38 +14,18 @@ export const TeamsSummaryStats = ({
   totalPlayers,
 }: TeamsSummaryStatsProps) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8 bg-base-100 rounded-lg p-6 dark:bg-base-800">
       <div>
-        <StatCard
-          title="Total Teams"
-          value={totalTeams.toString()}
-          icon={<TeamsIcon />}
-          color="primary.main"
-        />
+        <StatCard title="Total Teams" value={totalTeams.toString()} />
       </div>
       <div>
-        <StatCard
-          title="Total Games"
-          value={totalGames.toString()}
-          icon={<GamesIcon />}
-          color="secondary.main"
-        />
+        <StatCard title="Total Games" value={totalGames.toString()} />
       </div>
       <div>
-        <StatCard
-          title="Total Wins"
-          value={totalWins.toString()}
-          icon={<WinsIcon />}
-          color="success.main"
-        />
+        <StatCard title="Total Wins" value={totalWins.toString()} />
       </div>
       <div>
-        <StatCard
-          title="Total Players"
-          value={totalPlayers.toString()}
-          icon={<PlayersIcon />}
-          color="info.main"
-        />
+        <StatCard title="Total Players" value={totalPlayers.toString()} />
       </div>
     </div>
   );

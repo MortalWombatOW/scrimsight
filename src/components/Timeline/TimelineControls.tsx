@@ -1,6 +1,14 @@
 import { useTimelineContext } from "./TimelineContext";
 import { formatTime } from "../../lib";
 
+type TimeSegment = {
+  title: string;
+  subtitle: string;
+  type: "map" | "round" | "teamfight";
+  startTime: number;
+  endTime: number;
+};
+
 export const TimelineControls: React.FC = () => {
   const {
     currentTimeRange,
@@ -17,16 +25,130 @@ export const TimelineControls: React.FC = () => {
 
   const { mapTime, roundTimes, teamfights } = loadedData;
 
+  const timeScale = 100 / (mapTime.endTime - mapTime.startTime);
+
+  const renderTimeSegment = (segment: TimeSegment) => {
+    const duration = segment.endTime - segment.startTime;
+    const isSelected =
+      segment.startTime === startTime && segment.endTime === endTime;
+    return (
+      <tr
+        key={`${segment.startTime}-${segment.endTime}`}
+        className={`hover:bg-base-100 ${isSelected ? "bg-base-100" : ""}`}
+      >
+        <td
+          className={`w-1/6 ${
+            segment.type === "map"
+              ? "font-bold"
+              : segment.type === "round"
+              ? "font-bold"
+              : "font-normal"
+          }`}
+        >
+          {segment.title}
+        </td>
+        <td className="w-1/6">{formatTime(segment.startTime)}</td>
+        <td className="w-1/6">{formatTime(segment.endTime)}</td>
+        <td className="w-1/2">
+          <div className="flex flex-row">
+            <div
+              className="h-2 bg-base-300 rounded-l-full"
+              style={{ width: `${segment.startTime * timeScale}%` }}
+            ></div>
+            <div
+              className={`h-2 bg-base-content ${
+                segment.startTime === mapTime.startTime &&
+                segment.endTime === mapTime.endTime
+                  ? "rounded-full"
+                  : segment.startTime === mapTime.startTime
+                  ? "rounded-l-full"
+                  : segment.endTime === mapTime.endTime
+                  ? "rounded-r-full"
+                  : ""
+              }`}
+              style={{ width: `${Math.max(duration * timeScale, 1)}%` }}
+            ></div>
+            <div
+              className="h-2 bg-base-300 rounded-r-full"
+              style={{
+                width: `${(mapTime.endTime - segment.endTime) * timeScale}%`,
+              }}
+            ></div>
+          </div>
+        </td>
+        <td>
+          <button
+            className="btn btn-xs btn-outline"
+            onClick={() =>
+              setCurrentTimeRange({
+                start: segment.startTime,
+                end: segment.endTime,
+              })
+            }
+          >
+            View
+          </button>
+        </td>
+      </tr>
+    );
+  };
+
   return (
-    <div className="flex flex-row gap-4">
-      <div className="flex flex-col gap-2 ml-4 mt-3">
-        <div className="text-sm text-gray-500 font-semibold">Go to segment</div>
-        <ul className="menu menu-vertical bg-base-200 rounded-box">
+    <div className="flex flex-col gap-2 ml-4 mt-3">
+      <div className="text-lg text-base-500 font-semibold">
+        Select segment to view
+      </div>
+      <table className="table table-xs ">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          {renderTimeSegment({
+            title: "Full Map",
+            subtitle: "",
+            type: "map",
+            startTime: mapTime.startTime,
+            endTime: mapTime.endTime,
+          })}
+          {roundTimes.flatMap((roundTime) => {
+            const teamfightsInRound = teamfights.filter(
+              (teamfight) =>
+                teamfight.startTime >= roundTime.roundStartTime &&
+                teamfight.endTime <= roundTime.roundEndTime
+            );
+
+            return [
+              renderTimeSegment({
+                title: `Round ${roundTime.roundNumber}`,
+                subtitle: "",
+                type: "round",
+                startTime: roundTime.roundStartTime,
+                endTime: roundTime.roundEndTime,
+              }),
+              ...teamfightsInRound.map((teamfight) =>
+                renderTimeSegment({
+                  title: `Teamfight`,
+                  subtitle: "",
+                  type: "teamfight",
+                  startTime: teamfight.startTime,
+                  endTime: teamfight.endTime,
+                })
+              ),
+            ];
+          })}
+        </tbody>
+      </table>
+      {/* <ul className="menu menu-vertical bg-base-200 rounded-box">
           <li>
             <button
               className={`${
                 startTime === 0 && endTime === mapTime.endTime
-                  ? "bg-gray-200 font-semibold"
+                  ? "bg-base-200 font-semibold"
                   : ""
               }`}
               onClick={() =>
@@ -42,7 +164,7 @@ export const TimelineControls: React.FC = () => {
                     className={`${
                       roundTime.roundStartTime === startTime &&
                       roundTime.roundEndTime === endTime
-                        ? "bg-gray-200 font-semibold"
+                        ? "bg-base-200 font-semibold"
                         : ""
                     }`}
                     onClick={() =>
@@ -67,7 +189,7 @@ export const TimelineControls: React.FC = () => {
                             className={`${
                               teamfight.startTime === startTime &&
                               teamfight.endTime === endTime
-                                ? "bg-gray-200 font-semibold"
+                                ? "bg-base-200 font-semibold"
                                 : ""
                             }`}
                             onClick={() =>
@@ -86,25 +208,7 @@ export const TimelineControls: React.FC = () => {
               ))}
             </ul>
           </li>
-        </ul>
-      </div>
-      <div className=" flex flex-col gap-2 ml-4 mt-3">
-        <div className="text-sm text-gray-500 font-semibold">
-          Selected Time Range
-        </div>
-        <div className="ml-4">
-          <div className="text-sm text-gray-500">Start</div>
-          <div className="text-lg font-bold">
-            {formatTime(currentTimeRange.start)}
-          </div>
-        </div>
-        <div className="ml-4">
-          <div className="text-sm text-gray-500">End</div>
-          <div className="text-lg font-bold">
-            {formatTime(currentTimeRange.end)}
-          </div>
-        </div>
-      </div>
+        </ul> */}
     </div>
   );
 };

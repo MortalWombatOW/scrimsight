@@ -3,7 +3,6 @@ import { useAtom } from "jotai";
 import { teamStatsAtom } from "../../atoms/teamStatsAtom";
 import { TeamsSummaryStats } from "./components/TeamsSummaryStats";
 import { TeamsFilter, SortOption } from "./components/TeamsFilter";
-import { TeamsVisualization } from "./components/TeamsVisualization";
 import { TeamsList } from "./components/TeamsList";
 
 export const TeamsPage = () => {
@@ -40,11 +39,11 @@ export const TeamsPage = () => {
 
   return (
     <div className="container mx-auto px-4 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">
+      <div className="mb-8 bg-base-100 rounded-lg p-6  dark:bg-base-800">
+        <h1 className="text-3xl font-bold mb-2 text-base-900 dark:text-white">
           Teams
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
+        <p className="text-lg text-base-600 dark:text-base-400">
           Overview of all teams and their performance
         </p>
       </div>
@@ -56,16 +55,16 @@ export const TeamsPage = () => {
         totalPlayers={totalPlayers}
       />
 
-      <TeamsVisualization teams={teamStats} />
+      <div className="bg-base-100 rounded-lg p-6 shadow-md mb-6 dark:bg-base-800">
+        <TeamsFilter
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          sortBy={sortBy}
+          onSortChange={(value) => setSortBy(value)}
+        />
 
-      <TeamsFilter
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        sortBy={sortBy}
-        onSortChange={(value) => setSortBy(value)}
-      />
-
-      <TeamsList teams={filteredAndSortedTeams} />
+        <TeamsList teams={filteredAndSortedTeams} />
+      </div>
     </div>
   );
 };

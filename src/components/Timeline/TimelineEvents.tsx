@@ -112,7 +112,7 @@ const TimelineItem: React.FC<{
             <>
               <div className="flex items-center">
                 <span className="font-medium text-xs">{playerName}</span>
-                <span className="text-xs text-gray-500 ml-1">
+                <span className="text-xs text-base-500 ml-1">
                   {formatTime(time)}
                 </span>
               </div>
@@ -140,12 +140,12 @@ const TimelineItem: React.FC<{
         {/* Middle time marker (only for important events) */}
         {isUltimate && (
           <div className="text-center flex-shrink-0">
-            <div className="text-xs text-gray-500">{formatTime(time)}</div>
+            <div className="text-xs text-base-500">{formatTime(time)}</div>
             <div className="border border-base-300 rounded-full text-xs px-2 py-0.5 mt-0.5 flex items-center">
               <ZapIcon />
               <span>
                 Ultimate ({hero})
-                <span className="text-xs text-gray-500 ml-1">{teamName}</span>
+                <span className="text-xs text-base-500 ml-1">{teamName}</span>
               </span>
             </div>
           </div>
@@ -158,7 +158,7 @@ const TimelineItem: React.FC<{
           {!isTeam1 && (
             <>
               <div className="flex items-center justify-end">
-                <span className="text-xs text-gray-500 mr-1">
+                <span className="text-xs text-base-500 mr-1">
                   {formatTime(time)}
                 </span>
                 <EventIcon />
@@ -283,7 +283,7 @@ export const TimelineEvents: React.FC = () => {
       </div>
 
       {events.length === 0 && (
-        <div className="text-center py-4 text-gray-500 text-xs">
+        <div className="text-center py-4 text-base-500 text-xs">
           No events found for this match
         </div>
       )}

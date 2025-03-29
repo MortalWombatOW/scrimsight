@@ -20,6 +20,15 @@ interface SingleStatPlayerComparisonProps {
   matchId: string;
 }
 
+const chartStyle = {
+  bar: {
+    fill: "var(--color-base-content)",
+  },
+  background: {
+    fill: "var(--color-base-200)",
+  },
+};
+
 export const SingleStatPlayerComparison = ({
   matchId,
 }: SingleStatPlayerComparisonProps) => {
@@ -96,14 +105,14 @@ export const SingleStatPlayerComparison = ({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded shadow-md dark:bg-gray-800 dark:border-gray-700">
-          <p className="font-semibold text-gray-800 dark:text-gray-200 mb-1">
+        <div className="bg-base p-3 border border-base-200 rounded shadow-md dark:bg-base-800 dark:border-base-700">
+          <p className="font-semibold text-base-800 dark:text-base-200 mb-1">
             {data.playerName}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-base-600 dark:text-base-400">
             Team: {data.playerTeam}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-base-600 dark:text-base-400">
             {camelCaseToWords(stat)}: {prettyFormat(data.value)}
           </p>
         </div>
@@ -113,19 +122,19 @@ export const SingleStatPlayerComparison = ({
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 w-full p-6 shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <div className="bg-base rounded-lg border border-base-200 w-full p-6 shadow-sm dark:bg-base-800 dark:border-base-700">
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-4 border-b border-base-200 dark:border-base-700">
+          <h3 className="text-xl font-semibold text-base-900 dark:text-white">
             Player Metric Comparison
           </h3>
 
           <div className="w-full sm:w-64">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-base-700 dark:text-base-300 mb-1">
               Select Metric
             </label>
             <select
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-md border border-base-300 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-base-600 dark:bg-base-700 dark:text-white"
               value={stat}
               onChange={(e) => {
                 const newStat = e.target.value as PlayerStatsNumericalKeys;
@@ -146,7 +155,7 @@ export const SingleStatPlayerComparison = ({
         <div className="flex flex-col md:flex-row gap-8">
           {/* Team 1 */}
           <div className="flex-1">
-            <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <h4 className="text-lg font-medium text-base-800 dark:text-base-200 mb-4 flex items-center">
               {matchData.team1Name}
             </h4>
             <div className="h-[200px] w-full">
@@ -176,12 +185,12 @@ export const SingleStatPlayerComparison = ({
                   />
                   <Bar
                     dataKey="value"
-                    fill="oklch(0.373 0.034 259.733)"
+                    style={chartStyle.bar}
                     radius={[0, 4, 4, 0]}
                     label={{
                       position: "right",
                       formatter: (value: number) => prettyFormat(value),
-                      fill: "#4b5563",
+                      fill: "var(--color-base-content)",
                       fontSize: 12,
                       fontWeight: "bold",
                     }}
@@ -193,7 +202,7 @@ export const SingleStatPlayerComparison = ({
 
           {/* Team 2 */}
           <div className="flex-1">
-            <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <h4 className="text-lg font-medium text-base-800 dark:text-base-200 mb-4 flex items-center">
               {matchData.team2Name}
             </h4>
             <div className="h-[200px] w-full">
@@ -223,12 +232,12 @@ export const SingleStatPlayerComparison = ({
                   />
                   <Bar
                     dataKey="value"
-                    fill="oklch(0.373 0.034 259.733)"
+                    style={chartStyle.bar}
                     radius={[0, 4, 4, 0]}
                     label={{
                       position: "right",
                       formatter: (value: number) => prettyFormat(value),
-                      fill: "#4b5563",
+                      fill: "var(--color-base-content)",
                       fontSize: 12,
                       fontWeight: "bold",
                     }}
@@ -240,13 +249,13 @@ export const SingleStatPlayerComparison = ({
         </div>
 
         <div className="mt-6">
-          <div className="overflow-x-auto border rounded-lg border-gray-200 dark:border-gray-700">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+          <div className="overflow-x-auto border rounded-lg border-base-200 dark:border-base-700">
+            <table className="min-w-full divide-y divide-base-200 dark:divide-base-700">
+              <thead className="bg-base-50 dark:bg-base-700">
                 <tr>
                   <th
                     scope="col"
-                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300 cursor-pointer"
+                    className="px-4 py-3 text-left text-xs font-medium text-base-500 uppercase tracking-wider dark:text-base-300 cursor-pointer"
                     onClick={() => handleSort("playerName")}
                   >
                     <div className="flex items-center">
@@ -260,7 +269,7 @@ export const SingleStatPlayerComparison = ({
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300 cursor-pointer"
+                    className="px-4 py-3 text-left text-xs font-medium text-base-500 uppercase tracking-wider dark:text-base-300 cursor-pointer"
                     onClick={() => handleSort("playerTeam")}
                   >
                     <div className="flex items-center">
@@ -274,7 +283,7 @@ export const SingleStatPlayerComparison = ({
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300 cursor-pointer"
+                    className="px-4 py-3 text-right text-xs font-medium text-base-500 uppercase tracking-wider dark:text-base-300 cursor-pointer"
                     onClick={() => handleSort(stat)}
                   >
                     <div className="flex items-center justify-end">
@@ -288,14 +297,14 @@ export const SingleStatPlayerComparison = ({
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+              <tbody className="bg-base divide-y divide-base-200 dark:bg-base-800 dark:divide-base-700">
                 {sortedData.map((player, index) => (
                   <tr
                     key={player.playerName}
                     className={
                       index % 2 === 0
-                        ? "bg-white dark:bg-gray-800"
-                        : "bg-gray-50 dark:bg-gray-750"
+                        ? "bg-base dark:bg-base-800"
+                        : "bg-base-50 dark:bg-base-750"
                     }
                   >
                     <td className="px-4 py-2 whitespace-nowrap">
@@ -304,8 +313,8 @@ export const SingleStatPlayerComparison = ({
                           <div
                             className={`w-5 h-5 rounded-full border-2 ${
                               player.playerTeam === matchData.team1Name
-                                ? "border-gray-700 dark:border-gray-300"
-                                : "border-gray-400 dark:border-gray-500"
+                                ? "border-base-700 dark:border-base-300"
+                                : "border-base-400 dark:border-base-500"
                             } flex items-center justify-center`}
                           >
                             <span className="text-xs font-medium">
@@ -314,18 +323,18 @@ export const SingleStatPlayerComparison = ({
                           </div>
                         </div>
                         <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                          <div className="text-sm font-medium text-base-800 dark:text-base-200">
                             {player.playerName}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap">
-                      <div className="text-sm text-gray-700 dark:text-gray-300">
+                      <div className="text-sm text-base-700 dark:text-base-300">
                         {player.playerTeam}
                       </div>
                     </td>
-                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 text-right">
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-base-700 dark:text-base-300 text-right">
                       <span className="font-medium">
                         {prettyFormat(player[stat])}
                       </span>

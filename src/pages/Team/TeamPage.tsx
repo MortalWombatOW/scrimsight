@@ -1,106 +1,83 @@
-import { useParams } from "react-router-dom";
-import { useAtom } from "jotai";
+import { useParams, NavLink, Outlet } from "react-router-dom";
+import { useAtom, useAtomValue } from "jotai";
 import { teamNamesAtom } from "../../atoms/teamNamesAtom";
 import { teamStatsAtom } from "../../atoms/teamStatsAtom";
-import { allPlayersForTeamAtom } from "../../atoms/allPlayersForTeamAtom";
-import { matchDataAtom } from "../../atoms/matchDataAtom";
-import { MatchData } from "../../atoms/matchDataAtom";
-import { TeamStats } from "../../atoms/teamStatsAtom";
-import { TeamPlayers } from "../../atoms/allPlayersForTeamAtom";
+// Removed unused imports: allPlayersForTeamAtom, matchDataAtom
+// Removed unused component imports: TeamOverview, TeamPlayers, TeamMatches, TeamCompositions
 import { StatCard } from "../../components/StatCard";
-import { TeamCompositions } from "./TeamCompositions";
+import { ErrorMessage } from "../../components/Common/ErrorMessage";
+
+const NavTab = ({
+  to,
+  children,
+}: {
+  to: string;
+  children: React.ReactNode;
+}) => (
+  <NavLink
+    to={to}
+    end // Important for the index route matching
+    className={({ isActive }) =>
+      `tab tab-bordered ${
+        isActive ? "tab-active !border-primary !text-primary" : ""
+      }`
+    }
+  >
+    {children}
+  </NavLink>
+);
 
 export const TeamPage = () => {
-  const { teamName } = useParams();
+  const { teamId } = useParams<{ teamId: string }>();
   const [teamNames] = useAtom(teamNamesAtom);
-  const [teamStats] = useAtom(teamStatsAtom);
-  const [players] = useAtom(allPlayersForTeamAtom);
-  const [matches] = useAtom(matchDataAtom);
+  const teamStats = useAtomValue(teamStatsAtom);
 
-  const teamNameSafe = teamName || "";
-  const teamRecord: TeamStats = teamStats.find(
-    (stat: TeamStats) => stat.teamName === teamNameSafe
-  ) || {
-    teamName: "",
-    gamesPlayed: 0,
-    wins: 0,
-    losses: 0,
-    draws: 0,
-    mostRecentGameDate: null,
-    players: [],
-  };
-  const teamPlayers: TeamPlayers = players.find(
-    (team: TeamPlayers) => team.teamName === teamNameSafe
-  ) || { teamName: "", players: [] };
-  const teamMatches = matches.filter(
-    (match: MatchData) =>
-      match.team1Name === teamNameSafe || match.team2Name === teamNameSafe
+  if (!teamId) {
+    return <ErrorMessage message="Team ID not provided" />;
+  }
+
+  const teamRecord = teamStats.find((stat) => stat.teamName === teamId);
+
+  // Basic check if team exists based on stats
+  if (!teamRecord) {
+    return <ErrorMessage message="Team not found" />;
+  }
+
+  const teamNameDisplay = String(
+    teamNames[teamId as keyof typeof teamNames] || teamId
   );
 
-  const teamNameDisplay: string = String(
-    teamNames[teamNameSafe as keyof typeof teamNames] || teamNameSafe
-  );
+  const winRate = (teamRecord.wins / teamRecord.gamesPlayed) * 100 || 0;
 
   return (
-    <div className="p-6">
-      <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-gray-800">
-        <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Team Header - Remains the same */}
+      <div className="bg-base-100 rounded-lg shadow-lg p-6 mb-6">
+        <h1 className="text-4xl font-bold mb-4 text-primary">
           {teamNameDisplay}
         </h1>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-fit">
-          <div>
-            <StatCard
-              title="Wins"
-              value={teamRecord.wins.toString()}
-              color="success.light"
-            />
-          </div>
-          <div>
-            <StatCard
-              title="Draws"
-              value={teamRecord.draws.toString()}
-              color="warning.light"
-            />
-          </div>
-          <div>
-            <StatCard
-              title="Losses"
-              value={teamRecord.losses.toString()}
-              color="error.light"
-            />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard title="Win Rate" value={`${winRate.toFixed(1)}%`} />
+          <StatCard title="Wins" value={teamRecord.wins.toString()} />
+          <StatCard title="Losses" value={teamRecord.losses.toString()} />
+          <StatCard title="Draws" value={teamRecord.draws.toString()} />
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md p-4 mb-6 dark:bg-gray-800">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-          Players
-        </h2>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {teamPlayers.players.map((playerName: string) => (
-            <li key={playerName} className="py-3">
-              <p className="text-gray-800 dark:text-gray-200">{playerName}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {/* Sub-route Navigation and Content */}
+      <div className="bg-base-100 rounded-lg shadow-lg border border-base-300">
+        {/* Navigation Links styled as Tabs */}
+        <div role="tablist" className="tabs tabs-bordered">
+          <NavTab to=".">Overview</NavTab>
+          <NavTab to="players">Players</NavTab>
+          <NavTab to="matches">Matches</NavTab>
+          <NavTab to="compositions">Compositions</NavTab>
+        </div>
 
-      <TeamCompositions teamName={teamNameSafe} />
-
-      <div className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-          Games Played
-        </h2>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {teamMatches.map((match: MatchData) => (
-            <li key={match.matchId} className="py-3">
-              <p className="text-gray-800 dark:text-gray-200">
-                {`${match.team1Name} vs ${match.team2Name} - ${match.dateString}`}
-              </p>
-            </li>
-          ))}
-        </ul>
+        {/* Outlet for rendering sub-route components */}
+        <div className="p-6">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

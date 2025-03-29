@@ -18,7 +18,7 @@ type PlayerStatsDerivedNumericalKeys = 'eliminationsPer10Minutes' | 'finalBlowsP
 | 'damageBlockedPer10Minutes' | 'defensiveAssistsPer10Minutes' | 'offensiveAssistsPer10Minutes' | 'ultimatesEarnedPer10Minutes' | 'ultimatesUsedPer10Minutes'
 | 'multikillsPer10Minutes' | 'soloKillsPer10Minutes' | 'objectiveKillsPer10Minutes' | 'environmentalKillsPer10Minutes' | 'environmentalDeathsPer10Minutes'
 | 'criticalHitsPer10Minutes' | 'shotsFiredPer10Minutes' | 'shotsHitPer10Minutes' | 'shotsMissedPer10Minutes' | 'scopedShotsFiredPer10Minutes' | 'scopedShotsHitPer10Minutes'
-| 'weaponAccuracy' | 'scopedWeaponAccuracy' | 'utility' | 'criticalHitRate';
+| 'weaponAccuracy' | 'scopedWeaponAccuracy' | 'criticalHitRate';
 
 export type PlayerStats = PlayerStatsBase & {[k in PlayerStatsDerivedNumericalKeys]: number};
 
@@ -61,7 +61,7 @@ const playerStatsDerivedNumericalKeys: PlayerStatsDerivedNumericalKeys[] = [
       'damageBlockedPer10Minutes', 'defensiveAssistsPer10Minutes', 'offensiveAssistsPer10Minutes', 'ultimatesEarnedPer10Minutes',
       'ultimatesUsedPer10Minutes', 'multikillsPer10Minutes', 'soloKillsPer10Minutes', 'objectiveKillsPer10Minutes', 'environmentalKillsPer10Minutes',
       'environmentalDeathsPer10Minutes', 'criticalHitsPer10Minutes', 'shotsFiredPer10Minutes', 'shotsHitPer10Minutes', 'shotsMissedPer10Minutes', 'scopedShotsFiredPer10Minutes',
-      'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'utility', 'criticalHitRate'
+      'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'criticalHitRate'
 ];
 
 
@@ -136,9 +136,8 @@ function addDerivedMetrics<T extends PlayerStatsCategoryKeys>(metricAtom: Metric
 
     for (const row of rows) {
       const playtime = row.playtime;
-
-      const newRow: Grouped<PlayerStats, T, PlayerStatsNumericalKeys> = {
-        ...row,
+      
+      const newRow: Grouped<PlayerStats, T, PlayerStatsNumericalKeys> = Object.assign({}, row, {
         eliminationsPer10Minutes: row.eliminations / (playtime / 600),
         finalBlowsPer10Minutes: row.finalBlows / (playtime / 600),
         deathsPer10Minutes: row.deaths / (playtime / 600),
@@ -168,8 +167,7 @@ function addDerivedMetrics<T extends PlayerStatsCategoryKeys>(metricAtom: Metric
         weaponAccuracy: row.shotsHit / row.shotsFired,
         scopedWeaponAccuracy: row.scopedShotsHit / row.scopedShotsFired,
         criticalHitRate: row.criticalHits / row.shotsFired,
-        utility: 0.05 * row.heroDamageDealt + 0.05 * row.healingDealt + 0.5 * row.finalBlows + 0.25 * row.eliminations + 0.1 * row.defensiveAssists + 0.1 * row.offensiveAssists - 0.5 * row.deaths + 0.05 * row.damageBlocked
-      }
+      });
       newRows.push(newRow);
     }
 
@@ -239,45 +237,7 @@ function onlyDominantRole(
   return newAtom as typeof metricAtom;
 }
 
-// Totals for a player
-export const playerStatsByPlayerAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['playerName']));
-// Totals for each hero
-export const playerStatsByHeroAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['playerHero']));
-
-// Totals for each role
-export const playerStatsByRoleAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['playerRole']));
-
-// Totals for each team
-export const playerStatsByTeamAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['playerTeam']));
-
-// Totals for each match per team
-export const playerStatsByMatchIdAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['matchId', 'playerTeam']));
-
-// Totals for each round per team
-export const playerStatsByMatchIdAndRoundNumberAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['matchId', 'roundNumber', 'playerTeam']));
-
-// Totals for each match per player 
-export const playerStatsByMatchIdAndPlayerNameAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['matchId', 'playerName']));
-
-// Totals for each round per player
-export const playerStatsByMatchIdAndRoundNumberAndPlayerNameAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['matchId', 'roundNumber', 'playerName']));
-
-// Totals for each player broken down by role
-export const playerStatsByPlayerAndRoleAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['playerName', 'playerRole']));
-
-// Totals for each player broken down by hero
-export const playerStatsByPlayerAndHeroAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['playerName', 'playerHero']));
-
-// Totals for each player broken down by team
-export const playerStatsByPlayerAndTeamAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['playerName', 'playerTeam']));
-
-// Totals for each player broken down by match and role
-export const playerStatsByMatchIdAndPlayerNameAndRoleAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['matchId', 'playerName', 'playerRole']));
-
-export const playerStatsByMatchIdAndPlayerNameAndRoleAndTeamAndHeroAtom = addDerivedMetrics(groupByAtom(playerStatsBaseAtom, ['matchId', 'playerName', 'playerRole', 'playerTeam', 'playerHero']));
-
-
-export const getStatsAtom =  <T extends PlayerStatsCategoryKeys>(groupBy: PlayerStatsCategoryKeys[], filter?: Record<T, string[]>) => {
+const getStatsAtom =  <T extends PlayerStatsCategoryKeys>(groupBy: PlayerStatsCategoryKeys[], filter?: Record<T, string[]>) => {
   if (filter) {
     return addDerivedMetrics(groupByAtom(onlyDominantRole(filterBaseAtom(playerStatsBaseAtom, filter)), groupBy));
   } else {

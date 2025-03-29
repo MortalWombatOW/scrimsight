@@ -2,6 +2,7 @@ export * from './allPlayersForTeamAtom';
 export * from './derived_events';
 export * from './event_extractors';
 export * from './files';
+export * from './groupedEventsAtom';
 export * from './mapTimesAtom';
 export * from './matchDataAtom';
 export * from './metrics';

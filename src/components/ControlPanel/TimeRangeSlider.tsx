@@ -50,7 +50,7 @@ const TimeRangeSlider: React.FC<TimeRangeSliderProps> = ({
   return (
     <div className="w-full min-w-[300px] max-w-[500px] px-2 py-4 relative">
       <div
-        className="h-1 w-full rounded-md bg-gray-200 mb-4"
+        className="h-1 w-full rounded-md bg-base-200 mb-4"
         style={getTrackStyle()}
       ></div>
 

@@ -1,4 +1,7 @@
 import React from "react";
+import { MdFormatListBulleted } from "react-icons/md";
+import { GiHealthNormal } from "react-icons/gi";
+import { FaShield } from "react-icons/fa6";
 
 type ColorKey =
   | "inherit"
@@ -41,46 +44,30 @@ const TankIcon: React.FC<{ color: ColorKey; className?: string }> = ({
   color,
   className,
 }) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="currentColor"
+  <FaShield
     className={`${getColorClass(color)} ${className || ""}`}
-    width="1em"
-    height="1em"
-  >
-    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
-  </svg>
+    size={16}
+  />
 );
 
 const DamageIcon: React.FC<{ color: ColorKey; className?: string }> = ({
   color,
   className,
 }) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="currentColor"
+  <MdFormatListBulleted
     className={`${getColorClass(color)} ${className || ""} rotate-270`}
-    width="1em"
-    height="1em"
-    style={{ transform: "rotate(270deg)" }}
-  >
-    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-  </svg>
+    size={16}
+  />
 );
 
 const SupportIcon: React.FC<{ color: ColorKey; className?: string }> = ({
   color,
   className,
 }) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="currentColor"
+  <GiHealthNormal
     className={`${getColorClass(color)} ${className || ""}`}
-    width="1em"
-    height="1em"
-  >
-    <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z" />
-  </svg>
+    size={16}
+  />
 );
 
 const RoleIcon: React.FC<RoleIconProps> = ({

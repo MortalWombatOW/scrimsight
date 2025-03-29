@@ -82,10 +82,10 @@ export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
     >
       <div className="relative">
         {/* Input field */}
-        <div className="relative flex flex-wrap items-center gap-1 rounded-md border border-gray-300 bg-white p-2 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:border-gray-600 dark:bg-gray-700">
+        <div className="relative flex flex-wrap items-center gap-1 rounded-md border border-base-300 bg-base p-2 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:border-base-600 dark:bg-base-700">
           {/* Icon */}
           {icon && (
-            <span className="mr-2 text-gray-500 dark:text-gray-400">
+            <span className="mr-2 text-base-500 dark:text-base-400">
               {icon}
             </span>
           )}
@@ -94,7 +94,7 @@ export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
           {selected.map((option) => (
             <div
               key={option}
-              className="flex items-center gap-1 rounded-full border border-gray-300 bg-gray-100 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800"
+              className="flex items-center gap-1 rounded-full border border-base-300 bg-base-100 px-2 py-1 text-sm dark:border-base-600 dark:bg-base-800"
             >
               <span>{optionLabel ? optionLabel(option) : option}</span>
               <button
@@ -120,19 +120,19 @@ export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
         </div>
 
         {/* Floating label */}
-        <span className="absolute -top-2 left-2 bg-white px-1 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+        <span className="absolute -top-2 left-2 bg-base px-1 text-xs text-base-600 dark:bg-base-800 dark:text-base-400">
           {label}
         </span>
       </div>
 
       {/* Dropdown */}
       {isOpen && (
-        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-300 bg-white py-1 shadow-md dark:border-gray-600 dark:bg-gray-800">
+        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-base-300 bg-base py-1 shadow-md dark:border-base-600 dark:bg-base-800">
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (
               <li
                 key={option}
-                className="cursor-pointer px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="cursor-pointer px-3 py-2 hover:bg-base-100 dark:hover:bg-base-700"
                 onClick={() => toggleOption(option)}
               >
                 <div className="flex items-center">
@@ -148,7 +148,7 @@ export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
                       {optionLabel ? optionLabel(option) : option}
                     </div>
                     {optionSubLabel && (
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                      <div className="text-sm text-base-500 dark:text-base-400">
                         {optionSubLabel(option)}
                       </div>
                     )}
@@ -157,7 +157,7 @@ export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
               </li>
             ))
           ) : (
-            <li className="cursor-default px-3 py-2 text-gray-500 dark:text-gray-400">
+            <li className="cursor-default px-3 py-2 text-base-500 dark:text-base-400">
               {noOptionsText}
             </li>
           )}

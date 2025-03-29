@@ -27,11 +27,6 @@ export interface HeatmapGridProps {
   onClick?: (x: number, y: number) => void;
 
   /**
-   * Whether cells should be square
-   */
-  square?: boolean;
-
-  /**
    * Custom cell renderer
    */
   cellRender?: (x: number, y: number, value: number) => React.ReactNode;
@@ -63,7 +58,6 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
   yLabels = [],
   cellHeight = "2rem",
   onClick,
-  square = false,
   cellRender,
   cellStyle,
   xLabelsStyle,
@@ -83,17 +77,16 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
     return max;
   }, [data]);
 
-  // Calculate the width of each cell if square is true
-  const cellWidth = square ? cellHeight : "1fr";
-
   return (
     <div className="w-full relative">
       <div
         className="grid"
         style={{
           display: "grid",
-          gridTemplateColumns: yLabels.length > 0 ? "auto 1fr" : "1fr",
-          gridTemplateRows: xLabels.length > 0 ? "auto 1fr" : "1fr",
+          gridTemplateColumns:
+            yLabels.length > 0 ? `auto ${cellHeight}px` : `${cellHeight}px`,
+          gridTemplateRows:
+            xLabels.length > 0 ? `auto ${cellHeight}px` : `${cellHeight}px`,
         }}
       >
         {/* Empty cell in top-left corner when both x and y labels exist */}
@@ -108,7 +101,7 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
             style={{
               gridColumn: "2",
               gridRow: "1",
-              gridTemplateColumns: `repeat(${xLabels.length}, ${cellWidth})`,
+              gridTemplateColumns: `repeat(${xLabels.length}, ${cellHeight})`,
             }}
           >
             {xLabels.map((label, index) => (
@@ -155,7 +148,7 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
             gridRow: "2",
             gridTemplateColumns: `repeat(${
               data[0]?.length || 0
-            }, ${cellWidth})`,
+            }, ${cellHeight})`,
             gridTemplateRows: `repeat(${data.length}, ${cellHeight})`,
           }}
         >
@@ -168,9 +161,8 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
               return (
                 <div
                   key={`cell-${y}-${x}`}
-                  className="flex items-center justify-center border border-gray-200 relative group"
+                  className="flex items-center justify-center border border-base-200 relative group w-full h-full"
                   style={{
-                    height: cellHeight,
                     background: `rgba(120, 120, 120, ${ratio})`,
                     cursor: onClick ? "pointer" : "default",
                     ...(cellStyle ? cellStyle(x, y, ratio) : {}),
@@ -179,9 +171,11 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
                   role={onClick ? "button" : undefined}
                   tabIndex={onClick ? 0 : undefined}
                 >
-                  {cellRender ? cellRender(x, y, value) : value}
+                  <div className="flex items-center justify-center w-full h-full">
+                    {cellRender ? cellRender(x, y, value) : value}
+                  </div>
                   {hoverText && (
-                    <div className="absolutebottom-0 left-1/2 transform -translate-x-1/2 translate-y-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none bg-gray-800 text-white text-sm rounded px-2 py-1 mt-1 shadow-lg max-w-xs text-center whitespace-normal">
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none bg-base-800 text-white text-sm rounded px-2 py-1 mt-1 shadow-lg max-w-xs text-center whitespace-normal">
                       {hoverText(xLabel, yLabel, value)}
                     </div>
                   )}

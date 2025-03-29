@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
+import { useAtomValue } from "jotai";
 import { useTimelineContext } from "./TimelineContext";
 import { formatTime, getHeroImage } from "../../lib";
+import { groupedKillOffensiveAssistExtractorAtom } from "../../atoms/groupedEventsAtom";
 
 export const TimelineDisplay: React.FC = () => {
   const {
@@ -10,12 +12,23 @@ export const TimelineDisplay: React.FC = () => {
     setSelectedEventId,
   } = useTimelineContext();
 
+  // If "loadedData" is not ready, show a loading state
   if (!loadedData) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center p-8">
+        <div className="loading loading-spinner loading-lg text-base-400"></div>
+      </div>
+    );
   }
 
-  const { events } = loadedData;
+  const { matchData } = loadedData;
 
+  // Pull our grouped kill+assist events from the atom
+  const killAssistGroups = useAtomValue(
+    groupedKillOffensiveAssistExtractorAtom
+  );
+
+  // Create an x-scale mapping [start, end] => [0%, 100%]
   const xScale = useMemo(() => {
     return (time: number) => {
       return (
@@ -26,186 +39,314 @@ export const TimelineDisplay: React.FC = () => {
     };
   }, [currentTimeRange]);
 
-  // Generate tick marks at regular intervals
+  // Generate tick marks
   const tickMarks = useMemo(() => {
     const numberOfTicks = 10;
     const tickArray = [];
-
     for (let i = 0; i <= numberOfTicks; i++) {
       const position = i * (100 / numberOfTicks);
       const time =
         currentTimeRange.start +
         (i / numberOfTicks) * (currentTimeRange.end - currentTimeRange.start);
-
-      const formattedTime = formatTime(time);
-
       tickArray.push({
         position,
-        label: formattedTime,
+        label: formatTime(time),
         time,
       });
     }
-
     return tickArray;
   }, [currentTimeRange]);
 
-  // Filter events that are within the current time range
-  const visibleEvents = useMemo(() => {
-    return events.filter(
-      (event) =>
-        event.time >= currentTimeRange.start &&
-        event.time <= currentTimeRange.end
+  // Filter kill+assist groups to just those within our [start, end] range
+  const visibleKillAssistGroups = useMemo(() => {
+    if (!matchData) return [];
+    return killAssistGroups.filter(
+      (g) =>
+        g.matchId === matchData.matchId &&
+        g.matchTime >= currentTimeRange.start &&
+        g.matchTime <= currentTimeRange.end
     );
-  }, [events, currentTimeRange]);
+  }, [killAssistGroups, matchData, currentTimeRange]);
 
-  // Group events by time (considering a small threshold to group events that are close)
-  const groupedEvents = useMemo(() => {
-    const groups: {
-      time: number;
-      position: number;
-      events: typeof events;
-    }[] = [];
-    const threshold = 0.5; // 0.5 seconds threshold to group events
+  // A small helper to render an icon + label for each kill or assist
+  const EventBadge = ({
+    label,
+    eventType,
+    victimInfo,
+    onHover,
+    active,
+    teamColor,
+  }: {
+    label: string;
+    eventType: string;
+    victimInfo?: { name: string; hero: string } | null;
+    onHover: () => void;
+    active: boolean;
+    teamColor: "team1" | "team2";
+  }) => {
+    const borderColor =
+      teamColor === "team1"
+        ? "border-red-600 bg-red-100"
+        : "border-blue-600 bg-blue-100";
 
-    visibleEvents.forEach((event) => {
-      // Find an existing group that's close enough in time
-      const existingGroup = groups.find(
-        (group) => Math.abs(group.time - event.time) <= threshold
+    const activeEffect = active
+      ? "scale-105 z-10 shadow-sm ring-1 ring-base-300 ring-opacity-50"
+      : "";
+
+    return (
+      <div
+        className="flex items-center cursor-pointer group py-0.5"
+        onMouseEnter={onHover}
+        onMouseLeave={() => setSelectedEventId(null)}
+      >
+        <div
+          className={`rounded-full border ${activeEffect} ${borderColor} flex-shrink-0`}
+          style={{ padding: "2px" }}
+        >
+          {/* <img
+            src={getHeroImage(hero)}
+            alt={hero}
+            className="w-5 h-5 rounded-full"
+          /> */}
+        </div>
+        <div className="flex flex-col ml-1.5">
+          <div className="text-xs text-base-700 font-medium leading-none">
+            {label}
+          </div>
+          <div className="flex items-center text-[10px] text-base-500 leading-none">
+            {eventType}
+            {victimInfo && (
+              <div className="flex items-center ml-0.5">
+                <span className="mx-0.5">→</span>
+                <div
+                  className="rounded-full border border-base-300 flex-shrink-0"
+                  style={{ padding: "1px" }}
+                >
+                  <img
+                    src={getHeroImage(victimInfo.hero)}
+                    alt={victimInfo.hero}
+                    className="w-3 h-3 rounded-full"
+                  />
+                </div>
+                <span className="font-medium ml-0.5">{victimInfo.name}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render one "cluster" per grouped instant in time
+  const renderKillAssistGroup = (
+    group: typeof visibleKillAssistGroups[number],
+    index: number
+  ) => {
+    // Split events by team
+    const team1Kills = group.kills.filter(
+      (k) => k.attackerTeam === matchData.team1Name
+    );
+    const team2Kills = group.kills.filter(
+      (k) => k.attackerTeam === matchData.team2Name
+    );
+    const team1Assists = group.assists.filter(
+      (a) => a.playerTeam === matchData.team1Name
+    );
+    const team2Assists = group.assists.filter(
+      (a) => a.playerTeam === matchData.team2Name
+    );
+
+    // Only render if there are events to show
+    if (
+      team1Kills.length === 0 &&
+      team2Kills.length === 0 &&
+      team1Assists.length === 0 &&
+      team2Assists.length === 0
+    ) {
+      return null;
+    }
+
+    // Render a cluster of events for each team
+    const EventCluster = ({
+      events,
+      isTeam1,
+    }: {
+      events: Array<{ type: "kill" | "assist"; data: any }>;
+      isTeam1: boolean;
+    }) => {
+      if (events.length === 0) return null;
+
+      const yOffset = isTeam1 ? -45 : 45;
+      const teamColor = isTeam1 ? "team1" : "team2";
+      const lineColor = isTeam1 ? "bg-base-600" : "bg-base-500";
+
+      return (
+        <div
+          className="absolute flex flex-col items-center"
+          style={{
+            left: `${xScale(group.matchTime)}%`,
+            transform: "translateX(-50%)",
+            top: "50%",
+          }}
+        >
+          {/* Line connecting to timeline */}
+          <div
+            className={`w-px absolute ${lineColor}`}
+            style={{
+              top: isTeam1 ? `${yOffset}px` : "0px",
+              bottom: isTeam1 ? "0px" : `${-yOffset}px`,
+            }}
+          />
+
+          {/* Event badges container */}
+          <div
+            className="flex flex-col py-1 px-1.5 rounded bg-base bg-opacity-70 backdrop-blur-sm shadow-sm"
+            style={{
+              marginTop: isTeam1 ? `${yOffset - 5}px` : "0px",
+              marginBottom: isTeam1 ? "0px" : `${-yOffset + 5}px`,
+              maxWidth: "220px",
+              minWidth: "140px",
+            }}
+          >
+            {events.map((event, i) => {
+              if (event.type === "kill") {
+                const kill = event.data;
+                return (
+                  <EventBadge
+                    key={`kill-${kill.attackerName}-${kill.victimName}-${i}`}
+                    label={kill.attackerName}
+                    eventType="Kill"
+                    victimInfo={{
+                      name: kill.victimName,
+                      hero: kill.victimHero,
+                    }}
+                    onHover={() => setSelectedEventId(kill.matchId)}
+                    active={selectedEventId === kill.matchId}
+                    teamColor={teamColor}
+                  />
+                );
+              } else {
+                const assist = event.data;
+                return (
+                  <EventBadge
+                    key={`assist-${assist.playerName}-${i}`}
+                    label={assist.playerName}
+                    eventType="Assist"
+                    victimInfo={null}
+                    onHover={() => setSelectedEventId(assist.matchId)}
+                    active={selectedEventId === assist.matchId}
+                    teamColor={teamColor}
+                  />
+                );
+              }
+            })}
+          </div>
+        </div>
       );
+    };
 
-      if (existingGroup) {
-        existingGroup.events.push(event);
-      } else {
-        // Create a new group
-        groups.push({
-          time: event.time,
-          position: xScale(event.time),
-          events: [event],
-        });
-      }
-    });
+    // Combine kills and assists for each team
+    const team1Events = [
+      ...team1Kills.map((kill) => ({ type: "kill" as const, data: kill })),
+      ...team1Assists.map((assist) => ({
+        type: "assist" as const,
+        data: assist,
+      })),
+    ];
 
-    // Sort groups by time
-    return groups.sort((a, b) => a.time - b.time);
-  }, [visibleEvents, xScale]);
+    const team2Events = [
+      ...team2Kills.map((kill) => ({ type: "kill" as const, data: kill })),
+      ...team2Assists.map((assist) => ({
+        type: "assist" as const,
+        data: assist,
+      })),
+    ];
+
+    return (
+      <React.Fragment key={`killAssistGroup-${index}`}>
+        {team1Events.length > 0 && (
+          <EventCluster events={team1Events} isTeam1={true} />
+        )}
+        {team2Events.length > 0 && (
+          <EventCluster events={team2Events} isTeam1={false} />
+        )}
+      </React.Fragment>
+    );
+  };
 
   return (
-    <div className="mt-6 mb-24">
-      {/* Container for the entire timeline */}
-      <div className="relative w-full">
-        {/* Top time labels */}
-        <div className="relative w-full h-5 mb-1">
-          {tickMarks.map((tick, index) => (
-            <div
-              key={`label-${index}`}
-              className="absolute text-xs text-gray-500 w-20"
-              style={{
-                left: `${tick.position - 0}%`,
-                transform:
-                  index === 0
-                    ? "translateX(10%)"
-                    : index === tickMarks.length - 1
-                    ? "translateX(-6z0%)"
-                    : "translateX(-50%)",
-              }}
-            >
-              {tick.label}
-            </div>
-          ))}
-        </div>
+    <div className="card bg-base-100 shadow-sm mb-8">
+      <div className="card-body p-3 h-[600px]">
+        <h2 className="card-title text-base-700 text-lg font-semibold mb-3">
+          Events Timeline
+        </h2>
 
-        {/* Timeline bar with tick marks */}
-        <div className="relative w-full h-8">
-          {/* The main timeline bar */}
-          <div className="absolute top-4 h-1 bg-gray-300 w-full rounded-full"></div>
-
-          {/* Tick marks */}
-          {tickMarks.map((tick, index) => (
-            <div
-              key={`tick-${index}`}
-              className="absolute top-0 flex flex-col items-center"
-              style={{
-                left: `${tick.position}%`,
-                transform: "translateX(-50%)",
-              }}
-            >
-              <div className="h-8 w-px bg-gray-200"></div>
-            </div>
-          ))}
-        </div>
-
-        {/* Events display */}
-        <div className="relative">
-          {/* Event groups */}
-          {groupedEvents.map((group, groupIndex) => (
-            <div
-              key={`group-${groupIndex}`}
-              className="absolute"
-              style={{
-                left: `${group.position}%`,
-                transform: "translateX(-50%)",
-                top: "-20px",
-              }}
-            >
-              {/* Vertical marker line */}
-              <div className="w-px h-3 bg-gray-400 mx-auto"></div>
-
-              {/* Group of events */}
+        <div className="relative w-full">
+          {/* Top time labels */}
+          <div className="relative w-full h-4 mb-1">
+            {tickMarks.map((tick, index) => (
               <div
-                className={`mt-1 pt-1 flex items-center justify-center ${
-                  group.events.length > 1 ? "flex-wrap" : ""
-                }`}
+                key={`label-${index}`}
+                className="absolute text-xs text-base-500 w-16 text-center"
+                style={{
+                  left: `${tick.position}%`,
+                  transform:
+                    index === 0
+                      ? "translateX(0%)"
+                      : index === tickMarks.length - 1
+                      ? "translateX(-100%)"
+                      : "translateX(-50%)",
+                }}
               >
-                {group.events.map((event) => (
-                  <div
-                    key={event.id}
-                    className={`transition-all duration-200 mx-1 flex flex-col items-center ${
-                      selectedEventId === event.id ? "scale-110 z-10" : ""
-                    }`}
-                    style={{
-                      width: group.events.length > 1 ? "30px" : "auto",
-                      marginBottom: group.events.length > 1 ? "8px" : "0",
-                    }}
-                    onMouseEnter={() => setSelectedEventId(event.id)}
-                    onMouseLeave={() => setSelectedEventId(null)}
-                  >
-                    {/* Event content with hero image and name */}
-                    <div
-                      className={`p-1 rounded transition-all ${
-                        selectedEventId === event.id
-                          ? "bg-gray-200 shadow-sm"
-                          : ""
-                      }`}
-                    >
-                      <img
-                        src={getHeroImage(event.playerHero)}
-                        alt={event.playerHero}
-                        className="w-8 h-8 mx-auto rounded-full border border-gray-300"
-                      />
-                      <div
-                        className="text-xs text-gray-600 mt-1 text-center font-medium whitespace-nowrap overflow-hidden text-ellipsis"
-                        style={{ maxWidth: "60px" }}
-                      >
-                        {event.playerName}
-                      </div>
-                      <div
-                        className="text-xs text-gray-600 mt-1 text-center font-medium whitespace-nowrap overflow-hidden text-ellipsis"
-                        style={{ maxWidth: "60px" }}
-                      >
-                        {event.type === "playerEvent" &&
-                          event.playerEvent?.playerEventType}
-                        {event.type === "playerInteractionEvent" &&
-                          event.playerInteractionEvent
-                            ?.playerInteractionEventType}
-                        {event.type === "ultimateEvent" &&
-                          event.ultimateEvent?.ultimateId}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                {tick.label}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Timeline bar with tick marks */}
+          <div className="relative w-full h-6 mb-6">
+            {/* Main timeline bar */}
+            <div className="absolute top-3 h-1 bg-base-300 w-full rounded-full" />
+
+            {/* Tick marks */}
+            {tickMarks.map((tick, index) => (
+              <div
+                key={`tick-${index}`}
+                className="absolute top-1 flex flex-col items-center"
+                style={{
+                  left: `${tick.position}%`,
+                  transform: "translateX(-50%)",
+                }}
+              >
+                <div className="h-4 w-px bg-base-300" />
+              </div>
+            ))}
+          </div>
+
+          {/* Event groups */}
+          <div className="relative w-full min-h-[120px]">
+            {visibleKillAssistGroups.length > 0 ? (
+              visibleKillAssistGroups.map((group, index) =>
+                renderKillAssistGroup(group, index)
+              )
+            ) : (
+              <div className="text-center text-base-500 py-6 text-sm">
+                No events in this time range
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="flex justify-center mt-6 text-xs text-base-500 gap-4">
+          <div className="flex items-center">
+            <div className="w-2 h-2 rounded-full bg-base-600 mr-1"></div>
+            <span>{matchData.team1Name}</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-2 h-2 rounded-full bg-base-500 mr-1"></div>
+            <span>{matchData.team2Name}</span>
+          </div>
         </div>
       </div>
     </div>

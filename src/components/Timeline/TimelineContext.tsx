@@ -44,6 +44,14 @@ export interface TimelineEvent {
   ultimateEvent?: UltimateEvent;
 }
 
+// A grouped structure that collects events by approximate time + team
+interface GroupedTimelineEvents {
+  time: number;
+  teamName: string;
+  isTeam1: boolean;
+  events: TimelineEvent[];
+}
+
 interface TimelineContextType {
   matchId: string;
   timeRangeLabel: string;
@@ -57,6 +65,7 @@ interface TimelineContextType {
     roundTimes: RoundTimes[];
     teamfights: Teamfight[];
     events: TimelineEvent[];
+    groupedEvents: GroupedTimelineEvents[];
   };
 }
 
@@ -81,44 +90,44 @@ export const TimelineProvider: React.FC<TimelineProviderProps> = ({
 
   const allMatchData = useAtomValue(matchDataAtom);
   const matchData = useMemo(
-    () => allMatchData.find((matchData) => matchData.matchId === matchId),
+    () => allMatchData.find((m) => m.matchId === matchId),
     [allMatchData, matchId]
   );
 
   const allMapTimes = useAtomValue(mapTimesAtom);
   const mapTime = useMemo(
-    () => allMapTimes.find((mapTime) => mapTime.matchId === matchId),
+    () => allMapTimes.find((mt) => mt.matchId === matchId),
     [allMapTimes, matchId]
   );
 
   const allRoundTimes = useAtomValue(roundTimesAtom);
   const roundTimes = useMemo(
-    () => allRoundTimes.filter((roundTime) => roundTime.matchId === matchId),
+    () => allRoundTimes.filter((rt) => rt.matchId === matchId),
     [allRoundTimes, matchId]
   );
 
   const allTeamfights = useAtomValue(teamfightsAtom);
   const teamfights = useMemo(
-    () => allTeamfights.filter((teamfight) => teamfight.matchId === matchId),
+    () => allTeamfights.filter((tf) => tf.matchId === matchId),
     [allTeamfights, matchId]
   );
 
   const allPlayerLives = useAtomValue(playerLivesAtom);
   const playerLives = useMemo(
-    () => allPlayerLives.filter((playerLife) => playerLife.matchId === matchId),
+    () => allPlayerLives.filter((pl) => pl.matchId === matchId),
     [allPlayerLives, matchId]
   );
-
   console.log(playerLives);
 
+  // Filter to only the events within our current time range:
   const allPlayerEvents = useAtomValue(playerEventsAtom);
   const playerEvents = useMemo(
     () =>
       allPlayerEvents.filter(
-        (playerEvent) =>
-          playerEvent.matchId === matchId &&
-          playerEvent.playerEventTime >= currentTimeRange.start &&
-          playerEvent.playerEventTime <= currentTimeRange.end
+        (pe) =>
+          pe.matchId === matchId &&
+          pe.playerEventTime >= currentTimeRange.start &&
+          pe.playerEventTime <= currentTimeRange.end
       ),
     [allPlayerEvents, matchId, currentTimeRange]
   );
@@ -127,13 +136,11 @@ export const TimelineProvider: React.FC<TimelineProviderProps> = ({
   const playerInteractionEvents = useMemo(
     () =>
       allPlayerInteractionEvents.filter(
-        (playerInteractionEvent) =>
-          playerInteractionEvent.matchId === matchId &&
-          playerInteractionEvent.playerInteractionEventTime >=
-            currentTimeRange.start &&
-          playerInteractionEvent.playerInteractionEventTime <=
-            currentTimeRange.end &&
-          playerInteractionEvent.direction === "outgoing"
+        (pie) =>
+          pie.matchId === matchId &&
+          pie.playerInteractionEventTime >= currentTimeRange.start &&
+          pie.playerInteractionEventTime <= currentTimeRange.end &&
+          pie.direction === "outgoing"
       ),
     [allPlayerInteractionEvents, matchId, currentTimeRange]
   );
@@ -142,14 +149,15 @@ export const TimelineProvider: React.FC<TimelineProviderProps> = ({
   const ultimateEvents = useMemo(
     () =>
       allUltimateEvents.filter(
-        (ultimateEvent) =>
-          ultimateEvent.matchId === matchId &&
-          ultimateEvent.ultimateStartTime >= currentTimeRange.start &&
-          ultimateEvent.ultimateStartTime <= currentTimeRange.end
+        (ue) =>
+          ue.matchId === matchId &&
+          ue.ultimateStartTime >= currentTimeRange.start &&
+          ue.ultimateStartTime <= currentTimeRange.end
       ),
     [allUltimateEvents, matchId, currentTimeRange]
   );
 
+  // A nicely formatted label for the current time range
   const timeRangeLabel = useMemo(() => {
     const start = mapTime?.startTime;
     const end = mapTime?.endTime;
@@ -157,73 +165,112 @@ export const TimelineProvider: React.FC<TimelineProviderProps> = ({
       return "Entire Match";
     }
     const maybeRound = roundTimes.find(
-      (roundTime) =>
-        roundTime.roundStartTime === currentTimeRange.start &&
-        roundTime.roundEndTime === currentTimeRange.end
+      (r) =>
+        r.roundStartTime === currentTimeRange.start &&
+        r.roundEndTime === currentTimeRange.end
     );
     if (maybeRound) {
       return `Round ${maybeRound.roundNumber}`;
     }
     const maybeTeamfight = teamfights.find(
-      (teamfight) =>
-        teamfight.startTime === currentTimeRange.start &&
-        teamfight.endTime === currentTimeRange.end
+      (tf) =>
+        tf.startTime === currentTimeRange.start &&
+        tf.endTime === currentTimeRange.end
     );
     if (maybeTeamfight) {
-      return `Teamfight ${maybeTeamfight.startTime} - ${maybeTeamfight.endTime} ${maybeTeamfight.team1Kills} - ${maybeTeamfight.team2Kills}`;
+      return `Teamfight ${maybeTeamfight.startTime} - ${maybeTeamfight.endTime}  (${maybeTeamfight.team1Kills} - ${maybeTeamfight.team2Kills})`;
     }
     return `${formatDuration(currentTimeRange.end - currentTimeRange.start)}`;
-  }, [mapTime, currentTimeRange]);
+  }, [mapTime, currentTimeRange, roundTimes, teamfights]);
 
+  // Combine all relevant events into a single array
   const events: TimelineEvent[] = useMemo(() => {
     if (!matchData) {
       return [];
     }
     return [
-      ...playerInteractionEvents.map((playerInteractionEvent) => ({
-        id: playerInteractionEvent.id,
+      ...playerInteractionEvents.map((pie) => ({
+        id: pie.id,
         type: "playerInteractionEvent" as const,
-        time: playerInteractionEvent.playerInteractionEventTime,
-        playerInteractionEvent: playerInteractionEvent,
-        playerName: playerInteractionEvent.playerName,
-        teamName: playerInteractionEvent.playerTeam,
-        playerHero: playerInteractionEvent.playerHero,
-        playerRole: getRoleFromHero(playerInteractionEvent.playerHero),
-        isTeam1: playerInteractionEvent.playerTeam === matchData.team1Name,
+        time: pie.playerInteractionEventTime,
+        playerInteractionEvent: pie,
+        playerName: pie.playerName,
+        teamName: pie.playerTeam,
+        playerHero: pie.playerHero,
+        playerRole: getRoleFromHero(pie.playerHero),
+        isTeam1: pie.playerTeam === matchData.team1Name,
       })),
-      ...playerEvents.map((playerEvent) => ({
-        id: playerEvent.id,
+      ...playerEvents.map((pe) => ({
+        id: pe.id,
         type: "playerEvent" as const,
-        time: playerEvent.playerEventTime,
-        playerEvent: playerEvent,
-        playerName: playerEvent.playerName,
-        teamName: playerEvent.playerTeam,
-        playerHero: playerEvent.playerHero,
-        playerRole: getRoleFromHero(playerEvent.playerHero),
-        isTeam1: playerEvent.playerTeam === matchData.team1Name,
+        time: pe.playerEventTime,
+        playerEvent: pe,
+        playerName: pe.playerName,
+        teamName: pe.playerTeam,
+        playerHero: pe.playerHero,
+        playerRole: getRoleFromHero(pe.playerHero),
+        isTeam1: pe.playerTeam === matchData.team1Name,
       })),
-      ...ultimateEvents.map((ultimateEvent) => ({
-        id: ultimateEvent.id,
+      ...ultimateEvents.map((ue) => ({
+        id: ue.id,
         type: "ultimateEvent" as const,
-        time: ultimateEvent.ultimateStartTime,
-        ultimateEvent: ultimateEvent,
-        playerName: ultimateEvent.playerName,
-        teamName: ultimateEvent.playerTeam,
-        playerHero: ultimateEvent.playerHero,
-        playerRole: getRoleFromHero(ultimateEvent.playerHero),
-        isTeam1: ultimateEvent.playerTeam === matchData.team1Name,
+        time: ue.ultimateStartTime,
+        ultimateEvent: ue,
+        playerName: ue.playerName,
+        teamName: ue.playerTeam,
+        playerHero: ue.playerHero,
+        playerRole: getRoleFromHero(ue.playerHero),
+        isTeam1: ue.playerTeam === matchData.team1Name,
       })),
     ].sort((a, b) => a.time - b.time);
   }, [playerInteractionEvents, playerEvents, ultimateEvents, matchData]);
+
+  // Create grouped events by (approximate) time + team to simplify display
+  const groupedEvents: GroupedTimelineEvents[] = useMemo(() => {
+    if (!events.length) return [];
+    const threshold = 5; // seconds threshold to group events from the same team
+    const result: GroupedTimelineEvents[] = [];
+
+    for (const evt of events) {
+      const lastGroup = result[result.length - 1];
+
+      // If there's a group from the same team and close enough in time, add to it
+      if (
+        lastGroup &&
+        lastGroup.isTeam1 === evt.isTeam1 &&
+        Math.abs(lastGroup.time - evt.time) <= threshold
+      ) {
+        lastGroup.events.push(evt);
+      } else {
+        // Otherwise, create a new group
+        result.push({
+          time: evt.time,
+          teamName: evt.teamName,
+          isTeam1: evt.isTeam1,
+          events: [evt],
+        });
+      }
+    }
+    return result;
+  }, [events]);
 
   const dataLoaded =
     matchData &&
     mapTime &&
     roundTimes &&
     teamfights &&
-    playerEvents &&
-    playerInteractionEvents &&
-    ultimateEvents;
+    typeof events !== "undefined";
+
+  const loadedData = dataLoaded
+    ? {
+        matchData,
+        mapTime,
+        roundTimes,
+        teamfights,
+        events,
+        groupedEvents,
+      }
+    : undefined;
 
   return (
     <TimelineContext.Provider
@@ -234,15 +281,7 @@ export const TimelineProvider: React.FC<TimelineProviderProps> = ({
         selectedEventId,
         setSelectedEventId,
         timeRangeLabel,
-        loadedData: dataLoaded
-          ? {
-              matchData,
-              mapTime,
-              roundTimes,
-              teamfights,
-              events,
-            }
-          : undefined,
+        loadedData,
       }}
     >
       {children}

@@ -110,7 +110,7 @@ const ZeroState = () => {
               ${
                 isDragActive
                   ? "border-blue-400"
-                  : "border-gray-300 dark:border-gray-600"
+                  : "border-base-300 dark:border-base-600"
               } 
               ${
                 isDragAccept
@@ -136,14 +136,14 @@ const ZeroState = () => {
               ) : isDragAccept ? (
                 <MdOutlineFileOpen className="text-green-500" size={50} />
               ) : (
-                <MdOutlineFileOpen className="text-gray-400" size={50} />
+                <MdOutlineFileOpen className="text-base-400" size={50} />
               )}
 
               <div className="flex flex-col items-center">
                 <span className="text-xl">
                   Drag files here or click to select
                 </span>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
+                <span className="text-sm text-base-500 dark:text-base-400">
                   Upload your ScrimTime log files to get started
                 </span>
               </div>
