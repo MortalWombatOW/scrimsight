@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useTimelineContext } from "./TimelineContext";
 import { getHeroImage } from "../../lib";
 
@@ -39,19 +40,7 @@ const getEventDisplayText = (eventType: string): string => {
   return eventType;
 };
 
-const TimelineItem: React.FC<{
-  time: number;
-  playerName: string;
-  playerHero: string;
-  eventType: string;
-  isTeam1: boolean;
-  isSelected: boolean;
-  targetName?: string;
-  hero?: string;
-  teamName?: string;
-  onClick: () => void;
-  onMouseLeave: () => void;
-}> = ({
+const TimelineItem = ({
   time,
   playerName,
   playerHero,
@@ -63,7 +52,19 @@ const TimelineItem: React.FC<{
   teamName,
   onClick,
   onMouseLeave,
-}) => {
+}: {
+  time: number;
+  playerName: string;
+  playerHero: string;
+  eventType: string;
+  isTeam1: boolean;
+  isSelected: boolean;
+  targetName?: string;
+  hero?: string;
+  teamName?: string;
+  onClick: () => void;
+  onMouseLeave: () => void;
+}): ReactNode => {
   const displayText = getEventDisplayText(eventType);
   const isUltimate = eventType.toLowerCase().includes("ultimate");
 
@@ -188,7 +189,9 @@ const TimelineItem: React.FC<{
   );
 };
 
-export const TimelineEvents: React.FC = () => {
+// NOTE: The TimelineEvents component definition below was already corrected in the previous step.
+// This SEARCH/REPLACE block only fixes the TimelineItem component above it.
+export const TimelineEvents = (): ReactNode => {
   const {
     loadedData,
     selectedEventId,

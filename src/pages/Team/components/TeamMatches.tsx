@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom"; // Import useParams
 import { useAtomValue } from "jotai"; // Import useAtomValue
 import { MatchData, matchDataAtom } from "../../../atoms/matchDataAtom"; // Import matchDataAtom
@@ -17,7 +17,7 @@ const getUniqueOpponents = (matches: MatchData[], teamId: string) => [
   ),
 ];
 
-export const TeamMatches: React.FC = () => {
+export const TeamMatches = (): ReactNode => {
   const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL
   const allMatches = useAtomValue(matchDataAtom); // Get all matches
 

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useTimelineContext } from "./TimelineContext";
 import { formatTime } from "../../lib";
 
@@ -9,7 +10,7 @@ type TimeSegment = {
   endTime: number;
 };
 
-export const TimelineControls: React.FC = () => {
+export const TimelineControls = (): ReactNode => {
   const {
     currentTimeRange,
     setCurrentTimeRange,

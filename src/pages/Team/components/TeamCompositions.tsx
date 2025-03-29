@@ -1,4 +1,4 @@
-import React from "react";
+import { type ReactNode } from "react";
 import { useParams } from "react-router-dom"; // Import useParams
 import { useAtomValue } from "jotai";
 import { detailedTeamCompositionsAtom } from "../../../atoms/derived_stats/detailedTeamCompositionsAtom";
@@ -11,7 +11,7 @@ import { formatDuration } from "../../../lib/time";
 import RoleIcon from "../../../components/Common/RoleIcon";
 import { ErrorMessage } from "../../../components/Common/ErrorMessage"; // Import ErrorMessage
 
-export const TeamCompositions: React.FC = () => {
+export const TeamCompositions = (): ReactNode => {
   const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL
 
   if (!teamId) {

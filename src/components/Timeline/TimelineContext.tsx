@@ -15,13 +15,7 @@ import {
   UltimateEvent,
   ultimateEventsAtom,
 } from "../../atoms";
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useMemo,
-} from "react";
+import { createContext, useContext, useState, ReactNode, useMemo } from "react";
 import { playerLivesAtom } from "../../atoms/playerLivesAtom";
 import { formatDuration, getRoleFromHero } from "../../lib";
 
@@ -78,10 +72,10 @@ interface TimelineProviderProps {
   matchId: string;
 }
 
-export const TimelineProvider: React.FC<TimelineProviderProps> = ({
+export const TimelineProvider = ({
   children,
   matchId,
-}) => {
+}: TimelineProviderProps): ReactNode => {
   const [currentTimeRange, setCurrentTimeRange] = useState<TimeRange>({
     start: 0,
     end: 100,

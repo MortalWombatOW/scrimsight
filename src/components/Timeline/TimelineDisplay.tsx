@@ -1,10 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useMemo, type ReactNode } from "react";
 import { useAtomValue } from "jotai";
 import { useTimelineContext } from "./TimelineContext";
 import { formatTime, getHeroImage } from "../../lib";
 import { groupedKillOffensiveAssistExtractorAtom } from "../../atoms/groupedEventsAtom";
 
-export const TimelineDisplay: React.FC = () => {
+export const TimelineDisplay = (): ReactNode => {
   const {
     currentTimeRange,
     loadedData,

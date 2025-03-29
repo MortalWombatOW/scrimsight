@@ -1,4 +1,4 @@
-import React from "react";
+import { type ReactNode } from "react";
 import { TimelineProvider } from "./TimelineContext";
 import { TimelineTable } from "./TimelineTable";
 import { TimelineEvents } from "./TimelineEvents";
@@ -10,7 +10,7 @@ import { TimelineControls } from "./TimelineControls";
  * This component acts as the container for the entire timeline visualization,
  * integrating THREE.js rendering with React UI controls
  */
-export const Timeline: React.FC<{ matchId: string }> = ({ matchId }) => {
+export const Timeline = ({ matchId }: { matchId: string }): ReactNode => {
   return (
     <TimelineProvider matchId={matchId}>
       <TimelineContent />
@@ -18,7 +18,7 @@ export const Timeline: React.FC<{ matchId: string }> = ({ matchId }) => {
   );
 };
 
-const TimelineContent: React.FC = () => {
+const TimelineContent = (): ReactNode => {
   // These context values will be used in child components
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 

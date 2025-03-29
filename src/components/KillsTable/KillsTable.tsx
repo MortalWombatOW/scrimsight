@@ -1,4 +1,4 @@
-import React from "react";
+import { type ReactNode } from "react";
 
 import { useAtom } from "jotai";
 import {
@@ -102,7 +102,7 @@ export const calculatePlayerTotals = (killMatrix: {
   return totals;
 };
 
-const KillsTable: React.FC<KillsTableProps> = ({ matchId }) => {
+const KillsTable = ({ matchId }: KillsTableProps): ReactNode => {
   const [matchData] = useAtom(matchDataAtom);
   const [playerInteractionEvents] = useAtom(playerInteractionEventsAtom);
 

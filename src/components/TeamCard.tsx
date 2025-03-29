@@ -1,4 +1,4 @@
-import React from "react";
+import { type ReactNode } from "react";
 import { useAtomValue } from "jotai";
 import { teamStatsAtom } from "../atoms/teamStatsAtom";
 import { Link } from "react-router-dom";
@@ -14,7 +14,7 @@ const getInitials = (name: string) => {
     .join("");
 };
 
-const TeamCard: React.FC<TeamCardProps> = ({ teamName }) => {
+const TeamCard = ({ teamName }: TeamCardProps): ReactNode => {
   const teamStats = useAtomValue(teamStatsAtom);
 
   const team = teamStats.find((team) => team.teamName === teamName);

@@ -1,4 +1,4 @@
-import React from "react";
+import { type ReactNode } from "react";
 import { MdFormatListBulleted } from "react-icons/md";
 import { GiHealthNormal } from "react-icons/gi";
 import { FaShield } from "react-icons/fa6";
@@ -40,41 +40,41 @@ const getColorClass = (color: ColorKey): string => {
   }
 };
 
-const TankIcon: React.FC<{ color: ColorKey; className?: string }> = ({
+const TankIcon = ({
   color,
   className,
-}) => (
+}: { color: ColorKey; className?: string }): ReactNode => (
   <FaShield
     className={`${getColorClass(color)} ${className || ""}`}
     size={16}
   />
 );
 
-const DamageIcon: React.FC<{ color: ColorKey; className?: string }> = ({
+const DamageIcon = ({
   color,
   className,
-}) => (
+}: { color: ColorKey; className?: string }): ReactNode => (
   <MdFormatListBulleted
     className={`${getColorClass(color)} ${className || ""} rotate-270`}
     size={16}
   />
 );
 
-const SupportIcon: React.FC<{ color: ColorKey; className?: string }> = ({
+const SupportIcon = ({
   color,
   className,
-}) => (
+}: { color: ColorKey; className?: string }): ReactNode => (
   <GiHealthNormal
     className={`${getColorClass(color)} ${className || ""}`}
     size={16}
   />
 );
 
-const RoleIcon: React.FC<RoleIconProps> = ({
+const RoleIcon = ({
   role,
   color = "inherit",
   className = "",
-}) => {
+}: RoleIconProps): ReactNode => {
   switch (role) {
     case "tank":
       return <TankIcon color={color} className={className} />;

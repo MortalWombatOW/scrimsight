@@ -1,4 +1,4 @@
-import React from "react";
+import { type ReactNode } from "react";
 import { useStats } from "../../../atoms";
 import { useAtomValue } from "jotai";
 import { matchDataAtom } from "../../../atoms/matchDataAtom";
@@ -8,7 +8,7 @@ interface PlayerMatchesProps {
   playerName: string;
 }
 
-export const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerName }) => {
+export const PlayerMatches = ({ playerName }: PlayerMatchesProps): ReactNode => {
   const matchStats = useStats(
     ["matchId", "playerName", "playerHero", "playerTeam"],
     { playerName: [playerName] }

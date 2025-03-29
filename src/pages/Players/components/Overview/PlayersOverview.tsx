@@ -1,11 +1,11 @@
-import React from "react";
+import { type ReactNode } from "react";
 import { useStats } from "../../../../atoms/metrics/playerMetricsAtoms";
 import RoleIcon from "../../../../components/Common/RoleIcon";
 import { getRoleFromHero } from "../../../../lib/hero";
 import { TopPlayersList } from "./TopPlayersList";
 import { PlayerList } from "./PlayerList";
 
-export const PlayersOverview: React.FC = () => {
+export const PlayersOverview = (): ReactNode => {
   const heroStats = useStats(["playerName", "playerHero"]);
 
   // Safely calculate most played hero

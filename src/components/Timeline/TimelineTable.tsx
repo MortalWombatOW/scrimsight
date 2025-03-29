@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { useTimelineContext } from "./TimelineContext";
 import { formatDuration } from "../../lib";
 
-export const TimelineTable: React.FC = () => {
+export const TimelineTable = (): ReactNode => {
   const { loadedData, currentTimeRange, timeRangeLabel } = useTimelineContext();
 
   const playerStats = useMemo(() => {

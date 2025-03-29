@@ -1,4 +1,4 @@
-import React from "react";
+import { type ReactNode } from "react";
 import { useStats } from "../../../atoms";
 import {
   OverwatchRole,
@@ -83,7 +83,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const PlayerHeroes: React.FC<PlayerHeroesProps> = ({ playerName }) => {
+export const PlayerHeroes = ({ playerName }: PlayerHeroesProps): ReactNode => {
   const heroStats = useStats(["playerName", "playerHero"], {
     playerName: [playerName],
   });

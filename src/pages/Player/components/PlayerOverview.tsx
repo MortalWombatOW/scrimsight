@@ -1,4 +1,4 @@
-import React from "react";
+import { type ReactNode } from "react";
 import { useStats } from "../../../atoms";
 import { StatCard } from "../../../components/StatCard";
 import {
@@ -28,9 +28,9 @@ type PerformanceTrend = {
   avgElims: number;
 };
 
-export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
+export const PlayerOverview = ({
   playerName,
-}) => {
+}: PlayerOverviewProps): ReactNode => {
   // Get overall stats
   const overallStats = useStats(["playerName"], { playerName: [playerName] });
   const heroStats = useStats(["playerName", "playerHero"], {

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { OverwatchRole } from "../../lib";
 import RoleCheckbox from "./RoleCheckbox";
 
@@ -7,11 +8,11 @@ interface RoleControlProps {
   size?: "small" | "large";
 }
 
-const RoleControl: React.FC<RoleControlProps> = ({
+const RoleControl = ({
   selectedRoles,
   onChange,
   size = "large",
-}) => {
+}: RoleControlProps): ReactNode => {
   return (
     <div className="mx-2.5">
       <h3 className="mb-2 text-lg font-medium">Roles</h3>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, type ReactNode } from "react";
 
 interface IconAutocompleteProps {
   options: string[];
@@ -12,7 +12,7 @@ interface IconAutocompleteProps {
   optionSubLabel?: (option: string) => string;
 }
 
-export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
+export const IconAutocomplete = ({
   options,
   selected,
   onChange,
@@ -22,7 +22,7 @@ export const IconAutocomplete: React.FC<IconAutocompleteProps> = ({
   size = "large",
   optionLabel,
   optionSubLabel,
-}) => {
+}: IconAutocompleteProps): ReactNode => {
   const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);

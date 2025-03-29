@@ -1,10 +1,10 @@
-import React from "react";
+import { type ReactNode } from "react";
 
 interface ErrorMessageProps {
   message: string;
 }
 
-export const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
+export const ErrorMessage = ({ message }: ErrorMessageProps): ReactNode => {
   return (
     <div className="alert alert-error">
       <svg
