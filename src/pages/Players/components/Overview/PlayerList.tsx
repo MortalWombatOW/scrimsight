@@ -8,7 +8,6 @@ import { PlayerStatsNumericalKeys } from "../../../../atoms/metrics/playerMetric
 const sortFields = {
   playtime: "playtime" as PlayerStatsNumericalKeys,
   eliminationsPer10Minutes: "eliminationsPer10Minutes" as PlayerStatsNumericalKeys,
-  // Remove winRate if it's not a valid key
 } as const;
 
 export const PlayerList = () => {
