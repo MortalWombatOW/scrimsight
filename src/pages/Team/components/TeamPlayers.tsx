@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom"; // Import useParams
 import {
   useReactTable,
   getCoreRowModel,
@@ -18,9 +18,9 @@ import {
 } from "../../../atoms/metrics/playerMetricsAtoms";
 import { Grouped } from "../../../atoms/metrics/metricUtils";
 import { prettyFormat } from "../../../lib/format";
-// import { getRoleFromHero } from "../../../lib/hero"; // Keep for potential future use
+import { ErrorMessage } from "../../../components/Common/ErrorMessage"; // Import ErrorMessage
+// import { getRoleFromHero } from "../../../lib/hero";
 
-// Define the shape of the data row for the table
 type PlayerTableRow = Grouped<
   PlayerStats,
   PlayerStatsCategoryKeys,
@@ -29,21 +29,25 @@ type PlayerTableRow = Grouped<
 
 const columnHelper = createColumnHelper<PlayerTableRow>();
 
-interface TeamPlayersProps {
-  // players prop is no longer needed as useStats fetches the players
-  teamName: string;
-}
+// Removed TeamPlayersProps interface
 
-export const TeamPlayers = ({ teamName }: TeamPlayersProps) => {
+export const TeamPlayers = () => {
+  const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  // Fetch aggregated stats per player for the given team
+  if (!teamId) {
+    // Handle case where teamId is not available
+    return <ErrorMessage message="Team ID not found in URL." />;
+  }
+
+  // Fetch aggregated stats per player for the given team using teamId
   const { rows: playerStatsData = [] } = useStats(["playerName"], {
-    playerTeam: [teamName],
+    playerTeam: [teamId],
   });
 
   // --- Role Calculation (Placeholder/Simplified) ---
+  // TODO: Implement robust dominant role calculation if needed.
   // TODO: Implement robust dominant role calculation if needed.
   // For now, we'll just add a placeholder column.
   // const getPlayerRole = (playerName: string) => { ... };
@@ -97,26 +101,6 @@ export const TeamPlayers = ({ teamName }: TeamPlayersProps) => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
-
-  // --- Role Filter Component (Placeholder) ---
-  // TODO: Implement dropdown/select for role filtering
-  const RoleFilter = () => (
-    <div className="mb-4">
-      <label className="mr-2">Filter by Role:</label>
-      <select
-        className="select select-bordered select-sm"
-        value={(table.getColumn("role")?.getFilterValue() as string) ?? ""}
-        onChange={(e) =>
-          table.getColumn("role")?.setFilterValue(e.target.value || undefined)
-        }
-      >
-        <option value="">All Roles</option>
-        <option value="Tank">Tank</option>
-        <option value="Damage">Damage</option>
-        <option value="Support">Support</option>
-      </select>
-    </div>
-  );
 
   return (
     <div className="space-y-4">

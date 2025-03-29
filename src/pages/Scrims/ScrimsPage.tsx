@@ -1,15 +1,8 @@
 import { useAtomValue } from "jotai";
 import { matchDataAtom } from "../../atoms";
-import { scrimAtom } from "../../atoms/scrimAtom";
+import { scrimAtom, Scrim } from "../../atoms/scrimAtom"; // Import Scrim type
 import { useNavigate } from "react-router-dom";
-import { formatTime } from "../../lib";
-import { CiMap } from "react-icons/ci";
-
-interface Scrim {
-  id: string;
-  matchIds: string[];
-  // Add other properties as needed
-}
+import { formatTime, mapNameToFileName } from "../../lib"; // Added mapNameToFileName
 
 export const ScrimsPage = () => {
   const navigate = useNavigate();
@@ -83,7 +76,12 @@ export const ScrimsPage = () => {
                       >
                         <div className="card-body p-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <CiMap className="text-xl" />
+                            <img
+                              src={mapNameToFileName(match.map, false)}
+                              alt={match.map}
+                              className="w-8 h-8 rounded mr-1 object-cover" // Added image tag with styling
+                            />
+                            {/* <CiMap className="text-xl" /> Removed original icon for now, image replaces it */}
                             <span className="font-medium">{match.map}</span>
                             <div className="badge badge-outline">
                               {match.mode}

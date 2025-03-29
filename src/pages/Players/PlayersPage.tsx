@@ -1,14 +1,8 @@
-import { useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
 import { useStats } from "../../atoms/metrics/playerMetricsAtoms";
-import { PlayersOverview } from "./components/Overview/PlayersOverview";
-import { PlayersPerformance } from "./components/Performance/PlayersPerformance";
-import { PlayersHeroes } from "./components/Heroes/PlayersHeroes";
 import { ErrorMessage } from "../../components/Common/ErrorMessage";
 
-type ViewType = "overview" | "performance" | "heroes";
-
 export const PlayersPage = () => {
-  const [activeView, setActiveView] = useState<ViewType>("overview");
   const playerStats = useStats(["playerName"]);
 
   if (!playerStats) {
@@ -20,9 +14,7 @@ export const PlayersPage = () => {
   }
 
   if (playerStats.rows.length === 0) {
-    return (
-      <ErrorMessage message="No data available for players" />
-    );
+    return <ErrorMessage message="No data available for players" />;
   }
 
   return (
@@ -40,26 +32,48 @@ export const PlayersPage = () => {
 
         {/* Navigation */}
         <div className="tabs tabs-boxed bg-base-200 p-1 mb-8">
-          {["overview", "performance", "heroes"].map((view) => (
-            <button
-              key={view}
-              onClick={() => setActiveView(view as ViewType)}
-              className={`tab ${
-                activeView === view
+          <NavLink
+            to="/players"
+            end // Important: use 'end' for the index route NavLink
+            className={({ isActive }) =>
+              `tab ${
+                isActive
                   ? "tab-active bg-base-300"
                   : "text-base-content/70 hover:text-base-content"
-              } capitalize`}
-            >
-              {view}
-            </button>
-          ))}
+              } capitalize`
+            }
+          >
+            Overview
+          </NavLink>
+          <NavLink
+            to="/players/performance"
+            className={({ isActive }) =>
+              `tab ${
+                isActive
+                  ? "tab-active bg-base-300"
+                  : "text-base-content/70 hover:text-base-content"
+              } capitalize`
+            }
+          >
+            Performance
+          </NavLink>
+          <NavLink
+            to="/players/heroes"
+            className={({ isActive }) =>
+              `tab ${
+                isActive
+                  ? "tab-active bg-base-300"
+                  : "text-base-content/70 hover:text-base-content"
+              } capitalize`
+            }
+          >
+            Heroes
+          </NavLink>
         </div>
 
         {/* Content */}
         <div className="mt-8">
-          {activeView === "overview" && <PlayersOverview />}
-          {activeView === "performance" && <PlayersPerformance />}
-          {activeView === "heroes" && <PlayersHeroes />}
+          <Outlet />
         </div>
       </div>
     </div>

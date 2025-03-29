@@ -22,7 +22,7 @@ const getTitle = (pathname: string) => {
     return `Scrims - ${pathname.split("/").pop()}`;
   }
 
-  if (pathname.startsWith("/players")) {
+  if (pathname.startsWith("/player")) {
     if (pathname === "/players") {
       return "Players";
     }
@@ -149,7 +149,7 @@ export const Navigation = ({
           children: playerAtom.rows.map((player) => ({
             title: `${player.playerName}`,
             icon: <RoleIcon role={player.playerRole} />,
-            link: `/players/${player.playerName}`,
+            link: `/player/${player.playerName}`,
             subtitle: playerTeamAtom.rows
               .filter((row) => row.playerName === player.playerName)
               .map((row) => row.playerTeam)

@@ -1,7 +1,7 @@
 import { atom } from 'jotai'; // Import atom
 import { atomFamily } from 'jotai/utils';
 import { Getter } from 'jotai';
-import { matchDataAtom, MatchData } from '../matchDataAtom';
+import { matchDataAtom } from '../matchDataAtom';
 import { heroSpawnExtractorAtom, type HeroSpawnLogEvent } from '../event_extractors/heroSpawnExtractorAtom';
 import { heroSwapExtractorAtom, type HeroSwapLogEvent } from '../event_extractors/heroSwapExtractorAtom';
 import { mapTimesAtom } from '../mapTimesAtom';

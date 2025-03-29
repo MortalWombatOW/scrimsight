@@ -1,37 +1,33 @@
-import React from "react"; // Removed useState for now
+import React from "react";
+import { useParams } from "react-router-dom"; // Import useParams
 import { useAtomValue } from "jotai";
-// Import the new atom (adjust path if necessary)
 import { detailedTeamCompositionsAtom } from "../../../atoms/derived_stats/detailedTeamCompositionsAtom";
-import { getHeroImage, getRoleFromHero } from "../../../lib/hero";
+import {
+  getHeroImage,
+  getRoleFromHero,
+  getRankForRole,
+} from "../../../lib/hero";
 import { formatDuration } from "../../../lib/time";
 import RoleIcon from "../../../components/Common/RoleIcon";
+import { ErrorMessage } from "../../../components/Common/ErrorMessage"; // Import ErrorMessage
 
-// Define the expected shape from the new atom
-interface DetailedComposition {
-  composition: string[];
-  playtimeSeconds: number;
-  wins: number;
-  losses: number;
-  draws: number;
-  winRate: number;
-  frequency: number;
-}
+export const TeamCompositions: React.FC = () => {
+  const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL
 
-interface TeamCompositionsProps {
-  // compositions prop removed
-  teamName: string; // Keep teamName if needed for filtering atom later (e.g., atomFamily)
-}
+  if (!teamId) {
+    // Handle case where teamId is not available
+    return <ErrorMessage message="Team ID not found in URL." />;
+  }
 
-export const TeamCompositions: React.FC<TeamCompositionsProps> = ({
-  teamName, // Keep teamName prop
-}) => {
-  // Fetch data from the new atom, passing teamName to the atomFamily
+  // Fetch data from the new atom, passing teamId to the atomFamily
   const detailedCompositionsData = useAtomValue(
-    detailedTeamCompositionsAtom(teamName)
-  ) as DetailedComposition[];
+    detailedTeamCompositionsAtom(teamId)
+  ); // Removed type coercion
 
-  // TODO: Implement sorting based on new data (playtimeSeconds, winRate, frequency)
-  const sortedCompositions = detailedCompositionsData; // No sorting for now
+  // Sort compositions by playtime descending
+  const sortedCompositions = [...detailedCompositionsData].sort(
+    (a, b) => b.playtimeSeconds - a.playtimeSeconds
+  );
 
   // Calculate max playtime for progress bar (if needed, or remove bar)
   const maxTimePlayed = Math.max(
@@ -55,21 +51,30 @@ export const TeamCompositions: React.FC<TeamCompositionsProps> = ({
               <div className="flex flex-col gap-4">
                 {/* Hero Icons */}
                 <div className="flex items-center gap-4 flex-wrap">
-                  {comp.composition.map((hero) => (
-                    <div key={hero} className="relative">
-                      <img
-                        src={getHeroImage(hero)}
-                        alt={hero}
-                        className="w-12 h-12 rounded-full"
-                      />
-                      <div className="absolute -bottom-1 -right-1">
-                        <RoleIcon
-                          role={getRoleFromHero(hero)}
-                          className="w-6 h-6"
+                  {/* Sort heroes within the composition by role rank */}
+                  {[...comp.composition]
+                    .sort((heroA, heroB) => {
+                      const roleA = getRoleFromHero(heroA);
+                      const roleB = getRoleFromHero(heroB);
+                      const rankA = getRankForRole(roleA);
+                      const rankB = getRankForRole(roleB);
+                      return rankA - rankB; // Sort Tank -> Damage -> Support
+                    })
+                    .map((hero) => (
+                      <div key={hero} className="relative">
+                        <img
+                          src={getHeroImage(hero)}
+                          alt={hero}
+                          className="w-12 h-12 rounded-full"
                         />
+                        <div className="absolute -bottom-1 -right-1">
+                          <RoleIcon
+                            role={getRoleFromHero(hero)}
+                            className="w-6 h-6"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
 
                 {/* Stats Row */}

@@ -1,34 +1,45 @@
-import { useParams } from "react-router-dom";
+import { useParams, NavLink, Outlet } from "react-router-dom";
 import { useAtom, useAtomValue } from "jotai";
 import { teamNamesAtom } from "../../atoms/teamNamesAtom";
 import { teamStatsAtom } from "../../atoms/teamStatsAtom";
-import { allPlayersForTeamAtom } from "../../atoms/allPlayersForTeamAtom";
-import { matchDataAtom } from "../../atoms/matchDataAtom";
+// Removed unused imports: allPlayersForTeamAtom, matchDataAtom
+// Removed unused component imports: TeamOverview, TeamPlayers, TeamMatches, TeamCompositions
 import { StatCard } from "../../components/StatCard";
-import { TeamOverview } from "./components/TeamOverview";
-import { TeamPlayers } from "./components/TeamPlayers";
-import { TeamMatches } from "./components/TeamMatches";
-import { TeamCompositions } from "./components/TeamCompositions";
 import { ErrorMessage } from "../../components/Common/ErrorMessage";
+
+const NavTab = ({
+  to,
+  children,
+}: {
+  to: string;
+  children: React.ReactNode;
+}) => (
+  <NavLink
+    to={to}
+    end // Important for the index route matching
+    className={({ isActive }) =>
+      `tab tab-bordered ${
+        isActive ? "tab-active !border-primary !text-primary" : ""
+      }`
+    }
+  >
+    {children}
+  </NavLink>
+);
 
 export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
   const [teamNames] = useAtom(teamNamesAtom);
   const teamStats = useAtomValue(teamStatsAtom);
-  const players = useAtomValue(allPlayersForTeamAtom);
-  const matches = useAtomValue(matchDataAtom);
 
   if (!teamId) {
     return <ErrorMessage message="Team ID not provided" />;
   }
 
   const teamRecord = teamStats.find((stat) => stat.teamName === teamId);
-  const teamPlayers = players.find((team) => team.teamName === teamId);
-  const teamMatches = matches.filter(
-    (match) => match.team1Name === teamId || match.team2Name === teamId
-  );
 
-  if (!teamRecord || !teamPlayers) {
+  // Basic check if team exists based on stats
+  if (!teamRecord) {
     return <ErrorMessage message="Team not found" />;
   }
 
@@ -40,6 +51,7 @@ export const TeamPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Team Header - Remains the same */}
       <div className="bg-base-100 rounded-lg shadow-lg p-6 mb-6">
         <h1 className="text-4xl font-bold mb-4 text-primary">
           {teamNameDisplay}
@@ -52,52 +64,19 @@ export const TeamPage = () => {
         </div>
       </div>
 
+      {/* Sub-route Navigation and Content */}
       <div className="bg-base-100 rounded-lg shadow-lg border border-base-300">
+        {/* Navigation Links styled as Tabs */}
         <div role="tablist" className="tabs tabs-bordered">
-          <input
-            type="radio"
-            name="team_tabs"
-            role="tab"
-            className="tab"
-            aria-label="Overview"
-            defaultChecked
-          />
-          <div role="tabpanel" className="p-6">
-            <TeamOverview teamStats={teamRecord} />
-          </div>
+          <NavTab to=".">Overview</NavTab>
+          <NavTab to="players">Players</NavTab>
+          <NavTab to="matches">Matches</NavTab>
+          <NavTab to="compositions">Compositions</NavTab>
+        </div>
 
-          <input
-            type="radio"
-            name="team_tabs"
-            role="tab"
-            className="tab"
-            aria-label="Players"
-          />
-          <div role="tabpanel" className="p-6">
-            <TeamPlayers teamName={teamId} />
-          </div>
-
-          <input
-            type="radio"
-            name="team_tabs"
-            role="tab"
-            className="tab"
-            aria-label="Matches"
-          />
-          <div role="tabpanel" className="p-6">
-            <TeamMatches matches={teamMatches} teamName={teamId} />
-          </div>
-
-          <input
-            type="radio"
-            name="team_tabs"
-            role="tab"
-            className="tab"
-            aria-label="Compositions"
-          />
-          <div role="tabpanel" className="p-6">
-            <TeamCompositions teamName={teamId} />
-          </div>
+        {/* Outlet for rendering sub-route components */}
+        <div className="p-6">
+          <Outlet />
         </div>
       </div>
     </div>

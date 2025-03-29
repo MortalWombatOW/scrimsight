@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import {
   ResponsiveContainer,
@@ -6,25 +7,27 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
 } from "recharts";
-import { TeamStats } from "../../../atoms/teamStatsAtom";
 import { useStats } from "../../../atoms/metrics/playerMetricsAtoms";
 import { StatCard } from "../../../components/StatCard"; // Import StatCard
-import { teamMapTypeStatsAtom } from "../../../atoms/derived_stats/teamMapTypeStatsAtom"; // Corrected import path
+import { teamMapTypeStatsAtom } from "../../../atoms/derived_stats/teamMapTypeStatsAtom";
 import { prettyFormat } from "../../../lib/format";
+import { ErrorMessage } from "../../../components/Common/ErrorMessage"; // Import ErrorMessage
 
-interface TeamOverviewProps {
-  teamStats: TeamStats; // Keep teamStats for teamName primarily
-}
+export const TeamOverview = () => {
+  const { teamId } = useParams<{ teamId: string }>();
 
-export const TeamOverview = ({ teamStats }: TeamOverviewProps) => {
-  // Get aggregated stats for the team using useStats
+  if (!teamId) {
+    // Handle case where teamId is not available
+    return <ErrorMessage message="Team ID not found in URL." />;
+  }
+
+  // Get aggregated stats for the team using useStats with teamId
   const aggregatedStats = useStats(["playerTeam"], {
-    playerTeam: [teamStats.teamName],
+    playerTeam: [teamId],
   });
-  // Get map type stats by passing teamName to the atomFamily
-  const mapTypeStats = useAtomValue(teamMapTypeStatsAtom(teamStats.teamName));
+  // Get map type stats by passing teamId to the atomFamily
+  const mapTypeStats = useAtomValue(teamMapTypeStatsAtom(teamId));
 
   const teamTotals = aggregatedStats.rows[0];
   const totalPlaytimeSeconds = teamTotals?.playtime || 0; // Keep for conditional rendering check
@@ -38,7 +41,7 @@ export const TeamOverview = ({ teamStats }: TeamOverviewProps) => {
   ];
 
   const mapWinRateData = Object.entries(mapTypeStats || {})
-    .map(([mapType, stats], index) => ({
+    .map(([mapType, stats]) => ({
       name: mapType,
       value: stats.winRate,
       gamesPlayed: stats.gamesPlayed,

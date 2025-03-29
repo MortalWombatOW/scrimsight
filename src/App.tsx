@@ -7,9 +7,16 @@ import { HomePage } from "./pages/Home";
 import { AddFilesPage } from "./pages/AddFiles/AddFilesPage";
 import { ScrimsPage } from "./pages/Scrims/ScrimsPage";
 import { PlayersPage } from "./pages/Players/PlayersPage";
+import { PlayersOverview } from "./pages/Players/components/Overview/PlayersOverview";
+import { PlayersPerformance } from "./pages/Players/components/Performance/PlayersPerformance";
+import { PlayersHeroes } from "./pages/Players/components/Heroes/PlayersHeroes";
 import { TeamsPage } from "./pages/Teams";
 import { PlayerPage } from "./pages/Player";
 import { TeamPage } from "./pages/Team";
+import { TeamOverview } from "./pages/Team/components/TeamOverview";
+import { TeamPlayers } from "./pages/Team/components/TeamPlayers";
+import { TeamMatches } from "./pages/Team/components/TeamMatches";
+import { TeamCompositions } from "./pages/Team/components/TeamCompositions";
 import { MatchPage2 } from "./pages/Match/MatchPage2";
 import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 import { CallbackPage } from "./pages/Auth/CallbackPage";
@@ -62,13 +69,22 @@ const App = () => {
                       element={<MatchStatComparisonPage />}
                     />
                   </Route>
-                  <Route path="/players" element={<PlayersPage />} />
-                  <Route
-                    path="/players/:playerName"
-                    element={<PlayerPage />}
-                  ></Route>
+                  <Route path="/players" element={<PlayersPage />}>
+                    <Route index element={<PlayersOverview />} />
+                    <Route
+                      path="performance"
+                      element={<PlayersPerformance />}
+                    />
+                    <Route path="heroes" element={<PlayersHeroes />} />
+                  </Route>
+                  <Route path="/player/:playerName" element={<PlayerPage />} />
                   <Route path="/teams" element={<TeamsPage />} />
-                  <Route path="/teams/:teamId" element={<TeamPage />} />
+                  <Route path="/teams/:teamId" element={<TeamPage />}>
+                    <Route index element={<TeamOverview />} />
+                    <Route path="players" element={<TeamPlayers />} />
+                    <Route path="matches" element={<TeamMatches />} />
+                    <Route path="compositions" element={<TeamCompositions />} />
+                  </Route>
                   <Route path="/files" element={<AddFilesPage />} />
                 </Routes>
               </Suspense>

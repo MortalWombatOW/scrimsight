@@ -21,7 +21,7 @@ const TeamCard: React.FC<TeamCardProps> = ({ teamName }) => {
 
   return (
     <Link to={`/teams/${teamName}`} className="no-underline">
-      <div className="w-[400px] p-4 border-2 border-transparent hover:border-primary-500 transition-colors duration-300 rounded-md shadow-sm">
+      <div className="w-[400px] p-4 border-2 border-transparent rounded-md bg-base-200  dark:bg-base-800">
         <div className="p-2">
           <div className="flex items-center">
             <div className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center mb-1">

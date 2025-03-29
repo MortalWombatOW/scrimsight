@@ -1,53 +1,66 @@
 import React, { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
-import { MatchData } from "../../../atoms/matchDataAtom";
+import { Link, useParams } from "react-router-dom"; // Import useParams
+import { useAtomValue } from "jotai"; // Import useAtomValue
+import { MatchData, matchDataAtom } from "../../../atoms/matchDataAtom"; // Import matchDataAtom
 import { formatDate } from "../../../lib/date";
+import { ErrorMessage } from "../../../components/Common/ErrorMessage"; // Import ErrorMessage
 
-interface TeamMatchesProps {
-  matches: MatchData[];
-  teamName: string;
-}
+// Removed TeamMatchesProps interface
 
 // Helper to get unique values for filters
 const getUniqueValues = (matches: MatchData[], key: keyof MatchData) => [
   ...new Set(matches.map((m) => m[key])),
 ];
-const getUniqueOpponents = (matches: MatchData[], teamName: string) => [
+const getUniqueOpponents = (matches: MatchData[], teamId: string) => [
   ...new Set(
-    matches.map((m) => (m.team1Name === teamName ? m.team2Name : m.team1Name))
+    matches.map((m) => (m.team1Name === teamId ? m.team2Name : m.team1Name))
   ),
 ];
 
-export const TeamMatches: React.FC<TeamMatchesProps> = ({
-  matches,
-  teamName,
-}) => {
+export const TeamMatches: React.FC = () => {
+  const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL
+  const allMatches = useAtomValue(matchDataAtom); // Get all matches
+
   const [opponentFilter, setOpponentFilter] = useState<string>("");
   const [mapFilter, setMapFilter] = useState<string>("");
   const [modeFilter, setModeFilter] = useState<string>("");
   const [resultFilter, setResultFilter] = useState<string>(""); // 'win', 'loss', 'draw', ''
 
+  // Filter matches for the current team first
+  const teamMatches = useMemo(
+    () =>
+      allMatches.filter(
+        (match) => match.team1Name === teamId || match.team2Name === teamId
+      ),
+    [allMatches, teamId]
+  );
+
+  // Sort the team's matches
   const sortedMatches = useMemo(
     () =>
-      [...matches].sort(
+      [...teamMatches].sort(
         (a, b) =>
           new Date(b.dateString).getTime() - new Date(a.dateString).getTime()
       ),
-    [matches]
+    [teamMatches]
   );
 
-  const uniqueOpponents = useMemo(() => getUniqueOpponents(matches, teamName), [
-    matches,
-    teamName,
+  // Calculate unique values based on the team's matches
+  const uniqueOpponents = useMemo(() => {
+    if (!teamId) return []; // Explicit check for teamId
+    return getUniqueOpponents(teamMatches, teamId);
+  }, [teamMatches, teamId]);
+  const uniqueMaps = useMemo(() => getUniqueValues(teamMatches, "map"), [
+    teamMatches,
   ]);
-  const uniqueMaps = useMemo(() => getUniqueValues(matches, "map"), [matches]);
-  const uniqueModes = useMemo(() => getUniqueValues(matches, "mode"), [
-    matches,
+  const uniqueModes = useMemo(() => getUniqueValues(teamMatches, "mode"), [
+    teamMatches,
   ]);
 
+  // Filter the sorted team matches based on UI filters
   const filteredMatches = useMemo(() => {
     return sortedMatches.filter((match) => {
-      const isTeam1 = match.team1Name === teamName;
+      const isTeam1 = match.team1Name === teamId;
       const teamScore = isTeam1 ? match.team1Score : match.team2Score;
       const opposingScore = isTeam1 ? match.team2Score : match.team1Score;
       const opposingTeam = isTeam1 ? match.team2Name : match.team1Name;
@@ -70,8 +83,13 @@ export const TeamMatches: React.FC<TeamMatchesProps> = ({
     mapFilter,
     modeFilter,
     resultFilter,
-    teamName,
+    teamId, // Use teamId here
   ]);
+
+  if (!teamId) {
+    // Handle case where teamId is not available
+    return <ErrorMessage message="Team ID not found in URL." />;
+  }
 
   const getResultBgClass = (result: string) => {
     switch (result) {
@@ -170,7 +188,7 @@ export const TeamMatches: React.FC<TeamMatchesProps> = ({
       <div className="grid gap-4">
         {filteredMatches.length > 0 ? (
           filteredMatches.map((match) => {
-            const isTeam1 = match.team1Name === teamName;
+            const isTeam1 = match.team1Name === teamId; // Use teamId
             const teamScore = isTeam1 ? match.team1Score : match.team2Score;
             const opposingScore = isTeam1 ? match.team2Score : match.team1Score;
             const opposingTeam = isTeam1 ? match.team2Name : match.team1Name;
