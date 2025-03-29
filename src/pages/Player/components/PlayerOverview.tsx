@@ -10,6 +10,7 @@ import {
   Tooltip,
   LineChart,
   Line,
+  Cell,
 } from "recharts";
 import { useAtomValue } from "jotai";
 import { matchDataAtom } from "../../../atoms/matchDataAtom";
@@ -249,17 +250,30 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
                 <Tooltip
                   content={({ active, payload, label }) => {
                     if (active && payload && payload.length) {
+                      const kdaValue = payload[0]?.value;
+                      const winRateValue = payload[1]?.value;
+                      const avgElimsValue = payload[2]?.value;
+
                       return (
                         <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-base-300">
                           <p className="font-semibold">{label}</p>
                           <p className="text-sm">
-                            KDA: {payload[0].value.toFixed(2)}
+                            KDA:{" "}
+                            {typeof kdaValue === "number"
+                              ? kdaValue.toFixed(2)
+                              : kdaValue ?? "N/A"}
                           </p>
                           <p className="text-sm">
-                            Win Rate: {payload[1].value.toFixed(1)}%
+                            Win Rate:{" "}
+                            {typeof winRateValue === "number"
+                              ? winRateValue.toFixed(1) + "%"
+                              : winRateValue ?? "N/A"}
                           </p>
                           <p className="text-sm">
-                            Avg Elims: {payload[2].value.toFixed(1)}
+                            Avg Elims:{" "}
+                            {typeof avgElimsValue === "number"
+                              ? avgElimsValue.toFixed(1)
+                              : avgElimsValue ?? "N/A"}
                           </p>
                         </div>
                       );
