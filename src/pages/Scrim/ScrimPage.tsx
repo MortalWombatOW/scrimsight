@@ -138,13 +138,25 @@ export const ScrimPage = () => {
                 <Link // Wrap the card in a Link
                   key={matchId}
                   to={`/matches/${matchId}`} // Link to the match page
-                  className="card bg-base-200 hover:bg-base-300 transition-colors block" // Added 'block' to make the entire card clickable
+                  className={`card bg-base-200 hover:bg-base-300 transition-colors block border-l-4 ${
+                    isDraw
+                      ? "border-transparent" // Or use a neutral color like border-base-300
+                      : isTeam1Winner
+                      ? "border-success"
+                      : "border-error"
+                  }`}
                 >
-                  <div className="card-body p-4">
-                    <div className="flex flex-col lg:flex-row gap-4">
+                  <div className="card-body p-3">
+                    {" "}
+                    {/* Changed p-4 to p-3 */}
+                    <div className="flex flex-col lg:flex-row gap-3">
+                      {" "}
+                      {/* Changed gap-4 to gap-3 */}
                       {/* Map Image */}
                       <div className="flex-shrink-0">
-                        <div className="relative w-48 h-28 overflow-hidden rounded-lg">
+                        <div className="relative w-40 h-24 overflow-hidden rounded-lg">
+                          {" "}
+                          {/* Changed w-48 h-28 to w-40 h-24 */}
                           <img
                             src={mapNameToFileName(match.map, false)}
                             alt={match.map}
@@ -160,66 +172,67 @@ export const ScrimPage = () => {
                           </div>
                         </div>
                       </div>
-
                       {/* Match Details */}
-                      <div className="flex flex-col flex-grow gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="badge badge-lg">{`Match ${
+                      <div className="flex flex-col flex-grow gap-2">
+                        {/* Top Row: Match #, Mode, Duration */}
+                        <div className="flex items-center gap-3 text-sm">
+                          <span className="font-semibold">{`Match ${
                             index + 1
-                          }`}</div>
-                          <div className="badge badge-outline">
+                          }`}</span>
+                          <div className="badge badge-sm badge-outline">
                             {match.mode}
                           </div>
-                          <div className="flex items-center gap-2 text-base-content/70 ml-auto">
+                          <div className="flex items-center gap-1 text-base-content/70 ml-auto">
                             <IoTimeOutline />
                             {formatTime(match.duration)}
                           </div>
                         </div>
 
-                        {/* Score Section */}
-                        <div className="flex items-center justify-center gap-8 bg-base-300 p-4 rounded-lg">
+                        {/* Score & Teams */}
+                        <div className="flex items-center justify-between gap-4 py-2">
+                          {/* Team 1 */}
                           <div
-                            className={`text-center ${
-                              isTeam1Winner ? "font-bold" : ""
+                            className={`flex items-center gap-3 ${
+                              isTeam1Winner
+                                ? "font-bold"
+                                : "text-base-content/70"
                             }`}
                           >
-                            <div className="text-xl font-bold">
-                              {match.team1Name}
-                            </div>
-                            <div className="text-3xl font-mono mt-1">
+                            <span className="text-lg">{match.team1Name}</span>
+                          </div>
+                          {/* Score */}
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`text-2xl font-semibold ${
+                                isTeam1Winner ? "text-primary" : ""
+                              }`}
+                            >
                               {match.team1Score}
-                            </div>
+                            </span>
+                            <span className="text-base-content/50">vs</span>
+                            <span
+                              className={`text-2xl font-semibold ${
+                                isTeam2Winner ? "text-primary" : ""
+                              }`}
+                            >
+                              {match.team2Score}
+                            </span>
                           </div>
-                          <div className="text-2xl font-bold text-base-content/30">
-                            VS
-                          </div>
+                          {/* Team 2 */}
                           <div
-                            className={`text-center ${
-                              isTeam2Winner ? "font-bold" : ""
+                            className={`flex items-center gap-3 justify-end ${
+                              isTeam2Winner
+                                ? "font-bold"
+                                : "text-base-content/70"
                             }`}
                           >
-                            <div className="text-xl font-bold">
+                            <span className="text-lg text-right">
                               {match.team2Name}
-                            </div>
-                            <div className="text-3xl font-mono mt-1">
-                              {match.team2Score}
-                            </div>
+                            </span>
                           </div>
                         </div>
 
-                        {/* Match Result */}
-                        <div className="text-center">
-                          {isDraw ? (
-                            <span className="text-base-content/70">Draw</span>
-                          ) : (
-                            <span className="text-primary font-medium">
-                              {isTeam1Winner
-                                ? match.team1Name
-                                : match.team2Name}{" "}
-                              Victory
-                            </span>
-                          )}
-                        </div>
+                        {/* Removed Match Result Indicator Badge */}
                       </div>
                     </div>
                   </div>
