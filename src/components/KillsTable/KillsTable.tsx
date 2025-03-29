@@ -1,251 +1,161 @@
-import { type ReactNode } from "react";
-
+import { type ReactNode, Suspense } from "react"; // Added Suspense
 import { useAtom } from "jotai";
-import {
-  matchDataAtom,
-  PlayerInteractionEvent,
-  playerInteractionEventsAtom,
-} from "~/atoms";
+import { killMatrixAtomFamily } from "~/atoms/derived_stats/killMatrixAtom"; // Import the new atom
 import HeatmapGrid from "~/components/Heatmap/HeatmapGrid";
 
 interface KillsTableProps {
   matchId: string;
 }
 
-interface PlayerInteraction {
-  sourcePlayerName: string;
-  sourceTeamName: string;
-  targetPlayerName: string;
-  value: number;
-}
+// Removed local helper functions: transformPlayerInteractions, createKillMatrix, calculatePlayerTotals
 
-interface PlayerTotals {
-  kills: number;
-  deaths: number;
-}
+const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
+  // Use the new derived atom family
+  // useAtom handles Suspense automatically for async atoms
+  const [killMatrixData] = useAtom(killMatrixAtomFamily(matchId));
 
-const transformPlayerInteractions = (
-  data: PlayerInteractionEvent[]
-): PlayerInteraction[] => {
-  const interactions: {
-    [key: string]: PlayerInteraction;
-  } = {};
+  // Handle case where atom returns null (e.g., match not found)
+  if (!killMatrixData) {
+    return <div className="text-center p-4">Kill data not available for this match.</div>;
+  }
 
-  const kills = data.filter(
-    (row) => row.playerInteractionEventType === "Killed player"
+  const { killMatrix, team1Name, team2Name, team1Players, team2Players } = killMatrixData;
+
+  // Calculate heatmap data directly here using the killMatrix from the atom
+  const team1Kills: number[][] = team1Players.map((player) =>
+    team2Players.map((victim) => killMatrix[player]?.[victim] ?? 0) // Added safety check
   );
 
-  kills.forEach((row) => {
-    const sourcePlayer = row.playerName;
-    const targetPlayer = row.otherPlayerName;
-    const interactionKey = `${sourcePlayer}-${targetPlayer}`;
+  const team2Kills: number[][] = team2Players.map((player) =>
+    team1Players.map((victim) => killMatrix[player]?.[victim] ?? 0) // Added safety check
+  );
 
-    if (sourcePlayer === targetPlayer) {
-      return;
-    }
+  // Removed old data fetching and processing logic
 
-    if (!interactions[interactionKey]) {
-      interactions[interactionKey] = {
-        sourcePlayerName: sourcePlayer,
-        sourceTeamName: row.playerTeam,
-        targetPlayerName: targetPlayer,
-        value: 0,
-      };
-    }
-    interactions[interactionKey].value += 1;
-  });
-
-  return Object.values(interactions);
-};
-
-const createKillMatrix = (
-  interactions: PlayerInteraction[],
-  players: string[]
-): { [killer: string]: { [victim: string]: number } } => {
-  const matrix: { [killer: string]: { [victim: string]: number } } = {};
-
-  // Initialize matrix with zeros
-  players.forEach((killer) => {
-    matrix[killer] = {};
-    players.forEach((victim) => {
-      matrix[killer][victim] = 0;
-    });
-  });
-
-  // Fill in kill counts
-  interactions.forEach((interaction) => {
-    matrix[interaction.sourcePlayerName][interaction.targetPlayerName] =
-      interaction.value;
-  });
-
-  return matrix;
-};
-
-export const calculatePlayerTotals = (killMatrix: {
-  [killer: string]: { [victim: string]: number };
-}): { [player: string]: PlayerTotals } => {
-  const totals: { [player: string]: PlayerTotals } = {};
-
-  Object.keys(killMatrix).forEach((player) => {
-    totals[player] = {
-      kills: Object.values(killMatrix[player]).reduce(
-        (sum, kills) => sum + kills,
-        0
-      ),
-      deaths: Object.keys(killMatrix).reduce(
-        (sum, killer) => sum + killMatrix[killer][player],
-        0
-      ),
-    };
-  });
-
-  return totals;
-};
-
-const KillsTable = ({ matchId }: KillsTableProps): ReactNode => {
-  const [matchData] = useAtom(matchDataAtom);
-  const [playerInteractionEvents] = useAtom(playerInteractionEventsAtom);
-
-  const match = matchData?.find((m) => m.matchId === matchId);
-  const interactions =
-    playerInteractionEvents?.filter((e) => e.matchId === matchId) ?? [];
-
-  if (!match) return null;
-
-  const { team1Name, team2Name, team1Players, team2Players } = match;
-  const players = [...team1Players, ...team2Players];
-
-  const processedInteractions = transformPlayerInteractions(interactions);
-  const killMatrix = createKillMatrix(processedInteractions, players);
-
+  // Prepare data for HeatmapGrid (already done above)
+  /*
   const team1Kills: number[][] = [];
   for (const player of team1Players) {
-    const row: number[] = [];
-    for (const victim of team2Players) {
-      row.push(killMatrix[player][victim]);
-    }
-    team1Kills.push(row);
-  }
-
-  const team2Kills: number[][] = [];
-  for (const player of team2Players) {
-    const row: number[] = [];
-    for (const victim of team1Players) {
-      row.push(killMatrix[player][victim]);
-    }
-    team2Kills.push(row);
-  }
+  */
   return (
     <div className="bg-base rounded-lg border border-base-200 p-4 shadow-sm dark:bg-base-800 dark:border-base-700">
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="flex flex-col">
-          <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
+      <div className="flex flex-col md:flex-row gap-6 justify-around"> {/* Added justify-around */}
+        <div className="flex flex-col flex-1 min-w-0"> {/* Added flex-1 and min-w-0 */}
+          <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white truncate"> {/* Added truncate */}
             Kills by {team1Name}
           </h3>
-          <div className="grid grid-cols-12 mb-8">
-            <div className="col-span-3">
-              <div className="flex justify-end">
-                <span className="text-xs text-base-500 dark:text-base-400">
-                  Attackers
-                </span>
-              </div>
-            </div>
-            <div className="col-span-9">
-              <div className="flex justify-center">
-                <span className="text-xs text-base-500 dark:text-base-400">
-                  Victims
-                </span>
-              </div>
-            </div>
-          </div>
-          <HeatmapGrid
-            data={team1Kills}
-            xLabels={team2Players}
-            yLabels={team1Players}
-            cellHeight="30px"
-            hoverText={(xLabel, yLabel, value) =>
-              `${yLabel} killed ${xLabel} ${value} times`
-            }
-            cellRender={(_x: number, _y: number, value: number) => (
-              <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
-                {value}
+          {/* Simplified header structure */}
+          <div className="flex justify-between mb-8">
+              <span className="text-xs text-base-500 dark:text-base-400 self-end pb-1 pr-2"> {/* Adjusted alignment */}
+                Attackers
               </span>
-            )}
-            xLabelsStyle={() => ({
-              fontSize: ".7rem",
-              rotate: "-45deg",
-              marginBottom: "0.7rem",
-              marginLeft: "6px",
-              overflow: "visible",
-            })}
-            yLabelsStyle={() => ({
-              fontSize: ".7rem",
-              marginTop: "1px",
-            })}
-            cellStyle={(_x: number, _y: number, ratio: number) => ({
-              background: `rgb(120, 120, 120, ${ratio})`,
-              fontSize: ".8rem",
-              border: "none",
-              margin: "3px",
-              marginLeft: "0px",
-            })}
-          />
+              <span className="text-xs text-base-500 dark:text-base-400 text-center flex-1"> {/* Adjusted alignment */}
+                Victims
+              </span>
+          </div>
+          {/* Heatmap Grid */}
+            <HeatmapGrid
+              data={team1Kills}
+              xLabels={team2Players}
+              yLabels={team1Players}
+              cellHeight="30px"
+              hoverText={(xLabel, yLabel, value) =>
+                `${yLabel} killed ${xLabel} ${value} times`
+              }
+              cellRender={(_x: number, _y: number, value: number) => (
+                <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
+                  {value}
+                </span>
+              )}
+              xLabelsStyle={() => ({
+                fontSize: ".7rem",
+                rotate: "-45deg",
+                marginBottom: "0.7rem",
+                marginLeft: "6px",
+                overflow: "visible",
+                whiteSpace: "nowrap", // Prevent wrapping
+              })}
+              yLabelsStyle={() => ({
+                fontSize: ".7rem",
+                marginTop: "1px",
+                whiteSpace: "nowrap", // Prevent wrapping
+                textAlign: "right", // Align right
+                paddingRight: "4px", // Add padding
+              })}
+              cellStyle={(_x: number, _y: number, ratio: number) => ({
+                background: `rgb(120, 120, 120, ${ratio})`,
+                fontSize: ".8rem",
+                border: "none",
+                margin: "3px",
+                marginLeft: "0px",
+              })}
+            />
         </div>
-        <div className="flex flex-col mr-8">
-          <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white">
+
+        {/* Separator */}
+        <div className="border-l border-base-300 dark:border-base-600 mx-4 hidden md:block"></div>
+
+        <div className="flex flex-col flex-1 min-w-0 mr-6"> {/* Added flex-1 and min-w-0 */}
+          <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white truncate"> {/* Added truncate */}
             Kills by {team2Name}
           </h3>
-          <div className="grid grid-cols-12 mb-8">
-            <div className="col-span-3">
-              <div className="flex justify-end">
-                <span className="text-xs text-base-500 dark:text-base-400">
-                  Attackers
-                </span>
-              </div>
-            </div>
-            <div className="col-span-9">
-              <div className="flex justify-center">
-                <span className="text-xs text-base-500 dark:text-base-400">
-                  Victims
-                </span>
-              </div>
-            </div>
-          </div>
-          <HeatmapGrid
-            data={team2Kills}
-            xLabels={team1Players}
-            yLabels={team2Players}
-            cellHeight="30px"
-            hoverText={(xLabel, yLabel, value) =>
-              `${yLabel} killed ${xLabel} ${value} times`
-            }
-            cellRender={(_x: number, _y: number, value: number) => (
-              <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
-                {value}
+          {/* Simplified header structure */}
+          <div className="flex justify-between mb-8">
+              <span className="text-xs text-base-500 dark:text-base-400 self-end pb-1 pr-2"> {/* Adjusted alignment */}
+                Attackers
               </span>
-            )}
-            xLabelsStyle={() => ({
-              fontSize: ".7rem",
-              rotate: "-45deg",
-              marginBottom: "0.7rem",
-              marginLeft: "8px",
-              overflow: "visible",
-            })}
-            yLabelsStyle={() => ({
-              fontSize: ".7rem",
-              marginTop: "1px",
-            })}
-            cellStyle={(_x: number, _y: number, ratio: number) => ({
-              background: `rgb(120, 120, 120, ${ratio})`,
-              fontSize: ".8rem",
-              border: "none",
-              margin: "3px",
-            })}
-          />
+              <span className="text-xs text-base-500 dark:text-base-400 text-center flex-1"> {/* Adjusted alignment */}
+                Victims
+              </span>
+          </div>
+            <HeatmapGrid
+              data={team2Kills}
+              xLabels={team1Players}
+              yLabels={team2Players}
+              cellHeight="30px"
+              hoverText={(xLabel, yLabel, value) =>
+                `${yLabel} killed ${xLabel} ${value} times`
+              }
+              cellRender={(_x: number, _y: number, value: number) => (
+                <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
+                  {value}
+                </span>
+              )}
+              xLabelsStyle={() => ({
+                fontSize: ".7rem",
+                rotate: "-45deg",
+                marginBottom: "0.7rem",
+                marginLeft: "8px",
+                overflow: "visible",
+                whiteSpace: "nowrap", // Prevent wrapping
+              })}
+              yLabelsStyle={() => ({
+                fontSize: ".7rem",
+                marginTop: "1px",
+                whiteSpace: "nowrap", // Prevent wrapping
+                textAlign: "right", // Align right
+                paddingRight: "4px", // Add padding
+              })}
+              cellStyle={(_x: number, _y: number, ratio: number) => ({
+                background: `rgb(120, 120, 120, ${ratio})`,
+                fontSize: ".8rem",
+                border: "none",
+                margin: "3px",
+              })}
+            />
         </div>
       </div>
     </div>
   );
 };
 
-export default KillsTable;
+// Wrap the main component with Suspense for loading state
+const KillsTable = ({ matchId }: KillsTableProps): ReactNode => {
+  return (
+    <Suspense fallback={<div className="h-40 w-full flex justify-center items-center">Loading...</div>}> {/* Adjust height/width as needed */}
+      <KillsTableContent matchId={matchId} />
+    </Suspense>
+  );
+};
+
+export default KillsTable; // Added default export
