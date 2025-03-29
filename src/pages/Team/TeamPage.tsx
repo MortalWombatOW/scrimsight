@@ -4,7 +4,6 @@ import { teamNamesAtom } from "../../atoms/teamNamesAtom";
 import { teamStatsAtom } from "../../atoms/teamStatsAtom";
 import { allPlayersForTeamAtom } from "../../atoms/allPlayersForTeamAtom";
 import { matchDataAtom } from "../../atoms/matchDataAtom";
-import { teamCompositionsAtom } from "../../atoms/teamCompositionsAtom";
 import { StatCard } from "../../components/StatCard";
 import { TeamOverview } from "./components/TeamOverview";
 import { TeamPlayers } from "./components/TeamPlayers";
@@ -18,7 +17,6 @@ export const TeamPage = () => {
   const teamStats = useAtomValue(teamStatsAtom);
   const players = useAtomValue(allPlayersForTeamAtom);
   const matches = useAtomValue(matchDataAtom);
-  const compositions = useAtomValue(teamCompositionsAtom);
 
   if (!teamId) {
     return <ErrorMessage message="Team ID not provided" />;
@@ -41,42 +39,20 @@ export const TeamPage = () => {
   const winRate = (teamRecord.wins / teamRecord.gamesPlayed) * 100 || 0;
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
-      {/* Header Section */}
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="bg-base-100 rounded-lg shadow-lg p-6 mb-6">
         <h1 className="text-4xl font-bold mb-4 text-primary">
           {teamNameDisplay}
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Win Rate"
-            value={`${winRate.toFixed(1)}%`}
-            color="primary"
-            trend="neutral"
-          />
-          <StatCard
-            title="Wins"
-            value={teamRecord.wins.toString()}
-            color="success"
-            trend="positive"
-          />
-          <StatCard
-            title="Losses"
-            value={teamRecord.losses.toString()}
-            color="error"
-            trend="negative"
-          />
-          <StatCard
-            title="Draws"
-            value={teamRecord.draws.toString()}
-            color="warning"
-            trend="neutral"
-          />
+          <StatCard title="Win Rate" value={`${winRate.toFixed(1)}%`} />
+          <StatCard title="Wins" value={teamRecord.wins.toString()} />
+          <StatCard title="Losses" value={teamRecord.losses.toString()} />
+          <StatCard title="Draws" value={teamRecord.draws.toString()} />
         </div>
       </div>
 
-      {/* Main Content Tabs */}
-      <div className="bg-base-100 rounded-lg shadow-lg">
+      <div className="bg-base-100 rounded-lg shadow-lg border border-base-300">
         <div role="tablist" className="tabs tabs-bordered">
           <input
             type="radio"
@@ -98,7 +74,7 @@ export const TeamPage = () => {
             aria-label="Players"
           />
           <div role="tabpanel" className="p-6">
-            <TeamPlayers players={teamPlayers.players} teamName={teamId} />
+            <TeamPlayers teamName={teamId} />
           </div>
 
           <input
@@ -120,12 +96,7 @@ export const TeamPage = () => {
             aria-label="Compositions"
           />
           <div role="tabpanel" className="p-6">
-            <TeamCompositions
-              compositions={compositions.filter(
-                (comp) => comp.teamName === teamId
-              )}
-              teamName={teamId}
-            />
+            <TeamCompositions teamName={teamId} />
           </div>
         </div>
       </div>

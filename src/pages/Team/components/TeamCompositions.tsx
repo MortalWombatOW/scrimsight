@@ -1,79 +1,128 @@
-import React, { useState } from "react";
-import { TeamComposition } from "../../../atoms/teamCompositionsAtom";
+import React from "react"; // Removed useState for now
+import { useAtomValue } from "jotai";
+// Import the new atom (adjust path if necessary)
+import { detailedTeamCompositionsAtom } from "../../../atoms/derived_stats/detailedTeamCompositionsAtom";
 import { getHeroImage, getRoleFromHero } from "../../../lib/hero";
 import { formatDuration } from "../../../lib/time";
 import RoleIcon from "../../../components/Common/RoleIcon";
 
+// Define the expected shape from the new atom
+interface DetailedComposition {
+  composition: string[];
+  playtimeSeconds: number;
+  wins: number;
+  losses: number;
+  draws: number;
+  winRate: number;
+  frequency: number;
+}
+
 interface TeamCompositionsProps {
-  compositions: TeamComposition[];
-  teamName: string;
+  // compositions prop removed
+  teamName: string; // Keep teamName if needed for filtering atom later (e.g., atomFamily)
 }
 
 export const TeamCompositions: React.FC<TeamCompositionsProps> = ({
-  compositions,
-  teamName,
+  teamName, // Keep teamName prop
 }) => {
-  const [showAllCompositions, setShowAllCompositions] = useState(false);
+  // Fetch data from the new atom, passing teamName to the atomFamily
+  const detailedCompositionsData = useAtomValue(
+    detailedTeamCompositionsAtom(teamName)
+  ) as DetailedComposition[];
 
-  const filteredCompositions = compositions
-    .filter((c) => showAllCompositions || c.timePlayed > 60)
-    .sort((a, b) => b.timePlayed - a.timePlayed);
+  // TODO: Implement sorting based on new data (playtimeSeconds, winRate, frequency)
+  const sortedCompositions = detailedCompositionsData; // No sorting for now
 
-  const maxTimePlayed = Math.max(...compositions.map((c) => c.timePlayed), 0);
-  const hasHiddenCompositions = compositions.some((c) => c.timePlayed <= 60);
+  // Calculate max playtime for progress bar (if needed, or remove bar)
+  const maxTimePlayed = Math.max(
+    ...sortedCompositions.map((c) => c.playtimeSeconds),
+    0
+  );
 
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4">Team Compositions</h2>
-      
+
+      {/* TODO: Add Sorting Controls here */}
+
       <div className="grid gap-4">
-        {filteredCompositions.map((comp, index) => (
-          <div
-            key={index}
-            className="border border-base-300 rounded-lg p-4"
-          >
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                {comp.heroes.map((hero) => (
-                  <div key={hero} className="relative">
-                    <img
-                      src={getHeroImage(hero)}
-                      alt={hero}
-                      className="w-12 h-12 rounded-full"
-                    />
-                    <div className="absolute -bottom-1 -right-1">
-                      <RoleIcon role={getRoleFromHero(hero)} className="w-6 h-6" />
+        {sortedCompositions.length > 0 ? (
+          sortedCompositions.map((comp, index) => (
+            <div
+              key={index} // Consider a more stable key if available (e.g., composition hash)
+              className="border border-base-300 rounded-lg p-4"
+            >
+              <div className="flex flex-col gap-4">
+                {/* Hero Icons */}
+                <div className="flex items-center gap-4 flex-wrap">
+                  {comp.composition.map((hero) => (
+                    <div key={hero} className="relative">
+                      <img
+                        src={getHeroImage(hero)}
+                        alt={hero}
+                        className="w-12 h-12 rounded-full"
+                      />
+                      <div className="absolute -bottom-1 -right-1">
+                        <RoleIcon
+                          role={getRoleFromHero(hero)}
+                          className="w-6 h-6"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Stats Row */}
+                <div className="flex items-center justify-between gap-4 text-sm text-base-content/80">
+                  <span>
+                    Playtime:{" "}
+                    <span className="font-medium">
+                      {formatDuration(comp.playtimeSeconds)}
+                    </span>
+                  </span>
+                  <span>
+                    Win Rate:{" "}
+                    <span className="font-medium">
+                      {/* Display calculated winRate */}
+                      {comp.winRate.toFixed(1)}%
+                    </span>
+                  </span>
+                  <span>
+                    Frequency:{" "}
+                    <span className="font-medium">
+                      {/* Display calculated frequency */}
+                      {comp.frequency}{" "}
+                      {comp.frequency === 1 ? "match" : "matches"}
+                    </span>
+                  </span>
+                </div>
+
+                {/* Optional: Playtime Bar (can be removed if stats row is sufficient) */}
+                {maxTimePlayed > 0 && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex-grow h-2 bg-base-300 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary"
+                        style={{
+                          width: `${
+                            (comp.playtimeSeconds / maxTimePlayed) * 100
+                          }%`,
+                        }}
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <div className="flex-grow h-2 bg-base-300 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary"
-                    style={{
-                      width: `${(comp.timePlayed / maxTimePlayed) * 100}%`,
-                    }}
-                  />
-                </div>
-                <span className="text-sm text-base-content/70 whitespace-nowrap">
-                  {formatDuration(comp.timePlayed)}
-                </span>
+                )}
               </div>
             </div>
+          ))
+        ) : (
+          <div className="text-center p-6 text-base-content/70">
+            Composition data not available yet.
           </div>
-        ))}
+        )}
       </div>
 
-      {hasHiddenCompositions && (
-        <button
-          onClick={() => setShowAllCompositions(!showAllCompositions)}
-          className="text-primary hover:text-primary-focus underline"
-        >
-          {showAllCompositions ? "Show fewer compositions" : "Show all compositions"}
-        </button>
-      )}
+      {/* Removed "Show All" button for now */}
     </div>
   );
 };

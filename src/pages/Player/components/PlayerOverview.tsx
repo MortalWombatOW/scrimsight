@@ -178,31 +178,23 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="KDA Ratio"
-          color="hsl(var(--p))"
           value={kda}
           description="Eliminations + Assists / Deaths"
-          trend={Number(kda) > 2 ? "positive" : "neutral"}
         />
         <StatCard
           title="Win Rate"
-          color="hsl(var(--p))"
           value={`${(winRate * 100).toFixed(1)}%`}
           description="Percentage of matches won"
-          trend={winRate > 0.5 ? "positive" : "negative"}
         />
         <StatCard
           title="Avg Eliminations"
-          color="hsl(var(--p))"
           value={avgElims}
           description="Per 10 Minutes"
-          trend={Number(avgElims) > 15 ? "positive" : "neutral"}
         />
         <StatCard
           title="Avg Deaths"
-          color="hsl(var(--p))"
           value={avgDeaths}
           description="Per 10 Minutes"
-          trend={Number(avgDeaths) < 5 ? "positive" : "negative"}
         />
       </div>
 
@@ -338,7 +330,7 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
                 />
                 <Tooltip content={CustomTooltip} />
                 <Bar dataKey="playtime" className="fill-base-content">
-                  {heroUsageData.map((entry, index) => (
+                  {heroUsageData.map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={`hsl(var(--${index % 2 ? "s" : "p"}))`}
@@ -357,29 +349,15 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
           Performance Breakdown
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Damage / 10min"
-            color="hsl(var(--p))"
-            value={avgDamage}
-            trend="neutral"
-          />
-          <StatCard
-            title="Healing / 10min"
-            color="hsl(var(--p))"
-            value={avgHealing}
-            trend="neutral"
-          />
+          <StatCard title="Damage / 10min" value={avgDamage} />
+          <StatCard title="Healing / 10min" value={avgHealing} />
           <StatCard
             title="Weapon Accuracy"
-            color="hsl(var(--p))"
             value={`${(stats.weaponAccuracy * 100).toFixed(1)}%`}
-            trend={stats.weaponAccuracy > 0.4 ? "positive" : "neutral"}
           />
           <StatCard
             title="Critical Hit Rate"
-            color="hsl(var(--p))"
             value={`${(stats.criticalHitRate * 100).toFixed(1)}%`}
-            trend={stats.criticalHitRate > 0.1 ? "positive" : "neutral"}
           />
         </div>
       </div>
@@ -392,15 +370,11 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <StatCard
             title="Total Matches"
-            color="hsl(var(--p))"
             value={playerMatches.length.toString()}
-            trend="neutral"
           />
           <StatCard
             title="Total Playtime"
-            color="hsl(var(--p))"
             value={`${Math.round(stats.playtime / 60)} min`}
-            trend="neutral"
           />
         </div>
       </div>

@@ -1,67 +1,166 @@
-import { useStats } from "../../../atoms/metrics/playerMetricsAtoms";
-import { getRoleFromHero } from "../../../lib/hero";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  createColumnHelper,
+  flexRender,
+  SortingState,
+  ColumnFiltersState,
+} from "@tanstack/react-table";
+import {
+  useStats,
+  PlayerStats,
+  PlayerStatsCategoryKeys,
+  PlayerStatsNumericalKeys,
+} from "../../../atoms/metrics/playerMetricsAtoms";
+import { Grouped } from "../../../atoms/metrics/metricUtils";
+import { prettyFormat } from "../../../lib/format";
+// import { getRoleFromHero } from "../../../lib/hero"; // Keep for potential future use
+
+// Define the shape of the data row for the table
+type PlayerTableRow = Grouped<
+  PlayerStats,
+  PlayerStatsCategoryKeys,
+  PlayerStatsNumericalKeys
+>;
+
+const columnHelper = createColumnHelper<PlayerTableRow>();
 
 interface TeamPlayersProps {
-  players: string[];
+  // players prop is no longer needed as useStats fetches the players
   teamName: string;
 }
 
-export const TeamPlayers = ({ players, teamName }: TeamPlayersProps) => {
-  const playerStats = useStats(
-    ["playerName", "playerHero"],
-    { playerTeam: [teamName] }
+export const TeamPlayers = ({ teamName }: TeamPlayersProps) => {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  // Fetch aggregated stats per player for the given team
+  const { rows: playerStatsData = [] } = useStats(["playerName"], {
+    playerTeam: [teamName],
+  });
+
+  // --- Role Calculation (Placeholder/Simplified) ---
+  // TODO: Implement robust dominant role calculation if needed.
+  // For now, we'll just add a placeholder column.
+  // const getPlayerRole = (playerName: string) => { ... };
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("playerName", {
+        header: "Player",
+        cell: (info) => (
+          <Link
+            to={`/players/${info.getValue()}`}
+            className="text-primary hover:text-primary-focus"
+          >
+            {info.getValue()}
+          </Link>
+        ),
+        enableSorting: true,
+      }),
+      // Placeholder for Role - requires better data/logic
+      columnHelper.display({
+        id: "role",
+        header: "Primary Role",
+        cell: () => "TBD", // Placeholder
+        enableColumnFilter: true, // Enable filtering on this column later
+      }),
+      columnHelper.accessor("eliminationsPer10Minutes", {
+        header: "Elims / 10 min",
+        cell: (info) => prettyFormat(info.getValue()),
+        enableSorting: true,
+      }),
+      columnHelper.accessor("deathsPer10Minutes", {
+        header: "Deaths / 10 min",
+        cell: (info) => prettyFormat(info.getValue()),
+        enableSorting: true,
+      }),
+      // Add more columns as needed (e.g., Damage/10, Healing/10)
+    ],
+    []
   );
 
-  const getPlayerRole = (playerName: string) => {
-    const playerHeroes = playerStats.rows
-      .filter((row) => row.playerName === playerName)
-      .map((row) => row.playerHero);
+  const table = useReactTable({
+    data: playerStatsData,
+    columns,
+    state: {
+      sorting,
+      columnFilters,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+  });
 
-    const roleCount = new Map<string, number>();
-    playerHeroes.forEach((hero) => {
-      const role = getRoleFromHero(hero);
-      roleCount.set(role, (roleCount.get(role) || 0) + 1);
-    });
-
-    return Array.from(roleCount.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] || "unknown";
-  };
+  // --- Role Filter Component (Placeholder) ---
+  // TODO: Implement dropdown/select for role filtering
+  const RoleFilter = () => (
+    <div className="mb-4">
+      <label className="mr-2">Filter by Role:</label>
+      <select
+        className="select select-bordered select-sm"
+        value={(table.getColumn("role")?.getFilterValue() as string) ?? ""}
+        onChange={(e) =>
+          table.getColumn("role")?.setFilterValue(e.target.value || undefined)
+        }
+      >
+        <option value="">All Roles</option>
+        <option value="Tank">Tank</option>
+        <option value="Damage">Damage</option>
+        <option value="Support">Support</option>
+      </select>
+    </div>
+  );
 
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold mb-4">Team Roster</h2>
+      {/* <RoleFilter /> */} {/* Add filter component when implemented */}
       <div className="overflow-x-auto">
-        <table className="table w-full">
+        <table className="table table-zebra w-full">
           <thead>
-            <tr>
-              <th>Player</th>
-              <th>Primary Role</th>
-              <th>Games Played</th>
-              <th>Win Rate</th>
-            </tr>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    onClick={header.column.getToggleSortingHandler()}
+                    className={
+                      header.column.getCanSort()
+                        ? "cursor-pointer select-none"
+                        : ""
+                    }
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                    {{
+                      asc: " 🔼",
+                      desc: " 🔽",
+                    }[header.column.getIsSorted() as string] ?? null}
+                  </th>
+                ))}
+              </tr>
+            ))}
           </thead>
           <tbody>
-            {players.map((player) => (
-              <tr key={player}>
-                <td>
-                  <Link
-                    to={`/players/${player}`}
-                    className="text-primary hover:text-primary-focus"
-                  >
-                    {player}
-                  </Link>
-                </td>
-                <td>{getPlayerRole(player)}</td>
-                <td>{playerStats.rows.filter((row) => row.playerName === player).length}</td>
-                <td>
-                  {(
-                    (playerStats.rows.filter(
-                      (row) => row.playerName === player && row.result === "win"
-                    ).length /
-                      playerStats.rows.filter((row) => row.playerName === player).length) *
-                    100
-                  ).toFixed(1)}%
-                </td>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>
