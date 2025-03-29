@@ -54,18 +54,6 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
     return null; // Tie
   };
 
-  // Calculate percentage for visualization
-  const getPercentage = (team: string, stat: string) => {
-    const team1Value = teamData[matchData.team1Name][stat] || 0;
-    const team2Value = teamData[matchData.team2Name][stat] || 0;
-    const total = team1Value + team2Value;
-
-    if (total === 0) return 50; // Equal if both are 0
-
-    const value = teamData[team][stat] || 0;
-    return Math.max(10, Math.min(90, (value / total) * 100)); // Constraining between 10% and 90% for visibility
-  };
-
   return (
     <div className="grid grid-cols-7 gap-4 bg-base-100 rounded-lg border border-base-200 w-full max-w-[800px] p-2 shadow-sm dark:bg-base-800 dark:border-base-700">
       {/* Header row */}
@@ -85,8 +73,6 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
         const team1Value = teamData[matchData.team1Name][stat] || 0;
         const team2Value = teamData[matchData.team2Name][stat] || 0;
         const winner = getWinnerTeam(stat);
-        const team1Percentage = getPercentage(matchData.team1Name, stat);
-        const team2Percentage = getPercentage(matchData.team2Name, stat);
 
         return (
           <React.Fragment key={stat}>

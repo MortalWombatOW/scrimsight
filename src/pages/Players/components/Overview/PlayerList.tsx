@@ -12,10 +12,8 @@ const sortFields = {
 } as const;
 
 export const PlayerList = () => {
-  const [sortField, setSortField] = useState<keyof typeof sortFields>(
-    "playtime"
-  );
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [sortField] = useState<keyof typeof sortFields>("playtime");
+  const [sortDirection] = useState<"asc" | "desc">("desc");
 
   const stats = useStats(
     ["playerName", "playerRole"],
@@ -23,15 +21,6 @@ export const PlayerList = () => {
     sortField,
     sortDirection
   );
-
-  // Add handlers if you need the state, or remove if unused
-  const handleSortFieldChange = (field: keyof typeof sortFields) => {
-    setSortField(field);
-  };
-
-  const handleSortDirectionChange = (direction: "asc" | "desc") => {
-    setSortDirection(direction);
-  };
 
   return (
     <div className="overflow-x-auto">

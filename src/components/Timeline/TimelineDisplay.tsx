@@ -70,7 +70,6 @@ export const TimelineDisplay: React.FC = () => {
 
   // A small helper to render an icon + label for each kill or assist
   const EventBadge = ({
-    hero,
     label,
     eventType,
     victimInfo,
@@ -78,7 +77,6 @@ export const TimelineDisplay: React.FC = () => {
     active,
     teamColor,
   }: {
-    hero: string;
     label: string;
     eventType: string;
     victimInfo?: { name: string; hero: string } | null;
@@ -216,7 +214,6 @@ export const TimelineDisplay: React.FC = () => {
                 return (
                   <EventBadge
                     key={`kill-${kill.attackerName}-${kill.victimName}-${i}`}
-                    hero={kill.attackerHero}
                     label={kill.attackerName}
                     eventType="Kill"
                     victimInfo={{
@@ -233,7 +230,6 @@ export const TimelineDisplay: React.FC = () => {
                 return (
                   <EventBadge
                     key={`assist-${assist.playerName}-${i}`}
-                    hero={assist.playerHero}
                     label={assist.playerName}
                     eventType="Assist"
                     victimInfo={null}
