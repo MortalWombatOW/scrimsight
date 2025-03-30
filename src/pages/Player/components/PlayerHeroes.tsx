@@ -15,10 +15,11 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { useParams } from "react-router-dom"; // Import useParams
 
-interface PlayerHeroesProps {
-  playerName: string;
-}
+// interface PlayerHeroesProps { // Remove prop interface
+//   playerName: string;
+// }
 
 // Custom bar component with hero image
 const CustomBar = (props: any) => {
@@ -83,7 +84,14 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const PlayerHeroes = ({ playerName }: PlayerHeroesProps): ReactNode => {
+export const PlayerHeroes = (): ReactNode => { // Remove props
+  const { playerName } = useParams<{ playerName: string }>(); // Get playerName from URL params
+
+  if (!playerName) {
+    // Handle case where playerName is not in URL
+    return <div>Player name not found in URL.</div>;
+  }
+
   const heroStats = useStats(["playerName", "playerHero"], {
     playerName: [playerName],
   });

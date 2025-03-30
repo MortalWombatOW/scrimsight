@@ -2,13 +2,20 @@ import { type ReactNode } from "react";
 import { useStats } from "../../../atoms";
 import { useAtomValue } from "jotai";
 import { matchDataAtom } from "../../../atoms/matchDataAtom";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom"; // Import useParams
 
-interface PlayerMatchesProps {
-  playerName: string;
-}
+// interface PlayerMatchesProps { // Remove prop interface
+//   playerName: string;
+// }
 
-export const PlayerMatches = ({ playerName }: PlayerMatchesProps): ReactNode => {
+export const PlayerMatches = (): ReactNode => { // Remove props
+  const { playerName } = useParams<{ playerName: string }>(); // Get playerName from URL params
+
+  if (!playerName) {
+    // Handle case where playerName is not in URL
+    return <div>Player name not found in URL.</div>;
+  }
+
   const matchStats = useStats(
     ["matchId", "playerName", "playerHero", "playerTeam"],
     { playerName: [playerName] }

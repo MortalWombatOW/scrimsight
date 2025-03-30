@@ -16,10 +16,11 @@ import { useAtomValue } from "jotai";
 import { matchDataAtom } from "../../../atoms/matchDataAtom";
 import { format } from "date-fns";
 import { getRoleFromHero } from "../../../lib/hero";
+import { useParams } from "react-router-dom"; // Import useParams
 
-interface PlayerOverviewProps {
-  playerName: string;
-}
+// interface PlayerOverviewProps { // Remove prop interface
+//   playerName: string;
+// }
 
 type PerformanceTrend = {
   date: string;
@@ -28,9 +29,14 @@ type PerformanceTrend = {
   avgElims: number;
 };
 
-export const PlayerOverview = ({
-  playerName,
-}: PlayerOverviewProps): ReactNode => {
+export const PlayerOverview = (): ReactNode => { // Remove props
+  const { playerName } = useParams<{ playerName: string }>(); // Get playerName from URL params
+
+  if (!playerName) {
+    // Handle case where playerName is not in URL, though routing should prevent this
+    return <div>Player name not found in URL.</div>;
+  }
+
   // Get overall stats
   const overallStats = useStats(["playerName"], { playerName: [playerName] });
   const heroStats = useStats(["playerName", "playerHero"], {

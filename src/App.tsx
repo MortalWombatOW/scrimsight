@@ -12,6 +12,9 @@ import { PlayersPerformance } from "./pages/Players/components/Performance/Playe
 import { PlayersHeroes } from "./pages/Players/components/Heroes/PlayersHeroes";
 import { TeamsPage } from "./pages/Teams";
 import { PlayerPage } from "./pages/Player";
+import { PlayerOverview as SinglePlayerOverview } from "./pages/Player/components/PlayerOverview"; // Renamed import
+import { PlayerHeroes as SinglePlayerHeroes } from "./pages/Player/components/PlayerHeroes"; // Renamed import
+import { PlayerMatches as SinglePlayerMatches } from "./pages/Player/components/PlayerMatches"; // Renamed import
 import { TeamPage } from "./pages/Team";
 import { TeamOverview } from "./pages/Team/components/TeamOverview";
 import { TeamPlayers } from "./pages/Team/components/TeamPlayers";
@@ -77,7 +80,12 @@ const App = () => {
                     />
                     <Route path="heroes" element={<PlayersHeroes />} />
                   </Route>
-                  <Route path="/player/:playerName" element={<PlayerPage />} />
+                  {/* Updated Player Route with nested routes */}
+                  <Route path="/player/:playerName" element={<PlayerPage />}>
+                    <Route index element={<SinglePlayerOverview />} />
+                    <Route path="heroes" element={<SinglePlayerHeroes />} />
+                    <Route path="matches" element={<SinglePlayerMatches />} />
+                  </Route>
                   <Route path="/teams" element={<TeamsPage />} />
                   <Route path="/teams/:teamId" element={<TeamPage />}>
                     <Route index element={<TeamOverview />} />

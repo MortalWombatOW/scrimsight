@@ -1,4 +1,4 @@
-import { useParams, Outlet, Link, useLocation } from "react-router-dom";
+import { useParams, Outlet } from "react-router-dom"; // Removed Link, useLocation
 import { useAtomValue } from "jotai";
 import { matchDataAtom } from "../../atoms";
 import { formatTime, mapNameToFileName } from "../../lib";
@@ -6,13 +6,14 @@ import { IoMdCalendar } from "react-icons/io";
 import { MdAccessTime } from "react-icons/md";
 import { TbClockHour1 } from "react-icons/tb";
 import { FiMapPin } from "react-icons/fi";
+import { SubPageNavigation } from "../../components/Layout/SubPageNavigation"; // Added import
 
 // Import the extracted components
 import { MatchScoreCard } from "./components/scorecard/MatchScoreCard";
-
 export const MatchPage2 = () => {
   const { matchId } = useParams<{ matchId: string }>();
-  const location = useLocation();
+  // Removed unused location variable:
+  // const location = useLocation();
 
   const matchDataList = useAtomValue(matchDataAtom);
   if (!matchDataList || !matchId) {
@@ -22,6 +23,13 @@ export const MatchPage2 = () => {
   if (!matchData) {
     return null;
   }
+
+  // Define Nav Items for SubPageNavigation
+  const matchNavItems = [
+    { path: `/matches/${matchId}`, label: "Overview", end: true },
+    { path: `/matches/${matchId}/timeline`, label: "Timeline" },
+    { path: `/matches/${matchId}/compare`, label: "Compare" },
+  ];
 
   return (
     <div className="flex flex-col gap-6 items-left w-full mx-auto">
@@ -83,44 +91,13 @@ export const MatchPage2 = () => {
         <MatchScoreCard matchData={matchData} />
       </div>
 
-      {/* navigation buttons */}
-      <div className="bg-base-100 border border-base-200 rounded-lg shadow-sm dark:bg-base-800 dark:border-base-700">
-        <div className="border-b border-base-200 dark:border-base-700">
-          <nav className="-mb-px flex">
-            <Link
-              to={`/matches/${matchId}`}
-              className={`mr-2 inline-block px-4 py-2 ${
-                location.pathname === `/matches/${matchId}`
-                  ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                  : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
-              }`}
-            >
-              Overview
-            </Link>
-            <Link
-              to={`/matches/${matchId}/timeline`}
-              className={`mr-2 inline-block px-4 py-2 ${
-                location.pathname === `/matches/${matchId}/timeline`
-                  ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                  : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
-              }`}
-            >
-              Timeline
-            </Link>
-            <Link
-              to={`/matches/${matchId}/compare`}
-              className={`mr-2 inline-block px-4 py-2 ${
-                location.pathname === `/matches/${matchId}/compare`
-                  ? "border-b-2 border-primary-500 text-primary-600 dark:border-primary-400 dark:text-primary-400"
-                  : "text-base-500 hover:border-base-300 hover:text-base-700 dark:text-base-400 dark:hover:border-base-600 dark:hover:text-base-300"
-              }`}
-            >
-              Compare
-            </Link>
-          </nav>
-        </div>
-
-        <div className="p-6">
+      {/* SubPage Navigation */}
+      <div className="bg-base-100 rounded-lg shadow-sm">
+        {/* Removed border classes, using tabs-boxed style */}
+        <SubPageNavigation navItems={matchNavItems} />
+        <div className="p-6 pt-0">
+          {" "}
+          {/* Adjusted padding */}
           <Outlet />
         </div>
       </div>
