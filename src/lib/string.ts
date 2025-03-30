@@ -10,6 +10,13 @@ export function isNumeric(str: string): boolean {
   return !isNaN(parseFloat(str)) && isFinite(parseFloat(str));
 }
 
+export const getInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((word) => word[0])
+    .join("");
+};
+
 export function mapNameToFileName(name: string, overhead: boolean): string {
   const lower = name.toLowerCase().replaceAll(' ', '').replaceAll("'", '');
   if (overhead) {

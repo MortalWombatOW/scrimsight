@@ -5,6 +5,7 @@ import { CiMap } from "react-icons/ci";
 import { IoTimeOutline } from "react-icons/io5";
 import { TbTournament } from "react-icons/tb";
 import { Link, useParams } from "react-router-dom"; // Import the Link component
+import { TeamCard } from "../../components/Card/TeamCard";
 
 export const ScrimPage = () => {
   const { scrimId } = useParams<{ scrimId: string }>();
@@ -22,17 +23,6 @@ export const ScrimPage = () => {
   );
 
   if (!scrim) return null;
-
-  // Calculate additional stats
-  const team1WinRate = (
-    (scrim.team1Wins / scrim.matchIds.length) *
-    100
-  ).toFixed(1);
-  const team2WinRate = (
-    (scrim.team2Wins / scrim.matchIds.length) *
-    100
-  ).toFixed(1);
-  const drawRate = ((scrim.draws / scrim.matchIds.length) * 100).toFixed(1);
 
   return (
     <div className="container mx-auto px-4  max-w-6xl">
@@ -60,35 +50,21 @@ export const ScrimPage = () => {
         </div>
       </div>
 
-      {/* Teams Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Team 1 Stats */}
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title text-2xl">{team1Name}</h2>
-            <div className="stats stats-vertical shadow">
-              <div className="stat">
-                <div className="stat-title">Wins</div>
-                <div className="stat-value text-xl">{scrim.team1Wins}</div>
-                <div className="stat-desc">{team1WinRate}% win rate</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Team 2 Stats */}
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title text-2xl">{team2Name}</h2>
-            <div className="stats stats-vertical shadow">
-              <div className="stat">
-                <div className="stat-title">Wins</div>
-                <div className="stat-value text-xl">{scrim.team2Wins}</div>
-                <div className="stat-desc">{team2WinRate}% win rate</div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
+        <TeamCard
+          teamName={team1Name}
+          playerNames={scrim.team1Players}
+          primaryStats={[
+            { value: scrim.team1Wins.toString(), label: "Match Wins" },
+          ]}
+        />
+        <TeamCard
+          teamName={team2Name}
+          playerNames={scrim.team2Players}
+          primaryStats={[
+            { value: scrim.team2Wins.toString(), label: "Match Wins" },
+          ]}
+        />
       </div>
 
       {/* Overall Stats */}
@@ -105,11 +81,6 @@ export const ScrimPage = () => {
               <div className="stat-value text-xl">
                 {scrim.team1Wins} - {scrim.team2Wins}
               </div>
-              {scrim.draws > 0 && (
-                <div className="stat-desc">
-                  {scrim.draws} draws ({drawRate}%)
-                </div>
-              )}
             </div>
             <div className="stat">
               <div className="stat-title">Avg. Match Duration</div>

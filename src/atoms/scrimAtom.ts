@@ -5,6 +5,8 @@ export interface Scrim {
   dateString: string;
   team1Name: string;
   team2Name: string;
+  team1Players: string[];
+  team2Players: string[];
   team1Wins: number;
   team2Wins: number;
   draws: number;
@@ -35,6 +37,8 @@ export const scrimAtom = atom<Promise<Scrim[]>>(async (get) => {
       dateString: matches[0].dateString,
       team1Name: matches[0].team1Name,
       team2Name: matches[0].team2Name,
+      team1Players: matches[0].team1Players,
+      team2Players: matches[0].team2Players,
       team1Wins,
       team2Wins,
       draws,
