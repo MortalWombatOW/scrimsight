@@ -1,11 +1,11 @@
 import { useState, useMemo, type ReactNode } from "react";
-import { Link, useParams } from "react-router-dom"; // Import useParams
-import { useAtomValue } from "jotai"; // Import useAtomValue
-import { MatchData, matchDataAtom } from "../../../atoms/matchDataAtom"; // Import matchDataAtom
-import { formatDate } from "../../../lib/date";
-import { ErrorMessage } from "../../../components/Common/ErrorMessage"; // Import ErrorMessage
-
-// Removed TeamMatchesProps interface
+import { useParams } from "react-router-dom"; // Removed unused Link
+import { useAtomValue } from "jotai";
+import { MatchData, matchDataAtom } from "../../../atoms/matchDataAtom";
+// Removed unused: import { formatDate } from "../../../lib/date";
+import { formatTime } from "../../../lib/format";
+import { ErrorMessage } from "../../../components/Common/ErrorMessage";
+import { MatchCard } from "../../../components/Card/MatchCard"; // Import MatchCard
 
 // Helper to get unique values for filters
 const getUniqueValues = (matches: MatchData[], key: keyof MatchData) => [
@@ -91,18 +91,7 @@ export const TeamMatches = (): ReactNode => {
     return <ErrorMessage message="Team ID not found in URL." />;
   }
 
-  const getResultBgClass = (result: string) => {
-    switch (result) {
-      case "win":
-        return "bg-success/10 hover:bg-success/20";
-      case "loss":
-        return "bg-error/10 hover:bg-error/20";
-      case "draw":
-        return "bg-warning/10 hover:bg-warning/20";
-      default:
-        return "hover:bg-base-200";
-    }
-  };
+  // Removed unused getResultBgClass function
 
   return (
     <div className="space-y-4">
@@ -184,64 +173,29 @@ export const TeamMatches = (): ReactNode => {
         </div>
       </div>
 
-      {/* Match List */}
-      <div className="grid gap-4">
+      {/* Match Card List */}
+       <div className="flex flex-col md:flex-row flex-wrap gap-6">
         {filteredMatches.length > 0 ? (
-          filteredMatches.map((match) => {
-            const isTeam1 = match.team1Name === teamId; // Use teamId
-            const teamScore = isTeam1 ? match.team1Score : match.team2Score;
-            const opposingScore = isTeam1 ? match.team2Score : match.team1Score;
-            const opposingTeam = isTeam1 ? match.team2Name : match.team1Name;
-            const result =
-              teamScore > opposingScore
-                ? "win"
-                : teamScore < opposingScore
-                ? "loss"
-                : "draw";
-            const resultBgClass = getResultBgClass(result);
-
-            return (
-              <Link
-                key={match.matchId}
-                to={`/matches/${match.matchId}`}
-                className={`block transition-colors duration-200 rounded-lg p-4 border border-base-300 ${resultBgClass}`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`font-bold ${
-                          result === "win"
-                            ? "text-success"
-                            : result === "loss"
-                            ? "text-error"
-                            : "text-warning"
-                        }`}
-                      >
-                        {result.toUpperCase()}
-                      </span>
-                      <span className="text-base-content">
-                        vs {opposingTeam}
-                      </span>
-                    </div>
-                    <div className="text-sm text-base-content/70">
-                      {match.map} - {match.mode}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-mono text-lg">
-                      {teamScore} - {opposingScore}
-                    </div>
-                    <div className="text-sm text-base-content/70">
-                      {formatDate(new Date(match.dateString))}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            );
-          })
+          filteredMatches.map((match) => (
+            <MatchCard
+              key={match.matchId}
+              title={`${match.map} (${match.mode})`}
+              teamNames={[match.team1Name, match.team2Name]}
+              date={match.dateString} // Assuming dateString is display-ready
+              mapName={match.map}
+              primaryStats={[
+                { value: `${match.team1Score} - ${match.team2Score}`, label: "Score" },
+              ]}
+              secondaryStats={[
+                { value: formatTime(match.duration), label: "Duration" },
+                // Add opponent if needed, requires knowing which team is 'us' vs 'them'
+                // { value: match.team1Name === teamId ? match.team2Name : match.team1Name, label: "Opponent"}
+              ]}
+              linkUrl={`/matches/${match.matchId}`}
+            />
+          ))
         ) : (
-          <div className="text-center p-6 text-base-content/70">
+          <div className="w-full text-center p-6 text-base-content/70">
             No matches found matching the selected filters.
           </div>
         )}

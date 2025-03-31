@@ -11,6 +11,8 @@ type PlayerStatsBaseNumericalKeys = 'playtime' | 'eliminations' | 'finalBlows' |
 | 'damageBlocked' | 'defensiveAssists' | 'offensiveAssists' | 'ultimatesEarned' | 'ultimatesUsed' | 'multikills'
 | 'soloKills' | 'objectiveKills' | 'environmentalKills' | 'environmentalDeaths' | 'criticalHits' | 'shotsFired' | 'shotsHit' | 'shotsMissed' | 'scopedShotsFired' | 'scopedShotsHit';
 
+// Removed duplicate type alias
+
 type PlayerStatsBase = {[k in PlayerStatsCategoryKeys]: string} & {[k in PlayerStatsBaseNumericalKeys]: number};
 
 type PlayerStatsDerivedNumericalKeys = 'eliminationsPer10Minutes' | 'finalBlowsPer10Minutes' | 'deathsPer10Minutes' | 'allDamageDealtPer10Minutes' | 'barrierDamageDealtPer10Minutes'
@@ -22,9 +24,11 @@ type PlayerStatsDerivedNumericalKeys = 'eliminationsPer10Minutes' | 'finalBlowsP
 
 export type PlayerStats = PlayerStatsBase & {[k in PlayerStatsDerivedNumericalKeys]: number};
 
+// Exporting this type union
 export type PlayerStatsNumericalKeys = PlayerStatsBaseNumericalKeys | PlayerStatsDerivedNumericalKeys;
 
-const playerStatsBaseNumericalKeys: PlayerStatsBaseNumericalKeys[] = [
+// Exporting the constant array of base keys
+export const playerStatsBaseNumericalKeys: PlayerStatsBaseNumericalKeys[] = [
   'playtime',
   'eliminations',
   'finalBlows', 
@@ -80,7 +84,7 @@ export const playerStatsCategoryKeys: PlayerStatsCategoryKeys[] = [
     ];
 
 // The most granular data, which is the player stats for each round.
-const playerStatsBaseAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = atom(async (get) => {
+export const playerStatsBaseAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = atom(async (get) => {
   const playerStats = await get(playerStatExpandedAtom);
   const playtimeData = await get(heroPlaytimeAtom);
 
@@ -237,7 +241,8 @@ function onlyDominantRole(
   return newAtom as typeof metricAtom;
 }
 
-const getStatsAtom =  <T extends PlayerStatsCategoryKeys>(groupBy: PlayerStatsCategoryKeys[], filter?: Record<T, string[]>) => {
+// Exporting this function for use in other atom files
+export const getStatsAtom =  <T extends PlayerStatsCategoryKeys>(groupBy: PlayerStatsCategoryKeys[], filter?: Record<T, string[]>) => {
   if (filter) {
     return addDerivedMetrics(groupByAtom(onlyDominantRole(filterBaseAtom(playerStatsBaseAtom, filter)), groupBy));
   } else {

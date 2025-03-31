@@ -1,4 +1,5 @@
-export type SortOption = "name" | "wins" | "recent" | "players";
+// Remove "recent" from sort options
+export type SortOption = "name" | "wins" | "players";
 
 interface TeamsFilterProps {
   searchQuery: string;
@@ -38,8 +39,9 @@ export const TeamsFilter = ({
             onChange={(e) => onSortChange(e.target.value as SortOption)}
           >
             <option value="name">Team Name</option>
-            <option value="wins">Most Wins</option>
-            <option value="recent">Most Recent</option>
+            {/* Update label to reflect sorting by win rate */}
+            <option value="wins">Highest Win Rate</option>
+            {/* Removed "Most Recent" option */}
             <option value="players">Most Players</option>
           </select>
         </div>

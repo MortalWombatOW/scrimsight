@@ -1,8 +1,10 @@
 import { TeamCard } from "../../../components/Card/TeamCard";
-import { TeamStats } from "../../../atoms/teamStatsAtom";
+// Import the new summary type
+import { TeamListSummary } from "../../../atoms/metrics/listSummaryAtoms";
+import { formatPercentage } from "../../../lib/format"; // Assuming a formatting function exists
 
 interface TeamsListProps {
-  teams: TeamStats[];
+  teams: TeamListSummary[]; // Use the new type
 }
 
 export const TeamsList = ({ teams }: TeamsListProps) => {
@@ -12,21 +14,19 @@ export const TeamsList = ({ teams }: TeamsListProps) => {
         <TeamCard
           key={team.teamName}
           teamName={team.teamName}
-          playerNames={team.players}
+          // Display player count instead of list
+          playerNames={[`${team.playerCount} Players`]} // Pass count as a single-item array for CardBaseFact
           primaryStats={[
-            { value: team.wins.toString(), label: "Wins" },
-            { value: team.losses.toString(), label: "Losses" },
-            { value: team.draws.toString(), label: "Draws" },
+            // Display Win Rate as primary stat
+            { value: formatPercentage(team.winRate), label: "Win Rate" },
           ]}
           secondaryStats={[
+            // Display Games Played and Player Count as secondary stats
             { value: team.gamesPlayed.toString(), label: "Games Played" },
-            {
-              value: team.mostRecentGameDate?.toLocaleDateString() || "N/A",
-              label: "Most Recent Game",
-            },
+            { value: team.playerCount.toString(), label: "Players" },
           ]}
           linkUrl={`/teams/${team.teamName}`}
-          // linkText is optional here, TeamCard provides a default
+          // linkText uses default "View Details"
         />
       ))}
     </div>

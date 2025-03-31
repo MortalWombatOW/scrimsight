@@ -52,4 +52,11 @@ export const formatDuration = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   return `${minutes}m ${remainingSeconds.toString().padStart(2, '0')}s`;
-}; 
+};
+
+export const formatPercentage = (value: number | undefined, decimals = 1): string => {
+  if (value === undefined || isNaN(value)) {
+    return 'N/A';
+  }
+  return `${(value * 100).toFixed(decimals)}%`;
+};

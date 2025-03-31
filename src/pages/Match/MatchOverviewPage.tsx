@@ -1,21 +1,162 @@
 import { useParams } from "react-router-dom";
+import { useAtomValue } from "jotai";
+import { matchDataAtom } from "../../atoms/matchDataAtom"; // Removed unused MatchData type
+import {
+  teamStatsForMatchAtom,
+  playerStatsForMatchAtom,
+} from "../../atoms/metrics/contextualStatAtoms";
+import { MatchCard } from "../../components/Card/MatchCard";
+import { TeamCard } from "../../components/Card/TeamCard";
+import { PlayerCard } from "../../components/Card/PlayerCard";
+import { formatTime, prettyFormat } from "../../lib"; // Import formatters
 import { PlayerStatsComparison } from "./components/stats/PlayerStatsComparison";
 import { TeamStatsComparison } from "./components/stats/TeamStatsComparison";
 import KillsTable from "../../components/KillsTable/KillsTable";
 
 export const MatchOverviewPage = () => {
   const { matchId } = useParams<{ matchId: string }>();
+  const allMatches = useAtomValue(matchDataAtom);
 
   if (!matchId) {
-    return <div>No match ID</div>;
+    return <div className="text-center p-4">No match ID provided.</div>;
   }
 
+  const match = allMatches.find((m) => m.matchId === matchId);
+
+  if (!match) {
+    return <div className="text-center p-4">Match not found.</div>;
+  }
+
+  // Fetch contextual stats using the atoms (components to handle loading/undefined states)
+  const TeamStatsDisplay = ({ teamName }: { teamName: string }) => {
+    const teamStats = useAtomValue(
+      teamStatsForMatchAtom({ matchId, teamName })
+    );
+    if (!teamStats) return null; // Or loading indicator
+    // TODO: Define relevant stats for TeamCard based on teamStats structure
+    return (
+      <TeamCard
+        teamName={teamName}
+        playerNames={
+          teamName === match.team1Name ? match.team1Players : match.team2Players
+        }
+        primaryStats={[
+          { value: prettyFormat(teamStats.eliminations), label: "Elims" },
+        ]} // Example stat
+        secondaryStats={[
+          { value: prettyFormat(teamStats.deaths), label: "Deaths" },
+        ]} // Example stat
+        linkUrl={`/teams/${teamName}`}
+      />
+    );
+  };
+
+  const PlayerStatsDisplay = ({ playerId }: { playerId: string }) => {
+    const playerStatsRows = useAtomValue(
+      playerStatsForMatchAtom({ matchId, playerId })
+    );
+    if (!playerStatsRows || playerStatsRows.length === 0) return null; // Or loading
+
+    // Aggregate stats across heroes if needed, or display per hero
+    // For simplicity, aggregate here (summing stats)
+    const aggregatedStats = playerStatsRows.reduce((acc, row) => {
+      Object.keys(row).forEach((key) => {
+        if (typeof row[key as keyof typeof row] === "number") {
+          acc[key as keyof typeof acc] =
+            (acc[key as keyof typeof acc] || 0) +
+            (row[key as keyof typeof row] as number);
+        } else {
+          // Keep first value for non-numerical keys like playerName
+          if (!acc[key as keyof typeof acc]) {
+            acc[key as keyof typeof acc] = row[key as keyof typeof row];
+          }
+        }
+      });
+      return acc;
+    }, {} as any); // Use 'any' for simplicity in aggregation, refine if needed
+
+    const kda =
+      aggregatedStats.deaths === 0
+        ? prettyFormat(
+            aggregatedStats.eliminations +
+              (aggregatedStats.offensiveAssists +
+                aggregatedStats.defensiveAssists)
+          )
+        : prettyFormat(
+            (aggregatedStats.eliminations +
+              (aggregatedStats.offensiveAssists +
+                aggregatedStats.defensiveAssists)) /
+              aggregatedStats.deaths
+          );
+
+    return (
+      <PlayerCard
+        playerName={playerId}
+        teamNames={[
+          match.team1Players.includes(playerId)
+            ? match.team1Name
+            : match.team2Name,
+        ]}
+        heroes={playerStatsRows.map((r) => r.playerHero)} // List heroes played
+        primaryStats={[{ value: kda, label: "KDA" }]} // Example stat
+        secondaryStats={[
+          {
+            value: prettyFormat(aggregatedStats.heroDamageDealt),
+            label: "Hero Dmg",
+          },
+        ]} // Example stat
+        // Add linkUrl if PlayerCard supports it or wrap in Link
+      />
+    );
+  };
+
+  const allPlayerIds = [...match.team1Players, ...match.team2Players];
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-row gap-4">
-        <TeamStatsComparison matchId={matchId} />
-        <KillsTable matchId={matchId} />
+    <div className="flex flex-col gap-6">
+      {/* Overall Match Card */}
+      <MatchCard
+        title={`${match.map} (${match.mode})`}
+        teamNames={[match.team1Name, match.team2Name]}
+        date={match.dateString} // Assuming dateString is suitable for display
+        mapName={match.map}
+        primaryStats={[
+          {
+            value: `${match.team1Score} - ${match.team2Score}`,
+            label: "Score",
+          },
+          { value: formatTime(match.duration), label: "Duration" },
+        ]}
+        // No link needed if already on the page
+      />
+
+      {/* Team Cards */}
+      <div className="flex flex-col md:flex-row flex-wrap gap-4">
+        <TeamStatsDisplay teamName={match.team1Name} />
+        <TeamStatsDisplay teamName={match.team2Name} />
       </div>
+
+      {/* Player Cards */}
+      <h2 className="text-2xl font-semibold mt-4">Player Stats</h2>
+      <div className="flex flex-col md:flex-row flex-wrap gap-4">
+        {allPlayerIds.map((playerId) => (
+          <PlayerStatsDisplay key={playerId} playerId={playerId} />
+        ))}
+      </div>
+
+      {/* Existing Comparison Components */}
+      <h2 className="text-2xl font-semibold mt-4">Detailed Comparisons</h2>
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="flex-1">
+          <h3 className="text-xl font-medium mb-2">Team Comparison</h3>
+          <TeamStatsComparison matchId={matchId} />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-xl font-medium mb-2">Kill Feed</h3>
+          <KillsTable matchId={matchId} />
+        </div>
+      </div>
+      <h3 className="text-xl font-medium mb-2 mt-4">Player Comparison</h3>
       <PlayerStatsComparison matchId={matchId} />
     </div>
   );
