@@ -8,7 +8,8 @@ interface ScrimCardProps {
   mapsPlayed: string[];
   primaryStats: { value: string; label: string }[];
   secondaryStats?: { value: string; label: string }[];
-  link?: string;
+  linkUrl?: string;
+  linkText?: string; // Optional text, defaults if only URL provided
 }
 
 export const ScrimCard = ({
@@ -18,7 +19,8 @@ export const ScrimCard = ({
   mapsPlayed,
   primaryStats,
   secondaryStats,
-  link,
+  linkUrl,
+  linkText = "View Details", // Default link text
 }: ScrimCardProps) => (
   <CardBase
     title={title}
@@ -37,6 +39,7 @@ export const ScrimCard = ({
         label={mapsPlayed.length === 1 ? "Map" : "Maps"}
       />,
     ]}
-    link={link}
+    linkUrl={linkUrl}
+    linkText={linkUrl ? linkText : undefined} // Only pass text if URL exists
   />
 );

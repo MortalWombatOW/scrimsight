@@ -6,7 +6,8 @@ interface TeamCardProps {
   playerNames: string[];
   primaryStats: { value: string; label: string }[];
   secondaryStats?: { value: string; label: string }[];
-  link?: string;
+  linkUrl?: string;
+  linkText?: string; // Optional text, defaults if only URL provided
 }
 
 export const TeamCard = ({
@@ -14,7 +15,8 @@ export const TeamCard = ({
   playerNames,
   primaryStats,
   secondaryStats,
-  link,
+  linkUrl,
+  linkText = "View Details", // Default link text
 }: TeamCardProps) => (
   <CardBase
     title={teamName}
@@ -26,6 +28,7 @@ export const TeamCard = ({
         label="Players"
       />
     }
-    link={link}
+    linkUrl={linkUrl}
+    linkText={linkUrl ? linkText : undefined} // Only pass text if URL exists
   />
 );

@@ -25,7 +25,8 @@ export const TeamsList = ({ teams }: TeamsListProps) => {
               label: "Most Recent Game",
             },
           ]}
-          link={`/teams/${team.teamName}`}
+          linkUrl={`/teams/${team.teamName}`}
+          // linkText is optional here, TeamCard provides a default
         />
       ))}
     </div>

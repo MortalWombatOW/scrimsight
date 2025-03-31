@@ -63,20 +63,26 @@ const CardBaseContent = ({
   primaryStats,
   secondaryStats,
   info,
+  linkText, // Destructure new props
+  linkUrl, // Destructure new props
 }: {
   title: string;
   icon?: ReactNode;
   primaryStats: { value: string; label: string }[];
   secondaryStats?: { value: string; label: string }[];
   info: ReactNode | ReactNode[];
+  linkText?: string;
+  linkUrl?: string;
 }) => (
   <div className="card bg-base-100 w-fit border border-base-800">
     <div className="card-body flex flex-row p-6">
+      {/* Info Section */}
       <div className="flex flex-col gap-6">
         <CardBaseHeader title={title} icon={icon} />
         <CardBaseInfo>{info}</CardBaseInfo>
       </div>
       <div className="divider divider-horizontal h-24"></div>
+      {/* Stats Section */}
       <div className="flex flex-col justify-between justify-center">
         <div className="flex flex-row gap-6 justify-around">
           {primaryStats.map((stat) => (
@@ -99,16 +105,31 @@ const CardBaseContent = ({
           </div>
         )}
       </div>
+      {/* Optional Link Section */}
+      {linkUrl && linkText && (
+        <>
+          <div className="divider divider-horizontal h-24"></div>
+          <div className="flex items-center justify-center">
+            <Link to={linkUrl} className="link link-primary">
+              {linkText}
+            </Link>
+          </div>
+        </>
+      )}
     </div>
   </div>
 );
 
 export const CardBase = ({
-  link,
+  linkText,
+  linkUrl,
   ...props
 }: {
-  link?: string;
-} & React.ComponentProps<typeof CardBaseContent>) => {
-  const content = <CardBaseContent {...props} />;
-  return link ? <Link to={link}>{content}</Link> : content;
+  linkText?: string;
+  linkUrl?: string;
+} & Omit<
+  React.ComponentProps<typeof CardBaseContent>,
+  "linkText" | "linkUrl"
+>) => {
+  return <CardBaseContent {...props} linkText={linkText} linkUrl={linkUrl} />;
 };
