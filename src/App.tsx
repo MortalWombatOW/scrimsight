@@ -27,6 +27,7 @@ import { TimelinePage } from "./pages/Match/TimelinePage";
 import { MatchOverviewPage } from "./pages/Match/MatchOverviewPage";
 import { MatchStatComparisonPage } from "./pages/Match/MatchStatComparisonPage";
 import { ScrimPage } from "./pages/Scrim/ScrimPage";
+import { MetricsExplorerPage } from "./pages/MetricsExplorer/MetricsExplorerPage"; // Import the new page
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -94,6 +95,11 @@ const App = () => {
                     <Route path="compositions" element={<TeamCompositions />} />
                   </Route>
                   <Route path="/files" element={<AddFilesPage />} />
+                  <Route
+                    path="/metrics"
+                    element={<MetricsExplorerPage />}
+                  />{" "}
+                  {/* Add the new route */}
                 </Routes>
               </Suspense>
             </Layout>

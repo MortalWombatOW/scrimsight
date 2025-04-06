@@ -255,8 +255,9 @@ const statsAtomCache = new Map<string, MetricAtom<any, any, any>>();
 export const useStats = <T extends PlayerStatsCategoryKeys>(
   groupBy: PlayerStatsCategoryKeys[],
   filter?: Record<T, string[]>,
-  sortBy?: PlayerStatsNumericalKeys,
-  sortDirection?: 'asc' | 'desc' 
+  // Update sortBy type to accept both category and numerical keys
+  sortBy?: PlayerStatsCategoryKeys | PlayerStatsNumericalKeys | undefined,
+  sortDirection?: 'asc' | 'desc'
 ) => {
   const cacheKey = JSON.stringify({ groupBy, filter, sortBy, sortDirection });
   const statsAtom = statsAtomCache.has(cacheKey) ? statsAtomCache.get(cacheKey)! : getStatsAtom(groupBy, filter);
@@ -264,10 +265,58 @@ export const useStats = <T extends PlayerStatsCategoryKeys>(
     statsAtomCache.set(cacheKey, statsAtom);
   }
   const stats = useAtomValue(statsAtom);
-  if (sortBy) {
+  if (sortBy && stats.rows) {
+    // Check if the sortBy key is a numerical or category key
+    const isNumerical = playerStatsNumericalKeys.includes(sortBy as PlayerStatsNumericalKeys);
+
     stats.rows.sort((a, b) => {
-      return sortDirection === 'asc' ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy];
+      const valA = a[sortBy];
+      const valB = b[sortBy];
+
+      // Handle potential null/undefined values gracefully
+      if (valA == null && valB == null) return 0;
+      if (valA == null) return sortDirection === 'asc' ? -1 : 1; // Treat nulls as smaller or larger depending on direction
+      if (valB == null) return sortDirection === 'asc' ? 1 : -1;
+
+      let comparison = 0;
+      if (isNumerical) {
+        // Numerical comparison
+        comparison = (valA as number) - (valB as number);
+      } else {
+        // String (locale-aware) comparison for categories
+        comparison = String(valA).localeCompare(String(valB));
+      }
+
+      return sortDirection === 'asc' ? comparison : -comparison;
     });
   }
   return stats;
 };
+
+// Atom to get unique values for each category key, useful for filter dropdowns
+export const uniqueCategoryValuesAtom = atom(async (get) => {
+  const { rows, categoryKeys } = await get(playerStatsBaseAtom);
+  const uniqueValues: Record<PlayerStatsCategoryKeys, Set<string>> = {} as any;
+
+  // Initialize sets for each category key
+  categoryKeys.forEach(key => {
+    uniqueValues[key] = new Set<string>();
+  });
+
+  // Populate sets with unique values from rows
+  rows.forEach(row => {
+    categoryKeys.forEach(key => {
+      if (row[key] !== undefined && row[key] !== null) {
+        uniqueValues[key].add(row[key]);
+      }
+    });
+  });
+
+  // Convert sets to sorted arrays
+  const result: Record<PlayerStatsCategoryKeys, string[]> = {} as any;
+  categoryKeys.forEach(key => {
+    result[key] = Array.from(uniqueValues[key]).sort();
+  });
+
+  return result;
+});

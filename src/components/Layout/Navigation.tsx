@@ -6,6 +6,7 @@ import { MdOutlinePersonOutline } from "react-icons/md";
 import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";
+import { IoStatsChartOutline } from "react-icons/io5"; // Import chart icon
 import { useEffect } from "react";
 import RoleIcon from "../Common/RoleIcon";
 import { CiMap } from "react-icons/ci";
@@ -164,6 +165,12 @@ export const Navigation = ({
             title: name,
             link: `/teams/${name}`,
           })),
+        })}
+        {renderMenuItem({
+          // Add Metrics Explorer item
+          title: "Metrics Explorer",
+          link: "/metrics",
+          icon: <IoStatsChartOutline />,
         })}
         {renderMenuItem({
           title: "Files",
