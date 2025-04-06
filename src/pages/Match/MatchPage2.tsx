@@ -7,6 +7,7 @@ import { MdAccessTime } from "react-icons/md";
 import { TbClockHour1 } from "react-icons/tb";
 import { FiMapPin } from "react-icons/fi";
 import { SubPageNavigation } from "../../components/Layout/SubPageNavigation"; // Added import
+import Container from "~/components/Container/Container"; // Added import
 
 // Import the extracted components
 import { MatchScoreCard } from "./components/scorecard/MatchScoreCard";
@@ -32,7 +33,9 @@ export const MatchPage2 = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-6 items-left w-full mx-auto">
+    <Container>
+      {" "}
+      {/* Added Container */}
       <div className="flex flex-row gap-4 flex-wrap">
         <section className="bg-base-100 border border-base-200 p-6 rounded-lg w-fit h-fit shadow-sm flex flex-row flex-wrap gap-4">
           <img
@@ -90,7 +93,6 @@ export const MatchPage2 = () => {
 
         <MatchScoreCard matchData={matchData} />
       </div>
-
       {/* SubPage Navigation */}
       <div className="bg-base-100 rounded-lg shadow-sm">
         {/* Removed border classes, using tabs-boxed style */}
@@ -101,6 +103,6 @@ export const MatchPage2 = () => {
           <Outlet />
         </div>
       </div>
-    </div>
+    </Container> // Added closing Container
   );
 };

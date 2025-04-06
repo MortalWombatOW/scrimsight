@@ -22,6 +22,7 @@ import { logFileInputAtom, logFileInputMutationAtom } from "../../atoms/files";
 import { ChangeEvent } from "react";
 import { MdDelete } from "react-icons/md";
 import { sampleDataEnabledAtom } from "../../atoms/files/sampleDataAtoms";
+import Container from "~/components/Container/Container";
 
 export const AddFilesPage = () => {
   const [, setFiles] = useAtom(logFileInputMutationAtom);
@@ -77,7 +78,7 @@ export const AddFilesPage = () => {
   };
 
   return (
-    <div className="container mx-auto  py-8">
+    <Container>
       <h1 className="text-2xl font-bold mb-6 text-base-900 dark:text-white">
         Add Files
       </h1>
@@ -153,6 +154,6 @@ export const AddFilesPage = () => {
           ))}
         </ul>
       </div>
-    </div>
+    </Container>
   );
 };

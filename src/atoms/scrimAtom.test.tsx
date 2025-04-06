@@ -1,7 +1,7 @@
 import React, { Suspense } from "react"; // Import Suspense
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react"; // Use render and screen
-import { Provider, useAtomValue, atom } from "jotai"; // Use useAtomValue
+import { Provider, useAtomValue } from "jotai"; // Use useAtomValue
 import { scrimAtom, Scrim } from "./scrimAtom";
 import { MatchData } from "./matchDataAtom";
 

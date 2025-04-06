@@ -11,6 +11,7 @@ import { TeamsSummaryStats } from "./components/TeamsSummaryStats";
 // Update SortOption type if needed in TeamsFilter.tsx later
 import { TeamsFilter, SortOption } from "./components/TeamsFilter";
 import { TeamsList } from "./components/TeamsList";
+import Container from "~/components/Container/Container"; // Added import
 
 export const TeamsPage = () => {
   // Use the new summary atom
@@ -58,7 +59,9 @@ export const TeamsPage = () => {
     });
 
   return (
-    <div className="container mx-auto px-4 max-w-7xl">
+    <Container>
+      {" "}
+      {/* Added Container */}
       <div className="mb-8 bg-base-100 rounded-lg p-6  dark:bg-base-800">
         <h1 className="text-3xl font-bold mb-2 text-base-900 dark:text-white">
           Teams
@@ -67,14 +70,12 @@ export const TeamsPage = () => {
           Overview of all teams and their performance
         </p>
       </div>
-
       <TeamsSummaryStats
         totalTeams={totalTeams}
         totalGames={totalGames}
         totalWins={totalWins}
         totalPlayers={totalPlayers}
       />
-
       <div className="bg-base-100 rounded-lg p-6 shadow-md mb-6 dark:bg-base-800">
         <TeamsFilter
           searchQuery={searchQuery}
@@ -85,6 +86,6 @@ export const TeamsPage = () => {
 
         <TeamsList teams={filteredAndSortedTeams} />
       </div>
-    </div>
+    </Container> // Added closing Container
   );
 };

@@ -118,7 +118,7 @@ export const Navigation = ({
 
   return (
     <nav className="h-full w-full overflow-y-auto">
-      <ul className="menu menu-md bg-base-100 rounded-box w-full gap-2">
+      <ul className="menu menu-md border border-gray-500 rounded-box w-full gap-2">
         {renderMenuItem({
           title: "Home",
           link: "/",

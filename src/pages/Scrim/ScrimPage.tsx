@@ -15,6 +15,7 @@ import {
   matchStatsForScrimAtom,
 } from "../../atoms/metrics/contextualStatAtoms"; // Import contextual atoms
 import { MatchData } from "../../atoms/matchDataAtom"; // Import MatchData type for matchStatsForScrimAtom
+import Container from "~/components/Container/Container"; // Added import
 
 export const ScrimPage = () => {
   const { scrimId } = useParams<{ scrimId: string }>(); // Use the constructed scrimId
@@ -133,7 +134,9 @@ export const ScrimPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 max-w-6xl">
+    <Container>
+      {" "}
+      {/* Added Container */}
       {/* Header Section */}
       <div className="card bg-base-100 shadow-xl mb-6">
         <div className="card-body">
@@ -163,14 +166,12 @@ export const ScrimPage = () => {
           </div>
         </div>
       </div>
-
       {/* Team Cards with Scrim Stats */}
       <h2 className="text-2xl font-semibold mb-4">Team Performance</h2>
       <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
         <TeamStatsDisplay teamName={team1Name} />
         <TeamStatsDisplay teamName={team2Name} />
       </div>
-
       {/* Player Cards with Scrim Stats */}
       <h2 className="text-2xl font-semibold mb-4">Player Performance</h2>
       <div className="flex flex-col md:flex-row flex-wrap gap-4 mb-6">
@@ -178,12 +179,10 @@ export const ScrimPage = () => {
           <PlayerStatsDisplay key={playerId} playerId={playerId} />
         ))}
       </div>
-
       {/* Match Cards */}
       <h2 className="text-2xl font-semibold mb-4">Matches</h2>
       <MatchListDisplay />
-
       {/* Removed Overall Stats Card and Matches Timeline */}
-    </div>
+    </Container> // Added closing Container
   );
 };

@@ -74,7 +74,7 @@ const CardBaseContent = ({
   linkText?: string;
   linkUrl?: string;
 }) => (
-  <div className="card bg-base-100 w-fit border border-base-800">
+  <div className="card  w-fit border border-gray-500">
     <div className="card-body flex flex-row p-6">
       {/* Info Section */}
       <div className="flex flex-col gap-6">

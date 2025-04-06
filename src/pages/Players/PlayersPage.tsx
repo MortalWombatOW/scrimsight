@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { useStats } from "../../atoms/metrics/playerMetricsAtoms";
 import { ErrorMessage } from "../../components/Common/ErrorMessage";
 import { SubPageNavigation } from "../../components/Layout/SubPageNavigation";
+import Container from "~/components/Container/Container"; // Added import
 
 export const PlayersPage = () => {
   const playerStats = useStats(["playerName"]);
@@ -25,7 +26,9 @@ export const PlayersPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-base-100">
+    <Container>
+      {" "}
+      {/* Added Container */}
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8 bg-base-200 p-6 rounded-box">
@@ -45,6 +48,6 @@ export const PlayersPage = () => {
           <Outlet />
         </div>
       </div>
-    </div>
+    </Container> // Added closing Container
   );
 };

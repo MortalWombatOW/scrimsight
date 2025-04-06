@@ -8,6 +8,7 @@ import {
 // Removed unused: import { useNavigate } from "react-router-dom";
 import { formatTime } from "../../lib"; // Removed unused mapNameToFileName
 import { ScrimCard } from "../../components/Card/ScrimCard"; // Import ScrimCard
+import Container from "~/components/Container/Container"; // Added import
 
 export const ScrimsPage = () => {
   // Removed unused navigate
@@ -31,9 +32,10 @@ export const ScrimsPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 max-w-5xl">
+    <Container>
+      {" "}
+      {/* Added Container */}
       <h1 className="text-3xl font-bold mb-6">Scrims</h1>
-
       {/* Use flex layout for cards */}
       <div className="flex flex-col md:flex-row flex-wrap gap-6">
         {scrimSummaries.map((scrim: ScrimListSummary) => (
@@ -55,6 +57,6 @@ export const ScrimsPage = () => {
           />
         ))}
       </div>
-    </div>
+    </Container> // Added closing Container
   );
 };

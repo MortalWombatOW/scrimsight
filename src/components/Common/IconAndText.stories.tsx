@@ -1,23 +1,21 @@
 import IconAndTextButton from "./IconAndText";
 import type { Meta, StoryObj } from "@storybook/react";
 import HealingIcon from "~/components/Icons/HealingIcon";
-import DeleteIcon from '@mui/icons-material/Delete';
-import InfoIcon from '@mui/icons-material/Info';
-import WarningIcon from '@mui/icons-material/Warning';
+// Removed MUI Icons: DeleteIcon, InfoIcon, WarningIcon
 
 const meta: Meta<typeof IconAndTextButton> = {
   component: IconAndTextButton,
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['contained', 'outlined', 'text'],
+      control: "select",
+      options: ["contained", "outlined", "text"],
     },
     colorKey: {
-      control: 'select',
-      options: ['primary', 'secondary', 'error', 'warning', 'info', 'success'],
+      control: "select",
+      options: ["primary", "secondary", "error", "warning", "info", "success"],
     },
     dynamic: {
-      control: 'boolean',
+      control: "boolean",
     },
   },
 };
@@ -29,19 +27,19 @@ type Story = StoryObj<typeof IconAndTextButton>;
 export const Default: Story = {
   args: {
     icon: <HealingIcon size={24} fill="black" />,
-    text: 'Healing',
+    text: "Healing",
     dynamic: false,
     variant: "contained",
     padding: "12px",
     borderRadius: "10px",
-    colorKey: "primary"
+    colorKey: "primary",
   },
 };
 
 export const DynamicHover: Story = {
   args: {
-    icon: <InfoIcon />,
-    text: 'Hover for more info',
+    icon: <HealingIcon size={24} fill="currentColor" />, // Replaced InfoIcon
+    text: "Hover for more info",
     dynamic: true,
     variant: "contained",
     colorKey: "info",
@@ -51,8 +49,8 @@ export const DynamicHover: Story = {
 
 export const OutlinedButton: Story = {
   args: {
-    icon: <DeleteIcon />,
-    text: 'Delete Item',
+    icon: <HealingIcon size={24} fill="currentColor" />, // Replaced DeleteIcon
+    text: "Delete Item",
     dynamic: false,
     variant: "outlined",
     colorKey: "error",
@@ -62,8 +60,8 @@ export const OutlinedButton: Story = {
 
 export const TextButton: Story = {
   args: {
-    icon: <WarningIcon />,
-    text: 'Warning',
+    icon: <HealingIcon size={24} fill="currentColor" />, // Replaced WarningIcon
+    text: "Warning",
     dynamic: false,
     variant: "text",
     colorKey: "warning",
@@ -74,7 +72,7 @@ export const TextButton: Story = {
 export const CompactButton: Story = {
   args: {
     icon: <HealingIcon size={16} fill="black" />,
-    text: 'Quick Action',
+    text: "Quick Action",
     dynamic: false,
     variant: "contained",
     padding: "4px 8px",
@@ -85,8 +83,8 @@ export const CompactButton: Story = {
 
 export const SuccessButton: Story = {
   args: {
-    icon: <InfoIcon />,
-    text: 'Operation Complete',
+    icon: <HealingIcon size={24} fill="currentColor" />, // Replaced InfoIcon
+    text: "Operation Complete",
     dynamic: false,
     variant: "contained",
     colorKey: "success",

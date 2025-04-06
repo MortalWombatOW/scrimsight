@@ -7,6 +7,7 @@ import { teamStatsAtom } from "../../atoms/teamStatsAtom";
 import { StatCard } from "../../components/StatCard";
 import { ErrorMessage } from "../../components/Common/ErrorMessage";
 import { SubPageNavigation } from "../../components/Layout/SubPageNavigation";
+import Container from "~/components/Container/Container"; // Added import
 
 export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
@@ -38,7 +39,9 @@ export const TeamPage = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <Container>
+      {" "}
+      {/* Added Container */}
       {/* Team Header - Remains the same */}
       <div className="bg-base-100 rounded-lg shadow-lg p-6 mb-6">
         <h1 className="text-4xl font-bold mb-4 text-primary">
@@ -51,7 +54,6 @@ export const TeamPage = () => {
           <StatCard title="Draws" value={teamRecord.draws.toString()} />
         </div>
       </div>
-
       {/* Sub-route Navigation and Content */}
       <div className="bg-base-100 rounded-lg shadow-lg">
         {/* Navigation Links using SubPageNavigation */}
@@ -65,6 +67,6 @@ export const TeamPage = () => {
           <Outlet />
         </div>
       </div>
-    </div>
+    </Container> // Added closing Container
   );
 };

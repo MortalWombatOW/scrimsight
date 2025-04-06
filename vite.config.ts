@@ -2,7 +2,7 @@
 /// <reference types="vite/client" />
 import { defineConfig, Plugin } from 'vite';
 import { resolve } from 'path';
-import { configDefaults } from 'vitest/config';
+// Removed: import { configDefaults } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { visualizer } from 'rollup-plugin-visualizer';

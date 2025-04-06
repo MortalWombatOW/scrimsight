@@ -5,6 +5,7 @@ import { getRoleFromHero } from "../../lib/hero";
 import { SubPageNavigation } from "../../components/Layout/SubPageNavigation"; // Added SubPageNavigation
 import RoleIcon from "../../components/Common/RoleIcon";
 import { ErrorBoundary } from "react-error-boundary";
+import Container from "~/components/Container/Container"; // Added import
 // Removed direct imports of child components as they are handled by Outlet
 // import { PlayerOverview } from "./components/PlayerOverview";
 // import { PlayerHeroes } from "./components/PlayerHeroes";
@@ -69,7 +70,9 @@ export const PlayerPage = () => {
   ];
 
   return (
-    <div className="container mx-auto p-4 bg-base-100">
+    <Container>
+      {" "}
+      {/* Added Container */}
       {/* Header Section */}
       <header className="mb-8 bg-base-100 rounded-box p-6">
         <div className="flex items-center gap-4">
@@ -80,16 +83,14 @@ export const PlayerPage = () => {
           </div>
         </div>
       </header>
-
       {/* SubPage Navigation */}
       <SubPageNavigation navItems={playerNavItems} />
-
       {/* Content Outlet */}
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Suspense fallback={<LoadingSpinner />}>
           <Outlet /> {/* Replaced conditional rendering with Outlet */}
         </Suspense>
       </ErrorBoundary>
-    </div>
+    </Container> // Added closing Container
   );
 };

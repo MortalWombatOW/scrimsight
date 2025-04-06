@@ -11,6 +11,7 @@ import {
 import { ScrimCard } from "../../components/Card/ScrimCard";
 import { TeamCard } from "../../components/Card/TeamCard";
 import { PlayerCard } from "../../components/Card/PlayerCard";
+import Container from "~/components/Container/Container"; // Added import
 import { formatTime, formatPercentage, prettyFormat } from "../../lib"; // Import formatters
 
 const NUM_ITEMS_TO_SHOW = 3; // Number of cards to show per section
@@ -155,8 +156,9 @@ export const HomePage = (): React.ReactNode => {
 
   // If data exists, show the main page content
   return (
-    // Container with top padding, no outer div or image
-    <div className="container mx-auto px-4 pt-8">
+    <Container>
+      {" "}
+      {/* Replaced div with Container */}
       {/* Sections for Scrims, Teams, Players */}
       <Suspense
         fallback={
@@ -167,6 +169,6 @@ export const HomePage = (): React.ReactNode => {
         <TopTeamsSection />
         <TopPlayersSection />
       </Suspense>
-    </div>
+    </Container> // Closing Container tag
   );
 };
