@@ -14,7 +14,9 @@
     "build-graph": "npx tsg --tsconfig=tsconfig.json --exclude node_modules --md=codebase-structure-graph.md",
     "scan": "npm run start && npx react-scan@latest localhost:3000",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -65,11 +67,12 @@
     "@storybook/react-vite": "^8.5.8",
     "@storybook/test": "^8.5.8",
     "@stylistic/eslint-plugin": "^4.0.1",
+    "@testing-library/react": "^16.2.0",
     "@types/eslint": "^9.6.1",
-    "@ysk8hori/typescript-graph": "^0.24.0",
     "@typescript-eslint/eslint-plugin": "^8.24.1",
     "@typescript-eslint/parser": "^8.24.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "@ysk8hori/typescript-graph": "^0.24.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.0.1",
@@ -79,6 +82,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-storybook": "^0.11.3",
     "eslint-plugin-unused-imports": "^4.1.4",
+    "jsdom": "^26.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.5.2",
     "rollup-plugin-visualizer": "^5.14.0",
@@ -88,7 +92,8 @@
     "vite": "^6.1.1",
     "vite-plugin-dts": "^4.5.0",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.1.1"
   },
   "eslintConfig": {
     "extends": [
