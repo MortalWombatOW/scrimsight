@@ -46,18 +46,19 @@ The following Functional Requirements (FR) define the target state for Scrimsigh
 *   **FR-3.4.6:** Track player lives (`playerLivesAtom`).
 *   **FR-3.4.7:** Track ultimate timings; Calculate avg. time-to-ult.
 *   **FR-3.4.8:** Standardize player interactions (`playerInteractionEventsAtom`).
-*   **FR-3.4.9:** Calculate First Kill/Death Rate (requires new atom/logic).
+*   **FR-3.4.9:** Calculate First Kill/Death Rate. **(Completed 2025-04-06: Implemented via `firstKillImpactAtom` and `playerFirstKillDeathRateAtom`)**
 *   **FR-3.4.10:** Aggregate stats across contexts (`contextualStatAtoms`, `getStatsAtom`).
 
 #### 3.5 Team Statistics & Analysis
 *   **FR-3.5.1:** Calculate Team Win Rate by Map Type (`teamMapTypeStatsAtom`).
-*   **FR-3.5.2:** Track Team Compositions (playtime, win rate, frequency) (`detailedTeamCompositionsAtom`).
-*   **FR-3.5.3:** Calculate basic team ult economy metrics (requires new atom/logic).
+*   **FR-3.5.2:** Track Team Compositions (playtime, win rate, frequency) (`detailedTeamCompositionsAtom`). **(Enhanced 2025-04-06: Added detailed matchup analysis - performance vs specific opponent compositions)**
+*   **FR-3.5.3:** Calculate ultimate impact metrics. **(Completed 2025-04-06: Implemented via `ultimateImpactAtom`, focusing on individual player ult impact within fights - kills during ult, fight win rate with ult)**
 
 #### 3.6 Match Analysis
-*   **FR-3.6.1:** Identify teamfights (`teamfightsAtom`).
-*   **FR-3.6.2:** Calculate kills per team per fight (`teamfightsAtom`).
-*   **FR-3.6.3:** Track ultimate usage within/around fights (`teamfightsAtom`).
+*   **FR-3.6.1:** Identify teamfights (`teamfightsAtom`). **(Refined 2025-04-06: Added `fightId`, team names, winner)**
+*   **FR-3.6.2:** Calculate kills per team per fight (`teamfightsAtom`). **(Refined 2025-04-06: Used for winner calculation)**
+*   **(New 2025-04-06):** Calculate teamfight participation (`teamfightParticipationAtom`).
+*   **FR-3.6.3:** Track ultimate usage within/around fights (`teamfightsAtom`). **(Existing logic maintained)**
 *   **FR-3.6.4:** Generate player Kill Matrix (`killMatrixAtomFamily`).
 
 #### 3.7 Visualization & UI Pages
@@ -83,6 +84,12 @@ The following Functional Requirements (FR) define the target state for Scrimsigh
 *   **FR-3.9.1:** Stripe integration for payment processing.
 *   **FR-3.9.2:** User subscription management.
 
+**(Completed 2025-04-06): Data Aggregation & Contextualization (Project 5)**
+*   Refined list summary atoms (`playerListSummaryAtom`, `teamListSummaryAtom`) to include newer metrics.
+*   Implemented benchmark atoms (`averageMetricPerRoleAtom`, `averageMetricPerHeroAtom`, `averageMetricPerMapAtom`) to provide context for player stats.
+*   Implemented comparison atom (`playerComparisonAtomFamily`) to compare player stats against benchmarks.
+*   This completes the core data processing and analysis backend work outlined in the initial projects, making data ready for UI presentation.
+
 ### Known Issues / Risks / Open Questions (v1)
 
 *   **Performance:** Client-side handling of large log volumes needs testing.
@@ -90,4 +97,3 @@ The following Functional Requirements (FR) define the target state for Scrimsigh
 *   **Timeline Visualization:** Implementation complexity and effort are potentially high.
 *   **Browser Compatibility:** File System Access API limits directory selection outside Chrome; fallbacks need testing.
 *   **Log Data Reliability:** Accuracy of stats like weapon accuracy depends on log data quality.
-

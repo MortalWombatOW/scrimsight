@@ -8,9 +8,13 @@ const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better cap
 // A teamfight is a period of time where a teams are engaged in a fight.
 // The teamfights in a match are seperated by periods of at least TEAMFIGHT_BUFFER_TIME seconds of kill-less time.
 export interface Teamfight {
+  fightId: string; // Unique identifier for the fight (e.g., {matchId}-{startTime})
   matchId: string;
   startTime: number;
   endTime: number;
+  team1Name: string;
+  team2Name: string;
+  winner: 'team1' | 'team2' | 'draw';
   duration: number;
   team1Kills: number;
   team2Kills: number;
@@ -19,9 +23,19 @@ export interface Teamfight {
   team2PlayersWithUltimatesChargedAtStart: string[];
   team1PlayersWithUltimatesUsed: string[];
   team2PlayersWithUltimatesUsed: string[];
+  // First kill/death details
+  firstKillPlayer?: string;
+  firstKillTeam?: string;
+  firstKillTime?: number;
+  firstDeathPlayer?: string; // Victim of the first kill
+  firstDeathTeam?: string;
+  firstDeathTime?: number; // Same as firstKillTime
 }
 
-export const teamfightsAtom = atom(async (get) => {
+// Define the type for the intermediate teamfight data structure
+type TeamfightPass1 = Pick<Teamfight, 'matchId' | 'startTime' | 'endTime' | 'duration' | 'team1Kills' | 'team2Kills' | 'team1Name' | 'team2Name'>;
+
+export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
   const playerInteractionEvents = await get(playerInteractionEventsAtom);
   
 
@@ -43,13 +57,13 @@ export const teamfightsAtom = atom(async (get) => {
       acc[matchId] = [];
     }
     acc[matchId].push(event);
-    return acc;
-  }, {} as Record<string, PlayerInteractionEvent[]>);
-  
-  const teamfightsPass1: Pick<Teamfight, 'matchId' | 'startTime' | 'endTime' | 'duration' | 'team1Kills' | 'team2Kills'>[] = [];
-  
-  // First pass: process kills to identify teamfights
-  Object.entries(killEventsByMatch).forEach(([matchId, killEvents]) => {
+     return acc;
+   }, {} as Record<string, PlayerInteractionEvent[]>);
+   
+  const teamfightsPass1: TeamfightPass1[] = [];
+   
+   // First pass: process kills to identify teamfights
+   Object.entries(killEventsByMatch).forEach(([matchId, killEvents]) => {
     // Sort deaths chronologically
     killEvents.sort((a, b) => a.playerInteractionEventTime - b.playerInteractionEventTime);
     
@@ -58,6 +72,7 @@ export const teamfightsAtom = atom(async (get) => {
       console.error(`No match data found for matchId: ${matchId}`);
       return;
     }
+    const { team1Name, team2Name } = matchData; // Get team names here
     
     // Find teamfight periods
     let teamfightStartTime: number | null = null;
@@ -81,14 +96,12 @@ export const teamfightsAtom = atom(async (get) => {
           let team2Kills = 0;
           
           teamfightKills.forEach(kill => {
-            if (kill.playerTeam === matchData.team1Name) {
+            if (kill.playerTeam === team1Name) { // Use extracted team name
               team1Kills++;
             } else {
               team2Kills++;
             }
           });
-          
-      
           
           teamfightsPass1.push({
             matchId,
@@ -97,6 +110,8 @@ export const teamfightsAtom = atom(async (get) => {
             duration: endTime - startTime,
             team1Kills,
             team2Kills,
+            team1Name, // Add team name
+            team2Name, // Add team name
           });
         }
         
@@ -118,7 +133,7 @@ export const teamfightsAtom = atom(async (get) => {
         let team2Kills = 0;
         
         teamfightKills.forEach(kill => {
-          if (kill.playerTeam === matchData.team1Name) {
+          if (kill.playerTeam === team1Name) { // Use extracted team name
             team1Kills++;
           } else {
             team2Kills++;
@@ -132,51 +147,115 @@ export const teamfightsAtom = atom(async (get) => {
           duration: endTime - startTime,
           team1Kills,
           team2Kills,
+          team1Name, // Add team name
+          team2Name, // Add team name
         });
       }
     }
   });
 
+  // Second pass: Add ultimate usage, determine winner, and find first kill/death
   const teamfights = teamfightsPass1.flatMap(t => {
+    // Find corresponding matchData again
     const matchData = matchDatas.find(matchData => matchData.matchId === t.matchId);
     if (!matchData) {
-      console.error(`No match data found for matchId: ${t.matchId}`);
+      // This check might be redundant if the first pass guarantees matchData exists, but safe to keep
+      console.error(`No match data found for matchId: ${t.matchId} in second pass`);
       return [];
     }
-    const team1PlayersWithUltimatesChargedAtStart = ultimateEvents.filter(ultimateEvent => 
+    const { team1Name, team2Name, team1Players, team2Players } = matchData; // Destructure for easier access
+
+    // Combine players with their team names for easier lookup
+    const allPlayersWithTeams = [
+      ...team1Players.map(p => ({ playerName: p, teamName: team1Name })),
+      ...team2Players.map(p => ({ playerName: p, teamName: team2Name })),
+    ];
+
+    // Calculate winner
+    let winner: 'team1' | 'team2' | 'draw';
+    if (t.team1Kills > t.team2Kills) {
+      winner = 'team1';
+    } else if (t.team2Kills > t.team1Kills) {
+      winner = 'team2';
+    } else {
+      winner = 'draw';
+    }
+
+    // Generate fightId
+    const fightId = `${t.matchId}-${t.startTime.toFixed(3)}`; // Use fixed decimal places for consistency
+
+    // --- Find First Kill/Death ---
+    let firstKillPlayer: string | undefined;
+    let firstKillTeam: string | undefined;
+    let firstKillTime: number | undefined;
+    let firstDeathPlayer: string | undefined;
+    let firstDeathTeam: string | undefined;
+    let firstDeathTime: number | undefined;
+
+    const fightKillEvents = killEvents
+      .filter(kill => kill.matchId === t.matchId && kill.playerInteractionEventTime >= t.startTime && kill.playerInteractionEventTime <= t.endTime)
+      .sort((a, b) => a.playerInteractionEventTime - b.playerInteractionEventTime);
+
+    if (fightKillEvents.length > 0) {
+      const firstKillEvent = fightKillEvents[0];
+      firstKillPlayer = firstKillEvent.playerName;
+      firstKillTeam = firstKillEvent.playerTeam;
+      firstKillTime = firstKillEvent.playerInteractionEventTime;
+      firstDeathPlayer = firstKillEvent.otherPlayerName; // Use otherPlayerName for the victim
+      firstDeathTime = firstKillEvent.playerInteractionEventTime; // Time is the same
+
+      // Find the victim's team using the combined list
+      const victimPlayerData = allPlayersWithTeams.find((p: { playerName: string; teamName: string }) => p.playerName === firstDeathPlayer);
+      firstDeathTeam = victimPlayerData?.teamName; // Could be undefined if player not found (shouldn't happen ideally)
+    }
+    // --- End First Kill/Death ---
+
+
+    // Filter ultimate events (using matchData for team names as before)
+    const team1PlayersWithUltimatesChargedAtStart = ultimateEvents.filter(ultimateEvent =>
       ultimateEvent.matchId === t.matchId &&
-      ultimateEvent.playerTeam === matchData.team1Name &&
+      ultimateEvent.playerTeam === matchData.team1Name && // Use matchData here for consistency
       ultimateEvent.ultimateChargedTime <= t.startTime &&
-      ultimateEvent.ultimateStartTime >= t.endTime
+      ultimateEvent.ultimateStartTime >= t.endTime // Check if ult started AFTER fight ended
     ).map(event => event.playerName);
     
     const team2PlayersWithUltimatesChargedAtStart = ultimateEvents.filter(ultimateEvent => 
       ultimateEvent.matchId === t.matchId &&
-      ultimateEvent.playerTeam === matchData.team2Name &&
+      ultimateEvent.playerTeam === matchData.team2Name && // Use matchData here for consistency
       ultimateEvent.ultimateChargedTime <= t.startTime &&
-      ultimateEvent.ultimateStartTime >= t.endTime
+      ultimateEvent.ultimateStartTime >= t.endTime // Check if ult started AFTER fight ended
     ).map(event => event.playerName);
 
     const team1PlayersWithUltimatesUsed = ultimateEvents.filter(ultimateEvent => 
       ultimateEvent.matchId === t.matchId &&
-      ultimateEvent.playerTeam === matchData.team1Name &&
+      ultimateEvent.playerTeam === matchData.team1Name && // Use matchData here for consistency
       ultimateEvent.ultimateStartTime >= t.startTime &&
       ultimateEvent.ultimateStartTime <= t.endTime
     ).map(event => event.playerName);
     
     const team2PlayersWithUltimatesUsed = ultimateEvents.filter(ultimateEvent => 
       ultimateEvent.matchId === t.matchId &&
-      ultimateEvent.playerTeam === matchData.team2Name &&
+      ultimateEvent.playerTeam === matchData.team2Name && // Use matchData here for consistency
       ultimateEvent.ultimateStartTime >= t.startTime &&
       ultimateEvent.ultimateStartTime <= t.endTime
     ).map(event => event.playerName);
 
+    // Construct the final Teamfight object
     return [{
-      ...t,
+      ...t, // Includes matchId, startTime, endTime, duration, team1Kills, team2Kills, team1Name, team2Name
+      fightId, // Add fightId
+      winner, // Add winner
       team1PlayersWithUltimatesChargedAtStart,
       team2PlayersWithUltimatesChargedAtStart,
       team1PlayersWithUltimatesUsed,
       team2PlayersWithUltimatesUsed,
+      // Add first kill/death info
+      firstKillPlayer,
+      firstKillTeam,
+      firstKillTime,
+      firstDeathPlayer,
+      firstDeathTeam,
+      firstDeathTime,
     }];
   });
   

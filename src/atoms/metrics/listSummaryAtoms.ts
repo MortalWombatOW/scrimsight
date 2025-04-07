@@ -16,6 +16,8 @@ import { scrimAtom } from '../scrimAtom'; // Removed unused Scrim type
 import { teamStatsAtom } from '../teamStatsAtom'; // Removed unused TeamStats type
 import { groupByAtom, Grouped } from './metricUtils'; // Removed unused MetricAtom
 import { OverwatchRole, getRankForRole } from '../../lib/hero';
+import { playerFirstKillDeathRateAtom } from '../derived_stats/playerFirstKillDeathRateAtom'; // Import the new atom
+import { firstKillImpactAtom } from '../derived_stats/firstKillImpactAtom'; // Import first kill impact atom
 
 // --- Player List Summary ---
 
@@ -27,6 +29,7 @@ export interface PlayerListSummary {
   deaths: number;
   assists: number; // Calculated as offensive + defensive assists
   role: OverwatchRole; // Role with most playtime
+  firstKillRate: number; // Added: Percentage of teamfights participated in where player got first kill
 }
 
 // Helper atom to group player stats by player name
@@ -93,6 +96,8 @@ export const playerListSummaryAtom: Atom<Promise<PlayerListSummary[]>> = atom(as
   const playtimeByHero = await get(playtimeByPlayerHeroAtom);
   const playtimeByRole = await get(playtimeByPlayerRoleAtom);
   const primaryTeamMap = await get(primaryTeamByPlayerAtom);
+  const firstKillRateData = await get(playerFirstKillDeathRateAtom); // Get first kill rate data (returns a Record)
+
 
   const summaries: PlayerListSummary[] = [];
 
@@ -138,6 +143,7 @@ export const playerListSummaryAtom: Atom<Promise<PlayerListSummary[]>> = atom(as
       deaths: playerStat.deaths,
       assists: playerStat.offensiveAssists + playerStat.defensiveAssists,
       role: topRole,
+      firstKillRate: firstKillRateData[playerName]?.firstKillRate ?? 0, // Access rate from record, default to 0
     });
   }
 
@@ -177,21 +183,27 @@ export interface TeamListSummary {
   playerCount: number;
   winRate: number; // Calculated as wins / (wins + losses)
   gamesPlayed: number;
+  firstKillWinRate: number; // Added: Win rate in teamfights where this team got the first kill
 }
 
 export const teamListSummaryAtom: Atom<Promise<TeamListSummary[]>> = atom( // Added Atom type
   async (get) => {
     const teamStats = await get(teamStatsAtom);
+    const firstKillImpactData = await get(firstKillImpactAtom); // Get first kill impact data
 
     return teamStats.map((team) => {
       const gamesPlayed = team.wins + team.losses; // Exclude draws for win rate calculation
       const winRate = gamesPlayed > 0 ? team.wins / gamesPlayed : 0;
+      // Access the team-specific stats from the record
+      const teamFirstKillStats = firstKillImpactData.teamStats[team.teamName];
+      const firstKillWinRate = teamFirstKillStats?.firstKillWinRate ?? 0; // Get rate, default 0
 
       return {
         teamName: team.teamName,
         playerCount: team.players.length,
         winRate: winRate,
         gamesPlayed: team.gamesPlayed, // Include draws here
+        firstKillWinRate: firstKillWinRate, // Add the rate
       };
     });
   }

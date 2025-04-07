@@ -7,10 +7,19 @@ import { formatTime } from "../../../lib/format";
 import { ErrorMessage } from "../../../components/Common/ErrorMessage";
 import { MatchCard } from "../../../components/Card/MatchCard"; // Import MatchCard
 
-// Helper to get unique values for filters
-const getUniqueValues = (matches: MatchData[], key: keyof MatchData) => [
-  ...new Set(matches.map((m) => m[key])),
+// Define a type for keys of MatchData that hold string values
+type StringMatchDataKeys = {
+  [K in keyof MatchData]: MatchData[K] extends string ? K : never;
+}[keyof MatchData];
+
+// Refined helper to get unique string values for filters
+const getUniqueValues = (
+  matches: MatchData[],
+  key: StringMatchDataKeys
+): string[] => [
+  ...new Set(matches.map((m) => m[key])), // Now guaranteed to be string
 ];
+
 const getUniqueOpponents = (matches: MatchData[], teamId: string) => [
   ...new Set(
     matches.map((m) => (m.team1Name === teamId ? m.team2Name : m.team1Name))

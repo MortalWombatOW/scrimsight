@@ -27,6 +27,7 @@ vi.mock("./matchDataAtom", async (importOriginal) => {
       team2Score: 1,
       duration: 600, // 10 minutes
       roundWinners: ["team1", "team2", "team1"], // Example round winners
+      winner: "Team A", // Added winner based on score
     },
     {
       matchId: "m2",
@@ -43,6 +44,7 @@ vi.mock("./matchDataAtom", async (importOriginal) => {
       team2Score: 2,
       duration: 720, // 12 minutes
       roundWinners: ["team2", "team1", "team2"],
+      winner: "Team B", // Added winner based on score
     },
     {
       matchId: "m3",
@@ -59,6 +61,7 @@ vi.mock("./matchDataAtom", async (importOriginal) => {
       team2Score: 0,
       duration: 900, // 15 minutes
       roundWinners: ["team1", "team1", "team1"],
+      winner: "Team C", // Added winner based on score
     },
   ];
 
