@@ -1,208 +1,106 @@
-import { type ReactNode, useMemo } from "react"; // Added useMemo
-import { useAtomValue } from "jotai";
+import { type ReactNode, useMemo } from "react";
 import { useTimelineContext } from "./TimelineContext";
-import { formatTime } from "../../lib";
-import {
-  segmentStatsAtomFamily,
-  SegmentParams,
-} from "../../atoms/derived_state/segmentStatsAtomFamily"; // Added
-import { FaSkull, FaBolt } from "react-icons/fa"; // Added
-
-type TimeSegment = {
-  matchId: string; // Added matchId
-  title: string;
-  subtitle: string;
-  type: "map" | "round" | "teamfight";
-  startTime: number;
-  endTime: number;
-  winner?: string | null;
-};
-
-// Helper component to render stats to avoid calling hook conditionally
-const SegmentStatsDisplay = ({ segment }: { segment: TimeSegment }) => {
-  // Memoize the params object to prevent unnecessary atom recalculations
-  const segmentParams = useMemo<SegmentParams>(() => ({
-    matchId: segment.matchId,
-    startTime: segment.startTime,
-    endTime: segment.endTime,
-    type: segment.type,
-  }), [segment.matchId, segment.startTime, segment.endTime, segment.type]);
-
-  // Get stats for the segment
-  const stats = useAtomValue(segmentStatsAtomFamily(segmentParams));
-
-  if (!stats) {
-    // Render placeholders or nothing while loading/if error
-    return <div className="text-xs mt-1 opacity-50">Loading stats...</div>;
-  }
-
-  return (
-    <div className="flex flex-col text-xs mt-1 gap-0.5">
-       {/* Winning team */}
-       {segment.winner && (
-        <div className="flex items-center justify-between gap-2">
-          <span className="flex items-center gap-1 opacity-80">Winner:</span>
-          <span className="font-bold">{segment.winner}</span>
-        </div>
-      )}
-      <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1 opacity-80">
-          <FaSkull /> Kills:
-        </span>
-        <span>
-          {stats.team1Kills} / {stats.team2Kills}
-        </span>
-      </div>
-      <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1 opacity-80">
-          <FaBolt /> Ults:
-        </span>
-        <span>
-          {stats.team1UltsUsed} / {stats.team2UltsUsed}
-        </span>
-      </div>
-       
-    </div>
-  );
-};
+import { TimeSegmentDisplay, TimeSegment } from "./TimeSegmentDisplay"; // Import new component and type
 
 export const TimelineControls = (): ReactNode => {
-  const {
-    currentTimeRange,
-    setCurrentTimeRange,
-    loadedData,
-  } = useTimelineContext();
 
-  const startTime = currentTimeRange.start;
-  const endTime = currentTimeRange.end;
+  const { setCurrentTimeRange, loadedData, } =
+    useTimelineContext();
 
   if (!loadedData) {
     return <div>Loading...</div>;
   }
 
-  const { mapTime, roundTimes, teamfights } = loadedData;
+  const { mapTime, roundTimes, teamfights, matchData } = loadedData;
 
-  const renderTimeSegment = (segment: TimeSegment) => {
-    const duration = segment.endTime - segment.startTime;
-    const isSelected =
-      segment.startTime === startTime && segment.endTime === endTime;
+  // Prepare nested data structure
+  const mapSegmentData = useMemo<TimeSegment | null>(() => {
+    if (!mapTime) return null;
 
-    let borderColorClass = "border border-gray-700"; // Default grey
-    if (segment.type === "teamfight" && segment.winner) {
-      if (segment.winner === loadedData?.matchData?.team1Name) {
-        borderColorClass = "border border-success hover:border-success/80"; // Use full success color, adjust hover
-      } else if (segment.winner === loadedData?.matchData?.team2Name) {
-        borderColorClass = "border border-error hover:border-error/80"; // Use full error color, adjust hover
-      }
-    }
-    if (isSelected) {
-      borderColorClass = "border border-primary"; // Highlight selected
-    }
+    const roundSegments: TimeSegment[] = roundTimes
+      .map((roundTime): TimeSegment | null => { // Explicitly type the map return
+        const roundMatchId = roundTime.matchId || mapTime.matchId;
+        if (!roundMatchId) return null; // Should not happen if mapTime exists
 
-    return (
-      <div
-        key={`${segment.startTime}-${segment.endTime}`}
-        className={`p-2 rounded-md shadow-sm cursor-pointer ${borderColorClass} text-base-content w-48 flex flex-col gap-1`} // Fixed width, flex col
-        onClick={() =>
-          setCurrentTimeRange({
-            start: segment.startTime,
-            end: segment.endTime,
-          })
-        }
-      >
-        {/* Title */}
-        <div
-          className={`text-sm truncate ${
-            segment.type === "map" || segment.type === "round"
-              ? "font-bold"
-              : "font-normal"
-          }`}
-          title={segment.title}
-        >
-          {segment.title}
-        </div>
+        if (!matchData) return null; // Should not happen if roundMatchId exists  
+        const roundWinner = matchData.roundWinners[roundTime.roundNumber - 1] === 'team1' ? matchData.team1Name : matchData.team2Name;
 
-        {/* Times */}
-        <div className="text-xs opacity-80">
-          {formatTime(segment.startTime)} - {formatTime(segment.endTime)} (
-          {formatTime(duration)}
+        const teamfightSegments: TimeSegment[] = teamfights
+          .filter(
+            (tf) =>
+              tf.matchId === roundMatchId &&
+              tf.startTime >= roundTime.roundStartTime &&
+              tf.endTime <= roundTime.roundEndTime
           )
-        </div>
+          .map((tf) => ({
+            matchId: tf.matchId,
+            title: `${tf.winner} Win`,
+            subtitle: "Teamfight",
+            type: "teamfight",
+            startTime: tf.startTime,
+            endTime: tf.endTime,
+            winner: tf.winner,
+          }));
 
-       
-       
+        return {
+          matchId: roundMatchId,
+          // Use round winner for the title, fallback to generic title if no winner
+          title: roundWinner ? `${roundWinner} Win` : `Round ${roundTime.roundNumber}`,
+          subtitle: `Round ${roundTime.roundNumber}`,
+          type: "round",
+          startTime: roundTime.roundStartTime,
+          endTime: roundTime.roundEndTime,
+          winner: roundWinner,
+          childrenSegments: teamfightSegments,
+        };
+      })
+      .filter((segment): segment is TimeSegment => segment !== null); // Filter out nulls - this predicate is correct
 
-        {/* Stats Display */}
-        <SegmentStatsDisplay segment={segment} />
+    return {
+      matchId: mapTime.matchId,
+      title: `${matchData?.winner} Win`,
+      subtitle: "Match",
+      type: "map",
+      startTime: mapTime.startTime,
+      endTime: mapTime.endTime,
+      winner: matchData?.winner, // Assuming matchData provides overall winner
+      childrenSegments: roundSegments,
+    };
+  }, [mapTime, roundTimes, teamfights, matchData]);
 
-      </div>
-    );
+  const handleSelect = (start: number, end: number) => {
+    setCurrentTimeRange({ start, end });
   };
+
 
   return (
     <div className="flex flex-col gap-2 ml-4 mt-3">
       <div className="text-lg text-base-500 font-semibold mb-2">
-        {" "}
-        {/* Added mb-2 */}
         Select segment to view
       </div>
-      {/* Replace table with flex container */}
-      <div className="flex flex-wrap gap-2">
-        {/* Render Full Map segment */}
-        {mapTime &&
-          renderTimeSegment({
-            // Check if mapTime exists
-            matchId: mapTime.matchId, // Pass matchId
-            title: "Full Map",
-            subtitle: "",
-            type: "map",
-            startTime: mapTime.startTime,
-            endTime: mapTime.endTime,
-          })}
-        {roundTimes.flatMap((roundTime) => {
-          // Ensure roundTime has matchId (might need adjustment based on roundTimesAtom structure)
-          const roundMatchId = roundTime.matchId || mapTime?.matchId;
-          if (!roundMatchId) return []; // Skip if no matchId
 
-          const teamfightsInRound = teamfights.filter(
-            (teamfight) =>
-              teamfight.matchId === roundMatchId && // Ensure teamfight belongs to the same match
-              teamfight.startTime >= roundTime.roundStartTime &&
-              teamfight.endTime <= roundTime.roundEndTime
-          );
+      {/* Render the single top-level map segment */}
+      {mapSegmentData && (
+        <div className="flex flex-col gap-2"> {/* Container for the map segment */}
+          <TimeSegmentDisplay
+            segment={mapSegmentData}
+            onSelect={handleSelect}
+            // isSelected prop removed as the component now handles its own state
+            team1Name={matchData?.team1Name}
+            team2Name={matchData?.team2Name}
+          />
+        </div>
+      )}
 
-          return [
-            renderTimeSegment({
-              matchId: roundMatchId, // Pass matchId
-              title: `Round ${roundTime.roundNumber}`,
-              subtitle: "",
-              type: "round",
-              startTime: roundTime.roundStartTime,
-              endTime: roundTime.roundEndTime,
-            }),
-            ...teamfightsInRound.map((teamfight) =>
-              renderTimeSegment({
-                matchId: teamfight.matchId, // Pass matchId
-                title: `Teamfight`,
-                subtitle: "",
-                type: "teamfight",
-                startTime: teamfight.startTime,
-                endTime: teamfight.endTime,
-                winner: teamfight.winner,
-              })
-            ),
-          ];
-        })}
-      </div>
       {/* Legend */}
       <div className="flex justify-center mt-6 text-xs text-base-500 gap-4">
         <div className="flex items-center">
           <div className="w-2 h-2 rounded-full border border-success mr-1"></div>
-          <span>{loadedData?.matchData?.team1Name} Win</span>
+          <span>{matchData?.team1Name ?? "Team 1"} Win</span>
         </div>
         <div className="flex items-center">
           <div className="w-2 h-2 rounded-full border border-error mr-1"></div>
-          <span>{loadedData?.matchData?.team2Name} Win</span>
+          <span>{matchData?.team2Name ?? "Team 2"} Win</span>
         </div>
       </div>
     </div>

@@ -40,5 +40,5 @@
 *   **Log Parsing (`scrimtime.ts`, `files/` atoms):** Accuracy is paramount (Core Principle). Must be robust to variations/errors in logs.
 *   **Core Data Aggregation Atoms:** Foundation for all derived stats. Logic must be correct.
 *   **Derived Statistic Atoms (e.g., `teamfightsAtom`, `playerLivesAtom`, `detailedTeamCompositionsAtom`):** Complex logic requiring careful implementation and validation.
-*   **Timeline Visualization (`Timeline` component):** Identified as potentially high-effort (Risk 9).
+*   **Timeline Visualization (`TimelineControls`, `TimeSegmentDisplay` components):** Refactored (2025-04-07) to use a recursive `TimeSegmentDisplay` component for rendering nested map/round/teamfight segments. Identified as potentially high-effort (Risk 9).
 *   **Authentication Flow (OIDC):** Needs secure and correct implementation (FR-3.8, NFR-4.3).

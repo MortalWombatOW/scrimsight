@@ -4,6 +4,20 @@
 
 ---
 
+### Recent Changes (2025-04-07 PM)
+
+*   **Added Round Winner Data:** Modified `src/atoms/roundTimesAtom.ts` to include a `winner` field in the `RoundTimes` interface, populated using the `capturingTeam` from the corresponding `round_end` event.
+*   **Corrected Timeline Winner Display:** Updated `src/components/Timeline/TimelineControls.tsx` to correctly use `roundTime.winner` (derived from `round_end` event) for displaying the winner in round segments, instead of incorrectly using the overall match winner.
+
+### Recent Changes (2025-04-07 AM)
+
+*   **Refactored Timeline Controls:**
+    *   Created a new reusable component `src/components/Timeline/TimeSegmentDisplay.tsx` to handle rendering individual time segments (map, round, teamfight).
+    *   This component supports recursive rendering of `childrenSegments` to display nested structures (rounds within maps, teamfights within rounds).
+    *   Modified `src/components/Timeline/TimelineControls.tsx` to prepare the hierarchical data structure and render the timeline using the new `TimeSegmentDisplay` component.
+    *   Applied winning team border color to map and round segments in addition to teamfights.
+    *   Fixed TypeScript errors related to type mismatches after the refactor.
+
 ### Recent Changes (2025-04-06 PM - Late Evening)
 
 *   **Standardized Border Colors:** Replaced all theme-based border classes (`border-base-200`, `border-base-300`, `border-base-400`, `border-base-600`, `border-base-700`) with `border-gray-700` across the project. Also updated standalone `border` classes to explicitly use `border-gray-700` to ensure all elements consistently use the target border color. Ran `npm run build` successfully after both changes.
