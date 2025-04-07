@@ -12,47 +12,56 @@ type SortByOptionType = { value: PlayerStatsCategoryKeys | PlayerStatsNumericalK
 type SortDirectionOptionType = { value: "asc" | "desc"; label: string };
 
 
-// Base styles (common parts)
+// Base styles (common parts) using DaisyUI theme variables
 const baseControlStyles = (provided: any, state: any) => ({
   ...provided,
-  backgroundColor: "#2A303C", // bg-base-200
-  borderColor: state.isFocused ? "#666" : "#4A5568",
-  boxShadow: state.isFocused ? "0 0 0 1px #666" : provided.boxShadow,
+  backgroundColor: "hsl(var(--b2))", // Use base-200
+  borderColor: state.isFocused ? "hsl(var(--p))" : "hsl(var(--b3))", // Use primary on focus, base-300 otherwise
+  boxShadow: state.isFocused ? "0 0 0 1px hsl(var(--p))" : provided.boxShadow, // Use primary shadow on focus
   "&:hover": {
-    borderColor: "#666",
+    borderColor: "hsl(var(--bc) / 0.5)", // Use base-content with opacity on hover
   },
-  color: "#A6ADBB",
+  color: "hsl(var(--bc))", // Use base-content color
+  borderRadius: 'var(--radius-field, 0.25rem)', // Use theme radius
 });
 
 const baseMenuStyles = (provided: any) => ({
   ...provided,
-  backgroundColor: "#1D232A", // bg-base-100
+  backgroundColor: "hsl(var(--b1))", // Use base-100
   zIndex: 20,
+  borderRadius: 'var(--radius-box, 0.5rem)', // Use theme radius
 });
 
 const baseOptionStyles = (provided: any, state: any) => ({
   ...provided,
   backgroundColor: state.isSelected
-    ? "#0052CC"
+    ? "hsl(var(--p))" // Use primary for selected
     : state.isFocused
-    ? "#4A5568"
-    : provided.backgroundColor,
-  color: state.isSelected ? "white" : "#A6ADBB",
+    ? "hsl(var(--b3))" // Use base-300 for focused
+    : provided.backgroundColor, // Default background
+  color: state.isSelected ? "hsl(var(--pc))" : "hsl(var(--bc))", // Use primary-content or base-content
   "&:active": {
-    backgroundColor: "#666",
+    backgroundColor: "hsl(var(--p) / 0.8)", // Slightly darker primary on active
   },
+  borderRadius: 'var(--radius-field, 0.25rem)', // Use theme radius
 });
 
-const baseInputStyles = (provided: any) => ({ ...provided, color: "#A6ADBB" });
-const baseSingleValueStyles = (provided: any) => ({ ...provided, color: "#A6ADBB" });
-const baseMultiValueStyles = (provided: any) => ({ ...provided, backgroundColor: "#4A5568" });
-const baseMultiValueLabelStyles = (provided: any) => ({ ...provided, color: "#FFFFFF" });
+const baseInputStyles = (provided: any) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
+const baseSingleValueStyles = (provided: any) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
+const baseMultiValueStyles = (provided: any) => ({
+  ...provided,
+  backgroundColor: "hsl(var(--b3))", // Use base-300
+  borderRadius: 'var(--radius-badge, 1.9rem)', // Use badge radius for pill shape
+});
+const baseMultiValueLabelStyles = (provided: any) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
 const baseMultiValueRemoveStyles = (provided: any) => ({
   ...provided,
-  color: "#A6ADBB",
-  ":hover": { backgroundColor: "#ff4d4d", color: "white" },
+  color: "hsl(var(--bc) / 0.7)", // Use base-content with opacity
+  ":hover": { backgroundColor: "hsl(var(--er) / 0.3)", color: "hsl(var(--er))" }, // Use error color on hover
+  borderTopRightRadius: 'var(--radius-badge, 1.9rem)', // Match pill shape
+  borderBottomRightRadius: 'var(--radius-badge, 1.9rem)', // Match pill shape
 });
-const basePlaceholderStyles = (provided: any) => ({ ...provided, color: "#6B7280" });
+const basePlaceholderStyles = (provided: any) => ({ ...provided, color: "hsl(var(--bc) / 0.5)" }); // Use base-content with opacity
 
 
 // Specific Styles Configurations
@@ -108,14 +117,18 @@ export const filterSelectStyles: StylesConfig<OptionType, true> = {
 };
 
 
-// Helper function to get distinct colors for chart bars
-const COLORS = [
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#ff7300",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
+// Helper function to get distinct colors for chart bars/points using theme colors
+// Using HSL values directly from src/index.css for better theme consistency
+const THEME_COLORS = [
+  "oklch(var(--p))", // Primary
+  "oklch(var(--a))", // Accent
+  "oklch(var(--s))", // Secondary
+  "oklch(var(--in))", // Info
+  "oklch(var(--su))", // Success
+  "oklch(var(--wa))", // Warning
+  "oklch(var(--er))", // Error
+  // Add more variations if needed, e.g., slightly desaturated versions or base colors
+  "oklch(var(--b3))", // Base-300 (darker)
+  "oklch(var(--n))", // Neutral
 ];
-export const getColor = (index: number) => COLORS[index % COLORS.length];
+export const getColor = (index: number) => THEME_COLORS[index % THEME_COLORS.length];

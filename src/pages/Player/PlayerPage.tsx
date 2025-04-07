@@ -73,8 +73,10 @@ export const PlayerPage = () => {
     <Container>
       {" "}
       {/* Added Container */}
-      {/* Header Section */}
-      <header className="mb-8 bg-base-100 rounded-box p-6">
+      {/* Header Section - Apply consistent card styling */}
+      <header className="mb-8 bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg p-6">
+        {" "}
+        {/* Updated classes */}
         <div className="flex items-center gap-4">
           <RoleIcon role={mostPlayedRole} className="w-12 h-12" />
           <div>

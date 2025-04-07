@@ -100,7 +100,7 @@ export const TimelineDisplay = (): ReactNode => {
         onMouseLeave={() => setSelectedEventId(null)}
       >
         <div
-          className={`rounded-full border ${activeEffect} ${borderColor} flex-shrink-0`}
+          className={`rounded-full border border-gray-700 ${activeEffect} ${borderColor} flex-shrink-0`}
           style={{ padding: "2px" }}
         >
           {/* <img
@@ -119,7 +119,7 @@ export const TimelineDisplay = (): ReactNode => {
               <div className="flex items-center ml-0.5">
                 <span className="mx-0.5">→</span>
                 <div
-                  className="rounded-full border border-base-300 flex-shrink-0"
+                  className="rounded-full border border-gray-700 border-gray-700 flex-shrink-0"
                   style={{ padding: "1px" }}
                 >
                   <img

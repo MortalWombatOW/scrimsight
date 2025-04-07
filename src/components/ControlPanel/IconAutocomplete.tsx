@@ -82,7 +82,7 @@ export const IconAutocomplete = ({
     >
       <div className="relative">
         {/* Input field */}
-        <div className="relative flex flex-wrap items-center gap-1 rounded-md border border-base-300 bg-base p-2 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:border-base-600 dark:bg-base-700">
+        <div className="relative flex flex-wrap items-center gap-1 rounded-md border border-gray-700 border-gray-700 bg-base p-2 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:border-gray-700 dark:bg-base-700">
           {/* Icon */}
           {icon && (
             <span className="mr-2 text-base-500 dark:text-base-400">
@@ -94,7 +94,7 @@ export const IconAutocomplete = ({
           {selected.map((option) => (
             <div
               key={option}
-              className="flex items-center gap-1 rounded-full border border-base-300 bg-base-100 px-2 py-1 text-sm dark:border-base-600 dark:bg-base-800"
+              className="flex items-center gap-1 rounded-full border border-gray-700 border-gray-700 bg-base-100 px-2 py-1 text-sm dark:border-gray-700 dark:bg-base-800"
             >
               <span>{optionLabel ? optionLabel(option) : option}</span>
               <button
@@ -127,7 +127,7 @@ export const IconAutocomplete = ({
 
       {/* Dropdown */}
       {isOpen && (
-        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-base-300 bg-base py-1 shadow-md dark:border-base-600 dark:bg-base-800">
+        <ul className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-700 border-gray-700 bg-base py-1 shadow-md dark:border-gray-700 dark:bg-base-800">
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option) => (
               <li

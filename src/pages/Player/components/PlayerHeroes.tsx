@@ -62,7 +62,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-base-300">
+      <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-gray-700 border-gray-700">
         <div className="flex items-center gap-2 mb-2">
           <img
             src={getHeroImage(data.hero, true)}

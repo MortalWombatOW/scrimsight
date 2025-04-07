@@ -14,7 +14,7 @@ export interface Teamfight {
   endTime: number;
   team1Name: string;
   team2Name: string;
-  winner: 'team1' | 'team2' | 'draw';
+  winner: string | null; // Changed type from 'team1'|'team2'|'draw' to string | null
   duration: number;
   team1Kills: number;
   team2Kills: number;
@@ -171,14 +171,14 @@ export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
       ...team2Players.map(p => ({ playerName: p, teamName: team2Name })),
     ];
 
-    // Calculate winner
-    let winner: 'team1' | 'team2' | 'draw';
+    // Calculate winner using actual team names
+    let winner: string | null; // Changed type
     if (t.team1Kills > t.team2Kills) {
-      winner = 'team1';
+      winner = t.team1Name; // Assign team name
     } else if (t.team2Kills > t.team1Kills) {
-      winner = 'team2';
+      winner = t.team2Name; // Assign team name
     } else {
-      winner = 'draw';
+      winner = null; // Assign null for draw
     }
 
     // Generate fightId

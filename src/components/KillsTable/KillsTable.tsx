@@ -38,7 +38,7 @@ const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
   for (const player of team1Players) {
   */
   return (
-    <div className="bg-base rounded-lg border border-base-200 p-4 shadow-sm dark:bg-base-800 dark:border-base-700">
+    <div className="bg-base rounded-lg border border-gray-700 border-gray-700 p-4 shadow-sm dark:bg-base-800 dark:border-gray-700">
       <div className="flex flex-col md:flex-row gap-6 justify-around"> {/* Added justify-around */}
         <div className="flex flex-col flex-1 min-w-0"> {/* Added flex-1 and min-w-0 */}
           <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white truncate"> {/* Added truncate */}
@@ -93,7 +93,7 @@ const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
         </div>
 
         {/* Separator */}
-        <div className="border-l border-base-300 dark:border-base-600 mx-4 hidden md:block"></div>
+        <div className="border-l border-gray-700 dark:border-gray-700 mx-4 hidden md:block"></div>
 
         <div className="flex flex-col flex-1 min-w-0 mr-6"> {/* Added flex-1 and min-w-0 */}
           <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white truncate"> {/* Added truncate */}

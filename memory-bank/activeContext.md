@@ -4,6 +4,10 @@
 
 ---
 
+### Recent Changes (2025-04-06 PM - Late Evening)
+
+*   **Standardized Border Colors:** Replaced all theme-based border classes (`border-base-200`, `border-base-300`, `border-base-400`, `border-base-600`, `border-base-700`) with `border-gray-700` across the project. Also updated standalone `border` classes to explicitly use `border-gray-700` to ensure all elements consistently use the target border color. Ran `npm run build` successfully after both changes.
+
 ### Recent Changes (2025-04-06 PM - Evening)
 
 *   **Implemented Data Aggregation & Contextualization (Project 5):**
@@ -26,7 +30,7 @@
     *   Created `src/atoms/derived_stats/ultimateImpactAtom.ts`: Calculates per-player, per-hero ultimate impact within teamfights, including kills during the ult window (`ultimateStartTime` to `ultimateEndTime`) and fight win rate with ult.
     *   Updated `src/atoms/index.ts` to export the new atom.
     *   Ran `npm run build` successfully after fixing unused imports.
-*   **(Earlier - 2025-04-06 PM) Implemented First Kill/Death Analysis (Project 2):**
+*   **(Earlier - 2025-04-06 PM) Implemented First Kill/Death Analysis (Project 2):**r
     *   Enhanced `src/atoms/teamfightsAtom.ts`: Added `firstKillPlayer`, `firstKillTeam`, `firstKillTime`, `firstDeathPlayer`, `firstDeathTeam`, `firstDeathTime` fields and logic to populate them. Fixed related type errors.
     *   Created `src/atoms/derived_stats/firstKillImpactAtom.ts`: Calculates overall and per-team win rates based on securing the first kill or suffering the first death.
     *   Created `src/atoms/derived_stats/playerFirstKillDeathRateAtom.ts`: Calculates per-player first kill and first death rates based on teamfight participation. Fixed related type errors.

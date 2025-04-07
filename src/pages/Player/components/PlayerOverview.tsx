@@ -255,7 +255,7 @@ export const PlayerOverview = (): ReactNode => { // Remove props
                       const avgElimsValue = payload[2]?.value;
 
                       return (
-                        <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-base-300">
+                        <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-gray-700 border-gray-700">
                           <p className="font-semibold">{label}</p>
                           <p className="text-sm">
                             KDA:{" "}

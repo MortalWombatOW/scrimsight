@@ -5,7 +5,6 @@ import {
   Scatter,
   XAxis,
   YAxis,
-  Tooltip,
   ResponsiveContainer,
   Label,
 } from "recharts";
@@ -93,24 +92,99 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
     });
   }, [allPlayerData, sortBy, sortDirection]);
 
-  // Custom renderShape function for the scatter plot - now all circles with same style
+  // Custom renderShape function for the scatter plot with annotations
   const renderShape = (props: any) => {
     const { cx, cy, payload } = props;
+
+    // Format the x and y values nicely
+    const xValue = prettyFormat(payload.x);
+    const yValue = prettyFormat(payload.y);
+
+    // Team colors based on the project's color scheme
+    const team1Color = "#566fdd"; // From constants.scss 'team-1'
+    const team2Color = "#c76756"; // From constants.scss 'team-2'
+    const pointColor =
+      payload.team === payload.team1Name ? team1Color : team2Color;
+
+    // Calculate a unique position for each player's label based on their name
+    // This creates a more deterministic layout that avoids random overlaps
+    const nameHash = payload.playerName
+      .split("")
+      .reduce((acc: number, char: string) => {
+        return acc + char.charCodeAt(0);
+      }, 0);
+
+    // Use the hash to determine a consistent angle for the label
+    // This distributes labels in a radial pattern around the point
+    // We use the player name hash to get a consistent angle, but we add some spacing
+    // by dividing the circle into segments based on the total number of players
+    const playerIndex = nameHash % 8; // Divide into 8 segments for better distribution
+    const angle = playerIndex * 45 * (Math.PI / 180); // 45 degrees per segment (360/8)
+    const distance = 50; // Distance from point to label
+
+    // Calculate label position using the angle
+    const labelX = cx + Math.cos(angle) * distance;
+    const labelY = cy + Math.sin(angle) * distance;
+
+    // No need for rectangle positioning since we removed the background
+
     return (
       <g>
+        {/* Connect line from point to label - made more visible */}
+        <line
+          x1={cx}
+          y1={cy}
+          x2={labelX}
+          y2={labelY}
+          stroke={pointColor}
+          strokeWidth={1.5}
+          strokeDasharray="3,2"
+          strokeOpacity={0.9}
+        />
+
+        {/* Player name annotation with text shadow for readability */}
+        <text
+          x={labelX}
+          y={labelY - 10}
+          textAnchor="middle"
+          fill="white"
+          fontSize={10}
+          fontWeight="bold"
+          style={{ textShadow: "0px 0px 3px rgba(0,0,0,0.9)" }}
+        >
+          {payload.playerName}
+        </text>
+
+        {/* X and Y values in a single line with text shadow */}
+        <text
+          x={labelX}
+          y={labelY + 8}
+          textAnchor="middle"
+          fill="rgba(255, 255, 255, 0.9)"
+          fontSize={9}
+          style={{ textShadow: "0px 0px 3px rgba(0,0,0,0.9)" }}
+        >
+          {camelCaseToWords(xStat)}: {xValue} | {camelCaseToWords(yStat)}:{" "}
+          {yValue}
+        </text>
+
+        {/* Data point circle */}
         <circle
           cx={cx}
           cy={cy}
-          r={8}
-          fill="none"
-          stroke="#666"
+          r={6}
+          fill={pointColor}
+          fillOpacity={0.2}
+          stroke={pointColor}
           strokeWidth={2}
         />
+
+        {/* Initial letter in the circle */}
         <text
           x={cx}
           y={cy + 3}
           textAnchor="middle"
-          fill="#666"
+          fill="white"
           fontSize={8}
           fontWeight="bold"
         >
@@ -120,29 +194,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
     );
   };
 
-  // Custom tooltip component that works with ReCharts typing
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="bg-base p-3 border border-base-200 rounded shadow-md dark:bg-base-800 dark:border-base-700">
-          <p className="font-semibold text-base-800 dark:text-base-200 mb-1">
-            {data.playerName}
-          </p>
-          <p className="text-sm text-base-600 dark:text-base-400">
-            Team: {data.team}
-          </p>
-          <p className="text-sm text-base-600 dark:text-base-400">
-            {camelCaseToWords(xStat)}: {prettyFormat(data.x)}
-          </p>
-          <p className="text-sm text-base-600 dark:text-base-400">
-            {camelCaseToWords(yStat)}: {prettyFormat(data.y)}
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
+  // Tooltip removed as we now have permanent annotations for each data point
 
   // Function to handle column sorting
   const handleSort = (column: string) => {
@@ -155,9 +207,9 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
   };
 
   return (
-    <div className="bg-base rounded-lg border border-base-200 w-full p-6 shadow-sm dark:bg-base-800 dark:border-base-700">
+    <div className="bg-base rounded-lg border border-gray-700 border-gray-700 w-full p-6 shadow-sm dark:bg-base-800 dark:border-gray-700">
       <div className="flex flex-col gap-6">
-        <h2 className="text-xl font-semibold text-base-800 dark:text-base-200 pb-2 border-b border-base-200 dark:border-base-700">
+        <h2 className="text-xl font-semibold text-base-800 dark:text-base-200 pb-2 border-b border-gray-700 dark:border-gray-700">
           Player Comparison
         </h2>
 
@@ -168,7 +220,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
               X Metric
             </label>
             <select
-              className="w-full rounded-md border border-base-300 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-base-600 dark:bg-base-700 dark:text-white"
+              className="w-full rounded-md border border-gray-700 border-gray-700 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-gray-700 dark:bg-base-700 dark:text-white"
               value={xStat}
               onChange={(e) =>
                 setXStat(e.target.value as PlayerStatsNumericalKeys)
@@ -187,7 +239,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
               Y Metric
             </label>
             <select
-              className="w-full rounded-md border border-base-300 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-base-600 dark:bg-base-700 dark:text-white"
+              className="w-full rounded-md border border-gray-700 border-gray-700 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-gray-700 dark:bg-base-700 dark:text-white"
               value={yStat}
               onChange={(e) =>
                 setYStat(e.target.value as PlayerStatsNumericalKeys)
@@ -203,9 +255,9 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
         </div>
 
         {/* Scatter Plot - UI Principle: Visual consistency by using same shape for all points */}
-        <div className="h-[400px] w-full">
+        <div className="h-[500px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <ScatterChart margin={{ top: 20, right: 20, bottom: 70, left: 40 }}>
+            <ScatterChart margin={{ top: 60, right: 60, bottom: 60, left: 60 }}>
               <XAxis
                 type="number"
                 dataKey="x"
@@ -236,11 +288,15 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
                   style={{ textAnchor: "middle", fill: "#666", fontSize: 12 }}
                 />
               </YAxis>
-              <Tooltip content={<CustomTooltip />} cursor={false} />
+              {/* Tooltip removed as we now have permanent annotations */}
 
               <Scatter
                 name={matchData.team1Name}
-                data={allPlayerData}
+                data={allPlayerData.map((item) => ({
+                  ...item,
+                  team1Name: matchData.team1Name,
+                  team2Name: matchData.team2Name,
+                }))}
                 style={chartStyle.scatter}
                 shape={renderShape}
               />
@@ -249,7 +305,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
         </div>
 
         {/* Data Table - UI Principle: Complementary data representation */}
-        <div className="overflow-x-auto border rounded-lg border-base-200 dark:border-base-700">
+        <div className="overflow-x-auto border border-gray-700 rounded-lg border-gray-700 dark:border-gray-700">
           <table className="min-w-full divide-y divide-base-200 dark:divide-base-700">
             <thead className="bg-base-50 dark:bg-base-700">
               <tr>
@@ -324,7 +380,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
                   <td className="px-4 py-3 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center">
-                        <div className="w-5 h-5 rounded-full border-2 border-base-600 flex items-center justify-center">
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-700 flex items-center justify-center">
                           <span className="text-xs font-medium">
                             {player.playerName.charAt(0)}
                           </span>

@@ -7,8 +7,9 @@ interface ContainerProps {
 
 const Container: React.FC<ContainerProps> = ({ children, className = "" }) => {
   return (
+    // Use theme background, border, and shadow
     <div
-      className={`p-4 rounded-lg border border-gray-500 shadow-sm ${className}`}
+      className={`p-4 rounded-lg bg-base-100 border border-gray-700 border-gray-700 shadow-md ${className}`}
     >
       {children}
     </div>

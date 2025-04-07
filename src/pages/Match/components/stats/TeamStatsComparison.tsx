@@ -55,7 +55,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   };
 
   return (
-    <div className="grid grid-cols-7 gap-4 bg-base-100 rounded-lg border border-base-200 w-full max-w-[800px] p-2 shadow-sm dark:bg-base-800 dark:border-base-700">
+    <div className="grid grid-cols-7 gap-4 bg-base-100 rounded-lg border border-gray-700 border-gray-700 w-full max-w-[800px] p-2 shadow-sm dark:bg-base-800 dark:border-gray-700">
       {/* Header row */}
       <div className="col-span-3 text-right">
         <span className="text-md font-semibold text-base-800 dark:text-base-200">

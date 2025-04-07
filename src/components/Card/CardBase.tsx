@@ -74,7 +74,9 @@ const CardBaseContent = ({
   linkText?: string;
   linkUrl?: string;
 }) => (
-  <div className="card  w-fit border border-gray-500">
+  // Apply theme background, border, shadow, rounded corners
+  <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg w-fit">
+    {/* Keep card-body for padding/structure, but removed parent 'card' class */}
     <div className="card-body flex flex-row p-6">
       {/* Info Section */}
       <div className="flex flex-col gap-6">
@@ -94,14 +96,29 @@ const CardBaseContent = ({
           ))}
         </div>
         {secondaryStats && secondaryStats.length > 0 && (
-          <div className="flex flex-wrap flex-col md:flex-row gap-x-6 gap-y-2 mt-3">
-            {secondaryStats.map((stat) => (
-              <CardBaseSecondaryStat
-                key={stat.label}
-                value={stat.value}
-                label={stat.label}
-              />
-            ))}
+          <div className="flex flex-wrap flex-col md:flex-row gap-x-6 gap-y-2 mt-3 items-center">
+            {" "}
+            {/* Added items-center */}
+            {secondaryStats.map((stat) =>
+              // Conditionally render Role as a badge
+              stat.label === "Role" ? (
+                <div key={stat.label} className="flex items-center gap-2">
+                  {" "}
+                  {/* Wrapper for alignment */}
+                  <span className="badge badge-outline badge-primary rounded-full px-3 text-xs">
+                    {stat.value}
+                  </span>
+                  {/* Optionally keep the label, or remove if badge is self-explanatory */}
+                  {/* <span className="text-sm text-base-content/70">{stat.label}</span> */}
+                </div>
+              ) : (
+                <CardBaseSecondaryStat
+                  key={stat.label}
+                  value={stat.value}
+                  label={stat.label}
+                />
+              )
+            )}
           </div>
         )}
       </div>

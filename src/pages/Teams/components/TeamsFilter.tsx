@@ -23,7 +23,7 @@ export const TeamsFilter = ({
           </label>
           <input
             type="text"
-            className="w-full px-3 py-2 border border-base-300 bg-base-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-base-700 dark:border-base-600 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-700 border-gray-700 bg-base-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-base-700 dark:border-gray-700 dark:text-white"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Enter team name..."
@@ -34,7 +34,7 @@ export const TeamsFilter = ({
             Sort By
           </label>
           <select
-            className="w-full px-3 py-2 border border-base-300 bg-base-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-base-700 dark:border-base-600 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-700 border-gray-700 bg-base-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-base-700 dark:border-gray-700 dark:text-white"
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value as SortOption)}
           >

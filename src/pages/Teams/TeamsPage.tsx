@@ -60,13 +60,18 @@ export const TeamsPage = () => {
 
   return (
     <Container>
-      {" "}
-      {/* Added Container */}
-      <div className="mb-8 bg-base-100 rounded-lg p-6  dark:bg-base-800">
-        <h1 className="text-3xl font-bold mb-2 text-base-900 dark:text-white">
+      {/* Use theme background, consistent padding/margin */}
+      <div className="mb-8 bg-base-200 rounded-lg p-6 shadow-md">
+        {" "}
+        {/* Adjusted background to base-200 for header */}
+        <h1 className="text-3xl font-bold mb-2 text-base-content">
+          {" "}
+          {/* Use theme text color */}
           Teams
         </h1>
-        <p className="text-lg text-base-600 dark:text-base-400">
+        <p className="text-lg text-base-content/70">
+          {" "}
+          {/* Use theme text color with opacity */}
           Overview of all teams and their performance
         </p>
       </div>
@@ -76,14 +81,16 @@ export const TeamsPage = () => {
         totalWins={totalWins}
         totalPlayers={totalPlayers}
       />
-      <div className="bg-base-100 rounded-lg p-6 shadow-md mb-6 dark:bg-base-800">
+      {/* Use theme background, consistent padding/shadow */}
+      <div className="bg-base-200 rounded-lg p-6 shadow-md mb-6">
+        {" "}
+        {/* Adjusted background to base-200 */}
         <TeamsFilter
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           sortBy={sortBy}
           onSortChange={(value) => setSortBy(value)}
         />
-
         <TeamsList teams={filteredAndSortedTeams} />
       </div>
     </Container> // Added closing Container

@@ -125,7 +125,7 @@ export const MetricsExplorerPage: React.FC = () => {
         {/* Data Display Section */}
         <div className="flex flex-row gap-4">
           {/* Table View */}
-          <div className="flex-1 p-4 border rounded bg-base-100">
+          <div className="flex-1 p-4 border border-gray-700 rounded bg-base-100">
             <h2 className="text-lg font-semibold mb-2">Table View</h2>
             <div className="overflow-auto max-h-[600px]">
               {" "}
@@ -139,7 +139,7 @@ export const MetricsExplorerPage: React.FC = () => {
           </div>
 
           {/* Chart View */}
-          <div className="flex-1 p-4 border rounded bg-base-100 h-[400px]">
+          <div className="flex-1 p-4 border border-gray-700 rounded bg-base-100 h-[400px]">
             <h2 className="text-lg font-semibold mb-2">Chart View</h2>
             {/* Use the imported MetricsChart component */}
             <MetricsChart

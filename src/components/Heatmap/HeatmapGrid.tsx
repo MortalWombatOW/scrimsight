@@ -161,7 +161,7 @@ export const HeatmapGrid = ({
               return (
                 <div
                   key={`cell-${y}-${x}`}
-                  className="flex items-center justify-center border border-base-200 relative group w-full h-full"
+                  className="flex items-center justify-center border border-gray-700 border-gray-700 relative group w-full h-full"
                   style={{
                     background: `rgba(120, 120, 120, ${ratio})`,
                     cursor: onClick ? "pointer" : "default",

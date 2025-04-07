@@ -42,8 +42,10 @@ export const TeamPage = () => {
     <Container>
       {" "}
       {/* Added Container */}
-      {/* Team Header - Remains the same */}
-      <div className="bg-base-100 rounded-lg shadow-lg p-6 mb-6">
+      {/* Team Header - Apply consistent card styling */}
+      <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg p-6 mb-6">
+        {" "}
+        {/* Updated classes */}
         <h1 className="text-4xl font-bold mb-4 text-primary">
           {teamNameDisplay}
         </h1>
@@ -54,12 +56,13 @@ export const TeamPage = () => {
           <StatCard title="Draws" value={teamRecord.draws.toString()} />
         </div>
       </div>
-      {/* Sub-route Navigation and Content */}
-      <div className="bg-base-100 rounded-lg shadow-lg">
+      {/* Sub-route Navigation and Content - Apply consistent card styling */}
+      <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg">
+        {" "}
+        {/* Updated classes */}
         {/* Navigation Links using SubPageNavigation */}
-        {/* Note: Removed border class from outer div as tabs-boxed includes padding */}
+        {/* Note: Removed border border-gray-700 class from outer div as tabs-boxed includes padding */}
         <SubPageNavigation navItems={teamNavItems} />
-
         {/* Outlet for rendering sub-route components */}
         <div className="p-6 pt-0">
           {" "}

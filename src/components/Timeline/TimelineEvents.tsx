@@ -99,7 +99,7 @@ const TimelineItem = ({
   return (
     <div
       className={`
-        py-1.5 border-b border-base-200 last:border-0
+        py-1.5 border-b border-gray-700 last:border-0
         ${isSelected ? "bg-base-200" : ""}
         hover:bg-base-200 transition-all duration-200
       `}
@@ -142,7 +142,7 @@ const TimelineItem = ({
         {isUltimate && (
           <div className="text-center flex-shrink-0">
             <div className="text-xs text-base-500">{formatTime(time)}</div>
-            <div className="border border-base-300 rounded-full text-xs px-2 py-0.5 mt-0.5 flex items-center">
+            <div className="border border-gray-700 rounded-full text-xs px-2 py-0.5 mt-0.5 flex items-center">
               <ZapIcon />
               <span>
                 Ultimate ({hero})

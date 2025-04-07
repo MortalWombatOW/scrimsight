@@ -46,7 +46,7 @@ export const TeamCompositions = (): ReactNode => {
           sortedCompositions.map((comp, index) => (
             <div
               key={index} // Consider a more stable key if available (e.g., composition hash)
-              className="border border-base-300 rounded-lg p-4"
+              className="border border-gray-700 rounded-lg p-4"
             >
               <div className="flex flex-col gap-4">
                 {/* Hero Icons */}

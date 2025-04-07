@@ -24,17 +24,17 @@ const TimelineContent = (): ReactNode => {
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      <div className="col-span-2 row-span-1 border border-base-300 rounded-md">
+      <div className="col-span-2 row-span-1 border border-gray-700 border-gray-700 rounded-md">
         <TimelineControls />
       </div>
-      <div className="col-span-2 row-span-1 border border-base-300 rounded-md overflow-hidden">
+      <div className="col-span-2 row-span-1 border border-gray-700 border-gray-700 rounded-md overflow-hidden">
         <TimelineDisplay />
       </div>
-      <div className="col-span-2 sm:col-span-1 border border-base-300 rounded-md">
+      <div className="col-span-2 sm:col-span-1 border border-gray-700 border-gray-700 rounded-md">
         <TimelineTable />
       </div>
 
-      <div className="col-span-2 sm:col-span-1 border border-base-300 rounded-md">
+      <div className="col-span-2 sm:col-span-1 border border-gray-700 border-gray-700 rounded-md">
         <TimelineEvents />
       </div>
     </div>

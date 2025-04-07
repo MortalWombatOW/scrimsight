@@ -90,7 +90,7 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
   }));
 
   return (
-    <div className="p-4 border rounded bg-base-200 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="p-4 border border-gray-700 rounded bg-base-200 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {/* Group By Select */}
       <div>
         <label

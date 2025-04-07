@@ -36,8 +36,13 @@ export const MatchPage2 = () => {
     <Container>
       {" "}
       {/* Added Container */}
-      <div className="flex flex-row gap-4 flex-wrap">
-        <section className="bg-base-100 border border-base-200 p-6 rounded-lg w-fit h-fit shadow-sm flex flex-row flex-wrap gap-4">
+      <div className="flex flex-row gap-4 flex-wrap mb-6">
+        {" "}
+        {/* Added mb-6 for spacing */}
+        {/* Apply consistent card styling to match details section */}
+        <section className="bg-base-200 border border-gray-700 border-gray-700 p-6 rounded-lg w-fit h-fit shadow-md flex flex-row flex-wrap gap-4">
+          {" "}
+          {/* Updated classes */}
           <img
             src={mapNameToFileName(matchData.map, false)}
             alt={matchData.map}
@@ -90,12 +95,13 @@ export const MatchPage2 = () => {
             </div>
           </div>
         </section>
-
         <MatchScoreCard matchData={matchData} />
       </div>
-      {/* SubPage Navigation */}
-      <div className="bg-base-100 rounded-lg shadow-sm">
-        {/* Removed border classes, using tabs-boxed style */}
+      {/* SubPage Navigation - Apply consistent card styling */}
+      <div className="bg-base-200 border border-gray-700 border-gray-700 rounded-lg shadow-md">
+        {" "}
+        {/* Updated classes */}
+        {/* Removed border border-gray-700 classes, using tabs-boxed style */}
         <SubPageNavigation navItems={matchNavItems} />
         <div className="p-6 pt-0">
           {" "}

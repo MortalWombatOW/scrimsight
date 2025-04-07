@@ -43,7 +43,7 @@ export const TeamCompositions = ({ teamName }: TeamCompositionsProps) => {
             </p>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4 pb-2 border-b border-base-200 dark:border-base-700">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4 pb-2 border-b border-gray-700 dark:border-gray-700">
             {["tank", "damage", "support"].map((role) => (
               <div className="md:col-span-3" key={role}>
                 <div className="flex items-center gap-2">

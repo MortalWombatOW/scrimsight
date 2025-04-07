@@ -137,34 +137,46 @@ export const ScrimPage = () => {
     <Container>
       {" "}
       {/* Added Container */}
-      {/* Header Section */}
-      <div className="card bg-base-100 shadow-xl mb-6">
-        <div className="card-body">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h1 className="text-3xl font-bold flex items-center gap-3">
-                <TbTournament className="text-2xl" />
-                Scrim: {team1Name} vs {team2Name}
-              </h1>
-              <p className="text-base-content/70 mt-1">{dateString}</p>
-            </div>
-            <div className="stats shadow">
-              <div className="stat place-items-center">
-                <div className="stat-title">Total Duration</div>
-                <div className="stat-value text-xl flex items-center gap-2">
-                  <IoTimeOutline />
-                  {formatTime(duration)}
-                </div>
+      {/* Header Section - Apply consistent card styling */}
+      <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg mb-6 p-6">
+        {" "}
+        {/* Changed div classes */}
+        {/* Removed card-body, padding applied directly */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              <TbTournament className="text-2xl" />
+              Scrim: {team1Name} vs {team2Name}
+            </h1>
+            <p className="text-base-content/70 mt-1">{dateString}</p>
+          </div>
+          {/* Ensure stats component uses theme background/text */}
+          <div className="stats shadow bg-base-100 text-base-content rounded-lg">
+            {" "}
+            {/* Added bg/text/radius */}
+            <div className="stat place-items-center">
+              <div className="stat-title text-base-content/70">
+                Total Duration
+              </div>{" "}
+              {/* Adjusted text opacity */}
+              <div className="stat-value text-xl flex items-center gap-2">
+                <IoTimeOutline />
+                {formatTime(duration)}
               </div>
-              <div className="stat place-items-center">
-                <div className="stat-title">Overall Score</div>
-                <div className="stat-value text-xl">
-                  {scrim.team1Wins} - {scrim.team2Wins}
-                </div>
+            </div>
+            <div className="stat place-items-center">
+              <div className="stat-title text-base-content/70">
+                Overall Score
+              </div>{" "}
+              {/* Adjusted text opacity */}
+              <div className="stat-value text-xl">
+                {scrim.team1Wins} - {scrim.team2Wins}{" "}
+                {/* Ensure team1Wins/team2Wins exist on scrim object */}
               </div>
             </div>
           </div>
         </div>
+        {/* Removed extra closing div here */}
       </div>
       {/* Team Cards with Scrim Stats */}
       <h2 className="text-2xl font-semibold mb-4">Team Performance</h2>
