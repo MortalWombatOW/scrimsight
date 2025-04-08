@@ -2,195 +2,386 @@ import type { ReactNode } from "react";
 import { useTimelineContext } from "./TimelineContext";
 import { getHeroImage } from "../../lib";
 
-// Helper function to format time (MM:SS)
-const formatTime = (timeInSeconds: number): string => {
-  const minutes = Math.floor(timeInSeconds / 60);
-  const seconds = Math.floor(timeInSeconds % 60);
-  return `${minutes.toString().padStart(2, "0")}:${seconds
-    .toString()
-    .padStart(2, "0")}`;
-};
-
-// Event type display text mapping
+// Event type display text mapping (Simplified for kill feed)
 const getEventDisplayText = (eventType: string): string => {
-  const eventMap: Record<string, string> = {
-    // Player interaction events
-    elimination: "Eliminated",
-    assist: "Assisted",
-    damage: "Damaged",
-    healing: "Healed",
+  // const eventMap: Record<string, string> = { // Removed unused map
+  //   // Player events
+  //   death: "Died",
+  //   respawn: "Respawned",
+  //   swap: "Swapped Hero",
+  //   // position: "Changed Position", // Position changes likely too noisy for kill feed
+  //
+  //   // Ultimate events - handled separately
+  //   // Interactions (elimination, assist) handled separately
+  // };
 
-    // Player events
-    death: "Died",
-    respawn: "Respawned",
-    swap: "Swapped Hero",
-    position: "Changed Position",
+  // Simple check for known non-interaction/non-ultimate types
+  const lowerEventType = eventType.toLowerCase();
+  if (lowerEventType.includes("death")) return "Died";
+  if (lowerEventType.includes("respawn")) return "Respawned";
+  if (lowerEventType.includes("swap")) return "Swapped Hero";
 
-    // Ultimate events - handled separately
-  };
-
-  // Try to find a match in the map
-  for (const [key, value] of Object.entries(eventMap)) {
-    if (eventType.toLowerCase().includes(key.toLowerCase())) {
-      return value;
-    }
-  }
-
-  // Return the original if no match found
+  // Default or unmapped type (should ideally not happen often in kill feed context)
   return eventType;
 };
 
+// --- Icons ---
+
+const ArrowRightIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3" // Thicker stroke for visibility
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="mx-1 inline-block"
+  >
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+    <polyline points="12 5 19 12 12 19"></polyline>
+  </svg>
+);
+
+const PlusIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="10" // Slightly smaller
+    height="10"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="mx-1 inline-block"
+  >
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>
+);
+
+// Zap icon for ultimate indicator
+const ZapIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="mr-1 inline-block" // Use inline-block
+  >
+    <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+  </svg>
+);
+
+const PlayerHeroDisplay = ({
+  name,
+  hero,
+  isTeam1,
+}: {
+  name: string;
+  hero: string;
+  isTeam1: boolean;
+}) => {
+  // Added null check for hero
+  const heroImage = getHeroImage(hero);
+  return (
+    <span className="inline-flex items-center">
+      <span
+        className={`font-medium text-xs ${
+          isTeam1 ? "text-blue-400" : "text-red-400"
+        }`}
+      >
+        {name}
+      </span>
+      {heroImage && ( // Conditionally render image
+        <img
+          src={heroImage}
+          alt={hero}
+          className="w-4 h-4 ml-1 inline-block" // Use inline-block
+        />
+      )}
+    </span>
+  );
+};
+
+// Define props interface for TimelineItem
+interface TimelineItemProps {
+  playerName: string;
+  playerHero: string;
+  eventType: string;
+  isTeam1: boolean;
+  isSelected: boolean;
+  targetName?: string; // Optional
+  targetHero?: string; // Optional
+  // We don't need otherPlayerHero in the props anymore as we're handling it differently
+  onClick: () => void;
+  onMouseLeave: () => void;
+}
+
 const TimelineItem = ({
-  time,
   playerName,
   playerHero,
   eventType,
   isTeam1,
   isSelected,
   targetName,
-  hero,
-  teamName,
+  targetHero,
+  // otherPlayerHero removed as it's not needed
   onClick,
   onMouseLeave,
-}: {
-  time: number;
-  playerName: string;
-  playerHero: string;
-  eventType: string;
-  isTeam1: boolean;
-  isSelected: boolean;
-  targetName?: string;
-  hero?: string;
-  teamName?: string;
-  onClick: () => void;
-  onMouseLeave: () => void;
-}): ReactNode => {
-  const displayText = getEventDisplayText(eventType);
-  const isUltimate = eventType.toLowerCase().includes("ultimate");
+}: TimelineItemProps): ReactNode => {
+  // Use the interface
+  const lowerEventType = eventType.toLowerCase();
+  const isElimination =
+    lowerEventType.includes("elimination") || lowerEventType.includes("killed");
+  const isAssist = lowerEventType.includes("assist");
+  const isUltimate = lowerEventType.includes("ultimate");
+  const isDeath =
+    lowerEventType.includes("death") || lowerEventType.includes("died");
+  const isSwap = lowerEventType.includes("swap");
+  const isDamage = lowerEventType.includes("damage");
+  const isHealing = lowerEventType.includes("heal");
+  const isResurrect = lowerEventType.includes("resurrect");
+  const isDemech = lowerEventType.includes("demech");
+  const isRemech = lowerEventType.includes("remech");
 
-  // Zap icon for ultimate indicator
-  const ZapIcon = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="mr-1"
-    >
-      <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
-    </svg>
-  );
+  // Determine target player's team (assuming targetName exists for elim/assist)
+  // For damage/healing events between teammates, this needs to be adjusted
+  // For now, we'll assume targets are on the opposite team for eliminations
+  // and on the same team for healing
+  let targetIsTeam1 = !isTeam1; // Default: target is on the opposite team
 
-  const EventIcon = () => {
+  // For healing events, targets are typically on the same team
+  if (isHealing || isResurrect) {
+    targetIsTeam1 = isTeam1;
+  }
+
+  const renderContent = () => {
+    if (isElimination && targetName && targetHero) {
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <ArrowRightIcon />
+          <PlayerHeroDisplay
+            name={targetName}
+            hero={targetHero}
+            isTeam1={targetIsTeam1}
+          />
+        </>
+      );
+    }
+    if (isAssist && targetName) {
+      // Victim hero might not be available for assists, handle gracefully
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <PlusIcon />
+          <span
+            className={`font-medium text-xs ${
+              targetIsTeam1 ? "text-blue-400" : "text-red-400"
+            }`}
+          >
+            {targetName}
+          </span>
+          {targetHero &&
+          getHeroImage(targetHero) && ( // Check if image exists
+              <img
+                src={getHeroImage(targetHero)}
+                alt={targetHero}
+                className="w-4 h-4 ml-1 inline-block"
+              />
+            )}
+        </>
+      );
+    }
+    if (isUltimate) {
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <ZapIcon />
+          <span className="text-xs ml-1">Ultimate ({playerHero})</span>
+        </>
+      );
+    }
+    if (isDeath || isSwap) {
+      const displayText = getEventDisplayText(eventType);
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <span className="text-xs ml-1">{displayText}</span>
+        </>
+      );
+    }
+
+    // Handle damage events
+    if (isDamage && targetName) {
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <span className="text-xs ml-1">→ Damage →</span>
+          <span
+            className={`font-medium text-xs ${
+              targetIsTeam1 ? "text-blue-400" : "text-red-400"
+            }`}
+          >
+            {targetName}
+          </span>
+        </>
+      );
+    }
+
+    // Handle healing events
+    if (isHealing && targetName) {
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <span className="text-xs ml-1">→ Healing →</span>
+          <span
+            className={`font-medium text-xs ${
+              !targetIsTeam1 ? "text-blue-400" : "text-red-400"
+            }`}
+          >
+            {targetName}
+          </span>
+        </>
+      );
+    }
+
+    // Handle resurrect events
+    if (isResurrect && targetName) {
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <span className="text-xs ml-1">→ Resurrected →</span>
+          <span
+            className={`font-medium text-xs ${
+              !targetIsTeam1 ? "text-blue-400" : "text-red-400"
+            }`}
+          >
+            {targetName}
+          </span>
+        </>
+      );
+    }
+
+    // Handle demech events
+    if (isDemech && targetName) {
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <span className="text-xs ml-1">was demeched</span>
+        </>
+      );
+    }
+
+    // Handle remech events
+    if (isRemech) {
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <span className="text-xs ml-1">called mech</span>
+        </>
+      );
+    }
+
+    // Fallback for other event types
+    if (targetName) {
+      return (
+        <>
+          <PlayerHeroDisplay
+            name={playerName}
+            hero={playerHero}
+            isTeam1={isTeam1}
+          />
+          <span className="text-xs ml-1">{eventType}</span>
+          <span
+            className={`font-medium text-xs ml-1 ${
+              targetIsTeam1 ? "text-blue-400" : "text-red-400"
+            }`}
+          >
+            {targetName}
+          </span>
+        </>
+      );
+    }
+
+    // For any other event with no target
     return (
-      <img
-        src={getHeroImage(playerHero)}
-        alt={playerHero}
-        className="w-4 h-4"
-      />
+      <>
+        <PlayerHeroDisplay
+          name={playerName}
+          hero={playerHero}
+          isTeam1={isTeam1}
+        />
+        <span className="text-xs ml-1">{eventType}</span>
+      </>
     );
   };
+
+  const content = renderContent();
+  if (!content) return null; // Don't render the div if no content
 
   return (
     <div
       className={`
-        py-1.5 border-b border-gray-700 last:border-0
-        ${isSelected ? "bg-base-200" : ""}
-        hover:bg-base-200 transition-all duration-200
+        py-1 px-2 text-center text-xs border-b border-gray-800 last:border-0
+        ${
+          isSelected ? "bg-base-300" : "bg-base-100"
+        } // Adjusted background colors
+        hover:bg-base-300 transition-all duration-150
       `}
       onMouseEnter={onClick}
       onMouseLeave={onMouseLeave}
     >
-      <div className="flex items-center justify-between">
-        {/* Left side (Team 1) content */}
-        <div className={`w-[45%] ${isTeam1 ? "block" : "invisible"} text-left`}>
-          {isTeam1 && (
-            <>
-              <div className="flex items-center">
-                <span className="font-medium text-xs">{playerName}</span>
-                <span className="text-xs text-base-500 ml-1">
-                  {formatTime(time)}
-                </span>
-              </div>
-              {isUltimate ? (
-                <div className="mt-0.5 flex items-center">
-                  <EventIcon />
-                  <span className="badge badge-xs badge-outline ml-1">
-                    Ultimate ({hero})
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center mt-0.5">
-                  <span className="text-xs badge badge-xs ml-1">
-                    {displayText}
-                  </span>
-                  {targetName && (
-                    <span className="text-xs ml-1">{targetName}</span>
-                  )}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Middle time marker (only for important events) */}
-        {isUltimate && (
-          <div className="text-center flex-shrink-0">
-            <div className="text-xs text-base-500">{formatTime(time)}</div>
-            <div className="border border-gray-700 rounded-full text-xs px-2 py-0.5 mt-0.5 flex items-center">
-              <ZapIcon />
-              <span>
-                Ultimate ({hero})
-                <span className="text-xs text-base-500 ml-1">{teamName}</span>
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Right side (Team 2) content */}
-        <div
-          className={`w-[45%] ${!isTeam1 ? "block" : "invisible"} text-right`}
-        >
-          {!isTeam1 && (
-            <>
-              <div className="flex items-center justify-end">
-                <span className="text-xs text-base-500 mr-1">
-                  {formatTime(time)}
-                </span>
-                <EventIcon />
-                <span className="font-medium text-xs">{playerName}</span>
-              </div>
-              {isUltimate ? (
-                <div className="mt-0.5 flex justify-end items-center">
-                  <span className="badge badge-xs badge-outline mr-1">
-                    Ultimate ({hero})
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-end mt-0.5">
-                  <span className="text-xs badge badge-xs mr-1">
-                    {displayText}
-                  </span>
-                  {targetName && (
-                    <span className="text-xs mr-1">{targetName}</span>
-                  )}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+      {content}
     </div>
   );
 };
 
-// NOTE: The TimelineEvents component definition below was already corrected in the previous step.
-// This SEARCH/REPLACE block only fixes the TimelineItem component above it.
 export const TimelineEvents = (): ReactNode => {
   const {
     loadedData,
@@ -199,97 +390,119 @@ export const TimelineEvents = (): ReactNode => {
   } = useTimelineContext();
 
   if (!loadedData) {
+    // Added return statement for the loading indicator JSX
     return (
-      <div className="flex justify-center items-center p-4">
+      <div className="flex justify-center items-center h-[400px]">
+        {" "}
+        {/* Ensure loading takes height */}
         <div className="loading loading-dots"></div>
       </div>
     );
   }
 
-  const { matchData, events } = loadedData;
+  const { matchData, events }: { matchData: any; events: any[] } = loadedData;
 
   return (
-    <div className="card bg-base-100 shadow-md p-2">
-      <div className="mb-2">
-        <div className="flex justify-between items-center mb-1">
-          <div className="text-sm font-semibold">{matchData.team1Name}</div>
-          <div className="text-sm font-semibold">{matchData.team2Name}</div>
-        </div>
-        <div className="w-full h-0.5 bg-base-200 rounded-full"></div>
-      </div>
-
-      <div className="max-h-[400px] overflow-y-auto">
+    // Removed outer card padding, applying directly to children if needed
+    <div className="bg-base-100 shadow-md rounded-lg overflow-hidden">
+      <div className="max-h-[400px] overflow-y-auto bg-base-100">
         {events.map((event, index) => {
           if (
             event.type === "playerInteractionEvent" &&
             event.playerInteractionEvent
           ) {
-            const { playerInteractionEvent } = event;
-            const isTeam1 =
-              playerInteractionEvent.playerTeam === matchData.team1Name;
+            const { playerInteractionEvent: p } = event; // Alias for brevity
+            const isTeam1 = p.playerTeam === matchData.team1Name;
+            // *** Need targetHero for eliminations! Assuming it exists on the event ***
+            // *** If not, this needs adjustment based on available data ***
+            // For interaction events, we need to handle the target hero
+            // Since otherPlayerHero is not in the interface, we'll use a workaround
+            // by checking if the event is a kill event and setting the target hero accordingly
+            let targetHero = "Unknown";
+
+            // For kill events, the target hero should be available from the event
+            if (p.playerInteractionEventType.toLowerCase().includes("killed")) {
+              // Try to find the hero from the events array for the target player
+              const targetEvent = events.find(
+                (e) =>
+                  e.playerName === p.otherPlayerName &&
+                  e.type === "playerEvent" &&
+                  e.playerEvent?.playerEventType.toLowerCase().includes("death")
+              );
+
+              if (targetEvent) {
+                targetHero = targetEvent.playerHero;
+              }
+            } else {
+              // For other interaction events, use the player's hero as fallback
+              targetHero = p.playerHero;
+            }
 
             return (
               <TimelineItem
-                key={`interaction-${index}`}
-                time={playerInteractionEvent.playerInteractionEventTime}
-                playerName={playerInteractionEvent.playerName}
-                playerHero={playerInteractionEvent.playerHero}
-                eventType={playerInteractionEvent.playerInteractionEventType}
+                key={`interaction-${p.id || index}`} // Use ID if available
+                // time={p.playerInteractionEventTime} // Time removed
+                playerName={p.playerName}
+                playerHero={p.playerHero}
+                eventType={p.playerInteractionEventType}
                 isTeam1={isTeam1}
-                isSelected={selectedEventId === playerInteractionEvent.id}
-                targetName={playerInteractionEvent.otherPlayerName}
-                teamName={playerInteractionEvent.playerTeam}
-                onClick={() => setSelectedEventId(playerInteractionEvent.id)}
-                onMouseLeave={() => setSelectedEventId(null)}
-              />
-            );
-          } else if (event.type === "playerEvent" && event.playerEvent) {
-            const { playerEvent } = event;
-            const isTeam1 = playerEvent.playerTeam === matchData.team1Name;
-
-            return (
-              <TimelineItem
-                key={`player-${index}`}
-                time={playerEvent.playerEventTime}
-                playerName={playerEvent.playerName}
-                playerHero={playerEvent.playerHero}
-                eventType={playerEvent.playerEventType}
-                isTeam1={isTeam1}
-                isSelected={selectedEventId === playerEvent.id}
-                teamName={playerEvent.playerTeam}
-                onClick={() => setSelectedEventId(playerEvent.id)}
-                onMouseLeave={() => setSelectedEventId(null)}
-              />
-            );
-          } else if (event.type === "ultimateEvent" && event.ultimateEvent) {
-            const { ultimateEvent } = event;
-            const isTeam1 = ultimateEvent.playerTeam === matchData.team1Name;
-
-            return (
-              <TimelineItem
-                key={`ultimate-${index}`}
-                time={ultimateEvent.ultimateStartTime}
-                playerName={ultimateEvent.playerName}
-                playerHero={ultimateEvent.playerHero}
-                eventType="ultimate"
-                isTeam1={isTeam1}
-                isSelected={selectedEventId === ultimateEvent.id}
-                hero={ultimateEvent.playerHero}
-                teamName={ultimateEvent.playerTeam}
-                onClick={() => setSelectedEventId(ultimateEvent.id)}
+                isSelected={selectedEventId === p.id}
+                targetName={p.otherPlayerName}
+                targetHero={targetHero} // Pass target hero
+                // otherPlayerHero removed as it's not needed
+                onClick={() => setSelectedEventId(p.id)}
                 onMouseLeave={() => setSelectedEventId(null)}
               />
             );
           }
-          return null;
-        })}
-      </div>
+          // Player Event (Death, Swap)
+          else if (event.type === "playerEvent" && event.playerEvent) {
+            const { playerEvent: p } = event;
+            const isTeam1 = p.playerTeam === matchData.team1Name;
 
-      {events.length === 0 && (
-        <div className="text-center py-4 text-base-500 text-xs">
-          No events found for this match
-        </div>
-      )}
+            return (
+              <TimelineItem
+                key={`player-${p.id || index}`}
+                // time={p.playerEventTime} // Time removed
+                playerName={p.playerName}
+                playerHero={p.playerHero}
+                eventType={p.playerEventType}
+                isTeam1={isTeam1}
+                isSelected={selectedEventId === p.id}
+                // No targetName/targetHero for these events
+                onClick={() => setSelectedEventId(p.id)}
+                onMouseLeave={() => setSelectedEventId(null)}
+              />
+            );
+          }
+          // Ultimate Event
+          else if (event.type === "ultimateEvent" && event.ultimateEvent) {
+            const { ultimateEvent: p } = event;
+            const isTeam1 = p.playerTeam === matchData.team1Name;
+
+            return (
+              <TimelineItem
+                key={`ultimate-${p.id || index}`}
+                // time={p.ultimateStartTime} // Time removed
+                playerName={p.playerName}
+                playerHero={p.playerHero}
+                eventType="ultimate" // Standardized type
+                isTeam1={isTeam1}
+                isSelected={selectedEventId === p.id}
+                // No targetName/targetHero needed here
+                onClick={() => setSelectedEventId(p.id)}
+                onMouseLeave={() => setSelectedEventId(null)}
+              />
+            );
+          }
+          return null; // Should not happen with pre-filtering
+        })}
+        {events.length === 0 && (
+          <div className="text-center py-4 text-base-500 text-xs px-2">
+            No relevant events found for kill feed.
+          </div>
+        )}
+      </div>
     </div>
   );
 };

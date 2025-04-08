@@ -1,10 +1,14 @@
 import { type ReactNode, useMemo } from "react";
+import { useAtomValue } from "jotai"; // Import useAtomValue
 import { useTimelineContext } from "./TimelineContext";
-import { TimeSegmentDisplay, TimeSegment } from "./TimeSegmentDisplay"; // Import new component and type
+import { TimelineButton, type TimelineSegmentButtonData } from "./TimelineButton"; // Import new component and type
+import {
+  roundEndExtractorAtom,
+  type RoundEndLogEvent, // Corrected type name
+} from "../../atoms/event_extractors/roundEndExtractorAtom"; // Import atom and type
 
 export const TimelineControls = (): ReactNode => {
-
-  const { setCurrentTimeRange, loadedData, } =
+  const { setCurrentTimeRange, loadedData, currentTimeRange } =
     useTimelineContext();
 
   if (!loadedData) {
@@ -12,66 +16,90 @@ export const TimelineControls = (): ReactNode => {
   }
 
   const { mapTime, roundTimes, teamfights, matchData } = loadedData;
+  const allRoundEnds = useAtomValue(roundEndExtractorAtom); // Get all round end events
 
-  // Prepare nested data structure
-  const mapSegmentData = useMemo<TimeSegment | null>(() => {
-    if (!mapTime) return null;
+  // Prepare flattened and sorted data structure for buttons
+  const flatSegments = useMemo<TimelineSegmentButtonData[]>(() => {
+    if (!mapTime || !matchData) return [];
 
-    const roundSegments: TimeSegment[] = roundTimes
-      .map((roundTime): TimeSegment | null => { // Explicitly type the map return
-        const roundMatchId = roundTime.matchId || mapTime.matchId;
-        if (!roundMatchId) return null; // Should not happen if mapTime exists
+    const segments: TimelineSegmentButtonData[] = [];
+    let fightCounter = 1; // Simple counter for fight IDs/labels
 
-        if (!matchData) return null; // Should not happen if roundMatchId exists  
-        const roundWinner = matchData.roundWinners[roundTime.roundNumber - 1] === 'team1' ? matchData.team1Name : matchData.team2Name;
+    roundTimes.forEach((roundTime) => {
+      const roundMatchId = roundTime.matchId || mapTime.matchId;
+      if (!roundMatchId) return;
 
-        const teamfightSegments: TimeSegment[] = teamfights
-          .filter(
-            (tf) =>
-              tf.matchId === roundMatchId &&
-              tf.startTime >= roundTime.roundStartTime &&
-              tf.endTime <= roundTime.roundEndTime
-          )
-          .map((tf) => ({
-            matchId: tf.matchId,
-            title: `${tf.winner} Win`,
-            subtitle: "Teamfight",
-            type: "teamfight",
-            startTime: tf.startTime,
-            endTime: tf.endTime,
-            winner: tf.winner,
-          }));
+      // Add teamfights for this round
+      const roundTeamfights = teamfights
+        .filter(
+          (tf) =>
+            tf.matchId === roundMatchId &&
+            tf.startTime >= roundTime.roundStartTime &&
+            tf.endTime <= roundTime.roundEndTime
+        )
+        .sort((a, b) => a.startTime - b.startTime) // Ensure fights are chronological
+        .map((tf): TimelineSegmentButtonData => ({
+          id: `tf-${fightCounter++}`, // Generate unique ID
+          title: `${tf.winner} Fight Win (${Math.round(tf.startTime)}s - ${Math.round(tf.endTime)}s)`,
+          type: "teamfight",
+          startTime: tf.startTime,
+          endTime: tf.endTime,
+          sortTime: tf.startTime, // Add sortTime for teamfights
+          winner: tf.winner,
+          team1Name: matchData.team1Name,
+          team2Name: matchData.team2Name,
+        }));
 
-        return {
-          matchId: roundMatchId,
-          // Use round winner for the title, fallback to generic title if no winner
-          title: roundWinner ? `${roundWinner} Win` : `Round ${roundTime.roundNumber}`,
-          subtitle: `Round ${roundTime.roundNumber}`,
-          type: "round",
-          startTime: roundTime.roundStartTime,
-          endTime: roundTime.roundEndTime,
-          winner: roundWinner,
-          childrenSegments: teamfightSegments,
-        };
-      })
-      .filter((segment): segment is TimeSegment => segment !== null); // Filter out nulls - this predicate is correct
+      segments.push(...roundTeamfights);
 
-    return {
-      matchId: mapTime.matchId,
-      title: `${matchData?.winner} Win`,
-      subtitle: "Match",
+      // Filter round ends for the current match
+      const matchRoundEnds = allRoundEnds.filter(re => re.matchId === matchData.matchId);
+
+      // Add round result segment
+      // Find the corresponding round end event to get the winner
+      const roundEndEvent = matchRoundEnds.find(
+        (re: RoundEndLogEvent) => // Corrected type annotation here
+          re.matchId === roundMatchId && re.roundNumber === roundTime.roundNumber
+      );
+      const roundWinner = roundEndEvent?.capturingTeam; // Use capturingTeam from the event
+
+      segments.push({
+        id: `round-${roundTime.roundNumber}`,
+        title: roundWinner
+          ? `${roundWinner} Wins Round ${roundTime.roundNumber}`
+          : `Round ${roundTime.roundNumber} End`,
+        type: "round",
+        startTime: roundTime.roundStartTime, // Use round times for selection
+        endTime: roundTime.roundEndTime,
+        sortTime: roundTime.roundEndTime, // Add sortTime for rounds (use end time)
+        winner: roundWinner,
+        roundNumber: roundTime.roundNumber,
+        team1Name: matchData.team1Name,
+        team2Name: matchData.team2Name,
+      });
+    });
+
+    // Add final match result segment
+    segments.push({
+      id: "map-result",
+      title: `${matchData.winner} Wins Match`,
       type: "map",
       startTime: mapTime.startTime,
       endTime: mapTime.endTime,
-      winner: matchData?.winner, // Assuming matchData provides overall winner
-      childrenSegments: roundSegments,
-    };
-  }, [mapTime, roundTimes, teamfights, matchData]);
+      sortTime: mapTime.endTime, // Add sortTime for map (use end time)
+      winner: matchData.winner,
+      team1Name: matchData.team1Name,
+      team2Name: matchData.team2Name,
+    });
+
+    // Final sort using the new sortTime property
+    return segments.sort((a, b) => a.sortTime - b.sortTime);
+
+  }, [mapTime, roundTimes, teamfights, matchData, allRoundEnds]); // Add allRoundEnds to dependency array
 
   const handleSelect = (start: number, end: number) => {
     setCurrentTimeRange({ start, end });
   };
-
 
   return (
     <div className="flex flex-col gap-2 ml-4 mt-3">
@@ -79,23 +107,30 @@ export const TimelineControls = (): ReactNode => {
         Select segment to view
       </div>
 
-      {/* Render the single top-level map segment */}
-      {mapSegmentData && (
-        <div className="flex flex-col gap-2"> {/* Container for the map segment */}
-          <TimeSegmentDisplay
-            segment={mapSegmentData}
-            onSelect={handleSelect}
-            // isSelected prop removed as the component now handles its own state
-            team1Name={matchData?.team1Name}
-            team2Name={matchData?.team2Name}
-          />
-        </div>
-      )}
+      {/* Render the flat list of buttons */}
+      <div className="flex flex-wrap gap-2">
+        {flatSegments.map((segment) => {
+          const isSelected =
+            currentTimeRange?.start === segment.startTime &&
+            currentTimeRange?.end === segment.endTime;
+
+          return (
+            <TimelineButton
+              key={segment.id}
+              segment={segment}
+              isSelected={isSelected}
+              onClick={handleSelect}
+              team1Name={matchData?.team1Name}
+              team2Name={matchData?.team2Name}
+            />
+          );
+        })}
+      </div>
 
       {/* Legend */}
       <div className="flex justify-center mt-6 text-xs text-base-500 gap-4">
         <div className="flex items-center">
-          <div className="w-2 h-2 rounded-full border border-success mr-1"></div>
+          <div className="w-2 h-2 rounded-full border border-blue-600 mr-1"></div>
           <span>{matchData?.team1Name ?? "Team 1"} Win</span>
         </div>
         <div className="flex items-center">

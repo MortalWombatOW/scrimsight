@@ -1,11 +1,4 @@
-import { type ReactNode, useMemo } from "react";
-import { useAtomValue } from "jotai";
-import { formatTime } from "../../lib";
-import {
-  segmentStatsAtomFamily,
-  SegmentParams,
-} from "../../atoms/derived_state/segmentStatsAtomFamily";
-import { FaSkull, FaBolt } from "react-icons/fa";
+import { type ReactNode } from "react";
 import { useTimelineContext } from "./TimelineContext"; // Import context hook
 
 // Moved and updated TimeSegment type
@@ -20,42 +13,6 @@ export type TimeSegment = {
   childrenSegments?: TimeSegment[]; // Added for nesting
 };
 
-// Moved SegmentStatsDisplay component
-const SegmentStatsDisplay = ({ segment }: { segment: TimeSegment }) => {
-  const segmentParams = useMemo<SegmentParams>(() => ({
-    matchId: segment.matchId,
-    startTime: segment.startTime,
-    endTime: segment.endTime,
-    type: segment.type,
-  }), [segment.matchId, segment.startTime, segment.endTime, segment.type]);
-
-  const stats = useAtomValue(segmentStatsAtomFamily(segmentParams));
-
-  if (!stats) {
-    return <div className="text-xs mt-1 opacity-50">Loading stats...</div>;
-  }
-
-  return (
-    <div className={`flex flex-col text-xs mt-1 gap-0.5 ${segment.type === "teamfight" ? "w-full" : "max-w-xs"}`}>
-      <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1 opacity-80">
-          <FaSkull /> Kills:
-        </span>
-        <span>
-          {stats.team1Kills} / {stats.team2Kills}
-        </span>
-      </div>
-      <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1 opacity-80">
-          <FaBolt /> Ults:
-        </span>
-        <span>
-          {stats.team1UltsUsed} / {stats.team2UltsUsed}
-        </span>
-      </div>
-    </div>
-  );
-};
 
 // Define props for the main component
 interface TimeSegmentDisplayProps {
@@ -75,7 +32,6 @@ export const TimeSegmentDisplay = ({
   team2Name,
 }: TimeSegmentDisplayProps): ReactNode => {
   const { currentTimeRange } = useTimelineContext(); // Get context
-  const duration = segment.endTime - segment.startTime;
 
   // Calculate isSelected locally
   const isSelected =
@@ -101,7 +57,7 @@ export const TimeSegmentDisplay = ({
   }
 
   if (isSelected) {
-    borderColorClass = "border-2 border-primary"; // Use thicker border for selected
+    borderColorClass = "border-2 border-primary";
     console.log("Selected segment:", segment);
   }
 
@@ -112,7 +68,6 @@ export const TimeSegmentDisplay = ({
       onClick={(e) => {e.stopPropagation(); onSelect(segment.startTime, segment.endTime)}}
     >
       <div className={segment.type === "teamfight" ? "flex flex-col gap-1" : "flex flex-row gap-9"}>
-        <div className="flex flex-col gap-1">
       <div
         className={`text-sm truncate ${
           segment.type === "map" || segment.type === "round"
@@ -123,15 +78,6 @@ export const TimeSegmentDisplay = ({
       >
         {segment.title}
       </div>
-      <div className="text-xs opacity-80">{segment.subtitle}
-        {": "}
-        {formatTime(segment.startTime)} - {formatTime(segment.endTime)} (
-        {formatTime(duration)})
-      </div>
-      </div>
-
-      {/* Stats Display */}
-      <SegmentStatsDisplay segment={segment} />
       </div>
 
       {/* Render Children Segments */}
@@ -142,7 +88,6 @@ export const TimeSegmentDisplay = ({
               key={`${childSegment.startTime}-${childSegment.endTime}-child`}
               segment={childSegment}
               onSelect={onSelect}
-              // isSelected prop removed from recursive call
               team1Name={team1Name}
               team2Name={team2Name}
             />

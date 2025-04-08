@@ -27,9 +27,6 @@ const TimelineContent = (): ReactNode => {
       <div className="col-span-2 row-span-1 border border-gray-700 border-gray-700 rounded-md">
         <TimelineControls />
       </div>
-      <div className="col-span-2 row-span-1 border border-gray-700 border-gray-700 rounded-md overflow-hidden">
-        <TimelineDisplay />
-      </div>
       <div className="col-span-2 sm:col-span-1 border border-gray-700 border-gray-700 rounded-md">
         <TimelineTable />
       </div>

@@ -155,7 +155,7 @@ export const TimelineTable = (): ReactNode => {
   return (
     <div className="overflow-x-auto p-4">
       <h2 className="text-lg font-semibold mb-2">
-        Totals during {timeRangeLabel} (
+        Totals between {formatDuration(currentTimeRange.start)} and {formatDuration(currentTimeRange.end)} (
         {formatDuration(currentTimeRange.end - currentTimeRange.start)})
       </h2>
 

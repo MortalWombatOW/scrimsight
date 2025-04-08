@@ -4,6 +4,17 @@
 
 ---
 
+### Recent Changes (2025-04-07 PM - Later)
+
+*   **Redesigned Timeline Events:** Modified `src/components/Timeline/TimelineEvents.tsx` to display events in a compact, scrollable "kill feed" style, similar to Overwatch.
+    *   Changed layout from two columns to a single centered column.
+    *   Updated `TimelineItem` to show events like `[Player (Hero)] -> [Target (Hero)]` for eliminations, `[Player (Hero)] + [Target (Hero)]` for assists, and `[Player (Hero)] Ultimate` for ultimates, using team-specific colors.
+    *   Removed per-event timestamps.
+    *   Added filtering in `TimelineEvents` to only show relevant event types (eliminations, assists, ultimates, deaths, swaps).
+    *   Ensured the container has `max-h-[400px]` and `overflow-y-auto`.
+    *   Removed the top team name headers.
+    *   Fixed TS errors and removed unused variables after refactoring. Build successful.
+
 ### Recent Changes (2025-04-07 PM)
 
 *   **Added Round Winner Data:** Modified `src/atoms/roundTimesAtom.ts` to include a `winner` field in the `RoundTimes` interface, populated using the `capturingTeam` from the corresponding `round_end` event.
