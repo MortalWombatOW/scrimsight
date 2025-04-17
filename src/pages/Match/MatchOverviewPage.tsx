@@ -3,13 +3,13 @@ import { useAtomValue } from "jotai";
 import { matchDataAtom } from "../../atoms/matchDataAtom"; // Removed unused MatchData type
 import {
   teamStatsForMatchAtom,
-  playerStatsForMatchAtom,
+  // Removed unused playerStatsForMatchAtom
 } from "../../atoms/metrics/contextualStatAtoms";
 import { MatchCard } from "../../components/Card/MatchCard";
 import { TeamCard } from "../../components/Card/TeamCard";
-import { PlayerCard } from "../../components/Card/PlayerCard";
+// Removed unused PlayerCard
 import { formatTime, prettyFormat } from "../../lib"; // Import formatters
-import { PlayerStatsComparison } from "./components/stats/PlayerStatsComparison";
+// Removed PlayerStatsComparison import
 import { TeamStatsComparison } from "./components/stats/TeamStatsComparison";
 import KillsTable from "../../components/KillsTable/KillsTable";
 
@@ -51,6 +51,8 @@ export const MatchOverviewPage = () => {
     );
   };
 
+  // Removed unused PlayerStatsDisplay function
+  /*
   const PlayerStatsDisplay = ({ playerId }: { playerId: string }) => {
     const playerStatsRows = useAtomValue(
       playerStatsForMatchAtom({ matchId, playerId })
@@ -109,26 +111,33 @@ export const MatchOverviewPage = () => {
       />
     );
   };
+  */
 
-  const allPlayerIds = [...match.team1Players, ...match.team2Players];
+  // Removed unused allPlayerIds variable
+  // const allPlayerIds = [...match.team1Players, ...match.team2Players];
 
   return (
     <div className="flex flex-col gap-6">
       {/* Overall Match Card */}
-      <MatchCard
-        title={`${match.map} (${match.mode})`}
-        teamNames={[match.team1Name, match.team2Name]}
-        date={match.dateString} // Assuming dateString is suitable for display
-        mapName={match.map}
-        primaryStats={[
-          {
-            value: `${match.team1Score} - ${match.team2Score}`,
-            label: "Score",
-          },
-          { value: formatTime(match.duration), label: "Duration" },
-        ]}
-        // No link needed if already on the page
-      />
+      <div className="flex flex-col md:flex-row gap-6 mb-6">
+        <MatchCard
+          title={`${match.map} (${match.mode})`}
+          teamNames={[match.team1Name, match.team2Name]}
+          date={match.dateString} // Assuming dateString is suitable for display
+          mapName={match.map}
+          primaryStats={[
+            {
+              value: `${match.team1Score} - ${match.team2Score}`,
+              label: "Score",
+            },
+            { value: formatTime(match.duration), label: "Duration" },
+          ]}
+          // No link needed if already on the page
+        />
+
+        <TeamStatsComparison matchId={matchId} />
+        <KillsTable matchId={matchId} />
+      </div>
 
       {/* Team Cards */}
       <div className="flex flex-col md:flex-row flex-wrap gap-4">
@@ -137,27 +146,15 @@ export const MatchOverviewPage = () => {
       </div>
 
       {/* Player Cards */}
-      <h2 className="text-2xl font-semibold mt-4">Player Stats</h2>
+      {/* <h2 className="text-2xl font-semibold mt-4">Player Stats</h2>
       <div className="flex flex-col md:flex-row flex-wrap gap-4">
         {allPlayerIds.map((playerId) => (
           <PlayerStatsDisplay key={playerId} playerId={playerId} />
         ))}
-      </div>
+      </div> */}
 
-      {/* Existing Comparison Components */}
-      <h2 className="text-2xl font-semibold mt-4">Detailed Comparisons</h2>
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="flex-1">
-          <h3 className="text-xl font-medium mb-2">Team Comparison</h3>
-          <TeamStatsComparison matchId={matchId} />
-        </div>
-        <div className="flex-1">
-          <h3 className="text-xl font-medium mb-2">Kill Feed</h3>
-          <KillsTable matchId={matchId} />
-        </div>
-      </div>
-      <h3 className="text-xl font-medium mb-2 mt-4">Player Comparison</h3>
-      <PlayerStatsComparison matchId={matchId} />
+      <div className="flex flex-col lg:flex-row gap-4"></div>
+      {/* Removed PlayerStatsComparison component */}
     </div>
   );
 };

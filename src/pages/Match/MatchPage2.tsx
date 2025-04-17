@@ -29,6 +29,7 @@ export const MatchPage2 = () => {
   const matchNavItems = [
     { path: `/matches/${matchId}`, label: "Overview", end: true },
     { path: `/matches/${matchId}/timeline`, label: "Timeline" },
+    { path: `/matches/${matchId}/players`, label: "Players" }, // Add Players nav item
     { path: `/matches/${matchId}/compare`, label: "Compare" },
   ];
 

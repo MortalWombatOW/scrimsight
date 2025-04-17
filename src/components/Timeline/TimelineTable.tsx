@@ -3,7 +3,8 @@ import { useTimelineContext } from "./TimelineContext";
 import { formatDuration } from "../../lib";
 
 export const TimelineTable = (): ReactNode => {
-  const { loadedData, currentTimeRange, timeRangeLabel } = useTimelineContext();
+  // Removed unused timeRangeLabel from context destructuring
+  const { loadedData, currentTimeRange } = useTimelineContext();
 
   const playerStats = useMemo(() => {
     if (!loadedData?.events) return [];

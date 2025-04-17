@@ -25,6 +25,7 @@ import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 import { CallbackPage } from "./pages/Auth/CallbackPage";
 import { TimelinePage } from "./pages/Match/TimelinePage";
 import { MatchOverviewPage } from "./pages/Match/MatchOverviewPage";
+import { MatchPlayersPage } from "./pages/Match/MatchPlayersPage"; // Import the new players page
 import { MatchStatComparisonPage } from "./pages/Match/MatchStatComparisonPage";
 import { ScrimPage } from "./pages/Scrim/ScrimPage";
 import { MetricsExplorerPage } from "./pages/MetricsExplorer/MetricsExplorerPage"; // Import the new page
@@ -72,6 +73,8 @@ const App = () => {
                       path="compare"
                       element={<MatchStatComparisonPage />}
                     />
+                    <Route path="players" element={<MatchPlayersPage />} />{" "}
+                    {/* Add the new players route */}
                   </Route>
                   <Route path="/players" element={<PlayersPage />}>
                     <Route index element={<PlayersOverview />} />

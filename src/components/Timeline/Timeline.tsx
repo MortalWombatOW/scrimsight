@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import { TimelineProvider } from "./TimelineContext";
 import { TimelineTable } from "./TimelineTable";
 import { TimelineEvents } from "./TimelineEvents";
-import { TimelineDisplay } from "./TimelineDisplay";
+// Removed unused TimelineDisplay import
 import { TimelineControls } from "./TimelineControls";
 
 /**

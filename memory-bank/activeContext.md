@@ -4,6 +4,15 @@
 
 ---
 
+### Recent Changes (2025-04-10 PM)
+
+*   **Refactored Match Page Player Stats:** Moved the player statistics comparison component to a dedicated subpage.
+    *   Created `src/pages/Match/MatchPlayersPage.tsx` to host the `PlayerStatsComparison` component.
+    *   Updated routing in `src/App.tsx` to add the `/matches/:matchId/players` route, rendering `MatchPlayersPage`.
+    *   Updated navigation in `src/pages/Match/MatchPage2.tsx` to include a "Players" tab linking to the new route.
+    *   Removed the `PlayerStatsComparison` component from `src/pages/Match/MatchOverviewPage.tsx`.
+
+
 ### Recent Changes (2025-04-07 PM - Later)
 
 *   **Redesigned Timeline Events:** Modified `src/components/Timeline/TimelineEvents.tsx` to display events in a compact, scrollable "kill feed" style, similar to Overwatch.
