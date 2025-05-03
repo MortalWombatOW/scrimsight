@@ -27,6 +27,10 @@ export default defineConfig(({ mode }) => {
         assert: 'assert',
       },
     },
+    
+    optimizeDeps: {
+      exclude: ['pandas-js'],
+    },
 
     server: {
       port: 3000,
@@ -40,10 +44,25 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'build',
       sourcemap: mode === 'development',
+      commonjsOptions: {
+        transformMixedEsModules: true,
+        include: [/node_modules/],
+      },
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),
         },
+        external: [
+          'babel-runtime/helpers/toConsumableArray',
+          'babel-runtime/helpers/classCallCheck',
+          'babel-runtime/helpers/createClass',
+          'babel-runtime/helpers/possibleConstructorReturn',
+          'babel-runtime/helpers/get',
+          'babel-runtime/helpers/inherits',
+          'babel-runtime/helpers/slicedToArray',
+          'babel-runtime/helpers/typeof',
+          'babel-runtime/regenerator'
+        ],
       },
     },
     test: {

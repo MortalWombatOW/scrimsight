@@ -7,6 +7,7 @@ import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";
 import { IoStatsChartOutline } from "react-icons/io5"; // Import chart icon
+import { BsDatabaseFillGear } from "react-icons/bs"; // Import database icon for V2 data flow
 import { useEffect } from "react";
 import RoleIcon from "../Common/RoleIcon";
 import { CiMap } from "react-icons/ci";
@@ -199,6 +200,11 @@ export const Navigation = ({
           title: "Metrics Explorer",
           link: "/metrics",
           icon: <IoStatsChartOutline />,
+        })}
+        {renderMenuItem({
+          title: "V2 Architecture",
+          link: "/v2",
+          icon: <BsDatabaseFillGear />,
         })}
         {renderMenuItem({
           title: "Files",

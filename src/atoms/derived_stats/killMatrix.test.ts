@@ -6,47 +6,65 @@ import {
   generateKillMatrixData
 } from './killMatrix';
 
+// Import the PlayerInteractionEvent interface
+import { PlayerInteractionEvent } from '../derived_events/playerInteractionEventsAtom';
+
 // Sample interaction events for testing
-const sampleInteractionEvents = [
+const sampleInteractionEvents: PlayerInteractionEvent[] = [
   {
+    id: 'interaction1',
     matchId: 'match1',
     playerName: 'player1',
     playerTeam: 'team1',
+    playerHero: 'hero1',
     playerInteractionEventType: 'Killed player',
     otherPlayerName: 'player3',
-    matchTime: 100
+    playerInteractionEventTime: 100,
+    direction: 'outgoing'
   },
   {
+    id: 'interaction2',
     matchId: 'match1',
     playerName: 'player1',
     playerTeam: 'team1',
+    playerHero: 'hero1',
     playerInteractionEventType: 'Killed player',
     otherPlayerName: 'player4',
-    matchTime: 120
+    playerInteractionEventTime: 120,
+    direction: 'outgoing'
   },
   {
+    id: 'interaction3',
     matchId: 'match1',
     playerName: 'player2',
     playerTeam: 'team1',
+    playerHero: 'hero2',
     playerInteractionEventType: 'Killed player',
     otherPlayerName: 'player3',
-    matchTime: 140
+    playerInteractionEventTime: 140,
+    direction: 'outgoing'
   },
   {
+    id: 'interaction4',
     matchId: 'match1',
     playerName: 'player3',
     playerTeam: 'team2',
+    playerHero: 'hero3',
     playerInteractionEventType: 'Killed player',
     otherPlayerName: 'player1',
-    matchTime: 160
+    playerInteractionEventTime: 160,
+    direction: 'outgoing'
   },
   {
+    id: 'interaction5',
     matchId: 'match1',
     playerName: 'player4',
     playerTeam: 'team2',
+    playerHero: 'hero4',
     playerInteractionEventType: 'Shot fired',
     otherPlayerName: 'player2',
-    matchTime: 180
+    playerInteractionEventTime: 180,
+    direction: 'outgoing'
   }
 ];
 

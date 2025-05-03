@@ -23,6 +23,8 @@ interface DataSpec {
 
 type LogSpec = Record<string, DataSpec>;
 
+// Export the LOG_SPEC as public
+export { LOG_SPEC };
 
 // File Utilities
 export const readFileAsync = (file: File): Promise<string> => {

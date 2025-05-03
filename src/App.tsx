@@ -29,6 +29,8 @@ import { MatchPlayersPage } from "./pages/Match/MatchPlayersPage"; // Import the
 import { MatchStatComparisonPage } from "./pages/Match/MatchStatComparisonPage";
 import { ScrimPage } from "./pages/Scrim/ScrimPage";
 import { MetricsExplorerPage } from "./pages/MetricsExplorer/MetricsExplorerPage"; // Import the new page
+import { V2DataFlowPage } from "./pages/V2DataFlow"; // Import the V2 data flow visualization page
+import DataDisplayPage from "./pages/DataDisplayPage";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -98,11 +100,10 @@ const App = () => {
                     <Route path="compositions" element={<TeamCompositions />} />
                   </Route>
                   <Route path="/files" element={<AddFilesPage />} />
-                  <Route
-                    path="/metrics"
-                    element={<MetricsExplorerPage />}
-                  />{" "}
-                  {/* Add the new route */}
+                  <Route path="/metrics" element={<MetricsExplorerPage />} />
+                  <Route path="/v2" element={<V2DataFlowPage />} />
+                  {/* Data Display Page for v2 Silver Matches */}
+                  <Route path="/data-display" element={<DataDisplayPage />} />
                 </Routes>
               </Suspense>
             </Layout>
