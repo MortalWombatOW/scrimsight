@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { playerStatExtractorAtom } from './event_extractors/playerStatExtractorAtom';
+import { playerStatExtractorAtom } from '~/atoms/event_extractors/playerStatExtractorAtom';
 
 
 /**

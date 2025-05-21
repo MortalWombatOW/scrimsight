@@ -1,7 +1,7 @@
 import { atom } from "jotai";
-import { playerEventsAtom } from "../derived_events/playerEventsAtom";
-import { roundTimesAtom } from "../roundTimesAtom";
-import { MetricAtom } from "./metricUtils";
+import { playerEventsAtom } from "~/atoms/derived_events/playerEventsAtom";
+import { roundTimesAtom } from "~/atoms/roundTimesAtom";
+import { MetricAtom } from "~/atoms/metrics/metricUtils";
 
 export interface HeroPlaytime {
   playerName: string;

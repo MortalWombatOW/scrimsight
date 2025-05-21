@@ -4,9 +4,9 @@ import {
   PlayerStatsNumericalKeys,
   playerStatsNumericalKeys,
   playerStatsBaseNumericalKeys,
-} from '../metrics/playerMetricsAtoms';
-import { matchDataAtom } from '../matchDataAtom';
-import { uniqueMapNamesAtom } from '../uniqueMapNamesAtom'; // Assuming this exists
+} from '~/atoms/metrics/playerMetricsAtoms';
+import { matchDataAtom } from '~/atoms/matchDataAtom';
+import { uniqueMapNamesAtom } from '~/atoms/uniqueMapNamesAtom'; // Assuming this exists
 
 // Define the output structure for average stats per map
 export type AverageMapStats = {

@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { logFileParserAtom } from '../files/logFileParserAtom';
+import { logFileParserAtom } from '~/atoms/files/logFileParserAtom';
 
 /**
  * Interface for the match extractor atom's output

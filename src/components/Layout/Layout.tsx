@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { Navigation } from "./Navigation";
+import { Navigation } from "~/components/Layout/Navigation";
 import { Suspense, useEffect, useState } from "react";
 import { FaDiscord } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa6";
 import { useAuth } from "react-oidc-context";
-import { sampleDataEnabledAtom } from "../../atoms/files/sampleDataAtoms";
+import { sampleDataEnabledAtom } from "~/atoms/files/sampleDataAtoms";
 import { useAtom } from "jotai";
 
 const DiscordButton = () => {

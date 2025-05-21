@@ -4,10 +4,10 @@ import {
   createKillMatrix, 
   calculatePlayerTotals,
   generateKillMatrixData
-} from './killMatrix';
+} from '~/atoms/derived_stats/killMatrix';
 
 // Import the PlayerInteractionEvent interface
-import { PlayerInteractionEvent } from '../derived_events/playerInteractionEventsAtom';
+import { PlayerInteractionEvent } from '~/atoms/derived_events/playerInteractionEventsAtom';
 
 // Sample interaction events for testing
 const sampleInteractionEvents: PlayerInteractionEvent[] = [

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import RoleIcon from "./RoleIcon";
+import RoleIcon from "~/components/Common/RoleIcon";
 
 const meta: Meta<typeof RoleIcon> = {
   component: RoleIcon,

@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
-import { teamfightsAtom } from '../teamfightsAtom';
-import { ultimateEventsAtom, UltimateEvent } from '../derived_events/ultimateEventsAtom';
-import { killExtractorAtom } from '../event_extractors/killExtractorAtom';
-import { uniquePlayerNamesAtom } from '../uniquePlayerNamesAtom';
+import { teamfightsAtom } from '~/atoms/teamfightsAtom';
+import { ultimateEventsAtom, UltimateEvent } from '~/atoms/derived_events/ultimateEventsAtom';
+import { killExtractorAtom } from '~/atoms/event_extractors/killExtractorAtom';
+import { uniquePlayerNamesAtom } from '~/atoms/uniquePlayerNamesAtom';
 
 // Interface for stats per hero for a specific player
 export interface HeroUltimateImpactStats {

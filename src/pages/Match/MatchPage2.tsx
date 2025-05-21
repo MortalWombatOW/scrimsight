@@ -1,16 +1,16 @@
 import { useParams, Outlet } from "react-router-dom"; // Removed Link, useLocation
 import { useAtomValue } from "jotai";
-import { matchDataAtom } from "../../atoms";
-import { formatTime, mapNameToFileName } from "../../lib";
+import { matchDataAtom } from "~/atoms";
+import { formatTime, mapNameToFileName } from "~/lib";
 import { IoMdCalendar } from "react-icons/io";
 import { MdAccessTime } from "react-icons/md";
 import { TbClockHour1 } from "react-icons/tb";
 import { FiMapPin } from "react-icons/fi";
-import { SubPageNavigation } from "../../components/Layout/SubPageNavigation"; // Added import
+import { SubPageNavigation } from "~/components/Layout/SubPageNavigation"; // Added import
 import Container from "~/components/Container/Container"; // Added import
 
 // Import the extracted components
-import { MatchScoreCard } from "./components/scorecard/MatchScoreCard";
+import { MatchScoreCard } from "~/pages/Match/components/scorecard/MatchScoreCard";
 export const MatchPage2 = () => {
   const { matchId } = useParams<{ matchId: string }>();
   // Removed unused location variable:

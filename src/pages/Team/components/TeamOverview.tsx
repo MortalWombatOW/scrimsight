@@ -9,12 +9,12 @@ import {
   Tooltip,
 } from "recharts";
 // Removed useStats import
-import { teamListSummaryAtom } from "../../../atoms/metrics/listSummaryAtoms"; // Import summary atom
-import { TeamCard } from "../../../components/Card/TeamCard";
+import { teamListSummaryAtom } from "~/atoms/metrics/listSummaryAtoms"; // Import summary atom
+import { TeamCard } from "~/components/Card/TeamCard";
 // Removed unused: import { StatCard } from "../../../components/StatCard";
-import { teamMapTypeStatsAtom } from "../../../atoms/derived_stats/teamMapTypeStatsAtom";
-import { formatPercentage } from "../../../lib/format"; // Removed unused prettyFormat
-import { ErrorMessage } from "../../../components/Common/ErrorMessage";
+import { teamMapTypeStatsAtom } from "~/atoms/derived_stats/teamMapTypeStatsAtom";
+import { formatPercentage } from "~/lib/format"; // Removed unused prettyFormat
+import { ErrorMessage } from "~/components/Common/ErrorMessage";
 
 export const TeamOverview = () => {
   const { teamId } = useParams<{ teamId: string }>();

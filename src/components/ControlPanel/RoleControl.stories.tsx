@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import type { Meta, StoryObj } from "@storybook/react";
-import RoleControl from "./RoleControl";
-import { OverwatchRole } from "../../lib";
+import RoleControl from "~/components/ControlPanel/RoleControl";
+import { OverwatchRole } from "~/lib";
 import React from "react";
 
 const meta: Meta<typeof RoleControl> = {

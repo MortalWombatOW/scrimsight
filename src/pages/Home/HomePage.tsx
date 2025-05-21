@@ -1,18 +1,18 @@
 import React, { Suspense } from "react";
 import { Link } from "react-router-dom";
-import { matchDataAtom } from "../../atoms"; // Keep for hasData check
+import { matchDataAtom } from "~/atoms"; // Keep for hasData check
 import { useAtomValue } from "jotai";
-import ZeroState from "./ZeroState";
+import ZeroState from "~/pages/Home/ZeroState";
 import {
   scrimListSummaryAtom,
   teamListSummaryAtom,
   playerListSummaryAtom,
-} from "../../atoms/metrics/listSummaryAtoms"; // Import summary atoms
-import { ScrimCard } from "../../components/Card/ScrimCard";
-import { TeamCard } from "../../components/Card/TeamCard";
-import { PlayerCard } from "../../components/Card/PlayerCard";
+} from "~/atoms/metrics/listSummaryAtoms"; // Import summary atoms
+import { ScrimCard } from "~/components/Card/ScrimCard";
+import { TeamCard } from "~/components/Card/TeamCard";
+import { PlayerCard } from "~/components/Card/PlayerCard";
 import Container from "~/components/Container/Container"; // Added import
-import { formatTime, formatPercentage, prettyFormat } from "../../lib"; // Import formatters
+import { formatTime, formatPercentage, prettyFormat } from "~/lib"; // Import formatters
 
 const NUM_ITEMS_TO_SHOW = 3; // Number of cards to show per section
 

@@ -1,4 +1,4 @@
-import IconAndTextButton from "./IconAndText";
+import IconAndTextButton from "~/components/Common/IconAndText";
 import type { Meta, StoryObj } from "@storybook/react";
 import HealingIcon from "~/components/Icons/HealingIcon";
 // Removed MUI Icons: DeleteIcon, InfoIcon, WarningIcon

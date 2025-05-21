@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { matchDataAtom } from './matchDataAtom';
+import { matchDataAtom } from '~/atoms/matchDataAtom';
 
 export interface TeamPlayers {
   teamName: string;

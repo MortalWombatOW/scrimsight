@@ -1,12 +1,12 @@
 import { useParams, Outlet } from "react-router-dom";
 import { useAtom, useAtomValue } from "jotai";
-import { teamNamesAtom } from "../../atoms/teamNamesAtom";
-import { teamStatsAtom } from "../../atoms/teamStatsAtom";
+import { teamNamesAtom } from "~/atoms/teamNamesAtom";
+import { teamStatsAtom } from "~/atoms/teamStatsAtom";
 // Removed unused imports: allPlayersForTeamAtom, matchDataAtom
 // Removed unused component imports: TeamOverview, TeamPlayers, TeamMatches, TeamCompositions
-import { StatCard } from "../../components/StatCard";
-import { ErrorMessage } from "../../components/Common/ErrorMessage";
-import { SubPageNavigation } from "../../components/Layout/SubPageNavigation";
+import { StatCard } from "~/components/StatCard";
+import { ErrorMessage } from "~/components/Common/ErrorMessage";
+import { SubPageNavigation } from "~/components/Layout/SubPageNavigation";
 import Container from "~/components/Container/Container"; // Added import
 
 export const TeamPage = () => {

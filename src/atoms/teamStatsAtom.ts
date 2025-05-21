@@ -1,8 +1,8 @@
 import { Atom, atom } from 'jotai';
-import { allPlayersForTeamAtom } from './allPlayersForTeamAtom';
-import { matchDataAtom } from './matchDataAtom';
-import { TeamPlayers } from './allPlayersForTeamAtom';
-import { MatchData } from './matchDataAtom';
+import { allPlayersForTeamAtom } from '~/atoms/allPlayersForTeamAtom';
+import { matchDataAtom } from '~/atoms/matchDataAtom';
+import { TeamPlayers } from '~/atoms/allPlayersForTeamAtom';
+import { MatchData } from '~/atoms/matchDataAtom';
 
 // Define the interface for team stats
 export interface TeamStats {

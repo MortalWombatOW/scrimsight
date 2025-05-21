@@ -1,5 +1,5 @@
-import { PlayerStatsNumericalKeys, playerStatsNumericalKeys } from '../metrics/playerMetricsAtoms';
-import { OverwatchRole } from '../../lib/hero';
+import { PlayerStatsNumericalKeys, playerStatsNumericalKeys } from '~/atoms/metrics/playerMetricsAtoms';
+import { OverwatchRole } from '~/lib/hero';
 
 // Define the parameters for the function
 export interface PlayerComparisonParams {

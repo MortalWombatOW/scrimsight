@@ -1,10 +1,10 @@
 import { type ReactNode } from "react";
 // Removed useStats import for overall stats, keep for hero stats for now
-import { useStats } from "../../../atoms";
+import { useStats } from "~/atoms";
 import { useAtomValue } from "jotai"; // Import useAtomValue
-import { playerListSummaryAtom } from "../../../atoms/metrics/listSummaryAtoms"; // Import summary atom
-import { PlayerCard } from "../../../components/Card/PlayerCard"; // Import PlayerCard
-import { StatCard } from "../../../components/StatCard";
+import { playerListSummaryAtom } from "~/atoms/metrics/listSummaryAtoms"; // Import summary atom
+import { PlayerCard } from "~/components/Card/PlayerCard"; // Import PlayerCard
+import { StatCard } from "~/components/StatCard";
 import {
   ResponsiveContainer,
   BarChart,
@@ -17,11 +17,11 @@ import {
   Cell,
 } from "recharts";
 // Removed duplicate import: import { useAtomValue } from "jotai";
-import { matchDataAtom } from "../../../atoms/matchDataAtom";
+import { matchDataAtom } from "~/atoms/matchDataAtom";
 import { format } from "date-fns";
-import { getRoleFromHero } from "../../../lib/hero";
+import { getRoleFromHero } from "~/lib/hero";
 import { useParams } from "react-router-dom";
-import { prettyFormat } from "../../../lib/format"; // Import prettyFormat
+import { prettyFormat } from "~/lib/format"; // Import prettyFormat
 
 // interface PlayerOverviewProps { // Remove prop interface
 //   playerName: string;

@@ -18,7 +18,7 @@ import {
   PlayerStatsCategoryKeys,
   PlayerStatsNumericalKeys,
 } from "~/atoms/metrics/playerMetricsAtoms";
-import { getColor } from "../utils/metricExplorerStyles"; // Import color function
+import { getColor } from "~/pages/MetricsExplorer/utils/metricExplorerStyles"; // Import color function
 
 interface MetricsChartProps {
   data: any[]; // Consider defining a more specific type if possible

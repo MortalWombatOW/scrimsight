@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import { teamfightsAtom } from '../teamfightsAtom'; // Removed unused Teamfight type import
-import { PlayerInteractionEvent, playerInteractionEventsAtom } from '../derived_events/playerInteractionEventsAtom';
+import { teamfightsAtom } from '~/atoms/teamfightsAtom'; // Removed unused Teamfight type import
+import { PlayerInteractionEvent, playerInteractionEventsAtom } from '~/atoms/derived_events/playerInteractionEventsAtom';
 
 export interface TeamfightParticipation {
   team1Players: string[];

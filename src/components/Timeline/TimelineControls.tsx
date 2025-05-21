@@ -1,11 +1,11 @@
 import { type ReactNode, useMemo } from "react";
 import { useAtomValue } from "jotai"; // Import useAtomValue
-import { useTimelineContext } from "./TimelineContext";
-import { TimelineButton, type TimelineSegmentButtonData } from "./TimelineButton"; // Import new component and type
+import { useTimelineContext } from "~/components/Timeline/TimelineContext";
+import { TimelineButton, type TimelineSegmentButtonData } from "~/components/Timeline/TimelineButton"; // Import new component and type
 import {
   roundEndExtractorAtom,
   type RoundEndLogEvent, // Corrected type name
-} from "../../atoms/event_extractors/roundEndExtractorAtom"; // Import atom and type
+} from "~/atoms/event_extractors/roundEndExtractorAtom"; // Import atom and type
 
 export const TimelineControls = (): ReactNode => {
   const { setCurrentTimeRange, loadedData, currentTimeRange } =

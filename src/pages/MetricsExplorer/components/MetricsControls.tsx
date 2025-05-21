@@ -13,7 +13,7 @@ import {
   sortBySelectStyles,
   sortDirectionSelectStyles,
   filterSelectStyles,
-} from "../utils/metricExplorerStyles";
+} from "~/pages/MetricsExplorer/utils/metricExplorerStyles";
 
 // Define option type for react-select
 type OptionType = { value: string; label: string };

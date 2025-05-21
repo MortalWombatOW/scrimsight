@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import { matchDataAtom } from '../matchDataAtom';
-import { logFileParserAtom, LogFileParserOutput } from '../files/logFileParserAtom'; // Use correct atom and type
+import { matchDataAtom } from '~/atoms/matchDataAtom';
+import { logFileParserAtom, LogFileParserOutput } from '~/atoms/files/logFileParserAtom'; // Use correct atom and type
 
 // Define a basic LogEvent type based on expected properties
 interface LogEvent {

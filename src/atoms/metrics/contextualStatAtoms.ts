@@ -5,10 +5,10 @@ import {
   // Removed unused: PlayerStatsCategoryKeys,
   PlayerStatsNumericalKeys,
   getStatsAtom,
-} from './playerMetricsAtoms';
-import { Grouped, Metric } from './metricUtils'; // Removed unused MetricAtom
-import { Scrim, scrimAtom } from '../scrimAtom';
-import { MatchData, matchDataAtom } from '../matchDataAtom';
+} from '~/atoms/metrics/playerMetricsAtoms';
+import { Grouped, Metric } from '~/atoms/metrics/metricUtils'; // Removed unused MetricAtom
+import { Scrim, scrimAtom } from '~/atoms/scrimAtom';
+import { MatchData, matchDataAtom } from '~/atoms/matchDataAtom';
 
 // --- Player Stats for Match ---
 

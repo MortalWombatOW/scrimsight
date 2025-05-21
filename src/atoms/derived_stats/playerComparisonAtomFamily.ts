@@ -1,14 +1,14 @@
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { getStatsAtom } from '../metrics/playerMetricsAtoms';
-import { averageMetricPerRoleAtom } from './averageMetricPerRoleAtom';
-import { averageMetricPerHeroAtom } from './averageMetricPerHeroAtom';
+import { getStatsAtom } from '~/atoms/metrics/playerMetricsAtoms';
+import { averageMetricPerRoleAtom } from '~/atoms/derived_stats/averageMetricPerRoleAtom';
+import { averageMetricPerHeroAtom } from '~/atoms/derived_stats/averageMetricPerHeroAtom';
 import { 
   generatePlayerComparison, 
   getPlayerStatsFilter,
   type PlayerComparisonParams,
   type MetricComparison
-} from './playerComparison';
+} from '~/atoms/derived_stats/playerComparison';
 
 // Atom family to compare player stats against benchmarks
 export const playerComparisonAtomFamily = atomFamily(

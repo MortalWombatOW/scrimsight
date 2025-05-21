@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import { readFileAsync } from './scrimtime';
-import { logFileInputAtom } from './logFileInputAtom';
+import { readFileAsync } from '~/atoms/files/scrimtime';
+import { logFileInputAtom } from '~/atoms/files/logFileInputAtom';
 
 /**
  * Interface for the log file loader atom's output

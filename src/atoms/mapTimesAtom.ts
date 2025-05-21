@@ -1,7 +1,7 @@
 import { Atom, atom } from 'jotai';
-import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
-import { matchEndExtractorAtom } from './event_extractors/matchEndExtractorAtom';
-import { roundTimesAtom } from './roundTimesAtom';
+import { matchStartExtractorAtom } from '~/atoms/event_extractors/matchStartExtractorAtom';
+import { matchEndExtractorAtom } from '~/atoms/event_extractors/matchEndExtractorAtom';
+import { roundTimesAtom } from '~/atoms/roundTimesAtom';
 
 /**
  * Interface for map times data

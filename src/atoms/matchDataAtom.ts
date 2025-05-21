@@ -1,10 +1,10 @@
 import { atom } from 'jotai';
-import { matchExtractorAtom } from './event_extractors/matchExtractorAtom';
-import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
-import { matchEndExtractorAtom } from './event_extractors/matchEndExtractorAtom';
-import { playerStatExtractorAtom } from './event_extractors/playerStatExtractorAtom';
-import { mapTimesAtom } from './mapTimesAtom';
-import { roundEndExtractorAtom } from './event_extractors/roundEndExtractorAtom';
+import { matchExtractorAtom } from '~/atoms/event_extractors/matchExtractorAtom';
+import { matchStartExtractorAtom } from '~/atoms/event_extractors/matchStartExtractorAtom';
+import { matchEndExtractorAtom } from '~/atoms/event_extractors/matchEndExtractorAtom';
+import { playerStatExtractorAtom } from '~/atoms/event_extractors/playerStatExtractorAtom';
+import { mapTimesAtom } from '~/atoms/mapTimesAtom';
+import { roundEndExtractorAtom } from '~/atoms/event_extractors/roundEndExtractorAtom';
 /**
  * Interface for combined match data
  */

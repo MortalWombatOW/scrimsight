@@ -1,4 +1,4 @@
-import { createEventExtractorAtom } from './createEventExtractorAtom';
+import { createEventExtractorAtom } from '~/atoms/event_extractors/createEventExtractorAtom';
 
 /**
  * Interface for damage events

@@ -11,11 +11,11 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { Layout } from "~/components/Layout/Layout";
-import AtomNode from "./components/AtomNode";
-import EdgeLabel from "./components/EdgeLabel";
-import { getLayoutedElements } from "./utils/dagre";
-import { useAtomData } from "./hooks/useAtomData";
-import LayerSelector from "./components/LayerSelector";
+import AtomNode from "~/pages/SchemaVisualizer/components/AtomNode";
+import EdgeLabel from "~/pages/SchemaVisualizer/components/EdgeLabel";
+import { getLayoutedElements } from "~/pages/SchemaVisualizer/utils/dagre";
+import { useAtomData } from "~/pages/SchemaVisualizer/hooks/useAtomData";
+import LayerSelector from "~/pages/SchemaVisualizer/components/LayerSelector";
 
 const SchemaVisualizerPage: React.FC = () => {
   const {

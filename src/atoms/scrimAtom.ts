@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { MatchData, matchDataAtom } from './matchDataAtom';
+import { MatchData, matchDataAtom } from '~/atoms/matchDataAtom';
 
 export interface Scrim {
   dateString: string;

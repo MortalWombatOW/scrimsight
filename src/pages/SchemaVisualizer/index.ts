@@ -1,3 +1,3 @@
-import SchemaVisualizerPage from './SchemaVisualizerPage';
+import SchemaVisualizerPage from '~/pages/SchemaVisualizer/SchemaVisualizerPage';
 
 export default SchemaVisualizerPage;

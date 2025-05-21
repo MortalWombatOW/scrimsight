@@ -2,34 +2,34 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { Suspense } from "react";
-import { Layout } from "./components/Layout/Layout";
-import { HomePage } from "./pages/Home";
-import { AddFilesPage } from "./pages/AddFiles/AddFilesPage";
-import { ScrimsPage } from "./pages/Scrims/ScrimsPage";
-import { PlayersPage } from "./pages/Players/PlayersPage";
-import { PlayersOverview } from "./pages/Players/components/Overview/PlayersOverview";
-import { PlayersPerformance } from "./pages/Players/components/Performance/PlayersPerformance";
-import { PlayersHeroes } from "./pages/Players/components/Heroes/PlayersHeroes";
-import { TeamsPage } from "./pages/Teams";
-import { PlayerPage } from "./pages/Player";
-import { PlayerOverview as SinglePlayerOverview } from "./pages/Player/components/PlayerOverview"; // Renamed import
-import { PlayerHeroes as SinglePlayerHeroes } from "./pages/Player/components/PlayerHeroes"; // Renamed import
-import { PlayerMatches as SinglePlayerMatches } from "./pages/Player/components/PlayerMatches"; // Renamed import
-import { TeamPage } from "./pages/Team";
-import { TeamOverview } from "./pages/Team/components/TeamOverview";
-import { TeamPlayers } from "./pages/Team/components/TeamPlayers";
-import { TeamMatches } from "./pages/Team/components/TeamMatches";
-import { TeamCompositions } from "./pages/Team/components/TeamCompositions";
-import { MatchPage2 } from "./pages/Match/MatchPage2";
+import { Layout } from "~/components/Layout/Layout";
+import { HomePage } from "~/pages/Home";
+import { AddFilesPage } from "~/pages/AddFiles/AddFilesPage";
+import { ScrimsPage } from "~/pages/Scrims/ScrimsPage";
+import { PlayersPage } from "~/pages/Players/PlayersPage";
+import { PlayersOverview } from "~/pages/Players/components/Overview/PlayersOverview";
+import { PlayersPerformance } from "~/pages/Players/components/Performance/PlayersPerformance";
+import { PlayersHeroes } from "~/pages/Players/components/Heroes/PlayersHeroes";
+import { TeamsPage } from "~/pages/Teams";
+import { PlayerPage } from "~/pages/Player";
+import { PlayerOverview as SinglePlayerOverview } from "~/pages/Player/components/PlayerOverview"; // Renamed import
+import { PlayerHeroes as SinglePlayerHeroes } from "~/pages/Player/components/PlayerHeroes"; // Renamed import
+import { PlayerMatches as SinglePlayerMatches } from "~/pages/Player/components/PlayerMatches"; // Renamed import
+import { TeamPage } from "~/pages/Team";
+import { TeamOverview } from "~/pages/Team/components/TeamOverview";
+import { TeamPlayers } from "~/pages/Team/components/TeamPlayers";
+import { TeamMatches } from "~/pages/Team/components/TeamMatches";
+import { TeamCompositions } from "~/pages/Team/components/TeamCompositions";
+import { MatchPage2 } from "~/pages/Match/MatchPage2";
 import { AuthProvider, AuthProviderProps } from "react-oidc-context";
-import { CallbackPage } from "./pages/Auth/CallbackPage";
-import { TimelinePage } from "./pages/Match/TimelinePage";
-import { MatchOverviewPage } from "./pages/Match/MatchOverviewPage";
-import { MatchPlayersPage } from "./pages/Match/MatchPlayersPage"; // Import the new players page
-import { MatchStatComparisonPage } from "./pages/Match/MatchStatComparisonPage";
-import { ScrimPage } from "./pages/Scrim/ScrimPage";
-import { MetricsExplorerPage } from "./pages/MetricsExplorer/MetricsExplorerPage"; // Import the new page
-import SchemaVisualizerPage from "./pages/SchemaVisualizer";
+import { CallbackPage } from "~/pages/Auth/CallbackPage";
+import { TimelinePage } from "~/pages/Match/TimelinePage";
+import { MatchOverviewPage } from "~/pages/Match/MatchOverviewPage";
+import { MatchPlayersPage } from "~/pages/Match/MatchPlayersPage"; // Import the new players page
+import { MatchStatComparisonPage } from "~/pages/Match/MatchStatComparisonPage";
+import { ScrimPage } from "~/pages/Scrim/ScrimPage";
+import { MetricsExplorerPage } from "~/pages/MetricsExplorer/MetricsExplorerPage"; // Import the new page
+import SchemaVisualizerPage from "~/pages/SchemaVisualizer";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {

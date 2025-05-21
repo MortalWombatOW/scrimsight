@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { PlayerStatsComparison } from "./components/stats/PlayerStatsComparison";
+import { PlayerStatsComparison } from "~/pages/Match/components/stats/PlayerStatsComparison";
 
 export const MatchPlayersPage = () => {
   const { matchId } = useParams<{ matchId: string }>();

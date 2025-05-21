@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import type { Meta, StoryObj } from "@storybook/react";
-import TimeRangeSlider from "./TimeRangeSlider";
+import TimeRangeSlider from "~/components/ControlPanel/TimeRangeSlider";
 import React from "react";
 
 const meta: Meta<typeof TimeRangeSlider> = {

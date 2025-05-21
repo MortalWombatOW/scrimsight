@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
-import { parseFile } from './scrimtime';
-import { stringHash } from '../../lib/string';
-import { logFileLoaderAtom } from './logFileLoaderAtom';
-import { sampleDataAtom } from './sampleDataAtoms';
+import { parseFile } from '~/atoms/files/scrimtime';
+import { stringHash } from '~/lib/string';
+import { logFileLoaderAtom } from '~/atoms/files/logFileLoaderAtom';
+import { sampleDataAtom } from '~/atoms/files/sampleDataAtoms';
 /**
  * Interface for the log file parser atom's output
  */

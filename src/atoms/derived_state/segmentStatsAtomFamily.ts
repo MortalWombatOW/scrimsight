@@ -1,10 +1,10 @@
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { playerStatusTimelineAtom, PlayerStatusTimeline } from './playerStatusTimelineAtom';
-import { playerInteractionEventsAtom, PlayerInteractionEvent } from '../derived_events/playerInteractionEventsAtom';
-import { ultimateEventsAtom, UltimateEvent } from '../derived_events/ultimateEventsAtom';
-import { teamfightsAtom } from '../teamfightsAtom'; // Removed unused Teamfight type import
-import { matchDataAtom } from '../matchDataAtom';
+import { playerStatusTimelineAtom, PlayerStatusTimeline } from '~/atoms/derived_state/playerStatusTimelineAtom';
+import { playerInteractionEventsAtom, PlayerInteractionEvent } from '~/atoms/derived_events/playerInteractionEventsAtom';
+import { ultimateEventsAtom, UltimateEvent } from '~/atoms/derived_events/ultimateEventsAtom';
+import { teamfightsAtom } from '~/atoms/teamfightsAtom'; // Removed unused Teamfight type import
+import { matchDataAtom } from '~/atoms/matchDataAtom';
 
 export interface SegmentParams {
   matchId: string;

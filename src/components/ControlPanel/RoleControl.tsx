@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { OverwatchRole } from "../../lib";
-import RoleCheckbox from "./RoleCheckbox";
+import { OverwatchRole } from "~/lib";
+import RoleCheckbox from "~/components/ControlPanel/RoleCheckbox";
 
 interface RoleControlProps {
   selectedRoles: OverwatchRole[];

@@ -1,20 +1,20 @@
 import { useAtomValue } from "jotai";
-import { scrimAtom } from "../../atoms/scrimAtom"; // Keep scrimAtom for finding the scrim
+import { scrimAtom } from "~/atoms/scrimAtom"; // Keep scrimAtom for finding the scrim
 // Removed matchDataAtom import
 // Removed duplicate imports below
-import { formatTime, prettyFormat } from "../../lib";
+import { formatTime, prettyFormat } from "~/lib";
 import { IoTimeOutline } from "react-icons/io5";
 import { TbTournament } from "react-icons/tb";
 import { useParams } from "react-router-dom"; // Removed unused Link
-import { TeamCard } from "../../components/Card/TeamCard";
-import { PlayerCard } from "../../components/Card/PlayerCard";
-import { MatchCard } from "../../components/Card/MatchCard"; // Import MatchCard
+import { TeamCard } from "~/components/Card/TeamCard";
+import { PlayerCard } from "~/components/Card/PlayerCard";
+import { MatchCard } from "~/components/Card/MatchCard"; // Import MatchCard
 import {
   teamStatsForScrimAtom,
   playerStatsForScrimAtom,
   matchStatsForScrimAtom,
-} from "../../atoms/metrics/contextualStatAtoms"; // Import contextual atoms
-import { MatchData } from "../../atoms/matchDataAtom"; // Import MatchData type for matchStatsForScrimAtom
+} from "~/atoms/metrics/contextualStatAtoms"; // Import contextual atoms
+import { MatchData } from "~/atoms/matchDataAtom"; // Import MatchData type for matchStatsForScrimAtom
 import Container from "~/components/Container/Container"; // Added import
 
 export const ScrimPage = () => {

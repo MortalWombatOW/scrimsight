@@ -4,7 +4,7 @@ import {
   PlayerStatsNumericalKeys,
   playerStatsNumericalKeys,
   playerStatsBaseNumericalKeys,
-} from '../metrics/playerMetricsAtoms';
+} from '~/atoms/metrics/playerMetricsAtoms';
 // Removed incorrect import: import { uniqueHeroNamesAtom } from '../uniqueHeroNamesAtom';
 
 // Define the output structure for average stats per hero

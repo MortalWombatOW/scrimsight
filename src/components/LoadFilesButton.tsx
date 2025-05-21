@@ -18,7 +18,7 @@ declare global {
 }
 
 import { useAtom } from "jotai";
-import { logFileInputMutationAtom } from "../atoms/files";
+import { logFileInputMutationAtom } from "~/atoms/files";
 
 export const LoadFilesButton = () => {
   const [, setFiles] = useAtom(logFileInputMutationAtom);

@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import { logFileParserAtom } from '../files/logFileParserAtom';
-import { extractEventsFromFiles } from './extractEventHelpers';
+import { logFileParserAtom } from '~/atoms/files/logFileParserAtom';
+import { extractEventsFromFiles } from '~/atoms/event_extractors/extractEventHelpers';
 
 /**
  * Creates an atom that extracts events of a specific type from the parsed log files

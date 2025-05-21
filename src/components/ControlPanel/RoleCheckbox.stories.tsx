@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import RoleCheckbox from "./RoleCheckbox";
+import RoleCheckbox from "~/components/ControlPanel/RoleCheckbox";
 
 const meta: Meta<typeof RoleCheckbox> = {
   component: RoleCheckbox,

@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { useTimelineContext } from "./TimelineContext"; // Import context hook
+import { useTimelineContext } from "~/components/Timeline/TimelineContext"; // Import context hook
 
 // Moved and updated TimeSegment type
 export type TimeSegment = {

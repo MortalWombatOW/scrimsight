@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { Teamfight, teamfightsAtom } from '../teamfightsAtom';
+import { Teamfight, teamfightsAtom } from '~/atoms/teamfightsAtom';
 
 export interface FirstKillImpactStats {
   totalFights: number;

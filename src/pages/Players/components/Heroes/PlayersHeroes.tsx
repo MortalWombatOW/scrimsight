@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useStats } from "../../../../atoms";
-import { OverwatchRole, getHeroImage } from "../../../../lib/hero";
-import RoleIcon from "../../../../components/Common/RoleIcon";
-import { prettyFormat } from "../../../../lib/format";
+import { useStats } from "~/atoms";
+import { OverwatchRole, getHeroImage } from "~/lib/hero";
+import RoleIcon from "~/components/Common/RoleIcon";
+import { prettyFormat } from "~/lib/format";
 
 export const PlayersHeroes = () => {
   const [selectedRole, setSelectedRole] = useState<OverwatchRole | "all">(

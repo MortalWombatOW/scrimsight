@@ -4,20 +4,20 @@ import {
   playerStatsBaseAtom,
   // Removed unused: playerStatsBaseNumericalKeys,
   PlayerStatsNumericalKeys,
-} from './playerMetricsAtoms';
+} from '~/atoms/metrics/playerMetricsAtoms';
 import {
   // Removed unused: HeroPlaytime,
   // Removed unused: HeroPlaytimeCategoryKeys,
   // Removed unused: HeroPlaytimeNumericalKeys,
   heroPlaytimeAtom,
-} from './heroPlaytimeAtom';
+} from '~/atoms/metrics/heroPlaytimeAtom';
 // Removed unused: import { allPlayersForTeamAtom } from '../allPlayersForTeamAtom';
-import { scrimAtom } from '../scrimAtom'; // Removed unused Scrim type
-import { teamStatsAtom } from '../teamStatsAtom'; // Removed unused TeamStats type
-import { groupByAtom, Grouped } from './metricUtils'; // Removed unused MetricAtom
-import { OverwatchRole, getRankForRole } from '../../lib/hero';
-import { playerFirstKillDeathRateAtom } from '../derived_stats/playerFirstKillDeathRateAtom'; // Import the new atom
-import { firstKillImpactAtom } from '../derived_stats/firstKillImpactAtom'; // Import first kill impact atom
+import { scrimAtom } from '~/atoms/scrimAtom'; // Removed unused Scrim type
+import { teamStatsAtom } from '~/atoms/teamStatsAtom'; // Removed unused TeamStats type
+import { groupByAtom, Grouped } from '~/atoms/metrics/metricUtils'; // Removed unused MetricAtom
+import { OverwatchRole, getRankForRole } from '~/lib/hero';
+import { playerFirstKillDeathRateAtom } from '~/atoms/derived_stats/playerFirstKillDeathRateAtom'; // Import the new atom
+import { firstKillImpactAtom } from '~/atoms/derived_stats/firstKillImpactAtom'; // Import first kill impact atom
 
 // --- Player List Summary ---
 

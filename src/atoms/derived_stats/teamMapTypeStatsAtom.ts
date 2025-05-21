@@ -1,7 +1,7 @@
 import { atom } from 'jotai'; // Import atom
 import { atomFamily } from 'jotai/utils';
 import { Getter } from 'jotai'; // Import Getter type
-import { matchDataAtom, MatchData } from '../matchDataAtom';
+import { matchDataAtom, MatchData } from '~/atoms/matchDataAtom';
 
 export interface MapModeStats {
   wins: number;

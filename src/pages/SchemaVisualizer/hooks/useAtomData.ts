@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { MarkerType, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
-import { AtomCollection } from '../types';
-import { getAtomData } from '../services/atomDataService';
+import { AtomCollection } from '~/pages/SchemaVisualizer/types';
+import { getAtomData } from '~/pages/SchemaVisualizer/services/atomDataService';
 
 export const useAtomData = () => {
   const [atomData, setAtomData] = useState<AtomCollection | null>(null);

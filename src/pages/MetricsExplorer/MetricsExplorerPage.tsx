@@ -11,10 +11,10 @@ import {
   // Removed playerStatsNumericalKeys array import
 } from "~/atoms/metrics/playerMetricsAtoms";
 // Removed customSelectStyles import
-import { useMetricsTableColumns } from "./hooks/useMetricsTableColumns";
-import { MetricsDataTable } from "./components/MetricsDataTable";
-import { MetricsChart } from "./components/MetricsChart";
-import { MetricsControls } from "./components/MetricsControls"; // Import the new controls component
+import { useMetricsTableColumns } from "~/pages/MetricsExplorer/hooks/useMetricsTableColumns";
+import { MetricsDataTable } from "~/pages/MetricsExplorer/components/MetricsDataTable";
+import { MetricsChart } from "~/pages/MetricsExplorer/components/MetricsChart";
+import { MetricsControls } from "~/pages/MetricsExplorer/components/MetricsControls"; // Import the new controls component
 
 export const MetricsExplorerPage: React.FC = () => {
   // State for user selections (will be expanded)

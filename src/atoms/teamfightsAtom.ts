@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
-import { PlayerInteractionEvent, playerInteractionEventsAtom} from './derived_events';
-import { ultimateEventsAtom } from './derived_events/ultimateEventsAtom';
-import { matchDataAtom } from './matchDataAtom';
+import { PlayerInteractionEvent, playerInteractionEventsAtom} from '~/atoms/derived_events';
+import { ultimateEventsAtom } from '~/atoms/derived_events/ultimateEventsAtom';
+import { matchDataAtom } from '~/atoms/matchDataAtom';
 const TEAMFIGHT_BUFFER_TIME = 10; // seconds
 const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
 

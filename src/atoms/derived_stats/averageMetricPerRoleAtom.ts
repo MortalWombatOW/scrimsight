@@ -5,8 +5,8 @@ import {
   playerStatsNumericalKeys, // Import all numerical keys
   // PlayerStatsBaseNumericalKeys, // Type not needed directly here
   playerStatsBaseNumericalKeys, // Import the constant array
-} from '../metrics/playerMetricsAtoms';
-import { OverwatchRole } from '../../lib/hero';
+} from '~/atoms/metrics/playerMetricsAtoms';
+import { OverwatchRole } from '~/lib/hero';
 // Removed unused: import { Grouped } from '../metrics/metricUtils';
 
 // Define the output structure for average stats per role

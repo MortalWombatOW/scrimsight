@@ -1,11 +1,11 @@
 import { useState, useMemo, type ReactNode } from "react";
 import { useParams } from "react-router-dom"; // Removed unused Link
 import { useAtomValue } from "jotai";
-import { MatchData, matchDataAtom } from "../../../atoms/matchDataAtom";
+import { MatchData, matchDataAtom } from "~/atoms/matchDataAtom";
 // Removed unused: import { formatDate } from "../../../lib/date";
-import { formatTime } from "../../../lib/format";
-import { ErrorMessage } from "../../../components/Common/ErrorMessage";
-import { MatchCard } from "../../../components/Card/MatchCard"; // Import MatchCard
+import { formatTime } from "~/lib/format";
+import { ErrorMessage } from "~/components/Common/ErrorMessage";
+import { MatchCard } from "~/components/Card/MatchCard"; // Import MatchCard
 
 // Define a type for keys of MatchData that hold string values
 type StringMatchDataKeys = {

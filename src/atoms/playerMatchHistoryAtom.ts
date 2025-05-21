@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
-import { playerStatExtractorAtom } from './event_extractors/playerStatExtractorAtom';
-import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
-import { matchEndExtractorAtom } from './event_extractors/matchEndExtractorAtom';
-import { matchExtractorAtom } from './event_extractors/matchExtractorAtom';
+import { playerStatExtractorAtom } from '~/atoms/event_extractors/playerStatExtractorAtom';
+import { matchStartExtractorAtom } from '~/atoms/event_extractors/matchStartExtractorAtom';
+import { matchEndExtractorAtom } from '~/atoms/event_extractors/matchEndExtractorAtom';
+import { matchExtractorAtom } from '~/atoms/event_extractors/matchExtractorAtom';
 
 export interface PlayerMatch {
   matchId: string;

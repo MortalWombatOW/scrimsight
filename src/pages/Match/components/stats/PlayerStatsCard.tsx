@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useStats } from "../../../../atoms";
+import { useStats } from "~/atoms";
 import {
   getHeroImage,
   camelCaseToAbbreviation,
   camelCaseToWords,
   prettyFormat,
-} from "../../../../lib";
-import { ProgressBar } from "../../../../components/ProgressBar";
+} from "~/lib";
+import { ProgressBar } from "~/components/ProgressBar";
 
 interface PlayerStatsCardProps {
   playerName: string;

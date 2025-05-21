@@ -5,6 +5,8 @@ import _import from 'eslint-plugin-import';
 import tsParser from '@typescript-eslint/parser';
 import unusedImports from 'eslint-plugin-unused-imports';
 import stylistic from '@stylistic/eslint-plugin';
+import pathAlias from 'eslint-plugin-path-alias'
+import boundaries from "eslint-plugin-boundaries";
 
 export default [
   {
@@ -19,6 +21,8 @@ export default [
       import: _import,
       'unused-imports': unusedImports,
       stylistic,
+      'path-alias': pathAlias,
+      boundaries,
     },
     languageOptions: {
       parser: tsParser,
@@ -34,6 +38,24 @@ export default [
       react: {
         version: 'detect',
       },
+      "boundaries/elements": [
+        {
+          type: "atoms",
+          pattern: "atoms/*"
+        },
+        {
+          type: "components",
+          pattern: "components/*"
+        },
+        {
+          type: "pages",
+          pattern: "pages/*"
+        },
+        {
+          type: "library",
+          pattern: "lib/*"
+        }
+      ],
     },
     rules: {
       'react-hooks/rules-of-hooks': 'error',
@@ -55,6 +77,17 @@ export default [
         'ignoreTrailingComments': false,
         'ignorePattern': '^import\\s.+\\sfrom\\s.+\\s;',
       }],
+      'path-alias/no-relative': ['error', {}],
+      ...boundaries.configs.strict.rules,
+    //   "boundaries/element-types": [2, {
+    //   default: "disallow",
+    //   rules: [
+    //     {
+    //       from: "pages",
+    //       allow: ["components"]
+    //     },
+    //   ]
+    // }],
     },
   },
   {

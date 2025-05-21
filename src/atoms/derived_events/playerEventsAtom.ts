@@ -1,11 +1,11 @@
 import { Atom, atom } from 'jotai';
-import { defensiveAssistExtractorAtom } from '../event_extractors/defensiveAssistExtractorAtom';
-import { offensiveAssistExtractorAtom } from '../event_extractors/offensiveAssistExtractorAtom';
-import { heroSpawnExtractorAtom } from '../event_extractors/heroSpawnExtractorAtom';
-import { heroSwapExtractorAtom } from '../event_extractors/heroSwapExtractorAtom';
-import { ability1UsedExtractorAtom } from '../event_extractors/ability1UsedExtractorAtom';
-import { ability2UsedExtractorAtom } from '../event_extractors/ability2UsedExtractorAtom';
-import { combinePlayerEvents, type PlayerEvent } from './playerEvents';
+import { defensiveAssistExtractorAtom } from '~/atoms/event_extractors/defensiveAssistExtractorAtom';
+import { offensiveAssistExtractorAtom } from '~/atoms/event_extractors/offensiveAssistExtractorAtom';
+import { heroSpawnExtractorAtom } from '~/atoms/event_extractors/heroSpawnExtractorAtom';
+import { heroSwapExtractorAtom } from '~/atoms/event_extractors/heroSwapExtractorAtom';
+import { ability1UsedExtractorAtom } from '~/atoms/event_extractors/ability1UsedExtractorAtom';
+import { ability2UsedExtractorAtom } from '~/atoms/event_extractors/ability2UsedExtractorAtom';
+import { combinePlayerEvents, type PlayerEvent } from '~/atoms/derived_events/playerEvents';
 
 /**
  * Atom that combines various player events

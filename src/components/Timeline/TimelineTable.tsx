@@ -1,6 +1,6 @@
 import { useMemo, type ReactNode } from "react";
-import { useTimelineContext } from "./TimelineContext";
-import { formatDuration } from "../../lib";
+import { useTimelineContext } from "~/components/Timeline/TimelineContext";
+import { formatDuration } from "~/lib";
 
 export const TimelineTable = (): ReactNode => {
   // Removed unused timeRangeLabel from context destructuring

@@ -3,11 +3,11 @@ import { atom } from 'jotai';
 import {
   KillLogEvent,
   killExtractorAtom,
-} from './event_extractors/killExtractorAtom';
+} from '~/atoms/event_extractors/killExtractorAtom';
 import {
   OffensiveAssistLogEvent,
   offensiveAssistExtractorAtom,
-} from './event_extractors/offensiveAssistExtractorAtom';
+} from '~/atoms/event_extractors/offensiveAssistExtractorAtom';
 
 /**
  * An interface to represent grouped kill and offensive assist events.

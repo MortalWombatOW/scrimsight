@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import RoleIconSvg from "./RoleIconSvg";
+import RoleIconSvg from "~/components/Common/RoleIconSvg";
 
 const meta: Meta<typeof RoleIconSvg> = {
   component: RoleIconSvg,

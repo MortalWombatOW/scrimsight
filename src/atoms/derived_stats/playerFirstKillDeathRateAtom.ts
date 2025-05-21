@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
-import { Teamfight, teamfightsAtom } from '../teamfightsAtom';
-import { teamfightParticipationAtom } from './teamfightParticipationAtom';
-import { uniquePlayerNamesAtom } from '../uniquePlayerNamesAtom';
+import { Teamfight, teamfightsAtom } from '~/atoms/teamfightsAtom';
+import { teamfightParticipationAtom } from '~/atoms/derived_stats/teamfightParticipationAtom';
+import { uniquePlayerNamesAtom } from '~/atoms/uniquePlayerNamesAtom';
 
 export interface PlayerFirstKillDeathRateStats {
   playerName: string;

@@ -1,10 +1,10 @@
 import { atom } from 'jotai';
-import { MercyRezLogEvent, mercyRezExtractorAtom } from '../event_extractors/mercyRezExtractorAtom';
-import { DvaDemechLogEvent, dvaDemechExtractorAtom } from '../event_extractors/dvaDemechExtractorAtom';
-import { DvaRemechLogEvent, dvaRemechExtractorAtom } from '../event_extractors/dvaRemechExtractorAtom';
-import { KillLogEvent, killExtractorAtom } from '../event_extractors/killExtractorAtom';
-import { DamageLogEvent, damageExtractorAtom } from '../event_extractors/damageExtractorAtom';
-import { HealingLogEvent, healingExtractorAtom } from '../event_extractors/healingExtractorAtom';
+import { MercyRezLogEvent, mercyRezExtractorAtom } from '~/atoms/event_extractors/mercyRezExtractorAtom';
+import { DvaDemechLogEvent, dvaDemechExtractorAtom } from '~/atoms/event_extractors/dvaDemechExtractorAtom';
+import { DvaRemechLogEvent, dvaRemechExtractorAtom } from '~/atoms/event_extractors/dvaRemechExtractorAtom';
+import { KillLogEvent, killExtractorAtom } from '~/atoms/event_extractors/killExtractorAtom';
+import { DamageLogEvent, damageExtractorAtom } from '~/atoms/event_extractors/damageExtractorAtom';
+import { HealingLogEvent, healingExtractorAtom } from '~/atoms/event_extractors/healingExtractorAtom';
 
 /**
  * Interface for combined player interaction events

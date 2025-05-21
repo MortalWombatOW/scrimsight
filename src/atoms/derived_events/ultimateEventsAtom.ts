@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
-import { ultimateChargedExtractorAtom } from '../event_extractors/ultimateChargedExtractorAtom';
-import { ultimateStartExtractorAtom } from '../event_extractors/ultimateStartExtractorAtom';
-import { ultimateEndExtractorAtom } from '../event_extractors/ultimateEndExtractorAtom';
+import { ultimateChargedExtractorAtom } from '~/atoms/event_extractors/ultimateChargedExtractorAtom';
+import { ultimateStartExtractorAtom } from '~/atoms/event_extractors/ultimateStartExtractorAtom';
+import { ultimateEndExtractorAtom } from '~/atoms/event_extractors/ultimateEndExtractorAtom';
 
 /**
  * Interface for combined ultimate events
