@@ -156,7 +156,7 @@ function fromHealing(event: HealingLogEvent, i: number): PlayerInteractionEvent[
   return [
     {
       id: `${event.matchId}-${event.matchTime}-${event.healerName}-${event.healeeName}-healed-${i}`,
-        matchId: event.matchId,
+      matchId: event.matchId,
       playerName: event.healerName,
       playerTeam: event.healerTeam,
       playerHero: event.healerHero,

@@ -49,7 +49,7 @@ export const TimeSegmentDisplay = ({
   }
   // Apply winning team color to map and round segments as well
   if ((segment.type === 'map' || segment.type === 'round') && segment.winner) {
-     if (segment.winner === team1Name) {
+    if (segment.winner === team1Name) {
       borderColorClass = "border border-success hover:border-success/80";
     } else if (segment.winner === team2Name) {
       borderColorClass = "border border-error hover:border-error/80";
@@ -68,16 +68,16 @@ export const TimeSegmentDisplay = ({
       onClick={(e) => {e.stopPropagation(); onSelect(segment.startTime, segment.endTime)}}
     >
       <div className={segment.type === "teamfight" ? "flex flex-col gap-1" : "flex flex-row gap-9"}>
-      <div
-        className={`text-sm truncate ${
-          segment.type === "map" || segment.type === "round"
-            ? "font-bold"
-            : "font-normal"
-        }`}
-        title={segment.title}
-      >
-        {segment.title}
-      </div>
+        <div
+          className={`text-sm truncate ${
+            segment.type === "map" || segment.type === "round"
+              ? "font-bold"
+              : "font-normal"
+          }`}
+          title={segment.title}
+        >
+          {segment.title}
+        </div>
       </div>
 
       {/* Render Children Segments */}

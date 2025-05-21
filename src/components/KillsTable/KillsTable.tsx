@@ -46,50 +46,50 @@ const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
           </h3>
           {/* Simplified header structure */}
           <div className="flex justify-between mb-8">
-              <span className="text-xs text-base-500 dark:text-base-400 self-end pb-1 pr-2"> {/* Adjusted alignment */}
-                Attackers
-              </span>
-              <span className="text-xs text-base-500 dark:text-base-400 text-center flex-1"> {/* Adjusted alignment */}
-                Victims
-              </span>
+            <span className="text-xs text-base-500 dark:text-base-400 self-end pb-1 pr-2"> {/* Adjusted alignment */}
+              Attackers
+            </span>
+            <span className="text-xs text-base-500 dark:text-base-400 text-center flex-1"> {/* Adjusted alignment */}
+              Victims
+            </span>
           </div>
           {/* Heatmap Grid */}
-            <HeatmapGrid
-              data={team1Kills}
-              xLabels={team2Players}
-              yLabels={team1Players}
-              cellHeight="30px"
-              hoverText={(xLabel, yLabel, value) =>
-                `${yLabel} killed ${xLabel} ${value} times`
-              }
-              cellRender={(_x: number, _y: number, value: number) => (
-                <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
-                  {value}
-                </span>
-              )}
-              xLabelsStyle={() => ({
-                fontSize: ".7rem",
-                rotate: "-45deg",
-                marginBottom: "0.7rem",
-                marginLeft: "6px",
-                overflow: "visible",
-                whiteSpace: "nowrap", // Prevent wrapping
-              })}
-              yLabelsStyle={() => ({
-                fontSize: ".7rem",
-                marginTop: "1px",
-                whiteSpace: "nowrap", // Prevent wrapping
-                textAlign: "right", // Align right
-                paddingRight: "4px", // Add padding
-              })}
-              cellStyle={(_x: number, _y: number, ratio: number) => ({
-                background: `rgb(120, 120, 120, ${ratio})`,
-                fontSize: ".8rem",
-                border: "none",
-                margin: "3px",
-                marginLeft: "0px",
-              })}
-            />
+          <HeatmapGrid
+            data={team1Kills}
+            xLabels={team2Players}
+            yLabels={team1Players}
+            cellHeight="30px"
+            hoverText={(xLabel, yLabel, value) =>
+              `${yLabel} killed ${xLabel} ${value} times`
+            }
+            cellRender={(_x: number, _y: number, value: number) => (
+              <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
+                {value}
+              </span>
+            )}
+            xLabelsStyle={() => ({
+              fontSize: ".7rem",
+              rotate: "-45deg",
+              marginBottom: "0.7rem",
+              marginLeft: "6px",
+              overflow: "visible",
+              whiteSpace: "nowrap", // Prevent wrapping
+            })}
+            yLabelsStyle={() => ({
+              fontSize: ".7rem",
+              marginTop: "1px",
+              whiteSpace: "nowrap", // Prevent wrapping
+              textAlign: "right", // Align right
+              paddingRight: "4px", // Add padding
+            })}
+            cellStyle={(_x: number, _y: number, ratio: number) => ({
+              background: `rgb(120, 120, 120, ${ratio})`,
+              fontSize: ".8rem",
+              border: "none",
+              margin: "3px",
+              marginLeft: "0px",
+            })}
+          />
         </div>
 
         {/* Separator */}
@@ -101,48 +101,48 @@ const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
           </h3>
           {/* Simplified header structure */}
           <div className="flex justify-between mb-8">
-              <span className="text-xs text-base-500 dark:text-base-400 self-end pb-1 pr-2"> {/* Adjusted alignment */}
-                Attackers
-              </span>
-              <span className="text-xs text-base-500 dark:text-base-400 text-center flex-1"> {/* Adjusted alignment */}
-                Victims
-              </span>
+            <span className="text-xs text-base-500 dark:text-base-400 self-end pb-1 pr-2"> {/* Adjusted alignment */}
+              Attackers
+            </span>
+            <span className="text-xs text-base-500 dark:text-base-400 text-center flex-1"> {/* Adjusted alignment */}
+              Victims
+            </span>
           </div>
-            <HeatmapGrid
-              data={team2Kills}
-              xLabels={team1Players}
-              yLabels={team2Players}
-              cellHeight="30px"
-              hoverText={(xLabel, yLabel, value) =>
-                `${yLabel} killed ${xLabel} ${value} times`
-              }
-              cellRender={(_x: number, _y: number, value: number) => (
-                <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
-                  {value}
-                </span>
-              )}
-              xLabelsStyle={() => ({
-                fontSize: ".7rem",
-                rotate: "-45deg",
-                marginBottom: "0.7rem",
-                marginLeft: "8px",
-                overflow: "visible",
-                whiteSpace: "nowrap", // Prevent wrapping
-              })}
-              yLabelsStyle={() => ({
-                fontSize: ".7rem",
-                marginTop: "1px",
-                whiteSpace: "nowrap", // Prevent wrapping
-                textAlign: "right", // Align right
-                paddingRight: "4px", // Add padding
-              })}
-              cellStyle={(_x: number, _y: number, ratio: number) => ({
-                background: `rgb(120, 120, 120, ${ratio})`,
-                fontSize: ".8rem",
-                border: "none",
-                margin: "3px",
-              })}
-            />
+          <HeatmapGrid
+            data={team2Kills}
+            xLabels={team1Players}
+            yLabels={team2Players}
+            cellHeight="30px"
+            hoverText={(xLabel, yLabel, value) =>
+              `${yLabel} killed ${xLabel} ${value} times`
+            }
+            cellRender={(_x: number, _y: number, value: number) => (
+              <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
+                {value}
+              </span>
+            )}
+            xLabelsStyle={() => ({
+              fontSize: ".7rem",
+              rotate: "-45deg",
+              marginBottom: "0.7rem",
+              marginLeft: "8px",
+              overflow: "visible",
+              whiteSpace: "nowrap", // Prevent wrapping
+            })}
+            yLabelsStyle={() => ({
+              fontSize: ".7rem",
+              marginTop: "1px",
+              whiteSpace: "nowrap", // Prevent wrapping
+              textAlign: "right", // Align right
+              paddingRight: "4px", // Add padding
+            })}
+            cellStyle={(_x: number, _y: number, ratio: number) => ({
+              background: `rgb(120, 120, 120, ${ratio})`,
+              fontSize: ".8rem",
+              border: "none",
+              margin: "3px",
+            })}
+          />
         </div>
       </div>
     </div>

@@ -57,13 +57,13 @@ export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
       acc[matchId] = [];
     }
     acc[matchId].push(event);
-     return acc;
-   }, {} as Record<string, PlayerInteractionEvent[]>);
+    return acc;
+  }, {} as Record<string, PlayerInteractionEvent[]>);
    
   const teamfightsPass1: TeamfightPass1[] = [];
    
-   // First pass: process kills to identify teamfights
-   Object.entries(killEventsByMatch).forEach(([matchId, killEvents]) => {
+  // First pass: process kills to identify teamfights
+  Object.entries(killEventsByMatch).forEach(([matchId, killEvents]) => {
     // Sort deaths chronologically
     killEvents.sort((a, b) => a.playerInteractionEventTime - b.playerInteractionEventTime);
     

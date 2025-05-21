@@ -19,8 +19,8 @@ export const PlayerList = ({ players }: PlayerListProps) => {
           player.deaths === 0
             ? prettyFormat(player.eliminations + player.assists) // If no deaths, just show K+A
             : prettyFormat(
-                (player.eliminations + player.assists) / player.deaths
-              );
+              (player.eliminations + player.assists) / player.deaths
+            );
 
         return (
           <PlayerCard

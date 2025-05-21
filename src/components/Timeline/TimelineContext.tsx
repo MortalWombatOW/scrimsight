@@ -257,13 +257,13 @@ export const TimelineProvider = ({
 
   const loadedData = dataLoaded
     ? {
-        matchData,
-        mapTime,
-        roundTimes,
-        teamfights,
-        events,
-        groupedEvents,
-      }
+      matchData,
+      mapTime,
+      roundTimes,
+      teamfights,
+      events,
+      groupedEvents,
+    }
     : undefined;
 
   return (

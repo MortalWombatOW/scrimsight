@@ -70,14 +70,14 @@ export function generatePlayerComparison(
     let delta: number | undefined = undefined;
     let percentDifference: number | undefined = undefined;
     if (benchmarkValue !== undefined && Number.isFinite(playerValue) && Number.isFinite(benchmarkValue)) {
-       delta = playerValue - benchmarkValue;
-       if (benchmarkValue !== 0) {
-           percentDifference = (delta / benchmarkValue) * 100;
-       } else if (playerValue !== 0) {
-           percentDifference = Infinity; // Or handle as a special case
-       } else {
-           percentDifference = 0;
-       }
+      delta = playerValue - benchmarkValue;
+      if (benchmarkValue !== 0) {
+        percentDifference = (delta / benchmarkValue) * 100;
+      } else if (playerValue !== 0) {
+        percentDifference = Infinity; // Or handle as a special case
+      } else {
+        percentDifference = 0;
+      }
     }
 
     comparisons.push({

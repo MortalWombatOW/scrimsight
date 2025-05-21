@@ -80,25 +80,25 @@ export const PlayersOverview = (): ReactNode => {
       </div>
 
       {/* TODO: Add PlayersFilter component here */}
-       <div className="p-4 bg-base-200 rounded-box shadow"> {/* Placeholder for filter UI */}
-         <input
-           type="text"
-           placeholder="Search Players..."
-           className="input input-bordered w-full max-w-xs mr-4"
-           value={searchQuery}
-           onChange={(e) => setSearchQuery(e.target.value)}
-         />
-         <select
-            className="select select-bordered w-full max-w-xs"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as PlayerSortOption)}
-          >
-            <option value="name">Name</option>
-            <option value="kda">KDA</option>
-            <option value="elims">Eliminations</option>
-            <option value="role">Role</option>
-          </select>
-       </div>
+      <div className="p-4 bg-base-200 rounded-box shadow"> {/* Placeholder for filter UI */}
+        <input
+          type="text"
+          placeholder="Search Players..."
+          className="input input-bordered w-full max-w-xs mr-4"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <select
+          className="select select-bordered w-full max-w-xs"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as PlayerSortOption)}
+        >
+          <option value="name">Name</option>
+          <option value="kda">KDA</option>
+          <option value="elims">Eliminations</option>
+          <option value="role">Role</option>
+        </select>
+      </div>
 
       {/* Top Players - This might need adjustment based on available summary data */}
       {/* <TopPlayersList /> */}

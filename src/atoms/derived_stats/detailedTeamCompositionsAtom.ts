@@ -196,11 +196,11 @@ export const detailedTeamCompositionsAtom = atomFamily((friendlyTeamId: string) 
             // only if this is the first time seeing this match for this comp
             const seenMatchBefore = friendlyStats.matchesSeen.has(matchId);
             friendlyStats.matchesSeen.add(matchId); // Add match ID *after* checking
-             if (!seenMatchBefore) {
-                 if (matchResult === 'win') friendlyStats.wins++;
-                 else if (matchResult === 'loss') friendlyStats.losses++;
-                 else friendlyStats.draws++;
-             }
+            if (!seenMatchBefore) {
+              if (matchResult === 'win') friendlyStats.wins++;
+              else if (matchResult === 'loss') friendlyStats.losses++;
+              else friendlyStats.draws++;
+            }
           }
         }
 
@@ -254,11 +254,11 @@ export const detailedTeamCompositionsAtom = atomFamily((friendlyTeamId: string) 
 
           const seenMatchBefore = friendlyStats.matchesSeen.has(matchId);
           friendlyStats.matchesSeen.add(matchId); // Add match regardless
-           if (!seenMatchBefore) {
-               if (matchResult === 'win') friendlyStats.wins++;
-               else if (matchResult === 'loss') friendlyStats.losses++;
-               else friendlyStats.draws++;
-           }
+          if (!seenMatchBefore) {
+            if (matchResult === 'win') friendlyStats.wins++;
+            else if (matchResult === 'loss') friendlyStats.losses++;
+            else friendlyStats.draws++;
+          }
         }
       }
     }
@@ -285,8 +285,8 @@ export const detailedTeamCompositionsAtom = atomFamily((friendlyTeamId: string) 
           winRateAgainst: isNaN(matchupWinRate) ? 0 : matchupWinRate,
         });
       }
-       // Sort matchups, e.g., by playtime against
-       finalMatchups.sort((a, b) => b.playtimeSecondsAgainst - a.playtimeSecondsAgainst);
+      // Sort matchups, e.g., by playtime against
+      finalMatchups.sort((a, b) => b.playtimeSecondsAgainst - a.playtimeSecondsAgainst);
 
 
       finalDetailedComps.push({

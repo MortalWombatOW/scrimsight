@@ -177,9 +177,9 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
           value={
             sortDirection
               ? {
-                  value: sortDirection,
-                  label: sortDirection === "asc" ? "Ascending" : "Descending",
-                }
+                value: sortDirection,
+                label: sortDirection === "asc" ? "Ascending" : "Descending",
+              }
               : null
           }
           onChange={(selectedOption) => {

@@ -60,12 +60,12 @@ export const playerStatsBaseNumericalKeys: PlayerStatsBaseNumericalKeys[] = [
 
 const playerStatsDerivedNumericalKeys: PlayerStatsDerivedNumericalKeys[] = [
   'eliminationsPer10Minutes', 'finalBlowsPer10Minutes',
-      'deathsPer10Minutes', 'allDamageDealtPer10Minutes', 'barrierDamageDealtPer10Minutes', 'heroDamageDealtPer10Minutes',
-      'healingDealtPer10Minutes', 'healingReceivedPer10Minutes', 'selfHealingPer10Minutes', 'damageTakenPer10Minutes',
-      'damageBlockedPer10Minutes', 'defensiveAssistsPer10Minutes', 'offensiveAssistsPer10Minutes', 'ultimatesEarnedPer10Minutes',
-      'ultimatesUsedPer10Minutes', 'multikillsPer10Minutes', 'soloKillsPer10Minutes', 'objectiveKillsPer10Minutes', 'environmentalKillsPer10Minutes',
-      'environmentalDeathsPer10Minutes', 'criticalHitsPer10Minutes', 'shotsFiredPer10Minutes', 'shotsHitPer10Minutes', 'shotsMissedPer10Minutes', 'scopedShotsFiredPer10Minutes',
-      'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'criticalHitRate'
+  'deathsPer10Minutes', 'allDamageDealtPer10Minutes', 'barrierDamageDealtPer10Minutes', 'heroDamageDealtPer10Minutes',
+  'healingDealtPer10Minutes', 'healingReceivedPer10Minutes', 'selfHealingPer10Minutes', 'damageTakenPer10Minutes',
+  'damageBlockedPer10Minutes', 'defensiveAssistsPer10Minutes', 'offensiveAssistsPer10Minutes', 'ultimatesEarnedPer10Minutes',
+  'ultimatesUsedPer10Minutes', 'multikillsPer10Minutes', 'soloKillsPer10Minutes', 'objectiveKillsPer10Minutes', 'environmentalKillsPer10Minutes',
+  'environmentalDeathsPer10Minutes', 'criticalHitsPer10Minutes', 'shotsFiredPer10Minutes', 'shotsHitPer10Minutes', 'shotsMissedPer10Minutes', 'scopedShotsFiredPer10Minutes',
+  'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'criticalHitRate'
 ];
 
 
@@ -75,13 +75,13 @@ export const playerStatsNumericalKeys = [
 ] as PlayerStatsNumericalKeys[];
 
 export const playerStatsCategoryKeys: PlayerStatsCategoryKeys[] = [
-      'matchId',
-      'roundNumber', 
-      'playerTeam',
-      'playerName',
-      'playerHero',
-      'playerRole'
-    ];
+  'matchId',
+  'roundNumber', 
+  'playerTeam',
+  'playerName',
+  'playerHero',
+  'playerRole'
+];
 
 // The most granular data, which is the player stats for each round.
 export const playerStatsBaseAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = atom(async (get) => {

@@ -37,8 +37,8 @@ const baseOptionStyles = (provided: any, state: any) => ({
   backgroundColor: state.isSelected
     ? "hsl(var(--p))" // Use primary for selected
     : state.isFocused
-    ? "hsl(var(--b3))" // Use base-300 for focused
-    : provided.backgroundColor, // Default background
+      ? "hsl(var(--b3))" // Use base-300 for focused
+      : provided.backgroundColor, // Default background
   color: state.isSelected ? "hsl(var(--pc))" : "hsl(var(--bc))", // Use primary-content or base-content
   "&:active": {
     backgroundColor: "hsl(var(--p) / 0.8)", // Slightly darker primary on active

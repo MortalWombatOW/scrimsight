@@ -40,7 +40,7 @@ export const teamfightParticipationAtom = atom(async (get): Promise<Map<string, 
         participatingPlayers.add(event.playerName);
         // Also add the 'otherPlayer' if applicable (e.g., victim in a kill, healer in healing)
         if (event.otherPlayerName && event.otherPlayerName !== event.playerName) {
-           participatingPlayers.add(event.otherPlayerName);
+          participatingPlayers.add(event.otherPlayerName);
         }
       }
     });
@@ -52,26 +52,26 @@ export const teamfightParticipationAtom = atom(async (get): Promise<Map<string, 
     // Note: This assumes player team affiliation is consistent within a fight timeframe.
     // A more robust approach might involve checking player team at the start of the fight if needed.
     relevantInteractions.forEach(event => {
-       if (participatingPlayers.has(event.playerName)) {
-         if (event.playerTeam === team1Name) {
-           team1Players.add(event.playerName);
-         } else if (event.playerTeam === team2Name) {
-           team2Players.add(event.playerName);
-         }
-       }
-       // Check otherPlayer as well, if they exist and are participating
-       if (event.otherPlayerName && participatingPlayers.has(event.otherPlayerName)) {
-         // Need to find an event involving the otherPlayer to determine their team
-         // This could be inefficient; consider pre-calculating player teams per match if needed.
-         const otherPlayerEvent = relevantInteractions.find(e => e.playerName === event.otherPlayerName && e.playerInteractionEventTime >= startTime && e.playerInteractionEventTime <= endTime);
-         if (otherPlayerEvent) {
-            if (otherPlayerEvent.playerTeam === team1Name) {
-              team1Players.add(otherPlayerEvent.playerName);
-            } else if (otherPlayerEvent.playerTeam === team2Name) {
-              team2Players.add(otherPlayerEvent.playerName);
-            }
-         }
-       }
+      if (participatingPlayers.has(event.playerName)) {
+        if (event.playerTeam === team1Name) {
+          team1Players.add(event.playerName);
+        } else if (event.playerTeam === team2Name) {
+          team2Players.add(event.playerName);
+        }
+      }
+      // Check otherPlayer as well, if they exist and are participating
+      if (event.otherPlayerName && participatingPlayers.has(event.otherPlayerName)) {
+        // Need to find an event involving the otherPlayer to determine their team
+        // This could be inefficient; consider pre-calculating player teams per match if needed.
+        const otherPlayerEvent = relevantInteractions.find(e => e.playerName === event.otherPlayerName && e.playerInteractionEventTime >= startTime && e.playerInteractionEventTime <= endTime);
+        if (otherPlayerEvent) {
+          if (otherPlayerEvent.playerTeam === team1Name) {
+            team1Players.add(otherPlayerEvent.playerName);
+          } else if (otherPlayerEvent.playerTeam === team2Name) {
+            team2Players.add(otherPlayerEvent.playerName);
+          }
+        }
+      }
     });
 
 

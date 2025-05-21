@@ -41,11 +41,11 @@ export const PlayerOverview = (): ReactNode => { // Remove props
   const playerSummaries = useAtomValue(playerListSummaryAtom);
   const playerSummary = playerSummaries.find(p => p.playerName === playerName);
 
-   // Keep hero stats for hero chart for now
+  // Keep hero stats for hero chart for now
   const heroStats = useStats(["playerName", "playerHero"], {
     playerName: playerName ? [playerName] : [], // Pass playerName if available
   });
-   // Keep matches for performance trend chart for now
+  // Keep matches for performance trend chart for now
   const matches = useAtomValue(matchDataAtom);
 
 
@@ -53,23 +53,23 @@ export const PlayerOverview = (): ReactNode => { // Remove props
     return <div>Player name not found in URL.</div>;
   }
   if (!playerSummary) {
-     return <div>Player summary data not found for {playerName}.</div>;
+    return <div>Player summary data not found for {playerName}.</div>;
   }
 
-   // Calculate KDA from summary
-   const kda = playerSummary.deaths === 0
-     ? prettyFormat(playerSummary.eliminations + playerSummary.assists)
-     : prettyFormat((playerSummary.eliminations + playerSummary.assists) / playerSummary.deaths);
+  // Calculate KDA from summary
+  const kda = playerSummary.deaths === 0
+    ? prettyFormat(playerSummary.eliminations + playerSummary.assists)
+    : prettyFormat((playerSummary.eliminations + playerSummary.assists) / playerSummary.deaths);
 
   // --- Keep existing calculations for charts/detailed stats ---
   // Calculate win rate from match data (still needed for trend chart)
-   const playerMatches = matches.filter(
-     (match) =>
-       match.team1Players.includes(playerName) ||
+  const playerMatches = matches.filter(
+    (match) =>
+      match.team1Players.includes(playerName) ||
        match.team2Players.includes(playerName)
-   );
-   // Calculate performance trends (keep function as is for now)
-   const calculatePerformanceTrends = (matches: any[]): PerformanceTrend[] => {
+  );
+  // Calculate performance trends (keep function as is for now)
+  const calculatePerformanceTrends = (matches: any[]): PerformanceTrend[] => {
     // Filter out any invalid matches first
     const validMatches = matches.filter(
       (match) =>
@@ -189,25 +189,25 @@ export const PlayerOverview = (): ReactNode => { // Remove props
 
   return (
     <div className="space-y-8">
-       {/* Player Card */}
-       <PlayerCard
-         playerName={playerSummary.playerName}
-         teamNames={[playerSummary.teamName]}
-         heroes={[playerSummary.topHero]}
-         primaryStats={[
-           { value: kda, label: "KDA" },
-           { value: prettyFormat(playerSummary.eliminations), label: "Elims" },
-         ]}
-         secondaryStats={[
-           { value: playerSummary.role, label: "Role" },
-           { value: prettyFormat(playerSummary.deaths), label: "Deaths" },
-           { value: prettyFormat(playerSummary.assists), label: "Assists" },
-         ]}
-         // Add linkUrl if needed
-       />
+      {/* Player Card */}
+      <PlayerCard
+        playerName={playerSummary.playerName}
+        teamNames={[playerSummary.teamName]}
+        heroes={[playerSummary.topHero]}
+        primaryStats={[
+          { value: kda, label: "KDA" },
+          { value: prettyFormat(playerSummary.eliminations), label: "Elims" },
+        ]}
+        secondaryStats={[
+          { value: playerSummary.role, label: "Role" },
+          { value: prettyFormat(playerSummary.deaths), label: "Deaths" },
+          { value: prettyFormat(playerSummary.assists), label: "Assists" },
+        ]}
+        // Add linkUrl if needed
+      />
 
       {/* Performance Metrics Grid (Keep Charts) */}
-       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Performance Trends */}
         <div className="bg-base-200 p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold mb-4 text-base-content">

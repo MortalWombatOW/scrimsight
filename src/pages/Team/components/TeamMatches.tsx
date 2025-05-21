@@ -77,8 +77,8 @@ export const TeamMatches = (): ReactNode => {
         teamScore > opposingScore
           ? "win"
           : teamScore < opposingScore
-          ? "loss"
-          : "draw";
+            ? "loss"
+            : "draw";
 
       if (opponentFilter && opposingTeam !== opponentFilter) return false;
       if (mapFilter && match.map !== mapFilter) return false;
@@ -183,7 +183,7 @@ export const TeamMatches = (): ReactNode => {
       </div>
 
       {/* Match Card List */}
-       <div className="flex flex-col md:flex-row flex-wrap gap-6">
+      <div className="flex flex-col md:flex-row flex-wrap gap-6">
         {filteredMatches.length > 0 ? (
           filteredMatches.map((match) => (
             <MatchCard

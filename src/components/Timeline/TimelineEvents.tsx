@@ -201,12 +201,12 @@ const TimelineItem = ({
           </span>
           {targetHero &&
           getHeroImage(targetHero) && ( // Check if image exists
-              <img
-                src={getHeroImage(targetHero)}
-                alt={targetHero}
-                className="w-4 h-4 ml-1 inline-block"
-              />
-            )}
+            <img
+              src={getHeroImage(targetHero)}
+              alt={targetHero}
+              className="w-4 h-4 ml-1 inline-block"
+            />
+          )}
         </>
       );
     }
@@ -370,8 +370,8 @@ const TimelineItem = ({
       className={`
         py-1 px-2 text-center text-xs border-b border-gray-800 last:border-0
         ${
-          isSelected ? "bg-base-300" : "bg-base-100"
-        } // Adjusted background colors
+    isSelected ? "bg-base-300" : "bg-base-100"
+    } // Adjusted background colors
         hover:bg-base-300 transition-all duration-150
       `}
       onMouseEnter={onClick}

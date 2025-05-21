@@ -41,10 +41,10 @@ export const averageMetricPerHeroAtom = atom(async (get): Promise<AverageMetricP
     }
     // Handle cases where a hero might appear in stats but not unique list (shouldn't happen ideally)
     else if (heroName) {
-       heroStatSums[heroName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 1 };
-       playerStatsBaseNumericalKeys.forEach(key => {
-         heroStatSums[heroName][key] = row[key] ?? 0;
-       });
+      heroStatSums[heroName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 1 };
+      playerStatsBaseNumericalKeys.forEach(key => {
+        heroStatSums[heroName][key] = row[key] ?? 0;
+      });
     }
   }
 
@@ -65,23 +65,23 @@ export const averageMetricPerHeroAtom = atom(async (get): Promise<AverageMetricP
         }
       });
 
-       // Calculate derived rates
-       finalAverages[heroName].weaponAccuracy = sums.shotsFired > 0 ? sums.shotsHit / sums.shotsFired : 0;
-       finalAverages[heroName].scopedWeaponAccuracy = sums.scopedShotsFired > 0 ? sums.scopedShotsHit / sums.scopedShotsFired : 0;
-       finalAverages[heroName].criticalHitRate = sums.shotsFired > 0 ? sums.criticalHits / sums.shotsFired : 0;
+      // Calculate derived rates
+      finalAverages[heroName].weaponAccuracy = sums.shotsFired > 0 ? sums.shotsHit / sums.shotsFired : 0;
+      finalAverages[heroName].scopedWeaponAccuracy = sums.scopedShotsFired > 0 ? sums.scopedShotsHit / sums.scopedShotsFired : 0;
+      finalAverages[heroName].criticalHitRate = sums.shotsFired > 0 ? sums.criticalHits / sums.shotsFired : 0;
 
-       // Clean up NaN/Infinity results
-       playerStatsNumericalKeys.forEach(key => {
-         if (finalAverages[heroName][key] !== undefined && !Number.isFinite(finalAverages[heroName][key])) {
-           finalAverages[heroName][key] = 0;
-         }
-       });
+      // Clean up NaN/Infinity results
+      playerStatsNumericalKeys.forEach(key => {
+        if (finalAverages[heroName][key] !== undefined && !Number.isFinite(finalAverages[heroName][key])) {
+          finalAverages[heroName][key] = 0;
+        }
+      });
 
     } else {
-       // If no playtime, set all averages to 0
-       playerStatsNumericalKeys.forEach(key => {
-         finalAverages[heroName][key] = 0;
-       });
+      // If no playtime, set all averages to 0
+      playerStatsNumericalKeys.forEach(key => {
+        finalAverages[heroName][key] = 0;
+      });
     }
   }
 
@@ -90,12 +90,12 @@ export const averageMetricPerHeroAtom = atom(async (get): Promise<AverageMetricP
 
 // Atom to get unique hero names (kept local as it's only used here for now)
 const uniqueHeroNamesAtom = atom(async (get) => {
-    const { rows } = await get(playerStatsBaseAtom);
-    const heroSet = new Set<string>();
-    rows.forEach(row => {
-        if (row.playerHero) {
-            heroSet.add(row.playerHero);
-        }
-    });
-    return Array.from(heroSet).sort();
+  const { rows } = await get(playerStatsBaseAtom);
+  const heroSet = new Set<string>();
+  rows.forEach(row => {
+    if (row.playerHero) {
+      heroSet.add(row.playerHero);
+    }
+  });
+  return Array.from(heroSet).sort();
 });

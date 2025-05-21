@@ -20,7 +20,7 @@ export const Timeline = ({ matchId }: { matchId: string }): ReactNode => {
 
 const TimelineContent = (): ReactNode => {
   // These context values will be used in child components
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
 
   return (
     <div className="grid grid-cols-2 gap-4">

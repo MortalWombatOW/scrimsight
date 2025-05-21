@@ -39,7 +39,7 @@ export const averageMetricPerMapAtom = atom(async (get): Promise<AverageMetricPe
 
   // Initialize sums for all known maps
   uniqueMaps.forEach(mapName => {
-     mapStatSums[mapName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 0 };
+    mapStatSums[mapName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 0 };
   });
 
 
@@ -52,13 +52,13 @@ export const averageMetricPerMapAtom = atom(async (get): Promise<AverageMetricPe
         mapStatSums[mapName][key] += row[key] ?? 0;
       });
     }
-     // Optional: Handle cases where mapName might be missing or not in uniqueMaps
-     else if (mapName && !mapStatSums[mapName]) {
-         mapStatSums[mapName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 1 };
-         playerStatsBaseNumericalKeys.forEach(key => {
-             mapStatSums[mapName][key] = row[key] ?? 0;
-         });
-     }
+    // Optional: Handle cases where mapName might be missing or not in uniqueMaps
+    else if (mapName && !mapStatSums[mapName]) {
+      mapStatSums[mapName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 1 };
+      playerStatsBaseNumericalKeys.forEach(key => {
+        mapStatSums[mapName][key] = row[key] ?? 0;
+      });
+    }
   }
 
   // Calculate averages and per-10 stats
@@ -78,23 +78,23 @@ export const averageMetricPerMapAtom = atom(async (get): Promise<AverageMetricPe
         }
       });
 
-       // Calculate derived rates
-       finalAverages[mapName].weaponAccuracy = sums.shotsFired > 0 ? sums.shotsHit / sums.shotsFired : 0;
-       finalAverages[mapName].scopedWeaponAccuracy = sums.scopedShotsFired > 0 ? sums.scopedShotsHit / sums.scopedShotsFired : 0;
-       finalAverages[mapName].criticalHitRate = sums.shotsFired > 0 ? sums.criticalHits / sums.shotsFired : 0;
+      // Calculate derived rates
+      finalAverages[mapName].weaponAccuracy = sums.shotsFired > 0 ? sums.shotsHit / sums.shotsFired : 0;
+      finalAverages[mapName].scopedWeaponAccuracy = sums.scopedShotsFired > 0 ? sums.scopedShotsHit / sums.scopedShotsFired : 0;
+      finalAverages[mapName].criticalHitRate = sums.shotsFired > 0 ? sums.criticalHits / sums.shotsFired : 0;
 
-       // Clean up NaN/Infinity results
-       playerStatsNumericalKeys.forEach(key => {
-         if (finalAverages[mapName][key] !== undefined && !Number.isFinite(finalAverages[mapName][key])) {
-           finalAverages[mapName][key] = 0;
-         }
-       });
+      // Clean up NaN/Infinity results
+      playerStatsNumericalKeys.forEach(key => {
+        if (finalAverages[mapName][key] !== undefined && !Number.isFinite(finalAverages[mapName][key])) {
+          finalAverages[mapName][key] = 0;
+        }
+      });
 
     } else {
-       // If no playtime, set all averages to 0
-       playerStatsNumericalKeys.forEach(key => {
-         finalAverages[mapName][key] = 0;
-       });
+      // If no playtime, set all averages to 0
+      playerStatsNumericalKeys.forEach(key => {
+        finalAverages[mapName][key] = 0;
+      });
     }
   }
 

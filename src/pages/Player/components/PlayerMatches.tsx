@@ -20,15 +20,15 @@ export const PlayerMatches = (): ReactNode => {
       match.team1Players.includes(playerName) ||
       match.team2Players.includes(playerName)
   ).sort( // Sort by date descending
-     (a, b) => new Date(b.dateString).getTime() - new Date(a.dateString).getTime()
+    (a, b) => new Date(b.dateString).getTime() - new Date(a.dateString).getTime()
   );
 
 
   return (
     <div className="space-y-4"> {/* Use space-y for consistency */}
       <h2 className="text-2xl font-semibold mb-4">Match History</h2>
-       {/* Use flex layout for cards */}
-       <div className="flex flex-col md:flex-row flex-wrap gap-6">
+      {/* Use flex layout for cards */}
+      <div className="flex flex-col md:flex-row flex-wrap gap-6">
         {playerMatches.length > 0 ? (
           playerMatches.map((match: MatchData) => (
             <MatchCard

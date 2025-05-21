@@ -5,9 +5,9 @@ import {
   playerStatsNumericalKeys, // Import all numerical keys
   // PlayerStatsBaseNumericalKeys, // Type not needed directly here
   playerStatsBaseNumericalKeys, // Import the constant array
- } from '../metrics/playerMetricsAtoms';
- import { OverwatchRole } from '../../lib/hero';
- // Removed unused: import { Grouped } from '../metrics/metricUtils';
+} from '../metrics/playerMetricsAtoms';
+import { OverwatchRole } from '../../lib/hero';
+// Removed unused: import { Grouped } from '../metrics/metricUtils';
 
 // Define the output structure for average stats per role
 export type AverageRoleStats = {
@@ -68,23 +68,23 @@ export const averageMetricPerRoleAtom = atom(async (get): Promise<AverageMetricP
         }
       });
 
-       // Calculate derived rates like accuracy
-       finalAverages[role].weaponAccuracy = sums.shotsFired > 0 ? sums.shotsHit / sums.shotsFired : 0;
-       finalAverages[role].scopedWeaponAccuracy = sums.scopedShotsFired > 0 ? sums.scopedShotsHit / sums.scopedShotsFired : 0;
-       finalAverages[role].criticalHitRate = sums.shotsFired > 0 ? sums.criticalHits / sums.shotsFired : 0;
+      // Calculate derived rates like accuracy
+      finalAverages[role].weaponAccuracy = sums.shotsFired > 0 ? sums.shotsHit / sums.shotsFired : 0;
+      finalAverages[role].scopedWeaponAccuracy = sums.scopedShotsFired > 0 ? sums.scopedShotsHit / sums.scopedShotsFired : 0;
+      finalAverages[role].criticalHitRate = sums.shotsFired > 0 ? sums.criticalHits / sums.shotsFired : 0;
 
-       // Clean up NaN/Infinity results
-       playerStatsNumericalKeys.forEach(key => {
-         if (finalAverages[role][key] !== undefined && !Number.isFinite(finalAverages[role][key])) {
-           finalAverages[role][key] = 0;
-         }
-       });
+      // Clean up NaN/Infinity results
+      playerStatsNumericalKeys.forEach(key => {
+        if (finalAverages[role][key] !== undefined && !Number.isFinite(finalAverages[role][key])) {
+          finalAverages[role][key] = 0;
+        }
+      });
 
     } else {
-       // If no playtime, set all averages to 0
-       playerStatsNumericalKeys.forEach(key => {
-         finalAverages[role][key] = 0;
-       });
+      // If no playtime, set all averages to 0
+      playerStatsNumericalKeys.forEach(key => {
+        finalAverages[role][key] = 0;
+      });
     }
   }
 

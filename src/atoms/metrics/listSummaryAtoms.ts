@@ -51,7 +51,7 @@ const playtimeByPlayerRoleAtom = atom(async (get) => {
   for (const row of playtimeData.rows) {
     // Use lowercase roles to match OverwatchRole type
     const role = getRankForRole(row.hero as OverwatchRole) === 0 ? 'tank' :
-                 getRankForRole(row.hero as OverwatchRole) === 1 ? 'damage' : 'support';
+      getRankForRole(row.hero as OverwatchRole) === 1 ? 'damage' : 'support';
     if (!rolePlaytimeMap.has(row.playerName)) {
       rolePlaytimeMap.set(row.playerName, new Map());
     }
@@ -68,7 +68,7 @@ const primaryTeamByPlayerAtom = atom(async (get) => {
   const teamPlaytimeMap = new Map<string, Map<string, number>>();
 
   for (const row of playerStatsRows) { // Use destructured rows
-     if (!teamPlaytimeMap.has(row.playerName)) {
+    if (!teamPlaytimeMap.has(row.playerName)) {
       teamPlaytimeMap.set(row.playerName, new Map());
     }
     const playerTeamMap = teamPlaytimeMap.get(row.playerName)!;
@@ -113,7 +113,7 @@ export const playerListSummaryAtom: Atom<Promise<PlayerListSummary[]>> = atom(as
     const playerHeroPlaytimes = playtimeByHero.rows.filter(
       (pt) => pt.playerName === playerName
     );
-     // Correct initial value for reduce to match Grouped<HeroPlaytime, 'playerName' | 'hero', 'playtime'>
+    // Correct initial value for reduce to match Grouped<HeroPlaytime, 'playerName' | 'hero', 'playtime'>
     const topHeroData = playerHeroPlaytimes.reduce(
       (top, current) => (current.playtime > top.playtime ? current : top),
       { playerName: '', hero: 'Unknown', playtime: -1 } // Use 'hero' key
@@ -121,17 +121,17 @@ export const playerListSummaryAtom: Atom<Promise<PlayerListSummary[]>> = atom(as
     const topHero = topHeroData.hero; // Access the correct property
 
 
-     // Find top role
+    // Find top role
     const playerRolePlaytimes = playtimeByRole.get(playerName);
     let topRole: OverwatchRole = 'tank'; // Default to lowercase
     let maxRolePlaytime = -1;
     if (playerRolePlaytimes) {
-        playerRolePlaytimes.forEach((playtime, role) => {
-            if (playtime > maxRolePlaytime) {
-                maxRolePlaytime = playtime;
-                topRole = role;
-            }
-        });
+      playerRolePlaytimes.forEach((playtime, role) => {
+        if (playtime > maxRolePlaytime) {
+          maxRolePlaytime = playtime;
+          topRole = role;
+        }
+      });
     }
 
 
@@ -222,13 +222,13 @@ export const latestScrimSummaryAtom: Atom<Promise<ScrimListSummary | undefined>>
   // Sort by date descending (assuming dateString is sortable, e.g., YYYY-MM-DD)
   // If dateString format isn't reliable, parsing to Date objects is needed
   const sortedScrims = [...allScrims].sort((a, b) => {
-     try {
-       // Attempt to parse dates for robust sorting
-       return new Date(b.dateString).getTime() - new Date(a.dateString).getTime();
-     } catch (e) {
-       // Fallback to string comparison if parsing fails
-       return b.dateString.localeCompare(a.dateString);
-     }
+    try {
+      // Attempt to parse dates for robust sorting
+      return new Date(b.dateString).getTime() - new Date(a.dateString).getTime();
+    } catch (e) {
+      // Fallback to string comparison if parsing fails
+      return b.dateString.localeCompare(a.dateString);
+    }
   });
 
   return sortedScrims[0]; // Return the most recent one

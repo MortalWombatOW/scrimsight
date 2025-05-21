@@ -47,8 +47,8 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
                     {winner === "team1"
                       ? matchData.team1Name
                       : winner === "team2"
-                      ? matchData.team2Name
-                      : "Draw"}
+                        ? matchData.team2Name
+                        : "Draw"}
                   </span>
                 </div>
               </div>
@@ -70,8 +70,8 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
                 {matchData.team1Score > matchData.team2Score
                   ? matchData.team1Name
                   : matchData.team2Score > matchData.team1Score
-                  ? matchData.team2Name
-                  : "Draw"}
+                    ? matchData.team2Name
+                    : "Draw"}
               </span>
             </div>
             {/* Ensure stats component uses theme colors and rounding */}

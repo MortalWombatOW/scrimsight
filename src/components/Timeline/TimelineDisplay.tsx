@@ -294,8 +294,8 @@ export const TimelineDisplay = (): ReactNode => {
                     index === 0
                       ? "translateX(0%)"
                       : index === tickMarks.length - 1
-                      ? "translateX(-100%)"
-                      : "translateX(-50%)",
+                        ? "translateX(-100%)"
+                        : "translateX(-50%)",
                 }}
               >
                 {tick.label}
