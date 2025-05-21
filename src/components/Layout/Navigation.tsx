@@ -8,6 +8,7 @@ import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";
 import { IoStatsChartOutline } from "react-icons/io5"; // Import chart icon
 import { BsDatabaseFillGear } from "react-icons/bs"; // Import database icon for V2 data flow
+import { BsShare } from "react-icons/bs"; // Import schema icon
 import { useEffect } from "react";
 import RoleIcon from "../Common/RoleIcon";
 import { CiMap } from "react-icons/ci";
@@ -205,6 +206,11 @@ export const Navigation = ({
           title: "V2 Architecture",
           link: "/v2",
           icon: <BsDatabaseFillGear />,
+        })}
+        {renderMenuItem({
+          title: "Schema Visualizer",
+          link: "/schema",
+          icon: <BsShare />,
         })}
         {renderMenuItem({
           title: "Files",
