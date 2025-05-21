@@ -58,7 +58,7 @@ export const MatchCard = ({ matchId }: { matchId: string }) => {
   }
 
   return (
-    <div className="card bg-base-200 border border-base-300 p-4 rounded-lg mb-4 shadow-md">
+    <div className="card bg-base-200 border border-gray-700 border-gray-700 p-4 rounded-lg mb-4 shadow-md">
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-4">
           <div className="flex justify-center">

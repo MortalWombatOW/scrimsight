@@ -39,13 +39,14 @@ export const roundTimesAtom = atom(async (get): Promise<RoundTimes[]> => {
 
     if (!end) return [];
 
+
     return [{
       matchId: start.matchId,
       roundNumber: start.roundNumber,
       roundStartTime: start.matchTime,
       roundSetupCompleteTime: setup.matchTime,
       roundEndTime: end.matchTime,
-      roundDuration: end.matchTime - setup.matchTime
+      roundDuration: end.matchTime - setup.matchTime,
     }];
   }).sort((a, b) => a.matchId !== b.matchId ? a.matchId.localeCompare(b.matchId) : a.roundNumber - b.roundNumber);
-}); 
+});

@@ -22,6 +22,7 @@ import { logFileInputAtom, logFileInputMutationAtom } from "../../atoms/files";
 import { ChangeEvent } from "react";
 import { MdDelete } from "react-icons/md";
 import { sampleDataEnabledAtom } from "../../atoms/files/sampleDataAtoms";
+import Container from "~/components/Container/Container";
 
 export const AddFilesPage = () => {
   const [, setFiles] = useAtom(logFileInputMutationAtom);
@@ -77,12 +78,12 @@ export const AddFilesPage = () => {
   };
 
   return (
-    <div className="container mx-auto  py-8">
+    <Container>
       <h1 className="text-2xl font-bold mb-6 text-base-900 dark:text-white">
         Add Files
       </h1>
 
-      <div className="mb-6 p-4 border border-base-200 rounded-md dark:border-base-700">
+      <div className="mb-6 p-4 border border-gray-700 border-gray-700 rounded-md dark:border-gray-700">
         <h2 className="text-lg font-semibold mb-2 text-base-900 dark:text-white">
           Sample Data
         </h2>
@@ -93,17 +94,18 @@ export const AddFilesPage = () => {
             checked={sampleDataEnabled}
             onChange={(e) => setSampleDataEnabled(e.target.checked)}
           />
-          <div className="relative w-11 h-6 bg-base-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-800 rounded-full peer dark:bg-base-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base after:border-base-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-base-600 peer-checked:bg-primary-600"></div>
+          <div className="relative w-11 h-6 bg-base-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-800 rounded-full peer dark:bg-base-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base after:border-gray-700 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-700 peer-checked:bg-primary-600"></div>
         </label>
       </div>
 
-      <div className="mb-6 p-4 border border-base-200 rounded-md dark:border-base-700">
+      <div className="mb-6 p-4 border border-gray-700 border-gray-700 rounded-lg">
+        {" "}
+        {/* Use theme border border-gray-700 and radius */}
+        {/* Use DaisyUI button classes */}
         <button
-          className={`px-4 py-2 rounded-md font-medium ${
-            window.showDirectoryPicker
-              ? "bg-primary-600 text-white hover:bg-primary-700"
-              : "bg-base-300 text-base-500 cursor-not-allowed dark:bg-base-700"
-          } mb-4 transition-colors`}
+          className={`btn rounded-lg mb-4 ${
+            window.showDirectoryPicker ? "btn-primary" : "btn-disabled"
+          }`}
           onClick={handleAddDirectory}
           disabled={!window.showDirectoryPicker}
         >
@@ -116,11 +118,12 @@ export const AddFilesPage = () => {
         )}
       </div>
 
-      <div className="mb-6 p-4 border border-base-200 rounded-md dark:border-base-700">
-        <h2 className="text-lg font-semibold mb-2 text-base-900 dark:text-white">
-          Upload Files
-        </h2>
-        <label className="inline-block px-4 py-2 bg-base border border-base-300 rounded-md text-base-700 font-medium cursor-pointer hover:bg-base-50 dark:bg-base-800 dark:border-base-600 dark:text-base-200 dark:hover:bg-base-700 transition-colors">
+      <div className="mb-6 p-4 border border-gray-700 border-gray-700 rounded-lg">
+        {" "}
+        {/* Use theme border border-gray-700 and radius */}
+        <h2 className="text-lg font-semibold mb-2">Upload Files</h2>
+        {/* Style label like an outline button */}
+        <label className="btn btn-outline rounded-lg cursor-pointer">
           Browse Files
           <input
             type="file"
@@ -142,8 +145,9 @@ export const AddFilesPage = () => {
               <span className="text-base-800 dark:text-base-200">
                 {file.name}
               </span>
+              {/* Use DaisyUI ghost button for delete */}
               <button
-                className="p-1 text-base-500 hover:text-red-500 rounded-full hover:bg-base-100 dark:hover:bg-base-700 transition-colors"
+                className="btn btn-ghost btn-circle btn-sm text-base-content/70 hover:bg-error/20 hover:text-error"
                 onClick={() => handleRemoveFile(index)}
                 aria-label="delete"
               >
@@ -153,6 +157,6 @@ export const AddFilesPage = () => {
           ))}
         </ul>
       </div>
-    </div>
+    </Container>
   );
 };

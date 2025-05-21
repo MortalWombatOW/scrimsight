@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { useTimelineContext } from "./TimelineContext";
 import { formatDuration } from "../../lib";
 
-export const TimelineTable: React.FC = () => {
-  const { loadedData, currentTimeRange, timeRangeLabel } = useTimelineContext();
+export const TimelineTable = (): ReactNode => {
+  // Removed unused timeRangeLabel from context destructuring
+  const { loadedData, currentTimeRange } = useTimelineContext();
 
   const playerStats = useMemo(() => {
     if (!loadedData?.events) return [];
@@ -155,13 +156,13 @@ export const TimelineTable: React.FC = () => {
   return (
     <div className="overflow-x-auto p-4">
       <h2 className="text-lg font-semibold mb-2">
-        Totals during {timeRangeLabel} (
+        Totals between {formatDuration(currentTimeRange.start)} and {formatDuration(currentTimeRange.end)} (
         {formatDuration(currentTimeRange.end - currentTimeRange.start)})
       </h2>
 
       {/* Team Summary Section */}
       <div className="mb-4 grid grid-cols-2 gap-4">
-        <div className="p-3 border rounded-lg shadow-sm bg-base-200">
+        <div className="p-3 border border-gray-700 rounded-lg shadow-sm bg-base-200">
           <h3 className="font-medium text-base-content">
             {teamStats.team1.name}
           </h3>
@@ -189,7 +190,7 @@ export const TimelineTable: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-3 border rounded-lg shadow-sm bg-base-200">
+        <div className="p-3 border border-gray-700 rounded-lg shadow-sm bg-base-200">
           <h3 className="font-medium text-base-content">
             {teamStats.team2.name}
           </h3>

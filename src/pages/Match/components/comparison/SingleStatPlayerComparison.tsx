@@ -105,7 +105,7 @@ export const SingleStatPlayerComparison = ({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-base p-3 border border-base-200 rounded shadow-md dark:bg-base-800 dark:border-base-700">
+        <div className="bg-base p-3 border border-gray-700 border-gray-700 rounded shadow-md dark:bg-base-800 dark:border-gray-700">
           <p className="font-semibold text-base-800 dark:text-base-200 mb-1">
             {data.playerName}
           </p>
@@ -122,9 +122,9 @@ export const SingleStatPlayerComparison = ({
   };
 
   return (
-    <div className="bg-base rounded-lg border border-base-200 w-full p-6 shadow-sm dark:bg-base-800 dark:border-base-700">
+    <div className="bg-base rounded-lg border border-gray-700 border-gray-700 w-full p-6 shadow-sm dark:bg-base-800 dark:border-gray-700">
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-4 border-b border-base-200 dark:border-base-700">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-4 border-b border-gray-700 dark:border-gray-700">
           <h3 className="text-xl font-semibold text-base-900 dark:text-white">
             Player Metric Comparison
           </h3>
@@ -134,7 +134,7 @@ export const SingleStatPlayerComparison = ({
               Select Metric
             </label>
             <select
-              className="w-full rounded-md border border-base-300 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-base-600 dark:bg-base-700 dark:text-white"
+              className="w-full rounded-md border border-gray-700 border-gray-700 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-gray-700 dark:bg-base-700 dark:text-white"
               value={stat}
               onChange={(e) => {
                 const newStat = e.target.value as PlayerStatsNumericalKeys;
@@ -249,7 +249,7 @@ export const SingleStatPlayerComparison = ({
         </div>
 
         <div className="mt-6">
-          <div className="overflow-x-auto border rounded-lg border-base-200 dark:border-base-700">
+          <div className="overflow-x-auto border border-gray-700 rounded-lg border-gray-700 dark:border-gray-700">
             <table className="min-w-full divide-y divide-base-200 dark:divide-base-700">
               <thead className="bg-base-50 dark:bg-base-700">
                 <tr>
@@ -313,8 +313,8 @@ export const SingleStatPlayerComparison = ({
                           <div
                             className={`w-5 h-5 rounded-full border-2 ${
                               player.playerTeam === matchData.team1Name
-                                ? "border-base-700 dark:border-base-300"
-                                : "border-base-400 dark:border-base-500"
+                                ? "border-gray-700 dark:border-gray-700"
+                                : "border-gray-700 dark:border-base-500"
                             } flex items-center justify-center`}
                           >
                             <span className="text-xs font-medium">

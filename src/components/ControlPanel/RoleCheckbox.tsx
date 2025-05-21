@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import RoleIcon from "../Common/RoleIcon";
 import { OverwatchRole } from "../../lib";
 
@@ -7,11 +8,11 @@ type RoleCheckboxProps = {
   onChange: (checked: boolean) => void;
 };
 
-const RoleCheckbox: React.FC<RoleCheckboxProps> = ({
+const RoleCheckbox = ({
   role,
   checked,
   onChange,
-}) => {
+}: RoleCheckboxProps): ReactNode => {
   return (
     <label className="inline-flex items-center cursor-pointer">
       <input

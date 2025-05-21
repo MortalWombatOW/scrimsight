@@ -3,7 +3,7 @@ import {heroNameToNormalized} from './string';
 export const getHeroImage = (heroName: string, rounded = true): string => `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(heroName)}.png`;
 
 // Hero lists by role
-const TANK_HEROES = [
+export const TANK_HEROES = [
   'D.Va',
   'Orisa',
   'Reinhardt',
@@ -18,7 +18,7 @@ const TANK_HEROES = [
   'Hazard'
 ] as const;
 
-const DAMAGE_HEROES = [
+export const DAMAGE_HEROES = [
   'Ashe',
   'Bastion',
   'Cassidy',
@@ -40,7 +40,7 @@ const DAMAGE_HEROES = [
   'Sojourn'
 ] as const;
 
-const SUPPORT_HEROES = [
+export const SUPPORT_HEROES = [
   'Ana',
   'Baptiste',
   'Brigitte',
@@ -66,7 +66,10 @@ export const getRoleFromHero = (hero: string): OverwatchRole => {
   if (TANK_HEROES.includes(hero as typeof TANK_HEROES[number])) return 'tank';
   if (DAMAGE_HEROES.includes(hero as typeof DAMAGE_HEROES[number])) return 'damage';
   if (SUPPORT_HEROES.includes(hero as typeof SUPPORT_HEROES[number])) return 'support';
-  throw new Error(`Unknown hero: ${hero} (${hero.length} characters)`);
+  
+  // Log warning but default to damage for unknown heroes to prevent crashes
+  console.warn(`Unknown hero detected: ${hero} (${hero.length} characters). Defaulting to damage role.`);
+  return 'damage';
 };
 
 export const getRankForRole = (role: OverwatchRole): number => {

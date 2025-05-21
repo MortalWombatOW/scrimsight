@@ -1,12 +1,15 @@
-import React, { Suspense } from "react";
-import { useParams } from "react-router-dom";
+import { Suspense } from "react"; // Removed React import as it's not needed explicitly
+import { useParams, Outlet } from "react-router-dom"; // Added Outlet
 import { useStats } from "../../atoms";
 import { getRoleFromHero } from "../../lib/hero";
+import { SubPageNavigation } from "../../components/Layout/SubPageNavigation"; // Added SubPageNavigation
 import RoleIcon from "../../components/Common/RoleIcon";
 import { ErrorBoundary } from "react-error-boundary";
-import { PlayerOverview } from "./components/PlayerOverview";
-import { PlayerHeroes } from "./components/PlayerHeroes";
-import { PlayerMatches } from "./components/PlayerMatches";
+import Container from "~/components/Container/Container"; // Added import
+// Removed direct imports of child components as they are handled by Outlet
+// import { PlayerOverview } from "./components/PlayerOverview";
+// import { PlayerHeroes } from "./components/PlayerHeroes";
+// import { PlayerMatches } from "./components/PlayerMatches";
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center min-h-[400px]">
@@ -24,9 +27,10 @@ const ErrorFallback = ({ error }: { error: Error }) => (
 
 export const PlayerPage = () => {
   const { playerName } = useParams<{ playerName: string }>();
-  const [activeTab, setActiveTab] = React.useState<
-    "overview" | "heroes" | "matches"
-  >("overview");
+  // Removed activeTab state:
+  // const [activeTab, setActiveTab] = React.useState<
+  //   "overview" | "heroes" | "matches"
+  // >("overview");
 
   if (!playerName) {
     return (
@@ -58,10 +62,21 @@ export const PlayerPage = () => {
     ? getRoleFromHero(playerData.playerHero)
     : "tank";
 
+  // Define Nav Items for SubPageNavigation
+  const playerNavItems = [
+    { path: `/player/${playerName}`, label: "Overview", end: true },
+    { path: `/player/${playerName}/heroes`, label: "Heroes" },
+    { path: `/player/${playerName}/matches`, label: "Matches" },
+  ];
+
   return (
-    <div className="container mx-auto p-4 bg-base-100">
-      {/* Header Section */}
-      <header className="mb-8 bg-base-100 rounded-box p-6">
+    <Container>
+      {" "}
+      {/* Added Container */}
+      {/* Header Section - Apply consistent card styling */}
+      <header className="mb-8 bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg p-6">
+        {" "}
+        {/* Updated classes */}
         <div className="flex items-center gap-4">
           <RoleIcon role={mostPlayedRole} className="w-12 h-12" />
           <div>
@@ -70,39 +85,14 @@ export const PlayerPage = () => {
           </div>
         </div>
       </header>
-
-      {/* Tab Navigation */}
-      <div className="tabs tabs-boxed bg-base-100 p-1 mb-8">
-        <button
-          className={`tab ${activeTab === "overview" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("overview")}
-        >
-          Overview
-        </button>
-        <button
-          className={`tab ${activeTab === "heroes" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("heroes")}
-        >
-          Heroes
-        </button>
-        <button
-          className={`tab ${activeTab === "matches" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("matches")}
-        >
-          Matches
-        </button>
-      </div>
-
-      {/* Tab Content */}
+      {/* SubPage Navigation */}
+      <SubPageNavigation navItems={playerNavItems} />
+      {/* Content Outlet */}
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Suspense fallback={<LoadingSpinner />}>
-          {activeTab === "overview" && (
-            <PlayerOverview playerName={playerName} />
-          )}
-          {activeTab === "heroes" && <PlayerHeroes playerName={playerName} />}
-          {activeTab === "matches" && <PlayerMatches playerName={playerName} />}
+          <Outlet /> {/* Replaced conditional rendering with Outlet */}
         </Suspense>
       </ErrorBoundary>
-    </div>
+    </Container> // Added closing Container
   );
 };

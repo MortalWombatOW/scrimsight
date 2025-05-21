@@ -110,7 +110,7 @@ const ZeroState = () => {
               ${
                 isDragActive
                   ? "border-blue-400"
-                  : "border-base-300 dark:border-base-600"
+                  : "border-gray-700 dark:border-gray-700"
               } 
               ${
                 isDragAccept

@@ -1,5 +1,9 @@
-import React from "react";
+import { type ReactNode } from "react";
+// Removed useStats import for overall stats, keep for hero stats for now
 import { useStats } from "../../../atoms";
+import { useAtomValue } from "jotai"; // Import useAtomValue
+import { playerListSummaryAtom } from "../../../atoms/metrics/listSummaryAtoms"; // Import summary atom
+import { PlayerCard } from "../../../components/Card/PlayerCard"; // Import PlayerCard
 import { StatCard } from "../../../components/StatCard";
 import {
   ResponsiveContainer,
@@ -12,14 +16,16 @@ import {
   Line,
   Cell,
 } from "recharts";
-import { useAtomValue } from "jotai";
+// Removed duplicate import: import { useAtomValue } from "jotai";
 import { matchDataAtom } from "../../../atoms/matchDataAtom";
 import { format } from "date-fns";
 import { getRoleFromHero } from "../../../lib/hero";
+import { useParams } from "react-router-dom";
+import { prettyFormat } from "../../../lib/format"; // Import prettyFormat
 
-interface PlayerOverviewProps {
-  playerName: string;
-}
+// interface PlayerOverviewProps { // Remove prop interface
+//   playerName: string;
+// }
 
 type PerformanceTrend = {
   date: string;
@@ -28,42 +34,42 @@ type PerformanceTrend = {
   avgElims: number;
 };
 
-export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
-  playerName,
-}) => {
-  // Get overall stats
-  const overallStats = useStats(["playerName"], { playerName: [playerName] });
+export const PlayerOverview = (): ReactNode => { // Remove props
+  const { playerName } = useParams<{ playerName: string }>(); // Get playerName from URL params
+
+  // Fetch player summaries and find the current player
+  const playerSummaries = useAtomValue(playerListSummaryAtom);
+  const playerSummary = playerSummaries.find(p => p.playerName === playerName);
+
+   // Keep hero stats for hero chart for now
   const heroStats = useStats(["playerName", "playerHero"], {
-    playerName: [playerName],
+    playerName: playerName ? [playerName] : [], // Pass playerName if available
   });
+   // Keep matches for performance trend chart for now
   const matches = useAtomValue(matchDataAtom);
 
-  if (overallStats.rows.length === 0) return null;
-  const stats = overallStats.rows[0];
 
-  // Calculate KDA and other key metrics
-  const kda = (
-    (stats.eliminations + stats.defensiveAssists + stats.offensiveAssists) /
-    Math.max(stats.deaths, 1)
-  ).toFixed(2);
+  if (!playerName) {
+    return <div>Player name not found in URL.</div>;
+  }
+  if (!playerSummary) {
+     return <div>Player summary data not found for {playerName}.</div>;
+  }
 
-  // Calculate win rate from match data
-  const playerMatches = matches.filter(
-    (match) =>
-      match.team1Players.includes(playerName) ||
-      match.team2Players.includes(playerName)
-  );
-  const wins = playerMatches.filter((match) => {
-    const isTeam1 = match.team1Players.includes(playerName);
-    return (
-      (isTeam1 && match.team1Score > match.team2Score) ||
-      (!isTeam1 && match.team2Score > match.team1Score)
-    );
-  }).length;
-  const winRate = playerMatches.length > 0 ? wins / playerMatches.length : 0;
+   // Calculate KDA from summary
+   const kda = playerSummary.deaths === 0
+     ? prettyFormat(playerSummary.eliminations + playerSummary.assists)
+     : prettyFormat((playerSummary.eliminations + playerSummary.assists) / playerSummary.deaths);
 
-  // Calculate performance trends
-  const calculatePerformanceTrends = (matches: any[]): PerformanceTrend[] => {
+  // --- Keep existing calculations for charts/detailed stats ---
+  // Calculate win rate from match data (still needed for trend chart)
+   const playerMatches = matches.filter(
+     (match) =>
+       match.team1Players.includes(playerName) ||
+       match.team2Players.includes(playerName)
+   );
+   // Calculate performance trends (keep function as is for now)
+   const calculatePerformanceTrends = (matches: any[]): PerformanceTrend[] => {
     // Filter out any invalid matches first
     const validMatches = matches.filter(
       (match) =>
@@ -124,7 +130,7 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
       });
   };
 
-  // Prepare hero usage data for chart
+  // Prepare hero usage data for chart (keep as is)
   const heroUsageData = heroStats.rows
     .sort((a, b) => b.playtime - a.playtime)
     .slice(0, 10)
@@ -134,13 +140,22 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
       role: getRoleFromHero(row.playerHero),
     }));
 
-  // Calculate average stats per 10 minutes
-  const avgDamage = stats.heroDamageDealtPer10Minutes.toFixed(0);
-  const avgHealing = stats.healingDealtPer10Minutes.toFixed(0);
-  const avgDeaths = stats.deathsPer10Minutes.toFixed(1);
-  const avgElims = stats.eliminationsPer10Minutes.toFixed(1);
+  // --- Detailed Stats Calculation (Keep for StatCards below) ---
+  // Fetch detailed overall stats again using useStats for the lower sections
+  // This isn't ideal, could be optimized later by passing data or using context
+  const detailedOverallStats = useStats(["playerName"], { playerName: [playerName] });
+  const detailedStats = detailedOverallStats.rows[0];
 
-  // Custom tooltip styles
+  const avgDamage = detailedStats?.heroDamageDealtPer10Minutes?.toFixed(0) ?? 'N/A';
+  const avgHealing = detailedStats?.healingDealtPer10Minutes?.toFixed(0) ?? 'N/A';
+  // Removed unused avgDeaths const avgDeaths = detailedStats?.deathsPer10Minutes?.toFixed(1) ?? 'N/A';
+  // Removed unused avgElims const avgElims = detailedStats?.eliminationsPer10Minutes?.toFixed(1) ?? 'N/A';
+  const weaponAccuracy = detailedStats?.weaponAccuracy ?? 0;
+  const criticalHitRate = detailedStats?.criticalHitRate ?? 0;
+  const totalPlaytime = detailedStats?.playtime ?? 0;
+
+
+  // Custom tooltip styles (keep as is)
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -174,32 +189,25 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
 
   return (
     <div className="space-y-8">
-      {/* Key Statistics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="KDA Ratio"
-          value={kda}
-          description="Eliminations + Assists / Deaths"
-        />
-        <StatCard
-          title="Win Rate"
-          value={`${(winRate * 100).toFixed(1)}%`}
-          description="Percentage of matches won"
-        />
-        <StatCard
-          title="Avg Eliminations"
-          value={avgElims}
-          description="Per 10 Minutes"
-        />
-        <StatCard
-          title="Avg Deaths"
-          value={avgDeaths}
-          description="Per 10 Minutes"
-        />
-      </div>
+       {/* Player Card */}
+       <PlayerCard
+         playerName={playerSummary.playerName}
+         teamNames={[playerSummary.teamName]}
+         heroes={[playerSummary.topHero]}
+         primaryStats={[
+           { value: kda, label: "KDA" },
+           { value: prettyFormat(playerSummary.eliminations), label: "Elims" },
+         ]}
+         secondaryStats={[
+           { value: playerSummary.role, label: "Role" },
+           { value: prettyFormat(playerSummary.deaths), label: "Deaths" },
+           { value: prettyFormat(playerSummary.assists), label: "Assists" },
+         ]}
+         // Add linkUrl if needed
+       />
 
-      {/* Performance Metrics Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Performance Metrics Grid (Keep Charts) */}
+       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Performance Trends */}
         <div className="bg-base-200 p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold mb-4 text-base-content">
@@ -247,7 +255,7 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
                       const avgElimsValue = payload[2]?.value;
 
                       return (
-                        <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-base-300">
+                        <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-gray-700 border-gray-700">
                           <p className="font-semibold">{label}</p>
                           <p className="text-sm">
                             KDA:{" "}
@@ -353,16 +361,16 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
           <StatCard title="Healing / 10min" value={avgHealing} />
           <StatCard
             title="Weapon Accuracy"
-            value={`${(stats.weaponAccuracy * 100).toFixed(1)}%`}
+            value={`${(weaponAccuracy * 100).toFixed(1)}%`}
           />
           <StatCard
             title="Critical Hit Rate"
-            value={`${(stats.criticalHitRate * 100).toFixed(1)}%`}
+            value={`${(criticalHitRate * 100).toFixed(1)}%`}
           />
         </div>
       </div>
 
-      {/* Match History Summary */}
+      {/* Match History Summary (Keep) */}
       <div className="bg-base-100 p-6 rounded-box">
         <h3 className="text-lg font-semibold mb-4 text-base-content">
           Match History Summary
@@ -374,7 +382,7 @@ export const PlayerOverview: React.FC<PlayerOverviewProps> = ({
           />
           <StatCard
             title="Total Playtime"
-            value={`${Math.round(stats.playtime / 60)} min`}
+            value={`${Math.round(totalPlaytime / 60)} min`}
           />
         </div>
       </div>

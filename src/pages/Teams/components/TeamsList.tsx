@@ -1,17 +1,33 @@
-import TeamCard from "../../../components/TeamCard";
-import { TeamStats } from "../../../atoms/teamStatsAtom";
+import { TeamCard } from "../../../components/Card/TeamCard";
+// Import the new summary type
+import { TeamListSummary } from "../../../atoms/metrics/listSummaryAtoms";
+import { formatPercentage } from "../../../lib/format"; // Assuming a formatting function exists
 
 interface TeamsListProps {
-  teams: TeamStats[];
+  teams: TeamListSummary[]; // Use the new type
 }
 
 export const TeamsList = ({ teams }: TeamsListProps) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="flex flex-col md:flex-row flex-wrap gap-6">
       {teams.map((team) => (
-        <div key={team.teamName}>
-          <TeamCard teamName={team.teamName} />
-        </div>
+        <TeamCard
+          key={team.teamName}
+          teamName={team.teamName}
+          // Display player count instead of list
+          playerNames={[`${team.playerCount} Players`]} // Pass count as a single-item array for CardBaseFact
+          primaryStats={[
+            // Display Win Rate as primary stat
+            { value: formatPercentage(team.winRate), label: "Win Rate" },
+          ]}
+          secondaryStats={[
+            // Display Games Played and Player Count as secondary stats
+            { value: team.gamesPlayed.toString(), label: "Games Played" },
+            { value: team.playerCount.toString(), label: "Players" },
+          ]}
+          linkUrl={`/teams/${team.teamName}`}
+          // linkText uses default "View Details"
+        />
       ))}
     </div>
   );

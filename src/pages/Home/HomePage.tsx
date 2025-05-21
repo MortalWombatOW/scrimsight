@@ -1,72 +1,174 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Link } from "react-router-dom";
-import { matchDataAtom } from "../../atoms";
+import { matchDataAtom } from "../../atoms"; // Keep for hasData check
 import { useAtomValue } from "jotai";
 import ZeroState from "./ZeroState";
+import {
+  scrimListSummaryAtom,
+  teamListSummaryAtom,
+  playerListSummaryAtom,
+} from "../../atoms/metrics/listSummaryAtoms"; // Import summary atoms
+import { ScrimCard } from "../../components/Card/ScrimCard";
+import { TeamCard } from "../../components/Card/TeamCard";
+import { PlayerCard } from "../../components/Card/PlayerCard";
+import Container from "~/components/Container/Container"; // Added import
+import { formatTime, formatPercentage, prettyFormat } from "../../lib"; // Import formatters
+
+const NUM_ITEMS_TO_SHOW = 3; // Number of cards to show per section
+
+// Section for Recent Scrims
+const RecentScrimsSection = () => {
+  const scrimSummaries = useAtomValue(scrimListSummaryAtom);
+  // Already sorted by date in the atom definition, take the first few
+  const recentScrims = scrimSummaries.slice(0, NUM_ITEMS_TO_SHOW);
+
+  if (recentScrims.length === 0) {
+    return null; // Don't show section if no data
+  }
+
+  return (
+    <div className="mb-12">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold">Recent Scrims</h2>
+        <Link to="/scrims" className="link link-primary text-sm">
+          View All
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {recentScrims.map((scrim) => (
+          <ScrimCard
+            key={scrim.scrimId}
+            title={`${scrim.teamNames[0]} vs ${scrim.teamNames[1]}`}
+            teamNames={scrim.teamNames}
+            date={scrim.dateString}
+            mapsPlayed={[`${scrim.mapCount} Maps`]}
+            primaryStats={[{ value: scrim.score, label: "Score (W-L-D)" }]}
+            secondaryStats={[
+              { value: formatTime(scrim.duration), label: "Duration" },
+              { value: scrim.mapCount.toString(), label: "Maps" },
+            ]}
+            linkUrl={`/scrims/${scrim.scrimId}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Section for Top Teams
+const TopTeamsSection = () => {
+  const teamSummaries = useAtomValue(teamListSummaryAtom);
+  // Sort by win rate descending, take top N
+  const topTeams = [...teamSummaries]
+    .sort((a, b) => b.winRate - a.winRate)
+    .slice(0, NUM_ITEMS_TO_SHOW);
+
+  if (topTeams.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mb-12">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold">Top Teams</h2>
+        <Link to="/teams" className="link link-primary text-sm">
+          View All
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {topTeams.map((team) => (
+          <TeamCard
+            key={team.teamName}
+            teamName={team.teamName}
+            playerNames={[`${team.playerCount} Players`]}
+            primaryStats={[
+              { value: formatPercentage(team.winRate), label: "Win Rate" },
+            ]}
+            secondaryStats={[
+              { value: team.gamesPlayed.toString(), label: "Games Played" },
+            ]}
+            linkUrl={`/teams/${team.teamName}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Section for Top Players
+const TopPlayersSection = () => {
+  const playerSummaries = useAtomValue(playerListSummaryAtom);
+
+  // Calculate KDA for sorting
+  const playersWithKda = playerSummaries.map((p) => ({
+    ...p,
+    kda:
+      p.deaths === 0
+        ? p.eliminations + p.assists
+        : (p.eliminations + p.assists) / p.deaths,
+  }));
+
+  // Sort by KDA descending, take top N
+  const topPlayers = playersWithKda
+    .sort((a, b) => b.kda - a.kda)
+    .slice(0, NUM_ITEMS_TO_SHOW);
+
+  if (topPlayers.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mb-12">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold">Top Players</h2>
+        <Link to="/players" className="link link-primary text-sm">
+          View All
+        </Link>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {topPlayers.map((player) => (
+          <PlayerCard
+            key={player.playerName}
+            playerName={player.playerName}
+            teamNames={[player.teamName]}
+            heroes={[player.topHero]}
+            primaryStats={[{ value: prettyFormat(player.kda), label: "KDA" }]}
+            secondaryStats={[
+              { value: player.role, label: "Role" },
+              { value: player.teamName, label: "Team" },
+            ]}
+            // No link prop on PlayerCard, link handled by parent if needed
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export const HomePage = (): React.ReactNode => {
-  const modules = [
-    {
-      title: "Files",
-      description: "Upload and manage scrim files for analysis.",
-      route: "/files",
-    },
-    {
-      title: "Scrims",
-      description: "View and analyze all your scrims and matches.",
-      route: "/scrims",
-    },
-    {
-      title: "Teams",
-      description: "Review team statistics and player compositions.",
-      route: "/teams",
-    },
-    {
-      title: "Players",
-      description: "Explore individual player stats and history.",
-      route: "/players",
-    },
-  ];
-
   const matchData = useAtomValue(matchDataAtom);
   const hasData = matchData.length > 0;
 
+  // If no data, show ZeroState immediately
   if (!hasData) {
     return <ZeroState />;
   }
 
+  // If data exists, show the main page content
   return (
-    <div>
-      <img
-        src="/assets/fullpage/eqo.png"
-        alt="Scrimsight"
-        className="h-auto w-full max-h-[80vh] object-cover"
-      />
-      <div className="container mx-auto flex flex-wrap justify-between gap-4 -mt-24 px-4">
-        {modules.map((module) => (
-          <div
-            key={module.title}
-            className="w-64 bg-base rounded-lg shadow-md overflow-hidden dark:bg-base-800"
-          >
-            <div className="p-4">
-              <h3 className="text-xl font-medium text-base-900 dark:text-white">
-                {module.title}
-              </h3>
-              <p className="mt-2 text-sm text-base-600 dark:text-base-300">
-                {module.description}
-              </p>
-            </div>
-            <div className="px-4 py-3 bg-base-50 dark:bg-base-700">
-              <Link
-                to={module.route}
-                className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                Explore {module.title}
-              </Link>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <Container>
+      {" "}
+      {/* Replaced div with Container */}
+      {/* Sections for Scrims, Teams, Players */}
+      <Suspense
+        fallback={
+          <div className="text-center p-4">Loading dashboard sections...</div>
+        }
+      >
+        <RecentScrimsSection />
+        <TopTeamsSection />
+        <TopPlayersSection />
+      </Suspense>
+    </Container> // Closing Container tag
   );
 };

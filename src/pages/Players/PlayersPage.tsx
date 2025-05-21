@@ -1,6 +1,8 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useStats } from "../../atoms/metrics/playerMetricsAtoms";
 import { ErrorMessage } from "../../components/Common/ErrorMessage";
+import { SubPageNavigation } from "../../components/Layout/SubPageNavigation";
+import Container from "~/components/Container/Container"; // Added import
 
 export const PlayersPage = () => {
   const playerStats = useStats(["playerName"]);
@@ -17,8 +19,16 @@ export const PlayersPage = () => {
     return <ErrorMessage message="No data available for players" />;
   }
 
+  const playerNavItems = [
+    { path: "/players", label: "Overview", end: true },
+    { path: "/players/performance", label: "Performance" },
+    { path: "/players/heroes", label: "Heroes" },
+  ];
+
   return (
-    <div className="min-h-screen bg-base-100">
+    <Container>
+      {" "}
+      {/* Added Container */}
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <header className="mb-8 bg-base-200 p-6 rounded-box">
@@ -31,51 +41,13 @@ export const PlayersPage = () => {
         </header>
 
         {/* Navigation */}
-        <div className="tabs tabs-boxed bg-base-200 p-1 mb-8">
-          <NavLink
-            to="/players"
-            end // Important: use 'end' for the index route NavLink
-            className={({ isActive }) =>
-              `tab ${
-                isActive
-                  ? "tab-active bg-base-300"
-                  : "text-base-content/70 hover:text-base-content"
-              } capitalize`
-            }
-          >
-            Overview
-          </NavLink>
-          <NavLink
-            to="/players/performance"
-            className={({ isActive }) =>
-              `tab ${
-                isActive
-                  ? "tab-active bg-base-300"
-                  : "text-base-content/70 hover:text-base-content"
-              } capitalize`
-            }
-          >
-            Performance
-          </NavLink>
-          <NavLink
-            to="/players/heroes"
-            className={({ isActive }) =>
-              `tab ${
-                isActive
-                  ? "tab-active bg-base-300"
-                  : "text-base-content/70 hover:text-base-content"
-              } capitalize`
-            }
-          >
-            Heroes
-          </NavLink>
-        </div>
+        <SubPageNavigation navItems={playerNavItems} />
 
         {/* Content */}
         <div className="mt-8">
           <Outlet />
         </div>
       </div>
-    </div>
+    </Container> // Added closing Container
   );
 };

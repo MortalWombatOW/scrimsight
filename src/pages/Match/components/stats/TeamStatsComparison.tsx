@@ -55,7 +55,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   };
 
   return (
-    <div className="grid grid-cols-7 gap-4 bg-base-100 rounded-lg border border-base-200 w-full max-w-[800px] p-2 shadow-sm dark:bg-base-800 dark:border-base-700">
+    <div className="grid grid-cols-7 gap-4 rounded-lg border border-gray-700 border-gray-700 w-full max-w-[800px] p-2 shadow-sm">
       {/* Header row */}
       <div className="col-span-3 text-right">
         <span className="text-md font-semibold text-base-800 dark:text-base-200">
@@ -73,7 +73,6 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
         const team1Value = teamData[matchData.team1Name][stat] || 0;
         const team2Value = teamData[matchData.team2Name][stat] || 0;
         const winner = getWinnerTeam(stat);
-
         return (
           <React.Fragment key={stat}>
             {/* Team 1 side */}
@@ -91,7 +90,8 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
               <ProgressBar
                 value={team1Value}
                 maxValue={team1Value + team2Value}
-                className="rounded-l-sm"
+                className="rounded-l-sm border border-gray-700"
+                reverse
               />
             </div>
 
@@ -117,8 +117,8 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
               <ProgressBar
                 value={team2Value}
                 maxValue={team1Value + team2Value}
-                className="rounded-r-sm"
-                reverse={true}
+                className="rounded-r-sm border border-gray-700"
+                reverse={false}
               />
             </div>
           </React.Fragment>

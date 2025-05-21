@@ -11,6 +11,8 @@ type PlayerStatsBaseNumericalKeys = 'playtime' | 'eliminations' | 'finalBlows' |
 | 'damageBlocked' | 'defensiveAssists' | 'offensiveAssists' | 'ultimatesEarned' | 'ultimatesUsed' | 'multikills'
 | 'soloKills' | 'objectiveKills' | 'environmentalKills' | 'environmentalDeaths' | 'criticalHits' | 'shotsFired' | 'shotsHit' | 'shotsMissed' | 'scopedShotsFired' | 'scopedShotsHit';
 
+// Removed duplicate type alias
+
 type PlayerStatsBase = {[k in PlayerStatsCategoryKeys]: string} & {[k in PlayerStatsBaseNumericalKeys]: number};
 
 type PlayerStatsDerivedNumericalKeys = 'eliminationsPer10Minutes' | 'finalBlowsPer10Minutes' | 'deathsPer10Minutes' | 'allDamageDealtPer10Minutes' | 'barrierDamageDealtPer10Minutes'
@@ -22,9 +24,11 @@ type PlayerStatsDerivedNumericalKeys = 'eliminationsPer10Minutes' | 'finalBlowsP
 
 export type PlayerStats = PlayerStatsBase & {[k in PlayerStatsDerivedNumericalKeys]: number};
 
+// Exporting this type union
 export type PlayerStatsNumericalKeys = PlayerStatsBaseNumericalKeys | PlayerStatsDerivedNumericalKeys;
 
-const playerStatsBaseNumericalKeys: PlayerStatsBaseNumericalKeys[] = [
+// Exporting the constant array of base keys
+export const playerStatsBaseNumericalKeys: PlayerStatsBaseNumericalKeys[] = [
   'playtime',
   'eliminations',
   'finalBlows', 
@@ -80,7 +84,7 @@ export const playerStatsCategoryKeys: PlayerStatsCategoryKeys[] = [
     ];
 
 // The most granular data, which is the player stats for each round.
-const playerStatsBaseAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = atom(async (get) => {
+export const playerStatsBaseAtom: MetricAtom<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = atom(async (get) => {
   const playerStats = await get(playerStatExpandedAtom);
   const playtimeData = await get(heroPlaytimeAtom);
 
@@ -237,7 +241,8 @@ function onlyDominantRole(
   return newAtom as typeof metricAtom;
 }
 
-const getStatsAtom =  <T extends PlayerStatsCategoryKeys>(groupBy: PlayerStatsCategoryKeys[], filter?: Record<T, string[]>) => {
+// Exporting this function for use in other atom files
+export const getStatsAtom =  <T extends PlayerStatsCategoryKeys>(groupBy: PlayerStatsCategoryKeys[], filter?: Record<T, string[]>) => {
   if (filter) {
     return addDerivedMetrics(groupByAtom(onlyDominantRole(filterBaseAtom(playerStatsBaseAtom, filter)), groupBy));
   } else {
@@ -250,8 +255,9 @@ const statsAtomCache = new Map<string, MetricAtom<any, any, any>>();
 export const useStats = <T extends PlayerStatsCategoryKeys>(
   groupBy: PlayerStatsCategoryKeys[],
   filter?: Record<T, string[]>,
-  sortBy?: PlayerStatsNumericalKeys,
-  sortDirection?: 'asc' | 'desc' 
+  // Update sortBy type to accept both category and numerical keys
+  sortBy?: PlayerStatsCategoryKeys | PlayerStatsNumericalKeys | undefined,
+  sortDirection?: 'asc' | 'desc'
 ) => {
   const cacheKey = JSON.stringify({ groupBy, filter, sortBy, sortDirection });
   const statsAtom = statsAtomCache.has(cacheKey) ? statsAtomCache.get(cacheKey)! : getStatsAtom(groupBy, filter);
@@ -259,10 +265,58 @@ export const useStats = <T extends PlayerStatsCategoryKeys>(
     statsAtomCache.set(cacheKey, statsAtom);
   }
   const stats = useAtomValue(statsAtom);
-  if (sortBy) {
+  if (sortBy && stats.rows) {
+    // Check if the sortBy key is a numerical or category key
+    const isNumerical = playerStatsNumericalKeys.includes(sortBy as PlayerStatsNumericalKeys);
+
     stats.rows.sort((a, b) => {
-      return sortDirection === 'asc' ? a[sortBy] - b[sortBy] : b[sortBy] - a[sortBy];
+      const valA = a[sortBy];
+      const valB = b[sortBy];
+
+      // Handle potential null/undefined values gracefully
+      if (valA == null && valB == null) return 0;
+      if (valA == null) return sortDirection === 'asc' ? -1 : 1; // Treat nulls as smaller or larger depending on direction
+      if (valB == null) return sortDirection === 'asc' ? 1 : -1;
+
+      let comparison = 0;
+      if (isNumerical) {
+        // Numerical comparison
+        comparison = (valA as number) - (valB as number);
+      } else {
+        // String (locale-aware) comparison for categories
+        comparison = String(valA).localeCompare(String(valB));
+      }
+
+      return sortDirection === 'asc' ? comparison : -comparison;
     });
   }
   return stats;
 };
+
+// Atom to get unique values for each category key, useful for filter dropdowns
+export const uniqueCategoryValuesAtom = atom(async (get) => {
+  const { rows, categoryKeys } = await get(playerStatsBaseAtom);
+  const uniqueValues: Record<PlayerStatsCategoryKeys, Set<string>> = {} as any;
+
+  // Initialize sets for each category key
+  categoryKeys.forEach(key => {
+    uniqueValues[key] = new Set<string>();
+  });
+
+  // Populate sets with unique values from rows
+  rows.forEach(row => {
+    categoryKeys.forEach(key => {
+      if (row[key] !== undefined && row[key] !== null) {
+        uniqueValues[key].add(row[key]);
+      }
+    });
+  });
+
+  // Convert sets to sorted arrays
+  const result: Record<PlayerStatsCategoryKeys, string[]> = {} as any;
+  categoryKeys.forEach(key => {
+    result[key] = Array.from(uniqueValues[key]).sort();
+  });
+
+  return result;
+});

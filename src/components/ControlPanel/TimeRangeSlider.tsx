@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 // TimeRangeSlider component
 interface TimeRangeSliderProps {
   value: [number, number];
@@ -8,14 +10,14 @@ interface TimeRangeSliderProps {
   onChange: (value: [number, number]) => void;
 }
 
-const TimeRangeSlider: React.FC<TimeRangeSliderProps> = ({
+const TimeRangeSlider = ({
   value,
   min,
   max,
   minDistance,
   renderLabel,
   onChange,
-}) => {
+}: TimeRangeSliderProps): ReactNode => {
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     index: 0 | 1

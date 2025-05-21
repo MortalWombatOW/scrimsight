@@ -1,214 +1,143 @@
+import { type ReactNode, useMemo } from "react";
+import { useAtomValue } from "jotai"; // Import useAtomValue
 import { useTimelineContext } from "./TimelineContext";
-import { formatTime } from "../../lib";
+import { TimelineButton, type TimelineSegmentButtonData } from "./TimelineButton"; // Import new component and type
+import {
+  roundEndExtractorAtom,
+  type RoundEndLogEvent, // Corrected type name
+} from "../../atoms/event_extractors/roundEndExtractorAtom"; // Import atom and type
 
-type TimeSegment = {
-  title: string;
-  subtitle: string;
-  type: "map" | "round" | "teamfight";
-  startTime: number;
-  endTime: number;
-};
-
-export const TimelineControls: React.FC = () => {
-  const {
-    currentTimeRange,
-    setCurrentTimeRange,
-    loadedData,
-  } = useTimelineContext();
-
-  const startTime = currentTimeRange.start;
-  const endTime = currentTimeRange.end;
+export const TimelineControls = (): ReactNode => {
+  const { setCurrentTimeRange, loadedData, currentTimeRange } =
+    useTimelineContext();
 
   if (!loadedData) {
     return <div>Loading...</div>;
   }
 
-  const { mapTime, roundTimes, teamfights } = loadedData;
+  const { mapTime, roundTimes, teamfights, matchData } = loadedData;
+  const allRoundEnds = useAtomValue(roundEndExtractorAtom); // Get all round end events
 
-  const timeScale = 100 / (mapTime.endTime - mapTime.startTime);
+  // Prepare flattened and sorted data structure for buttons
+  const flatSegments = useMemo<TimelineSegmentButtonData[]>(() => {
+    if (!mapTime || !matchData) return [];
 
-  const renderTimeSegment = (segment: TimeSegment) => {
-    const duration = segment.endTime - segment.startTime;
-    const isSelected =
-      segment.startTime === startTime && segment.endTime === endTime;
-    return (
-      <tr
-        key={`${segment.startTime}-${segment.endTime}`}
-        className={`hover:bg-base-100 ${isSelected ? "bg-base-100" : ""}`}
-      >
-        <td
-          className={`w-1/6 ${
-            segment.type === "map"
-              ? "font-bold"
-              : segment.type === "round"
-              ? "font-bold"
-              : "font-normal"
-          }`}
-        >
-          {segment.title}
-        </td>
-        <td className="w-1/6">{formatTime(segment.startTime)}</td>
-        <td className="w-1/6">{formatTime(segment.endTime)}</td>
-        <td className="w-1/2">
-          <div className="flex flex-row">
-            <div
-              className="h-2 bg-base-300 rounded-l-full"
-              style={{ width: `${segment.startTime * timeScale}%` }}
-            ></div>
-            <div
-              className={`h-2 bg-base-content ${
-                segment.startTime === mapTime.startTime &&
-                segment.endTime === mapTime.endTime
-                  ? "rounded-full"
-                  : segment.startTime === mapTime.startTime
-                  ? "rounded-l-full"
-                  : segment.endTime === mapTime.endTime
-                  ? "rounded-r-full"
-                  : ""
-              }`}
-              style={{ width: `${Math.max(duration * timeScale, 1)}%` }}
-            ></div>
-            <div
-              className="h-2 bg-base-300 rounded-r-full"
-              style={{
-                width: `${(mapTime.endTime - segment.endTime) * timeScale}%`,
-              }}
-            ></div>
-          </div>
-        </td>
-        <td>
-          <button
-            className="btn btn-xs btn-outline"
-            onClick={() =>
-              setCurrentTimeRange({
-                start: segment.startTime,
-                end: segment.endTime,
-              })
-            }
-          >
-            View
-          </button>
-        </td>
-      </tr>
-    );
+    const segments: TimelineSegmentButtonData[] = [];
+    let fightCounter = 1; // Simple counter for fight IDs/labels
+
+    roundTimes.forEach((roundTime) => {
+      const roundMatchId = roundTime.matchId || mapTime.matchId;
+      if (!roundMatchId) return;
+
+      // Add teamfights for this round
+      const roundTeamfights = teamfights
+        .filter(
+          (tf) =>
+            tf.matchId === roundMatchId &&
+            tf.startTime >= roundTime.roundStartTime &&
+            tf.endTime <= roundTime.roundEndTime
+        )
+        .sort((a, b) => a.startTime - b.startTime) // Ensure fights are chronological
+        .map((tf): TimelineSegmentButtonData => ({
+          id: `tf-${fightCounter++}`, // Generate unique ID
+          title: `${tf.winner} Fight Win (${Math.round(tf.startTime)}s - ${Math.round(tf.endTime)}s)`,
+          type: "teamfight",
+          startTime: tf.startTime,
+          endTime: tf.endTime,
+          sortTime: tf.startTime, // Add sortTime for teamfights
+          winner: tf.winner,
+          team1Name: matchData.team1Name,
+          team2Name: matchData.team2Name,
+        }));
+
+      segments.push(...roundTeamfights);
+
+      // Filter round ends for the current match
+      const matchRoundEnds = allRoundEnds.filter(re => re.matchId === matchData.matchId);
+
+      // Add round result segment
+      // Find the corresponding round end event to get the winner
+      const roundEndEvent = matchRoundEnds.find(
+        (re: RoundEndLogEvent) => // Corrected type annotation here
+          re.matchId === roundMatchId && re.roundNumber === roundTime.roundNumber
+      );
+      const roundWinner = roundEndEvent?.capturingTeam; // Use capturingTeam from the event
+
+      segments.push({
+        id: `round-${roundTime.roundNumber}`,
+        title: roundWinner
+          ? `${roundWinner} Wins Round ${roundTime.roundNumber}`
+          : `Round ${roundTime.roundNumber} End`,
+        type: "round",
+        startTime: roundTime.roundStartTime, // Use round times for selection
+        endTime: roundTime.roundEndTime,
+        sortTime: roundTime.roundEndTime, // Add sortTime for rounds (use end time)
+        winner: roundWinner,
+        roundNumber: roundTime.roundNumber,
+        team1Name: matchData.team1Name,
+        team2Name: matchData.team2Name,
+      });
+    });
+
+    // Add final match result segment
+    segments.push({
+      id: "map-result",
+      title: `${matchData.winner} Wins Match`,
+      type: "map",
+      startTime: mapTime.startTime,
+      endTime: mapTime.endTime,
+      sortTime: mapTime.endTime, // Add sortTime for map (use end time)
+      winner: matchData.winner,
+      team1Name: matchData.team1Name,
+      team2Name: matchData.team2Name,
+    });
+
+    // Final sort using the new sortTime property
+    return segments.sort((a, b) => a.sortTime - b.sortTime);
+
+  }, [mapTime, roundTimes, teamfights, matchData, allRoundEnds]); // Add allRoundEnds to dependency array
+
+  const handleSelect = (start: number, end: number) => {
+    setCurrentTimeRange({ start, end });
   };
 
   return (
     <div className="flex flex-col gap-2 ml-4 mt-3">
-      <div className="text-lg text-base-500 font-semibold">
+      <div className="text-lg text-base-500 font-semibold mb-2">
         Select segment to view
       </div>
-      <table className="table table-xs ">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Duration</th>
-          </tr>
-        </thead>
-        <tbody>
-          {renderTimeSegment({
-            title: "Full Map",
-            subtitle: "",
-            type: "map",
-            startTime: mapTime.startTime,
-            endTime: mapTime.endTime,
-          })}
-          {roundTimes.flatMap((roundTime) => {
-            const teamfightsInRound = teamfights.filter(
-              (teamfight) =>
-                teamfight.startTime >= roundTime.roundStartTime &&
-                teamfight.endTime <= roundTime.roundEndTime
-            );
 
-            return [
-              renderTimeSegment({
-                title: `Round ${roundTime.roundNumber}`,
-                subtitle: "",
-                type: "round",
-                startTime: roundTime.roundStartTime,
-                endTime: roundTime.roundEndTime,
-              }),
-              ...teamfightsInRound.map((teamfight) =>
-                renderTimeSegment({
-                  title: `Teamfight`,
-                  subtitle: "",
-                  type: "teamfight",
-                  startTime: teamfight.startTime,
-                  endTime: teamfight.endTime,
-                })
-              ),
-            ];
-          })}
-        </tbody>
-      </table>
-      {/* <ul className="menu menu-vertical bg-base-200 rounded-box">
-          <li>
-            <button
-              className={`${
-                startTime === 0 && endTime === mapTime.endTime
-                  ? "bg-base-200 font-semibold"
-                  : ""
-              }`}
-              onClick={() =>
-                setCurrentTimeRange({ start: 0, end: mapTime.endTime })
-              }
-            >
-              Full Map
-            </button>
-            <ul className="menu menu-horizontal bg-base-200 rounded-box">
-              {roundTimes.map((roundTime) => (
-                <li key={roundTime.roundNumber}>
-                  <button
-                    className={`${
-                      roundTime.roundStartTime === startTime &&
-                      roundTime.roundEndTime === endTime
-                        ? "bg-base-200 font-semibold"
-                        : ""
-                    }`}
-                    onClick={() =>
-                      setCurrentTimeRange({
-                        start: roundTime.roundStartTime,
-                        end: roundTime.roundEndTime,
-                      })
-                    }
-                  >
-                    Round {roundTime.roundNumber}
-                  </button>
-                  <ul className="menu menu-horizontal bg-base-200 rounded-box">
-                    {teamfights
-                      .filter(
-                        (teamfight) =>
-                          teamfight.startTime >= roundTime.roundStartTime &&
-                          teamfight.endTime <= roundTime.roundEndTime
-                      )
-                      .map((teamfight, index) => (
-                        <li key={teamfight.startTime}>
-                          <button
-                            className={`${
-                              teamfight.startTime === startTime &&
-                              teamfight.endTime === endTime
-                                ? "bg-base-200 font-semibold"
-                                : ""
-                            }`}
-                            onClick={() =>
-                              setCurrentTimeRange({
-                                start: teamfight.startTime,
-                                end: teamfight.endTime,
-                              })
-                            }
-                          >
-                            TF {index + 1}
-                          </button>
-                        </li>
-                      ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          </li>
-        </ul> */}
+      {/* Render the flat list of buttons */}
+      <div className="flex flex-wrap gap-2">
+        {flatSegments.map((segment) => {
+          const isSelected =
+            currentTimeRange?.start === segment.startTime &&
+            currentTimeRange?.end === segment.endTime;
+
+          return (
+            <TimelineButton
+              key={segment.id}
+              segment={segment}
+              isSelected={isSelected}
+              onClick={handleSelect}
+              team1Name={matchData?.team1Name}
+              team2Name={matchData?.team2Name}
+            />
+          );
+        })}
+      </div>
+
+      {/* Legend */}
+      <div className="flex justify-center mt-6 text-xs text-base-500 gap-4">
+        <div className="flex items-center">
+          <div className="w-2 h-2 rounded-full border border-blue-600 mr-1"></div>
+          <span>{matchData?.team1Name ?? "Team 1"} Win</span>
+        </div>
+        <div className="flex items-center">
+          <div className="w-2 h-2 rounded-full border border-error mr-1"></div>
+          <span>{matchData?.team2Name ?? "Team 2"} Win</span>
+        </div>
+      </div>
     </div>
   );
 };

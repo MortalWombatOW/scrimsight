@@ -1,4 +1,4 @@
-import React from "react";
+import { type ReactNode } from "react";
 import { useStats } from "../../../atoms";
 import {
   OverwatchRole,
@@ -15,10 +15,11 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { useParams } from "react-router-dom"; // Import useParams
 
-interface PlayerHeroesProps {
-  playerName: string;
-}
+// interface PlayerHeroesProps { // Remove prop interface
+//   playerName: string;
+// }
 
 // Custom bar component with hero image
 const CustomBar = (props: any) => {
@@ -61,7 +62,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-base-300">
+      <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-gray-700 border-gray-700">
         <div className="flex items-center gap-2 mb-2">
           <img
             src={getHeroImage(data.hero, true)}
@@ -83,7 +84,14 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const PlayerHeroes: React.FC<PlayerHeroesProps> = ({ playerName }) => {
+export const PlayerHeroes = (): ReactNode => { // Remove props
+  const { playerName } = useParams<{ playerName: string }>(); // Get playerName from URL params
+
+  if (!playerName) {
+    // Handle case where playerName is not in URL
+    return <div>Player name not found in URL.</div>;
+  }
+
   const heroStats = useStats(["playerName", "playerHero"], {
     playerName: [playerName],
   });

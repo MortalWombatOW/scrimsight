@@ -1,88 +1,57 @@
-import React from "react";
-import { useStats } from "../../../atoms";
+import { type ReactNode } from "react";
+// Removed useStats import
 import { useAtomValue } from "jotai";
-import { matchDataAtom } from "../../../atoms/matchDataAtom";
-import { Link } from "react-router-dom";
+import { MatchData, matchDataAtom } from "../../../atoms/matchDataAtom";
+import { useParams } from "react-router-dom"; // Removed unused Link
+import { MatchCard } from "../../../components/Card/MatchCard";
+import { formatTime } from "../../../lib/format";
 
-interface PlayerMatchesProps {
-  playerName: string;
-}
-
-export const PlayerMatches: React.FC<PlayerMatchesProps> = ({ playerName }) => {
-  const matchStats = useStats(
-    ["matchId", "playerName", "playerHero", "playerTeam"],
-    { playerName: [playerName] }
-  );
+export const PlayerMatches = (): ReactNode => {
+  const { playerName } = useParams<{ playerName: string }>();
   const allMatches = useAtomValue(matchDataAtom);
 
-  // Combine match stats with match data
-  const matchData = matchStats.rows
-    .map((stat) => {
-      const match = allMatches.find((m) => m.matchId === stat.matchId);
+  if (!playerName) {
+    return <div>Player name not found in URL.</div>;
+  }
 
-      if (!match) return null;
+  // Filter matches where the player participated
+  const playerMatches = allMatches.filter(
+    (match) =>
+      match.team1Players.includes(playerName) ||
+      match.team2Players.includes(playerName)
+  ).sort( // Sort by date descending
+     (a, b) => new Date(b.dateString).getTime() - new Date(a.dateString).getTime()
+  );
 
-      const isTeam1 = match.team1Players.includes(playerName);
-      const won =
-        (isTeam1 && match.team1Score > match.team2Score) ||
-        (!isTeam1 && match.team2Score > match.team1Score);
-
-      return {
-        ...stat,
-        ...match,
-        won,
-        score: `${match.team1Score} - ${match.team2Score}`,
-        elimsPerLife: (stat.eliminations / Math.max(stat.deaths, 1)).toFixed(2),
-        damage: Math.round(stat.heroDamageDealt).toLocaleString(),
-        healing: Math.round(stat.healingDealt).toLocaleString(),
-      };
-    })
-    .filter(Boolean);
 
   return (
-    <div className="bg-base-100 p-6 rounded-box">
-      <h2 className="text-xl font-bold mb-4">Recent Matches</h2>
-      <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Map</th>
-              <th>Hero</th>
-              <th>Result</th>
-              <th>Score</th>
-              <th>E/D</th>
-              <th>Damage</th>
-              <th>Healing</th>
-            </tr>
-          </thead>
-          <tbody>
-            {matchData.map((match) => (
-              <tr key={match.matchId}>
-                <td>{new Date(match.dateString).toLocaleDateString()}</td>
-                <td>
-                  <Link
-                    to={`/matches/${match.matchId}`}
-                    className={
-                      "link link-hover " +
-                      (match.won
-                        ? "border-b-success border-b-2"
-                        : "border-b-error border-b-2")
-                    }
-                  >
-                    {match.map}
-                  </Link>
-                </td>
-                <td>{match.playerHero}</td>
-                <td>{match.won ? "Win" : "Loss"}</td>
-                <td>{match.score}</td>
-                <td>{match.elimsPerLife}</td>
-                <td>{match.damage}</td>
-                <td>{match.healing}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="space-y-4"> {/* Use space-y for consistency */}
+      <h2 className="text-2xl font-semibold mb-4">Match History</h2>
+       {/* Use flex layout for cards */}
+       <div className="flex flex-col md:flex-row flex-wrap gap-6">
+        {playerMatches.length > 0 ? (
+          playerMatches.map((match: MatchData) => (
+            <MatchCard
+              key={match.matchId}
+              title={`${match.map} (${match.mode})`}
+              teamNames={[match.team1Name, match.team2Name]}
+              date={match.dateString} // Assuming dateString is display-ready
+              mapName={match.map}
+              primaryStats={[
+                { value: `${match.team1Score} - ${match.team2Score}`, label: "Score" },
+              ]}
+              secondaryStats={[
+                { value: formatTime(match.duration), label: "Duration" },
+                // Could add player's hero for this match if needed, requires fetching player stats
+              ]}
+              linkUrl={`/matches/${match.matchId}`}
+            />
+          ))
+        ) : (
+          <div className="w-full text-center p-6 text-base-content/70">
+            No matches found for this player.
+          </div>
+        )}
       </div>
     </div>
   );

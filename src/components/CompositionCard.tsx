@@ -16,7 +16,7 @@ export const CompositionCard = ({
   heroes,
   timePlayed,
 }: CompositionCardProps) => (
-  <div className="w-[300px] m-1 border rounded-md shadow-sm">
+  <div className="w-[300px] m-1 border border-gray-700 rounded-md shadow-sm">
     <div className="p-4">
       <div className="space-y-3">
         <div>

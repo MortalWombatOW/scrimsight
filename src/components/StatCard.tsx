@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 
 export interface StatCardProps {
   title: string;
@@ -7,12 +7,12 @@ export interface StatCardProps {
   description?: string;
 }
 
-export const StatCard: React.FC<StatCardProps> = ({
+export const StatCard = ({
   title,
   value,
   icon,
   description,
-}) => {
+}: StatCardProps): ReactNode => {
   return (
     <div className="stat">
       {icon && <div className="stat-figure">{icon}</div>}

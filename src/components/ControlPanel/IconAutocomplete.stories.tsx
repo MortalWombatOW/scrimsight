@@ -2,9 +2,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { IconAutocomplete } from './IconAutocomplete';
 import React, { useState } from "react";
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PersonIcon from '@mui/icons-material/Person';
-import { Box } from '@mui/material';
+// Removed MUI imports: LocationOnIcon, PersonIcon, Box
 
 const meta = {
   component: IconAutocomplete,
@@ -43,13 +41,13 @@ const Template: Story = {
   render: (args) => {
     const [selected, setSelected] = useState<string[]>([]);
     return (
-      <Box sx={{ width: 300 }}>
+      <div style={{ width: 300 }}> {/* Replaced Box with div */}
         <IconAutocomplete
           {...args}
           selected={selected}
           onChange={setSelected}
         />
-      </Box>
+      </div> // Closing div
     );
   }
 };
@@ -65,7 +63,7 @@ export const EmptyLocations: Story = {
   args: {
     options: sampleLocations,
     onChange: (newValue: string[]) => console.log('Changed:', newValue),
-    icon: <LocationOnIcon />,
+    icon: null, // Replaced LocationOnIcon
     label: "Select Maps",
     noOptionsText: "No maps found",
   },
@@ -84,7 +82,7 @@ export const PlayersSelection: Story = {
   args: {
     options: samplePlayers,
     selected: ['Striker', 'Proper'],
-    icon: <PersonIcon />,
+    icon: null, // Replaced PersonIcon
     label: "Select Players",
     noOptionsText: "No players found",
   }
@@ -96,7 +94,7 @@ export const Interactive: Story = {
     const [mode, setMode] = React.useState<'maps' | 'players'>('maps');
     
     const options = mode === 'maps' ? sampleLocations : samplePlayers;
-    const icon = mode === 'maps' ? <LocationOnIcon /> : <PersonIcon />;
+    const icon = null; // Replaced MUI icons
     const label = mode === 'maps' ? "Select Maps" : "Select Players";
     const noOptionsText = mode === 'maps' ? "No maps found" : "No players found";
     
@@ -136,4 +134,4 @@ export const Interactive: Story = {
       },
     },
   },
-}; 
+};

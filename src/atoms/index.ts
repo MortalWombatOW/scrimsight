@@ -16,3 +16,11 @@ export * from './uniqueMapNamesAtom';
 export * from './uniquePlayerNamesAtom';
 export * from './scrimAtom';
 export * from './teamfightsAtom';
+export * from './derived_stats/firstKillImpactAtom';
+export * from './derived_stats/playerFirstKillDeathRateAtom';
+export * from './derived_stats/ultimateImpactAtom';
+export * from './derived_stats/averageMetricPerRoleAtom';
+export * from './derived_stats/averageMetricPerHeroAtom';
+export * from './derived_stats/averageMetricPerMapAtom';
+export * from './derived_stats/playerComparisonAtomFamily';
+export * from './derived_state'; // Added export for new state atoms

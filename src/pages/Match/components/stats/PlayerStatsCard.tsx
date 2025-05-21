@@ -77,14 +77,14 @@ export const PlayerStatsCard = ({
   }
 
   return (
-    <div className="bg-base-100 rounded-lg border border-base-200 p-4 shadow-sm dark:bg-base-800 dark:border-base-700 h-full w-full transition-all duration-300 hover:shadow-md">
+    <div className="bg-base-100 rounded-lg border border-gray-700 border-gray-700 p-4 shadow-sm dark:bg-base-800 dark:border-gray-700 h-full w-full transition-all duration-300 hover:shadow-md">
       <div className="flex items-start">
         <div className="flex flex-col gap-3 w-full">
           <div className="flex items-center mb-1">
             <img
               src={heroImage}
               alt={`Hero`}
-              className="w-8 h-8 rounded-full mr-2 border border-base-200 dark:border-base-600"
+              className="w-8 h-8 rounded-full mr-2 border border-gray-700 border-gray-700 dark:border-gray-700"
             />
             <div className="flex flex-col mr-3">
               <h5 className="text-sm font-semibold text-base-800 dark:text-base-200">

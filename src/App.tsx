@@ -12,6 +12,9 @@ import { PlayersPerformance } from "./pages/Players/components/Performance/Playe
 import { PlayersHeroes } from "./pages/Players/components/Heroes/PlayersHeroes";
 import { TeamsPage } from "./pages/Teams";
 import { PlayerPage } from "./pages/Player";
+import { PlayerOverview as SinglePlayerOverview } from "./pages/Player/components/PlayerOverview"; // Renamed import
+import { PlayerHeroes as SinglePlayerHeroes } from "./pages/Player/components/PlayerHeroes"; // Renamed import
+import { PlayerMatches as SinglePlayerMatches } from "./pages/Player/components/PlayerMatches"; // Renamed import
 import { TeamPage } from "./pages/Team";
 import { TeamOverview } from "./pages/Team/components/TeamOverview";
 import { TeamPlayers } from "./pages/Team/components/TeamPlayers";
@@ -22,8 +25,11 @@ import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 import { CallbackPage } from "./pages/Auth/CallbackPage";
 import { TimelinePage } from "./pages/Match/TimelinePage";
 import { MatchOverviewPage } from "./pages/Match/MatchOverviewPage";
+import { MatchPlayersPage } from "./pages/Match/MatchPlayersPage"; // Import the new players page
 import { MatchStatComparisonPage } from "./pages/Match/MatchStatComparisonPage";
 import { ScrimPage } from "./pages/Scrim/ScrimPage";
+import { MetricsExplorerPage } from "./pages/MetricsExplorer/MetricsExplorerPage"; // Import the new page
+import SchemaVisualizerPage from "./pages/SchemaVisualizer";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -68,6 +74,8 @@ const App = () => {
                       path="compare"
                       element={<MatchStatComparisonPage />}
                     />
+                    <Route path="players" element={<MatchPlayersPage />} />{" "}
+                    {/* Add the new players route */}
                   </Route>
                   <Route path="/players" element={<PlayersPage />}>
                     <Route index element={<PlayersOverview />} />
@@ -77,7 +85,12 @@ const App = () => {
                     />
                     <Route path="heroes" element={<PlayersHeroes />} />
                   </Route>
-                  <Route path="/player/:playerName" element={<PlayerPage />} />
+                  {/* Updated Player Route with nested routes */}
+                  <Route path="/player/:playerName" element={<PlayerPage />}>
+                    <Route index element={<SinglePlayerOverview />} />
+                    <Route path="heroes" element={<SinglePlayerHeroes />} />
+                    <Route path="matches" element={<SinglePlayerMatches />} />
+                  </Route>
                   <Route path="/teams" element={<TeamsPage />} />
                   <Route path="/teams/:teamId" element={<TeamPage />}>
                     <Route index element={<TeamOverview />} />
@@ -86,6 +99,8 @@ const App = () => {
                     <Route path="compositions" element={<TeamCompositions />} />
                   </Route>
                   <Route path="/files" element={<AddFilesPage />} />
+                  <Route path="/metrics" element={<MetricsExplorerPage />} />
+                  <Route path="/schema" element={<SchemaVisualizerPage />} />
                 </Routes>
               </Suspense>
             </Layout>

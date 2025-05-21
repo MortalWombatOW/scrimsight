@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, type ReactNode } from "react";
 
 export interface HeatmapGridProps {
   /**
@@ -52,7 +52,7 @@ export interface HeatmapGridProps {
   hoverText?: (xLabel: string, yLabel: string, value: number) => string;
 }
 
-export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
+export const HeatmapGrid = ({
   data,
   xLabels = [],
   yLabels = [],
@@ -63,7 +63,7 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
   xLabelsStyle,
   yLabelsStyle,
   hoverText,
-}) => {
+}: HeatmapGridProps): ReactNode => {
   // Find the maximum value in the data to calculate ratios
   const maxValue = useMemo(() => {
     let max = 0;
@@ -161,7 +161,7 @@ export const HeatmapGrid: React.FC<HeatmapGridProps> = ({
               return (
                 <div
                   key={`cell-${y}-${x}`}
-                  className="flex items-center justify-center border border-base-200 relative group w-full h-full"
+                  className="flex items-center justify-center border border-gray-700 border-gray-700 relative group w-full h-full"
                   style={{
                     background: `rgba(120, 120, 120, ${ratio})`,
                     cursor: onClick ? "pointer" : "default",

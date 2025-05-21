@@ -8,42 +8,40 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { useStats } from "../../../atoms/metrics/playerMetricsAtoms";
-import { StatCard } from "../../../components/StatCard"; // Import StatCard
+// Removed useStats import
+import { teamListSummaryAtom } from "../../../atoms/metrics/listSummaryAtoms"; // Import summary atom
+import { TeamCard } from "../../../components/Card/TeamCard";
+// Removed unused: import { StatCard } from "../../../components/StatCard";
 import { teamMapTypeStatsAtom } from "../../../atoms/derived_stats/teamMapTypeStatsAtom";
-import { prettyFormat } from "../../../lib/format";
-import { ErrorMessage } from "../../../components/Common/ErrorMessage"; // Import ErrorMessage
+import { formatPercentage } from "../../../lib/format"; // Removed unused prettyFormat
+import { ErrorMessage } from "../../../components/Common/ErrorMessage";
 
 export const TeamOverview = () => {
   const { teamId } = useParams<{ teamId: string }>();
 
+  // Fetch all team summaries
+  const teamSummaries = useAtomValue(teamListSummaryAtom);
+  // Get map type stats by passing teamId to the atomFamily
+  const mapTypeStats = useAtomValue(teamMapTypeStatsAtom(teamId || "")); // Pass empty string if teamId is undefined
+
   if (!teamId) {
-    // Handle case where teamId is not available
     return <ErrorMessage message="Team ID not found in URL." />;
   }
 
-  // Get aggregated stats for the team using useStats with teamId
-  const aggregatedStats = useStats(["playerTeam"], {
-    playerTeam: [teamId],
-  });
-  // Get map type stats by passing teamId to the atomFamily
-  const mapTypeStats = useAtomValue(teamMapTypeStatsAtom(teamId));
+  // Find the specific team's summary
+  const teamSummary = teamSummaries.find((t) => t.teamName === teamId);
 
-  const teamTotals = aggregatedStats.rows[0];
-  const totalPlaytimeSeconds = teamTotals?.playtime || 0; // Keep for conditional rendering check
+  if (!teamSummary) {
+    return <ErrorMessage message={`Team data not found for ${teamId}.`} />;
+  }
 
-  // Use derived stats directly from teamTotals
-  const statCardData = [
-    { name: "Damage/10", value: teamTotals?.allDamageDealtPer10Minutes ?? 0 },
-    { name: "Healing/10", value: teamTotals?.healingDealtPer10Minutes ?? 0 },
-    { name: "Elims/10", value: teamTotals?.eliminationsPer10Minutes ?? 0 },
-    { name: "Ults Used/10", value: teamTotals?.ultimatesUsedPer10Minutes ?? 0 },
-  ];
-
+  // TODO: Re-evaluate if these stats are still needed or can be derived differently
+  // For now, keep the chart data calculation
   const mapWinRateData = Object.entries(mapTypeStats || {})
     .map(([mapType, stats]) => ({
       name: mapType,
-      value: stats.winRate,
+      // Multiply win rate by 100 for chart display
+      value: stats.winRate * 100,
       gamesPlayed: stats.gamesPlayed,
       fill: "#8884d8",
     }))
@@ -60,29 +58,27 @@ export const TeamOverview = () => {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-semibold">Team Performance Overview</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-base-200 p-4 rounded-lg shadow">
-          <h3 className="text-lg font-medium mb-4">
-            Average Stats per 10 Minutes
-          </h3>
-          {totalPlaytimeSeconds > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {statCardData.map((
-                stat // Use statCardData here
-              ) => (
-                <StatCard
-                  key={stat.name}
-                  title={stat.name}
-                  value={prettyFormat(stat.value)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center p-10">No playtime data available.</div>
-          )}
-        </div>
+      {/* Display Team Card at the top */}
+      <TeamCard
+        teamName={teamSummary.teamName}
+        playerNames={[`${teamSummary.playerCount} Players`]} // Show count
+        primaryStats={[
+          { value: formatPercentage(teamSummary.winRate), label: "Win Rate" },
+        ]}
+        secondaryStats={[
+          { value: teamSummary.gamesPlayed.toString(), label: "Games Played" },
+          { value: teamSummary.playerCount.toString(), label: "Players" },
+        ]}
+        // No link needed if already on the page
+      />
 
+      {/* Keep existing charts/stats below */}
+      <h2 className="text-2xl font-semibold">Detailed Overview</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
+        {" "}
+        {/* Changed to 1 column for now */}
+        {/* Removed Average Stats per 10 min card as data isn't readily available in summary */}
+        {/* <div className="bg-base-200 p-4 rounded-lg shadow"> ... </div> */}
         <div className="bg-base-200 p-4 rounded-lg shadow">
           <h3 className="text-lg font-medium mb-4">Win Rate by Map Type</h3>
           {mapWinRateData.length > 0 ? (
