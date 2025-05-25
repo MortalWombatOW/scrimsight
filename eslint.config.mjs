@@ -41,19 +41,23 @@ export default [
       "boundaries/elements": [
         {
           type: "atoms",
-          pattern: "atoms/*"
+          pattern: "atoms/",
+          mode: "folder",
         },
         {
           type: "components",
-          pattern: "components/*"
+          pattern: "components/",
+          mode: "folder",
         },
         {
           type: "pages",
-          pattern: "pages/*"
+          pattern: "pages/",
+          mode: "folder",
         },
         {
           type: "library",
-          pattern: "lib/*"
+          pattern: "lib/",
+          mode: "folder",
         }
       ],
     },
