@@ -4,11 +4,11 @@ import { useAtomValue } from "jotai";
 import {
   scrimListSummaryAtom,
   ScrimListSummary,
-} from "~/atoms/metrics/listSummaryAtoms";
+} from "@atoms/metrics/listSummaryAtoms";
 // Removed unused: import { useNavigate } from "react-router-dom";
-import { formatTime } from "~/lib"; // Removed unused mapNameToFileName
-import { ScrimCard } from "~/components/Card/ScrimCard"; // Import ScrimCard
-import Container from "~/components/Container/Container"; // Added import
+import { formatTime } from "@lib"; // Removed unused mapNameToFileName
+import { ScrimCard } from "@components/Card/ScrimCard"; // Import ScrimCard
+import Container from "@components/Container/Container"; // Added import
 
 export const ScrimsPage = () => {
   // Removed unused navigate

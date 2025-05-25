@@ -1,10 +1,10 @@
 import { type ReactNode } from "react";
 // Removed useStats import
 import { useAtomValue } from "jotai";
-import { MatchData, matchDataAtom } from "~/atoms/matchDataAtom";
+import { MatchData, matchDataAtom } from "@atoms/matchDataAtom";
 import { useParams } from "react-router-dom"; // Removed unused Link
-import { MatchCard } from "~/components/Card/MatchCard";
-import { formatTime } from "~/lib/format";
+import { MatchCard } from "@components/Card/MatchCard";
+import { formatTime } from "@library/format";
 
 export const PlayerMatches = (): ReactNode => {
   const { playerName } = useParams<{ playerName: string }>();

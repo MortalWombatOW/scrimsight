@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
-import { matchDataAtom, useStats } from "~/atoms";
-import { PlayerStatsCard } from "~/pages/Match/components/stats/PlayerStatsCard";
+import { matchDataAtom, useStats } from "@atoms";
+import { PlayerStatsCard } from "@pages/Match/components/stats/PlayerStatsCard";
 
 interface PlayerStatsComparisonProps {
   matchId: string;

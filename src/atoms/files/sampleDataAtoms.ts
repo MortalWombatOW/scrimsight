@@ -1,10 +1,10 @@
 import { atom } from "jotai";
-import { LogFileLoaderOutput } from "~/atoms/files/logFileLoaderAtom";
-import file1 from "~/atoms/files/sampledata/Log-2023-08-28-17-05-38.txt?raw";
-import file2 from "~/atoms/files/sampledata/Log-2023-08-28-17-29-57.txt?raw";
-import file3 from "~/atoms/files/sampledata/Log-2023-08-28-17-52-17.txt?raw";
-import file4 from "~/atoms/files/sampledata/Log-2023-08-28-18-28-25.txt?raw";
-import file5 from "~/atoms/files/sampledata/Log-2023-08-28-18-40-39.txt?raw";
+import { LogFileLoaderOutput } from "@atoms/files/logFileLoaderAtom";
+import file1 from "@atoms/files/sampledata/Log-2023-08-28-17-05-38.txt?raw";
+import file2 from "@atoms/files/sampledata/Log-2023-08-28-17-29-57.txt?raw";
+import file3 from "@atoms/files/sampledata/Log-2023-08-28-17-52-17.txt?raw";
+import file4 from "@atoms/files/sampledata/Log-2023-08-28-18-28-25.txt?raw";
+import file5 from "@atoms/files/sampledata/Log-2023-08-28-18-40-39.txt?raw";
 
 export const sampleDataEnabledAtom = atom(true);
 

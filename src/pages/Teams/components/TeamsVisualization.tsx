@@ -7,7 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { TeamStats } from "~/atoms/teamStatsAtom";
+import { TeamStats } from "@atoms/teamStatsAtom";
 
 interface TeamsVisualizationProps {
   teams: TeamStats[];

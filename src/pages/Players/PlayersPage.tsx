@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
-import { useStats } from "~/atoms/metrics/playerMetricsAtoms";
-import { ErrorMessage } from "~/components/Common/ErrorMessage";
-import { SubPageNavigation } from "~/components/Layout/SubPageNavigation";
-import Container from "~/components/Container/Container"; // Added import
+import { useStats } from "@atoms/metrics/playerMetricsAtoms";
+import { ErrorMessage } from "@components/Common/ErrorMessage";
+import { SubPageNavigation } from "@components/Layout/SubPageNavigation";
+import Container from "@components/Container/Container"; // Added import
 
 export const PlayersPage = () => {
   const playerStats = useStats(["playerName"]);

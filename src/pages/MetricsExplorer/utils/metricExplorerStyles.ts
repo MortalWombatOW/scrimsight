@@ -2,7 +2,7 @@ import { StylesConfig } from "react-select"; // Removed GroupBase
 import {
   PlayerStatsCategoryKeys,
   PlayerStatsNumericalKeys,
-} from "~/atoms/metrics/playerMetricsAtoms";
+} from "@atoms/metrics/playerMetricsAtoms";
 
 // Define option types used in controls
 type OptionType = { value: string; label: string };

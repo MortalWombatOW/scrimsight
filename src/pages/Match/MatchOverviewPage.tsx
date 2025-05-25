@@ -1,17 +1,17 @@
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import { matchDataAtom } from "~/atoms/matchDataAtom"; // Removed unused MatchData type
+import { matchDataAtom } from "@atoms/matchDataAtom"; // Removed unused MatchData type
 import {
   teamStatsForMatchAtom,
   // Removed unused playerStatsForMatchAtom
-} from "~/atoms/metrics/contextualStatAtoms";
-import { MatchCard } from "~/components/Card/MatchCard";
-import { TeamCard } from "~/components/Card/TeamCard";
+} from "@atoms/metrics/contextualStatAtoms";
+import { MatchCard } from "@components/Card/MatchCard";
+import { TeamCard } from "@components/Card/TeamCard";
 // Removed unused PlayerCard
-import { formatTime, prettyFormat } from "~/lib"; // Import formatters
+import { formatTime, prettyFormat } from "@lib"; // Import formatters
 // Removed PlayerStatsComparison import
-import { TeamStatsComparison } from "~/pages/Match/components/stats/TeamStatsComparison";
-import KillsTable from "~/components/KillsTable/KillsTable";
+import { TeamStatsComparison } from "@pages/Match/components/stats/TeamStatsComparison";
+import KillsTable from "@components/KillsTable/KillsTable";
 
 export const MatchOverviewPage = () => {
   const { matchId } = useParams<{ matchId: string }>();

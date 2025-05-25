@@ -1,9 +1,9 @@
 import { type ReactNode } from "react";
-import { TimelineProvider } from "~/components/Timeline/TimelineContext";
-import { TimelineTable } from "~/components/Timeline/TimelineTable";
-import { TimelineEvents } from "~/components/Timeline/TimelineEvents";
+import { TimelineProvider } from "@components/Timeline/TimelineContext";
+import { TimelineTable } from "@components/Timeline/TimelineTable";
+import { TimelineEvents } from "@components/Timeline/TimelineEvents";
 // Removed unused TimelineDisplay import
-import { TimelineControls } from "~/components/Timeline/TimelineControls";
+import { TimelineControls } from "@components/Timeline/TimelineControls";
 
 /**
  * Timeline component for visualizing match flow

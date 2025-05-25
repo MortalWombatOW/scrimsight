@@ -1,6 +1,6 @@
-import { useStats } from "~/atoms";
-import RoleIcon from "~/components/Common/RoleIcon";
-import { prettyFormat } from "~/lib/format";
+import { useStats } from "@atoms";
+import RoleIcon from "@components/Common/RoleIcon";
+import { prettyFormat } from "@library/format";
 import { Link } from "react-router-dom";
 
 export const TopPlayersList = () => {

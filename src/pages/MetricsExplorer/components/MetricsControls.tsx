@@ -5,7 +5,7 @@ import {
   PlayerStatsNumericalKeys,
   playerStatsCategoryKeys,
   playerStatsNumericalKeys,
-} from "~/atoms/metrics/playerMetricsAtoms";
+} from "@atoms/metrics/playerMetricsAtoms";
 // Import specific style objects
 import {
   groupBySelectStyles,
@@ -13,7 +13,7 @@ import {
   sortBySelectStyles,
   sortDirectionSelectStyles,
   filterSelectStyles,
-} from "~/pages/MetricsExplorer/utils/metricExplorerStyles";
+} from "@pages/MetricsExplorer/utils/metricExplorerStyles";
 
 // Define option type for react-select
 type OptionType = { value: string; label: string };
@@ -177,9 +177,9 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
           value={
             sortDirection
               ? {
-                value: sortDirection,
-                label: sortDirection === "asc" ? "Ascending" : "Descending",
-              }
+                  value: sortDirection,
+                  label: sortDirection === "asc" ? "Ascending" : "Descending",
+                }
               : null
           }
           onChange={(selectedOption) => {

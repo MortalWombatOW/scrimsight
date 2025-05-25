@@ -1,7 +1,7 @@
 import { atom } from "jotai";
-import { playerEventsAtom } from "~/atoms/derived_events/playerEventsAtom";
-import { playerInteractionEventsAtom } from "~/atoms/derived_events/playerInteractionEventsAtom";
-import { roundTimesAtom } from "~/atoms/roundTimesAtom";
+import { playerEventsAtom } from "@atoms/derived_events/playerEventsAtom";
+import { playerInteractionEventsAtom } from "@atoms/derived_events/playerInteractionEventsAtom";
+import { roundTimesAtom } from "@atoms/roundTimesAtom";
 
 export interface PlayerLife {
   matchId: string;

@@ -1,5 +1,5 @@
-import { listToNaturalLanguage } from "~/lib";
-import { CardBase, CardBaseFact } from "~/components/Card/CardBase";
+import { listToNaturalLanguage } from "@lib";
+import { CardBase, CardBaseFact } from "@components/Card/CardBase";
 
 interface MatchCardProps {
   title: string;

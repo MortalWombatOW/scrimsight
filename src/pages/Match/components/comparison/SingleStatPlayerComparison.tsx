@@ -13,8 +13,8 @@ import {
   matchDataAtom,
   playerStatsNumericalKeys,
   useStats,
-} from "~/atoms";
-import { camelCaseToWords, prettyFormat } from "~/lib";
+} from "@atoms";
+import { camelCaseToWords, prettyFormat } from "@lib";
 
 interface SingleStatPlayerComparisonProps {
   matchId: string;

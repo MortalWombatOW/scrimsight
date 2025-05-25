@@ -1,4 +1,4 @@
-import { PlayerInteractionEvent } from "~/atoms";
+import { PlayerInteractionEvent } from "@atoms";
 
 interface PlayerInteraction {
   sourcePlayerName: string;

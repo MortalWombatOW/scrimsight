@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import RoleIcon from "~/components/Common/RoleIcon";
-import { OverwatchRole } from "~/lib";
+import RoleIcon from "@components/Common/RoleIcon";
+import { OverwatchRole } from "@lib";
 
 type RoleCheckboxProps = {
   role: OverwatchRole;

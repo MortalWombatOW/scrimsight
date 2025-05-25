@@ -1,8 +1,8 @@
 import { useAtomValue, atom } from "jotai";
-import { playerStatExpandedAtom } from "~/atoms/playerStatExpandedAtom";
-import { groupByAtom, Grouped, MetricAtom } from "~/atoms/metrics/metricUtils";
+import { playerStatExpandedAtom } from "@atoms/playerStatExpandedAtom";
+import { groupByAtom, Grouped, MetricAtom } from "@atoms/metrics/metricUtils";
 import { heroPlaytimeAtom } from '~/atoms/metrics/heroPlaytimeAtom';
-import { OverwatchRole, getRankForRole } from "~/lib/hero";
+import { OverwatchRole, getRankForRole } from "@library/hero";
 
 export type PlayerStatsCategoryKeys = 'matchId' | 'roundNumber' | 'playerTeam' | 'playerName' | 'playerHero' | 'playerRole';
 

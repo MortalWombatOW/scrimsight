@@ -1,11 +1,11 @@
 import { type ReactNode } from "react";
-import { useStats } from "~/atoms";
+import { useStats } from "@atoms";
 import {
   OverwatchRole,
   getRoleFromHero,
   getHeroImage,
-} from "~/lib/hero";
-import RoleIcon from "~/components/Common/RoleIcon";
+} from "@library/hero";
+import RoleIcon from "@components/Common/RoleIcon";
 import {
   BarChart,
   Bar,

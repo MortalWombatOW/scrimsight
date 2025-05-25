@@ -14,10 +14,10 @@ import {
   teamfightsAtom,
   UltimateEvent,
   ultimateEventsAtom,
-} from "~/atoms";
+} from "@atoms";
 import { createContext, useContext, useState, ReactNode, useMemo } from "react";
-import { playerLivesAtom } from "~/atoms/playerLivesAtom";
-import { formatDuration, getRoleFromHero } from "~/lib";
+import { playerLivesAtom } from "@atoms/playerLivesAtom";
+import { formatDuration, getRoleFromHero } from "@lib";
 
 interface TimeRange {
   start: number;
@@ -257,13 +257,13 @@ export const TimelineProvider = ({
 
   const loadedData = dataLoaded
     ? {
-      matchData,
-      mapTime,
-      roundTimes,
-      teamfights,
-      events,
-      groupedEvents,
-    }
+        matchData,
+        mapTime,
+        roundTimes,
+        teamfights,
+        events,
+        groupedEvents,
+      }
     : undefined;
 
   return (

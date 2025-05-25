@@ -3,11 +3,11 @@ import { atomFamily } from "jotai/utils";
 import {
   matchDataAtom,
   playerInteractionEventsAtom,
-} from "~/atoms";
+} from "@atoms";
 import {
   generateKillMatrixData,
   type KillMatrixData
-} from "~/atoms/derived_stats/killMatrix";
+} from "@atoms/derived_stats/killMatrix";
 
 // --- Derived Atom Definition ---
 export const killMatrixAtomFamily = atomFamily((matchId: string) =>

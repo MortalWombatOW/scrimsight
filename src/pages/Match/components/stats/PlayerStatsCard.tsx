@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useStats } from "~/atoms";
+import { useStats } from "@atoms";
 import {
   getHeroImage,
   camelCaseToAbbreviation,
   camelCaseToWords,
   prettyFormat,
-} from "~/lib";
-import { ProgressBar } from "~/components/ProgressBar";
+} from "@lib";
+import { ProgressBar } from "@components/ProgressBar";
 
 interface PlayerStatsCardProps {
   playerName: string;
@@ -112,10 +112,10 @@ export const PlayerStatsCard = ({
                   className={`
                     flex items-center justify-center rounded-full w-6 h-6
                     ${
-              getRanking(stat).rank === 1
-                ? "bg-base-800 text-white dark:bg-base-200 dark:text-base-800"
-                : "bg-base-200 text-base-800 dark:bg-base-600 dark:text-base-200"
-              }
+                      getRanking(stat).rank === 1
+                        ? "bg-base-800 text-white dark:bg-base-200 dark:text-base-800"
+                        : "bg-base-200 text-base-800 dark:bg-base-600 dark:text-base-200"
+                    }
                   `}
                 >
                   <span className="text-xs font-medium">
@@ -142,10 +142,10 @@ export const PlayerStatsCard = ({
                     {stat === "finalBlows"
                       ? "Final Blows"
                       : stat === "allDamageDealt"
-                        ? "All Damage"
-                        : stat === "ultimatesUsed"
-                          ? "Ultimates Used"
-                          : camelCaseToWords(stat)}
+                      ? "All Damage"
+                      : stat === "ultimatesUsed"
+                      ? "Ultimates Used"
+                      : camelCaseToWords(stat)}
                   </span>
                   <span className="text-sm font-medium text-base-800 dark:text-base-200">
                     {prettyFormat(getStat(stat))}

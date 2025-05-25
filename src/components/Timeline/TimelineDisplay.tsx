@@ -1,8 +1,8 @@
 import React, { useMemo, type ReactNode } from "react";
 import { useAtomValue } from "jotai";
-import { useTimelineContext } from "~/components/Timeline/TimelineContext";
-import { formatTime, getHeroImage } from "~/lib";
-import { groupedKillOffensiveAssistExtractorAtom } from "~/atoms/groupedEventsAtom";
+import { useTimelineContext } from "@components/Timeline/TimelineContext";
+import { formatTime, getHeroImage } from "@lib";
+import { groupedKillOffensiveAssistExtractorAtom } from "@atoms/groupedEventsAtom";
 
 export const TimelineDisplay = (): ReactNode => {
   const {

@@ -1,7 +1,7 @@
 // Removed useState, useStats, RoleIcon, prettyFormat, Link, PlayerStatsNumericalKeys imports as they are no longer needed here
-import { PlayerCard } from "~/components/Card/PlayerCard"; // Import PlayerCard
-import { PlayerListSummary } from "~/atoms/metrics/listSummaryAtoms"; // Import the summary type
-import { prettyFormat } from "~/lib/format"; // Keep prettyFormat for KDA
+import { PlayerCard } from "@components/Card/PlayerCard"; // Import PlayerCard
+import { PlayerListSummary } from "@atoms/metrics/listSummaryAtoms"; // Import the summary type
+import { prettyFormat } from "@library/format"; // Keep prettyFormat for KDA
 
 interface PlayerListProps {
   players: PlayerListSummary[]; // Accept players summary as prop
@@ -19,8 +19,8 @@ export const PlayerList = ({ players }: PlayerListProps) => {
           player.deaths === 0
             ? prettyFormat(player.eliminations + player.assists) // If no deaths, just show K+A
             : prettyFormat(
-              (player.eliminations + player.assists) / player.deaths
-            );
+                (player.eliminations + player.assists) / player.deaths
+              );
 
         return (
           <PlayerCard

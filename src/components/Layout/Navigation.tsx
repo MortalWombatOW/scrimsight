@@ -1,5 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
-import { scrimAtom, teamNamesAtom, matchDataAtom, useStats } from "~/atoms";
+import { scrimAtom, teamNamesAtom, matchDataAtom, useStats } from "@atoms";
 import { useAtomValue } from "jotai";
 import { RiTeamLine } from "react-icons/ri";
 import { MdOutlinePersonOutline } from "react-icons/md";
@@ -10,7 +10,7 @@ import { IoStatsChartOutline } from "react-icons/io5"; // Import chart icon
 import { BsDatabaseFillGear } from "react-icons/bs"; // Import database icon for V2 data flow
 import { BsShare } from "react-icons/bs"; // Import schema icon
 import { useEffect } from "react";
-import RoleIcon from "~/components/Common/RoleIcon";
+import RoleIcon from "@components/Common/RoleIcon";
 import { CiMap } from "react-icons/ci";
 
 const getTitle = (pathname: string) => {

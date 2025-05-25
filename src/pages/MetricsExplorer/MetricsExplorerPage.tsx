@@ -1,7 +1,7 @@
 import React, { useState } from "react"; // Removed useMemo
 import { useAtomValue } from "jotai";
 // Removed unused imports: @tanstack/react-table, recharts, react-select
-import Container from "~/components/Container/Container";
+import Container from "@components/Container/Container";
 import {
   useStats,
   uniqueCategoryValuesAtom,
@@ -9,12 +9,12 @@ import {
   PlayerStatsNumericalKeys, // Keep this type
   // Removed playerStatsCategoryKeys array import
   // Removed playerStatsNumericalKeys array import
-} from "~/atoms/metrics/playerMetricsAtoms";
+} from "@atoms/metrics/playerMetricsAtoms";
 // Removed customSelectStyles import
-import { useMetricsTableColumns } from "~/pages/MetricsExplorer/hooks/useMetricsTableColumns";
-import { MetricsDataTable } from "~/pages/MetricsExplorer/components/MetricsDataTable";
-import { MetricsChart } from "~/pages/MetricsExplorer/components/MetricsChart";
-import { MetricsControls } from "~/pages/MetricsExplorer/components/MetricsControls"; // Import the new controls component
+import { useMetricsTableColumns } from "@pages/MetricsExplorer/hooks/useMetricsTableColumns";
+import { MetricsDataTable } from "@pages/MetricsExplorer/components/MetricsDataTable";
+import { MetricsChart } from "@pages/MetricsExplorer/components/MetricsChart";
+import { MetricsControls } from "@pages/MetricsExplorer/components/MetricsControls"; // Import the new controls component
 
 export const MetricsExplorerPage: React.FC = () => {
   // State for user selections (will be expanded)

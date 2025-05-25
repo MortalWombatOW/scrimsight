@@ -1,9 +1,9 @@
 import { GoLinkExternal } from "react-icons/go";
 import { useAtom } from "jotai";
-import { sampleDataEnabledAtom } from "~/atoms/files/sampleDataAtoms";
+import { sampleDataEnabledAtom } from "@atoms/files/sampleDataAtoms";
 import { MdOutlineFileOpen } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
-import { logFileInputMutationAtom } from "~/atoms/files";
+import { logFileInputMutationAtom } from "@atoms/files";
 import { useState, useCallback } from "react";
 
 const ZeroState = () => {
@@ -108,20 +108,20 @@ const ZeroState = () => {
             className={`
               border-2 border-dashed rounded-lg p-6 cursor-pointer
               ${
-    isDragActive
-      ? "border-blue-400"
-      : "border-gray-700 dark:border-gray-700"
-    } 
+                isDragActive
+                  ? "border-blue-400"
+                  : "border-gray-700 dark:border-gray-700"
+              } 
               ${
-    isDragAccept
-      ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-      : ""
-    } 
+                isDragAccept
+                  ? "border-green-500 bg-green-50 dark:bg-green-900/20"
+                  : ""
+              } 
               ${
-    isDragReject
-      ? "border-red-500 bg-red-50 dark:bg-red-900/20"
-      : ""
-    }
+                isDragReject
+                  ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                  : ""
+              }
               hover:border-blue-400 transition-colors
             `}
             onDragEnter={handleDragIn}

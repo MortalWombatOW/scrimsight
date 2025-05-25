@@ -1,10 +1,10 @@
 import { useParams, Link } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import { allPlayersForTeamAtom } from "~/atoms/allPlayersForTeamAtom";
-import { playerStatsForTeamAtom } from "~/atoms/metrics/contextualStatAtoms";
-import { PlayerCard } from "~/components/Card/PlayerCard";
-import { prettyFormat } from "~/lib/format";
-import { ErrorMessage } from "~/components/Common/ErrorMessage";
+import { allPlayersForTeamAtom } from "@atoms/allPlayersForTeamAtom";
+import { playerStatsForTeamAtom } from "@atoms/metrics/contextualStatAtoms";
+import { PlayerCard } from "@components/Card/PlayerCard";
+import { prettyFormat } from "@library/format";
+import { ErrorMessage } from "@components/Common/ErrorMessage";
 
 // Component to render a single player card using the atom family
 const PlayerCardLoader = ({
@@ -30,14 +30,14 @@ const PlayerCardLoader = ({
   const kda =
     playerStats.deaths === 0
       ? prettyFormat(
-        playerStats.eliminations +
+          playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)
-      )
+        )
       : prettyFormat(
-        (playerStats.eliminations +
+          (playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)) /
             playerStats.deaths
-      );
+        );
 
   return (
     <Link to={`/players/${playerId}`} className="block">

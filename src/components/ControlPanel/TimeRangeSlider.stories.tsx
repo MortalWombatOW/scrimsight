@@ -1,30 +1,30 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import type { Meta, StoryObj } from "@storybook/react";
-import TimeRangeSlider from "~/components/ControlPanel/TimeRangeSlider";
+import TimeRangeSlider from "@components/ControlPanel/TimeRangeSlider";
 import React from "react";
 
 const meta: Meta<typeof TimeRangeSlider> = {
   component: TimeRangeSlider,
   argTypes: {
     value: {
-      control: 'object',
-      description: 'Current range values [start, end]',
+      control: "object",
+      description: "Current range values [start, end]",
     },
     min: {
-      control: 'number',
-      description: 'Minimum value of the range',
+      control: "number",
+      description: "Minimum value of the range",
     },
     max: {
-      control: 'number',
-      description: 'Maximum value of the range',
+      control: "number",
+      description: "Maximum value of the range",
     },
     minDistance: {
-      control: 'number',
-      description: 'Minimum distance between handles',
+      control: "number",
+      description: "Minimum distance between handles",
     },
     onChange: {
-      action: 'range changed',
-      description: 'Callback when range values change',
+      action: "range changed",
+      description: "Callback when range values change",
     },
   },
 };
@@ -37,13 +37,15 @@ type Story = StoryObj<typeof TimeRangeSlider>;
 const formatTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  return `${hours.toString().padStart(2, "0")}:${mins
+    .toString()
+    .padStart(2, "0")}`;
 };
 
 // Helper function to format date (assumes value is days since epoch)
 const formatDate = (days: number) => {
   const date = new Date(days * 24 * 60 * 60 * 1000);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
 // Time range example (24-hour format)
@@ -84,7 +86,7 @@ export const InteractiveTimeRange: Story = {
           minDistance={60}
           renderLabel={(value) => formatTime(value)}
         />
-        <div style={{ marginTop: '1rem', fontFamily: 'monospace' }}>
+        <div style={{ marginTop: "1rem", fontFamily: "monospace" }}>
           Selected Time Range: {formatTime(value[0])} - {formatTime(value[1])}
         </div>
       </div>
@@ -93,7 +95,8 @@ export const InteractiveTimeRange: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Interactive time range selector with 24-hour format. Minimum interval is 1 hour.',
+        story:
+          "Interactive time range selector with 24-hour format. Minimum interval is 1 hour.",
       },
     },
   },
@@ -103,7 +106,10 @@ export const InteractiveTimeRange: Story = {
 export const InteractiveDateRange: Story = {
   render: () => {
     const today = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
-    const [value, setValue] = React.useState<[number, number]>([today - 7, today]);
+    const [value, setValue] = React.useState<[number, number]>([
+      today - 7,
+      today,
+    ]);
 
     return (
       <div>
@@ -116,7 +122,7 @@ export const InteractiveDateRange: Story = {
           minDistance={1}
           renderLabel={(value) => formatDate(value)}
         />
-        <div style={{ marginTop: '1rem', fontFamily: 'monospace' }}>
+        <div style={{ marginTop: "1rem", fontFamily: "monospace" }}>
           Selected Date Range: {formatDate(value[0])} - {formatDate(value[1])}
         </div>
       </div>
@@ -125,7 +131,8 @@ export const InteractiveDateRange: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Interactive date range selector showing the last 30 days. Minimum interval is 1 day.',
+        story:
+          "Interactive date range selector showing the last 30 days. Minimum interval is 1 day.",
       },
     },
   },
@@ -145,39 +152,46 @@ export const MinuteRange: Story = {
 // Combined interactive demo
 export const InteractiveCombined: Story = {
   render: () => {
-    const [mode, setMode] = React.useState<'time' | 'date'>('time');
+    const [mode, setMode] = React.useState<"time" | "date">("time");
     const today = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
 
-    const [timeValue, setTimeValue] = React.useState<[number, number]>([540, 1020]);
-    const [dateValue, setDateValue] = React.useState<[number, number]>([today - 7, today]);
+    const [timeValue, setTimeValue] = React.useState<[number, number]>([
+      540,
+      1020,
+    ]);
+    const [dateValue, setDateValue] = React.useState<[number, number]>([
+      today - 7,
+      today,
+    ]);
 
-    const config = mode === 'time'
-      ? {
-        value: timeValue,
-        onChange: setTimeValue,
-        min: 0,
-        max: 1440,
-        minDistance: 60,
-        renderLabel: formatTime,
-      }
-      : {
-        value: dateValue,
-        onChange: setDateValue,
-        min: today - 30,
-        max: today,
-        minDistance: 1,
-        renderLabel: formatDate,
-      };
+    const config =
+      mode === "time"
+        ? {
+            value: timeValue,
+            onChange: setTimeValue,
+            min: 0,
+            max: 1440,
+            minDistance: 60,
+            renderLabel: formatTime,
+          }
+        : {
+            value: dateValue,
+            onChange: setDateValue,
+            min: today - 30,
+            max: today,
+            minDistance: 1,
+            renderLabel: formatDate,
+          };
 
     return (
       <div>
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: "1rem" }}>
           <label>
             Mode:
             <select
               value={mode}
-              onChange={(e) => setMode(e.target.value as 'time' | 'date')}
-              style={{ marginLeft: '0.5rem' }}
+              onChange={(e) => setMode(e.target.value as "time" | "date")}
+              style={{ marginLeft: "0.5rem" }}
             >
               <option value="time">Time Range</option>
               <option value="date">Date Range</option>
@@ -185,11 +199,14 @@ export const InteractiveCombined: Story = {
           </label>
         </div>
         <TimeRangeSlider {...config} />
-        <div style={{ marginTop: '1rem', fontFamily: 'monospace' }}>
-          {mode === 'time'
-            ? `Selected Time: ${formatTime(timeValue[0])} - ${formatTime(timeValue[1])}`
-            : `Selected Dates: ${formatDate(dateValue[0])} - ${formatDate(dateValue[1])}`
-          }
+        <div style={{ marginTop: "1rem", fontFamily: "monospace" }}>
+          {mode === "time"
+            ? `Selected Time: ${formatTime(timeValue[0])} - ${formatTime(
+                timeValue[1]
+              )}`
+            : `Selected Dates: ${formatDate(dateValue[0])} - ${formatDate(
+                dateValue[1]
+              )}`}
         </div>
       </div>
     );
@@ -197,8 +214,9 @@ export const InteractiveCombined: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Combined demo showing both time and date range functionality with toggle.',
+        story:
+          "Combined demo showing both time and date range functionality with toggle.",
       },
     },
   },
-}; 
+};

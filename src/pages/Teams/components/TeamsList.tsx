@@ -1,7 +1,7 @@
-import { TeamCard } from "~/components/Card/TeamCard";
+import { TeamCard } from "@components/Card/TeamCard";
 // Import the new summary type
-import { TeamListSummary } from "~/atoms/metrics/listSummaryAtoms";
-import { formatPercentage } from "~/lib/format"; // Assuming a formatting function exists
+import { TeamListSummary } from "@atoms/metrics/listSummaryAtoms";
+import { formatPercentage } from "@library/format"; // Assuming a formatting function exists
 
 interface TeamsListProps {
   teams: TeamListSummary[]; // Use the new type

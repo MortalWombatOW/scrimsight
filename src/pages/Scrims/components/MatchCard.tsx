@@ -1,10 +1,10 @@
 import { useAtomValue } from "jotai";
 import { useNavigate } from "react-router-dom";
-import { matchDataAtom } from "~/atoms/matchDataAtom";
-import { useStats } from "~/atoms/metrics/playerMetricsAtoms";
-import { getHeroImage, formatTime } from "~/lib";
+import { matchDataAtom } from "@atoms/matchDataAtom";
+import { useStats } from "@atoms/metrics/playerMetricsAtoms";
+import { getHeroImage, formatTime } from "@library";
 import { useMemo } from "react";
-import { mapNameToFileName } from "~/lib/string";
+import { mapNameToFileName } from "@library/string";
 import { CiMap } from "react-icons/ci";
 
 const PlayerCard = ({
