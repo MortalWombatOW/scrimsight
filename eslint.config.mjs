@@ -40,25 +40,26 @@ export default [
       },
       "boundaries/elements": [
         {
-          type: "atoms",
-          pattern: "atoms/",
-          mode: "folder",
+          type: "atom",
+          pattern: "atoms/*/*Atom.ts",
+          mode: "file",
         },
         {
-          type: "components",
-          pattern: "components/",
-          mode: "folder",
+          type: "component",
+          pattern: "components/*/*.tsx",
+          mode: "file",
         },
         {
-          type: "pages",
-          pattern: "pages/",
-          mode: "folder",
+          type: "page",
+          pattern: "pages/*/*Page.tsx",
+          mode: "file",
         },
         {
           type: "library",
-          pattern: "lib/",
-          mode: "folder",
-        }
+          pattern: "lib/*.ts",
+          mode: "file",
+        },
+        
       ],
     },
     rules: {
@@ -83,6 +84,8 @@ export default [
       }],
       'path-alias/no-relative': ['error', {}],
       ...boundaries.configs.strict.rules,
+      "boundaries/external": [0],
+      
     //   "boundaries/element-types": [2, {
     //   default: "disallow",
     //   rules: [

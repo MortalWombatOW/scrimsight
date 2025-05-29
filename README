@@ -1,0 +1,70 @@
+# Scrimsight
+
+A web application for analyzing and visualizing Overwatch scrims.
+
+## Development
+
+### File Structure
+
+There are four types of files in the project:
+- atoms: Jotai atoms that define the data flow in the application and can depend on other atoms or libraries
+- components: React components that define the UI and can depend on atoms, libraries, or other components
+- pages: React pages that define the UI and can depend on only components and libraries
+- lib: JavaScript libraries that can be used in atoms, components, or other libraries
+
+The file structure is optimized for AI-assisted development, with the following conventions:
+- Strict constraints on file names and file locations to ensure conformance to project patterns
+- Entry points for each type of file that expose the types but hide the implementation details
+- Strict constraints on the implementation of each type of file to ensure consistency and maintainability
+
+#### Atoms
+
+Jotai atoms are used to define the business logic of the application, and can depend on other atoms or libraries.
+Each atom has an type, which is used to enforce type safety, and should be tested with vitest.
+Atoms can depend on other atoms, and can be used in components.
+Atoms are exported from an entry point file which defines the type of the atom, describes it in natural language, and imports the implementation.
+
+Atom locations: `src/atoms/{atomName}.ts`
+Atom test locations: `src/atoms/{atomName}.test.ts`
+Entrypoint location: `src/atoms/index.ts`
+
+Importing the atom type: `import {atomNameType} from '@atoms'`
+Importing the atom: `import {atomName} from '@atoms'`
+
+#### Components
+
+React components are used to define the UI of the application, styled with DaisyUI and Tailwind.
+Each component should take as minimal props as possible to ensure flexibility and maintainability, and fetch data from atoms.
+Components can depend on other atoms, components, or libraries.
+Each component should be tested with Storybook 8 and Chromatic.
+Components are exported from an entry point file which imports the implementation, so that it can be used elsewhere.
+
+Component locations: `src/components/{componentName}.tsx`
+Component test locations: `src/components/{componentName}.stories.tsx`
+Entrypoint location: `src/components/index.ts`
+
+Importing the component: `import {componentName} from '@components'`
+
+#### Pages
+
+React pages are used to define the UI of the application, styled with DaisyUI and Tailwind.
+Pages get their props from the URL, and can depend on only components and libraries.
+Pages are exported from an entry point file which imports the implementation, so that it can be used elsewhere.
+
+Page locations: `src/pages/{pageName}.tsx`
+Page test locations: `src/pages/{pageName}.stories.tsx`
+Entrypoint location: `src/pages/index.ts`
+
+Importing the page: `import {pageName} from '@pages'`
+
+#### Libraries
+
+Libraries are used to define reusable functionality that can be used in atoms, components, pages, or other libraries.
+Each library should be tested with vitest.
+Libraries are exported from an entry point file which imports the implementation and explains it in natural language.
+
+Library locations: `src/lib/{libraryName}.ts`
+Library test locations: `src/lib/{libraryName}.test.ts`
+Entrypoint location: `src/lib/index.ts`
+
+Importing the library: `import {libraryName} from '@lib'`
