@@ -1,22 +1,20 @@
 import { atom } from 'jotai';
-import { readFileAsync } from '~/atoms/files/scrimtime';
-import { logFileInputAtom } from '~/atoms/files/logFileInputAtom';
+import { readFileAsync } from '@library';
+import { logFileInput, LogFileLoaderType, LogFileInputType } from '@atoms';
 
 /**
- * Interface for the log file loader atom's output
+ * Implementation function for loading log file contents.
+ * This function can be tested independently.
  */
-export interface LogFileLoaderOutput {
-  fileName: string;
-  fileModified: number;
-  fileContent: string;
-}
+export const logFileLoaderAtomFn = async (
+  logFileInput: LogFileInputType 
+): Promise<LogFileLoaderType> => {
+  const { files } = logFileInput;
 
-/**
- * Atom that loads the contents of the uploaded log files
- */
-export const logFileLoaderAtom = atom(async (get): Promise<LogFileLoaderOutput[]> => {
-  const { files } = get(logFileInputAtom);
-  
+  if (!files || files.length === 0) {
+    return [];
+  }
+
   // Read all files concurrently
   const fileContents = await Promise.all(
     files.map(async (file) => {
@@ -30,4 +28,14 @@ export const logFileLoaderAtom = atom(async (get): Promise<LogFileLoaderOutput[]
   );
 
   return fileContents;
-}); 
+};
+
+/**
+ * Atom that loads the contents of the uploaded log files
+ */
+const logFileLoaderAtom = atom(async (get): Promise<LogFileLoaderType> => {
+  const logFileInputData = get(logFileInput.atom);
+  return logFileLoaderAtomFn(logFileInputData);
+});
+
+export default logFileLoaderAtom;

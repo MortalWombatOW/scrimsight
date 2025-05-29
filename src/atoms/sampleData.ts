@@ -1,13 +1,12 @@
 import { atom } from "jotai";
-import { LogFileLoaderOutput } from "@atoms/logFileLoaderAtom";
+import { LogFileLoaderType, sampleDataEnabled } from "@atoms";
 import file1 from "@library/sampledata/Log-2023-08-28-17-05-38.txt?raw";
 import file2 from "@library/sampledata/Log-2023-08-28-17-29-57.txt?raw";
 import file3 from "@library/sampledata/Log-2023-08-28-17-52-17.txt?raw";
 import file4 from "@library/sampledata/Log-2023-08-28-18-28-25.txt?raw";
 import file5 from "@library/sampledata/Log-2023-08-28-18-40-39.txt?raw";
-import sampleDataEnabled from "./sampleDataEnabled";
 
-export const sampleDataLoaderFn = async (enabled: boolean): Promise<LogFileLoaderOutput[]> => {
+export const sampleDataLoaderFn = (enabled: boolean): LogFileLoaderType => {
   if (!enabled) {
     return [];
   }
@@ -41,7 +40,7 @@ export const sampleDataLoaderFn = async (enabled: boolean): Promise<LogFileLoade
 };
 
 
-export default atom(async (get): Promise<LogFileLoaderOutput[]> => {
-  const enabled = await get(sampleDataEnabled);
+export default atom((get): LogFileLoaderType => {
+  const enabled = get(sampleDataEnabled.atom);
   return sampleDataLoaderFn(enabled);
 });

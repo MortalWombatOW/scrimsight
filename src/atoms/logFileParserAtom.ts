@@ -1,8 +1,6 @@
 import { atom } from 'jotai';
-import { parseFile } from '~/atoms/files/scrimtime';
-import { stringHash } from '~/lib/string';
-import { logFileLoaderAtom } from '~/atoms/files/logFileLoaderAtom';
-import { sampleData } from '@atoms';
+import { parseFile, stringHash } from '@library';
+import { logFileLoader, sampleData } from '@atoms';
 /**
  * Interface for the log file parser atom's output
  */
@@ -20,13 +18,13 @@ export interface LogFileParserOutput {
  * Atom that parses the loaded log files into structured data
  */
 export const logFileParserAtom = atom(async (get): Promise<LogFileParserOutput[]> => {
-  const loadedFiles = await get(logFileLoaderAtom);
-  const sampleData = get(sampleDataAtom);
+  const loadedFiles = await get(logFileLoader.atom);
+  const sampleDataFiles = get(sampleData.atom);
 
   console.log('loadedFiles', loadedFiles);
   console.log('sampleData', sampleData);
 
-  return [...loadedFiles, ...sampleData].map((file) => {
+  return [...loadedFiles, ...sampleDataFiles].map((file) => {
     const { logs } = parseFile(file.fileContent);
     return {
       fileName: file.fileName,

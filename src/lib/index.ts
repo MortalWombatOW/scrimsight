@@ -7,3 +7,4 @@ export * from './color';
 export * from './format';
 export * from './string';
 export * from './hero';
+export * from './scrimtime';

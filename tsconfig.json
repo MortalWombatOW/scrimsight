@@ -24,14 +24,26 @@
       "@atoms/*": [
         "src/atoms/*"
       ],
+      "@atoms": [
+        "src/atoms"
+      ],
       "@components/*": [
         "src/components/*"
+      ],
+      "@components": [
+        "src/components"
       ],
       "@pages/*": [
         "src/pages/*"
       ],
+      "@pages": [
+        "src/pages"
+      ],
       "@library/*": [
         "src/lib/*"
+      ],
+      "@library": [
+        "src/lib"
       ],
     },
     "types": [

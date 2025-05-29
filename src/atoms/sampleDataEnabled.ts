@@ -1,5 +1,5 @@
 import { atom } from "jotai";
+import { SampleDataEnabledType } from "@atoms";
 
-export const sampleDataEnabledFn = async () => true;
-
-export default atom(sampleDataEnabledFn);
+const sampleDataEnabledAtom = atom<SampleDataEnabledType>(true);
+export default sampleDataEnabledAtom;

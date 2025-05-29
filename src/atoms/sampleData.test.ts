@@ -6,8 +6,8 @@ import file4 from "@library/sampledata/Log-2023-08-28-18-28-25.txt?raw";
 import file5 from "@library/sampledata/Log-2023-08-28-18-40-39.txt?raw";
 
 describe('sampleDataLoaderFn', () => {
-  it('should return sample log data when enabled is true', async () => {
-    const result = await sampleDataLoaderFn(true);
+  it('should return sample log data when enabled is true', () => {
+    const result = sampleDataLoaderFn(true);
     expect(result).toHaveLength(5);
 
     expect(result[0].fileName).toBe('Log-2023-08-28-17-05-38.txt');
@@ -31,8 +31,8 @@ describe('sampleDataLoaderFn', () => {
     expect(result[4].fileContent).toBe(file5);
   });
 
-  it('should return an empty array when enabled is false', async () => {
-    const result = await sampleDataLoaderFn(false);
+  it('should return an empty array when enabled is false', () => {
+    const result =  sampleDataLoaderFn(false);
     expect(result).toEqual([]);
   });
 });

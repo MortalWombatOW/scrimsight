@@ -1,25 +1,18 @@
-/**
- * Interface for the log file input atom's output
- */
-export interface LogFileInput {
-  files: File[];
-}
+import { atom, WritableAtom } from 'jotai';
+import { LogFileInputType } from '@atoms';
 
-import { atom } from 'jotai';
+export const logFileInputAtomFn = (newFiles: File[]): LogFileInputType => {
+  return { files: newFiles };
+};
 
-/**
- * Atom that stores the uploaded log files
- */
-export const logFileInputAtom = atom<LogFileInput>({
-  files: [],
-});
+const _logFileInputAtom = atom<LogFileInputType>({ files: [] });
 
-/**
- * Atom that provides a setter function to update the log files
- */
-export const logFileInputMutationAtom = atom(
-  (get) => get(logFileInputAtom),
-  (_, set, files: File[]) => {
-    set(logFileInputAtom, { files });
+const logFileInputAtom: WritableAtom<LogFileInputType, [File[]], void> = atom(
+  (get) => get(_logFileInputAtom),
+  (_get, set, newFiles: File[]) => {
+    const nextState = logFileInputAtomFn(newFiles);
+    set(_logFileInputAtom, nextState);
   }
-); 
+);
+
+export default logFileInputAtom;
