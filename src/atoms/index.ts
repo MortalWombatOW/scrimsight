@@ -1,26 +1,24 @@
-export * from './allPlayersForTeamAtom';
-export * from './derived_events';
-export * from './event_extractors';
-export * from './files';
-export * from './groupedEventsAtom';
-export * from './mapTimesAtom';
-export * from './matchDataAtom';
-export * from './metrics';
-export * from './playerStatExpandedAtom';
-export * from './roundTimesAtom';
-export * from './teamCompositionsAtom';
-export * from './teamNamesAtom';
-export * from './teamStatsAtom';
-export * from './uniqueGameModesAtom';
-export * from './uniqueMapNamesAtom';
-export * from './uniquePlayerNamesAtom';
-export * from './scrimAtom';
-export * from './teamfightsAtom';
-export * from './derived_stats/firstKillImpactAtom';
-export * from './derived_stats/playerFirstKillDeathRateAtom';
-export * from './derived_stats/ultimateImpactAtom';
-export * from './derived_stats/averageMetricPerRoleAtom';
-export * from './derived_stats/averageMetricPerHeroAtom';
-export * from './derived_stats/averageMetricPerMapAtom';
-export * from './derived_stats/playerComparisonAtomFamily';
-export * from './derived_state'; // Added export for new state atoms
+import { Atom } from 'jotai';
+import teamPlayersAtom from './teamPlayers';
+
+type ScrimsightAtom<T> = {
+  name: string;
+  description: string;
+  atom: Atom<Promise<T>>;
+};
+
+interface TeamPlayersType {
+  teamName: string;
+  players: string[];
+}
+const teamPlayers: ScrimsightAtom<TeamPlayersType[]> = {
+  name: 'teamPlayers',
+  description: 'All players for each team',
+  atom: teamPlayersAtom,
+};
+
+const atoms: ScrimsightAtom<any>[] = [
+  teamPlayers
+];
+
+export default atoms;

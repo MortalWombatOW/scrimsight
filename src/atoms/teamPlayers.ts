@@ -1,12 +1,7 @@
 import { atom } from 'jotai';
-import { matchDataAtom } from '~/atoms/matchDataAtom';
+import { TeamPlayersType, matchDataAtom } from '@atoms';
 
-export interface TeamPlayers {
-  teamName: string;
-  players: string[];
-}
-
-export const allPlayersForTeamAtom = atom(async (get): Promise<TeamPlayers[]> => {
+export default atom(async (get): Promise<TeamPlayersType[]> => {
   const matchData = await get(matchDataAtom);
   const teamPlayersMap: Record<string, Set<string>> = {};
 

@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import { allPlayersForTeamAtom } from "@atoms/allPlayersForTeamAtom";
+import { allPlayersForTeamAtom } from "@atoms/teamPlayers";
 import { playerStatsForTeamAtom } from "@atoms/metrics/contextualStatAtoms";
 import { PlayerCard } from "@components/Card/PlayerCard";
 import { prettyFormat } from "@library/format";
