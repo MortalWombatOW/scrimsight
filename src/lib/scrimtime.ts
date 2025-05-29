@@ -1,4 +1,4 @@
-import { stringHash } from "@library/string";
+import { stringHash } from "@library";
 
 
 // describes an individual field in data spec

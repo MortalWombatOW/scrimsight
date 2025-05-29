@@ -1,29 +1,11 @@
 import { atom } from 'jotai';
 import { parseFile, stringHash } from '@library';
-import { logFileLoader, sampleData } from '@atoms';
-/**
- * Interface for the log file parser atom's output
- */
-export interface LogFileParserOutput {
-  fileName: string;
-  matchId: string;
-  logs: {
-    specName: string;
-    data: object;
-  }[];
-  fileModified: number;
-}
+import { logFileLoader, sampleData, LogFileLoaderType, LogFileParserOutput } from '@atoms';
 
-/**
- * Atom that parses the loaded log files into structured data
- */
-export const logFileParserAtom = atom(async (get): Promise<LogFileParserOutput[]> => {
-  const loadedFiles = await get(logFileLoader.atom);
-  const sampleDataFiles = get(sampleData.atom);
-
-  console.log('loadedFiles', loadedFiles);
-  console.log('sampleData', sampleData);
-
+export const logFileParserFn = (
+  loadedFiles: LogFileLoaderType,
+  sampleDataFiles: LogFileLoaderType
+): LogFileParserOutput[] => {
   return [...loadedFiles, ...sampleDataFiles].map((file) => {
     const { logs } = parseFile(file.fileContent);
     return {
@@ -33,4 +15,14 @@ export const logFileParserAtom = atom(async (get): Promise<LogFileParserOutput[]
       fileModified: file.fileModified,
     };
   });
+};
+
+/**
+ * Atom that parses the loaded log files into structured data
+ */
+export default atom(async (get): Promise<LogFileParserOutput[]> => {
+  const loadedFiles = await get(logFileLoader.atom);
+  const sampleDataFiles = await get(sampleData.atom);
+
+  return logFileParserFn(loadedFiles, sampleDataFiles);
 });

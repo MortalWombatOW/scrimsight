@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { logFileLoaderAtomFn } from './logFileLoaderAtom';
-import { readFileAsync } from '@library/scrimtime';
+import { readFileAsync } from '@library';
 import type { LogFileInputType } from '@atoms';
 
 // Mock the readFileAsync utility
