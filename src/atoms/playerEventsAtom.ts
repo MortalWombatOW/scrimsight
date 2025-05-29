@@ -31,4 +31,4 @@ export const playerEventsAtom: Atom<Promise<PlayerEvent[]>> = atom(async (get) =
 });
 
 // Re-export the PlayerEvent type for convenience
-export type { PlayerEvent } from './playerEvents';
+export type { PlayerEvent } from '../lib/playerEvents';

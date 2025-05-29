@@ -2,7 +2,7 @@ import { type ReactNode, useState } from "react";
 // Removed useStats import
 import { useAtomValue } from "jotai";
 // Removed duplicate imports below
-import { playerListSummaryAtom } from "@atoms/metrics/listSummaryAtoms";
+import { playerListSummaryAtom } from "@atoms/listSummaryAtoms";
 import RoleIcon from "@components/Common/RoleIcon";
 import { getRoleFromHero, OverwatchRole } from "@library/hero";
 // Removed unused: import { TopPlayersList } from "./TopPlayersList";

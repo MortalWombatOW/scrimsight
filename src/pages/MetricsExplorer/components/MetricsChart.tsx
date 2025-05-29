@@ -17,7 +17,7 @@ import {
 import {
   PlayerStatsCategoryKeys,
   PlayerStatsNumericalKeys,
-} from "@atoms/metrics/playerMetricsAtoms";
+} from "@library/playerMetricsAtoms";
 import { getColor } from "@pages/MetricsExplorer/utils/metricExplorerStyles"; // Import color function
 
 interface MetricsChartProps {

@@ -3,7 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import {
   PlayerStatsCategoryKeys,
   PlayerStatsNumericalKeys,
-} from "@atoms/metrics/playerMetricsAtoms";
+} from "@library/playerMetricsAtoms";
 
 // Define table columns dynamically based on state
 export const useMetricsTableColumns = ( // Renamed to useMetricsTableColumns for clarity

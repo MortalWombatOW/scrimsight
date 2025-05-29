@@ -13,7 +13,7 @@ import {
   teamStatsForScrimAtom,
   playerStatsForScrimAtom,
   matchStatsForScrimAtom,
-} from "@atoms/metrics/contextualStatAtoms"; // Import contextual atoms
+} from "@atoms/contextualStatAtoms"; // Import contextual atoms
 import { MatchData } from "@atoms/matchDataAtom"; // Import MatchData type for matchStatsForScrimAtom
 import Container from "@components/Container/Container"; // Added import
 

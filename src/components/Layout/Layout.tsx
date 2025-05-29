@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { FaDiscord } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa6";
 import { useAuth } from "react-oidc-context";
-import { sampleDataEnabledAtom } from "@atoms/files/sampleDataAtoms";
+import { sampleDataEnabledAtom } from "@atoms/sampleDataAtoms";
 import { useAtom } from "jotai";
 
 const DiscordButton = () => {

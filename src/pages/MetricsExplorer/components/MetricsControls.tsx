@@ -5,7 +5,7 @@ import {
   PlayerStatsNumericalKeys,
   playerStatsCategoryKeys,
   playerStatsNumericalKeys,
-} from "@atoms/metrics/playerMetricsAtoms";
+} from "@library/playerMetricsAtoms";
 // Import specific style objects
 import {
   groupBySelectStyles,

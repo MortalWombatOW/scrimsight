@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai";
 import {
   scrimListSummaryAtom,
   ScrimListSummary,
-} from "@atoms/metrics/listSummaryAtoms";
+} from "@atoms/listSummaryAtoms";
 // Removed unused: import { useNavigate } from "react-router-dom";
 import { formatTime } from "@lib"; // Removed unused mapNameToFileName
 import { ScrimCard } from "@components/Card/ScrimCard"; // Import ScrimCard

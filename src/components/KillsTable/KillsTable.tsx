@@ -1,6 +1,6 @@
 import { type ReactNode, Suspense } from "react"; // Added Suspense
 import { useAtom } from "jotai";
-import { killMatrixAtomFamily } from "@atoms/derived_stats/killMatrixAtom"; // Import the new atom
+import { killMatrixAtomFamily } from "@atoms/killMatrixAtom"; // Import the new atom
 import HeatmapGrid from "@components/Heatmap/HeatmapGrid";
 
 interface KillsTableProps {

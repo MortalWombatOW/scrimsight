@@ -5,7 +5,7 @@ import { TimelineButton, type TimelineSegmentButtonData } from "@components/Time
 import {
   roundEndExtractorAtom,
   type RoundEndLogEvent, // Corrected type name
-} from "@atoms/event_extractors/roundEndExtractorAtom"; // Import atom and type
+} from "@atoms/roundEndExtractorAtom"; // Import atom and type
 
 export const TimelineControls = (): ReactNode => {
   const { setCurrentTimeRange, loadedData, currentTimeRange } =

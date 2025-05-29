@@ -7,7 +7,7 @@ import {
 import {
   generateKillMatrixData,
   type KillMatrixData
-} from "@atoms/derived_stats/killMatrix";
+} from "@atoms/killMatrix";
 
 // --- Derived Atom Definition ---
 export const killMatrixAtomFamily = atomFamily((matchId: string) =>

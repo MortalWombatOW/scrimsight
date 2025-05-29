@@ -4,7 +4,7 @@ import { matchDataAtom } from "@atoms/matchDataAtom"; // Removed unused MatchDat
 import {
   teamStatsForMatchAtom,
   // Removed unused playerStatsForMatchAtom
-} from "@atoms/metrics/contextualStatAtoms";
+} from "@atoms/contextualStatAtoms";
 import { MatchCard } from "@components/Card/MatchCard";
 import { TeamCard } from "@components/Card/TeamCard";
 // Removed unused PlayerCard

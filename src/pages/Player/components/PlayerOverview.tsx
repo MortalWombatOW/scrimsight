@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 // Removed useStats import for overall stats, keep for hero stats for now
 import { useStats } from "@atoms";
 import { useAtomValue } from "jotai"; // Import useAtomValue
-import { playerListSummaryAtom } from "@atoms/metrics/listSummaryAtoms"; // Import summary atom
+import { playerListSummaryAtom } from "@atoms/listSummaryAtoms"; // Import summary atom
 import { PlayerCard } from "@components/Card/PlayerCard"; // Import PlayerCard
 import { StatCard } from "@components/StatCard";
 import {

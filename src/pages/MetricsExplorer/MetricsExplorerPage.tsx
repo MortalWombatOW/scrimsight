@@ -9,7 +9,7 @@ import {
   PlayerStatsNumericalKeys, // Keep this type
   // Removed playerStatsCategoryKeys array import
   // Removed playerStatsNumericalKeys array import
-} from "@atoms/metrics/playerMetricsAtoms";
+} from "@library/playerMetricsAtoms";
 // Removed customSelectStyles import
 import { useMetricsTableColumns } from "@pages/MetricsExplorer/hooks/useMetricsTableColumns";
 import { MetricsDataTable } from "@pages/MetricsExplorer/components/MetricsDataTable";

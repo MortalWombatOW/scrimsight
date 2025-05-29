@@ -1,6 +1,6 @@
 import { useAtomValue, atom } from "jotai";
 import { playerStatExpandedAtom } from "@atoms/playerStatExpandedAtom";
-import { groupByAtom, Grouped, MetricAtom } from "@atoms/metrics/metricUtils";
+import { groupByAtom, Grouped, MetricAtom } from "@library/metricUtils";
 import { heroPlaytimeAtom } from '~/atoms/metrics/heroPlaytimeAtom';
 import { OverwatchRole, getRankForRole } from "@library/hero";
 

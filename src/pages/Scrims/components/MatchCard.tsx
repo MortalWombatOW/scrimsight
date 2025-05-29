@@ -1,7 +1,7 @@
 import { useAtomValue } from "jotai";
 import { useNavigate } from "react-router-dom";
 import { matchDataAtom } from "@atoms/matchDataAtom";
-import { useStats } from "@atoms/metrics/playerMetricsAtoms";
+import { useStats } from "@library/playerMetricsAtoms";
 import { getHeroImage, formatTime } from "@library";
 import { useMemo } from "react";
 import { mapNameToFileName } from "@library/string";

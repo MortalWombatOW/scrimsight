@@ -7,7 +7,7 @@ import {
   scrimListSummaryAtom,
   teamListSummaryAtom,
   playerListSummaryAtom,
-} from "@atoms/metrics/listSummaryAtoms"; // Import summary atoms
+} from "@atoms/listSummaryAtoms"; // Import summary atoms
 import { ScrimCard } from "@components/Card/ScrimCard";
 import { TeamCard } from "@components/Card/TeamCard";
 import { PlayerCard } from "@components/Card/PlayerCard";

@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import { useParams } from "react-router-dom"; // Import useParams
 import { useAtomValue } from "jotai";
-import { detailedTeamCompositionsAtom } from "@atoms/derived_stats/detailedTeamCompositionsAtom";
+import { detailedTeamCompositionsAtom } from "@atoms/detailedTeamCompositionsAtom";
 import {
   getHeroImage,
   getRoleFromHero,

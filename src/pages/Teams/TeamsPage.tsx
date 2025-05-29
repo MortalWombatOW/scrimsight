@@ -6,7 +6,7 @@ import { useAtomValue } from "jotai"; // Use useAtomValue for read-only atoms
 import {
   teamListSummaryAtom,
   // Removed unused: TeamListSummary,
-} from "@atoms/metrics/listSummaryAtoms";
+} from "@atoms/listSummaryAtoms";
 import { TeamsSummaryStats } from "@pages/Teams/components/TeamsSummaryStats";
 // Update SortOption type if needed in TeamsFilter.tsx later
 import { TeamsFilter, SortOption } from "@pages/Teams/components/TeamsFilter";
