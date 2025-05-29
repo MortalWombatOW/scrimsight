@@ -20,9 +20,10 @@ The file structure is optimized for AI-assisted development, with the following 
 #### Atoms
 
 Jotai atoms are used to define the business logic of the application, and can depend on other atoms or libraries.
-Each atom has an type, which is used to enforce type safety, and should be tested with vitest.
+Each atom has an type, which is used to enforce type safety, and should be tested with vitest/jest.
 Atoms can depend on other atoms, and can be used in components.
 Atoms are exported from an entry point file which defines the type of the atom, describes it in natural language, and imports the implementation.
+Each atom implementation file should define the atom implementation function seperately from the atom definition in order to test it without the need for a full render. The atom is the default export of the file, the implementation function is a named export called `{atomName}Fn`. The atom is responsible for fetching any needed data from other atoms, and passing it to and returning from the implementation function.
 
 Atom locations: `src/atoms/{atomName}.ts`
 Atom test locations: `src/atoms/{atomName}.test.ts`

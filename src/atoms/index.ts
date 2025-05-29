@@ -1,24 +1,40 @@
 import { Atom } from 'jotai';
-import teamPlayersAtom from './teamPlayers';
+import teamPlayers from './teamPlayers';
+import sampleDataEnabled from './sampleDataEnabled';
+import sampleData from './sampleData';
+import { LogFileLoaderOutput } from './logFileLoaderAtom';
 
-type ScrimsightAtom<T> = {
+export type ScrimsightAtom<T> = {
   name: string;
   description: string;
   atom: Atom<Promise<T>>;
 };
 
-interface TeamPlayersType {
+export type TeamPlayersType = {
   teamName: string;
   players: string[];
-}
-const teamPlayers: ScrimsightAtom<TeamPlayersType[]> = {
-  name: 'teamPlayers',
-  description: 'All players for each team',
-  atom: teamPlayersAtom,
 };
 
+export type SampleDataEnabledType = boolean;
+
+export type SampleDataType = LogFileLoaderOutput[];
+
 const atoms: ScrimsightAtom<any>[] = [
-  teamPlayers
+  {
+    name: 'teamPlayers',
+    description: 'All players for each team',
+    atom: teamPlayers,
+  },
+  {
+    name: 'sampleDataEnabled',
+    description: 'Whether sample data is enabled',
+    atom: sampleDataEnabled,
+  },
+  {
+    name: 'sampleData',
+    description: 'Sample log file data',
+    atom: sampleData,
+  },
 ];
 
 export default atoms;

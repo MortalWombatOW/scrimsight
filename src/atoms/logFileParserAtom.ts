@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 import { parseFile } from '~/atoms/files/scrimtime';
 import { stringHash } from '~/lib/string';
 import { logFileLoaderAtom } from '~/atoms/files/logFileLoaderAtom';
-import { sampleDataAtom } from '~/atoms/files/sampleDataAtoms';
+import { sampleData } from '@atoms';
 /**
  * Interface for the log file parser atom's output
  */
@@ -35,4 +35,4 @@ export const logFileParserAtom = atom(async (get): Promise<LogFileParserOutput[]
       fileModified: file.fileModified,
     };
   });
-}); 
+});
