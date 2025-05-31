@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { logFileLoaderAtomFn } from './logFileLoaderAtom';
+import { logFileLoaderAtomFn } from '@atoms/logFileLoaderAtom';
 import { readFileAsync } from '@library';
 import type { LogFileInputType } from '@atoms';
 
@@ -22,10 +22,10 @@ describe('logFileLoaderAtomFn', () => {
 
   it('should return an empty array if files array is null or undefined (if applicable by type)', async () => {
     // Assuming LogFileInputType allows files to be null/undefined, adjust if not
-    const input1: LogFileInputType = { files: null as any }; // Or handle as per actual type
+    const input1: LogFileInputType = { files: null! }; // Using non-null assertion, assuming test intent
     expect(await logFileLoaderAtomFn(input1)).toEqual([]);
     
-    const input2: LogFileInputType = { files: undefined as any }; // Or handle as per actual type
+    const input2: LogFileInputType = { files: undefined! }; // Using non-null assertion, assuming test intent
     expect(await logFileLoaderAtomFn(input2)).toEqual([]);
   });
 

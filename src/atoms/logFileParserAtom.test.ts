@@ -27,9 +27,9 @@ describe('logFileParserFn', () => {
 
   it('should parse loaded files and sample data files correctly', () => {
     // Add a dummy matchId to satisfy the inferred type for mockReturnValueOnce
-    mockParseFile.mockReturnValueOnce({ logs: [{ specName: 'testSpec1', data: { msg: 'log1' } as any }], matchId: 'dummyMatchId1' });
+    mockParseFile.mockReturnValueOnce({ logs: [{ specName: 'testSpec1', data: [{ msg: 'log1' }] }], matchId: 'dummyMatchId1' });
     mockStringHash.mockReturnValueOnce(123);
-    mockParseFile.mockReturnValueOnce({ logs: [{ specName: 'testSpec2', data: { msg: 'log2' } as any }], matchId: 'dummyMatchId2' });
+    mockParseFile.mockReturnValueOnce({ logs: [{ specName: 'testSpec2', data: [{ msg: 'log2' }] }], matchId: 'dummyMatchId2' });
     mockStringHash.mockReturnValueOnce(456);
 
     const loadedFiles: LogFileLoaderType = [mockLoadedFile];
@@ -42,14 +42,14 @@ describe('logFileParserFn', () => {
     expect(result[0]).toEqual({
       fileName: 'loaded.txt',
       matchId: '123',
-      logs: [{ specName: 'testSpec1', data: { msg: 'log1' } }],
+      logs: [{ specName: 'testSpec1', data: [{ msg: 'log1' }] }],
       fileModified: 1234567890,
     });
 
     expect(result[1]).toEqual({
       fileName: 'sample.txt',
       matchId: '456',
-      logs: [{ specName: 'testSpec2', data: { msg: 'log2' } }],
+      logs: [{ specName: 'testSpec2', data: [{ msg: 'log2' }] }],
       fileModified: 9876543210,
     });
 
@@ -69,7 +69,7 @@ describe('logFileParserFn', () => {
   });
 
   it('should handle only loaded files', () => {
-    mockParseFile.mockReturnValueOnce({ logs: [{ specName: 'testSpecLoaded', data: { msg: 'loadedOnly' } as any }], matchId: 'dummyMatchId3' });
+    mockParseFile.mockReturnValueOnce({ logs: [{ specName: 'testSpecLoaded', data: [{ msg: 'loadedOnly' }] }], matchId: 'dummyMatchId3' });
     mockStringHash.mockReturnValueOnce(789);
 
     const loadedFiles: LogFileLoaderType = [mockLoadedFile];
@@ -79,7 +79,7 @@ describe('logFileParserFn', () => {
     expect(result[0]).toEqual({
       fileName: 'loaded.txt',
       matchId: '789',
-      logs: [{ specName: 'testSpecLoaded', data: { msg: 'loadedOnly' } }],
+      logs: [{ specName: 'testSpecLoaded', data: [{ msg: 'loadedOnly' }] }],
       fileModified: 1234567890,
     });
     expect(mockParseFile).toHaveBeenCalledWith('loaded content');
@@ -87,7 +87,7 @@ describe('logFileParserFn', () => {
   });
 
   it('should handle only sample data files', () => {
-    mockParseFile.mockReturnValueOnce({ logs: [{ specName: 'testSpecSample', data: { msg: 'sampleOnly' } as any }], matchId: 'dummyMatchId4' });
+    mockParseFile.mockReturnValueOnce({ logs: [{ specName: 'testSpecSample', data: [{ msg: 'sampleOnly' }] }], matchId: 'dummyMatchId4' });
     mockStringHash.mockReturnValueOnce(101);
 
     const sampleDataFiles: LogFileLoaderType = [mockSampleFile];
@@ -97,7 +97,7 @@ describe('logFileParserFn', () => {
     expect(result[0]).toEqual({
       fileName: 'sample.txt',
       matchId: '101',
-      logs: [{ specName: 'testSpecSample', data: { msg: 'sampleOnly' } }],
+      logs: [{ specName: 'testSpecSample', data: [{ msg: 'sampleOnly' }] }],
       fileModified: 9876543210,
     });
     expect(mockParseFile).toHaveBeenCalledWith('sample content');

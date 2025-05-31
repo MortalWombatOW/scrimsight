@@ -30,14 +30,14 @@ const PlayerCardLoader = ({
   const kda =
     playerStats.deaths === 0
       ? prettyFormat(
-          playerStats.eliminations +
+        playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)
-        )
+      )
       : prettyFormat(
-          (playerStats.eliminations +
+        (playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)) /
             playerStats.deaths
-        );
+      );
 
   return (
     <Link to={`/players/${playerId}`} className="block">

@@ -1,10 +1,12 @@
 import { atom } from 'jotai';
-import { matchExtractorAtom } from '~/atoms/event_extractors/matchExtractorAtom';
-import { matchStartExtractorAtom } from '~/atoms/event_extractors/matchStartExtractorAtom';
-import { matchEndExtractorAtom } from '~/atoms/event_extractors/matchEndExtractorAtom';
-import { playerStatExtractorAtom } from '~/atoms/event_extractors/playerStatExtractorAtom';
-import { mapTimesAtom } from '~/atoms/mapTimesAtom';
-import { roundEndExtractorAtom } from '~/atoms/event_extractors/roundEndExtractorAtom';
+import matchExtractor, { MatchFileInfo } from '@atoms/matchExtractorAtom';
+import matchStart from '@atoms/matchStart';
+import matchEnd from '@atoms/matchEnd';
+import playerStat from '@atoms/playerStat';
+import mapTimes, { MapTimes } from '@atoms/mapTimesAtom';
+import roundEnd from '@atoms/roundEnd';
+import { MatchStartLogEvent, MatchEndLogEvent, PlayerStatLogEvent, RoundEndLogEvent } from '@atoms';
+
 /**
  * Interface for combined match data
  */
@@ -27,16 +29,16 @@ export interface MatchData {
 }
 
 /**
- * Atom that combines match information from various sources
+ * Pure function that combines match information from various sources
  */
-export const matchDataAtom = atom(async (get): Promise<MatchData[]> => {
-  const matchInfo = await get(matchExtractorAtom);
-  const matchStarts = await get(matchStartExtractorAtom);
-  const matchEnds = await get(matchEndExtractorAtom);
-  const playerStats = await get(playerStatExtractorAtom);
-  const mapTimes = await get(mapTimesAtom);
-  const roundEnds = await get(roundEndExtractorAtom);
-
+export const matchDataFn = (
+  matchInfo: MatchFileInfo[],
+  matchStarts: MatchStartLogEvent[],
+  matchEnds: MatchEndLogEvent[],
+  playerStats: PlayerStatLogEvent[],
+  mapTimes: MapTimes[],
+  roundEnds: RoundEndLogEvent[]
+): MatchData[] => {
   return matchInfo.map(info => {
     const start = matchStarts.find(s => s.matchId === info.matchId);
     const end = matchEnds.find(e => e.matchId === info.matchId);
@@ -85,4 +87,18 @@ export const matchDataAtom = atom(async (get): Promise<MatchData[]> => {
       winner, // Added winner
     };
   });
+};
+
+/**
+ * Atom that combines match information from various sources
+ */
+export default atom(async (get): Promise<MatchData[]> => {
+  const matchInfo = await get(matchExtractor);
+  const matchStarts = await get(matchStart);
+  const matchEnds = await get(matchEnd);
+  const playerStats = await get(playerStat);
+  const mapTimesData = await get(mapTimes);
+  const roundEndsData = await get(roundEnd);
+
+  return matchDataFn(matchInfo, matchStarts, matchEnds, playerStats, mapTimesData, roundEndsData);
 });

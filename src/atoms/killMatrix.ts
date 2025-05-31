@@ -1,4 +1,4 @@
-import { PlayerInteractionEvent } from "@atoms";
+import { PlayerInteractionEvent, MatchData } from "@atoms";
 
 interface PlayerInteraction {
   sourcePlayerName: string;
@@ -113,7 +113,7 @@ export const calculatePlayerTotals = (killMatrix: {
 // Main logic function that combines all the steps
 export const generateKillMatrixData = (
   matchId: string,
-  allMatchData: any[],
+  allMatchData: MatchData[],
   allPlayerInteractionEvents: PlayerInteractionEvent[]
 ): KillMatrixData | null => {
   // Find the match data

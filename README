@@ -78,6 +78,7 @@ The `src/atoms/index.ts` file is responsible for registering all available atoms
 *   **Separate Testable Logic (`{atomName}Fn`):**
     *   Is the core business logic, data transformation, or asynchronous operation extracted into a **named export function** called `{atomName}Fn`?
     *   Is this function pure or easily testable in isolation (i.e., it takes necessary inputs and returns a predictable output or Promise)?
+    *   The `{atomName}Fn` should only accept parameters essential for its core logic. Avoid passing Jotai's `get` to the `Fn` if it's not directly used by this core logic. The default exported atom is responsible for using `get` to fetch dependencies and then passing the resolved values to the `Fn`.
     *   Does the default exported atom correctly use this `{atomName}Fn`?
         *   For read-only atoms: Typically in the read function `atom(async (get) => get(anotherAtom).then(data => {atomName}Fn(data)))` or `atom(async (get) => {atomName}Fn(await get(anotherAtom)))`.
         *   For writable atoms: Typically in the write function `atom(..., (_get, set, update) => set(_internalAtom, {atomName}Fn(update)))`.
@@ -101,6 +102,10 @@ The `src/atoms/index.ts` file is responsible for registering all available atoms
 *   **Imports and Dependencies:**
     *   Are all internal dependencies (other atoms) correctly `get` within the atom's definition?
     *   Are import paths correct (e.g., using `@library` for library functions, relative paths for other atoms within the same directory if that's the convention)?
+    *   **Importing for Registration vs. Consumption:**
+        *   When **registering** an atom in `src/atoms/index.ts`, import the atom's default export directly from its file (e.g., `import myAtom from './myAtom';`).
+        *   When **consuming** a registered atom elsewhere in the application, use the path alias (e.g., `import { myAtom } from '@atoms';`).
+        *   Types defined in `src/atoms/index.ts` (e.g., `MyAtomType`) should be imported using the alias (e.g., `import { MyAtomType } from '@atoms';`).
 
 *   **Naming Conventions:**
     *   File name: `src/atoms/{atomName}.ts`

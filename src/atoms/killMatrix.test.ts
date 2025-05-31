@@ -4,10 +4,11 @@ import {
   createKillMatrix, 
   calculatePlayerTotals,
   generateKillMatrixData
-} from '~/atoms/derived_stats/killMatrix';
+} from '@atoms/killMatrix'; // Corrected path
+import { MatchData } from '@atoms/matchDataAtom'; // Import MatchData type
 
 // Import the PlayerInteractionEvent interface
-import { PlayerInteractionEvent } from '~/atoms/derived_events/playerInteractionEventsAtom';
+import { PlayerInteractionEvent } from '@atoms/playerInteractionEventsAtom'; // Corrected path
 
 // Sample interaction events for testing
 const sampleInteractionEvents: PlayerInteractionEvent[] = [
@@ -69,13 +70,23 @@ const sampleInteractionEvents: PlayerInteractionEvent[] = [
 ];
 
 // Sample match data
-const sampleMatchData = [
+const sampleMatchData: MatchData[] = [
   {
     matchId: 'match1',
+    fileName: 'sample.log',
+    fileModified: new Date().getTime(),
+    dateString: '2023-01-01',
+    map: 'Lijiang Tower',
     team1Name: 'team1',
     team2Name: 'team2',
     team1Players: ['player1', 'player2'],
-    team2Players: ['player3', 'player4']
+    team2Players: ['player3', 'player4'],
+    winner: 'team1', // Corrected from mapWinner
+    mode: 'Control', // Added placeholder
+    team1Score: 2, // Added placeholder
+    team2Score: 1, // Added placeholder
+    duration: 1200, // Added placeholder
+    roundWinners: ['team1', 'team2', 'team1'], // Added placeholder
   }
 ];
 

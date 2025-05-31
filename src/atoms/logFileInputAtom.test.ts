@@ -1,4 +1,4 @@
-import { logFileInputAtomFn } from './logFileInputAtom';
+import { logFileInputAtomFn } from '@atoms/logFileInputAtom';
 
 describe('logFileInputAtomFn', () => {
   it('should return an object with the provided files', () => {

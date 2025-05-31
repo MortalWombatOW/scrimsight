@@ -1,14 +1,14 @@
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { getStatsAtom } from '~/atoms/metrics/playerMetricsAtoms';
-import { averageMetricPerRoleAtom } from '~/atoms/derived_stats/averageMetricPerRoleAtom';
-import { averageMetricPerHeroAtom } from '~/atoms/derived_stats/averageMetricPerHeroAtom';
+import { getStatsAtom } from '@library/playerMetricsUtils'; // Updated import path
+import averageMetricPerRoleAtom from '@atoms/averageMetricPerRoleAtom'; // Updated import path
+import averageMetricPerHeroAtom from '@atoms/averageMetricPerHeroAtom'; // Updated import path
 import { 
   generatePlayerComparison, 
   getPlayerStatsFilter,
   type PlayerComparisonParams,
   type MetricComparison
-} from '~/atoms/derived_stats/playerComparison';
+} from '@atoms/playerComparison'; // Updated import path
 
 // Atom family to compare player stats against benchmarks
 export const playerComparisonAtomFamily = atomFamily(
@@ -18,7 +18,10 @@ export const playerComparisonAtomFamily = atomFamily(
 
       // 1. Get Player Stats
       const { groupByKeys, filter } = getPlayerStatsFilter(playerName, heroName);
-      const playerStatsAtom = getStatsAtom(groupByKeys as any, filter as any);
+      const playerStatsAtom = getStatsAtom<typeof groupByKeys[number]>(
+        [...groupByKeys], // Spread to make it a mutable array
+        filter
+      );
       const playerStatsData = await get(playerStatsAtom);
 
       // 2. Get Benchmarks

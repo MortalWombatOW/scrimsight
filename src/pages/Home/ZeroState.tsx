@@ -108,20 +108,20 @@ const ZeroState = () => {
             className={`
               border-2 border-dashed rounded-lg p-6 cursor-pointer
               ${
-                isDragActive
-                  ? "border-blue-400"
-                  : "border-gray-700 dark:border-gray-700"
-              } 
+    isDragActive
+      ? "border-blue-400"
+      : "border-gray-700 dark:border-gray-700"
+    } 
               ${
-                isDragAccept
-                  ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-                  : ""
-              } 
+    isDragAccept
+      ? "border-green-500 bg-green-50 dark:bg-green-900/20"
+      : ""
+    } 
               ${
-                isDragReject
-                  ? "border-red-500 bg-red-50 dark:bg-red-900/20"
-                  : ""
-              }
+    isDragReject
+      ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+      : ""
+    }
               hover:border-blue-400 transition-colors
             `}
             onDragEnter={handleDragIn}

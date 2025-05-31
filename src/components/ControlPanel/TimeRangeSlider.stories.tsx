@@ -167,21 +167,21 @@ export const InteractiveCombined: Story = {
     const config =
       mode === "time"
         ? {
-            value: timeValue,
-            onChange: setTimeValue,
-            min: 0,
-            max: 1440,
-            minDistance: 60,
-            renderLabel: formatTime,
-          }
+          value: timeValue,
+          onChange: setTimeValue,
+          min: 0,
+          max: 1440,
+          minDistance: 60,
+          renderLabel: formatTime,
+        }
         : {
-            value: dateValue,
-            onChange: setDateValue,
-            min: today - 30,
-            max: today,
-            minDistance: 1,
-            renderLabel: formatDate,
-          };
+          value: dateValue,
+          onChange: setDateValue,
+          min: today - 30,
+          max: today,
+          minDistance: 1,
+          renderLabel: formatDate,
+        };
 
     return (
       <div>
@@ -202,11 +202,11 @@ export const InteractiveCombined: Story = {
         <div style={{ marginTop: "1rem", fontFamily: "monospace" }}>
           {mode === "time"
             ? `Selected Time: ${formatTime(timeValue[0])} - ${formatTime(
-                timeValue[1]
-              )}`
+              timeValue[1]
+            )}`
             : `Selected Dates: ${formatDate(dateValue[0])} - ${formatDate(
-                dateValue[1]
-              )}`}
+              dateValue[1]
+            )}`}
         </div>
       </div>
     );

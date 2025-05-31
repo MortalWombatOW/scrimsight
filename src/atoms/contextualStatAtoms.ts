@@ -2,17 +2,16 @@ import { atom } from 'jotai'; // Removed unused Atom type
 import { atomFamily } from 'jotai/utils';
 import {
   PlayerStats,
-  // Removed unused: PlayerStatsCategoryKeys,
   PlayerStatsNumericalKeys,
-  getStatsAtom,
-} from '~/atoms/metrics/playerMetricsAtoms';
-import { Grouped, Metric } from '~/atoms/metrics/metricUtils'; // Removed unused MetricAtom
-import { Scrim, scrimAtom } from '~/atoms/scrimAtom';
-import { MatchData, matchDataAtom } from '~/atoms/matchDataAtom';
+} from '@atoms'; // Types are in @atoms
+import { getStatsAtom } from '@library/playerMetricsUtils'; // getStatsAtom is in utils
+import { Grouped, Metric } from '@library/metricUtils'; // Corrected path
+import { scrimAtom, Scrim } from '@atoms/scrimAtom'; // Corrected path, import Scrim type, named import for scrimAtom
+import matchDataAtom, { MatchData } from '@atoms/matchDataAtom'; // Corrected path, import MatchData type
 
 // --- Player Stats for Match ---
 
-// Define the parameter type for the atom family
+// Define the parameter type for the atom familyzs
 interface PlayerMatchParams {
   matchId: string;
   playerId: string;
@@ -25,19 +24,19 @@ export const playerStatsForMatchAtom = atomFamily(
       // Use getStatsAtom (or replicate logic) with filters
       // Note: getStatsAtom needs to be accessible here, might need export or refactor
       const statsAtom = getStatsAtom(
-        ['playerName', 'playerHero'], // Group by player and hero within the match
+        ['matchId', 'playerName', 'playerHero'], // Added matchId to groupBy
         {
           matchId: [params.matchId],
           playerName: [params.playerId],
         }
       );
       // Explicitly type the resolved value from get(statsAtom)
-      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, ('playerName' | 'playerHero'), PlayerStatsNumericalKeys>, ('playerName' | 'playerHero'), PlayerStatsNumericalKeys>;
+      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, ('matchId' | 'playerName' | 'playerHero'), PlayerStatsNumericalKeys>, ('matchId' | 'playerName' | 'playerHero'), PlayerStatsNumericalKeys>;
 
       // Return the rows with the correct type assertion
       return statsData.rows as Grouped<
         PlayerStats,
-        'playerName' | 'playerHero',
+        ('matchId' | 'playerName' | 'playerHero'),
         PlayerStatsNumericalKeys
       >[];
     }),
@@ -58,18 +57,18 @@ export const teamStatsForMatchAtom = atomFamily(
   (params: TeamMatchParams) =>
     atom(async (get) => {
       const statsAtom = getStatsAtom(
-        ['playerTeam'], // Group by team only to aggregate stats
+        ['matchId', 'playerTeam'], // Added matchId to groupBy
         {
           matchId: [params.matchId],
           playerTeam: [params.teamName],
         }
       );
-      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, 'playerTeam', PlayerStatsNumericalKeys>, 'playerTeam', PlayerStatsNumericalKeys>;
+      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, ('matchId' | 'playerTeam'), PlayerStatsNumericalKeys>, ('matchId' | 'playerTeam'), PlayerStatsNumericalKeys>;
 
       // Return the single row for the specified team
       return statsData.rows[0] as Grouped<
         PlayerStats,
-        'playerTeam',
+        ('matchId' | 'playerTeam'),
         PlayerStatsNumericalKeys
       > | undefined; // Return undefined if no data found
     }),
@@ -100,18 +99,18 @@ export const playerStatsForScrimAtom = atomFamily(
       }
 
       const statsAtom = getStatsAtom(
-        ['playerName'], // Aggregate all stats for the player across the scrim matches
+        ['matchId', 'playerName'], // Added matchId to groupBy
         {
           matchId: targetScrim.matchIds, // Filter by matches in this scrim
           playerName: [params.playerId],
         }
       );
-      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, 'playerName', PlayerStatsNumericalKeys>, 'playerName', PlayerStatsNumericalKeys>;
+      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, ('matchId' | 'playerName'), PlayerStatsNumericalKeys>, ('matchId' | 'playerName'), PlayerStatsNumericalKeys>;
 
       // Return the single aggregated row for the player
       return statsData.rows[0] as Grouped<
         PlayerStats,
-        'playerName',
+        ('matchId' | 'playerName'),
         PlayerStatsNumericalKeys
       > | undefined;
     }),
@@ -148,18 +147,18 @@ export const teamStatsForScrimAtom = atomFamily(
       }
 
       const statsAtom = getStatsAtom(
-        ['playerTeam'], // Aggregate all stats for the team across the scrim matches
+        ['matchId', 'playerTeam'], // Added matchId to groupBy
         {
           matchId: targetScrim.matchIds, // Filter by matches in this scrim
           playerTeam: [params.teamName], // Filter by the specific team
         }
       );
-      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, 'playerTeam', PlayerStatsNumericalKeys>, 'playerTeam', PlayerStatsNumericalKeys>;
+      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, ('matchId' | 'playerTeam'), PlayerStatsNumericalKeys>, ('matchId' |'playerTeam'), PlayerStatsNumericalKeys>;
 
       // Return the single aggregated row for the team
       return statsData.rows[0] as Grouped<
         PlayerStats,
-        'playerTeam',
+        ('matchId' | 'playerTeam'),
         PlayerStatsNumericalKeys
       > | undefined;
     }),
@@ -190,7 +189,7 @@ export const playerStatsForTeamAtom = atomFamily(
       }
 
       const statsAtom = getStatsAtom(
-        ['playerName'], // Aggregate all stats for the player across the team's matches
+        ['matchId', 'playerName'], // Added matchId to groupBy
         {
           matchId: teamMatchIds, // Filter by matches the team played
           playerName: [params.playerId],
@@ -198,12 +197,12 @@ export const playerStatsForTeamAtom = atomFamily(
           // play against their own tagged team if data is messy. Filtering by match participation is safer.
         }
       );
-      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, 'playerName', PlayerStatsNumericalKeys>, 'playerName', PlayerStatsNumericalKeys>;
+      const statsData = await get(statsAtom) as Metric<Grouped<PlayerStats, ('matchId' | 'playerName'), PlayerStatsNumericalKeys>, ('matchId' | 'playerName'), PlayerStatsNumericalKeys>;
 
       // Return the single aggregated row for the player's performance in team matches
       return statsData.rows[0] as Grouped<
         PlayerStats,
-        'playerName',
+        ('matchId' | 'playerName'),
         PlayerStatsNumericalKeys
       > | undefined;
     }),

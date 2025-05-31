@@ -1,10 +1,12 @@
 import { atom } from 'jotai'; // Import atom
 import { atomFamily } from 'jotai/utils';
 import { Getter } from 'jotai';
-import { matchDataAtom } from '~/atoms/matchDataAtom';
-import { heroSpawnExtractorAtom, type HeroSpawnLogEvent } from '~/atoms/event_extractors/heroSpawnExtractorAtom';
-import { heroSwapExtractorAtom, type HeroSwapLogEvent } from '~/atoms/event_extractors/heroSwapExtractorAtom';
-import { mapTimesAtom } from '~/atoms/mapTimesAtom';
+import matchDataAtom from '@atoms/matchDataAtom'; // Corrected path
+import heroSpawnAtom from '@atoms/heroSpawn'; // Atom import
+import { HeroSpawnLogEvent } from '@atoms'; // Type import from index
+import heroSwapAtom from '@atoms/heroSwap';   // Atom import
+import { HeroSwapLogEvent } from '@atoms';   // Type import from index
+import mapTimesAtom from '@atoms/mapTimesAtom'; // Corrected path
 
 type HeroEvent = HeroSpawnLogEvent | HeroSwapLogEvent;
 
@@ -56,8 +58,8 @@ export const detailedTeamCompositionsAtom = atomFamily((friendlyTeamId: string) 
   atom(async (get: Getter): Promise<DetailedComposition[]> => {
     const [allMatches, heroSpawns, heroSwaps, mapTimes] = await Promise.all([
       get(matchDataAtom),
-      get(heroSpawnExtractorAtom),
-      get(heroSwapExtractorAtom),
+      get(heroSpawnAtom), // Use corrected atom name
+      get(heroSwapAtom),  // Use corrected atom name
       get(mapTimesAtom),
     ]);
 

@@ -1,14 +1,17 @@
 import { atom } from 'jotai';
+import { Metric } from '@library/metricUtils'; 
 import {
-  playerStatsBaseAtom,
-  PlayerStatsNumericalKeys,
+  playerStatsBase, 
+  PlayerStatsBase,
+  PlayerStatsCategoryKeys, 
+  PlayerStatsNumericalKeys, 
+  PlayerStatsBaseNumericalKeys, 
   playerStatsNumericalKeys,
-  playerStatsBaseNumericalKeys,
-} from '~/atoms/metrics/playerMetricsAtoms';
-import { matchDataAtom } from '~/atoms/matchDataAtom';
-import { uniqueMapNamesAtom } from '~/atoms/uniqueMapNamesAtom'; // Assuming this exists
+  playerStatsBaseNumericalKeys as baseNumericalKeysArray, 
+} from '@atoms';
+import matchData, { MatchData } from '@atoms/matchDataAtom';
+import uniqueMapNames from '@atoms/uniqueMapNamesAtom';
 
-// Define the output structure for average stats per map
 export type AverageMapStats = {
   [K in PlayerStatsNumericalKeys]?: number; // All numerical stats are optional averages
 };
@@ -16,14 +19,12 @@ export type AverageMapStats = {
 // Key could be mapName or mapName-mode
 export type AverageMetricPerMap = Record<string, AverageMapStats>;
 
-// Atom to calculate average player metrics per map
-export const averageMetricPerMapAtom = atom(async (get): Promise<AverageMetricPerMap> => {
-  // Get base player stats and match data
-  const playerStatsData = await get(playerStatsBaseAtom);
-  const allMatches = await get(matchDataAtom);
-  // Get unique map names to initialize structure
-  const uniqueMaps = await get(uniqueMapNamesAtom); // Need this atom
-
+// Pure function to calculate average metrics per map
+export const averageMetricPerMapFn = (
+  playerStatsData: Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys>,
+  allMatches: MatchData[],
+  uniqueMaps: string[]
+): AverageMetricPerMap => {
   // Create a lookup map from matchId to mapName (or mapName-mode)
   const matchIdToMapLookup = new Map<string, string>();
   allMatches.forEach(match => {
@@ -34,12 +35,16 @@ export const averageMetricPerMapAtom = atom(async (get): Promise<AverageMetricPe
   });
 
   // Intermediate structure to sum stats and playtime per map
-  type BaseKey = (typeof playerStatsBaseNumericalKeys)[number];
+  type BaseKey = PlayerStatsBaseNumericalKeys;
   const mapStatSums: Record<string, { [K in BaseKey]: number } & { count: number }> = {};
 
   // Initialize sums for all known maps
   uniqueMaps.forEach(mapName => {
-    mapStatSums[mapName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 0 };
+    const initialStats: { [K in BaseKey]: number } = {} as { [K in BaseKey]: number };
+    baseNumericalKeysArray.forEach((key: BaseKey) => {
+      initialStats[key] = 0;
+    });
+    mapStatSums[mapName] = { ...initialStats, count: 0 };
   });
 
 
@@ -48,14 +53,18 @@ export const averageMetricPerMapAtom = atom(async (get): Promise<AverageMetricPe
     const mapName = matchIdToMapLookup.get(row.matchId);
     if (mapName && mapStatSums[mapName]) {
       mapStatSums[mapName].count++;
-      playerStatsBaseNumericalKeys.forEach(key => {
+      baseNumericalKeysArray.forEach((key: BaseKey) => {
         mapStatSums[mapName][key] += row[key] ?? 0;
       });
     }
     // Optional: Handle cases where mapName might be missing or not in uniqueMaps
     else if (mapName && !mapStatSums[mapName]) {
-      mapStatSums[mapName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 1 };
-      playerStatsBaseNumericalKeys.forEach(key => {
+      const initialStats: { [K in BaseKey]: number } = {} as { [K in BaseKey]: number };
+      baseNumericalKeysArray.forEach((key: BaseKey) => {
+        initialStats[key] = 0;
+      });
+      mapStatSums[mapName] = { ...initialStats, count: 1 };
+      baseNumericalKeysArray.forEach((key: BaseKey) => {
         mapStatSums[mapName][key] = row[key] ?? 0;
       });
     }
@@ -71,7 +80,7 @@ export const averageMetricPerMapAtom = atom(async (get): Promise<AverageMetricPe
 
     if (totalPlaytime > 0) {
       // Calculate per-10 minute stats
-      playerStatsBaseNumericalKeys.forEach(key => {
+      baseNumericalKeysArray.forEach((key: BaseKey) => {
         if (key !== 'playtime') {
           const per10Key = `${key}Per10Minutes` as keyof AverageMapStats;
           finalAverages[mapName][per10Key] = (sums[key] / (totalPlaytime / 600));
@@ -85,7 +94,7 @@ export const averageMetricPerMapAtom = atom(async (get): Promise<AverageMetricPe
 
       // Clean up NaN/Infinity results
       playerStatsNumericalKeys.forEach(key => {
-        if (finalAverages[mapName][key] !== undefined && !Number.isFinite(finalAverages[mapName][key])) {
+        if (finalAverages[mapName][key] !== undefined && !Number.isFinite(finalAverages[mapName][key]!)) {
           finalAverages[mapName][key] = 0;
         }
       });
@@ -99,17 +108,14 @@ export const averageMetricPerMapAtom = atom(async (get): Promise<AverageMetricPe
   }
 
   return finalAverages;
-});
+};
 
-// Assuming uniqueMapNamesAtom exists, if not, it needs to be created similar to uniqueHeroNamesAtom
-// Example:
-// export const uniqueMapNamesAtom = atom(async (get) => {
-//     const matches = await get(matchDataAtom);
-//     const mapSet = new Set<string>();
-//     matches.forEach(match => {
-//         if (match.map) {
-//             mapSet.add(match.map);
-//         }
-//     });
-//     return Array.from(mapSet).sort();
-// });
+export default atom(async (get): Promise<AverageMetricPerMap> => {
+  // Get base player stats and match data
+  const playerStatsData: Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = await get(playerStatsBase.atom);
+  const allMatches: MatchData[] = await get(matchData);
+  // Get unique map names to initialize structure
+  const uniqueMaps: string[] = await get(uniqueMapNames);
+
+  return averageMetricPerMapFn(playerStatsData, allMatches, uniqueMaps);
+});

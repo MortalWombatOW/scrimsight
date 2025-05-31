@@ -1,5 +1,6 @@
-import { PlayerStatsNumericalKeys, playerStatsNumericalKeys } from '~/atoms/metrics/playerMetricsAtoms';
-import { OverwatchRole } from '~/lib/hero';
+import { PlayerStatsNumericalKeys, playerStatsNumericalKeys, PlayerStats, PlayerStatsCategoryKeys } from '@atoms'; // Updated import
+import { OverwatchRole } from '@library/hero'; // Updated import path
+import { Metric, Grouped } from '@library/metricUtils'; // Added Grouped to import
 
 // Define the parameters for the function
 export interface PlayerComparisonParams {
@@ -26,9 +27,9 @@ export interface MetricComparison {
  * @param heroBenchmarks Average stats per hero
  * @returns Array of metric comparisons
  */
-export function generatePlayerComparison(
+export function generatePlayerComparison<T extends PlayerStatsCategoryKeys>(
   params: PlayerComparisonParams,
-  playerStatsData: any,
+  playerStatsData: Metric<Grouped<PlayerStats, T, PlayerStatsNumericalKeys>, T, PlayerStatsNumericalKeys>,
   roleBenchmarks: Record<string, Record<string, number>>,
   heroBenchmarks: Record<string, Record<string, number>>
 ): MetricComparison[] {
@@ -36,7 +37,8 @@ export function generatePlayerComparison(
 
   // Find the specific player/hero row (should usually be just one)
   const playerRow = playerStatsData.rows.find(
-    (row: any) => row.playerName === playerName && (!heroName || row.playerHero === heroName)
+    // Cast row to PlayerStats to access playerName and playerHero, as T might not include them
+    (row) => (row as PlayerStats).playerName === playerName && (!heroName || (row as PlayerStats).playerHero === heroName)
   );
 
   if (!playerRow) {
@@ -44,7 +46,8 @@ export function generatePlayerComparison(
   }
 
   // Determine player's primary role
-  const playerRole = playerRow.playerRole as OverwatchRole | undefined;
+  // playerRole might not be in T, but it's added by onlyDominantRole and expected here.
+  const playerRole = (playerRow as PlayerStats).playerRole as OverwatchRole | undefined;
 
   // Compare Metrics
   const comparisons: MetricComparison[] = [];
@@ -97,10 +100,18 @@ export function generatePlayerComparison(
  * Function to determine filter for player stats based on player name and optional hero
  */
 export function getPlayerStatsFilter(playerName: string, heroName?: string) {
-  const groupByKeys = heroName ? ['playerName', 'playerHero'] : ['playerName'];
-  const filter = heroName
-    ? { playerName: [playerName], playerHero: [heroName] }
-    : { playerName: [playerName] };
-  
-  return { groupByKeys, filter };
+  if (heroName) {
+    const groupByKeys = ['playerName', 'playerHero'] as const;
+    const filter: Record<typeof groupByKeys[number], string[]> = { 
+      playerName: [playerName], 
+      playerHero: [heroName] 
+    };
+    return { groupByKeys, filter };
+  } else {
+    const groupByKeys = ['playerName'] as const;
+    const filter: Record<typeof groupByKeys[number], string[]> = { 
+      playerName: [playerName] 
+    };
+    return { groupByKeys, filter };
+  }
 }

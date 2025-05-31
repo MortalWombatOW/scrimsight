@@ -1,7 +1,8 @@
 import { atom } from 'jotai';
-import { roundStartExtractorAtom } from '~/atoms/event_extractors/roundStartExtractorAtom';
-import { roundEndExtractorAtom } from '~/atoms/event_extractors/roundEndExtractorAtom';
-import { setupCompleteExtractorAtom } from '~/atoms/event_extractors/setupCompleteExtractorAtom';
+import roundStartAtom from '@atoms/roundStart'; // Renamed for clarity
+import roundEndAtom from '@atoms/roundEnd';     // Renamed for clarity
+import setupCompleteAtom from '@atoms/setupComplete'; // Renamed for clarity
+import { RoundStartType, RoundEndType, SetupCompleteType } from '@atoms'; // Import types
 
 /**
  * Interface for round times data
@@ -16,13 +17,13 @@ export interface RoundTimes {
 }
 
 /**
- * Atom that combines round start, setup complete, and round end events to calculate round times
+ * Pure function that combines round start, setup complete, and round end events to calculate round times
  */
-export const roundTimesAtom = atom(async (get): Promise<RoundTimes[]> => {
-  const roundStarts = await get(roundStartExtractorAtom);
-  const setupCompletes = await get(setupCompleteExtractorAtom);
-  const roundEnds = await get(roundEndExtractorAtom);
-
+export const roundTimesFn = (
+  roundStarts: RoundStartType,
+  setupCompletes: SetupCompleteType,
+  roundEnds: RoundEndType
+): RoundTimes[] => {
   return roundStarts.flatMap(start => {
     // Find matching setup complete and end events
     const setup = setupCompletes.find(s => 
@@ -49,4 +50,15 @@ export const roundTimesAtom = atom(async (get): Promise<RoundTimes[]> => {
       roundDuration: end.matchTime - setup.matchTime,
     }];
   }).sort((a, b) => a.matchId !== b.matchId ? a.matchId.localeCompare(b.matchId) : a.roundNumber - b.roundNumber);
+};
+
+/**
+ * Atom that combines round start, setup complete, and round end events to calculate round times
+ */
+export default atom(async (get): Promise<RoundTimes[]> => {
+  const roundStartsData = await get(roundStartAtom);
+  const setupCompletesData = await get(setupCompleteAtom);
+  const roundEndsData = await get(roundEndAtom);
+
+  return roundTimesFn(roundStartsData, setupCompletesData, roundEndsData);
 });

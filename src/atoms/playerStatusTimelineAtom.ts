@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import { matchDataAtom } from '~/atoms/matchDataAtom';
-import { logFileParserAtom, LogFileParserOutput } from '~/atoms/files/logFileParserAtom'; // Use correct atom and type
+import matchDataAtom from '@atoms/matchDataAtom'; // Corrected import for atom
+import { LogFileParserAtomType, logFileParser } from '@atoms';
 
 // Define a basic LogEvent type based on expected properties
 interface LogEvent {
@@ -9,7 +9,7 @@ interface LogEvent {
   player_name?: string;
   player_team?: string;
   // Add other potential properties if needed, or use 'any'/'unknown' if structure varies widely
-  [key: string]: any;
+  [key: string]: unknown; // Changed any to unknown
 }
 
 export interface PlayerStatusEntry {
@@ -22,7 +22,7 @@ export type PlayerStatusTimeline = PlayerStatusEntry[];
 
 // Atom to track the active players on each team over time for each match
 export const playerStatusTimelineAtom = atom(async (get): Promise<Map<string, PlayerStatusTimeline>> => {
-  const parsedFiles: LogFileParserOutput[] = await get(logFileParserAtom);
+  const parsedFiles: LogFileParserAtomType = await get(logFileParser.atom); // Use imported logFileParser
   const allMatchData = await get(matchDataAtom);
   const statusTimelines = new Map<string, PlayerStatusTimeline>();
 
@@ -40,7 +40,8 @@ export const playerStatusTimelineAtom = atom(async (get): Promise<Map<string, Pl
 
     const { team1Name, team2Name, team1Players: initialTeam1, team2Players: initialTeam2 } = matchData;
     const timeline: PlayerStatusTimeline = [];
-    const matchLogs: LogEvent[] = logs.map(log => log.data as LogEvent); // Extract event data
+    // Each log.data is an object[], flatMap them and cast individual items to LogEvent
+    const matchLogs: LogEvent[] = logs.flatMap(log => log.data as LogEvent[]); 
 
     // Initialize sets with starting players
     let currentTeam1Players = new Set(initialTeam1);

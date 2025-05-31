@@ -1,33 +1,30 @@
 import { atom } from 'jotai';
 import {
-  playerStatsBaseAtom,
-  PlayerStatsNumericalKeys,
-  playerStatsNumericalKeys,
+  playerStatsBase, 
+  PlayerStatsBase, 
+  PlayerStatsCategoryKeys, 
+  playerStatsNumericalKeys, 
+  PlayerStatsBaseNumericalKeys, 
   playerStatsBaseNumericalKeys,
-} from '~/atoms/metrics/playerMetricsAtoms';
-// Removed incorrect import: import { uniqueHeroNamesAtom } from '../uniqueHeroNamesAtom';
+  AverageHeroStatsType,
+  AverageMetricPerHeroType,
+  uniqueHeroNames,
+} from '@atoms'; 
+import { Metric } from '@library/metricUtils'; 
 
-// Define the output structure for average stats per hero
-export type AverageHeroStats = {
-  [K in PlayerStatsNumericalKeys]?: number; // All numerical stats are optional averages
-};
 
-export type AverageMetricPerHero = Record<string, AverageHeroStats>; // Key is heroName
-
-// Atom to calculate average metrics per player hero
-export const averageMetricPerHeroAtom = atom(async (get): Promise<AverageMetricPerHero> => {
-  // Get the base player stats (includes hero and playtime)
-  const playerStatsData = await get(playerStatsBaseAtom);
-  // Get all unique hero names encountered to initialize the result map
-  const uniqueHeroes = await get(uniqueHeroNamesAtom); // Need this atom
-
+export const averageMetricPerHeroAtomFn = (
+  playerStatsData: Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys>,
+  uniqueHeroes: string[]
+): AverageMetricPerHeroType => {
   // Intermediate structure to sum stats and playtime per hero
-  type BaseKey = (typeof playerStatsBaseNumericalKeys)[number];
+  type BaseKey = PlayerStatsBaseNumericalKeys;
   const heroStatSums: Record<string, { [K in BaseKey]: number } & { count: number }> = {};
 
   // Initialize sums for all known heroes
   uniqueHeroes.forEach(heroName => {
-    heroStatSums[heroName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 0 };
+    const initialStats = Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as { [K in PlayerStatsBaseNumericalKeys]: number };
+    heroStatSums[heroName] = { ...initialStats, count: 0 };
   });
 
   // Aggregate sums and playtime for each hero
@@ -41,7 +38,8 @@ export const averageMetricPerHeroAtom = atom(async (get): Promise<AverageMetricP
     }
     // Handle cases where a hero might appear in stats but not unique list (shouldn't happen ideally)
     else if (heroName) {
-      heroStatSums[heroName] = { ...Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as any, count: 1 };
+      const initialStats = Object.fromEntries(playerStatsBaseNumericalKeys.map(k => [k, 0])) as { [K in PlayerStatsBaseNumericalKeys]: number };
+      heroStatSums[heroName] = { ...initialStats, count: 1 };
       playerStatsBaseNumericalKeys.forEach(key => {
         heroStatSums[heroName][key] = row[key] ?? 0;
       });
@@ -49,7 +47,7 @@ export const averageMetricPerHeroAtom = atom(async (get): Promise<AverageMetricP
   }
 
   // Calculate averages and per-10 stats
-  const finalAverages: AverageMetricPerHero = {};
+  const finalAverages: AverageMetricPerHeroType = {};
 
   for (const heroName of Object.keys(heroStatSums)) {
     const sums = heroStatSums[heroName];
@@ -60,7 +58,7 @@ export const averageMetricPerHeroAtom = atom(async (get): Promise<AverageMetricP
       // Calculate per-10 minute stats
       playerStatsBaseNumericalKeys.forEach(key => {
         if (key !== 'playtime') {
-          const per10Key = `${key}Per10Minutes` as keyof AverageHeroStats;
+          const per10Key = `${key}Per10Minutes` as keyof AverageHeroStatsType;
           finalAverages[heroName][per10Key] = (sums[key] / (totalPlaytime / 600));
         }
       });
@@ -72,7 +70,7 @@ export const averageMetricPerHeroAtom = atom(async (get): Promise<AverageMetricP
 
       // Clean up NaN/Infinity results
       playerStatsNumericalKeys.forEach(key => {
-        if (finalAverages[heroName][key] !== undefined && !Number.isFinite(finalAverages[heroName][key])) {
+        if (finalAverages[heroName][key] !== undefined && !Number.isFinite(finalAverages[heroName][key]!)) {
           finalAverages[heroName][key] = 0;
         }
       });
@@ -86,16 +84,12 @@ export const averageMetricPerHeroAtom = atom(async (get): Promise<AverageMetricP
   }
 
   return finalAverages;
-});
+};
 
-// Atom to get unique hero names (kept local as it's only used here for now)
-const uniqueHeroNamesAtom = atom(async (get) => {
-  const { rows } = await get(playerStatsBaseAtom);
-  const heroSet = new Set<string>();
-  rows.forEach(row => {
-    if (row.playerHero) {
-      heroSet.add(row.playerHero);
-    }
-  });
-  return Array.from(heroSet).sort();
+
+export default atom(async (get): Promise<AverageMetricPerHeroType> => {
+  const playerStatsData = await get(playerStatsBase.atom);
+  const uniqueHeroesData = await get(uniqueHeroNames.atom);
+
+  return averageMetricPerHeroAtomFn(playerStatsData, uniqueHeroesData);
 });

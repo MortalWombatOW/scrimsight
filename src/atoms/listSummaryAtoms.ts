@@ -1,25 +1,21 @@
-import { atom, Atom } from 'jotai';
+import { atom, Atom, Getter } from 'jotai';
 import {
-  // Removed unused: PlayerStatsCategoryKeys,
-  playerStatsBaseAtom,
-  // Removed unused: playerStatsBaseNumericalKeys,
-  PlayerStatsNumericalKeys,
-} from '~/atoms/metrics/playerMetricsAtoms';
+  playerStatsBase, // Use the registered atom
+  PlayerStatsBase, // Import PlayerStatsBase for typing
+  PlayerStatsBaseNumericalKeys, // Import for base stats
+} from '@atoms'; // Removed PlayerStatsNumericalKeys as it's unused
 import {
-  // Removed unused: HeroPlaytime,
-  // Removed unused: HeroPlaytimeCategoryKeys,
-  // Removed unused: HeroPlaytimeNumericalKeys,
-  heroPlaytimeAtom,
-} from '~/atoms/metrics/heroPlaytimeAtom';
-// Removed unused: import { allPlayersForTeamAtom } from '../allPlayersForTeamAtom';
-import { scrimAtom } from '~/atoms/scrimAtom'; // Removed unused Scrim type
-import { teamStatsAtom } from '~/atoms/teamStatsAtom'; // Removed unused TeamStats type
-import { groupByAtom, Grouped } from '~/atoms/metrics/metricUtils'; // Removed unused MetricAtom
-import { OverwatchRole, getRankForRole } from '~/lib/hero';
-import { playerFirstKillDeathRateAtom } from '~/atoms/derived_stats/playerFirstKillDeathRateAtom'; // Import the new atom
-import { firstKillImpactAtom } from '~/atoms/derived_stats/firstKillImpactAtom'; // Import first kill impact atom
-
-// --- Player List Summary ---
+  heroPlaytimeAtom, // Use the registered atom
+  HeroPlaytime, // Import HeroPlaytime type
+  HeroPlaytimeCategoryKeys, // Import for heroPlaytime
+  HeroPlaytimeNumericalKeys, // Import for heroPlaytime
+} from '@atoms/heroPlaytimeAtom'; // Use path alias
+import { groupByAtom, Grouped, Metric } from '@library/metricUtils'; // Import Metric
+import { OverwatchRole, getRoleFromHero } from '@library/hero'; // Removed getRankForRole as it's unused
+import { playerFirstKillDeathRateAtom, PlayerFirstKillDeathRateStats } from '@atoms/playerFirstKillDeathRateAtom'; // Use path alias
+import { scrimAtom, Scrim } from '@atoms/scrimAtom'; // Import Scrim type
+import { teamStatsAtom, TeamStats } from '@atoms/teamStatsAtom'; // Import TeamStats type
+import { firstKillImpactAtom } from '@atoms/firstKillImpactAtom'; // Import first kill impact atom
 
 export interface PlayerListSummary {
   playerName: string;
@@ -33,25 +29,23 @@ export interface PlayerListSummary {
 }
 
 // Helper atom to group player stats by player name
-const playerStatsGroupedByPlayerAtom = groupByAtom(playerStatsBaseAtom, [
+const playerStatsGroupedByPlayerAtom = groupByAtom(playerStatsBase.atom, [
   'playerName',
 ]);
 
 // Helper atom to group playtime by player name and hero
 const playtimeByPlayerHeroAtom = groupByAtom(heroPlaytimeAtom, [
   'playerName',
-  'hero', // Corrected key from 'playerHero' to 'hero'
+  'hero',
 ]);
 
 // Helper atom to group playtime by player name and role
-const playtimeByPlayerRoleAtom = atom(async (get) => {
-  const playtimeData = await get(heroPlaytimeAtom);
+const playtimeByPlayerRoleAtom = atom(async (get: Getter) => {
+  const playtimeData: Metric<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys> = await get(heroPlaytimeAtom);
   const rolePlaytimeMap = new Map<string, Map<OverwatchRole, number>>();
 
   for (const row of playtimeData.rows) {
-    // Use lowercase roles to match OverwatchRole type
-    const role = getRankForRole(row.hero as OverwatchRole) === 0 ? 'tank' :
-      getRankForRole(row.hero as OverwatchRole) === 1 ? 'damage' : 'support';
+    const role: OverwatchRole = getRoleFromHero(row.hero);
     if (!rolePlaytimeMap.has(row.playerName)) {
       rolePlaytimeMap.set(row.playerName, new Map());
     }
@@ -64,10 +58,10 @@ const playtimeByPlayerRoleAtom = atom(async (get) => {
 
 // Helper atom to determine primary team based on playtime
 const primaryTeamByPlayerAtom = atom(async (get) => {
-  const { rows: playerStatsRows } = await get(playerStatsBaseAtom); // Correctly await and destructure rows
+  const { rows: playerStatsRows } = await get(playerStatsBase.atom);
   const teamPlaytimeMap = new Map<string, Map<string, number>>();
 
-  for (const row of playerStatsRows) { // Use destructured rows
+  for (const row of playerStatsRows) {
     if (!teamPlaytimeMap.has(row.playerName)) {
       teamPlaytimeMap.set(row.playerName, new Map());
     }
@@ -91,37 +85,32 @@ const primaryTeamByPlayerAtom = atom(async (get) => {
 });
 
 
-export const playerListSummaryAtom: Atom<Promise<PlayerListSummary[]>> = atom(async (get) => { // Added Atom type
-  const groupedStats = await get(playerStatsGroupedByPlayerAtom);
-  const playtimeByHero = await get(playtimeByPlayerHeroAtom);
+export const playerListSummaryFn = async (get: Getter): Promise<PlayerListSummary[]> => {
+  const groupedStats: Metric<Grouped<PlayerStatsBase, 'playerName', PlayerStatsBaseNumericalKeys>, 'playerName', PlayerStatsBaseNumericalKeys> = await get(playerStatsGroupedByPlayerAtom);
+  const playtimeByHero: Metric<Grouped<HeroPlaytime, 'playerName' | 'hero', HeroPlaytimeNumericalKeys>, 'playerName' | 'hero', HeroPlaytimeNumericalKeys> = await get(playtimeByPlayerHeroAtom);
   const playtimeByRole = await get(playtimeByPlayerRoleAtom);
   const primaryTeamMap = await get(primaryTeamByPlayerAtom);
-  const firstKillRateData = await get(playerFirstKillDeathRateAtom); // Get first kill rate data (returns a Record)
+  const firstKillRateData: Record<string, PlayerFirstKillDeathRateStats> = await get(playerFirstKillDeathRateAtom);
 
 
   const summaries: PlayerListSummary[] = [];
 
-  // Ensure groupedStats.rows is correctly typed or cast if necessary
-  // Use the exported PlayerStatsNumericalKeys type for the assertion
-  const statsRows = groupedStats.rows as Grouped<any, 'playerName', PlayerStatsNumericalKeys>[];
+  const statsRows = groupedStats.rows;
 
 
   for (const playerStat of statsRows) {
     const playerName = playerStat.playerName;
 
-    // Find top hero
     const playerHeroPlaytimes = playtimeByHero.rows.filter(
       (pt) => pt.playerName === playerName
     );
-    // Correct initial value for reduce to match Grouped<HeroPlaytime, 'playerName' | 'hero', 'playtime'>
     const topHeroData = playerHeroPlaytimes.reduce(
       (top, current) => (current.playtime > top.playtime ? current : top),
-      { playerName: '', hero: 'Unknown', playtime: -1 } // Use 'hero' key
+      { playerName: '', hero: 'Unknown', playtime: -1 } as Grouped<HeroPlaytime, 'playerName' | 'hero', HeroPlaytimeNumericalKeys>
     );
-    const topHero = topHeroData.hero; // Access the correct property
+    const topHero = topHeroData.hero;
 
 
-    // Find top role
     const playerRolePlaytimes = playtimeByRole.get(playerName);
     let topRole: OverwatchRole = 'tank'; // Default to lowercase
     let maxRolePlaytime = -1;
@@ -143,11 +132,15 @@ export const playerListSummaryAtom: Atom<Promise<PlayerListSummary[]>> = atom(as
       deaths: playerStat.deaths,
       assists: playerStat.offensiveAssists + playerStat.defensiveAssists,
       role: topRole,
-      firstKillRate: firstKillRateData[playerName]?.firstKillRate ?? 0, // Access rate from record, default to 0
+      firstKillRate: firstKillRateData[playerName]?.firstKillRate ?? 0,
     });
   }
 
   return summaries;
+};
+
+export default atom(async (get): Promise<PlayerListSummary[]> => {
+  return playerListSummaryFn(get);
 });
 
 // --- Scrim List Summary ---
@@ -161,12 +154,10 @@ export interface ScrimListSummary {
   duration: number; // Total duration in seconds
 }
 
-export const scrimListSummaryAtom: Atom<
-  Promise<ScrimListSummary[]>
-> = atom(async (get) => { // Added Atom type
+export const scrimListSummaryFn = async (get: Getter): Promise<ScrimListSummary[]> => {
   const scrims = await get(scrimAtom);
 
-  return scrims.map((scrim) => ({
+  return scrims.map((scrim: Scrim) => ({
     scrimId: `${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}`, // Create a unique ID
     teamNames: [scrim.team1Name, scrim.team2Name],
     dateString: scrim.dateString,
@@ -174,6 +165,12 @@ export const scrimListSummaryAtom: Atom<
     score: `${scrim.team1Wins}-${scrim.team2Wins}-${scrim.draws}`,
     duration: scrim.duration,
   }));
+};
+
+export const scrimListSummaryAtom: Atom<
+  Promise<ScrimListSummary[]>
+> = atom(async (get) => {
+  return scrimListSummaryFn(get);
 });
 
 // --- Team List Summary ---
@@ -186,33 +183,37 @@ export interface TeamListSummary {
   firstKillWinRate: number; // Added: Win rate in teamfights where this team got the first kill
 }
 
-export const teamListSummaryAtom: Atom<Promise<TeamListSummary[]>> = atom( // Added Atom type
+export const teamListSummaryFn = async (get: Getter): Promise<TeamListSummary[]> => {
+  const teamStats = await get(teamStatsAtom);
+  const firstKillImpactData = await get(firstKillImpactAtom); // Get first kill impact data
+
+  return teamStats.map((team: TeamStats) => {
+    const gamesPlayed = team.wins + team.losses; // Exclude draws for win rate calculation
+    const winRate = gamesPlayed > 0 ? team.wins / gamesPlayed : 0;
+    // Access the team-specific stats from the record
+    const teamFirstKillStats = firstKillImpactData.teamStats[team.teamName];
+    const firstKillWinRate = teamFirstKillStats?.firstKillWinRate ?? 0; // Get rate, default 0
+
+    return {
+      teamName: team.teamName,
+      playerCount: team.players.length,
+      winRate: winRate,
+      gamesPlayed: team.gamesPlayed, // Include draws here
+      firstKillWinRate: firstKillWinRate, // Add the rate
+    };
+  });
+};
+
+export const teamListSummaryAtom: Atom<Promise<TeamListSummary[]>> = atom(
   async (get) => {
-    const teamStats = await get(teamStatsAtom);
-    const firstKillImpactData = await get(firstKillImpactAtom); // Get first kill impact data
-
-    return teamStats.map((team) => {
-      const gamesPlayed = team.wins + team.losses; // Exclude draws for win rate calculation
-      const winRate = gamesPlayed > 0 ? team.wins / gamesPlayed : 0;
-      // Access the team-specific stats from the record
-      const teamFirstKillStats = firstKillImpactData.teamStats[team.teamName];
-      const firstKillWinRate = teamFirstKillStats?.firstKillWinRate ?? 0; // Get rate, default 0
-
-      return {
-        teamName: team.teamName,
-        playerCount: team.players.length,
-        winRate: winRate,
-        gamesPlayed: team.gamesPlayed, // Include draws here
-        firstKillWinRate: firstKillWinRate, // Add the rate
-      };
-    });
+    return teamListSummaryFn(get);
   }
 );
 
 // --- Latest Scrim Summary ---
 
 // Helper to find the latest scrim based on dateString
-export const latestScrimSummaryAtom: Atom<Promise<ScrimListSummary | undefined>> = atom(async (get) => {
+export const latestScrimSummaryFn = async (get: Getter): Promise<ScrimListSummary | undefined> => {
   const allScrims = await get(scrimListSummaryAtom); // Use the already summarized scrims
 
   if (allScrims.length === 0) {
@@ -225,11 +226,15 @@ export const latestScrimSummaryAtom: Atom<Promise<ScrimListSummary | undefined>>
     try {
       // Attempt to parse dates for robust sorting
       return new Date(b.dateString).getTime() - new Date(a.dateString).getTime();
-    } catch (e) {
+    } catch { // Removed unused 'error' variable
       // Fallback to string comparison if parsing fails
       return b.dateString.localeCompare(a.dateString);
     }
   });
 
   return sortedScrims[0]; // Return the most recent one
+};
+
+export const latestScrimSummaryAtom: Atom<Promise<ScrimListSummary | undefined>> = atom(async (get) => {
+  return latestScrimSummaryFn(get);
 });

@@ -1,23 +1,23 @@
-import { Atom, atom } from 'jotai';
-import { defensiveAssistExtractorAtom } from '~/atoms/event_extractors/defensiveAssistExtractorAtom';
-import { offensiveAssistExtractorAtom } from '~/atoms/event_extractors/offensiveAssistExtractorAtom';
-import { heroSpawnExtractorAtom } from '~/atoms/event_extractors/heroSpawnExtractorAtom';
-import { heroSwapExtractorAtom } from '~/atoms/event_extractors/heroSwapExtractorAtom';
-import { ability1UsedExtractorAtom } from '~/atoms/event_extractors/ability1UsedExtractorAtom';
-import { ability2UsedExtractorAtom } from '~/atoms/event_extractors/ability2UsedExtractorAtom';
-import { combinePlayerEvents, type PlayerEvent } from '~/atoms/derived_events/playerEvents';
+import { atom } from 'jotai';
+import defensiveAssistAtom from '@atoms/defensiveAssist'; // Corrected path and import kind
+import offensiveAssistAtom from '@atoms/offensiveAssist'; // Corrected path and import kind
+import heroSpawnAtom from '@atoms/heroSpawn'; // Corrected path and import kind
+import heroSwapAtom from '@atoms/heroSwap'; // Corrected path and import kind
+import ability1UsedAtom from '@atoms/ability1Used'; // Corrected path and import kind
+import ability2UsedAtom from '@atoms/ability2Used'; // Corrected path and import kind
+import { combinePlayerEvents, type PlayerEvent } from '@library/playerEvents'; // Corrected path and import kind
 
 /**
  * Atom that combines various player events
  */
-export const playerEventsAtom: Atom<Promise<PlayerEvent[]>> = atom(async (get) => {
+export const playerEventsAtom = atom(async (get): Promise<PlayerEvent[]> => {
   // Get all the event data from extractor atoms
-  const defensiveAssists = await get(defensiveAssistExtractorAtom);
-  const offensiveAssists = await get(offensiveAssistExtractorAtom);
-  const heroSpawns = await get(heroSpawnExtractorAtom);
-  const heroSwaps = await get(heroSwapExtractorAtom);
-  const ability1Used = await get(ability1UsedExtractorAtom);
-  const ability2Used = await get(ability2UsedExtractorAtom);
+  const defensiveAssists = await get(defensiveAssistAtom);
+  const offensiveAssists = await get(offensiveAssistAtom);
+  const heroSpawns = await get(heroSpawnAtom);
+  const heroSwaps = await get(heroSwapAtom);
+  const ability1Used = await get(ability1UsedAtom);
+  const ability2Used = await get(ability2UsedAtom);
 
   // Use the pure function to combine events
   return combinePlayerEvents(

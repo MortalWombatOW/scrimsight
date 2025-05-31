@@ -1,6 +1,6 @@
 import { atom } from "jotai";
-import { playerEventsAtom } from "@atoms/playerEventsAtom";
-import { roundTimesAtom } from "@atoms/roundTimesAtom";
+import { playerEventsAtom, PlayerEvent } from "@atoms/playerEventsAtom"; // Corrected import for atom and type to named
+import roundTimesAtom, { RoundTimes } from "@atoms/roundTimesAtom"; // Corrected import for atom and type
 import { MetricAtom } from "@library/metricUtils";
 
 export interface HeroPlaytime {
@@ -15,15 +15,16 @@ export type HeroPlaytimeCategoryKeys = "playerName" | "matchId" | "roundNumber" 
 export type HeroPlaytimeNumericalKeys = "playtime";
 
 export const heroPlaytimeAtom: MetricAtom<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys> = atom(async (get) => {
-  const events = await get(playerEventsAtom);
-  const roundTimes = await get(roundTimesAtom);
+  const events: PlayerEvent[] = await get(playerEventsAtom);
+  const roundTimesData = await get(roundTimesAtom); // Renamed to avoid conflict with RoundTimes type if it's an array
+  const actualRoundTimes: RoundTimes[] = roundTimesData; // Assuming roundTimesData is RoundTimes[]
   
   const playtimeMap = new Map<string, HeroPlaytime>();
   
   // Group events by player/match/round
-  const eventsByPlayer = events.reduce((acc, event) => {
+  const eventsByPlayer = events.reduce((acc, event: PlayerEvent) => {
     // Find which round this event belongs to based on time
-    const round = roundTimes.find(rt => 
+    const round = actualRoundTimes.find((rt: RoundTimes) => 
       rt.matchId === event.matchId &&
       event.playerEventTime >= rt.roundStartTime &&
       event.playerEventTime <= rt.roundEndTime
@@ -35,20 +36,21 @@ export const heroPlaytimeAtom: MetricAtom<HeroPlaytime, HeroPlaytimeCategoryKeys
     if (!acc.has(key)) acc.set(key, []);
     acc.get(key)?.push(event);
     return acc;
-  }, new Map<string, typeof events>());
+  }, new Map<string, PlayerEvent[]>()); // Explicitly type the accumulator
 
   // Process each player's events per round
-  for (const [playerKey, playerEvents] of eventsByPlayer) {
-    const [playerName, matchId, roundNumber] = playerKey.split('-');
-    const round = roundTimes.find(rt => 
+  for (const [playerKey, playerEventsList] of eventsByPlayer) { // Renamed playerEvents to playerEventsList
+    const [playerName, matchId, roundNumberStr] = playerKey.split('-'); // Renamed roundNumber to roundNumberStr
+    const roundNumber = parseInt(roundNumberStr);
+    const round = actualRoundTimes.find((rt: RoundTimes) => 
       rt.matchId === matchId && 
-      rt.roundNumber === parseInt(roundNumber)
+      rt.roundNumber === roundNumber
     );
     
     if (!round) continue;
     
     // Sort events chronologically
-    const sortedEvents = playerEvents.sort((a, b) => a.playerEventTime - b.playerEventTime);
+    const sortedEvents = playerEventsList.sort((a: PlayerEvent, b: PlayerEvent) => a.playerEventTime - b.playerEventTime);
     let currentHero = '';
     let lastHeroChangeTime = round.roundSetupCompleteTime;
     
@@ -62,7 +64,7 @@ export const heroPlaytimeAtom: MetricAtom<HeroPlaytime, HeroPlaytimeCategoryKeys
           playtimeMap.set(playtimeKey, {
             playerName,
             matchId,
-            roundNumber: parseInt(roundNumber),
+            roundNumber: roundNumber,
             hero: currentHero,
             playtime: (playtimeMap.get(playtimeKey)?.playtime || 0) + duration
           });
@@ -81,7 +83,7 @@ export const heroPlaytimeAtom: MetricAtom<HeroPlaytime, HeroPlaytimeCategoryKeys
       playtimeMap.set(playtimeKey, {
         playerName,
         matchId,
-        roundNumber: parseInt(roundNumber),
+        roundNumber: roundNumber,
         hero: currentHero,
         playtime: (playtimeMap.get(playtimeKey)?.playtime || 0) + duration
       });
@@ -93,4 +95,4 @@ export const heroPlaytimeAtom: MetricAtom<HeroPlaytime, HeroPlaytimeCategoryKeys
     numericalKeys: ['playtime'] as HeroPlaytimeNumericalKeys[],
     rows: Array.from(playtimeMap.values())
   };
-}); 
+});

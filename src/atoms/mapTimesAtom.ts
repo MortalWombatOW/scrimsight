@@ -1,7 +1,8 @@
-import { Atom, atom } from 'jotai';
-import { matchStartExtractorAtom } from '~/atoms/event_extractors/matchStartExtractorAtom';
-import { matchEndExtractorAtom } from '~/atoms/event_extractors/matchEndExtractorAtom';
-import { roundTimesAtom } from '~/atoms/roundTimesAtom';
+import { atom } from 'jotai';
+import matchStart from '@atoms/matchStart';
+import matchEnd from '@atoms/matchEnd';
+import roundTimesAtom, { RoundTimes } from '@atoms/roundTimesAtom'; // Changed import name and added RoundTimes
+import { MatchStartType, MatchEndType } from '@atoms'; // Import specific types
 
 /**
  * Interface for map times data
@@ -14,14 +15,14 @@ export interface MapTimes {
 }
 
 /**
- * Atom that combines match start, end, and round events to calculate map times
+ * Pure function that combines match start, end, and round events to calculate map times
  */
-export const mapTimesAtom: Atom<Promise<MapTimes[]>> = atom(async (get) => {
-  const matchStarts = await get(matchStartExtractorAtom);
-  const matchEnds = await get(matchEndExtractorAtom);
-  const roundTimes = await get(roundTimesAtom);
-
-  if (!matchStarts || !matchEnds || !roundTimes) return [];
+export const mapTimesFn = (
+  matchStarts: MatchStartType,
+  matchEnds: MatchEndType,
+  roundTimesData: RoundTimes[] // Changed parameter name and type
+): MapTimes[] => {
+  if (!matchStarts || !matchEnds || !roundTimesData) return [];
 
   return matchStarts.map((start) => {
     const end = matchEnds.find((e) => e.matchId === start.matchId);
@@ -34,4 +35,15 @@ export const mapTimesAtom: Atom<Promise<MapTimes[]>> = atom(async (get) => {
       duration: end.matchTime - start.matchTime,
     };
   }).filter((time): time is MapTimes => time !== null);
-}); 
+};
+
+/**
+ * Atom that combines match start, end, and round events to calculate map times
+ */
+export default atom(async (get): Promise<MapTimes[]> => {
+  const matchStartsData = await get(matchStart);
+  const matchEndsData = await get(matchEnd);
+  const roundTimesData = await get(roundTimesAtom); // Use the imported atom
+
+  return mapTimesFn(matchStartsData, matchEndsData, roundTimesData);
+});

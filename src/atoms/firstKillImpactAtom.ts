@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { Teamfight, teamfightsAtom } from '~/atoms/teamfightsAtom';
+import { teamfightsAtom, Teamfight } from '@atoms/teamfightsAtom'; // Corrected path and import kind
 
 export interface FirstKillImpactStats {
   totalFights: number;
