@@ -1,0 +1,17 @@
+# Task ID: 4
+# Title: Investigate and Report: Component Compliance
+# Status: pending
+# Dependencies: 1
+# Priority: medium
+# Description: Analyze all existing components (excluding atoms) to identify deviations from the new project standards and document required changes in a detailed report.
+# Details:
+Identify all "component" level modules. For each component, compare its current implementation against standards in `README.md` (Task 1). Document findings in a structured format: Component Name, File Path, Compliance Issues, Suggested Refactoring Steps, Estimated Effort. 
+`// Example report entry:`
+`// Component: UserProfileCard`
+`// Path: src/components/UserProfileCard.jsx`
+`// Issues: Uses outdated styling method, props not typed.`
+`// Suggested: Convert to CSS Modules, add PropTypes/TypeScript.`
+`// Effort: M`
+
+# Test Strategy:
+Peer review of the generated report for accuracy, thoroughness, and clarity. Ensure all components (excluding atoms and pages) are covered. Verify that "compliance issues" directly map to standards in `README.md`.

@@ -3,35 +3,12 @@ import { atomFamily } from 'jotai/utils';
 import { Getter } from 'jotai';
 import matchDataAtom from '@atoms/matchDataAtom'; // Corrected path
 import heroSpawnAtom from '@atoms/heroSpawn'; // Atom import
-import { HeroSpawnLogEvent } from '@atoms'; // Type import from index
+import { HeroSpawnLogEvent, DetailedComposition, CompositionMatchup } from '@atoms'; // Type import from index
 import heroSwapAtom from '@atoms/heroSwap';   // Atom import
 import { HeroSwapLogEvent } from '@atoms';   // Type import from index
 import mapTimesAtom from '@atoms/mapTimesAtom'; // Corrected path
 
 type HeroEvent = HeroSpawnLogEvent | HeroSwapLogEvent;
-
-// Define the output shape
-export interface DetailedComposition {
-  composition: string[]; // Sorted list of hero names
-  playtimeSeconds: number;
-  wins: number; // Overall wins for this composition across all matchups
-  losses: number; // Overall losses for this composition across all matchups
-  draws: number; // Overall draws for this composition across all matchups
-  winRate: number; // Calculated as wins / (wins + losses)
-  frequency: number; // Number of distinct matches the composition appeared in
-  matchups: CompositionMatchup[]; // Added matchup data
-}
-
-// Added interface for matchup details
-export interface CompositionMatchup {
-  opponentComposition: string[];
-  playtimeSecondsAgainst: number;
-  winsAgainst: number;
-  lossesAgainst: number;
-  drawsAgainst: number;
-  winRateAgainst: number;
-}
-
 
 // Intermediate structure for aggregation
 interface AggregatedMatchupStats { // Renamed and adjusted for matchups

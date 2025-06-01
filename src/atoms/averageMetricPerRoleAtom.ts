@@ -4,19 +4,13 @@ import {
   playerStatsBase,
   PlayerStatsBase,
   PlayerStatsCategoryKeys,
-  PlayerStatsNumericalKeys,
   playerStatsNumericalKeys,
   PlayerStatsBaseNumericalKeys,
   playerStatsBaseNumericalKeys as baseNumericalKeysArray, // Rename to avoid conflict
+  AverageRoleStats, // Added import
+  AverageMetricPerRole, // Added import
 } from '@atoms';
 import { OverwatchRole } from '@library/hero';
-
-// Define the output structure for average stats per role
-export type AverageRoleStats = {
-  [K in PlayerStatsNumericalKeys]?: number;
-};
-
-export type AverageMetricPerRole = Record<OverwatchRole, AverageRoleStats>;
 
 // Pure function to calculate average metrics per player role
 export const averageMetricPerRoleFn = (

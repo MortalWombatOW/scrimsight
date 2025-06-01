@@ -1,0 +1,19 @@
+# Task ID: 10
+# Title: Refactor Library and Implement Tests
+# Status: pending
+# Dependencies: 1, 3, 7
+# Priority: high
+# Description: Update library code to align with new project standards (naming, documentation, purity) and add corresponding unit tests.
+# Details:
+Execute library refactoring tasks from Master Plan (Task 7). Update utility functions, helpers, constants to meet standards. 
+`// pseudo-code for refactoring library function`
+`// src/lib/oldUtils.js -> src/lib/newUtils.js`
+`/** @ JSDoc for formatCurrency */`
+`export const formatCurrency = (value, currency = 'USD') => { /* ... */ };`
+Maintain API contracts or document breaking changes. Implement comprehensive unit tests. 
+`// pseudo-code for library unit test`
+`import { formatCurrency } from './newUtils';`
+`describe('formatCurrency', () => { it('should format', () => { expect(formatCurrency(123.45)).toBe('$123.45'); }); });`
+
+# Test Strategy:
+All new/updated library unit tests pass. High test coverage. Code reviews. Verify consuming code still works. Linters/formatters (Task 1) pass.

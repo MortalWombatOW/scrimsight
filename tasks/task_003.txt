@@ -1,0 +1,17 @@
+# Task ID: 3
+# Title: Implement Unit Tests for Atoms
+# Status: pending
+# Dependencies: 1, 2
+# Priority: high
+# Description: Develop and implement comprehensive unit tests for all atom components, ensuring they meet quality and coverage standards.
+# Details:
+Set up the testing environment using Jest and React Testing Library (or project-specified tools). For each atom refactored in Task 2: Create a `MyAtom.test.js` (or `.tsx`) file. Write tests to cover: Basic rendering, rendering with different props, event handling, and accessibility. 
+`// pseudo-code for an atom test (e.g., Button.test.js)`
+`import { render, screen, fireEvent } from '@testing-library/react';`
+`import Button from './Button';`
+`test('renders button with text', () => { render(<Button>Click Me</Button>); expect(screen.getByText('Click Me')).toBeInTheDocument(); });`
+`test('calls onClick prop when clicked', () => { const handleClick = jest.fn(); render(<Button onClick={handleClick}>Click</Button>); fireEvent.click(screen.getByText('Click')); expect(handleClick).toHaveBeenCalledTimes(1); });`
+Aim for >80% statement coverage for each atom.
+
+# Test Strategy:
+Run `npm test` or `yarn test` and ensure all atom tests pass. Check test coverage reports. Review test cases for completeness and correctness (e.g., testing edge cases, all prop variations).

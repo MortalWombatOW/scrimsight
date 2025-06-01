@@ -1,7 +1,7 @@
-import { atom } from 'jotai';
-import { PlayerInteractionEvent, playerInteractionEventsAtom} from '~/atoms/derived_events';
-import { ultimateEventsAtom } from '~/atoms/derived_events/ultimateEventsAtom';
-import { matchDataAtom } from '~/atoms/matchDataAtom';
+import { atom, Getter } from 'jotai'; // Added Getter
+import { playerInteractionEventsAtom, PlayerInteractionEvent } from '@atoms/playerInteractionEventsAtom'; // Corrected to named import for atom
+import { ultimateEventsAtom } from '@atoms/ultimateEventsAtom'; // Corrected to named import
+import matchDataAtom from '@atoms/matchDataAtom'; // Default import is correct
 const TEAMFIGHT_BUFFER_TIME = 10; // seconds
 const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
 
@@ -35,7 +35,7 @@ export interface Teamfight {
 // Define the type for the intermediate teamfight data structure
 type TeamfightPass1 = Pick<Teamfight, 'matchId' | 'startTime' | 'endTime' | 'duration' | 'team1Kills' | 'team2Kills' | 'team1Name' | 'team2Name'>;
 
-export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
+export const teamfightsAtomFn = async (get: Getter): Promise<Teamfight[]> => {
   const playerInteractionEvents = await get(playerInteractionEventsAtom);
   
 
@@ -260,4 +260,8 @@ export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
   });
   
   return teamfights;
+};
+
+export default atom(async (get) => {
+  return teamfightsAtomFn(get);
 });

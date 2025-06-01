@@ -1,11 +1,13 @@
 import { atom } from 'jotai';
-import { TeamPlayersType, matchDataAtom } from '@atoms';
+import matchDataAtom, { type MatchData } from '@atoms/matchDataAtom'; // Direct import
+import type { TeamPlayersType } from '@atoms'; // Import as type-only
+import {ProgressBar} from '@components/ProgressBar'
 
 export default atom(async (get): Promise<TeamPlayersType[]> => {
-  const matchData = await get(matchDataAtom);
+  const matchDataValue = await get(matchDataAtom); // Use direct import
   const teamPlayersMap: Record<string, Set<string>> = {};
 
-  matchData.forEach(match => {
+  matchDataValue.forEach((match: MatchData) => { // Add type for match
     if (!teamPlayersMap[match.team1Name]) {
       teamPlayersMap[match.team1Name] = new Set();
     }
@@ -20,4 +22,4 @@ export default atom(async (get): Promise<TeamPlayersType[]> => {
     teamName,
     players: Array.from(playersSet),
   }));
-}); 
+});

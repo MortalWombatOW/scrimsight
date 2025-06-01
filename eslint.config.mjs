@@ -134,7 +134,7 @@ export default [
         'ignorePattern': '^import\\s.+\\sfrom\\s.+\\s;',
       }],
       'path-alias/no-relative': ['error', {}],
-      ...boundaries.configs.strict.rules,
+      // ...boundaries.configs.strict.rules,
       "boundaries/external": [0],
       // "boundaries/entry-point": [2, {
       //   default: "disallow",

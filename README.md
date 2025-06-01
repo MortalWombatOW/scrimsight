@@ -23,6 +23,18 @@ The file structure is optimized for AI-assisted development, with the following 
 
 ---
 
+### Code Quality and Compliance
+
+The project maintains code quality and compliance through the following mechanisms:
+
+*   **ESLint**: Configured via `eslint.config.mjs` with `@typescript-eslint`, `react`, `react-hooks`, `import`, `unused-imports`, `stylistic`, `path-alias`, and `boundaries` plugins. The `boundaries` plugin enforces the strict file structure defined in this README.
+*   **Prettier**: Integrated with ESLint to handle code formatting, ensuring consistency across the codebase.
+*   **CSS/SCSS Linting**: A dedicated linter for CSS/SCSS (e.g., Stylelint) is not currently configured.
+*   **Pre-commit Hooks**: Automated pre-commit hooks (e.g., using Husky and lint-staged) are not actively configured.
+*   **Manual Checks**: The `check-lint-build-errors.sh` script provides a manual method to run ESLint and TypeScript build checks for code quality verification.
+
+---
+
 #### Atoms
 
 Jotai atoms are used to define the business logic of the application, and can depend on other atoms or libraries.

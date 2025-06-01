@@ -1,29 +1,8 @@
-import { atom } from 'jotai';
-import { teamfightsAtom, Teamfight } from '@atoms/teamfightsAtom'; // Corrected path and import kind
+import { atom, Getter } from 'jotai'; // Added Getter
+import { teamfights, Teamfight, FirstKillImpactStats, TeamFirstKillImpactStats } from '@atoms'; // Corrected import to use registered name
 
-export interface FirstKillImpactStats {
-  totalFights: number;
-  overallWinRate: number; // Fights won / total fights (excluding draws)
-  firstKillWinRate: number; // Fights won when getting first kill / fights with first kill
-  firstDeathLossRate: number; // Fights lost when suffering first death / fights with first death
-  teamStats: Record<string, TeamFirstKillImpactStats>;
-}
-
-export interface TeamFirstKillImpactStats {
-  teamName: string;
-  totalFights: number;
-  fightsWon: number;
-  winRate: number;
-  fightsWithFirstKill: number;
-  fightsWonWithFirstKill: number;
-  firstKillWinRate: number; // fightsWonWithFirstKill / fightsWithFirstKill
-  fightsWithFirstDeath: number;
-  fightsLostWithFirstDeath: number;
-  firstDeathLossRate: number; // fightsLostWithFirstDeath / fightsWithFirstDeath
-}
-
-export const firstKillImpactAtom = atom(async (get): Promise<FirstKillImpactStats> => {
-  const teamfights = await get(teamfightsAtom);
+export const firstKillImpactAtomFn = async (get: Getter): Promise<FirstKillImpactStats> => {
+  const teamfightsData = await get(teamfights.atom); // Use registered atom
 
   let totalFights = 0;
   let totalWins = 0;
@@ -47,7 +26,7 @@ export const firstKillImpactAtom = atom(async (get): Promise<FirstKillImpactStat
     firstDeathLossRate: 0,
   });
 
-  teamfights.forEach((fight: Teamfight) => {
+  teamfightsData.forEach((fight: Teamfight) => { // Corrected to use teamfightsData
     if (fight.winner === 'draw') return; // Exclude draws from win rate calculations
 
     totalFights++;
@@ -128,4 +107,8 @@ export const firstKillImpactAtom = atom(async (get): Promise<FirstKillImpactStat
     firstDeathLossRate,
     teamStats: teamStatsMap,
   };
+};
+
+export const firstKillImpactAtom = atom(async (get) => {
+  return firstKillImpactAtomFn(get);
 });

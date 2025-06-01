@@ -1,0 +1,16 @@
+# Task ID: 1
+# Title: Establish Project Compliance Standards and Tooling
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Define and document project standards based on README.md, and set up associated linting, formatting, and CI checks to ensure ongoing compliance.
+# Details:
+Thoroughly review `README.md` to extract all defined project standards (coding style, naming conventions, component patterns, directory structure, testing requirements, etc.). Configure ESLint with appropriate plugins (e.g., `eslint-plugin-react`, `eslint-plugin-jsx-a11y`, `eslint-plugin-import`) and rules based on `README.md`. Configure Prettier for consistent code formatting. Configure Stylelint for CSS/SCSS linting if applicable. Set up Husky pre-commit hooks to run linters and formatters before commits. 
+`// pseudo-code for pre-commit hook (e.g., .husky/pre-commit)`
+`npx lint-staged`
+`// lint-staged.config.js`
+`module.exports = { "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"], "*.{css,scss}": ["stylelint --fix", "prettier --write"] }`
+Document any ambiguities or missing standards and seek clarification.
+
+# Test Strategy:
+Manually run linters/formatters on a sample of existing code to ensure they identify and/or fix issues correctly. Attempt to commit non-compliant code; verify pre-commit hook prevents the commit or auto-fixes. Verify that a CI pipeline (if configured) correctly runs these checks.

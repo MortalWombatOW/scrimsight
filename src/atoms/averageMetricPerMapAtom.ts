@@ -4,20 +4,14 @@ import {
   playerStatsBase, 
   PlayerStatsBase,
   PlayerStatsCategoryKeys, 
-  PlayerStatsNumericalKeys, 
   PlayerStatsBaseNumericalKeys, 
   playerStatsNumericalKeys,
-  playerStatsBaseNumericalKeys as baseNumericalKeysArray, 
+  playerStatsBaseNumericalKeys as baseNumericalKeysArray,
+  AverageMapStats,
+  AverageMetricPerMap,
 } from '@atoms';
 import matchData, { MatchData } from '@atoms/matchDataAtom';
 import uniqueMapNames from '@atoms/uniqueMapNamesAtom';
-
-export type AverageMapStats = {
-  [K in PlayerStatsNumericalKeys]?: number; // All numerical stats are optional averages
-};
-
-// Key could be mapName or mapName-mode
-export type AverageMetricPerMap = Record<string, AverageMapStats>;
 
 // Pure function to calculate average metrics per map
 export const averageMetricPerMapFn = (
