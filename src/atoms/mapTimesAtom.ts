@@ -1,21 +1,28 @@
-import { atom } from 'jotai';
-import { matchStart } from '@atoms';
-import { matchEnd } from '@atoms';
-import { roundTimes } from '@atoms';
-import { MatchStartType, MatchEndType, RoundTimes } from '@atoms'; // Import specific types
+import { Getter } from 'jotai';
+import {
+  matchStart,
+  matchEnd,
+  roundTimes,
+  type MatchStartType, // Type for match start events (actually MatchStartLogEvent[])
+  type MatchEndType,   // Type for match end events (actually MatchEndLogEvent[])
+  type RoundTimes,     // Type for round times data (element type if roundTimes.atom is RoundTimes[])
+  // but based on index.ts, roundTimes.atom is Promise<RoundTimes[]> where RoundTimes is an array itself.
+  // So await get(roundTimes.atom) is RoundTimes[] (which is RoundTimesType)
+  type MapTimes,       // This type will be moved to and imported from @atoms/index.ts
+} from '@atoms';
 
-/**
- * Interface for map times data
- */
-export const mapTimesFn = (
-  matchStarts: MatchStartType,
-  matchEnds: MatchEndType,
-  roundTimesData: RoundTimes[] // Changed parameter name and type
-): MapTimes[] => {
-  if (!matchStarts || !matchEnds || !roundTimesData) return [];
+// Default export the core atom logic (async getter function)
+// The helper function 'mapTimesFn' will be inlined.
+export default async (get: Getter): Promise<MapTimes[]> => {
+  const matchStartsData: MatchStartType = await get(matchStart.atom); // Corrected: MatchStartType is MatchStartLogEvent[]
+  const matchEndsData: MatchEndType = await get(matchEnd.atom);       // Corrected: MatchEndType is MatchEndLogEvent[]
+  const roundTimesData: RoundTimes[] = await get(roundTimes.atom); // This is RoundTimesType from index.ts (RoundTimes[])
 
-  return matchStarts.map((start) => {
-    const end = matchEnds.find((e) => e.matchId === start.matchId);
+  // Inlined logic from mapTimesFn:
+  if (!matchStartsData || !matchEndsData || !roundTimesData) return [];
+
+  return matchStartsData.map((start) => {
+    const end = matchEndsData.find((e) => e.matchId === start.matchId);
     if (!end) return null;
 
     return {
@@ -26,24 +33,3 @@ export const mapTimesFn = (
     };
   }).filter((time): time is MapTimes => time !== null);
 };
-
-/**
- * Pure function that combines match start, end, and round events to calculate map times
- */
-export interface MapTimes {
-  matchId: string;
-  startTime: number;
-  endTime: number;
-  duration: number;
-}
-
-/**
- * Atom that combines match start, end, and round events to calculate map times
- */
-export default atom(async (get): Promise<MapTimes[]> => {
-  const matchStartsData = await get(matchStart.atom);
-  const matchEndsData = await get(matchEnd.atom);
-  const roundTimesData = await get(roundTimes.atom); // Use the imported atom
-
-  return mapTimesFn(matchStartsData, matchEndsData, roundTimesData);
-});

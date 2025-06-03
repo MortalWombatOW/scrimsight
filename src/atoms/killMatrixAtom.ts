@@ -1,24 +1,30 @@
-import { atom } from "jotai";
-import { atomFamily } from "jotai/utils";
-import matchDataAtom, { MatchData } from "@atoms/matchDataAtom"; // Default import for atom, named for type
-import { playerInteractionEventsAtom, PlayerInteractionEvent } from "@atoms/playerInteractionEventsAtom"; // Named import for atom
+import { atom, Atom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
 import {
+  // Import the actual objects for runtime use
+  matchData,
+  playerInteractionEvents, // Import the playerInteractionEvents object
+  // Import types for type checking
+  type MatchData,
+  type PlayerInteractionEvent,
+  type KillMatrixData, // This type will be from @atoms (index.ts)
+  // Import functions for runtime use
   generateKillMatrixData,
-  type KillMatrixData
-} from "@atoms/killMatrix";
+} from '@atoms';
 
-// --- Derived Atom Definition ---
-export const killMatrixAtomFamily = atomFamily((matchId: string) =>
-  atom(async (get): Promise<KillMatrixData | null> => {
-    // Await the resolution of the async base atoms
-    const allMatchData: MatchData[] = await get(matchDataAtom);
-    const allPlayerInteractionEvents: PlayerInteractionEvent[] = await get(playerInteractionEventsAtom);
-
-    // Use the pure business logic function
-    return generateKillMatrixData(
-      matchId,
-      allMatchData,
-      allPlayerInteractionEvents
-    );
-  })
+// Directly export the result of atomFamily call as the default export.
+export default atomFamily<string, Atom<Promise<KillMatrixData | null>>>(
+  (matchId: string) =>
+    atom(async (get): Promise<KillMatrixData | null> => {
+      const allMatchData: MatchData[] = await get(matchData.atom);
+      // Correctly use the imported playerInteractionEvents object
+      const allPlayerInteractionEvents: PlayerInteractionEvent[] = await get(
+        playerInteractionEvents.atom
+      );
+      return generateKillMatrixData(
+        matchId,
+        allMatchData,
+        allPlayerInteractionEvents
+      );
+    })
 );

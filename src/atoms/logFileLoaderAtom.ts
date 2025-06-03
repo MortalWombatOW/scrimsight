@@ -1,15 +1,17 @@
-import { atom } from 'jotai';
+import { Getter } from 'jotai'; // atom will be used in index.ts
 import { readFileAsync } from '@library';
-import { logFileInput, LogFileLoaderType, LogFileInputType } from '@atoms';
+import {
+  logFileInput, // This is the ScrimsightAtom wrapper from index.ts
+  type LogFileLoaderType,
+} from '@atoms';
 
-/**
- * Implementation function for loading log file contents.
- * This function can be tested independently.
- */
-export const logFileLoaderAtomFn = async (
-  logFileInput: LogFileInputType 
-): Promise<LogFileLoaderType> => {
-  const { files } = logFileInput;
+// This is the core logic function for the atom.
+// It's an async function that takes Jotai's `get` and returns the atom's value.
+const logFileLoaderLogic = async (get: Getter): Promise<LogFileLoaderType> => {
+  const logFileInputData = get(logFileInput.atom); // logFileInput is imported from @atoms
+
+  // Inlined logic from loadLogFiles helper function:
+  const { files } = logFileInputData;
 
   if (!files || files.length === 0) {
     return [];
@@ -30,12 +32,4 @@ export const logFileLoaderAtomFn = async (
   return fileContents;
 };
 
-/**
- * Atom that loads the contents of the uploaded log files
- */
-const logFileLoaderAtom = atom(async (get): Promise<LogFileLoaderType> => {
-  const logFileInputData = get(logFileInput.atom);
-  return logFileLoaderAtomFn(logFileInputData);
-});
-
-export default logFileLoaderAtom;
+export default logFileLoaderLogic;

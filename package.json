@@ -81,7 +81,7 @@
     "@types/dagre": "^0.7.52",
     "@types/eslint": "^9.6.1",
     "@types/jest": "^29.5.14",
-    "@typescript-eslint/eslint-plugin": "^8.24.1",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.24.1",
     "@vitejs/plugin-react": "^4.3.4",
     "@ysk8hori/typescript-graph": "^0.24.0",

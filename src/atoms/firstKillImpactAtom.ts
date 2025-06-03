@@ -1,8 +1,16 @@
-import { atom, Getter } from 'jotai'; // Added Getter
-import { teamfights, Teamfight, FirstKillImpactStats, TeamFirstKillImpactStats } from '@atoms'; // Corrected import to use registered name
+import { Getter } from 'jotai'; // atom will be used in index.ts when wrapping
+import {
+  teamfights,
+  type Teamfight, // Assuming Teamfight type is from @atoms
+  // Assuming these types are (or will be) exported from @atoms/index.ts
+  type FirstKillImpactStats,
+  type TeamFirstKillImpactStats,
+} from '@atoms';
 
-export const firstKillImpactAtomFn = async (get: Getter): Promise<FirstKillImpactStats> => {
-  const teamfightsData = await get(teamfights.atom); // Use registered atom
+// This is the core logic function for the atom.
+// It's an async function that takes Jotai's `get` and returns the atom's value.
+const firstKillImpactLogic = async (get: Getter): Promise<FirstKillImpactStats> => {
+  const teamfightsData = await get(teamfights.atom);
 
   let totalFights = 0;
   let totalWins = 0;
@@ -26,8 +34,8 @@ export const firstKillImpactAtomFn = async (get: Getter): Promise<FirstKillImpac
     firstDeathLossRate: 0,
   });
 
-  teamfightsData.forEach((fight: Teamfight) => { // Corrected to use teamfightsData
-    if (fight.winner === 'draw') return; // Exclude draws from win rate calculations
+  teamfightsData.forEach((fight: Teamfight) => {
+    if (fight.winner === 'draw') return;
 
     totalFights++;
     const team1Won = fight.winner === 'team1';
@@ -35,7 +43,6 @@ export const firstKillImpactAtomFn = async (get: Getter): Promise<FirstKillImpac
 
     if (team1Won) totalWins++;
 
-    // Initialize team stats if not present
     if (!teamStatsMap[fight.team1Name]) {
       teamStatsMap[fight.team1Name] = initializeTeamStats(fight.team1Name);
     }
@@ -51,7 +58,6 @@ export const firstKillImpactAtomFn = async (get: Getter): Promise<FirstKillImpac
     if (team1Won) team1Stats.fightsWon++;
     if (team2Won) team2Stats.fightsWon++;
 
-    // First Kill Analysis
     if (fight.firstKillTeam) {
       fightsWithFirstKill++;
       if (fight.firstKillTeam === fight.team1Name) {
@@ -63,24 +69,23 @@ export const firstKillImpactAtomFn = async (get: Getter): Promise<FirstKillImpac
       } else if (fight.firstKillTeam === fight.team2Name) {
         team2Stats.fightsWithFirstKill++;
         if (team2Won) {
-          winsWithFirstKill++; // Overall count needs winner check
+          winsWithFirstKill++;
           team2Stats.fightsWonWithFirstKill++;
         }
       }
     }
 
-    // First Death Analysis
     if (fight.firstDeathTeam) {
       fightsWithFirstDeath++;
       if (fight.firstDeathTeam === fight.team1Name) {
         team1Stats.fightsWithFirstDeath++;
-        if (team2Won) { // Lost if the other team won
+        if (team2Won) {
           lossesWithFirstDeath++;
           team1Stats.fightsLostWithFirstDeath++;
         }
       } else if (fight.firstDeathTeam === fight.team2Name) {
         team2Stats.fightsWithFirstDeath++;
-        if (team1Won) { // Lost if the other team won
+        if (team1Won) {
           lossesWithFirstDeath++;
           team2Stats.fightsLostWithFirstDeath++;
         }
@@ -88,12 +93,10 @@ export const firstKillImpactAtomFn = async (get: Getter): Promise<FirstKillImpac
     }
   });
 
-  // Calculate rates
   const overallWinRate = totalFights > 0 ? totalWins / totalFights : 0;
   const firstKillWinRate = fightsWithFirstKill > 0 ? winsWithFirstKill / fightsWithFirstKill : 0;
   const firstDeathLossRate = fightsWithFirstDeath > 0 ? lossesWithFirstDeath / fightsWithFirstDeath : 0;
 
-  // Calculate team rates
   Object.values(teamStatsMap).forEach(stats => {
     stats.winRate = stats.totalFights > 0 ? stats.fightsWon / stats.totalFights : 0;
     stats.firstKillWinRate = stats.fightsWithFirstKill > 0 ? stats.fightsWonWithFirstKill / stats.fightsWithFirstKill : 0;
@@ -109,6 +112,4 @@ export const firstKillImpactAtomFn = async (get: Getter): Promise<FirstKillImpac
   };
 };
 
-export const firstKillImpactAtom = atom(async (get) => {
-  return firstKillImpactAtomFn(get);
-});
+export default firstKillImpactLogic;

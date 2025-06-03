@@ -1,14 +1,20 @@
-import { atom } from 'jotai';
-import { Teamfight, TeamfightParticipationType, PlayerFirstKillDeathRateStats, teamfights, teamfightParticipation, uniquePlayerNames } from '@atoms';
+import { Getter } from 'jotai'; // atom will be used in index.ts
+import {
+  teamfights,
+  teamfightParticipation,
+  uniquePlayerNames,
+  type Teamfight,
+  type PlayerFirstKillDeathRateStats,
+} from '@atoms';
 
-/**
- * Pure function that calculates first kill/death rates for all players
- */
-export const playerFirstKillDeathRateAtomFn = (
-  teamfightData: Teamfight[],
-  participation: TeamfightParticipationType,
-  playerNames: string[]
-): Record<string, PlayerFirstKillDeathRateStats> => {
+// Default export the core atom logic (async getter function)
+// The helper function 'playerFirstKillDeathRateAtomFn' will be inlined.
+export default async (get: Getter): Promise<Record<string, PlayerFirstKillDeathRateStats>> => {
+  const teamfightData = await get(teamfights.atom);
+  const participation = await get(teamfightParticipation.atom);
+  const playerNames = await get(uniquePlayerNames.atom);
+
+  // Inlined logic from playerFirstKillDeathRateAtomFn:
   const playerStatsMap: Record<string, PlayerFirstKillDeathRateStats> = {};
 
   // Initialize stats for all known players
@@ -34,12 +40,10 @@ export const playerFirstKillDeathRateAtomFn = (
   });
 
   // Aggregate participation count
-  // The participation atom structure is Map<string, TeamfightParticipation>
-  // We need to count how many fights each player participated in.
   const participationCounts: Record<string, number> = {};
   participation.forEach((playersInFight) => {
     [...playersInFight.team1Players, ...playersInFight.team2Players].forEach((playerName: string) => {
-      if (playerStatsMap[playerName]) { // Ensure player exists in our map
+      if (playerStatsMap[playerName]) {
         participationCounts[playerName] = (participationCounts[playerName] || 0) + 1;
       }
     });
@@ -48,23 +52,10 @@ export const playerFirstKillDeathRateAtomFn = (
   // Add participation counts and calculate rates
   Object.keys(playerStatsMap).forEach(playerName => {
     const stats = playerStatsMap[playerName];
-    stats.teamfightsParticipated = participationCounts[playerName] || 0; // Assign count, default to 0
+    stats.teamfightsParticipated = participationCounts[playerName] || 0;
     stats.firstKillRate = stats.teamfightsParticipated > 0 ? stats.firstKills / stats.teamfightsParticipated : 0;
     stats.firstDeathRate = stats.teamfightsParticipated > 0 ? stats.firstDeaths / stats.teamfightsParticipated : 0;
   });
 
   return playerStatsMap;
 };
-
-/**
- * Atom that calculates first kill/death rates for all players
- */
-const playerFirstKillDeathRateAtom = atom(async (get): Promise<Record<string, PlayerFirstKillDeathRateStats>> => {
-  const teamfightData = await get(teamfights.atom);
-  const participation = await get(teamfightParticipation.atom);
-  const playerNames = await get(uniquePlayerNames.atom);
-
-  return playerFirstKillDeathRateAtomFn(teamfightData, participation, playerNames);
-});
-
-export default playerFirstKillDeathRateAtom;

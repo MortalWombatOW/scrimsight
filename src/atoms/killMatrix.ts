@@ -1,61 +1,18 @@
-import { PlayerInteractionEvent, MatchData } from "@atoms";
+import { type PlayerInteractionEvent, type MatchData } from '@atoms';
 
-export const calculatePlayerTotals = (killMatrix: {
-  [killer: string]: { [victim: string]: number };
-}): { [player: string]: PlayerTotals } => {
-  const totals: { [player: string]: PlayerTotals } = {};
-  const players = Object.keys(killMatrix);
+// Types previously defined here (PlayerTotals, PlayerInteraction, KillMatrixData)
+// are now expected to be defined in or re-exported by src/atoms/index.ts.
+// Local versions can be used if generateKillMatrixData's signature doesn't expose them,
+// but KillMatrixData (the return type) IS exposed.
+// For now, assume these types will be available from @atoms for the function signature.
+import { type KillMatrixData, type PlayerTotals } from '@atoms'; // PlayerInteraction is internal to KillMatrixData
 
-  players.forEach((player) => {
-    totals[player] = {
-      kills: Object.values(killMatrix[player]).reduce(
-        (sum, kills) => sum + kills,
-        0
-      ),
-      deaths: players.reduce(
-        (sum, killer) => sum + (killMatrix[killer]?.[player] ?? 0),
-        0
-      ),
-    };
-  });
-
-  return totals;
-};
-
-export const createKillMatrix = (
-  interactions: PlayerInteraction[],
-  players: string[]
-): { [killer: string]: { [victim: string]: number } } => {
-  const matrix: { [killer: string]: { [victim: string]: number } } = {};
-
-  // Initialize matrix with zeros
-  players.forEach((killer) => {
-    matrix[killer] = {};
-    players.forEach((victim) => {
-      matrix[killer][victim] = 0;
-    });
-  });
-
-  // Fill in kill counts
-  interactions.forEach((interaction) => {
-    // Ensure players exist in the matrix before assigning
-    if (matrix[interaction.sourcePlayerName] && matrix[interaction.sourcePlayerName][interaction.targetPlayerName] !== undefined) {
-      matrix[interaction.sourcePlayerName][interaction.targetPlayerName] = interaction.value;
-    } else {
-      // Handle cases where a player might not be in the initial player list (e.g., mid-match joiners if data allows)
-      console.warn(`Player ${interaction.sourcePlayerName} or ${interaction.targetPlayerName} not found in initial player list for matrix creation.`);
-    }
-  });
-
-  return matrix;
-};
-
+// Helper function
 export const generateKillMatrixData = (
   matchId: string,
   allMatchData: MatchData[],
   allPlayerInteractionEvents: PlayerInteractionEvent[]
 ): KillMatrixData | null => {
-  // Find the match data
   const match = allMatchData?.find((m) => m.matchId === matchId);
   const interactionsForMatch = allPlayerInteractionEvents?.filter((e) => e.matchId === matchId) ?? [];
 
@@ -68,7 +25,6 @@ export const generateKillMatrixData = (
   const allPlayers = [...team1Players, ...team2Players];
 
   if (allPlayers.length === 0 || interactionsForMatch.length === 0) {
-    // Return a default state if there are no players or interactions
     const emptyMatrix = Object.fromEntries(allPlayers.map(killer => 
       [killer, Object.fromEntries(allPlayers.map(victim => [victim, 0]))]
     ));
@@ -99,14 +55,39 @@ export const generateKillMatrixData = (
     team2Name,
     allPlayers,
   };
+};;
+
+// Helper function
+function createKillMatrix (
+  interactions: { sourcePlayerName: string; targetPlayerName: string; value: number }[], // Simplified local PlayerInteraction
+  players: string[]
+): { [killer: string]: { [victim: string]: number } } {
+  const matrix: { [killer: string]: { [victim: string]: number } } = {};
+
+  players.forEach((killer) => {
+    matrix[killer] = {};
+    players.forEach((victim) => {
+      matrix[killer][victim] = 0;
+    });
+  });
+
+  interactions.forEach((interaction) => {
+    if (matrix[interaction.sourcePlayerName] && matrix[interaction.sourcePlayerName][interaction.targetPlayerName] !== undefined) {
+      matrix[interaction.sourcePlayerName][interaction.targetPlayerName] = interaction.value;
+    } else {
+      console.warn(`Player ${interaction.sourcePlayerName} or ${interaction.targetPlayerName} not found in initial player list for matrix creation.`);
+    }
+  });
+
+  return matrix;
 };
 
-// Pure function to transform raw events into player interactions
-export const transformPlayerInteractions = (
+// Helper function
+function transformPlayerInteractions (
   data: PlayerInteractionEvent[]
-): PlayerInteraction[] => {
+): { sourcePlayerName: string; sourceTeamName: string; targetPlayerName: string; value: number }[] { // Simplified local PlayerInteraction
   const interactions: {
-    [key: string]: PlayerInteraction;
+    [key: string]: { sourcePlayerName: string; sourceTeamName: string; targetPlayerName: string; value: number };
   } = {};
 
   const kills = data.filter(
@@ -118,7 +99,6 @@ export const transformPlayerInteractions = (
     const targetPlayer = row.otherPlayerName;
     const interactionKey = `${sourcePlayer}-${targetPlayer}`;
 
-    // Ignore self-kills if necessary
     if (sourcePlayer === targetPlayer) {
       return;
     }
@@ -137,27 +117,24 @@ export const transformPlayerInteractions = (
   return Object.values(interactions);
 };
 
-// Pure function to create kill matrix from interactions
-interface PlayerTotals {
-  kills: number;
-  deaths: number;
-}
+function calculatePlayerTotals (killMatrix: {
+  [killer: string]: { [victim: string]: number };
+}): { [player: string]: PlayerTotals } { // PlayerTotals here needs to be from @atoms
+  const totals: { [player: string]: PlayerTotals } = {};
+  const players = Object.keys(killMatrix);
 
-// Pure function to calculate player totals from the kill matrix
-interface PlayerInteraction {
-  sourcePlayerName: string;
-  sourceTeamName: string;
-  targetPlayerName: string;
-  value: number;
-}
+  players.forEach((player) => {
+    totals[player] = {
+      kills: Object.values(killMatrix[player]).reduce(
+        (sum, kills) => sum + kills,
+        0
+      ),
+      deaths: players.reduce(
+        (sum, killer) => sum + (killMatrix[killer]?.[player] ?? 0),
+        0
+      ),
+    };
+  });
 
-// Main logic function that combines all the steps
-export interface KillMatrixData {
-  killMatrix: { [killer: string]: { [victim: string]: number } };
-  playerTotals: { [player: string]: PlayerTotals };
-  team1Players: string[];
-  team2Players: string[];
-  team1Name: string;
-  team2Name: string;
-  allPlayers: string[];
+  return totals;
 }

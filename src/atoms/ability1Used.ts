@@ -1,12 +1,17 @@
-import { atom } from 'jotai';
-import { logFileParser, LogFileParserAtomType, Ability1UsedLogEvent, Ability1UsedType } from '@atoms';
+import { Getter } from 'jotai';
+import {
+  logFileParser, // This is the ScrimsightAtom wrapper from index.ts
+  type LogFileParserAtomType,
+  type Ability1UsedLogEvent, // This type will be moved to and imported from @atoms/index.ts
+  type Ability1UsedType      // This type will be moved to and imported from @atoms/index.ts
+} from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
-export const ability1UsedFn = async (parsedFiles: LogFileParserAtomType): Promise<Ability1UsedType> => {
+// Default export the core atom logic (async getter function)
+// The helper function 'ability1UsedFn' will be inlined.
+export default async (get: Getter): Promise<Ability1UsedType> => {
+  const parsedFiles: LogFileParserAtomType = await get(logFileParser.atom);
+
+  // Inlined logic from ability1UsedFn:
   return extractEventsFromFiles<Ability1UsedLogEvent>('ability_1_used', parsedFiles);
 };
-
-export default atom(async (get) => {
-  const parsedFiles = await get(logFileParser.atom);
-  return ability1UsedFn(parsedFiles);
-});

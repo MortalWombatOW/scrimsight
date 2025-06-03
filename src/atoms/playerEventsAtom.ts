@@ -1,75 +1,55 @@
-import { atom } from 'jotai';
-import { defensiveAssist, offensiveAssist, heroSpawn, heroSwap, ability1Used, ability2Used } from '@atoms';
-import { DefensiveAssistType, OffensiveAssistType, HeroSpawnType, HeroSwapType, Ability1UsedType, Ability2UsedType } from '@atoms';
+import { Getter } from 'jotai';
+import {
+  defensiveAssist,
+  offensiveAssist,
+  heroSpawn, // Assumes these are ScrimsightAtom wrappers from index.ts
+  heroSwap,
+  ability1Used,
+  ability2Used,
+  type DefensiveAssistType,
+  type OffensiveAssistType,
+  type HeroSpawnType,
+  type HeroSwapType,
+  type Ability1UsedType,
+  type Ability2UsedType,
+} from '@atoms';
 
-/**
- * Pure function that combines various player events
- */
-export const playerEventsAtomFn = (
-  defensiveAssists: DefensiveAssistType,
-  offensiveAssists: OffensiveAssistType,
-  heroSpawns: HeroSpawnType,
-  heroSwaps: HeroSwapType,
-  ability1UsedData: Ability1UsedType,
-  ability2UsedData: Ability2UsedType
-): any[] => {
-  // Simple combination logic - convert to common format
+// Default export the core atom logic (async getter function)
+// The helper function 'playerEventsAtomFn' will be inlined.
+export default async (get: Getter): Promise<any[]> => {
+  const defensiveAssistsData: DefensiveAssistType = await get(defensiveAssist.atom);
+  const offensiveAssistsData: OffensiveAssistType = await get(offensiveAssist.atom);
+  const heroSpawnsData: HeroSpawnType = await get(heroSpawn.atom);
+  const heroSwapsData: HeroSwapType = await get(heroSwap.atom);
+  const ability1UsedDataData: Ability1UsedType = await get(ability1Used.atom); // Corrected variable name
+  const ability2UsedDataData: Ability2UsedType = await get(ability2Used.atom); // Corrected variable name
+
+  // Inlined logic from playerEventsAtomFn:
   const events: any[] = [];
   
-  // Add defensive assists
-  defensiveAssists.forEach(event => {
+  defensiveAssistsData.forEach(event => {
     events.push({ ...event, eventType: 'defensiveAssist' });
   });
   
-  // Add offensive assists
-  offensiveAssists.forEach(event => {
+  offensiveAssistsData.forEach(event => {
     events.push({ ...event, eventType: 'offensiveAssist' });
   });
   
-  // Add hero spawns
-  heroSpawns.forEach(event => {
+  heroSpawnsData.forEach(event => {
     events.push({ ...event, eventType: 'heroSpawn' });
   });
   
-  // Add hero swaps
-  heroSwaps.forEach(event => {
+  heroSwapsData.forEach(event => {
     events.push({ ...event, eventType: 'heroSwap' });
   });
   
-  // Add ability usage
-  ability1UsedData.forEach(event => {
+  ability1UsedDataData.forEach(event => { // Corrected variable name
     events.push({ ...event, eventType: 'ability1Used' });
   });
   
-  ability2UsedData.forEach(event => {
+  ability2UsedDataData.forEach(event => { // Corrected variable name
     events.push({ ...event, eventType: 'ability2Used' });
   });
   
-  // Sort by match time
   return events.sort((a, b) => a.matchTime - b.matchTime);
 };
-
-/**
- * Atom that combines various player events
- */
-const playerEventsAtom = atom(async (get): Promise<any[]> => {
-  // Get all the event data from extractor atoms
-  const defensiveAssists = await get(defensiveAssist.atom);
-  const offensiveAssists = await get(offensiveAssist.atom);
-  const heroSpawns = await get(heroSpawn.atom);
-  const heroSwaps = await get(heroSwap.atom);
-  const ability1UsedData = await get(ability1Used.atom);
-  const ability2UsedData = await get(ability2Used.atom);
-
-  return playerEventsAtomFn(
-    defensiveAssists,
-    offensiveAssists,
-    heroSpawns,
-    heroSwaps,
-    ability1UsedData,
-    ability2UsedData
-  );
-});
-
-export default playerEventsAtom;
-

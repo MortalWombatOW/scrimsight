@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { SampleDataEnabledType } from "@atoms";
+import { type SampleDataEnabledType } from "@atoms"; // Ensure type is imported
 
-const sampleDataEnabledAtom = atom<SampleDataEnabledType>(true);
-export default sampleDataEnabledAtom;
+// Default export the direct atom definition
+export default atom<SampleDataEnabledType>(true);

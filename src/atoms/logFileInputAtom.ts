@@ -1,18 +1,12 @@
-import { atom, WritableAtom } from 'jotai';
-import { LogFileInputType } from '@atoms';
+import { atom } from 'jotai';
+import { type LogFileInputType } from '@atoms';
 
-export const logFileInputAtomFn = (newFiles: File[]): LogFileInputType => {
-  return { files: newFiles };
-};
-
-const _logFileInputAtom = atom<LogFileInputType>({ files: [] });
-
-const logFileInputAtom: WritableAtom<LogFileInputType, [File[]], void> = atom(
-  (get) => get(_logFileInputAtom),
+// Default export the core writable atom logic directly.
+// This pattern previously had a TS2353 error, but that might be resolved now.
+// This structure avoids the root-level 'const' that caused linting issues.
+export default atom<LogFileInputType, [File[]], void>(
+  { files: [] }, // Initial value
   (_get, set, newFiles: File[]) => {
-    const nextState = logFileInputAtomFn(newFiles);
-    set(_logFileInputAtom, nextState);
+    set({ files: newFiles });
   }
 );
-
-export default logFileInputAtom;

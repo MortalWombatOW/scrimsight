@@ -2,13 +2,13 @@ import { PlayerStatsNumericalKeys, playerStatsNumericalKeys, PlayerStats, Player
 import { OverwatchRole, Metric, Grouped } from '@library'; // Import from library index
 
 // Define the parameters for the function
-export interface PlayerComparisonParams {
+interface PlayerComparisonParams { // Removed export
   playerName: string;
   heroName?: string; // Optional: Compare stats for a specific hero
 }
 
 // Define the output structure for a single metric comparison
-export interface MetricComparison {
+interface MetricComparison { // Removed export
   metric: PlayerStatsNumericalKeys;
   playerValue: number;
   benchmarkValue?: number; // Benchmark might not exist for all metrics/contexts
@@ -26,7 +26,7 @@ export interface MetricComparison {
  * @param heroBenchmarks Average stats per hero
  * @returns Array of metric comparisons
  */
-export function generatePlayerComparison<T extends PlayerStatsCategoryKeys>(
+export function generatePlayerComparisonFn<T extends PlayerStatsCategoryKeys>( // Renamed
   params: PlayerComparisonParams,
   playerStatsData: Metric<Grouped<PlayerStats, T, PlayerStatsNumericalKeys>, T, PlayerStatsNumericalKeys>,
   roleBenchmarks: Record<string, Record<string, number>>,
@@ -98,7 +98,7 @@ export function generatePlayerComparison<T extends PlayerStatsCategoryKeys>(
 /**
  * Function to determine filter for player stats based on player name and optional hero
  */
-export function getPlayerStatsFilter(playerName: string, heroName?: string) {
+export function getPlayerStatsFilterFn(playerName: string, heroName?: string) { // Renamed
   if (heroName) {
     const groupByKeys = ['playerName', 'playerHero'] as const;
     const filter: Record<typeof groupByKeys[number], string[]> = { 
