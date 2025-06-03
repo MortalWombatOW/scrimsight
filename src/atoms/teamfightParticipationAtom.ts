@@ -1,26 +1,18 @@
 import { atom } from 'jotai';
-import { teamfightsAtom } from '~/atoms/teamfightsAtom'; // Removed unused Teamfight type import
-import { PlayerInteractionEvent, playerInteractionEventsAtom } from '~/atoms/derived_events/playerInteractionEventsAtom';
-
-export interface TeamfightParticipation {
-  team1Players: string[];
-  team2Players: string[];
-}
+import { teamfights, Teamfight, TeamfightParticipation } from '@atoms';
+import { PlayerInteractionEvent, playerInteractionEvents } from '@atoms';
 
 /**
- * Atom that calculates player participation for each teamfight.
- * Participation is defined as any player involved in a PlayerInteractionEvent
- * (kill, death, damage dealt/received, healing dealt/received, rez, demech, remech)
- * within the start and end time of a teamfight.
+ * Pure function that calculates player participation for each teamfight
  */
-export const teamfightParticipationAtom = atom(async (get): Promise<Map<string, TeamfightParticipation>> => {
-  const teamfights = await get(teamfightsAtom);
-  const playerInteractionEvents = await get(playerInteractionEventsAtom);
-
+export const teamfightParticipationAtomFn = (
+  teamfightData: Teamfight[],
+  playerInteractionEventsData: PlayerInteractionEvent[]
+): Map<string, TeamfightParticipation> => {
   const participationMap = new Map<string, TeamfightParticipation>();
 
   // Group interactions by matchId for faster lookup
-  const interactionsByMatch = playerInteractionEvents.reduce((acc, event) => {
+  const interactionsByMatch = playerInteractionEventsData.reduce((acc: Record<string, any>, event: any) => {
     if (!acc[event.matchId]) {
       acc[event.matchId] = [];
     }
@@ -28,14 +20,14 @@ export const teamfightParticipationAtom = atom(async (get): Promise<Map<string, 
     return acc;
   }, {} as Record<string, PlayerInteractionEvent[]>);
 
-  for (const fight of teamfights) {
+  for (const fight of teamfightData) {
     const { fightId, matchId, startTime, endTime, team1Name, team2Name } = fight;
     const relevantInteractions = interactionsByMatch[matchId] || [];
 
     const participatingPlayers = new Set<string>();
 
     // Find all players involved in interactions during the fight
-    relevantInteractions.forEach(event => {
+    relevantInteractions.forEach((event: any) => {
       if (event.playerInteractionEventTime >= startTime && event.playerInteractionEventTime <= endTime) {
         participatingPlayers.add(event.playerName);
         // Also add the 'otherPlayer' if applicable (e.g., victim in a kill, healer in healing)
@@ -51,7 +43,7 @@ export const teamfightParticipationAtom = atom(async (get): Promise<Map<string, 
     // Assign players to teams based on their team affiliation in the interaction events
     // Note: This assumes player team affiliation is consistent within a fight timeframe.
     // A more robust approach might involve checking player team at the start of the fight if needed.
-    relevantInteractions.forEach(event => {
+    relevantInteractions.forEach((event: any) => {
       if (participatingPlayers.has(event.playerName)) {
         if (event.playerTeam === team1Name) {
           team1Players.add(event.playerName);
@@ -63,7 +55,7 @@ export const teamfightParticipationAtom = atom(async (get): Promise<Map<string, 
       if (event.otherPlayerName && participatingPlayers.has(event.otherPlayerName)) {
         // Need to find an event involving the otherPlayer to determine their team
         // This could be inefficient; consider pre-calculating player teams per match if needed.
-        const otherPlayerEvent = relevantInteractions.find(e => e.playerName === event.otherPlayerName && e.playerInteractionEventTime >= startTime && e.playerInteractionEventTime <= endTime);
+        const otherPlayerEvent = relevantInteractions.find((e: any) => e.playerName === event.otherPlayerName && e.playerInteractionEventTime >= startTime && e.playerInteractionEventTime <= endTime);
         if (otherPlayerEvent) {
           if (otherPlayerEvent.playerTeam === team1Name) {
             team1Players.add(otherPlayerEvent.playerName);
@@ -82,4 +74,19 @@ export const teamfightParticipationAtom = atom(async (get): Promise<Map<string, 
   }
 
   return participationMap;
+};
+
+/**
+ * Atom that calculates player participation for each teamfight.
+ * Participation is defined as any player involved in a PlayerInteractionEvent
+ * (kill, death, damage dealt/received, healing dealt/received, rez, demech, remech)
+ * within the start and end time of a teamfight.
+ */
+const teamfightParticipationAtom = atom(async (get): Promise<Map<string, TeamfightParticipation>> => {
+  const teamfightData = await get(teamfights.atom);
+  const playerInteractionEventsData = await get(playerInteractionEvents.atom);
+
+  return teamfightParticipationAtomFn(teamfightData, playerInteractionEventsData);
 });
+
+export default teamfightParticipationAtom;

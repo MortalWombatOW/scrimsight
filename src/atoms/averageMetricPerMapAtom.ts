@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { Metric } from '@library/metricUtils'; 
+import { Metric } from '@library'; 
 import {
   playerStatsBase, 
   PlayerStatsBase,
@@ -10,8 +10,7 @@ import {
   AverageMapStats,
   AverageMetricPerMap,
 } from '@atoms';
-import matchData, { MatchData } from '@atoms/matchDataAtom';
-import uniqueMapNames from '@atoms/uniqueMapNamesAtom';
+import { matchData, uniqueMapNames, MatchData } from '@atoms';
 
 // Pure function to calculate average metrics per map
 export const averageMetricPerMapFn = (
@@ -107,9 +106,9 @@ export const averageMetricPerMapFn = (
 export default atom(async (get): Promise<AverageMetricPerMap> => {
   // Get base player stats and match data
   const playerStatsData: Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = await get(playerStatsBase.atom);
-  const allMatches: MatchData[] = await get(matchData);
+  const allMatches: MatchData[] = await get(matchData.atom);
   // Get unique map names to initialize structure
-  const uniqueMaps: string[] = await get(uniqueMapNames);
+  const uniqueMaps: string[] = await get(uniqueMapNames.atom);
 
   return averageMetricPerMapFn(playerStatsData, allMatches, uniqueMaps);
 });

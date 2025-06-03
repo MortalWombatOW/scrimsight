@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { logFileParser, LogFileParserAtomType } from '@atoms';
-import { extractEventsFromFiles } from '@library/eventExtractionUtils';
+import { extractEventsFromFiles } from '@library';
 import { SetupCompleteLogEvent, SetupCompleteType } from '@atoms';
 
 export const setupCompleteFn = async (parsedFiles: LogFileParserAtomType): Promise<SetupCompleteType> => { // Removed 'get' parameter

@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { logFileParser, LogFileParserAtomType } from '@atoms';
-import { extractEventsFromFiles } from '@library/eventExtractionUtils';
+import { extractEventsFromFiles } from '@library';
 import { MercyRezLogEvent, MercyRezType } from '@atoms';
 
 export const mercyRezFn = async (parsedFiles: LogFileParserAtomType): Promise<MercyRezType> => { // Removed 'get' parameter

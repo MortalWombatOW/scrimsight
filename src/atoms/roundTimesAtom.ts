@@ -7,18 +7,6 @@ import { RoundStartType, RoundEndType, SetupCompleteType } from '@atoms'; // Imp
 /**
  * Interface for round times data
  */
-export interface RoundTimes {
-  matchId: string;
-  roundNumber: number;
-  roundStartTime: number;
-  roundSetupCompleteTime: number;
-  roundEndTime: number;
-  roundDuration: number;
-}
-
-/**
- * Pure function that combines round start, setup complete, and round end events to calculate round times
- */
 export const roundTimesFn = (
   roundStarts: RoundStartType,
   setupCompletes: SetupCompleteType,
@@ -53,12 +41,26 @@ export const roundTimesFn = (
 };
 
 /**
+ * Pure function that combines round start, setup complete, and round end events to calculate round times
+ */
+export interface RoundTimes {
+  matchId: string;
+  roundNumber: number;
+  roundStartTime: number;
+  roundSetupCompleteTime: number;
+  roundEndTime: number;
+  roundDuration: number;
+}
+
+/**
  * Atom that combines round start, setup complete, and round end events to calculate round times
  */
-export default atom(async (get): Promise<RoundTimes[]> => {
+export const roundTimesAtom = atom(async (get): Promise<RoundTimes[]> => {
   const roundStartsData = await get(roundStartAtom);
   const setupCompletesData = await get(setupCompleteAtom);
   const roundEndsData = await get(roundEndAtom);
 
   return roundTimesFn(roundStartsData, setupCompletesData, roundEndsData);
 });
+
+export default roundTimesAtom;

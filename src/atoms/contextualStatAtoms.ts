@@ -4,10 +4,23 @@ import {
   PlayerStats,
   PlayerStatsNumericalKeys,
 } from '@atoms'; // Types are in @atoms
-import { getStatsAtom } from '@library/playerMetricsUtils'; // getStatsAtom is in utils
-import { Grouped, Metric } from '@library/metricUtils'; // Corrected path
-import { scrimAtom, Scrim } from '@atoms/scrimAtom'; // Corrected path, import Scrim type, named import for scrimAtom
-import matchDataAtom, { MatchData } from '@atoms/matchDataAtom'; // Corrected path, import MatchData type
+import { getStatsAtom, Grouped, Metric } from '@library'; // Import from library index
+import { scrims } from '@atoms';
+import { matchData } from '@atoms';
+import { MatchData } from '@atoms'; // Import types from index
+
+export interface Scrim {
+  dateString: string;
+  team1Name: string;
+  team2Name: string;
+  team1Players: string[];
+  team2Players: string[];
+  team1Wins: number;
+  team2Wins: number;
+  draws: number;
+  matchIds: string[];
+  duration: number;
+}
 
 // --- Player Stats for Match ---
 
@@ -89,7 +102,7 @@ export const playerStatsForScrimAtom = atomFamily(
   (params: PlayerScrimParams) =>
     atom(async (get) => {
       // Find the relevant scrim to get match IDs
-      const allScrims = await get(scrimAtom); // Now imported
+      const allScrims = await get(scrims.atom); // Now imported
       const targetScrim = allScrims.find((scrim: Scrim) => // Add type for scrim parameter
         `${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}` === params.scrimId
       );
@@ -131,7 +144,7 @@ export const teamStatsForScrimAtom = atomFamily(
   (params: TeamScrimParams) =>
     atom(async (get) => {
       // Find the relevant scrim to get match IDs
-      const allScrims = await get(scrimAtom);
+      const allScrims = await get(scrims.atom);
       const targetScrim = allScrims.find((scrim: Scrim) =>
         `${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}` === params.scrimId
       );
@@ -179,7 +192,7 @@ export const playerStatsForTeamAtom = atomFamily(
   (params: PlayerTeamParams) =>
     atom(async (get) => {
       // Find all matches the team participated in
-      const allMatches = await get(matchDataAtom); // Now imported
+      const allMatches = await get(matchData.atom); // Now imported
       const teamMatchIds = allMatches
         .filter((match: MatchData) => match.team1Name === params.teamName || match.team2Name === params.teamName) // Add type for match
         .map((match: MatchData) => match.matchId); // Add type for match
@@ -222,7 +235,7 @@ export const matchStatsForScrimAtom = atomFamily(
   (params: MatchScrimParams) =>
     atom(async (get) => {
       // Find the relevant scrim to get match IDs
-      const allScrims = await get(scrimAtom);
+      const allScrims = await get(scrims.atom);
       const targetScrim = allScrims.find((scrim: Scrim) =>
         `${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}` === params.scrimId
       );
@@ -232,7 +245,7 @@ export const matchStatsForScrimAtom = atomFamily(
       }
 
       // Filter the main matchDataAtom for matches belonging to this scrim
-      const allMatches = await get(matchDataAtom);
+      const allMatches = await get(matchData.atom);
       const scrimMatches = allMatches.filter((match: MatchData) =>
         targetScrim.matchIds.includes(match.matchId)
       );

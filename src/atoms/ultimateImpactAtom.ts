@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
-import { teamfightsAtom } from '~/atoms/teamfightsAtom';
-import { ultimateEventsAtom, UltimateEvent } from '~/atoms/derived_events/ultimateEventsAtom';
-import { killExtractorAtom } from '~/atoms/event_extractors/killExtractorAtom';
-import { uniquePlayerNamesAtom } from '~/atoms/uniquePlayerNamesAtom';
+import { teamfights } from '@atoms';
+import { ultimateEvents, UltimateEvent } from '@atoms';
+import { kill } from '@atoms';
+import { uniquePlayerNames } from '@atoms';
 
 // Interface for stats per hero for a specific player
 export interface HeroUltimateImpactStats {
@@ -21,20 +21,20 @@ export type UltimateImpactStats = Record<string, Record<string, HeroUltimateImpa
 type MutableHeroUltimateImpactStats = Omit<HeroUltimateImpactStats, 'avgKillsPerUlt' | 'fightWinRateWithUlt'>;
 
 export const ultimateImpactAtom = atom(async (get): Promise<UltimateImpactStats> => {
-  const teamfights = await get(teamfightsAtom);
-  const ultimateEvents = await get(ultimateEventsAtom);
-  const killEvents = await get(killExtractorAtom);
-  const playerNames = await get(uniquePlayerNamesAtom);
+  const teamfightData = await get(teamfights.atom);
+  const ultimateEventsData = await get(ultimateEvents.atom);
+  const killEvents = await get(kill.atom);
+  const playerNames = await get(uniquePlayerNames.atom);
 
   const playerHeroStatsMap: Record<string, Record<string, MutableHeroUltimateImpactStats>> = {};
 
   // Initialize structure for all players
-  playerNames.forEach(playerName => {
+  playerNames.forEach((playerName: string) => {
     playerHeroStatsMap[playerName] = {};
   });
 
   // Iterate through each ultimate usage
-  ultimateEvents.forEach((ultEvent: UltimateEvent) => {
+  ultimateEventsData.forEach((ultEvent: UltimateEvent) => {
     const {
       matchId,
       playerName,
@@ -61,7 +61,7 @@ export const ultimateImpactAtom = atom(async (get): Promise<UltimateImpactStats>
     const stats = playerHeroStatsMap[playerName][playerHero];
 
     // Find the teamfight(s) this ultimate occurred within
-    const relevantFights = teamfights.filter(fight =>
+    const relevantFights = teamfightData.filter(fight =>
       fight.matchId === matchId &&
       ultimateStartTime >= fight.startTime && // Ult starts within the fight window
       ultimateStartTime <= fight.endTime     // (or slightly overlaps start)

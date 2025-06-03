@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
-import { heroSpawnExtractorAtom, type HeroSpawnLogEvent } from '~/atoms/event_extractors/heroSpawnExtractorAtom';
-import { heroSwapExtractorAtom, type HeroSwapLogEvent } from '~/atoms/event_extractors/heroSwapExtractorAtom';
-import { mapTimesAtom } from '~/atoms/mapTimesAtom';
+import { type HeroSpawnLogEvent, heroSpawn } from '@atoms';
+import { type HeroSwapLogEvent, heroSwap } from '@atoms';
+import { mapTimes } from '@atoms';
 
 type HeroEvent = HeroSpawnLogEvent | HeroSwapLogEvent;
 
@@ -12,10 +12,10 @@ export interface TeamComposition {
 }
 
 export const teamCompositionsAtom = atom(async (get) => {
-  const [heroSpawns, heroSwaps, mapTimes] = await Promise.all([
-    get(heroSpawnExtractorAtom),
-    get(heroSwapExtractorAtom),
-    get(mapTimesAtom),
+  const [heroSpawns, heroSwaps, allMapTimes] = await Promise.all([
+    get(heroSpawn.atom),
+    get(heroSwap.atom),
+    get(mapTimes.atom),
   ]);
 
   const allEvents = [...heroSpawns, ...heroSwaps].sort((a, b) => a.matchTime - b.matchTime);
@@ -33,7 +33,7 @@ export const teamCompositionsAtom = atom(async (get) => {
 
   // Process each match and team combination
   for (const [matchId, teamMap] of eventsByMatchAndTeam) {
-    const matchTime = mapTimes.find(mt => mt.matchId === matchId);
+    const matchTime = allMapTimes.find(mt => mt.matchId === matchId);
     if (!matchTime) continue;
 
     for (const [teamName, events] of teamMap) {

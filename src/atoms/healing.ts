@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { logFileParser, LogFileParserAtomType } from '@atoms';
-import { extractEventsFromFiles } from '@library/eventExtractionUtils';
+import { extractEventsFromFiles } from '@library';
 import { HealingLogEvent, HealingType } from '@atoms';
 
 export const healingFn = async (parsedFiles: LogFileParserAtomType): Promise<HealingType> => { // Removed 'get' parameter

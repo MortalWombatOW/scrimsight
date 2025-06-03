@@ -1,10 +1,10 @@
 import { atom } from 'jotai';
-import { MercyRezLogEvent, mercyRezExtractorAtom } from '~/atoms/event_extractors/mercyRezExtractorAtom';
-import { DvaDemechLogEvent, dvaDemechExtractorAtom } from '~/atoms/event_extractors/dvaDemechExtractorAtom';
-import { DvaRemechLogEvent, dvaRemechExtractorAtom } from '~/atoms/event_extractors/dvaRemechExtractorAtom';
-import { KillLogEvent, killExtractorAtom } from '~/atoms/event_extractors/killExtractorAtom';
-import { DamageLogEvent, damageExtractorAtom } from '~/atoms/event_extractors/damageExtractorAtom';
-import { HealingLogEvent, healingExtractorAtom } from '~/atoms/event_extractors/healingExtractorAtom';
+import { MercyRezLogEvent, mercyRez } from '@atoms';
+import { DvaDemechLogEvent, dvaDemech } from '@atoms';
+import { DvaRemechLogEvent, dvaRemech } from '@atoms';
+import { KillLogEvent, kill } from '@atoms';
+import { DamageLogEvent, damage } from '@atoms';
+import { HealingLogEvent, healing } from '@atoms';
 
 /**
  * Interface for combined player interaction events
@@ -159,7 +159,7 @@ function fromHealing(event: HealingLogEvent, i: number): PlayerInteractionEvent[
       matchId: event.matchId,
       playerName: event.healerName,
       playerTeam: event.healerTeam,
-      playerHero: event.healerHero,
+      playerHero: 'Unknown', // healerHero not available in HealingLogEvent
       otherPlayerName: event.healeeName,
       playerInteractionEventTime: event.matchTime,
       playerInteractionEventType: 'Dealt Healing',
@@ -183,12 +183,12 @@ function fromHealing(event: HealingLogEvent, i: number): PlayerInteractionEvent[
  * Atom that combines various player interaction events
  */
 export const playerInteractionEventsAtom = atom(async (get): Promise<PlayerInteractionEvent[]> => {
-  const mercyRezs = await get(mercyRezExtractorAtom);
-  const dvaDemechs = await get(dvaDemechExtractorAtom);
-  const dvaRemechs = await get(dvaRemechExtractorAtom);
-  const kills = await get(killExtractorAtom);
-  const damages = await get(damageExtractorAtom);
-  const healings = await get(healingExtractorAtom);
+  const mercyRezs = await get(mercyRez.atom);
+  const dvaDemechs = await get(dvaDemech.atom);
+  const dvaRemechs = await get(dvaRemech.atom);
+  const kills = await get(kill.atom);
+  const damages = await get(damage.atom);
+  const healings = await get(healing.atom);
 
   return [
     ...mercyRezs.flatMap(fromMercyRez),

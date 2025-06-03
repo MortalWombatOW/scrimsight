@@ -1,64 +1,27 @@
 import { PlayerInteractionEvent, MatchData } from "@atoms";
 
-interface PlayerInteraction {
-  sourcePlayerName: string;
-  sourceTeamName: string;
-  targetPlayerName: string;
-  value: number;
-}
+export const calculatePlayerTotals = (killMatrix: {
+  [killer: string]: { [victim: string]: number };
+}): { [player: string]: PlayerTotals } => {
+  const totals: { [player: string]: PlayerTotals } = {};
+  const players = Object.keys(killMatrix);
 
-interface PlayerTotals {
-  kills: number;
-  deaths: number;
-}
-
-export interface KillMatrixData {
-  killMatrix: { [killer: string]: { [victim: string]: number } };
-  playerTotals: { [player: string]: PlayerTotals };
-  team1Players: string[];
-  team2Players: string[];
-  team1Name: string;
-  team2Name: string;
-  allPlayers: string[];
-}
-
-// Pure function to transform raw events into player interactions
-export const transformPlayerInteractions = (
-  data: PlayerInteractionEvent[]
-): PlayerInteraction[] => {
-  const interactions: {
-    [key: string]: PlayerInteraction;
-  } = {};
-
-  const kills = data.filter(
-    (row) => row.playerInteractionEventType === "Killed player"
-  );
-
-  kills.forEach((row) => {
-    const sourcePlayer = row.playerName;
-    const targetPlayer = row.otherPlayerName;
-    const interactionKey = `${sourcePlayer}-${targetPlayer}`;
-
-    // Ignore self-kills if necessary
-    if (sourcePlayer === targetPlayer) {
-      return;
-    }
-
-    if (!interactions[interactionKey]) {
-      interactions[interactionKey] = {
-        sourcePlayerName: sourcePlayer,
-        sourceTeamName: row.playerTeam,
-        targetPlayerName: targetPlayer,
-        value: 0,
-      };
-    }
-    interactions[interactionKey].value += 1;
+  players.forEach((player) => {
+    totals[player] = {
+      kills: Object.values(killMatrix[player]).reduce(
+        (sum, kills) => sum + kills,
+        0
+      ),
+      deaths: players.reduce(
+        (sum, killer) => sum + (killMatrix[killer]?.[player] ?? 0),
+        0
+      ),
+    };
   });
 
-  return Object.values(interactions);
+  return totals;
 };
 
-// Pure function to create kill matrix from interactions
 export const createKillMatrix = (
   interactions: PlayerInteraction[],
   players: string[]
@@ -87,30 +50,6 @@ export const createKillMatrix = (
   return matrix;
 };
 
-// Pure function to calculate player totals from the kill matrix
-export const calculatePlayerTotals = (killMatrix: {
-  [killer: string]: { [victim: string]: number };
-}): { [player: string]: PlayerTotals } => {
-  const totals: { [player: string]: PlayerTotals } = {};
-  const players = Object.keys(killMatrix);
-
-  players.forEach((player) => {
-    totals[player] = {
-      kills: Object.values(killMatrix[player]).reduce(
-        (sum, kills) => sum + kills,
-        0
-      ),
-      deaths: players.reduce(
-        (sum, killer) => sum + (killMatrix[killer]?.[player] ?? 0),
-        0
-      ),
-    };
-  });
-
-  return totals;
-};
-
-// Main logic function that combines all the steps
 export const generateKillMatrixData = (
   matchId: string,
   allMatchData: MatchData[],
@@ -161,3 +100,64 @@ export const generateKillMatrixData = (
     allPlayers,
   };
 };
+
+// Pure function to transform raw events into player interactions
+export const transformPlayerInteractions = (
+  data: PlayerInteractionEvent[]
+): PlayerInteraction[] => {
+  const interactions: {
+    [key: string]: PlayerInteraction;
+  } = {};
+
+  const kills = data.filter(
+    (row) => row.playerInteractionEventType === "Killed player"
+  );
+
+  kills.forEach((row) => {
+    const sourcePlayer = row.playerName;
+    const targetPlayer = row.otherPlayerName;
+    const interactionKey = `${sourcePlayer}-${targetPlayer}`;
+
+    // Ignore self-kills if necessary
+    if (sourcePlayer === targetPlayer) {
+      return;
+    }
+
+    if (!interactions[interactionKey]) {
+      interactions[interactionKey] = {
+        sourcePlayerName: sourcePlayer,
+        sourceTeamName: row.playerTeam,
+        targetPlayerName: targetPlayer,
+        value: 0,
+      };
+    }
+    interactions[interactionKey].value += 1;
+  });
+
+  return Object.values(interactions);
+};
+
+// Pure function to create kill matrix from interactions
+interface PlayerTotals {
+  kills: number;
+  deaths: number;
+}
+
+// Pure function to calculate player totals from the kill matrix
+interface PlayerInteraction {
+  sourcePlayerName: string;
+  sourceTeamName: string;
+  targetPlayerName: string;
+  value: number;
+}
+
+// Main logic function that combines all the steps
+export interface KillMatrixData {
+  killMatrix: { [killer: string]: { [victim: string]: number } };
+  playerTotals: { [player: string]: PlayerTotals };
+  team1Players: string[];
+  team2Players: string[];
+  team1Name: string;
+  team2Name: string;
+  allPlayers: string[];
+}

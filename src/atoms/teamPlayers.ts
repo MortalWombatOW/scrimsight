@@ -1,10 +1,9 @@
 import { atom } from 'jotai';
-import matchDataAtom, { type MatchData } from '@atoms/matchDataAtom'; // Direct import
+import { matchData, type MatchData } from '@atoms';
 import type { TeamPlayersType } from '@atoms'; // Import as type-only
-import {ProgressBar} from '@components/ProgressBar'
 
 export default atom(async (get): Promise<TeamPlayersType[]> => {
-  const matchDataValue = await get(matchDataAtom); // Use direct import
+  const matchDataValue = await get(matchData.atom); // Use registered atom
   const teamPlayersMap: Record<string, Set<string>> = {};
 
   matchDataValue.forEach((match: MatchData) => { // Add type for match

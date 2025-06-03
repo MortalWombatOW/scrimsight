@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { logFileParser, LogFileParserAtomType } from '@atoms';
-import { extractEventsFromFiles } from '@library/eventExtractionUtils';
+import { extractEventsFromFiles } from '@library';
 import { OffensiveAssistLogEvent, OffensiveAssistType } from '@atoms';
 
 export const offensiveAssistFn = async (parsedFiles: LogFileParserAtomType): Promise<OffensiveAssistType> => { // Removed 'get' parameter

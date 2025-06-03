@@ -1,10 +1,10 @@
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { playerStatusTimelineAtom, PlayerStatusTimeline } from '~/atoms/derived_state/playerStatusTimelineAtom';
-import { playerInteractionEventsAtom, PlayerInteractionEvent } from '~/atoms/derived_events/playerInteractionEventsAtom';
-import { ultimateEventsAtom, UltimateEvent } from '~/atoms/derived_events/ultimateEventsAtom';
-import { teamfightsAtom } from '~/atoms/teamfightsAtom'; // Removed unused Teamfight type import
-import { matchDataAtom } from '~/atoms/matchDataAtom';
+import { playerInteractionEvents, PlayerInteractionEvent } from '@atoms';
+import { ultimateEvents, UltimateEvent } from '@atoms';
+import { teamfights } from '@atoms';
+import { playerStatusTimeline } from '@atoms';
+import { matchData, MatchData } from '@atoms';
 
 export interface SegmentParams {
   matchId: string;
@@ -25,7 +25,7 @@ export interface SegmentStats {
 }
 
 // Helper function to find player counts at a specific time
-const getPlayerCountsAtTime = (timeline: PlayerStatusTimeline | undefined, time: number): { team1Count: number; team2Count: number } => {
+const getPlayerCountsAtTime = (timeline: any | undefined, time: number): { team1Count: number; team2Count: number } => {
   if (!timeline || timeline.length === 0) {
     return { team1Count: 0, team2Count: 0 }; // Default or error state
   }
@@ -48,25 +48,25 @@ export const segmentStatsAtomFamily = atomFamily((params: SegmentParams) =>
     const { matchId, startTime, endTime, type } = params;
 
     // Get necessary data sources
-    const allPlayerStatusTimelines = await get(playerStatusTimelineAtom);
-    const allMatchData = await get(matchDataAtom);
-    const allTeamfights = await get(teamfightsAtom);
-    const allInteractionEvents = await get(playerInteractionEventsAtom);
-    const allUltimateEvents = await get(ultimateEventsAtom);
+    const allPlayerStatusTimelines = await get(playerStatusTimeline.atom);
+    const allMatchData: MatchData[] = await get(matchData.atom);
+    const allTeamfights = await get(teamfights.atom);
+    const allInteractionEvents = await get(playerInteractionEvents.atom);
+    const allUltimateEvents = await get(ultimateEvents.atom);
 
     // Find data specific to this match
-    const playerStatusTimeline = allPlayerStatusTimelines.get(matchId);
-    const matchData = allMatchData.find(md => md.matchId === matchId);
+    const matchPlayerStatusTimeline = allPlayerStatusTimelines.get(matchId);
+    const currentMatchData = allMatchData.find((md: MatchData) => md.matchId === matchId);
 
-    if (!matchData) {
+    if (!currentMatchData) {
       console.error(`segmentStatsAtomFamily: MatchData not found for matchId ${matchId}`);
       return null; // Or return default stats
     }
-    const { team1Name, team2Name } = matchData;
+    const { team1Name, team2Name } = currentMatchData;
 
     // --- Calculate Player Counts ---
-    const startCounts = getPlayerCountsAtTime(playerStatusTimeline, startTime);
-    const endCounts = getPlayerCountsAtTime(playerStatusTimeline, endTime);
+    const startCounts = getPlayerCountsAtTime(matchPlayerStatusTimeline, startTime);
+    const endCounts = getPlayerCountsAtTime(matchPlayerStatusTimeline, endTime);
 
     let team1Kills = 0;
     let team2Kills = 0;

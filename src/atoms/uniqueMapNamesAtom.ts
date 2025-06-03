@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import matchStartAtom from '@atoms/matchStart'; // Renamed for clarity
+import { matchStart } from '@atoms';
 import { MatchStartType } from '@atoms'; // Import MatchStartType
 
 /**
@@ -18,6 +18,6 @@ export const uniqueMapNamesFn = (matchStarts: MatchStartType): string[] => {
  * Atom that extracts unique map names from all matches
  */
 export default atom(async (get): Promise<string[]> => {
-  const matchStartsData = await get(matchStartAtom);
+  const matchStartsData = await get(matchStart.atom);
   return uniqueMapNamesFn(matchStartsData);
 });

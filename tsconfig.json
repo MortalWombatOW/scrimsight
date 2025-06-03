@@ -25,25 +25,25 @@
         "src/atoms/*"
       ],
       "@atoms": [
-        "src/atoms"
+        "src/atoms/index.ts"
       ],
       "@components/*": [
         "src/components/*"
       ],
       "@components": [
-        "src/components"
+        "src/components/index.ts"
       ],
       "@pages/*": [
         "src/pages/*"
       ],
       "@pages": [
-        "src/pages"
+        "src/pages/index.ts"
       ],
       "@library/*": [
         "src/lib/*"
       ],
       "@library": [
-        "src/lib"
+        "src/lib/index.ts"
       ],
     },
     "types": [

@@ -5,7 +5,7 @@ import {
   PlayerStatsCategoryKeys, 
   PlayerStatsBaseNumericalKeys 
 } from '@atoms'; // Import the registered atom and types
-import { Metric } from '@library/metricUtils'; // Import Metric type
+import { Metric } from '@library';
 
 /**
  * Pure function to get unique hero names.

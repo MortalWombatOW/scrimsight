@@ -11,20 +11,63 @@ import {
   HeroPlaytimeCategoryKeys, // Import for heroPlaytime
   HeroPlaytimeNumericalKeys, // Import for heroPlaytime
 } from '@atoms/heroPlaytimeAtom'; // Use path alias
-import { groupByAtom, Grouped, Metric } from '@library/metricUtils'; // Import Metric
-import { OverwatchRole, getRoleFromHero } from '@library/hero'; // Removed getRankForRole as it's unused
-import { playerFirstKillDeathRateAtom, PlayerFirstKillDeathRateStats } from '@atoms/playerFirstKillDeathRateAtom'; // Use path alias
+import { groupByAtom, Grouped, Metric } from '@library'; // Import Metric
+import { OverwatchRole, getRoleFromHero } from '@library'; // Removed getRankForRole as it's unused
+import { playerFirstKillDeathRate, PlayerFirstKillDeathRateStats } from '@atoms'; // Use registered atom and type
 
-export interface PlayerListSummary {
-  playerName: string;
-  teamName: string; // Primary team (most playtime)
-  topHero: string; // Hero with most playtime
-  eliminations: number;
-  deaths: number;
-  assists: number; // Calculated as offensive + defensive assists
-  role: OverwatchRole; // Role with most playtime
-  firstKillRate: number; // Added: Percentage of teamfights participated in where player got first kill
-}
+export const playerListSummaryFn = async (get: Getter): Promise<PlayerListSummary[]> => {
+  const groupedStats: Metric<Grouped<PlayerStatsBase, 'playerName', PlayerStatsBaseNumericalKeys>, 'playerName', PlayerStatsBaseNumericalKeys> = await get(playerStatsGroupedByPlayerAtom);
+  const playtimeByHero: Metric<Grouped<HeroPlaytime, 'playerName' | 'hero', HeroPlaytimeNumericalKeys>, 'playerName' | 'hero', HeroPlaytimeNumericalKeys> = await get(playtimeByPlayerHeroAtom);
+  const playtimeByRole = await get(playtimeByPlayerRoleAtom);
+  const primaryTeamMap = await get(primaryTeamByPlayerAtom);
+  const firstKillRateData: Record<string, PlayerFirstKillDeathRateStats> = await get(playerFirstKillDeathRate.atom);
+
+
+  const summaries: PlayerListSummary[] = [];
+
+  const statsRows = groupedStats.rows;
+
+
+  for (const playerStat of statsRows) {
+    const playerName = playerStat.playerName;
+
+    const playerHeroPlaytimes = playtimeByHero.rows.filter(
+      (pt) => pt.playerName === playerName
+    );
+    const topHeroData = playerHeroPlaytimes.reduce(
+      (top, current) => (current.playtime > top.playtime ? current : top),
+      { playerName: '', hero: 'Unknown', playtime: -1 } as Grouped<HeroPlaytime, 'playerName' | 'hero', HeroPlaytimeNumericalKeys>
+    );
+    const topHero = topHeroData.hero;
+
+
+    const playerRolePlaytimes = playtimeByRole.get(playerName);
+    let topRole: OverwatchRole = 'tank'; // Default to lowercase
+    let maxRolePlaytime = -1; // Declare outside loop if needed for wider scope, but here it's fine
+    if (playerRolePlaytimes) {
+      playerRolePlaytimes.forEach((playtime, role) => {
+        if (playtime > maxRolePlaytime) {
+          maxRolePlaytime = playtime;
+          topRole = role;
+        }
+      });
+    }
+
+
+    summaries.push({
+      playerName: playerName,
+      teamName: primaryTeamMap.get(playerName) || 'Unknown',
+      topHero: topHero,
+      eliminations: playerStat.eliminations,
+      deaths: playerStat.deaths,
+      assists: playerStat.offensiveAssists + playerStat.defensiveAssists,
+      role: topRole,
+      firstKillRate: firstKillRateData[playerName]?.firstKillRate ?? 0,
+    });
+  }
+
+  return summaries;
+};
 
 // Helper atom to group player stats by player name
 const playerStatsGroupedByPlayerAtom = groupByAtom(playerStatsBase.atom, [
@@ -83,59 +126,16 @@ const primaryTeamByPlayerAtom = atom(async (get) => {
 });
 
 
-export const playerListSummaryFn = async (get: Getter): Promise<PlayerListSummary[]> => {
-  const groupedStats: Metric<Grouped<PlayerStatsBase, 'playerName', PlayerStatsBaseNumericalKeys>, 'playerName', PlayerStatsBaseNumericalKeys> = await get(playerStatsGroupedByPlayerAtom);
-  const playtimeByHero: Metric<Grouped<HeroPlaytime, 'playerName' | 'hero', HeroPlaytimeNumericalKeys>, 'playerName' | 'hero', HeroPlaytimeNumericalKeys> = await get(playtimeByPlayerHeroAtom);
-  const playtimeByRole = await get(playtimeByPlayerRoleAtom);
-  const primaryTeamMap = await get(primaryTeamByPlayerAtom);
-  const firstKillRateData: Record<string, PlayerFirstKillDeathRateStats> = await get(playerFirstKillDeathRateAtom);
-
-
-  const summaries: PlayerListSummary[] = [];
-
-  const statsRows = groupedStats.rows;
-
-
-  for (const playerStat of statsRows) {
-    const playerName = playerStat.playerName;
-
-    const playerHeroPlaytimes = playtimeByHero.rows.filter(
-      (pt) => pt.playerName === playerName
-    );
-    const topHeroData = playerHeroPlaytimes.reduce(
-      (top, current) => (current.playtime > top.playtime ? current : top),
-      { playerName: '', hero: 'Unknown', playtime: -1 } as Grouped<HeroPlaytime, 'playerName' | 'hero', HeroPlaytimeNumericalKeys>
-    );
-    const topHero = topHeroData.hero;
-
-
-    const playerRolePlaytimes = playtimeByRole.get(playerName);
-    let topRole: OverwatchRole = 'tank'; // Default to lowercase
-    let maxRolePlaytime = -1; // Declare outside loop if needed for wider scope, but here it's fine
-    if (playerRolePlaytimes) {
-      playerRolePlaytimes.forEach((playtime, role) => {
-        if (playtime > maxRolePlaytime) {
-          maxRolePlaytime = playtime;
-          topRole = role;
-        }
-      });
-    }
-
-
-    summaries.push({
-      playerName: playerName,
-      teamName: primaryTeamMap.get(playerName) || 'Unknown',
-      topHero: topHero,
-      eliminations: playerStat.eliminations,
-      deaths: playerStat.deaths,
-      assists: playerStat.offensiveAssists + playerStat.defensiveAssists,
-      role: topRole,
-      firstKillRate: firstKillRateData[playerName]?.firstKillRate ?? 0,
-    });
-  }
-
-  return summaries;
-};
+export interface PlayerListSummary {
+  playerName: string;
+  teamName: string; // Primary team (most playtime)
+  topHero: string; // Hero with most playtime
+  eliminations: number;
+  deaths: number;
+  assists: number; // Calculated as offensive + defensive assists
+  role: OverwatchRole; // Role with most playtime
+  firstKillRate: number; // Added: Percentage of teamfights participated in where player got first kill
+}
 
 export default atom(async (get): Promise<PlayerListSummary[]> => {
   return playerListSummaryFn(get);

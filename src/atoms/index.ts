@@ -1,6 +1,7 @@
 import { Atom, WritableAtom, PrimitiveAtom } from 'jotai';
-import { Metric } from '@library/metricUtils';
-import { OverwatchRole } from '@library/hero';
+import { Metric } from '@library';
+export type { Metric };
+import { OverwatchRole } from '@library';
 import teamPlayersAtom from '@atoms/teamPlayers'; // Changed: Removed named import of TeamPlayersType
 import sampleDataEnabledAtom from '@atoms/sampleDataEnabled';
 import sampleDataAtom from '@atoms/sampleData';
@@ -38,6 +39,18 @@ import setupCompleteAtom from '@atoms/setupComplete';
 import ultimateChargedAtom from '@atoms/ultimateCharged';
 import ultimateEndAtom from '@atoms/ultimateEnd';
 import ultimateStartAtom from '@atoms/ultimateStart';
+import teamfightParticipationAtom from '@atoms/teamfightParticipationAtom';
+import uniquePlayerNamesAtom from '@atoms/uniquePlayerNamesAtom';
+import { roundTimesAtom, RoundTimes } from '@atoms/roundTimesAtom';
+import { playerStatusTimelineAtom, PlayerStatusTimeline } from '@atoms/playerStatusTimelineAtom';
+import playerEventsAtom from '@atoms/playerEventsAtom';
+import playerFirstKillDeathRateAtom from '@atoms/playerFirstKillDeathRateAtom';
+import matchDataAtom from '@atoms/matchDataAtom';
+import uniqueMapNamesAtom from '@atoms/uniqueMapNamesAtom';
+import { scrimAtom } from '@atoms/scrimAtom';
+import { teamStatsAtom } from '@atoms/teamStatsAtom';
+import mapTimesAtom from '@atoms/mapTimesAtom';
+import matchExtractorAtom from '@atoms/matchExtractorAtom';
 
 // All atoms are of this type
 export type ScrimsightAtom<Value> = {
@@ -115,8 +128,33 @@ export type AverageMetricPerRole = Record<OverwatchRole, AverageRoleStats>;
 export interface CompositionMatchup { opponentComposition: string[]; playtimeSecondsAgainst: number; winsAgainst: number; lossesAgainst: number; drawsAgainst: number; winRateAgainst: number; }
 export interface DetailedComposition { composition: string[]; playtimeSeconds: number; wins: number; losses: number; draws: number; winRate: number; frequency: number; matchups: CompositionMatchup[]; }
 export interface TeamFirstKillImpactStats { teamName: string; totalFights: number; fightsWon: number; winRate: number; fightsWithFirstKill: number; fightsWonWithFirstKill: number; firstKillWinRate: number; fightsWithFirstDeath: number; fightsLostWithFirstDeath: number; firstDeathLossRate: number; }
+export interface TeamStats { teamName: string; gamesPlayed: number; wins: number; losses: number; draws: number; mostRecentGameDate: Date | null; players: string[]; }
 export interface FirstKillImpactStats { totalFights: number; overallWinRate: number; firstKillWinRate: number; firstDeathLossRate: number; teamStats: Record<string, TeamFirstKillImpactStats>; }
 export type TeamPlayersType = { teamName: string; players: string[]; }; // Added definition
+export interface HeroPlaytime { playerName: string; matchId: string; roundNumber: number; hero: string; playtime: number; }
+export type HeroPlaytimeCategoryKeys = "playerName" | "matchId" | "roundNumber" | "hero";
+export type HeroPlaytimeNumericalKeys = "playtime";
+
+// Additional derived atom types
+export interface TeamfightParticipation {
+  team1Players: string[];
+  team2Players: string[];
+}
+export type { RoundTimes };
+export type { PlayerStatusTimeline };
+export type TeamfightParticipationType = Map<string, TeamfightParticipation>;
+export type PlayerStatusTimelineType = Map<string, PlayerStatusTimeline>;
+export type RoundTimesType = RoundTimes[];
+
+// Player stats types
+export interface PlayerFirstKillDeathRateStats {
+  playerName: string;
+  firstKills: number;
+  firstDeaths: number;
+  teamfightsParticipated: number;
+  firstKillRate: number; // firstKills / teamfightsParticipated
+  firstDeathRate: number; // firstDeaths / teamfightsParticipated
+}
 
 // Re-exporting types from their source files
 export type { Teamfight };
@@ -124,6 +162,7 @@ export type { PlayerInteractionEvent };
 export type { UltimateEvent };
 // TeamPlayersType is now defined above
 export type { MatchData } from '@atoms/matchDataAtom';
+export type { Scrim } from '@atoms/scrimAtom';
 
 // Atom Registrations
 export const teamPlayers: ScrimsightAtom<Promise<TeamPlayersType[]>> = { name: 'teamPlayers', description: 'All players for each team', atom: teamPlayersAtom };
@@ -172,3 +211,19 @@ export const setupComplete: ScrimsightAtom<Promise<SetupCompleteType>> = { name:
 export const ultimateCharged: ScrimsightAtom<Promise<UltimateChargedType>> = { name: 'ultimateCharged', description: 'Atom that extracts ultimate charged events from the parsed log files.', atom: ultimateChargedAtom };
 export const ultimateEnd: ScrimsightAtom<Promise<UltimateEndType>> = { name: 'ultimateEnd', description: 'Atom that extracts ultimate end events from the parsed log files.', atom: ultimateEndAtom };
 export const ultimateStart: ScrimsightAtom<Promise<UltimateStartType>> = { name: 'ultimateStart', description: 'Atom that extracts ultimate start events from the parsed log files.', atom: ultimateStartAtom };
+
+// Additional derived atoms
+export const teamfightParticipation: ScrimsightAtom<Promise<TeamfightParticipationType>> = { name: 'teamfightParticipation', description: 'Atom that calculates player participation for each teamfight.', atom: teamfightParticipationAtom };
+export const uniquePlayerNames: ScrimsightAtom<Promise<string[]>> = { name: 'uniquePlayerNames', description: 'Atom that extracts unique player names from all matches.', atom: uniquePlayerNamesAtom };
+export const roundTimes: ScrimsightAtom<Promise<RoundTimesType>> = { name: 'roundTimes', description: 'Atom that combines round start, setup complete, and round end events to calculate round times.', atom: roundTimesAtom };
+export const playerStatusTimeline: ScrimsightAtom<Promise<PlayerStatusTimelineType>> = { name: 'playerStatusTimeline', description: 'Atom that tracks the active players on each team over time for each match.', atom: playerStatusTimelineAtom };
+export const playerEvents: ScrimsightAtom<Promise<any[]>> = { name: 'playerEvents', description: 'Atom that combines various player events into a unified timeline.', atom: playerEventsAtom };
+export const playerFirstKillDeathRate: ScrimsightAtom<Promise<Record<string, PlayerFirstKillDeathRateStats>>> = { name: 'playerFirstKillDeathRate', description: 'Atom that calculates first kill and death rates for each player based on teamfight participation.', atom: playerFirstKillDeathRateAtom };
+
+// Additional atoms for complex data structures
+export const matchData: ScrimsightAtom<Promise<any[]>> = { name: 'matchData', description: 'Atom that combines match metadata with player statistics and game events.', atom: matchDataAtom };
+export const uniqueMapNames: ScrimsightAtom<Promise<string[]>> = { name: 'uniqueMapNames', description: 'Atom that extracts unique map names from all matches.', atom: uniqueMapNamesAtom };
+export const scrims: ScrimsightAtom<Promise<any[]>> = { name: 'scrims', description: 'Atom that groups matches into scrimmage sessions by date and teams.', atom: scrimAtom };
+export const teamStats: ScrimsightAtom<Promise<any[]>> = { name: 'teamStats', description: 'Atom that calculates team-level statistics and performance metrics.', atom: teamStatsAtom };
+export const mapTimes: ScrimsightAtom<Promise<any[]>> = { name: 'mapTimes', description: 'Atom that calculates duration and timing data for each map/match.', atom: mapTimesAtom };
+export const matchExtractor: ScrimsightAtom<Promise<any[]>> = { name: 'matchExtractor', description: 'Atom that extracts match file information from log files.', atom: matchExtractorAtom };

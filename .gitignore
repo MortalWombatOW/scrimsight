@@ -49,3 +49,10 @@ dev-debug.log
 *.sln
 *.sw?
 # OS specific
+
+# Added by Task Master AI
+# Task files
+tasks.json
+tasks/ 
+
+package-lock.json

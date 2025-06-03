@@ -1,12 +1,12 @@
 import { atom } from 'jotai'; // Import atom
 import { atomFamily } from 'jotai/utils';
 import { Getter } from 'jotai';
-import matchDataAtom from '@atoms/matchDataAtom'; // Corrected path
-import heroSpawnAtom from '@atoms/heroSpawn'; // Atom import
+import { matchData } from '@atoms';
+import { heroSpawn } from '@atoms';
 import { HeroSpawnLogEvent, DetailedComposition, CompositionMatchup } from '@atoms'; // Type import from index
-import heroSwapAtom from '@atoms/heroSwap';   // Atom import
+import { heroSwap } from '@atoms';
 import { HeroSwapLogEvent } from '@atoms';   // Type import from index
-import mapTimesAtom from '@atoms/mapTimesAtom'; // Corrected path
+import { mapTimes } from '@atoms';
 
 type HeroEvent = HeroSpawnLogEvent | HeroSwapLogEvent;
 
@@ -33,11 +33,11 @@ interface AggregatedCompStats {
 
 export const detailedTeamCompositionsAtom = atomFamily((friendlyTeamId: string) => // Renamed param for clarity
   atom(async (get: Getter): Promise<DetailedComposition[]> => {
-    const [allMatches, heroSpawns, heroSwaps, mapTimes] = await Promise.all([
-      get(matchDataAtom),
-      get(heroSpawnAtom), // Use corrected atom name
-      get(heroSwapAtom),  // Use corrected atom name
-      get(mapTimesAtom),
+    const [allMatches, heroSpawns, heroSwaps, allMapTimes] = await Promise.all([
+      get(matchData.atom),
+      get(heroSpawn.atom),
+      get(heroSwap.atom),
+      get(mapTimes.atom),
     ]);
 
     // 1. Create Match Result Lookup & Identify Opponent Team
@@ -86,7 +86,7 @@ export const detailedTeamCompositionsAtom = atomFamily((friendlyTeamId: string) 
 
     // Iterate through matches that involve the friendly team
     for (const [matchId, matchEventGroups] of eventsByMatch) {
-      const matchTime = mapTimes.find((mt) => mt.matchId === matchId);
+      const matchTime = allMapTimes.find((mt) => mt.matchId === matchId);
       const matchInfo = matchResults.get(matchId);
       // Ensure matchTime and matchInfo (including opponentTeamId) are valid
       if (!matchTime || !matchInfo || !matchInfo.opponentTeamId) continue;

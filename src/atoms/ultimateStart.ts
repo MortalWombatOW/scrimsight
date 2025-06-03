@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { logFileParser, LogFileParserAtomType } from '@atoms';
-import { extractEventsFromFiles } from '@library/eventExtractionUtils';
+import { extractEventsFromFiles } from '@library';
 import { UltimateStartLogEvent, UltimateStartType } from '@atoms';
 
 export const ultimateStartFn = async (parsedFiles: LogFileParserAtomType): Promise<UltimateStartType> => { // Removed 'get' parameter

@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { logFileParser, LogFileParserAtomType } from '@atoms';
-import { extractEventsFromFiles } from '@library/eventExtractionUtils';
+import { extractEventsFromFiles } from '@library';
 import { RoundEndLogEvent, RoundEndType } from '@atoms';
 
 export const roundEndFn = async (parsedFiles: LogFileParserAtomType): Promise<RoundEndType> => { // Removed 'get' parameter

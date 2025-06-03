@@ -1,34 +1,75 @@
 import { atom } from 'jotai';
-import defensiveAssistAtom from '@atoms/defensiveAssist'; // Corrected path and import kind
-import offensiveAssistAtom from '@atoms/offensiveAssist'; // Corrected path and import kind
-import heroSpawnAtom from '@atoms/heroSpawn'; // Corrected path and import kind
-import heroSwapAtom from '@atoms/heroSwap'; // Corrected path and import kind
-import ability1UsedAtom from '@atoms/ability1Used'; // Corrected path and import kind
-import ability2UsedAtom from '@atoms/ability2Used'; // Corrected path and import kind
-import { combinePlayerEvents, type PlayerEvent } from '@library/playerEvents'; // Corrected path and import kind
+import { defensiveAssist, offensiveAssist, heroSpawn, heroSwap, ability1Used, ability2Used } from '@atoms';
+import { DefensiveAssistType, OffensiveAssistType, HeroSpawnType, HeroSwapType, Ability1UsedType, Ability2UsedType } from '@atoms';
+
+/**
+ * Pure function that combines various player events
+ */
+export const playerEventsAtomFn = (
+  defensiveAssists: DefensiveAssistType,
+  offensiveAssists: OffensiveAssistType,
+  heroSpawns: HeroSpawnType,
+  heroSwaps: HeroSwapType,
+  ability1UsedData: Ability1UsedType,
+  ability2UsedData: Ability2UsedType
+): any[] => {
+  // Simple combination logic - convert to common format
+  const events: any[] = [];
+  
+  // Add defensive assists
+  defensiveAssists.forEach(event => {
+    events.push({ ...event, eventType: 'defensiveAssist' });
+  });
+  
+  // Add offensive assists
+  offensiveAssists.forEach(event => {
+    events.push({ ...event, eventType: 'offensiveAssist' });
+  });
+  
+  // Add hero spawns
+  heroSpawns.forEach(event => {
+    events.push({ ...event, eventType: 'heroSpawn' });
+  });
+  
+  // Add hero swaps
+  heroSwaps.forEach(event => {
+    events.push({ ...event, eventType: 'heroSwap' });
+  });
+  
+  // Add ability usage
+  ability1UsedData.forEach(event => {
+    events.push({ ...event, eventType: 'ability1Used' });
+  });
+  
+  ability2UsedData.forEach(event => {
+    events.push({ ...event, eventType: 'ability2Used' });
+  });
+  
+  // Sort by match time
+  return events.sort((a, b) => a.matchTime - b.matchTime);
+};
 
 /**
  * Atom that combines various player events
  */
-export const playerEventsAtom = atom(async (get): Promise<PlayerEvent[]> => {
+const playerEventsAtom = atom(async (get): Promise<any[]> => {
   // Get all the event data from extractor atoms
-  const defensiveAssists = await get(defensiveAssistAtom);
-  const offensiveAssists = await get(offensiveAssistAtom);
-  const heroSpawns = await get(heroSpawnAtom);
-  const heroSwaps = await get(heroSwapAtom);
-  const ability1Used = await get(ability1UsedAtom);
-  const ability2Used = await get(ability2UsedAtom);
+  const defensiveAssists = await get(defensiveAssist.atom);
+  const offensiveAssists = await get(offensiveAssist.atom);
+  const heroSpawns = await get(heroSpawn.atom);
+  const heroSwaps = await get(heroSwap.atom);
+  const ability1UsedData = await get(ability1Used.atom);
+  const ability2UsedData = await get(ability2Used.atom);
 
-  // Use the pure function to combine events
-  return combinePlayerEvents(
+  return playerEventsAtomFn(
     defensiveAssists,
     offensiveAssists,
     heroSpawns,
     heroSwaps,
-    ability1Used,
-    ability2Used
+    ability1UsedData,
+    ability2UsedData
   );
 });
 
-// Re-export the PlayerEvent type for convenience
-export type { PlayerEvent } from '../lib/playerEvents';
+export default playerEventsAtom;
+

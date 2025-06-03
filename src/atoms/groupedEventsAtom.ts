@@ -3,9 +3,9 @@ import { atom } from 'jotai';
 import {
   KillLogEvent,
   OffensiveAssistLogEvent,
-} from '@atoms'; // Types from @atoms
-import killAtom from '@atoms/kill'; // Default import for the atom instance
-import offensiveAssistAtom from '@atoms/offensiveAssist'; // Default import for the atom instance
+  kill,
+  offensiveAssist,
+} from '@atoms'; // Types and registered atoms from @atoms
 
 /**
  * An interface to represent grouped kill and offensive assist events.
@@ -22,8 +22,8 @@ export interface GroupedKillOffensiveAssistEvent {
  * If multiple kills or assists occur in the same moment, all are grouped together.
  */
 export const groupedKillOffensiveAssistExtractorAtom = atom(async (get) => {
-  const killEvents = await get(killAtom);
-  const offensiveAssistEvents = await get(offensiveAssistAtom);
+  const killEvents = await get(kill.atom);
+  const offensiveAssistEvents = await get(offensiveAssist.atom);
 
   // Use a map to collect events under a single key (matchId & matchTime).
   const groupsByKey = new Map<string, GroupedKillOffensiveAssistEvent>();

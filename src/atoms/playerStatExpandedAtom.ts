@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
-import { playerStatExtractorAtom, PlayerStatLogEvent } from '~/atoms/event_extractors/playerStatExtractorAtom';
-import {getRoleFromHero} from '~/lib/hero';
+import { PlayerStatLogEvent, playerStat } from '@atoms';
+import {getRoleFromHero} from '@library';
 
 /**
  * Interface for expanded player stat events that includes role information
@@ -13,7 +13,7 @@ export interface PlayerStatsExpanded extends PlayerStatLogEvent {
  * Atom that adds role information to player stat events
  */
 export const playerStatExpandedAtom = atom(async (get): Promise<PlayerStatsExpanded[]> => {
-  const playerStats = await get(playerStatExtractorAtom);
+  const playerStats = await get(playerStat.atom);
   
   return playerStats.map(stat => ({
     ...stat,

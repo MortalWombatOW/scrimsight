@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { uniqueHeroNamesAtomFn } from '@atoms/uniqueHeroNamesAtom';
 import type { PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys } from '@atoms';
-import type { Metric } from '@library/metricUtils';
+import type { Metric } from '@library';
 
 describe('uniqueHeroNamesAtomFn', () => {
   const mockCategoryKeys = ['matchId', 'roundNumber', 'playerTeam', 'playerName', 'playerHero', 'playerRole'] as PlayerStatsCategoryKeys[];

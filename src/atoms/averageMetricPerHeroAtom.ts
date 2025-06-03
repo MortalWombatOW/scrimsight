@@ -10,7 +10,7 @@ import {
   AverageMetricPerHeroType,
   uniqueHeroNames,
 } from '@atoms'; 
-import { Metric } from '@library/metricUtils'; 
+import { Metric } from '@library'; 
 
 
 export const averageMetricPerHeroAtomFn = (

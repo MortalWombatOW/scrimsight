@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { logFileParser, LogFileParserAtomType } from '@atoms';
-import { extractEventsFromFiles } from '@library/eventExtractionUtils';
+import { extractEventsFromFiles } from '@library';
 import { HeroSwapLogEvent, HeroSwapType } from '@atoms';
 
 export const heroSwapFn = async (parsedFiles: LogFileParserAtomType): Promise<HeroSwapType> => { // Removed 'get' parameter

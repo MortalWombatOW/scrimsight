@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { Metric } from '@library/metricUtils';
+import { Metric } from '@library';
 import {
   playerStatsBase,
   PlayerStatsBase,
@@ -10,7 +10,7 @@ import {
   AverageRoleStats, // Added import
   AverageMetricPerRole, // Added import
 } from '@atoms';
-import { OverwatchRole } from '@library/hero';
+import { OverwatchRole } from '@library';
 
 // Pure function to calculate average metrics per player role
 export const averageMetricPerRoleFn = (

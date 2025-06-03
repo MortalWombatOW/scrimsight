@@ -1,6 +1,6 @@
 import { useAtomValue, atom, Atom, Getter } from "jotai";
-import { groupByAtom, Grouped, Metric } from "@library/metricUtils";
-import { OverwatchRole, getRankForRole } from "@library/hero";
+import { groupByAtom, Grouped, Metric } from "./metricUtils";
+import { OverwatchRole, getRankForRole } from "./hero";
 import { 
   PlayerStatsCategoryKeys, 
   PlayerStatsBaseNumericalKeys,

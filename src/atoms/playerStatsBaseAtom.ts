@@ -2,8 +2,8 @@ import { atom, Getter } from "jotai";
 import playerStat from "@atoms/playerStat";
 import { PlayerStatLogEvent } from "@atoms";
 import { heroPlaytimeAtom, HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys } from '@atoms/heroPlaytimeAtom'; // Added Keys
-import { Metric } from "@library/metricUtils"; // Removed MetricAtom as it's unused
-import { getRoleFromHero } from '@library/hero'; // Import getRoleFromHero
+import { Metric } from "@library"; // Removed MetricAtom as it's unused
+import { getRoleFromHero } from '@library'; // Import getRoleFromHero
 import { 
   PlayerStatsBase, 
   PlayerStatsCategoryKeys, 

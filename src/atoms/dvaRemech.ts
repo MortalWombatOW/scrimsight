@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { logFileParser, LogFileParserAtomType } from '@atoms';
-import { extractEventsFromFiles } from '@library/eventExtractionUtils';
+import { extractEventsFromFiles } from '@library';
 import { DvaRemechLogEvent, DvaRemechType } from '@atoms';
 
 export const dvaRemechFn = async (parsedFiles: LogFileParserAtomType): Promise<DvaRemechType> => { // Removed 'get' parameter

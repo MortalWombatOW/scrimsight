@@ -1,6 +1,5 @@
 import { PlayerStatsNumericalKeys, playerStatsNumericalKeys, PlayerStats, PlayerStatsCategoryKeys } from '@atoms'; // Updated import
-import { OverwatchRole } from '@library/hero'; // Updated import path
-import { Metric, Grouped } from '@library/metricUtils'; // Added Grouped to import
+import { OverwatchRole, Metric, Grouped } from '@library'; // Import from library index
 
 // Define the parameters for the function
 export interface PlayerComparisonParams {

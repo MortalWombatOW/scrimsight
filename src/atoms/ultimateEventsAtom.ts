@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
-import { ultimateChargedExtractorAtom } from '~/atoms/event_extractors/ultimateChargedExtractorAtom';
-import { ultimateStartExtractorAtom } from '~/atoms/event_extractors/ultimateStartExtractorAtom';
-import { ultimateEndExtractorAtom } from '~/atoms/event_extractors/ultimateEndExtractorAtom';
+import { ultimateCharged } from '@atoms';
+import { ultimateStart } from '@atoms';
+import { ultimateEnd } from '@atoms';
 
 /**
  * Interface for combined ultimate events
@@ -23,9 +23,9 @@ export interface UltimateEvent {
  * Atom that combines ultimate charged, start, and end events
  */
 export const ultimateEventsAtom = atom(async (get): Promise<UltimateEvent[]> => {
-  const chargedEvents = await get(ultimateChargedExtractorAtom);
-  const startEvents = await get(ultimateStartExtractorAtom);
-  const endEvents = await get(ultimateEndExtractorAtom);
+  const chargedEvents = await get(ultimateCharged.atom);
+  const startEvents = await get(ultimateStart.atom);
+  const endEvents = await get(ultimateEnd.atom);
 
   return chargedEvents.flatMap(charged => {
     // Find matching start and end events

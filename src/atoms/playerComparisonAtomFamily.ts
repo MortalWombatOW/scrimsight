@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { getStatsAtom } from '@library/playerMetricsUtils'; // Updated import path
+import { getStatsAtom } from '@library'; // Import from library index
 import averageMetricPerRoleAtom from '@atoms/averageMetricPerRoleAtom'; // Updated import path
 import averageMetricPerHeroAtom from '@atoms/averageMetricPerHeroAtom'; // Updated import path
 import { 

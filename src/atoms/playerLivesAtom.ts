@@ -1,7 +1,7 @@
 import { atom } from "jotai";
-import { playerEventsAtom } from "@atoms/playerEventsAtom";
+import { playerEvents } from '@atoms'; // Use registered atom
 import { playerInteractionEventsAtom } from "@atoms/playerInteractionEventsAtom";
-import { roundTimesAtom } from "@atoms/roundTimesAtom";
+import { roundTimes } from "@atoms";
 
 export interface PlayerLife {
   matchId: string;
@@ -13,8 +13,8 @@ export interface PlayerLife {
 
 export const playerLivesAtom = atom(async (get) => {
   const playerInteractionEvents = await get(playerInteractionEventsAtom);
-  const playerEvents = await get(playerEventsAtom);
-  const roundTimes = await get(roundTimesAtom);
+  const playerEventsData: any = await get(playerEvents.atom);
+  const roundTimesData = await get(roundTimes.atom);
 
   const lives: PlayerLife[] = [];
   const activeLifeByPlayer: Map<string, PlayerLife> = new Map();
@@ -35,7 +35,7 @@ export const playerLivesAtom = atom(async (get) => {
 
   // Process all events in chronological order
   const allEvents = [
-    ...playerEvents.map(e => ({
+    ...playerEventsData.map((e: any) => ({
       ...e,
       time: e.playerEventTime,
       type: e.playerEventType,
@@ -90,7 +90,7 @@ export const playerLivesAtom = atom(async (get) => {
 
   // End any remaining active lives at their round end times
   for (const [_, life] of activeLifeByPlayer.entries()) {
-    const roundEnd = roundTimes
+    const roundEnd = roundTimesData
       .filter(r => r.matchId === life.matchId)
       .sort((a, b) => b.roundEndTime - a.roundEndTime)
       .find(r => r.roundEndTime > life.startTime);

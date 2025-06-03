@@ -1,5 +1,5 @@
 import { atom, Getter } from 'jotai';
-import { Metric } from '@library/metricUtils'; // Import Metric
+import { Metric } from '@library'; // Import Metric
 import { 
   playerStatsBase, // Use the registered atom
   PlayerStatsCategoryKeys, 

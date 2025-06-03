@@ -1,0 +1,157 @@
+// independentModules.mjs
+// @ts-check
+
+import { createIndependentModules } from "eslint-plugin-project-structure";
+
+export const independentModulesConfig =
+createIndependentModules({
+  // debugMode: true,
+  modules: [
+
+    // App Index: src/index.tsx
+    {
+      name: "app-index",
+      pattern: "src/index.tsx", 
+      allowImportsFrom: [
+        "src/App.tsx", 
+        "src/index.css",
+      ],
+      errorMessage: "App index (src/index.tsx) can only import the main App component and index.css.",
+    },
+    // App: src/App.tsx
+    {
+      name: "app",
+      pattern: "src/App.tsx", 
+      allowImportsFrom: [
+        "src/pages/index.tsx",    // page-index 
+        "src/components/index.tsx", // component-index 
+        "src/atoms/index.ts",     // atom-index 
+        "src/lib/index.ts",       // library-index 
+      ],
+      errorMessage: "App (src/App.tsx) has restricted dependencies, can only import from pages index (@pages), components index (@components), atom index (@atoms), and library index (@library).",
+    },
+    // Atom Index: src/atoms/index.ts
+    {
+      name: "atom-index",
+      pattern: "src/atoms/index.ts", 
+      allowImportsFrom: [
+       "src/atoms/*.ts", // atoms (for other atoms, e.g. '@atoms/filename.ts')
+        "src/lib/index.ts", // library-index
+      ],
+      errorMessage: "Atom index (src/atoms/index.ts) can only import files from its own directory (e.g. '@atoms/filename.ts') or the library index (@library).",
+    },
+    // Component Index: src/components/index.tsx
+    {
+      name: "component-index",
+      pattern: "src/components/index.tsx", 
+      allowImportsFrom: [
+        "src/components/*.tsx", 
+      ],
+      errorMessage: "Component index (src/components/index.tsx) can only import files from '@components/filename.tsx'.",
+    },
+    // Page Index: src/pages/index.tsx
+    {
+      name: "page-index",
+      pattern: "src/pages/index.tsx", 
+      allowImportsFrom: [
+        "src/pages/*.tsx", 
+      ],
+      errorMessage: "Page index (src/pages/index.tsx) can only import files from '@pages/filename.tsx'.",
+    },
+    // Library Index: src/lib/index.ts
+    {
+      name: "library-index",
+      pattern: "src/lib/index.ts", 
+      allowImportsFrom: [
+        "src/lib/*.ts", 
+      ],
+      errorMessage: "Library index (src/lib/index.ts) can only import files from '@library/filename.ts'.",
+    },
+    // Atom Test: src/atoms/*.test.ts
+    {
+      name: "atom-test",
+      pattern: "src/atoms/*.test.ts", 
+      allowImportsFrom: [
+        "src/atoms/*.ts",      // atom (for testing specific atom, e.g. './someAtom' or aliased) 
+        "src/atoms/index.ts",  // atom-index (for other atoms via index) 
+        "src/lib/index.ts",    // library-index 
+      ],
+      errorMessage: "Atom tests (src/atoms/*.test.ts) have restricted dependencies, can only import from an atom (@atoms/atomName), the atom index (@atoms), or the library index (@library).",
+    },
+    // Component Test: src/components/*.stories.tsx
+    {
+      name: "component-test",
+      pattern: "src/components/*.stories.tsx", 
+      allowImportsFrom: [
+        "src/components/*.tsx",    // component (for testing specific component) 
+        "src/atoms/index.ts",      // atom-index 
+        "src/lib/index.ts",        // library-index 
+        "src/components/index.tsx",// component-index (for other components via index) 
+      ],
+      errorMessage: "Component stories (src/components/*.stories.tsx) have restricted dependencies, can only import from a component (@components/componentName), the component index (@components), or the library index (@library).",
+    },
+    // Page Test: src/pages/*.stories.tsx
+    {
+      name: "page-test",
+      pattern: "src/pages/*.stories.tsx", 
+      allowImportsFrom: [
+        "src/pages/*.tsx",         // page (for testing specific page) 
+        "src/components/index.tsx",// component-index 
+        "src/lib/index.ts",        // library-index 
+      ],
+      errorMessage: "Page stories (src/pages/*.stories.tsx) have restricted dependencies, can only import from a page (@pages/pageName), the component index (@components), or the library index (@library).",
+    },
+    // Library Test: src/lib/*.test.ts
+    {
+      name: "library-test",
+      pattern: "src/lib/*.test.ts", 
+      allowImportsFrom: [
+        "src/lib/*.ts",       // library (for testing specific library) 
+        "src/lib/index.ts",   // library-index (for other libraries via index) 
+      ],
+      errorMessage: "Library tests (src/lib/*.test.ts) have restricted dependencies, can only import from a library (@library/libraryName), or the library index (@library).",
+    },
+    // Atom: src/atoms/*.ts (excluding index and test files)
+    {
+      name: "atom",
+      // pattern is an array of patterns: [include, !exclude1, !exclude2]
+      // This is string[] which is a valid type for 'pattern'
+      pattern: [["src/atoms/*.ts", "!src/atoms/index.ts", "!src/atoms/*.test.ts"]], 
+      allowImportsFrom: [
+        "src/atoms/index.ts", // atom-index (for other atoms) 
+        "src/lib/index.ts",   // library-index 
+      ],
+      errorMessage: "Atoms (src/atoms/*.ts) can only import from the atom index (@atoms) or the library index (@library).",
+    },
+    // Component: src/components/*.tsx (excluding index and stories files)
+    {
+      name: "component",
+      pattern: [["src/components/*.tsx", "!src/components/index.tsx", "!src/components/*.stories.tsx"]], 
+      allowImportsFrom: [
+        "src/atoms/index.ts",     // atom-index 
+        "src/lib/index.ts",       // library-index 
+        "src/components/index.tsx",// component-index (for other components) 
+      ],
+      errorMessage: "Components (src/components/*.tsx) have restricted dependencies, can only import from the atom index (@atoms), the library index (@library), or the component index (@components).",
+    },
+    // Page: src/pages/*.tsx (excluding index and stories files)
+    {
+      name: "page",
+      pattern: [["src/pages/*.tsx", "!src/pages/index.tsx", "!src/pages/*.stories.tsx"]], 
+      allowImportsFrom: [
+        "src/components/index.tsx",// component-index 
+        "src/lib/index.ts",        // library-index 
+      ],
+      errorMessage: "Pages (src/pages/*.tsx) can only import from the component index (@components), or the library index (@library).",
+    },
+    // Library: src/lib/*.ts (excluding index and test files)
+    {
+      name: "library",
+      pattern: [["src/lib/*.ts", "!src/lib/index.ts", "!src/lib/*.test.ts"]], 
+      allowImportsFrom: [
+        "src/lib/index.ts", // library-index (for other libraries) 
+      ],
+      errorMessage: "Libraries (src/lib/*.ts) can only import from the library index (@library).",
+    },
+  ],
+});

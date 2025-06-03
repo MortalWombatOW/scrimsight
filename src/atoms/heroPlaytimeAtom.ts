@@ -1,28 +1,15 @@
 import { atom } from "jotai";
-import { playerEventsAtom, PlayerEvent } from "@atoms/playerEventsAtom"; // Corrected import for atom and type to named
-import roundTimesAtom, { RoundTimes } from "@atoms/roundTimesAtom"; // Corrected import for atom and type
-import { MetricAtom } from "@library/metricUtils";
+import { playerEvents, roundTimes, RoundTimesType, RoundTimes, Metric, HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys } from '@atoms';
 
-export interface HeroPlaytime {
-  playerName: string;
-  matchId: string;
-  roundNumber: number;
-  hero: string;
-  playtime: number;
-}
-
-export type HeroPlaytimeCategoryKeys = "playerName" | "matchId" | "roundNumber" | "hero";
-export type HeroPlaytimeNumericalKeys = "playtime";
-
-export const heroPlaytimeAtom: MetricAtom<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys> = atom(async (get) => {
-  const events: PlayerEvent[] = await get(playerEventsAtom);
-  const roundTimesData = await get(roundTimesAtom); // Renamed to avoid conflict with RoundTimes type if it's an array
-  const actualRoundTimes: RoundTimes[] = roundTimesData; // Assuming roundTimesData is RoundTimes[]
-  
+export const heroPlaytimeAtomFn = (
+  events: any[],
+  roundTimesData: RoundTimesType
+): Metric<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys> => {
+  const actualRoundTimes: RoundTimes[] = roundTimesData;
   const playtimeMap = new Map<string, HeroPlaytime>();
   
   // Group events by player/match/round
-  const eventsByPlayer = events.reduce((acc, event: PlayerEvent) => {
+  const eventsByPlayer = events.reduce((acc, event: any) => {
     // Find which round this event belongs to based on time
     const round = actualRoundTimes.find((rt: RoundTimes) => 
       rt.matchId === event.matchId &&
@@ -36,11 +23,11 @@ export const heroPlaytimeAtom: MetricAtom<HeroPlaytime, HeroPlaytimeCategoryKeys
     if (!acc.has(key)) acc.set(key, []);
     acc.get(key)?.push(event);
     return acc;
-  }, new Map<string, PlayerEvent[]>()); // Explicitly type the accumulator
+  }, new Map<string, any[]>());
 
   // Process each player's events per round
-  for (const [playerKey, playerEventsList] of eventsByPlayer) { // Renamed playerEvents to playerEventsList
-    const [playerName, matchId, roundNumberStr] = playerKey.split('-'); // Renamed roundNumber to roundNumberStr
+  for (const [playerKey, playerEventsList] of eventsByPlayer) {
+    const [playerName, matchId, roundNumberStr] = playerKey.split('-');
     const roundNumber = parseInt(roundNumberStr);
     const round = actualRoundTimes.find((rt: RoundTimes) => 
       rt.matchId === matchId && 
@@ -50,7 +37,7 @@ export const heroPlaytimeAtom: MetricAtom<HeroPlaytime, HeroPlaytimeCategoryKeys
     if (!round) continue;
     
     // Sort events chronologically
-    const sortedEvents = playerEventsList.sort((a: PlayerEvent, b: PlayerEvent) => a.playerEventTime - b.playerEventTime);
+    const sortedEvents = playerEventsList.sort((a: any, b: any) => a.playerEventTime - b.playerEventTime);
     let currentHero = '';
     let lastHeroChangeTime = round.roundSetupCompleteTime;
     
@@ -95,4 +82,11 @@ export const heroPlaytimeAtom: MetricAtom<HeroPlaytime, HeroPlaytimeCategoryKeys
     numericalKeys: ['playtime'] as HeroPlaytimeNumericalKeys[],
     rows: Array.from(playtimeMap.values())
   };
+};
+
+export default atom(async (get) => {
+  const events: any[] = await get(playerEvents.atom);
+  const roundTimesData = await get(roundTimes.atom);
+  
+  return heroPlaytimeAtomFn(events, roundTimesData);
 });
