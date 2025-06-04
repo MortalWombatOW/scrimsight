@@ -5,53 +5,92 @@ import { createFileComposition } from "eslint-plugin-project-structure";
 
 export const fileCompositionConfig = createFileComposition({
   filesRules: [
+    // AtomFamily Pattern - Files ending with AtomFamily.ts
     {
-      // Rule specifically for atom implementation files (e.g., src/atoms/someAtom.ts)
-      // Excludes index.ts and .test.ts files from this specific composition rule
-      filePattern: [["src/atoms/*.ts", "!src/atoms/index.ts", "!src/atoms/*.test.ts"]],
-      // Enforce that only the specified selectors (function and default export arrowFunction) are allowed at the root
+      filePattern: "src/atoms/*AtomFamily.ts",
       allowOnlySpecifiedSelectors: {
-        fileRoot: true, // Only allow what's defined in rules at the root
-        fileExport: true, // Only allow what's defined in rules for exports (overlaps with root here)
-        nestedSelectors: false, // Allow any selectors inside functions/classes
+        fileRoot: true,
+        fileExport: true, 
+        nestedSelectors: false,
       },
-      // Optional: Limit the number of root selectors if needed, though the rules below are more specific.
-      // rootSelectorsLimits: [
-      //   { selector: "function", limit: 1 }, // Expecting one named function export
-      //   { selector: "arrowFunction", limit: 1 } // Expecting one default export arrow function
-      // ],
+      rootSelectorsLimits: [
+        { selector: "variable", limit: 1 }, // Only the default atomFamily export
+      ],
       rules: [
-        // Rule for the exported implementation function (e.g., ability1UsedFn)
+        // AtomFamily default export (unnamed default)
         {
-          selector: "function", // Could also be "arrowFunction" if you use const fn = () => {}
-          scope: "fileExport", // Must be exported
-          format: "{fileName}Fn", // Name must be {fileName}Fn (e.g., ability1UsedFn)
-          positionIndex: 0, // Should appear first (excluding imports)
+          selector: "variable",
+          scope: "fileExport", 
+          format: "default",
+          positionIndex: 0,
         },
-        // Rule for the default exported Jotai atom
+      ],
+    },
+
+    // Input Atom Pattern - Files ending with Input or containing Input
+    {
+      filePattern: "src/atoms/*Input*.ts",
+      allowOnlySpecifiedSelectors: {
+        fileRoot: true,
+        fileExport: true,
+        nestedSelectors: false,
+      },
+      rootSelectorsLimits: [
+        { selector: "variable", limit: 2 }, // private atom + default export
+        { selector: "arrowFunction", limit: 1 } // helper function
+      ],
+      rules: [
+        // Helper function export (named)
         {
-          selector: "arrowFunction", // Jotai atoms are often defined with arrow functions for async get
-          scope: "fileExport", // Must be exported
-          // For default exports, the 'format' doesn't apply to the "default" keyword itself,
-          // but to the name if it were a named default export.
-          // Since it's an anonymous arrow function assigned to default export,
-          // we don't need a format for the name.
-          // We can ensure it's a default export by checking its AST properties if needed,
-          // but ESLint rules often infer default export status.
-          // The key here is that it's an exported arrow function and its position.
-          // If you wanted to be super strict and ensure it's *the* default export,
-          // that's a bit more advanced and might require a custom AST selector or a more complex setup.
-          // For now, relying on it being an exported arrowFunction at the second position.
-          positionIndex: 1, // Should appear second (after the Fn)
+          selector: "arrowFunction",
+          scope: "fileExport",
+          format: "{fileName}Fn",
+          positionIndex: 0,
         },
-        // If your default export is sometimes a direct `atom()` call not wrapped in an arrow function for export:
-        // {
-        //   selector: "variable", // If `export default atom(...)` is treated as a variable export
-        //   scope: "fileExport",
-        //   positionIndex: 1,
-        //   // You might need to inspect the AST further to ensure it's `atom(...)`
-        //   // This is simpler: assumes the default export is an arrow function or a direct variable.
-        // },
+        // Private atom variable (non-exported)
+        {
+          selector: "variable", 
+          scope: "fileRoot",
+          format: "_{camelCase}",
+          positionIndex: 1,
+        },
+        // Default writable atom export (unnamed default)
+        {
+          selector: "variable",
+          scope: "fileExport",
+          format: "default",
+          positionIndex: 2,
+        },
+      ],
+    },
+
+    // Standard Single Atoms - All other atom files
+    {
+      filePattern: [["src/atoms/*.ts", "!src/atoms/index.ts", "!src/atoms/*.test.ts", "!src/atoms/*AtomFamily.ts", "!src/atoms/*Input*.ts", "!src/atoms/atomTemplate.ts.txt"]],
+      allowOnlySpecifiedSelectors: {
+        fileRoot: true,
+        fileExport: true, 
+        nestedSelectors: false,
+      },
+      rootSelectorsLimits: [
+        { selector: "variable", limit: 1 }, // unnamed default export only
+        { selector: "arrowFunction", limit: 1 } // named function export only
+      ],
+      rules: [
+        // Implementation function export (named export for testing)
+        {
+          selector: "arrowFunction",
+          scope: "fileExport", 
+          format: "{fileName}Fn", 
+          positionIndex: 0, 
+        },
+        // Atom default export (unnamed default export)
+        {
+          selector: "variable", 
+          scope: "fileExport",
+          format: "default",
+          positionIndex: 1,
+        },
       ],
     },
   ],

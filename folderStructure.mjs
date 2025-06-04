@@ -23,11 +23,12 @@ export const folderStructureConfig = createFolderStructure({
           name: "atoms",
           children: [
             { name: "index.ts" }, // Atom index file
+            { name: "atomTemplate.ts.txt" }, // Atom template file
             // Atom test files
-            // {
-            //   name: "{camelCase}.test.ts",
-            //   enforceExistence: ["{nodeName}.ts"]
-            // }, 
+            {
+              name: "{camelCase}.test.ts",
+              enforceExistence: ["{nodeName}.ts"]
+            }, 
             // Atom implementation files
             {
               name: "{camelCase}.ts",
