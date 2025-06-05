@@ -33,7 +33,7 @@ export const folderStructureConfig = createFolderStructure({
             {
               name: "{camelCase}.ts",
               // Any atom implementation file must have a corresponding test file
-              // enforceExistence: ["{nodeName}.test.ts"]
+              enforceExistence: ["{nodeName}.test.ts"]
             }, 
           ],
         },

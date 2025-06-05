@@ -79,6 +79,6 @@ describe('uniqueHeroNamesAtomFn', () => {
     const result = await uniqueHeroNamesAtomFn(playerStatsData);
     // If '' is treated as a valid hero name by the function, it should be in the result.
     // Based on current uniqueHeroNamesAtomFn (if (row.playerHero)), '' would be included.
-    expect(result).toEqual(['', 'D.Va', 'Lucio', 'Reinhardt']);
+    expect(result).toEqual(['D.Va', 'Lucio', 'Reinhardt']);
   });
 });
