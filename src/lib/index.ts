@@ -13,3 +13,5 @@ export * from './scrimtime';
 export * from './eventExtractionUtils';
 export * from './metricUtils';
 export * from './playerMetricsUtils';
+export * from './playerComparison';
+export * from './killMatrixUtils';

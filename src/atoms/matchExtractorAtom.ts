@@ -1,10 +1,10 @@
 import { atom } from 'jotai';
-import { logFileParser, LogFileParserOutput } from '@atoms';
+import { logFileParser, LogFileParserOutput, MatchFileInfo } from '@atoms';
 
 /**
  * Interface for the match extractor atom's output
  */
-export const matchExtractorFn = (parsedFiles: LogFileParserOutput[]): MatchFileInfo[] => {
+export const matchExtractorAtomFn = (parsedFiles: LogFileParserOutput[]): MatchFileInfo[] => {
   return parsedFiles.map((file) => {
     const date = new Date(file.fileModified);
     return {
@@ -17,21 +17,11 @@ export const matchExtractorFn = (parsedFiles: LogFileParserOutput[]): MatchFileI
   });
 };
 
-/**
- * Pure function that extracts match information from the parsed log files
- */
-export interface MatchFileInfo {
-  matchId: string;
-  name: string;
-  fileModified: number;
-  dateString: string;
-  timeString: string;
-}
 
 /**
  * Atom that extracts match information from the parsed log files
  */
 export default atom(async (get): Promise<MatchFileInfo[]> => {
   const parsedFiles = await get(logFileParser.atom);
-  return matchExtractorFn(parsedFiles);
+  return matchExtractorAtomFn(parsedFiles);
 });

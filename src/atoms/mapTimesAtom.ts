@@ -1,13 +1,18 @@
 import { atom } from 'jotai';
-import { matchStart } from '@atoms';
-import { matchEnd } from '@atoms';
-import { roundTimes } from '@atoms';
-import { MatchStartType, MatchEndType, RoundTimes } from '@atoms'; // Import specific types
+import {
+  matchStart,
+  matchEnd,
+  roundTimes,
+  MatchStartType,
+  MatchEndType,
+  RoundTimes,
+  MapTimes,
+} from '@atoms';
 
 /**
  * Interface for map times data
  */
-export const mapTimesFn = (
+export const mapTimesAtomFn = (
   matchStarts: MatchStartType,
   matchEnds: MatchEndType,
   roundTimesData: RoundTimes[] // Changed parameter name and type
@@ -27,15 +32,6 @@ export const mapTimesFn = (
   }).filter((time): time is MapTimes => time !== null);
 };
 
-/**
- * Pure function that combines match start, end, and round events to calculate map times
- */
-export interface MapTimes {
-  matchId: string;
-  startTime: number;
-  endTime: number;
-  duration: number;
-}
 
 /**
  * Atom that combines match start, end, and round events to calculate map times
@@ -45,5 +41,5 @@ export default atom(async (get): Promise<MapTimes[]> => {
   const matchEndsData = await get(matchEnd.atom);
   const roundTimesData = await get(roundTimes.atom); // Use the imported atom
 
-  return mapTimesFn(matchStartsData, matchEndsData, roundTimesData);
+  return mapTimesAtomFn(matchStartsData, matchEndsData, roundTimesData);
 });

@@ -1,102 +1,79 @@
 import { atom } from 'jotai';
-import matchDataAtom from '@atoms/matchDataAtom'; // Corrected import for atom
-import { LogFileParserAtomType, logFileParser } from '@atoms';
+import {
+  matchData,
+  logFileParser,
+  LogFileParserAtomType,
+  LogEvent,
+  PlayerStatusTimeline,
+} from '@atoms';
 
-// Define a basic LogEvent type based on expected properties
-interface LogEvent {
-  timestamp: number;
-  event_type: string;
-  player_name?: string;
-  player_team?: string;
-  // Add other potential properties if needed, or use 'any'/'unknown' if structure varies widely
-  [key: string]: unknown; // Changed any to unknown
-}
-
-export interface PlayerStatusEntry {
-  timestamp: number;
-  team1Players: Set<string>;
-  team2Players: Set<string>;
-}
-
-export type PlayerStatusTimeline = PlayerStatusEntry[];
-
-// Atom to track the active players on each team over time for each match
-export const playerStatusTimelineAtom = atom(async (get): Promise<Map<string, PlayerStatusTimeline>> => {
-  const parsedFiles: LogFileParserAtomType = await get(logFileParser.atom); // Use imported logFileParser
-  const allMatchData = await get(matchDataAtom);
+export const playerStatusTimelineAtomFn = async (
+  parsedFiles: LogFileParserAtomType,
+  allMatchData: any[]
+): Promise<Map<string, PlayerStatusTimeline>> => {
   const statusTimelines = new Map<string, PlayerStatusTimeline>();
 
   // Create a map for quick lookup of matchData by matchId
   const matchDataMap = new Map(allMatchData.map(md => [md.matchId, md]));
 
-  for (const parsedFile of parsedFiles) {
-    const { matchId, logs } = parsedFile;
-    const matchData = matchDataMap.get(matchId);
+  for (const file of parsedFiles) {
+    const matchInfo = matchDataMap.get(file.matchId);
+    if (!matchInfo) continue; // Skip if no match data
 
-    if (!matchData) {
-      console.warn(`No matchData found for matchId ${matchId} when building player status timeline.`);
-      continue; // Skip if no corresponding matchData
-    }
-
-    const { team1Name, team2Name, team1Players: initialTeam1, team2Players: initialTeam2 } = matchData;
     const timeline: PlayerStatusTimeline = [];
-    // Each log.data is an object[], flatMap them and cast individual items to LogEvent
-    const matchLogs: LogEvent[] = logs.flatMap(log => log.data as LogEvent[]); 
+    const team1Players = new Set<string>();
+    const team2Players = new Set<string>();
 
-    // Initialize sets with starting players
-    let currentTeam1Players = new Set(initialTeam1);
-    let currentTeam2Players = new Set(initialTeam2);
+    // Process each log spec in the file
+    for (const logSpec of file.logs) {
+      const events = logSpec.data as LogEvent[];
 
-    // Add initial state at time 0
-    timeline.push({
-      timestamp: 0,
-      team1Players: new Set(currentTeam1Players),
-      team2Players: new Set(currentTeam2Players),
-    });
-
-    // Sort logs by time just in case they aren't already
-    matchLogs.sort((a: LogEvent, b: LogEvent) => a.timestamp - b.timestamp);
-
-    for (const event of matchLogs) {
-      let stateChanged = false;
-      const playerName = event.player_name; // Assuming player_name exists on relevant events
-      const playerTeam = event.player_team; // Assuming player_team exists
-
-      // Handle player join/leave events (adjust event types based on actual log spec)
-      if (event.event_type === 'PlayerJoinedMatch' && playerName) {
-        if (playerTeam === team1Name) {
-          if (!currentTeam1Players.has(playerName)) {
-            currentTeam1Players.add(playerName);
-            stateChanged = true;
+      for (const event of events) {
+        // Handle player spawn events to track active players
+        if (event.event_type === 'player_spawn' && event.player_name && event.player_team) {
+          if (event.player_team === matchInfo.team1Name) {
+            team1Players.add(event.player_name);
+          } else if (event.player_team === matchInfo.team2Name) {
+            team2Players.add(event.player_name);
           }
-        } else if (playerTeam === team2Name) {
-          if (!currentTeam2Players.has(playerName)) {
-            currentTeam2Players.add(playerName);
-            stateChanged = true;
-          }
-        }
-      } else if (event.event_type === 'PlayerLeftMatch' && playerName) {
-        if (currentTeam1Players.has(playerName)) {
-          currentTeam1Players.delete(playerName);
-          stateChanged = true;
-        } else if (currentTeam2Players.has(playerName)) {
-          currentTeam2Players.delete(playerName);
-          stateChanged = true;
-        }
-      }
-      // Potentially handle team swaps if logs provide that info
 
-      // If the player sets changed, record the new state
-      if (stateChanged) {
-        timeline.push({
-          timestamp: event.timestamp,
-          team1Players: new Set(currentTeam1Players),
-          team2Players: new Set(currentTeam2Players),
-        });
+          // Add entry to timeline
+          timeline.push({
+            timestamp: event.timestamp,
+            team1Players: new Set(team1Players),
+            team2Players: new Set(team2Players),
+          });
+        }
+
+        // Handle player death events to remove from active
+        if (event.event_type === 'player_death' && event.player_name && event.player_team) {
+          if (event.player_team === matchInfo.team1Name) {
+            team1Players.delete(event.player_name);
+          } else if (event.player_team === matchInfo.team2Name) {
+            team2Players.delete(event.player_name);
+          }
+
+          // Add entry to timeline
+          timeline.push({
+            timestamp: event.timestamp,
+            team1Players: new Set(team1Players),
+            team2Players: new Set(team2Players),
+          });
+        }
       }
     }
-    statusTimelines.set(matchId, timeline);
+
+    // Sort timeline by timestamp
+    timeline.sort((a, b) => a.timestamp - b.timestamp);
+    statusTimelines.set(file.matchId, timeline);
   }
 
   return statusTimelines;
+};
+
+export default atom(async (get): Promise<Map<string, PlayerStatusTimeline>> => {
+  const parsedFiles: LogFileParserAtomType = await get(logFileParser.atom);
+  const allMatchData = await get(matchData.atom);
+  
+  return playerStatusTimelineAtomFn(parsedFiles, allMatchData);
 });

@@ -1,14 +1,11 @@
 import { describe, it, expect } from 'vitest';
+import { killMatrixFn } from '@atoms/killMatrix';
 import { 
   transformPlayerInteractions, 
   createKillMatrix, 
-  calculatePlayerTotals,
-  generateKillMatrixData
-} from '@atoms/killMatrix'; // Corrected path
-import { MatchData } from '@atoms/matchDataAtom'; // Import MatchData type
-
-// Import the PlayerInteractionEvent interface
-import { PlayerInteractionEvent } from '@atoms/playerInteractionEventsAtom'; // Corrected path
+  calculatePlayerTotals
+} from '@library';
+import { MatchData, PlayerInteractionEvent } from '@atoms';
 
 // Sample interaction events for testing
 const sampleInteractionEvents: PlayerInteractionEvent[] = [
@@ -134,7 +131,7 @@ describe('killMatrix pure functions', () => {
   });
 
   it('generates complete kill matrix data', () => {
-    const result = generateKillMatrixData('match1', sampleMatchData, sampleInteractionEvents);
+    const result = killMatrixFn('match1', sampleMatchData, sampleInteractionEvents);
     
     expect(result).not.toBeNull();
     if (result) {
@@ -151,7 +148,7 @@ describe('killMatrix pure functions', () => {
   });
 
   it('handles missing match data gracefully', () => {
-    const result = generateKillMatrixData('nonexistent', sampleMatchData, sampleInteractionEvents);
+    const result = killMatrixFn('nonexistent', sampleMatchData, sampleInteractionEvents);
     expect(result).toBeNull();
   });
 });

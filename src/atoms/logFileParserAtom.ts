@@ -2,7 +2,7 @@ import { atom } from 'jotai';
 import { parseFile, stringHash } from '@library';
 import { logFileLoader, sampleData, LogFileLoaderType, LogFileParserOutput } from '@atoms';
 
-export const logFileParserFn = (
+export const logFileParserAtomFn = (
   loadedFiles: LogFileLoaderType,
   sampleDataFiles: LogFileLoaderType
 ): LogFileParserOutput[] => {
@@ -24,5 +24,5 @@ export default atom(async (get): Promise<LogFileParserOutput[]> => {
   const loadedFiles = await get(logFileLoader.atom);
   const sampleDataFiles = await get(sampleData.atom);
 
-  return logFileParserFn(loadedFiles, sampleDataFiles);
+  return logFileParserAtomFn(loadedFiles, sampleDataFiles);
 });

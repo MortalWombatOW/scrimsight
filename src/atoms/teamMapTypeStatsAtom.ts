@@ -1,19 +1,10 @@
-import { atom } from 'jotai'; // Import atom
+import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { Getter } from 'jotai'; // Import Getter type
-import { matchData } from '@atoms';
-import { MatchData } from '@atoms';
-
-export interface MapModeStats {
-  wins: number;
-  losses: number;
-  draws: number;
-  gamesPlayed: number;
-  winRate: number;
-}
+import { Getter } from 'jotai';
+import { matchData, MatchData, MapModeStats } from '@atoms';
 
 // Use atomFamily to create atoms based on teamId
-export const teamMapTypeStatsAtom = atomFamily((teamId: string) =>
+export default atomFamily((teamId: string) =>
   atom(async (get: Getter): Promise<Record<string, MapModeStats>> => { // Add Getter type
     const allMatches: MatchData[] = await get(matchData.atom); // Add type for clarity
 

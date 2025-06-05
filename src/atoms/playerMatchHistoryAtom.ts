@@ -1,10 +1,13 @@
 import { atom } from 'jotai';
-import { playerStat } from '@atoms';
-import { matchStart } from '@atoms';
-import { matchEnd } from '@atoms';
-import matchExtractorAtom from '@atoms/matchExtractorAtom';
+import {
+  playerStat,
+  matchStart,
+  matchEnd,
+  matchExtractor,
+  PlayerMatch,
+} from '@atoms';
 
-export const playerMatchHistoryAtom = (playerName: string) => atom(async (get): Promise<PlayerMatch[]> => {
+export const playerMatchHistoryAtomFn = (playerName: string) => atom(async (get): Promise<PlayerMatch[]> => {
   // Get the player's stat events to know in which match they participated and on which team
   const playerStats = await get(playerStat.atom);
   const relevantStats = playerStats.filter(stat => stat.playerName === playerName);
@@ -20,7 +23,7 @@ export const playerMatchHistoryAtom = (playerName: string) => atom(async (get): 
   // Get match start (provides map details and matchTime), match end (provides scores), and file info for date/time
   const matchStarts = await get(matchStart.atom);
   const matchEnds = await get(matchEnd.atom);
-  const matchFiles = await get(matchExtractorAtom);
+  const matchFiles = await get(matchExtractor.atom);
 
   const playerMatches: PlayerMatch[] = [];
 
@@ -64,14 +67,4 @@ export const playerMatchHistoryAtom = (playerName: string) => atom(async (get): 
   return playerMatches.slice(0, 10);
 });
 
-// Derived atom that takes a player's name and returns the last 10 matches
-export interface PlayerMatch {
-  matchId: string;
-  matchTime: number;   // for sorting purposes (from match start event)
-  date: string;
-  time: string;
-  mapName: string;
-  mapType: string;
-  playerTeam: string;
-  won: boolean;
-} 
+export default playerMatchHistoryAtomFn; 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, MockedFunction } from 'vitest';
-import { logFileParserFn } from '@atoms/logFileParserAtom';
+import { logFileParserAtomFn } from '@atoms/logFileParserAtom';
 import type { LogFileLoaderType } from '@atoms';
 import { parseFile, stringHash } from '@library';
 
@@ -12,7 +12,7 @@ vi.mock('@library', () => ({
   stringHash: vi.fn(),
 }));
 
-describe('logFileParserFn', () => {
+describe('logFileParserAtomFn', () => {
   const mockLoadedFile: LogFileLoaderType[0] = {
     fileName: 'loaded.txt',
     fileContent: 'loaded content',
@@ -35,7 +35,7 @@ describe('logFileParserFn', () => {
     const loadedFiles: LogFileLoaderType = [mockLoadedFile];
     const sampleDataFiles: LogFileLoaderType = [mockSampleFile];
 
-    const result = logFileParserFn(loadedFiles, sampleDataFiles);
+    const result = logFileParserAtomFn(loadedFiles, sampleDataFiles);
 
     expect(result).toHaveLength(2);
 
@@ -62,7 +62,7 @@ describe('logFileParserFn', () => {
   });
 
   it('should return an empty array if no files are provided', () => {
-    const result = logFileParserFn([], []);
+    const result = logFileParserAtomFn([], []);
     expect(result).toEqual([]);
     expect(mockParseFile).not.toHaveBeenCalled();
     expect(mockStringHash).not.toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe('logFileParserFn', () => {
     mockStringHash.mockReturnValueOnce(789);
 
     const loadedFiles: LogFileLoaderType = [mockLoadedFile];
-    const result = logFileParserFn(loadedFiles, []);
+    const result = logFileParserAtomFn(loadedFiles, []);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
@@ -91,7 +91,7 @@ describe('logFileParserFn', () => {
     mockStringHash.mockReturnValueOnce(101);
 
     const sampleDataFiles: LogFileLoaderType = [mockSampleFile];
-    const result = logFileParserFn([], sampleDataFiles);
+    const result = logFileParserAtomFn([], sampleDataFiles);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({

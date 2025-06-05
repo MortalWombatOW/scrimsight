@@ -1,13 +1,13 @@
-import { sampleDataLoaderFn } from '@atoms/sampleData';
+import { sampleDataFn } from '@atoms/sampleData';
 import file1 from "@library/sampledata/Log-2023-08-28-17-05-38.txt?raw";
 import file2 from "@library/sampledata/Log-2023-08-28-17-29-57.txt?raw";
 import file3 from "@library/sampledata/Log-2023-08-28-17-52-17.txt?raw";
 import file4 from "@library/sampledata/Log-2023-08-28-18-28-25.txt?raw";
 import file5 from "@library/sampledata/Log-2023-08-28-18-40-39.txt?raw";
 
-describe('sampleDataLoaderFn', () => {
+describe('sampleDataFn', () => {
   it('should return sample log data when enabled is true', () => {
-    const result = sampleDataLoaderFn(true);
+    const result = sampleDataFn(true);
     expect(result).toHaveLength(5);
 
     expect(result[0].fileName).toBe('Log-2023-08-28-17-05-38.txt');
@@ -32,7 +32,7 @@ describe('sampleDataLoaderFn', () => {
   });
 
   it('should return an empty array when enabled is false', () => {
-    const result =  sampleDataLoaderFn(false);
+    const result =  sampleDataFn(false);
     expect(result).toEqual([]);
   });
 });

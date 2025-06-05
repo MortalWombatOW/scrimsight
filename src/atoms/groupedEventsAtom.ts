@@ -3,28 +3,18 @@ import { atom } from 'jotai';
 import {
   KillLogEvent,
   OffensiveAssistLogEvent,
+  GroupedKillOffensiveAssistEvent,
   kill,
   offensiveAssist,
-} from '@atoms'; // Types and registered atoms from @atoms
+} from '@atoms';
 
 /**
- * An interface to represent grouped kill and offensive assist events.
+ * Pure function that groups kill events and offensive assists by matchId and matchTime.
  */
-export interface GroupedKillOffensiveAssistEvent {
-  matchId: string;
-  matchTime: number;
-  kills: KillLogEvent[];
-  assists: OffensiveAssistLogEvent[];
-}
-
-/**
- * Atom that groups kill events and offensive assists by matchId and matchTime.
- * If multiple kills or assists occur in the same moment, all are grouped together.
- */
-export const groupedKillOffensiveAssistExtractorAtom = atom(async (get) => {
-  const killEvents = await get(kill.atom);
-  const offensiveAssistEvents = await get(offensiveAssist.atom);
-
+export const groupedEventsAtomFn = (
+  killEvents: KillLogEvent[],
+  offensiveAssistEvents: OffensiveAssistLogEvent[]
+): GroupedKillOffensiveAssistEvent[] => {
   // Use a map to collect events under a single key (matchId & matchTime).
   const groupsByKey = new Map<string, GroupedKillOffensiveAssistEvent>();
 
@@ -56,4 +46,14 @@ export const groupedKillOffensiveAssistExtractorAtom = atom(async (get) => {
 
   // Convert the Map's values to an array for easy consumption.
   return Array.from(groupsByKey.values());
+};
+
+/**
+ * Atom that groups kill events and offensive assists by matchId and matchTime.
+ */
+export default atom(async (get): Promise<GroupedKillOffensiveAssistEvent[]> => {
+  const killEvents = await get(kill.atom);
+  const offensiveAssistEvents = await get(offensiveAssist.atom);
+  
+  return groupedEventsAtomFn(killEvents, offensiveAssistEvents);
 });

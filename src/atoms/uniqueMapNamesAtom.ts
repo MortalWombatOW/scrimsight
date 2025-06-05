@@ -5,7 +5,7 @@ import { MatchStartType } from '@atoms'; // Import MatchStartType
 /**
  * Pure function that extracts unique map names from all matches
  */
-export const uniqueMapNamesFn = (matchStarts: MatchStartType): string[] => {
+export const uniqueMapNamesAtomFn = (matchStarts: MatchStartType): string[] => {
   // Get unique map names
   const uniqueNames = Array.from(new Set(
     matchStarts.map(match => match.mapName)
@@ -19,5 +19,5 @@ export const uniqueMapNamesFn = (matchStarts: MatchStartType): string[] => {
  */
 export default atom(async (get): Promise<string[]> => {
   const matchStartsData = await get(matchStart.atom);
-  return uniqueMapNamesFn(matchStartsData);
+  return uniqueMapNamesAtomFn(matchStartsData);
 });

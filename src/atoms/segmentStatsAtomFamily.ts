@@ -1,50 +1,32 @@
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { playerInteractionEvents, PlayerInteractionEvent } from '@atoms';
+import { playerInteractionEvents, PlayerInteractionEvent, SegmentParams, SegmentStats, PlayerStatusTimeline } from '@atoms';
 import { ultimateEvents, UltimateEvent } from '@atoms';
 import { teamfights } from '@atoms';
 import { playerStatusTimeline } from '@atoms';
 import { matchData, MatchData } from '@atoms';
 
-export interface SegmentParams {
-  matchId: string;
-  startTime: number;
-  endTime: number;
-  type: 'map' | 'round' | 'teamfight';
-}
-
-export interface SegmentStats {
-  team1Kills: number;
-  team2Kills: number;
-  team1UltsUsed: number;
-  team2UltsUsed: number;
-  startPlayerCountTeam1: number;
-  startPlayerCountTeam2: number;
-  endPlayerCountTeam1: number;
-  endPlayerCountTeam2: number;
-}
-
-// Helper function to find player counts at a specific time
-const getPlayerCountsAtTime = (timeline: any | undefined, time: number): { team1Count: number; team2Count: number } => {
-  if (!timeline || timeline.length === 0) {
-    return { team1Count: 0, team2Count: 0 }; // Default or error state
-  }
-  // Find the latest entry at or before the target time
-  let relevantEntry = timeline[0];
-  for (let i = timeline.length - 1; i >= 0; i--) {
-    if (timeline[i].timestamp <= time) {
-      relevantEntry = timeline[i];
-      break;
-    }
-  }
-  return {
-    team1Count: relevantEntry.team1Players.size,
-    team2Count: relevantEntry.team2Players.size,
-  };
-};
-
-export const segmentStatsAtomFamily = atomFamily((params: SegmentParams) =>
+// AtomFamily for calculating segment statistics
+export default atomFamily((params: SegmentParams) =>
   atom(async (get): Promise<SegmentStats | null> => {
+    // Helper function to find player counts at a specific time
+    const getPlayerCountsAtTime = (timeline: PlayerStatusTimeline | undefined, time: number): { team1Count: number; team2Count: number } => {
+      if (!timeline || timeline.length === 0) {
+        return { team1Count: 0, team2Count: 0 }; // Default or error state
+      }
+      // Find the latest entry at or before the target time
+      let relevantEntry = timeline[0];
+      for (let i = timeline.length - 1; i >= 0; i--) {
+        if (timeline[i].timestamp <= time) {
+          relevantEntry = timeline[i];
+          break;
+        }
+      }
+      return {
+        team1Count: relevantEntry.team1Players.size,
+        team2Count: relevantEntry.team2Players.size,
+      };
+    };
     const { matchId, startTime, endTime, type } = params;
 
     // Get necessary data sources

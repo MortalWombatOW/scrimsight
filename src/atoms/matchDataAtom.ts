@@ -1,13 +1,21 @@
 import { atom } from 'jotai';
-import { matchExtractor } from '@atoms';
-import { matchStart } from '@atoms';
-import { matchEnd } from '@atoms';
-import { playerStat } from '@atoms';
-import { mapTimes } from '@atoms';
-import { roundEnd } from '@atoms';
-import { MatchStartLogEvent, MatchEndLogEvent, PlayerStatLogEvent, RoundEndLogEvent } from '@atoms';
+import {
+  matchExtractor,
+  matchStart,
+  matchEnd,
+  playerStat,
+  mapTimes,
+  roundEnd,
+  MatchStartLogEvent,
+  MatchEndLogEvent,
+  PlayerStatLogEvent,
+  RoundEndLogEvent,
+  MatchFileInfo,
+  MatchData,
+  MapTimes,
+} from '@atoms';
 
-export const matchDataFn = (
+export const matchDataAtomFn = (
   matchInfo: MatchFileInfo[],
   matchStarts: MatchStartLogEvent[],
   matchEnds: MatchEndLogEvent[],
@@ -65,43 +73,6 @@ export const matchDataFn = (
   });
 };
 
-export interface MapTimes {
-  matchId: string;
-  duration: number;
-  startTime: number;
-  endTime: number;
-}
-
-/**
- * Interface for combined match data
- */
-export interface MatchFileInfo {
-  matchId: string;
-  name: string;
-  fileModified: number;
-  dateString: string;
-}
-
-/**
- * Pure function that combines match information from various sources
- */
-export interface MatchData {
-  matchId: string;
-  fileName: string;
-  fileModified: number;
-  dateString: string;
-  map: string;
-  mode: string;
-  team1Name: string;
-  team2Name: string;
-  team1Score: number;
-  team2Score: number;
-  team1Players: string[];
-  team2Players: string[];
-  duration: number;
-  roundWinners: ('team1' | 'team2' | 'draw')[];
-  winner: string | null; // Added: team1Name, team2Name, or null for draw
-}
 
 /**
  * Atom that combines match information from various sources
@@ -114,5 +85,5 @@ export default atom(async (get): Promise<MatchData[]> => {
   const mapTimesData = await get(mapTimes.atom);
   const roundEndsData = await get(roundEnd.atom);
 
-  return matchDataFn(matchInfo, matchStarts, matchEnds, playerStats, mapTimesData, roundEndsData);
+  return matchDataAtomFn(matchInfo, matchStarts, matchEnds, playerStats, mapTimesData, roundEndsData);
 });

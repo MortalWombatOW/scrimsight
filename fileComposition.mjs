@@ -36,7 +36,7 @@ export const fileCompositionConfig = createFileComposition({
         nestedSelectors: false,
       },
       rootSelectorsLimits: [
-        { selector: "variable", limit: 2 }, // private atom + default export
+        { selector: "variable", limit: 3 }, // private atom + writable atom + default export
         { selector: "arrowFunction", limit: 1 } // helper function
       ],
       rules: [
@@ -54,12 +54,25 @@ export const fileCompositionConfig = createFileComposition({
           format: "_{camelCase}",
           positionIndex: 1,
         },
+        // Writable atom variable (non-exported) 
+        {
+          selector: "variable",
+          scope: "fileRoot",
+          format: "{camelCase}Atom",
+          positionIndex: 2,
+        },
         // Default writable atom export (unnamed default)
         {
           selector: "variable",
           scope: "fileExport",
           format: "default",
-          positionIndex: 2,
+          positionIndex: 3,
+        },
+        // Allow function calls (variableExpression) like atom(), get(), set()
+        {
+          selector: "variableExpression",
+          scope: "file",
+          format: "*", // Allow any function calls in input atoms
         },
       ],
     },

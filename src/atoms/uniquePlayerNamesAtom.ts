@@ -10,12 +10,7 @@ export const uniquePlayerNamesAtomFn = (playerStats: PlayerStatType): string[] =
   ));
 };
 
-/**
- * Atom that extracts unique player names from all matches
- */
-const uniquePlayerNamesAtom = atom(async (get): Promise<string[]> => {
+export default atom(async (get): Promise<string[]> => {
   const playerStats = await get(playerStat.atom);
   return uniquePlayerNamesAtomFn(playerStats);
-});
-
-export default uniquePlayerNamesAtom; 
+}); 

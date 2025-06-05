@@ -13,7 +13,7 @@ import {
 import { OverwatchRole } from '@library';
 
 // Pure function to calculate average metrics per player role
-export const averageMetricPerRoleFn = (
+export const averageMetricPerRoleAtomFn = (
   playerStatsData: Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys>
 ): AverageMetricPerRole => {
   // Intermediate structure to sum stats and playtime per role
@@ -77,5 +77,5 @@ export const averageMetricPerRoleFn = (
 // Atom to calculate average metrics per player role
 export default atom(async (get): Promise<AverageMetricPerRole> => {
   const playerStatsData: Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = await get(playerStatsBase.atom);
-  return averageMetricPerRoleFn(playerStatsData);
+  return averageMetricPerRoleAtomFn(playerStatsData);
 });

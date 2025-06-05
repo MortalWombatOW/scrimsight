@@ -2,6 +2,7 @@ import { Atom, WritableAtom, PrimitiveAtom } from 'jotai';
 import { Metric } from '@library';
 export type { Metric };
 import { OverwatchRole } from '@library';
+export type { OverwatchRole };
 import teamPlayersAtom from '@atoms/teamPlayers'; // Changed: Removed named import of TeamPlayersType
 import sampleDataEnabledAtom from '@atoms/sampleDataEnabled';
 import sampleDataAtom from '@atoms/sampleData';
@@ -11,10 +12,10 @@ import logFileParserAtom from '@atoms/logFileParserAtom';
 import averageMetricPerHeroAtom from '@atoms/averageMetricPerHeroAtom';
 import averageMetricPerMapAtom from '@atoms/averageMetricPerMapAtom';
 import averageMetricPerRoleAtom from '@atoms/averageMetricPerRoleAtom';
-import { firstKillImpactAtom } from '@atoms/firstKillImpactAtom';
-import teamfightsAtom, { Teamfight } from '@atoms/teamfightsAtom';
-import { playerInteractionEventsAtom, PlayerInteractionEvent } from '@atoms/playerInteractionEventsAtom';
-import { ultimateEventsAtom, UltimateEvent } from '@atoms/ultimateEventsAtom';
+import firstKillImpactAtom from '@atoms/firstKillImpactAtom';
+import teamfightsAtom from '@atoms/teamfightsAtom';
+import playerInteractionEventsAtom from '@atoms/playerInteractionEventsAtom';
+import ultimateEventsAtom from '@atoms/ultimateEventsAtom';
 import uniqueHeroNamesAtom from '@atoms/uniqueHeroNamesAtom';
 import playerStatsBaseAtom from '@atoms/playerStatsBaseAtom';
 import uniqueCategoryValuesAtom from '@atoms/uniqueCategoryValuesAtom';
@@ -41,16 +42,17 @@ import ultimateEndAtom from '@atoms/ultimateEnd';
 import ultimateStartAtom from '@atoms/ultimateStart';
 import teamfightParticipationAtom from '@atoms/teamfightParticipationAtom';
 import uniquePlayerNamesAtom from '@atoms/uniquePlayerNamesAtom';
-import { roundTimesAtom, RoundTimes } from '@atoms/roundTimesAtom';
-import { playerStatusTimelineAtom, PlayerStatusTimeline } from '@atoms/playerStatusTimelineAtom';
+import roundTimesAtom from '@atoms/roundTimesAtom';
+import playerStatusTimelineAtom from '@atoms/playerStatusTimelineAtom';
 import playerEventsAtom from '@atoms/playerEventsAtom';
 import playerFirstKillDeathRateAtom from '@atoms/playerFirstKillDeathRateAtom';
 import matchDataAtom from '@atoms/matchDataAtom';
 import uniqueMapNamesAtom from '@atoms/uniqueMapNamesAtom';
-import { scrimAtom } from '@atoms/scrimAtom';
-import { teamStatsAtom } from '@atoms/teamStatsAtom';
+import scrimAtom from '@atoms/scrimAtom';
+import teamStatsAtom from '@atoms/teamStatsAtom';
 import mapTimesAtom from '@atoms/mapTimesAtom';
 import matchExtractorAtom from '@atoms/matchExtractorAtom';
+import heroPlaytimeAtom from '@atoms/heroPlaytimeAtom';
 
 // All atoms are of this type
 export type ScrimsightAtom<Value> = {
@@ -125,6 +127,13 @@ export type AverageMetricPerMap = Record<string, AverageMapStats>;
 export type AverageRoleStats = { [K in PlayerStatsNumericalKeys]?: number; };
 export type AverageMetricPerRole = Record<OverwatchRole, AverageRoleStats>;
 
+export interface TeamComposition { teamName: string; heroes: string[]; timePlayed: number; }
+export interface MapModeStats { wins: number; losses: number; draws: number; gamesPlayed: number; winRate: number; }
+export interface UltimateEvent { id: string; matchId: string; playerName: string; playerTeam: string; playerHero: string; ultimateId: string; ultimateChargedTime: number; ultimateStartTime: number; ultimateEndTime: number; ultimateHoldTime: number; }
+export interface UniqueGameMode { mapType: string; }
+export interface HeroUltimateImpactStats { heroName: string; ultsUsedInFights: number; totalKillsDuringUltWindow: number; fightWinsWithUlt: number; avgKillsPerUlt: number; fightWinRateWithUlt: number; }
+export type UltimateImpactStats = Record<string, Record<string, HeroUltimateImpactStats>>;
+export interface Scrim { dateString: string; team1Name: string; team2Name: string; team1Players: string[]; team2Players: string[]; team1Wins: number; team2Wins: number; draws: number; matchIds: string[]; duration: number; }
 export interface CompositionMatchup { opponentComposition: string[]; playtimeSecondsAgainst: number; winsAgainst: number; lossesAgainst: number; drawsAgainst: number; winRateAgainst: number; }
 export interface DetailedComposition { composition: string[]; playtimeSeconds: number; wins: number; losses: number; draws: number; winRate: number; frequency: number; matchups: CompositionMatchup[]; }
 export interface TeamFirstKillImpactStats { teamName: string; totalFights: number; fightsWon: number; winRate: number; fightsWithFirstKill: number; fightsWonWithFirstKill: number; firstKillWinRate: number; fightsWithFirstDeath: number; fightsLostWithFirstDeath: number; firstDeathLossRate: number; }
@@ -135,13 +144,104 @@ export interface HeroPlaytime { playerName: string; matchId: string; roundNumber
 export type HeroPlaytimeCategoryKeys = "playerName" | "matchId" | "roundNumber" | "hero";
 export type HeroPlaytimeNumericalKeys = "playtime";
 
+// Segment Stats Types
+export interface SegmentParams {
+  matchId: string;
+  startTime: number;
+  endTime: number;
+  type: 'map' | 'round' | 'teamfight';
+}
+
+export interface SegmentStats {
+  team1Kills: number;
+  team2Kills: number;
+  team1UltsUsed: number;
+  team2UltsUsed: number;
+  startPlayerCountTeam1: number;
+  startPlayerCountTeam2: number;
+  endPlayerCountTeam1: number;
+  endPlayerCountTeam2: number;
+}
+
+// Player Comparison Types
+export interface PlayerComparisonParams {
+  playerName: string;
+  heroName?: string; // Optional: Compare stats for a specific hero
+}
+
+export interface MetricComparison {
+  metric: PlayerStatsNumericalKeys;
+  playerValue: number;
+  benchmarkValue?: number; // Benchmark might not exist for all metrics/contexts
+  benchmarkType: 'Role Average' | 'Hero Average' | 'N/A';
+  delta?: number; // Difference between player and benchmark
+  percentDifference?: number; // Percentage difference
+}
+
+// Teamfight Types
+export interface Teamfight {
+  fightId: string; // Unique identifier for the fight (e.g., {matchId}-{startTime})
+  matchId: string;
+  startTime: number;
+  endTime: number;
+  team1Name: string;
+  team2Name: string;
+  winner: string | null; // Changed type from 'team1'|'team2'|'draw' to string | null
+  duration: number;
+  team1Kills: number;
+  team2Kills: number;
+  // names of players
+  team1PlayersWithUltimatesChargedAtStart: string[];
+  team2PlayersWithUltimatesChargedAtStart: string[];
+  team1PlayersWithUltimatesUsed: string[];
+  team2PlayersWithUltimatesUsed: string[];
+  // First kill/death details
+  firstKillPlayer?: string;
+  firstKillTeam?: string;
+  firstKillTime?: number;
+  firstDeathPlayer?: string; // Victim of the first kill
+  firstDeathTeam?: string;
+  firstDeathTime?: number; // Same as firstKillTime
+}
+
+export type TeamfightPass1 = Pick<Teamfight, 'matchId' | 'startTime' | 'endTime' | 'duration' | 'team1Kills' | 'team2Kills' | 'team1Name' | 'team2Name'>;
+
+// Kill Matrix Types
+export interface PlayerTotals {
+  kills: number;
+  deaths: number;
+}
+
+export interface PlayerInteraction {
+  sourcePlayerName: string;
+  sourceTeamName: string;
+  targetPlayerName: string;
+  value: number;
+}
+
+export interface KillMatrixData {
+  killMatrix: { [killer: string]: { [victim: string]: number } };
+  playerTotals: { [player: string]: PlayerTotals };
+  team1Players: string[];
+  team2Players: string[];
+  team1Name: string;
+  team2Name: string;
+  allPlayers: string[];
+}
+
+// Grouped Events Types
+export interface GroupedKillOffensiveAssistEvent {
+  matchId: string;
+  matchTime: number;
+  kills: KillLogEvent[];
+  assists: OffensiveAssistLogEvent[];
+}
+
 // Additional derived atom types
 export interface TeamfightParticipation {
   team1Players: string[];
   team2Players: string[];
 }
-export type { RoundTimes };
-export type { PlayerStatusTimeline };
 export type TeamfightParticipationType = Map<string, TeamfightParticipation>;
 export type PlayerStatusTimelineType = Map<string, PlayerStatusTimeline>;
 export type RoundTimesType = RoundTimes[];
@@ -156,13 +256,193 @@ export interface PlayerFirstKillDeathRateStats {
   firstDeathRate: number; // firstDeaths / teamfightsParticipated
 }
 
+// Contextual Stat Atoms Types
+export interface PlayerMatchParams {
+  matchId: string;
+  playerId: string;
+}
+
+export interface TeamMatchParams {
+  matchId: string;
+  teamName: string;
+}
+
+export interface PlayerScrimParams {
+  scrimId: string; // Derived from date/teams, e.g., "2023-08-28-Team A-vs-Team B"
+  playerId: string;
+}
+
+export interface TeamScrimParams {
+  scrimId: string; // Derived from date/teams
+  teamName: string;
+}
+
+export interface PlayerTeamParams {
+  teamName: string;
+  playerId: string;
+}
+
+export interface MatchScrimParams {
+  scrimId: string; // Derived from date/teams
+}
+
+// Team Compositions Types
+export type HeroEvent = HeroSpawnLogEvent | HeroSwapLogEvent;
+
+export interface AggregatedMatchupStats {
+  opponentCompositionKey: string;
+  opponentHeroes: string[];
+  playtimeSecondsAgainst: number;
+  winsAgainst: number;
+  lossesAgainst: number;
+  drawsAgainst: number;
+}
+
+export interface AggregatedCompStats {
+  compositionKey: string; // Comma-separated sorted heroes
+  heroes: string[];
+  playtimeSeconds: number; // Total playtime for this friendly comp
+  wins: number; // Overall wins attributed to this comp (match-based)
+  losses: number; // Overall losses attributed to this comp (match-based)
+  draws: number; // Overall draws attributed to this comp (match-based)
+  matchesSeen: Set<string>; // Track distinct matches this friendly comp appeared in
+  matchups: Map<string, AggregatedMatchupStats>; // Key: opponent comp key
+}
+
+// List Summary Types
+export interface ScrimListSummary {
+  scrimId: string; // Unique ID derived from date and teams
+  teamNames: string[];
+  dateString: string;
+  mapCount: number;
+  score: string; // e.g., "3-2-1" (W-L-D for team1)
+  duration: number; // Total duration in seconds
+}
+
+export interface TeamListSummary {
+  teamName: string;
+  playerCount: number;
+  winRate: number; // Calculated as wins / (wins + losses)
+  gamesPlayed: number;
+  firstKillWinRate: number; // Added: Win rate in teamfights where this team got the first kill
+}
+
+export interface PlayerListSummary {
+  playerName: string;
+  teamName: string; // Primary team (most playtime)
+  topHero: string; // Hero with most playtime
+  eliminations: number;
+  deaths: number;
+  assists: number; // Calculated as offensive + defensive assists
+  role: OverwatchRole; // Role with most playtime
+  firstKillRate: number; // Added: Percentage of teamfights participated in where player got first kill
+}
+
+// Map Times Types
+export interface MapTimes {
+  matchId: string;
+  startTime: number;
+  endTime: number;
+  duration: number;
+}
+
+// Match Data Types
+export interface MatchFileInfo {
+  matchId: string;
+  name: string;
+  fileModified: number;
+  dateString: string;
+  timeString: string;
+}
+
+export interface MatchData {
+  matchId: string;
+  fileName: string;
+  fileModified: number;
+  dateString: string;
+  map: string;
+  mode: string;
+  team1Name: string;
+  team2Name: string;
+  team1Score: number;
+  team2Score: number;
+  team1Players: string[];
+  team2Players: string[];
+  duration: number;
+  roundWinners: ('team1' | 'team2' | 'draw')[];
+  winner: string | null; // Added: team1Name, team2Name, or null for draw
+}
+
+// Player Interaction Event Types
+export interface PlayerInteractionEvent {
+  id: string;
+  matchId: string;
+  playerName: string;
+  playerTeam: string;
+  playerHero: string;
+  otherPlayerName: string;
+  playerInteractionEventTime: number;
+  playerInteractionEventType: string;
+  direction: 'incoming' | 'outgoing';
+}
+
+// Player Lives Types
+export interface PlayerLife {
+  matchId: string;
+  playerName: string;
+  playerHero: string;
+  startTime: number;
+  endTime: number;
+}
+
+// Player Match History Types
+export interface PlayerMatch {
+  matchId: string;
+  matchTime: number;   // for sorting purposes (from match start event)
+  date: string;
+  time: string;
+  mapName: string;
+  mapType: string;
+  playerTeam: string;
+  won: boolean;
+}
+
+// Player Stat Expanded Types
+export interface PlayerStatsExpanded extends PlayerStatLogEvent {
+  playerRole: string;
+}
+
+// Player Status Timeline Types
+export interface LogEvent {
+  timestamp: number;
+  event_type: string;
+  player_name?: string;
+  player_team?: string;
+  [key: string]: unknown;
+}
+
+export interface PlayerStatusEntry {
+  timestamp: number;
+  team1Players: Set<string>;
+  team2Players: Set<string>;
+}
+
+export type PlayerStatusTimeline = PlayerStatusEntry[];
+
+// Round Times Types
+export interface RoundTimes {
+  matchId: string;
+  roundNumber: number;
+  roundStartTime: number;
+  roundSetupCompleteTime: number;
+  roundEndTime: number;
+  roundDuration: number;
+}
+
 // Re-exporting types from their source files
-export type { Teamfight };
-export type { PlayerInteractionEvent };
-export type { UltimateEvent };
+// UltimateEvent is now defined above
 // TeamPlayersType is now defined above
-export type { MatchData } from '@atoms/matchDataAtom';
-export type { Scrim } from '@atoms/scrimAtom';
+// Scrim is now defined above
 
 // Atom Registrations
 export const teamPlayers: ScrimsightAtom<Promise<TeamPlayersType[]>> = { name: 'teamPlayers', description: 'All players for each team', atom: teamPlayersAtom };
@@ -227,3 +507,4 @@ export const scrims: ScrimsightAtom<Promise<any[]>> = { name: 'scrims', descript
 export const teamStats: ScrimsightAtom<Promise<any[]>> = { name: 'teamStats', description: 'Atom that calculates team-level statistics and performance metrics.', atom: teamStatsAtom };
 export const mapTimes: ScrimsightAtom<Promise<any[]>> = { name: 'mapTimes', description: 'Atom that calculates duration and timing data for each map/match.', atom: mapTimesAtom };
 export const matchExtractor: ScrimsightAtom<Promise<any[]>> = { name: 'matchExtractor', description: 'Atom that extracts match file information from log files.', atom: matchExtractorAtom };
+export const heroPlaytime: ScrimsightAtom<Promise<Metric<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys>>> = { name: 'heroPlaytime', description: 'Atom that calculates hero playtime for each player per round.', atom: heroPlaytimeAtom };

@@ -1,8 +1,11 @@
 import { atom, Getter } from 'jotai'; // Added Getter
-import { playerInteractionEvents, PlayerInteractionEvent } from '@atoms';
+import { playerInteractionEvents, PlayerInteractionEvent, Teamfight, TeamfightPass1 } from '@atoms';
 import { ultimateEvents } from '@atoms';
 import { matchData } from '@atoms';
 export const teamfightsAtomFn = async (get: Getter): Promise<Teamfight[]> => {
+  const TEAMFIGHT_BUFFER_TIME = 10; // seconds
+  const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
+  
   const allPlayerInteractionEvents = await get(playerInteractionEvents.atom);
   
 
@@ -228,39 +231,9 @@ export const teamfightsAtomFn = async (get: Getter): Promise<Teamfight[]> => {
   
   return teamfights;
 }; // seconds
-const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
 
 // A teamfight is a period of time where a teams are engaged in a fight.
 // The teamfights in a match are seperated by periods of at least TEAMFIGHT_BUFFER_TIME seconds of kill-less time.
-export interface Teamfight {
-  fightId: string; // Unique identifier for the fight (e.g., {matchId}-{startTime})
-  matchId: string;
-  startTime: number;
-  endTime: number;
-  team1Name: string;
-  team2Name: string;
-  winner: string | null; // Changed type from 'team1'|'team2'|'draw' to string | null
-  duration: number;
-  team1Kills: number;
-  team2Kills: number;
-  // names of players
-  team1PlayersWithUltimatesChargedAtStart: string[];
-  team2PlayersWithUltimatesChargedAtStart: string[];
-  team1PlayersWithUltimatesUsed: string[];
-  team2PlayersWithUltimatesUsed: string[];
-  // First kill/death details
-  firstKillPlayer?: string;
-  firstKillTeam?: string;
-  firstKillTime?: number;
-  firstDeathPlayer?: string; // Victim of the first kill
-  firstDeathTeam?: string;
-  firstDeathTime?: number; // Same as firstKillTime
-}
-
-// Define the type for the intermediate teamfight data structure
-type TeamfightPass1 = Pick<Teamfight, 'matchId' | 'startTime' | 'endTime' | 'duration' | 'team1Kills' | 'team2Kills' | 'team1Name' | 'team2Name'>;
-
-const TEAMFIGHT_BUFFER_TIME = 10;
 
 export default atom(async (get) => {
   return teamfightsAtomFn(get);

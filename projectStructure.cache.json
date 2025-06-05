@@ -1,29 +1,5 @@
 [
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/uniqueHeroNamesAtom.test.ts",
-    "errorMessage": "🔥 File 'uniqueHeroNamesAtom.test.ts' is invalid. 🔥\n\nAllowed names  = index.ts, {camelCase}.ts\nError location = ./src/atoms/uniqueHeroNamesAtom.test.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/sampleData.test.ts",
-    "errorMessage": "🔥 File 'sampleData.test.ts' is invalid. 🔥\n\nAllowed names  = index.ts, {camelCase}.ts\nError location = ./src/atoms/sampleData.test.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/logFileParserAtom.test.ts",
-    "errorMessage": "🔥 File 'logFileParserAtom.test.ts' is invalid. 🔥\n\nAllowed names  = index.ts, {camelCase}.ts\nError location = ./src/atoms/logFileParserAtom.test.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/logFileLoaderAtom.test.ts",
-    "errorMessage": "🔥 File 'logFileLoaderAtom.test.ts' is invalid. 🔥\n\nAllowed names  = index.ts, {camelCase}.ts\nError location = ./src/atoms/logFileLoaderAtom.test.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/logFileInputAtom.test.ts",
-    "errorMessage": "🔥 File 'logFileInputAtom.test.ts' is invalid. 🔥\n\nAllowed names  = index.ts, {camelCase}.ts\nError location = ./src/atoms/logFileInputAtom.test.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/killMatrix.test.ts",
-    "errorMessage": "🔥 File 'killMatrix.test.ts' is invalid. 🔥\n\nAllowed names  = index.ts, {camelCase}.ts\nError location = ./src/atoms/killMatrix.test.ts\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Teams/TeamsPage.tsx",
     "errorMessage": "🔥 Folder 'Teams' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Teams\n\n"
   },

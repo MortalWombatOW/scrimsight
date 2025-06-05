@@ -67,10 +67,22 @@ createIndependentModules({
       ],
       errorMessage: "Library index (src/lib/index.ts) can only import files from '@library/filename.ts'.",
     },
-    // Atom Test: src/atoms/*.test.ts
+    // Sample Data Test: Special case for raw file imports
+    {
+      name: "sample-data-test",
+      pattern: "src/atoms/sampleData.test.ts",
+      allowImportsFrom: [
+        "src/atoms/*.ts",      // atom (for testing specific atom)
+        "src/atoms/index.ts",  // atom-index (for other atoms via index) 
+        "src/lib/index.ts",    // library-index
+        "src/lib/sampledata/*.txt", // raw sample data files
+      ],
+      errorMessage: "Sample data test (src/atoms/sampleData.test.ts) can import from atoms, atom index (@atoms), library index (@library), and raw sample data files.",
+    },
+    // Atom Test: src/atoms/*.test.ts (excluding sampleData.test.ts)
     {
       name: "atom-test",
-      pattern: "src/atoms/*.test.ts", 
+      pattern: [["src/atoms/*.test.ts", "!src/atoms/sampleData.test.ts"]], 
       allowImportsFrom: [
         "src/atoms/*.ts",      // atom (for testing specific atom, e.g. './someAtom' or aliased) 
         "src/atoms/index.ts",  // atom-index (for other atoms via index) 
@@ -111,12 +123,23 @@ createIndependentModules({
       ],
       errorMessage: "Library tests (src/lib/*.test.ts) have restricted dependencies, can only import from a library (@library/libraryName), or the library index (@library).",
     },
-    // Atom: src/atoms/*.ts (excluding index and test files)
+    // Sample Data Atom: Special case for raw file imports
+    {
+      name: "sample-data-atom",
+      pattern: "src/atoms/sampleData.ts",
+      allowImportsFrom: [
+        "src/atoms/index.ts",   // atom-index (for types and other atoms)
+        "src/lib/index.ts",     // library-index
+        "src/lib/sampledata/*.txt", // raw sample data files
+      ],
+      errorMessage: "Sample data atom (src/atoms/sampleData.ts) can import from atom index (@atoms), library index (@library), and raw sample data files.",
+    },
+    // Atom: src/atoms/*.ts (excluding index, test files, and sampleData)
     {
       name: "atom",
       // pattern is an array of patterns: [include, !exclude1, !exclude2]
       // This is string[] which is a valid type for 'pattern'
-      pattern: [["src/atoms/*.ts", "!src/atoms/index.ts", "!src/atoms/*.test.ts"]], 
+      pattern: [["src/atoms/*.ts", "!src/atoms/index.ts", "!src/atoms/*.test.ts", "!src/atoms/sampleData.ts"]], 
       allowImportsFrom: [
         "src/atoms/index.ts", // atom-index (for other atoms) 
         "src/lib/index.ts",   // library-index 

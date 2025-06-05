@@ -1,37 +1,18 @@
-import { atom } from 'jotai'; // Import atom
+import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { Getter } from 'jotai';
-import { matchData } from '@atoms';
-import { heroSpawn } from '@atoms';
-import { HeroSpawnLogEvent, DetailedComposition, CompositionMatchup } from '@atoms'; // Type import from index
-import { heroSwap } from '@atoms';
-import { HeroSwapLogEvent } from '@atoms';   // Type import from index
-import { mapTimes } from '@atoms';
+import {
+  matchData,
+  heroSpawn,
+  heroSwap,
+  mapTimes,
+  DetailedComposition,
+  CompositionMatchup,
+  HeroEvent,
+  AggregatedCompStats,
+} from '@atoms';
 
-type HeroEvent = HeroSpawnLogEvent | HeroSwapLogEvent;
-
-// Intermediate structure for aggregation
-interface AggregatedMatchupStats { // Renamed and adjusted for matchups
-  opponentCompositionKey: string;
-  opponentHeroes: string[];
-  playtimeSecondsAgainst: number;
-  winsAgainst: number;
-  lossesAgainst: number;
-  drawsAgainst: number;
-}
-
-interface AggregatedCompStats {
-  compositionKey: string; // Comma-separated sorted heroes
-  heroes: string[];
-  playtimeSeconds: number; // Total playtime for this friendly comp
-  wins: number; // Overall wins attributed to this comp (match-based)
-  losses: number; // Overall losses attributed to this comp (match-based)
-  draws: number; // Overall draws attributed to this comp (match-based)
-  matchesSeen: Set<string>; // Track distinct matches this friendly comp appeared in
-  matchups: Map<string, AggregatedMatchupStats>; // Key: opponent comp key
-}
-
-export const detailedTeamCompositionsAtom = atomFamily((friendlyTeamId: string) => // Renamed param for clarity
+export const detailedTeamCompositionsAtomFn = () => atomFamily((friendlyTeamId: string) =>
   atom(async (get: Getter): Promise<DetailedComposition[]> => {
     const [allMatches, heroSpawns, heroSwaps, allMapTimes] = await Promise.all([
       get(matchData.atom),
@@ -286,3 +267,5 @@ export const detailedTeamCompositionsAtom = atomFamily((friendlyTeamId: string) 
     return finalDetailedComps;
   })
 );
+
+export default detailedTeamCompositionsAtomFn();

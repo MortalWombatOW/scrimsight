@@ -1,21 +1,19 @@
 import { atom } from "jotai";
-import { playerEvents } from '@atoms'; // Use registered atom
-import { playerInteractionEventsAtom } from "@atoms/playerInteractionEventsAtom";
-import { roundTimes } from "@atoms";
+import {
+  playerEvents,
+  playerInteractionEvents,
+  roundTimes,
+  PlayerLife,
+  PlayerInteractionEvent,
+  RoundTimesType,
+} from '@atoms';
 
-export interface PlayerLife {
-  matchId: string;
-  playerName: string;
-  playerHero: string;
-  startTime: number;
-  endTime: number;
-}
-
-export const playerLivesAtom = atom(async (get) => {
-  const playerInteractionEvents = await get(playerInteractionEventsAtom);
-  const playerEventsData: any = await get(playerEvents.atom);
-  const roundTimesData = await get(roundTimes.atom);
-
+// Define player event type based on usage
+export const playerLivesAtomFn = (
+  playerInteractionEventsData: PlayerInteractionEvent[],
+  playerEventsData: PlayerEvent[],
+  roundTimesData: RoundTimesType
+): PlayerLife[] => {
   const lives: PlayerLife[] = [];
   const activeLifeByPlayer: Map<string, PlayerLife> = new Map();
 
@@ -35,12 +33,12 @@ export const playerLivesAtom = atom(async (get) => {
 
   // Process all events in chronological order
   const allEvents = [
-    ...playerEventsData.map((e: any) => ({
+    ...playerEventsData.map((e: PlayerEvent) => ({
       ...e,
       time: e.playerEventTime,
       type: e.playerEventType,
     })),
-    ...playerInteractionEvents
+    ...playerInteractionEventsData
       .filter(e => e.playerInteractionEventType === 'Died' && e.direction === 'incoming')
       .map(e => ({
         matchId: e.matchId,
@@ -91,9 +89,9 @@ export const playerLivesAtom = atom(async (get) => {
   // End any remaining active lives at their round end times
   for (const [_, life] of activeLifeByPlayer.entries()) {
     const roundEnd = roundTimesData
-      .filter(r => r.matchId === life.matchId)
+      .filter((r) => r.matchId === life.matchId)
       .sort((a, b) => b.roundEndTime - a.roundEndTime)
-      .find(r => r.roundEndTime > life.startTime);
+      .find((r) => r.roundEndTime > life.startTime);
 
     if (roundEnd) {
       life.endTime = roundEnd.roundEndTime;
@@ -106,4 +104,20 @@ export const playerLivesAtom = atom(async (get) => {
       ? a.matchId.localeCompare(b.matchId)
       : a.startTime - b.startTime
   );
+};
+
+interface PlayerEvent {
+  matchId: string;
+  playerName: string;
+  playerEventTime: number;
+  playerEventType: string;
+  playerHero: string;
+}
+
+export default atom(async (get): Promise<PlayerLife[]> => {
+  const playerInteractionEventsData = await get(playerInteractionEvents.atom);
+  const playerEventsData: PlayerEvent[] = await get(playerEvents.atom);
+  const roundTimesData = await get(roundTimes.atom);
+
+  return playerLivesAtomFn(playerInteractionEventsData, playerEventsData, roundTimesData);
 });

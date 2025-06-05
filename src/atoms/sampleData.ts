@@ -6,7 +6,7 @@ import file3 from "@library/sampledata/Log-2023-08-28-17-52-17.txt?raw";
 import file4 from "@library/sampledata/Log-2023-08-28-18-28-25.txt?raw";
 import file5 from "@library/sampledata/Log-2023-08-28-18-40-39.txt?raw";
 
-export const sampleDataLoaderFn = (enabled: boolean): LogFileLoaderType => {
+export const sampleDataFn = (enabled: boolean): LogFileLoaderType => {
   if (!enabled) {
     return [];
   }
@@ -42,5 +42,5 @@ export const sampleDataLoaderFn = (enabled: boolean): LogFileLoaderType => {
 
 export default atom((get): LogFileLoaderType => {
   const enabled = get(sampleDataEnabled.atom);
-  return sampleDataLoaderFn(enabled);
+  return sampleDataFn(enabled);
 });

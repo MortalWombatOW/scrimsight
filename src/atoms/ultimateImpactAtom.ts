@@ -1,31 +1,15 @@
 import { atom } from 'jotai';
-import { teamfights } from '@atoms';
-import { ultimateEvents, UltimateEvent } from '@atoms';
-import { kill } from '@atoms';
-import { uniquePlayerNames } from '@atoms';
+import { teamfights, ultimateEvents, UltimateEvent, kill, uniquePlayerNames, HeroUltimateImpactStats, UltimateImpactStats, Teamfight, KillType } from '@atoms';
 
-// Interface for stats per hero for a specific player
-export interface HeroUltimateImpactStats {
-  heroName: string;
-  ultsUsedInFights: number;
-  totalKillsDuringUltWindow: number; // Sum of kills by the player during all ult windows for this hero
-  fightWinsWithUlt: number;
-  avgKillsPerUlt: number; // totalKillsDuringUltWindow / ultsUsedInFights
-  fightWinRateWithUlt: number; // fightWinsWithUlt / ultsUsedInFights
-}
-
-// Interface for the overall atom output (Player Name -> Hero Name -> Stats)
-export type UltimateImpactStats = Record<string, Record<string, HeroUltimateImpactStats>>;
-
-// Helper type for intermediate calculations
-type MutableHeroUltimateImpactStats = Omit<HeroUltimateImpactStats, 'avgKillsPerUlt' | 'fightWinRateWithUlt'>;
-
-export const ultimateImpactAtom = atom(async (get): Promise<UltimateImpactStats> => {
-  const teamfightData = await get(teamfights.atom);
-  const ultimateEventsData = await get(ultimateEvents.atom);
-  const killEvents = await get(kill.atom);
-  const playerNames = await get(uniquePlayerNames.atom);
-
+export const ultimateImpactAtomFn = (
+  teamfightData: Teamfight[],
+  ultimateEventsData: UltimateEvent[],
+  killEvents: KillType,
+  playerNames: string[]
+): UltimateImpactStats => {
+  // Helper type for intermediate calculations
+  type MutableHeroUltimateImpactStats = Omit<HeroUltimateImpactStats, 'avgKillsPerUlt' | 'fightWinRateWithUlt'>;
+  
   const playerHeroStatsMap: Record<string, Record<string, MutableHeroUltimateImpactStats>> = {};
 
   // Initialize structure for all players
@@ -111,4 +95,14 @@ export const ultimateImpactAtom = atom(async (get): Promise<UltimateImpactStats>
   });
 
   return finalStats;
+};
+
+
+export default atom(async (get): Promise<UltimateImpactStats> => {
+  const teamfightData = await get(teamfights.atom);
+  const ultimateEventsData = await get(ultimateEvents.atom);
+  const killEvents = await get(kill.atom);
+  const playerNames = await get(uniquePlayerNames.atom);
+
+  return ultimateImpactAtomFn(teamfightData, ultimateEventsData, killEvents, playerNames);
 });

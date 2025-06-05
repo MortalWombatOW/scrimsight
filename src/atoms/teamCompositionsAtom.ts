@@ -1,22 +1,12 @@
 import { atom } from 'jotai';
-import { type HeroSpawnLogEvent, heroSpawn } from '@atoms';
-import { type HeroSwapLogEvent, heroSwap } from '@atoms';
-import { mapTimes } from '@atoms';
+import { HeroSpawnLogEvent, heroSpawn, HeroSwapLogEvent, heroSwap, mapTimes, TeamComposition, MapTimes } from '@atoms';
 
-type HeroEvent = HeroSpawnLogEvent | HeroSwapLogEvent;
-
-export interface TeamComposition {
-  teamName: string;
-  heroes: string[];
-  timePlayed: number;
-}
-
-export const teamCompositionsAtom = atom(async (get) => {
-  const [heroSpawns, heroSwaps, allMapTimes] = await Promise.all([
-    get(heroSpawn.atom),
-    get(heroSwap.atom),
-    get(mapTimes.atom),
-  ]);
+export const teamCompositionsAtomFn = (
+  heroSpawns: HeroSpawnLogEvent[],
+  heroSwaps: HeroSwapLogEvent[],
+  allMapTimes: MapTimes[]
+) => {
+  type HeroEvent = HeroSpawnLogEvent | HeroSwapLogEvent;
 
   const allEvents = [...heroSpawns, ...heroSwaps].sort((a, b) => a.matchTime - b.matchTime);
   const compositions: TeamComposition[] = [];
@@ -100,4 +90,14 @@ export const teamCompositionsAtom = atom(async (get) => {
   }
 
   return compositions;
+};
+
+export default atom(async (get) => {
+  const [heroSpawns, heroSwaps, allMapTimes] = await Promise.all([
+    get(heroSpawn.atom),
+    get(heroSwap.atom),
+    get(mapTimes.atom),
+  ]);
+
+  return teamCompositionsAtomFn(heroSpawns, heroSwaps, allMapTimes);
 }); 

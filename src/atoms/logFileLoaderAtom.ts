@@ -30,12 +30,7 @@ export const logFileLoaderAtomFn = async (
   return fileContents;
 };
 
-/**
- * Atom that loads the contents of the uploaded log files
- */
-const logFileLoaderAtom = atom(async (get): Promise<LogFileLoaderType> => {
+export default atom(async (get): Promise<LogFileLoaderType> => {
   const logFileInputData = get(logFileInput.atom);
   return logFileLoaderAtomFn(logFileInputData);
 });
-
-export default logFileLoaderAtom;

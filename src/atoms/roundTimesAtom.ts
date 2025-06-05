@@ -1,13 +1,15 @@
 import { atom } from 'jotai';
-import roundStartAtom from '@atoms/roundStart'; // Renamed for clarity
-import roundEndAtom from '@atoms/roundEnd';     // Renamed for clarity
-import setupCompleteAtom from '@atoms/setupComplete'; // Renamed for clarity
-import { RoundStartType, RoundEndType, SetupCompleteType } from '@atoms'; // Import types
+import {
+  roundStart,
+  roundEnd,
+  setupComplete,
+  RoundStartType,
+  RoundEndType,
+  SetupCompleteType,
+  RoundTimes,
+} from '@atoms';
 
-/**
- * Interface for round times data
- */
-export const roundTimesFn = (
+export const roundTimesAtomFn = (
   roundStarts: RoundStartType,
   setupCompletes: SetupCompleteType,
   roundEnds: RoundEndType
@@ -18,49 +20,32 @@ export const roundTimesFn = (
       s.matchId === start.matchId && 
       s.roundNumber === start.roundNumber
     );
-
-    if (!setup) return [];
-
+    
     const end = roundEnds.find(e => 
       e.matchId === start.matchId && 
       e.roundNumber === start.roundNumber
     );
-
-    if (!end) return [];
-
-
+    
+    // Only include rounds that have all three events
+    if (!setup || !end) {
+      return [];
+    }
+    
     return [{
       matchId: start.matchId,
       roundNumber: start.roundNumber,
       roundStartTime: start.matchTime,
       roundSetupCompleteTime: setup.matchTime,
       roundEndTime: end.matchTime,
-      roundDuration: end.matchTime - setup.matchTime,
+      roundDuration: end.matchTime - start.matchTime,
     }];
   }).sort((a, b) => a.matchId !== b.matchId ? a.matchId.localeCompare(b.matchId) : a.roundNumber - b.roundNumber);
 };
 
-/**
- * Pure function that combines round start, setup complete, and round end events to calculate round times
- */
-export interface RoundTimes {
-  matchId: string;
-  roundNumber: number;
-  roundStartTime: number;
-  roundSetupCompleteTime: number;
-  roundEndTime: number;
-  roundDuration: number;
-}
+export default atom(async (get): Promise<RoundTimes[]> => {
+  const roundStartsData = await get(roundStart.atom);
+  const setupCompletesData = await get(setupComplete.atom);
+  const roundEndsData = await get(roundEnd.atom);
 
-/**
- * Atom that combines round start, setup complete, and round end events to calculate round times
- */
-export const roundTimesAtom = atom(async (get): Promise<RoundTimes[]> => {
-  const roundStartsData = await get(roundStartAtom);
-  const setupCompletesData = await get(setupCompleteAtom);
-  const roundEndsData = await get(roundEndAtom);
-
-  return roundTimesFn(roundStartsData, setupCompletesData, roundEndsData);
+  return roundTimesAtomFn(roundStartsData, setupCompletesData, roundEndsData);
 });
-
-export default roundTimesAtom;

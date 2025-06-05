@@ -1,7 +1,12 @@
 import { atom, Getter } from "jotai";
-import playerStat from "@atoms/playerStat";
-import { PlayerStatLogEvent } from "@atoms";
-import { heroPlaytimeAtom, HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys } from '@atoms/heroPlaytimeAtom'; // Added Keys
+import {
+  playerStat,
+  PlayerStatLogEvent,
+  heroPlaytime,
+  HeroPlaytime,
+  HeroPlaytimeCategoryKeys,
+  HeroPlaytimeNumericalKeys,
+} from "@atoms";
 import { Metric } from "@library"; // Removed MetricAtom as it's unused
 import { getRoleFromHero } from '@library'; // Import getRoleFromHero
 import { 
@@ -20,8 +25,8 @@ import {
 export const playerStatsBaseAtomFn = async (
   get: Getter
 ): Promise<Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys>> => {
-  const playerStats: PlayerStatLogEvent[] = await get(playerStat); // Get raw PlayerStatLogEvent
-  const playtimeData: Metric<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys> = await get(heroPlaytimeAtom);
+  const playerStats: PlayerStatLogEvent[] = await get(playerStat.atom); // Get raw PlayerStatLogEvent
+  const playtimeData: Metric<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys> = await get(heroPlaytime.atom);
 
   // Create a playtime lookup map
   const playtimeMap = new Map<string, number>();

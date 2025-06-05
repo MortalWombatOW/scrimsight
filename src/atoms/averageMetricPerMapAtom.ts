@@ -13,7 +13,7 @@ import {
 import { matchData, uniqueMapNames, MatchData } from '@atoms';
 
 // Pure function to calculate average metrics per map
-export const averageMetricPerMapFn = (
+export const averageMetricPerMapAtomFn = (
   playerStatsData: Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys>,
   allMatches: MatchData[],
   uniqueMaps: string[]
@@ -110,5 +110,5 @@ export default atom(async (get): Promise<AverageMetricPerMap> => {
   // Get unique map names to initialize structure
   const uniqueMaps: string[] = await get(uniqueMapNames.atom);
 
-  return averageMetricPerMapFn(playerStatsData, allMatches, uniqueMaps);
+  return averageMetricPerMapAtomFn(playerStatsData, allMatches, uniqueMaps);
 });

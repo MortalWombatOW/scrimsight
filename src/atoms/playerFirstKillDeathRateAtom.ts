@@ -56,15 +56,10 @@ export const playerFirstKillDeathRateAtomFn = (
   return playerStatsMap;
 };
 
-/**
- * Atom that calculates first kill/death rates for all players
- */
-const playerFirstKillDeathRateAtom = atom(async (get): Promise<Record<string, PlayerFirstKillDeathRateStats>> => {
+export default atom(async (get): Promise<Record<string, PlayerFirstKillDeathRateStats>> => {
   const teamfightData = await get(teamfights.atom);
   const participation = await get(teamfightParticipation.atom);
   const playerNames = await get(uniquePlayerNames.atom);
 
   return playerFirstKillDeathRateAtomFn(teamfightData, participation, playerNames);
 });
-
-export default playerFirstKillDeathRateAtom;

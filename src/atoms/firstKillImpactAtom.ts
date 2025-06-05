@@ -109,6 +109,6 @@ export const firstKillImpactAtomFn = async (get: Getter): Promise<FirstKillImpac
   };
 };
 
-export const firstKillImpactAtom = atom(async (get) => {
+export default atom(async (get) => {
   return firstKillImpactAtomFn(get);
 });

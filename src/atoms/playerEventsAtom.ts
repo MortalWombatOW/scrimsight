@@ -1,6 +1,15 @@
 import { atom } from 'jotai';
 import { defensiveAssist, offensiveAssist, heroSpawn, heroSwap, ability1Used, ability2Used } from '@atoms';
-import { DefensiveAssistType, OffensiveAssistType, HeroSpawnType, HeroSwapType, Ability1UsedType, Ability2UsedType } from '@atoms';
+import { DefensiveAssistType, OffensiveAssistType, HeroSpawnType, HeroSwapType, Ability1UsedType, Ability2UsedType, DefensiveAssistLogEvent, OffensiveAssistLogEvent, HeroSpawnLogEvent, HeroSwapLogEvent, Ability1UsedLogEvent, Ability2UsedLogEvent } from '@atoms';
+
+// Define unified player event types
+type PlayerEventWithType = 
+  | (DefensiveAssistLogEvent & { eventType: 'defensiveAssist' })
+  | (OffensiveAssistLogEvent & { eventType: 'offensiveAssist' })
+  | (HeroSpawnLogEvent & { eventType: 'heroSpawn' })
+  | (HeroSwapLogEvent & { eventType: 'heroSwap' })
+  | (Ability1UsedLogEvent & { eventType: 'ability1Used' })
+  | (Ability2UsedLogEvent & { eventType: 'ability2Used' });
 
 /**
  * Pure function that combines various player events
@@ -12,9 +21,9 @@ export const playerEventsAtomFn = (
   heroSwaps: HeroSwapType,
   ability1UsedData: Ability1UsedType,
   ability2UsedData: Ability2UsedType
-): any[] => {
+): PlayerEventWithType[] => {
   // Simple combination logic - convert to common format
-  const events: any[] = [];
+  const events: PlayerEventWithType[] = [];
   
   // Add defensive assists
   defensiveAssists.forEach(event => {
@@ -49,10 +58,7 @@ export const playerEventsAtomFn = (
   return events.sort((a, b) => a.matchTime - b.matchTime);
 };
 
-/**
- * Atom that combines various player events
- */
-const playerEventsAtom = atom(async (get): Promise<any[]> => {
+export default atom(async (get): Promise<any[]> => {
   // Get all the event data from extractor atoms
   const defensiveAssists = await get(defensiveAssist.atom);
   const offensiveAssists = await get(offensiveAssist.atom);
@@ -70,6 +76,4 @@ const playerEventsAtom = atom(async (get): Promise<any[]> => {
     ability2UsedData
   );
 });
-
-export default playerEventsAtom;
 
