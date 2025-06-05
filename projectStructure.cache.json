@@ -36,10 +36,6 @@
     "errorMessage": "🔥 File 'ultimateCharged.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ultimateCharged.test.ts\nError location = ./src/atoms/ultimateCharged.ts\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/teamfightsAtom.ts",
-    "errorMessage": "🔥 File 'teamfightsAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/teamfightsAtom.test.ts\nError location = ./src/atoms/teamfightsAtom.ts\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/teamfightParticipationAtom.ts",
     "errorMessage": "🔥 File 'teamfightParticipationAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/teamfightParticipationAtom.test.ts\nError location = ./src/atoms/teamfightParticipationAtom.ts\n\n"
   },
@@ -76,18 +72,6 @@
     "errorMessage": "🔥 File 'sampleDataEnabled.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/sampleDataEnabled.test.ts\nError location = ./src/atoms/sampleDataEnabled.ts\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/roundStart.ts",
-    "errorMessage": "🔥 File 'roundStart.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/roundStart.test.ts\nError location = ./src/atoms/roundStart.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/roundEnd.ts",
-    "errorMessage": "🔥 File 'roundEnd.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/roundEnd.test.ts\nError location = ./src/atoms/roundEnd.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerStatsBaseAtom.ts",
-    "errorMessage": "🔥 File 'playerStatsBaseAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerStatsBaseAtom.test.ts\nError location = ./src/atoms/playerStatsBaseAtom.ts\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerStatusTimelineAtom.ts",
     "errorMessage": "🔥 File 'playerStatusTimelineAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerStatusTimelineAtom.test.ts\nError location = ./src/atoms/playerStatusTimelineAtom.ts\n\n"
   },
@@ -112,10 +96,6 @@
     "errorMessage": "🔥 File 'playerListSummary.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerListSummary.test.ts\nError location = ./src/atoms/playerListSummary.ts\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerInteractionEventsAtom.ts",
-    "errorMessage": "🔥 File 'playerInteractionEventsAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerInteractionEventsAtom.test.ts\nError location = ./src/atoms/playerInteractionEventsAtom.ts\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerFirstKillDeathRateAtom.ts",
     "errorMessage": "🔥 File 'playerFirstKillDeathRateAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerFirstKillDeathRateAtom.test.ts\nError location = ./src/atoms/playerFirstKillDeathRateAtom.ts\n\n"
   },
@@ -136,20 +116,8 @@
     "errorMessage": "🔥 File 'mercyRez.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/mercyRez.test.ts\nError location = ./src/atoms/mercyRez.ts\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/matchStart.ts",
-    "errorMessage": "🔥 File 'matchStart.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/matchStart.test.ts\nError location = ./src/atoms/matchStart.ts\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/matchExtractorAtom.ts",
     "errorMessage": "🔥 File 'matchExtractorAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/matchExtractorAtom.test.ts\nError location = ./src/atoms/matchExtractorAtom.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/matchEnd.ts",
-    "errorMessage": "🔥 File 'matchEnd.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/matchEnd.test.ts\nError location = ./src/atoms/matchEnd.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/matchDataAtom.ts",
-    "errorMessage": "🔥 File 'matchDataAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/matchDataAtom.test.ts\nError location = ./src/atoms/matchDataAtom.ts\n\n"
   },
   {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/killMatrixAtom.ts",
@@ -160,20 +128,8 @@
     "errorMessage": "🔥 File 'listSummaryAtoms.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/listSummaryAtoms.test.ts\nError location = ./src/atoms/listSummaryAtoms.ts\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/kill.ts",
-    "errorMessage": "🔥 File 'kill.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/kill.test.ts\nError location = ./src/atoms/kill.ts\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/heroSwap.ts",
     "errorMessage": "🔥 File 'heroSwap.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/heroSwap.test.ts\nError location = ./src/atoms/heroSwap.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/heroSpawn.ts",
-    "errorMessage": "🔥 File 'heroSpawn.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/heroSpawn.test.ts\nError location = ./src/atoms/heroSpawn.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/healing.ts",
-    "errorMessage": "🔥 File 'healing.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/healing.test.ts\nError location = ./src/atoms/healing.ts\n\n"
   },
   {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/groupedEventsAtom.ts",
@@ -196,10 +152,6 @@
     "errorMessage": "🔥 File 'detailedTeamCompositionsAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/detailedTeamCompositionsAtom.test.ts\nError location = ./src/atoms/detailedTeamCompositionsAtom.ts\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/damage.ts",
-    "errorMessage": "🔥 File 'damage.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/damage.test.ts\nError location = ./src/atoms/damage.ts\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/contextualStatAtoms.ts",
     "errorMessage": "🔥 File 'contextualStatAtoms.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/contextualStatAtoms.test.ts\nError location = ./src/atoms/contextualStatAtoms.ts\n\n"
   },
@@ -210,18 +162,6 @@
   {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/averageMetricPerMapAtom.ts",
     "errorMessage": "🔥 File 'averageMetricPerMapAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/averageMetricPerMapAtom.test.ts\nError location = ./src/atoms/averageMetricPerMapAtom.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/averageMetricPerHeroAtom.ts",
-    "errorMessage": "🔥 File 'averageMetricPerHeroAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/averageMetricPerHeroAtom.test.ts\nError location = ./src/atoms/averageMetricPerHeroAtom.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/ability2Used.ts",
-    "errorMessage": "🔥 File 'ability2Used.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ability2Used.test.ts\nError location = ./src/atoms/ability2Used.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/ability1Used.ts",
-    "errorMessage": "🔥 File 'ability1Used.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ability1Used.test.ts\nError location = ./src/atoms/ability1Used.ts\n\n"
   },
   {
     "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Teams/TeamsPage.tsx",

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, MockedFunction, afterEach } from 'vitest';
 import { heroSpawnFn } from '@atoms/heroSpawn';
-import type { LogFileParserAtomType, HeroSpawnLogEvent, HeroSpawnType } from '@atoms';
+import type { LogFileParserAtomType, HeroSpawnType } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
 // Mock @library functions

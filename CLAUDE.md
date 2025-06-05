@@ -1,202 +1,177 @@
-# Claude Code Memory - Scrimsight Project
+# ScrimSight Development Workflow
 
-## ESLint Project Structure Rule Enforcement
+## Core Workflow Pattern
 
-### Overview
-This project uses `eslint-plugin-project-structure` with strict file composition rules to enforce architectural patterns in the `src/atoms/` directory. Successfully reduced critical file composition errors from 155+ to <30 (80%+ reduction).
+When given a task, **ALWAYS** evaluate it first and choose the appropriate workflow:
 
-### File Composition Patterns
+### Research & Exploration Phase
+- **ALWAYS** use subagents to search the `docs/` folder for relevant documentation when researching or exploring
+- Use subagents to investigate specific questions or verify implementation details
+- This preserves context while gathering comprehensive information
 
-#### 1. Standard Single Atoms
-- **Pattern**: Named function export + default export
-- **Structure**:
-  ```typescript
-  export const {fileName}Fn = (...params) => {
-    // Pure function logic with nested helpers
-  };
-  
-  export default atom(async (get) => {
-    return {fileName}Fn(...);
-  });
-  ```
-- **Rules**: 1 arrowFunction + 1 variable (default export)
+### 1. For Easily Testable Tasks → Test-Driven Development
+If the task involves logic that can be unit/integration tested:
+- Write comprehensive tests first based on expected input/output pairs
+- Commit the tests (they should fail initially)
+- Implement code to make tests pass
+- Iterate until all tests pass
+- Commit the working implementation
 
-#### 2. AtomFamily Pattern  
-- **Pattern**: Default export only
-- **Structure**:
-  ```typescript
-  export default atomFamily((param) =>
-    atom(async (get) => {
-      // All helper functions nested inside
-      const helperFn = (...) => { ... };
-      return helperFn(...);
-    })
-  );
-  ```
-- **Rules**: Default export with all logic inline
+### 2. For Visual/UI Changes → Visual Iteration
+If the task involves UI components, styling, or visual changes:
+- Write the initial implementation
+- Request screenshot from user to compare against expectations
+- Iterate based on visual feedback until satisfied
+- Commit the final visual implementation
 
-#### 3. Input Atom Pattern
-- **Pattern**: Named function + default export  
-- **Structure**:
-  ```typescript
-  export const {fileName}Fn = (input: Type): OutputType => {
-    // Pure function logic
-  };
-  
-  export default atom(async (get) => {
-    const input = get(inputAtom.atom);
-    return {fileName}Fn(input);
-  });
-  ```
-- **Rules**: Named function + private atom + unnamed default export
+### 3. For Other Tasks → Explore, Plan, Code
+For complex features, refactoring, or unclear requirements:
+- **Explore**: Read relevant files, understand current implementation
+- **Plan**: Use "think" keyword to trigger extended thinking, create explicit plan
+- **Code**: Implement the planned solution step by step
+- **Commit**: Create descriptive commit with context
 
-### Type System Architecture
+## Task Management with Taskmaster
 
-#### Central Type Registry
-- **All interfaces must be exported from `src/atoms/index.ts`**
-- **No interface exports from individual atom files**
-- **Purpose**: API discoverability and preventing duplicate definitions
+ALWAYS use the Taskmaster CLI tool to track progress. If the user's ask does not align with the plan, ask for clarification and update the task structure accordingly.
 
-#### Type Categories Added to Index:
-- Contextual Stats: `PlayerMatchParams`, `TeamMatchParams`, etc.
-- Team Compositions: `HeroEvent`, `AggregatedMatchupStats`, etc.  
-- List Summaries: `ScrimListSummary`, `TeamListSummary`, `PlayerListSummary`
-- Match Data: `MatchFileInfo`, `MatchData`, `MapTimes`
-- Player Lives: `PlayerLife`
-- Player History: `PlayerMatch`
-- Status Timeline: `LogEvent`, `PlayerStatusEntry`, `PlayerStatusTimeline`
-- Round Times: `RoundTimes`
+```bash
+# View current tasks
+npx task-master list
 
-#### Atom Registration Pattern
-```typescript
-export const atomName: ScrimsightAtom<Promise<ReturnType>> = {
-  name: 'atomName',
-  description: 'Description of what this atom does',
-  atom: atomImplementation
-};
+# Get next available task
+npx task-master next
+
+# Set task status as you work
+npx task-master set-status -i TASK_ID -s in-progress
+npx task-master set-status -i TASK_ID -s done
+
+# Add new tasks when discovered
+npx task-master add-task -p "Description of new task"
 ```
 
-### Import/Export Patterns
+See docs/taskmaster.md for the full list of commands.
 
-#### Correct Import Structure
-```typescript
-// ✅ Correct - Import from central index
-import {
-  baseAtom,
-  TypeInterface,
-  anotherAtom,
-} from '@atoms';
+**IMPORTANT**: For any task with multiple steps, use Taskmaster to break it down and track progress.
 
-// ❌ Wrong - Direct file imports
-import baseAtom from '@atoms/baseAtom';
-import { TypeInterface } from '@atoms/baseAtom';
-```
+## Project Commands
 
-#### Export Pattern Fixes
-```typescript
-// ❌ Wrong - Named variable export  
-export const myAtom = atom(async (get) => { ... });
+### Build & Quality
+- `npm run build`: Build the project
+- `npm run typecheck`: Run TypeScript type checking
+- `npm run dev`: Start development server
+- `npm test`: Run test suite
+- `npm run lint`: Run linting checks
+- `./check-lint-build-errors.sh`: **ALWAYS use this script** when checking for errors/warnings - it handles scoping to relevant paths instead of getting errors for the whole project
 
-// ✅ Correct - Unnamed default export
-export default atom(async (get) => { ... });
-```
+### Testing Strategy
+- Prefer running single tests over full test suite for performance
+- Always run typecheck after making code changes
+- Use Jest for unit tests, following existing patterns in `src/atoms/*.test.ts`
 
-### Common Violation Fixes
+## Code Style & Patterns
 
-#### 1. Function Naming Violations
-- **Pattern**: `export const {fileName}Fn = ...`
-- **Examples Fixed**: `mapTimesFn` → `mapTimesAtomFn`
+### TypeScript/React Conventions
+- Use ES modules (import/export), not CommonJS (require)
+- Destructure imports when possible: `import { foo } from 'bar'`
+- Follow existing patterns in the codebase for new components
+- Use Jotai atoms for state management (see `src/atoms/` directory)
+- Prefer functional components with hooks
 
-#### 2. Multiple Function Declarations
-- **Solution**: Move all helper functions inside the main function
-- **Pattern**: Nest helpers to avoid root-level function declarations
+### File Organization
+- Components go in `src/components/` with clear folder structure
+- Atoms (state) go in `src/atoms/` with descriptive names
+- Pages go in `src/pages/` following existing patterns
+- Utilities go in `src/lib/` 
 
-#### 3. Interface Export Violations  
-- **Solution**: Move all interfaces to `src/atoms/index.ts`
-- **Remove**: All `export interface` statements from individual files
+### Naming Conventions
+- Use PascalCase for components and files containing components
+- Use camelCase for atoms, utilities, and regular functions
+- Be descriptive with names, avoid abbreviations
 
-#### 4. VariableExpression Violations
-- **Common Issue**: `export const atom = atom(...); export default atom;`
-- **Solution**: Use unnamed default: `export default atom(...);`
+## Key Libraries & Tools
 
-#### 5. Independent Module Import Violations
-- **Issue**: Importing from individual files instead of central index
-- **Solution**: Always import from `@atoms` or `@library` only
+### Core Stack
+- **React** with TypeScript
+- **Jotai** for state management (atomic approach)
+- **Vite** for building and development
+- **React Router** for navigation
+- **Joy UI / Tailwind CSS** for UI components
 
-### Complex File Restructuring Examples
+### Testing
+- **Jest** for unit testing
+- **React Testing Library** for component testing
+- Follow existing test patterns in `*.test.ts` files
 
-#### Multi-Export to Single Function Pattern
-```typescript
-// Before: Multiple exports
-export const helperAtom1 = ...;
-export const helperAtom2 = ...; 
-export interface LocalInterface { ... }
+## Development Best Practices
 
-// After: Single function pattern
-export const mainAtomFn = () => {
-  const helperAtom1 = ...;
-  const helperAtom2 = ...;
-  
-  return {
-    helperAtom1,
-    helperAtom2,
-    mainAtom: atom(...)
-  };
-};
+### Code Quality Guardrails
+- **CRITICAL**: This project uses custom linting rules and guardrails (e.g., fileComposition rules)
+- **NEVER** modify or bypass these rules without explicit approval
+- If you think you've identified a special case or exception: **ALWAYS STOP AND ASK** the user
+- Do not assume you can change established patterns or rules
 
-export default mainAtomFn();
-```
+### Before Making Changes
+1. **ALWAYS** check existing implementations first
+2. Look at similar components/atoms for patterns
+3. Understand the Jotai atom dependency graph
+4. Check if utilities already exist in `src/lib/`
+5. Respect existing linting rules and code organization patterns
 
-#### AtomFamily with Inline Logic
-```typescript
-// Before: External helper functions
-function helper1() { ... }
-function helper2() { ... }
-export const atomFamily = atomFamily(...)
+### After Making Changes
+1. **MUST** run `./check-lint-build-errors.sh` to check for errors/warnings in relevant paths
+2. Run relevant tests to verify functionality
+3. Test in browser during development with `npm run dev`
+4. For UI changes, verify responsive design
 
-// After: All logic inline
-export default atomFamily((param) =>
-  atom(async (get) => {
-    const helper1 = () => { ... };
-    const helper2 = () => { ... };
-    // Use helpers inline
-  })
-);
-```
+### Git Workflow
+- Write descriptive commit messages explaining the "why"
+- Include context about the change's impact
+- Reference any related issues or tasks
 
-### Systematic Error Fixing Approach
+## Common Patterns
 
-1. **Run comprehensive check**: `./check-lint-build-errors.sh src/atoms/`
-2. **Identify file categories**:
-   - Interface export violations → Move to index.ts
-   - Function naming → Fix `{fileName}Fn` pattern  
-   - Import violations → Use @atoms imports
-   - Multiple exports → Restructure to single pattern
-3. **Fix in order of impact**: 
-   - Complex multi-file restructures first
-   - Simple naming/export fixes second
-   - Import fixes last
-4. **Test frequently**: Run check after each major file fix
-5. **Handle TypeScript conflicts**: Update imports in index.ts when changing exports
+### Creating New Atoms
+- Look at existing atoms in `src/atoms/` for patterns
+- Use proper TypeScript typing
+- Consider dependencies and derived atoms
+- Add tests for complex logic
 
-### Key Files Successfully Restructured
-- `contextualStatAtoms.ts` - Multiple exports → Single function
-- `detailedTeamCompositionsAtom.ts` - Interface violations → AtomFamily pattern
-- `killMatrixAtom.ts` - External imports → Inline atomFamily  
-- `listSummaryAtoms.ts` - Multiple exports → Single function
-- `playerInteractionEventsAtom.ts` - Multiple functions → Single pattern
-- `firstKillImpactAtom.ts` - Named export → Default export
-- 12+ other atoms with naming, interface, and import fixes
+### Creating New Components
+- Check `src/components/` for similar existing components
+- Follow the folder structure (Component/ComponentName.tsx)
+- Use existing UI library components when possible
+- Implement proper TypeScript props interfaces
 
-### Tools and Commands
-- **Error checking**: `./check-lint-build-errors.sh src/atoms/`
-- **Specific file**: `./check-lint-build-errors.sh src/atoms/fileName.ts`  
-- **Error counting**: `./check-lint-build-errors.sh src/atoms/ 2>/dev/null | grep "error.*🔥" | wc -l`
-- **File listing**: `./check-lint-build-errors.sh src/atoms/ 2>/dev/null | grep "^/home" | head -10`
+### Working with Data
+- Game logs are parsed in `src/atoms/logFileParserAtom.ts`
+- Player stats derived from parsed events
+- Match/team data flows through specific atom chains
+- Check existing atoms before creating new data transformations
 
-### Final Results
-- **Before**: 155+ critical file composition errors
-- **After**: <30 critical errors remaining
-- **Success Rate**: 80%+ error reduction
-- **Architecture**: Proper separation of concerns with centralized types
-- **Patterns**: Consistent file composition following established rules
+## Performance Considerations
+- Be mindful of atom dependency chains
+- Use Jotai's built-in memoization patterns
+- Avoid unnecessary re-renders in React components
+- Test with actual game log data for realistic performance
+
+## Overwatch-Specific Domain Knowledge
+- Heroes have roles: Tank, Damage, Support
+- Matches have rounds, rounds have teamfights
+- Player events include kills, deaths, abilities, ultimates
+- Maps have types (e.g., Escort, Assault, Hybrid)
+- Team compositions matter for analysis
+
+## IMPORTANT Notes
+- **YOU MUST** run typecheck when done with code changes
+- **ALWAYS** use existing patterns and libraries already in the codebase
+- **NEVER** add new dependencies without checking if functionality already exists
+- **BE SPECIFIC** in your task planning and execution
+- **USE TASKMASTER** for complex, multi-step tasks to track progress systematically
+
+## Error Checking
+- Always run the check-lint-build-errors.sh script when checking for errors/warnings, it handles scoping to a set of paths instead of getting errors for the whole project.
+
+## Referring to the user
+- Always refer to the user as "high codemancer and chief artificer" when communicating with them.
+

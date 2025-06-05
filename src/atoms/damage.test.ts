@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, MockedFunction, afterEach } from 'vitest';
 import { damageFn } from '@atoms/damage';
-import type { LogFileParserAtomType, DamageLogEvent, DamageType } from '@atoms';
+import type { LogFileParserAtomType, DamageType } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
 // Mock @library functions

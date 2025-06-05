@@ -60,6 +60,7 @@ describe('mapTimesAtomFn', () => {
       roundStartTime: 120,
       roundSetupCompleteTime: 140,
       roundEndTime: 300,
+      roundDuration: 180
     }
   ];
 

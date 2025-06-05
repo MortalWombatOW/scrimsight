@@ -22,6 +22,7 @@ export const folderStructureConfig = createFolderStructure({
         {
           name: "atoms",
           children: [
+            { name: "CLAUDE.md" }, // Claude memory file
             { name: "index.ts" }, // Atom index file
             { name: "atomTemplate.ts.txt" }, // Atom template file
             // Atom test files

@@ -13,62 +13,74 @@ describe('playerEventsAtomFn', () => {
   const mockDefensiveAssists: DefensiveAssistType = [
     {
       matchId: 'match1',
-      playerName: 'Player1',
-      playerTeam: 'Team A',
-      playerHero: 'Ana',
+      type: 'defensiveAssist',
       matchTime: 100,
+      playerTeam: 'Team A',
+      playerName: 'Player1',
+      playerHero: 'Ana',
+      heroDuplicated: ''
     }
   ];
 
   const mockOffensiveAssists: OffensiveAssistType = [
     {
       matchId: 'match1',
-      playerName: 'Player2',
-      playerTeam: 'Team A',
-      playerHero: 'Zenyatta',
+      type: 'offensiveAssist',
       matchTime: 150,
+      playerTeam: 'Team A',
+      playerName: 'Player2',
+      playerHero: 'Zenyatta',
+      heroDuplicated: ''
     }
   ];
 
   const mockHeroSpawns: HeroSpawnType = [
     {
       matchId: 'match1',
-      playerName: 'Player1',
-      playerTeam: 'Team A',
-      playerHero: 'Ana',
+      type: 'heroSpawn',
       matchTime: 50,
+      playerTeam: 'Team A',
+      playerName: 'Player1',
+      playerHero: 'Ana',
+      previousHero: '',
+      heroTimePlayed: 0
     }
   ];
 
   const mockHeroSwaps: HeroSwapType = [
     {
       matchId: 'match1',
-      playerName: 'Player1',
-      playerTeam: 'Team A',
-      playerHero: 'Mercy',
+      type: 'heroSwap',
       matchTime: 200,
+      playerTeam: 'Team A',
+      playerName: 'Player1',
+      playerHero: 'Mercy',
+      previousHero: 'Ana',
+      heroTimePlayed: 150
     }
   ];
 
   const mockAbility1Used: Ability1UsedType = [
     {
       matchId: 'match1',
-      playerName: 'Player1',
-      playerTeam: 'Team A',
-      playerHero: 'Ana',
+      type: 'ability1Used',
       matchTime: 75,
-      ability: 'Sleep Dart',
+      playerTeam: 'Team A',
+      playerName: 'Player1',
+      playerHero: 'Ana',
+      heroDuplicated: ''
     }
   ];
 
   const mockAbility2Used: Ability2UsedType = [
     {
       matchId: 'match1',
-      playerName: 'Player1',
-      playerTeam: 'Team A',
-      playerHero: 'Ana',
+      type: 'ability2Used',
       matchTime: 125,
-      ability: 'Biotic Grenade',
+      playerTeam: 'Team A',
+      playerName: 'Player1',
+      playerHero: 'Ana',
+      heroDuplicated: ''
     }
   ];
 

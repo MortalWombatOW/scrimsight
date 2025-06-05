@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, MockedFunction } from 'vitest';
 import { healingFn } from '@atoms/healing';
-import type { LogFileParserAtomType, HealingLogEvent, HealingType } from '@atoms';
+import type { LogFileParserAtomType, HealingType } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
 // Mock @library functions

@@ -1,9 +1,3 @@
----
-description: Comprehensive reference for Taskmaster CLI commands.
-globs: **/*
-alwaysApply: true
----
-
 # Taskmaster Tool & Command Reference
 
 This document provides a detailed reference for interacting with Taskmaster, covering CLI commands used via `npx task-master {command}`, designed for direct user interaction or fallback.
@@ -332,28 +326,3 @@ This document provides a detailed reference for interacting with Taskmaster, cov
     *   `-f, --file <file>`: `Path to your Taskmaster 'tasks.json' file. Default relies on auto-detection.`
 *   **Usage:** Run this after making changes to tasks.json to keep individual task files up to date.
 
----
-
-## Environment Variables Configuration (Updated)
-
-Taskmaster primarily uses the **`.taskmasterconfig`** file (in project root) for configuration (models, parameters, logging level, etc.), managed via `npx task-master models --setup`.
-
-Environment variables are used **only** for sensitive API keys related to AI providers and specific overrides like the Ollama base URL:
-
-*   **API Keys (Required for corresponding provider):**
-    *   `ANTHROPIC_API_KEY`
-    *   `PERPLEXITY_API_KEY`
-    *   `OPENAI_API_KEY`
-    *   `GOOGLE_API_KEY`
-    *   `MISTRAL_API_KEY`
-    *   `AZURE_OPENAI_API_KEY` (Requires `AZURE_OPENAI_ENDPOINT` too)
-    *   `OPENROUTER_API_KEY`
-    *   `XAI_API_KEY`
-    *   `OLLANA_API_KEY` (Requires `OLLAMA_BASE_URL` too)
-*   **Endpoints (Optional/Provider Specific inside .taskmasterconfig):**
-    *   `AZURE_OPENAI_ENDPOINT`
-    *   `OLLAMA_BASE_URL` (Default: `http://localhost:11434/api`)
-
-**Set API keys** in your **`.env`** file in the project root. All other settings (model choice, max tokens, temperature, log level, custom endpoints) are managed in `.taskmasterconfig` via `npx task-master models` command.
-
----
