@@ -6,12 +6,12 @@ import {
   PlayerLife,
   PlayerInteractionEvent,
   RoundTimesType,
+  PlayerEventForLives,
 } from '@atoms';
 
-// Define player event type based on usage
 export const playerLivesAtomFn = (
   playerInteractionEventsData: PlayerInteractionEvent[],
-  playerEventsData: PlayerEvent[],
+  playerEventsData: PlayerEventForLives[],
   roundTimesData: RoundTimesType
 ): PlayerLife[] => {
   const lives: PlayerLife[] = [];
@@ -33,10 +33,10 @@ export const playerLivesAtomFn = (
 
   // Process all events in chronological order
   const allEvents = [
-    ...playerEventsData.map((e: PlayerEvent) => ({
+    ...playerEventsData.map((e: PlayerEventForLives) => ({
       ...e,
-      time: e.playerEventTime,
-      type: e.playerEventType,
+      time: e.playerEventTime || e.matchTime,
+      type: e.playerEventType || e.eventType,
     })),
     ...playerInteractionEventsData
       .filter(e => e.playerInteractionEventType === 'Died' && e.direction === 'incoming')
@@ -106,17 +106,9 @@ export const playerLivesAtomFn = (
   );
 };
 
-interface PlayerEvent {
-  matchId: string;
-  playerName: string;
-  playerEventTime: number;
-  playerEventType: string;
-  playerHero: string;
-}
-
 export default atom(async (get): Promise<PlayerLife[]> => {
   const playerInteractionEventsData = await get(playerInteractionEvents.atom);
-  const playerEventsData: PlayerEvent[] = await get(playerEvents.atom);
+  const playerEventsData: PlayerEventForLives[] = await get(playerEvents.atom);
   const roundTimesData = await get(roundTimes.atom);
 
   return playerLivesAtomFn(playerInteractionEventsData, playerEventsData, roundTimesData);

@@ -439,6 +439,36 @@ export interface RoundTimes {
   roundDuration: number;
 }
 
+// Player Event Types for various atoms
+export interface PlayerEventForPlaytime {
+  matchId: string;
+  playerName: string;
+  playerEventTime?: number;
+  playerEventType?: string;
+  playerHero: string;
+  matchTime: number;
+  eventType: string;
+}
+
+export interface PlayerEventForLives {
+  matchId: string;
+  playerName: string;
+  playerEventTime?: number;
+  playerEventType?: string;
+  playerHero: string;
+  matchTime: number;
+  eventType: string;
+}
+
+// Unified player event type with event type discrimination
+export type PlayerEventWithType = 
+  | (DefensiveAssistLogEvent & { eventType: 'defensiveAssist' })
+  | (OffensiveAssistLogEvent & { eventType: 'offensiveAssist' })
+  | (HeroSpawnLogEvent & { eventType: 'heroSpawn' })
+  | (HeroSwapLogEvent & { eventType: 'heroSwap' })
+  | (Ability1UsedLogEvent & { eventType: 'ability1Used' })
+  | (Ability2UsedLogEvent & { eventType: 'ability2Used' });
+
 // Re-exporting types from their source files
 // UltimateEvent is now defined above
 // TeamPlayersType is now defined above
@@ -497,14 +527,14 @@ export const teamfightParticipation: ScrimsightAtom<Promise<TeamfightParticipati
 export const uniquePlayerNames: ScrimsightAtom<Promise<string[]>> = { name: 'uniquePlayerNames', description: 'Atom that extracts unique player names from all matches.', atom: uniquePlayerNamesAtom };
 export const roundTimes: ScrimsightAtom<Promise<RoundTimesType>> = { name: 'roundTimes', description: 'Atom that combines round start, setup complete, and round end events to calculate round times.', atom: roundTimesAtom };
 export const playerStatusTimeline: ScrimsightAtom<Promise<PlayerStatusTimelineType>> = { name: 'playerStatusTimeline', description: 'Atom that tracks the active players on each team over time for each match.', atom: playerStatusTimelineAtom };
-export const playerEvents: ScrimsightAtom<Promise<any[]>> = { name: 'playerEvents', description: 'Atom that combines various player events into a unified timeline.', atom: playerEventsAtom };
+export const playerEvents: ScrimsightAtom<Promise<PlayerEventWithType[]>> = { name: 'playerEvents', description: 'Atom that combines various player events into a unified timeline.', atom: playerEventsAtom };
 export const playerFirstKillDeathRate: ScrimsightAtom<Promise<Record<string, PlayerFirstKillDeathRateStats>>> = { name: 'playerFirstKillDeathRate', description: 'Atom that calculates first kill and death rates for each player based on teamfight participation.', atom: playerFirstKillDeathRateAtom };
 
 // Additional atoms for complex data structures
-export const matchData: ScrimsightAtom<Promise<any[]>> = { name: 'matchData', description: 'Atom that combines match metadata with player statistics and game events.', atom: matchDataAtom };
+export const matchData: ScrimsightAtom<Promise<MatchData[]>> = { name: 'matchData', description: 'Atom that combines match metadata with player statistics and game events.', atom: matchDataAtom };
 export const uniqueMapNames: ScrimsightAtom<Promise<string[]>> = { name: 'uniqueMapNames', description: 'Atom that extracts unique map names from all matches.', atom: uniqueMapNamesAtom };
-export const scrims: ScrimsightAtom<Promise<any[]>> = { name: 'scrims', description: 'Atom that groups matches into scrimmage sessions by date and teams.', atom: scrimAtom };
-export const teamStats: ScrimsightAtom<Promise<any[]>> = { name: 'teamStats', description: 'Atom that calculates team-level statistics and performance metrics.', atom: teamStatsAtom };
-export const mapTimes: ScrimsightAtom<Promise<any[]>> = { name: 'mapTimes', description: 'Atom that calculates duration and timing data for each map/match.', atom: mapTimesAtom };
-export const matchExtractor: ScrimsightAtom<Promise<any[]>> = { name: 'matchExtractor', description: 'Atom that extracts match file information from log files.', atom: matchExtractorAtom };
+export const scrims: ScrimsightAtom<Promise<Scrim[]>> = { name: 'scrims', description: 'Atom that groups matches into scrimmage sessions by date and teams.', atom: scrimAtom };
+export const teamStats: ScrimsightAtom<Promise<TeamStats[]>> = { name: 'teamStats', description: 'Atom that calculates team-level statistics and performance metrics.', atom: teamStatsAtom };
+export const mapTimes: ScrimsightAtom<Promise<MapTimes[]>> = { name: 'mapTimes', description: 'Atom that calculates duration and timing data for each map/match.', atom: mapTimesAtom };
+export const matchExtractor: ScrimsightAtom<Promise<MatchFileInfo[]>> = { name: 'matchExtractor', description: 'Atom that extracts match file information from log files.', atom: matchExtractorAtom };
 export const heroPlaytime: ScrimsightAtom<Promise<Metric<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys>>> = { name: 'heroPlaytime', description: 'Atom that calculates hero playtime for each player per round.', atom: heroPlaytimeAtom };

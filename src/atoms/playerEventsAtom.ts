@@ -1,19 +1,8 @@
 import { atom } from 'jotai';
 import { defensiveAssist, offensiveAssist, heroSpawn, heroSwap, ability1Used, ability2Used } from '@atoms';
-import { DefensiveAssistType, OffensiveAssistType, HeroSpawnType, HeroSwapType, Ability1UsedType, Ability2UsedType, DefensiveAssistLogEvent, OffensiveAssistLogEvent, HeroSpawnLogEvent, HeroSwapLogEvent, Ability1UsedLogEvent, Ability2UsedLogEvent } from '@atoms';
+import { DefensiveAssistType, OffensiveAssistType, HeroSpawnType, HeroSwapType, Ability1UsedType, Ability2UsedType, PlayerEventWithType } from '@atoms';
 
 // Define unified player event types
-type PlayerEventWithType = 
-  | (DefensiveAssistLogEvent & { eventType: 'defensiveAssist' })
-  | (OffensiveAssistLogEvent & { eventType: 'offensiveAssist' })
-  | (HeroSpawnLogEvent & { eventType: 'heroSpawn' })
-  | (HeroSwapLogEvent & { eventType: 'heroSwap' })
-  | (Ability1UsedLogEvent & { eventType: 'ability1Used' })
-  | (Ability2UsedLogEvent & { eventType: 'ability2Used' });
-
-/**
- * Pure function that combines various player events
- */
 export const playerEventsAtomFn = (
   defensiveAssists: DefensiveAssistType,
   offensiveAssists: OffensiveAssistType,
@@ -58,7 +47,7 @@ export const playerEventsAtomFn = (
   return events.sort((a, b) => a.matchTime - b.matchTime);
 };
 
-export default atom(async (get): Promise<any[]> => {
+export default atom(async (get): Promise<PlayerEventWithType[]> => {
   // Get all the event data from extractor atoms
   const defensiveAssists = await get(defensiveAssist.atom);
   const offensiveAssists = await get(offensiveAssist.atom);

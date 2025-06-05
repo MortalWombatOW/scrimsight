@@ -45,31 +45,6 @@ Atoms are exported from an entry point file which defines the type of the atom, 
 
 Each atom implementation file should define the atom implementation function separately from the atom definition in order to test it without the need for a full render. The atom is the **default export** of the file, and the implementation function is a named export called `{atomName}Fn`. The atom is responsible for fetching any needed data from other atoms, and passing it to and returning from the implementation function.
 
-*   **Read-only Atoms (e.g., `sampleData.ts`):** The `{atomName}Fn` typically performs data fetching or complex computations.
-    ```typescript
-    // src/atoms/sampleData.ts
-    export const sampleDataLoaderFn = async (enabled: boolean): Promise<LogFileLoaderOutput[]> => { /* ... */ };
-
-    export default atom(async (get) => {
-      const enabled = await get(sampleDataEnabled);
-      return sampleDataLoaderFn(enabled);
-    });
-    ```
-*   **Writable Atoms (e.g., `logFileInputAtom.ts`):** The `{atomName}Fn` typically handles the logic for updating the atom's state.
-    ```typescript
-    // src/atoms/logFileInputAtom.ts
-    export const logFileInputAtomFn = (newFiles: File[]): LogFileInputType => { /* ... */ };
-
-    const _logFileInputAtom = atom<LogFileInputType>({ files: [] });
-
-    export default atom(
-      (get) => get(_logFileInputAtom),
-      (_get, set, newFiles: File[]) => {
-        const nextState = logFileInputAtomFn(newFiles);
-        set(_logFileInputAtom, nextState);
-      }
-    );
-    ```
 
 Atom types (e.g., `LogFileInputType`, `SampleDataType`) are defined and exported from the entry point file (`src/atoms/index.ts`).
 

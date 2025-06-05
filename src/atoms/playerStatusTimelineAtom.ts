@@ -5,11 +5,12 @@ import {
   LogFileParserAtomType,
   LogEvent,
   PlayerStatusTimeline,
+  MatchData,
 } from '@atoms';
 
 export const playerStatusTimelineAtomFn = async (
   parsedFiles: LogFileParserAtomType,
-  allMatchData: any[]
+  allMatchData: MatchData[]
 ): Promise<Map<string, PlayerStatusTimeline>> => {
   const statusTimelines = new Map<string, PlayerStatusTimeline>();
 

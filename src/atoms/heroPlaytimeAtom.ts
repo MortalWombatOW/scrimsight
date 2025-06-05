@@ -1,20 +1,20 @@
 import { atom } from "jotai";
-import { playerEvents, roundTimes, RoundTimesType, RoundTimes, Metric, HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys } from '@atoms';
-
+import { playerEvents, roundTimes, RoundTimesType, RoundTimes, Metric, HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys, PlayerEventForPlaytime } from '@atoms';
 export const heroPlaytimeAtomFn = (
-  events: any[],
+  events: PlayerEventForPlaytime[],
   roundTimesData: RoundTimesType
 ): Metric<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys> => {
   const actualRoundTimes: RoundTimes[] = roundTimesData;
   const playtimeMap = new Map<string, HeroPlaytime>();
   
   // Group events by player/match/round
-  const eventsByPlayer = events.reduce((acc, event: any) => {
+  const eventsByPlayer = events.reduce((acc, event: PlayerEventForPlaytime) => {
     // Find which round this event belongs to based on time
+    const eventTime = event.playerEventTime ?? event.matchTime;
     const round = actualRoundTimes.find((rt: RoundTimes) => 
       rt.matchId === event.matchId &&
-      event.playerEventTime >= rt.roundStartTime &&
-      event.playerEventTime <= rt.roundEndTime
+      eventTime >= rt.roundStartTime &&
+      eventTime <= rt.roundEndTime
     );
     
     if (!round) return acc; // Skip events outside known rounds
@@ -23,7 +23,7 @@ export const heroPlaytimeAtomFn = (
     if (!acc.has(key)) acc.set(key, []);
     acc.get(key)?.push(event);
     return acc;
-  }, new Map<string, any[]>());
+  }, new Map<string, PlayerEventForPlaytime[]>());
 
   // Process each player's events per round
   for (const [playerKey, playerEventsList] of eventsByPlayer) {
@@ -37,15 +37,17 @@ export const heroPlaytimeAtomFn = (
     if (!round) continue;
     
     // Sort events chronologically
-    const sortedEvents = playerEventsList.sort((a: any, b: any) => a.playerEventTime - b.playerEventTime);
+    const sortedEvents = playerEventsList.sort((a, b) => (a.playerEventTime ?? a.matchTime) - (b.playerEventTime ?? b.matchTime));
     let currentHero = '';
     let lastHeroChangeTime = round.roundSetupCompleteTime;
     
     for (const event of sortedEvents) {
-      if (event.playerEventType === 'heroSpawn' || event.playerEventType === 'heroSwap') {
+      const eventType = event.playerEventType || event.eventType;
+      if (eventType === 'heroSpawn' || eventType === 'heroSwap') {
         if (currentHero) {
           // Add duration for previous hero
-          const duration = event.playerEventTime - lastHeroChangeTime;
+          const eventTime = event.playerEventTime ?? event.matchTime;
+          const duration = eventTime - lastHeroChangeTime;
           const playtimeKey = `${playerName}-${matchId}-${roundNumber}-${currentHero}`;
           
           playtimeMap.set(playtimeKey, {
@@ -58,7 +60,7 @@ export const heroPlaytimeAtomFn = (
         }
         
         currentHero = event.playerHero;
-        lastHeroChangeTime = event.playerEventTime;
+        lastHeroChangeTime = event.playerEventTime ?? event.matchTime;
       }
     }
     
@@ -85,7 +87,7 @@ export const heroPlaytimeAtomFn = (
 };
 
 export default atom(async (get) => {
-  const events: any[] = await get(playerEvents.atom);
+  const events: PlayerEventForPlaytime[] = await get(playerEvents.atom);
   const roundTimesData = await get(roundTimes.atom);
   
   return heroPlaytimeAtomFn(events, roundTimesData);

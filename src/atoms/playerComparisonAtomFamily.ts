@@ -30,7 +30,7 @@ export default atomFamily(
 
       // 3. Find the specific player/hero row
       const playerRow = playerStatsData.rows.find(
-        (row) => (row as any).playerName === playerName && (!heroName || (row as any).playerHero === heroName)
+        (row) => 'playerName' in row && row.playerName === playerName && (!heroName || ('playerHero' in row && row.playerHero === heroName))
       );
 
       if (!playerRow) {
@@ -38,13 +38,13 @@ export default atomFamily(
       }
 
       // Determine player's primary role
-      const playerRole = (playerRow as any).playerRole as OverwatchRole | undefined;
+      const playerRole = ('playerRole' in playerRow ? playerRow.playerRole : undefined) as OverwatchRole | undefined;
 
       // Compare Metrics
       const comparisons: MetricComparison[] = [];
 
       playerStatsNumericalKeys.forEach((metricKey) => {
-        const playerValue = (playerRow as any)[metricKey] ?? 0;
+        const playerValue = (metricKey in playerRow ? playerRow[metricKey] : 0) as number;
 
         let benchmarkValue: number | undefined = undefined;
         let benchmarkType: MetricComparison['benchmarkType'] = 'N/A';
