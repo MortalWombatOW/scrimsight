@@ -3,9 +3,9 @@ import {
   getRoleFromHero,
   getRankForRole,
   OverwatchRole,
-} from "@library/hero";
-import { formatDuration } from "@library/format";
-import RoleIcon from "@components/Common/RoleIcon";
+  formatDuration,
+} from "@library";
+import { RoleIcon } from "@icons";
 
 interface CompositionCardProps {
   heroes: string[];

@@ -45,6 +45,12 @@
       "@library": [
         "src/lib/index.ts"
       ],
+      "@icons/*": [
+        "src/icons/*"
+      ],
+      "@icons": [
+        "src/icons/index.ts"
+      ],
     },
     "types": [
       "vite/client",

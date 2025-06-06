@@ -22,7 +22,7 @@ import { logFileInputAtom, logFileInputMutationAtom } from "@atoms/files";
 import { ChangeEvent } from "react";
 import { MdDelete } from "react-icons/md";
 import { sampleDataEnabledAtom } from "@atoms/sampleDataAtoms";
-import Container from "@components/Container/Container";
+import { Container } from "@components";
 
 export const AddFilesPage = () => {
   const [, setFiles] = useAtom(logFileInputMutationAtom);

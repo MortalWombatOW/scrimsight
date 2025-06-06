@@ -2,10 +2,10 @@ import { Suspense } from "react"; // Removed React import as it's not needed exp
 import { useParams, Outlet } from "react-router-dom"; // Added Outlet
 import { useStats } from "@atoms";
 import { getRoleFromHero } from "@library/hero";
-import { SubPageNavigation } from "@components/Layout/SubPageNavigation"; // Added SubPageNavigation
-import RoleIcon from "@components/Common/RoleIcon";
+import { SubPageNavigation } from "@components"; // Added SubPageNavigation
+import { RoleIcon } from "@icons";
 import { ErrorBoundary } from "react-error-boundary";
-import Container from "@components/Container/Container"; // Added import
+import { Container } from "@components"; // Added import
 // Removed direct imports of child components as they are handled by Outlet
 // import { PlayerOverview } from "./components/PlayerOverview";
 // import { PlayerHeroes } from "./components/PlayerHeroes";

@@ -2,7 +2,7 @@ import React from "react";
 import { useAtomValue } from "jotai";
 import { matchDataAtom, useStats } from "@atoms";
 import { camelCaseToWords, prettyFormat } from "@lib";
-import { ProgressBar } from "@components/ProgressBar";
+import { ProgressBar } from "@components";
 
 interface TeamStatsComparisonProps {
   matchId: string;

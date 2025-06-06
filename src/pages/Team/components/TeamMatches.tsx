@@ -4,8 +4,8 @@ import { useAtomValue } from "jotai";
 import { MatchData, matchDataAtom } from "@atoms/matchDataAtom";
 // Removed unused: import { formatDate } from "../../../lib/date";
 import { formatTime } from "@library/format";
-import { ErrorMessage } from "@components/Common/ErrorMessage";
-import { MatchCard } from "@components/Card/MatchCard"; // Import MatchCard
+import { ErrorMessage } from "@components";
+import { MatchCard } from "@components"; // Import MatchCard
 
 // Define a type for keys of MatchData that hold string values
 type StringMatchDataKeys = {

@@ -10,11 +10,11 @@ import {
 } from "recharts";
 // Removed useStats import
 import { teamListSummaryAtom } from "@atoms/listSummaryAtoms"; // Import summary atom
-import { TeamCard } from "@components/Card/TeamCard";
+import { TeamCard } from "@components";
 // Removed unused: import { StatCard } from "../../../components/StatCard";
 import { teamMapTypeStatsAtom } from "@atoms/teamMapTypeStatsAtom";
 import { formatPercentage } from "@library/format"; // Removed unused prettyFormat
-import { ErrorMessage } from "@components/Common/ErrorMessage";
+import { ErrorMessage } from "@components";
 
 export const TeamOverview = () => {
   const { teamId } = useParams<{ teamId: string }>();

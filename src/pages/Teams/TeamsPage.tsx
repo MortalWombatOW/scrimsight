@@ -11,7 +11,7 @@ import { TeamsSummaryStats } from "@pages/Teams/components/TeamsSummaryStats";
 // Update SortOption type if needed in TeamsFilter.tsx later
 import { TeamsFilter, SortOption } from "@pages/Teams/components/TeamsFilter";
 import { TeamsList } from "@pages/Teams/components/TeamsList";
-import Container from "@components/Container/Container"; // Added import
+import { Container } from "@components"; // Added import
 
 export const TeamsPage = () => {
   // Use the new summary atom

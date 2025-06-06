@@ -24,7 +24,7 @@ createIndependentModules({
       pattern: "src/App.tsx", 
       allowImportsFrom: [
         "src/pages/index.tsx",    // page-index 
-        "src/components/index.tsx", // component-index 
+        "src/components/index.ts",  // component-index 
         "src/atoms/index.ts",     // atom-index 
         "src/lib/index.ts",       // library-index 
       ],
@@ -40,14 +40,24 @@ createIndependentModules({
       ],
       errorMessage: "Atom index (src/atoms/index.ts) can only import files from its own directory (e.g. '@atoms/filename.ts') or the library index (@library).",
     },
-    // Component Index: src/components/index.tsx
+    // Component Index: src/components/index.ts
     {
       name: "component-index",
-      pattern: "src/components/index.tsx", 
+      pattern: "src/components/index.ts", 
       allowImportsFrom: [
         "src/components/*.tsx", 
       ],
-      errorMessage: "Component index (src/components/index.tsx) can only import files from '@components/filename.tsx'.",
+      errorMessage: "Component index (src/components/index.ts) can only import files from '@components/filename.tsx'.",
+    },
+    // Icon Index: src/icons/index.ts
+    {
+      name: "icon-index",
+      pattern: "src/icons/index.ts", 
+      allowImportsFrom: [
+        "src/icons/*.tsx", 
+        "src/icons/*.svg",
+      ],
+      errorMessage: "Icon index (src/icons/index.ts) can only import files from '@icons/filename.tsx' or SVG files.",
     },
     // Page Index: src/pages/index.tsx
     {
@@ -98,9 +108,22 @@ createIndependentModules({
         "src/components/*.tsx",    // component (for testing specific component) 
         "src/atoms/index.ts",      // atom-index 
         "src/lib/index.ts",        // library-index 
-        "src/components/index.tsx",// component-index (for other components via index) 
+        "src/components/index.ts", // component-index (for other components via index) 
+        "src/icons/index.ts",      // icon-index (for icons via index)
       ],
-      errorMessage: "Component stories (src/components/*.stories.tsx) have restricted dependencies, can only import from a component (@components/componentName), the component index (@components), or the library index (@library).",
+      allowExternalImports: true,
+      errorMessage: "Component stories (src/components/*.stories.tsx) have restricted dependencies, can only import from a component (@components/componentName), the component index (@components), icon index (@icons), the library index (@library), or allowed external packages.",
+    },
+    // Icon Test: src/icons/*.stories.tsx
+    {
+      name: "icon-test",
+      pattern: "src/icons/*.stories.tsx", 
+      allowImportsFrom: [
+        "src/icons/*.tsx",         // icon (for testing specific icon) 
+        "src/icons/index.ts",      // icon-index (for other icons via index) 
+        "src/lib/index.ts",        // library-index 
+      ],
+      errorMessage: "Icon stories (src/icons/*.stories.tsx) have restricted dependencies, can only import from an icon (@icons/iconName), the icon index (@icons), or the library index (@library).",
     },
     // Page Test: src/pages/*.stories.tsx
     {
@@ -149,13 +172,25 @@ createIndependentModules({
     // Component: src/components/*.tsx (excluding index and stories files)
     {
       name: "component",
-      pattern: [["src/components/*.tsx", "!src/components/index.tsx", "!src/components/*.stories.tsx"]], 
+      pattern: [["src/components/*.tsx", "!src/components/index.ts", "!src/components/*.stories.tsx"]], 
       allowImportsFrom: [
         "src/atoms/index.ts",     // atom-index 
         "src/lib/index.ts",       // library-index 
-        "src/components/index.tsx",// component-index (for other components) 
+        "src/components/index.ts", // component-index (for other components) 
+        "src/icons/index.ts",     // icon-index (for icons)
       ],
-      errorMessage: "Components (src/components/*.tsx) have restricted dependencies, can only import from the atom index (@atoms), the library index (@library), or the component index (@components).",
+      allowExternalImports: true,
+      errorMessage: "Components (src/components/*.tsx) have restricted dependencies, can only import from the atom index (@atoms), the library index (@library), the component index (@components), the icon index (@icons), or allowed external packages.",
+    },
+    // Icon: src/icons/*.tsx (excluding index and stories files)
+    {
+      name: "icon",
+      pattern: [["src/icons/*.tsx", "!src/icons/index.ts", "!src/icons/*.stories.tsx"]], 
+      allowImportsFrom: [
+        "src/lib/index.ts",       // library-index 
+        "src/icons/*.svg",        // SVG files
+      ],
+      errorMessage: "Icons (src/icons/*.tsx) have restricted dependencies, can only import from the library index (@library) or SVG files.",
     },
     // Page: src/pages/*.tsx (excluding index and stories files)
     {

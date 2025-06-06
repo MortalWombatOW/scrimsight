@@ -1,8 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useStats } from "@library/playerMetricsAtoms";
-import { ErrorMessage } from "@components/Common/ErrorMessage";
-import { SubPageNavigation } from "@components/Layout/SubPageNavigation";
-import Container from "@components/Container/Container"; // Added import
+import { ErrorMessage, SubPageNavigation } from "@components";
+import { Container } from "@components"; // Added import
 
 export const PlayersPage = () => {
   const playerStats = useStats(["playerName"]);

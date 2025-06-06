@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { Suspense } from "react";
-import { Layout } from "@components/Layout/Layout";
+import { Layout } from "@components";
 import { HomePage } from "@pages/Home";
 import { AddFilesPage } from "@pages/AddFiles/AddFilesPage";
 import { ScrimsPage } from "@pages/Scrims/ScrimsPage";

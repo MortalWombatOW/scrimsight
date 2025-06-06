@@ -7,8 +7,8 @@ import {
 } from "@atoms/listSummaryAtoms";
 // Removed unused: import { useNavigate } from "react-router-dom";
 import { formatTime } from "@lib"; // Removed unused mapNameToFileName
-import { ScrimCard } from "@components/Card/ScrimCard"; // Import ScrimCard
-import Container from "@components/Container/Container"; // Added import
+import { ScrimCard } from "@components"; // Import ScrimCard
+import { Container } from "@components"; // Added import
 
 export const ScrimsPage = () => {
   // Removed unused navigate

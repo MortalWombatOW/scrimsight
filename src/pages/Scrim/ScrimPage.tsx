@@ -6,16 +6,14 @@ import { formatTime, prettyFormat } from "@lib";
 import { IoTimeOutline } from "react-icons/io5";
 import { TbTournament } from "react-icons/tb";
 import { useParams } from "react-router-dom"; // Removed unused Link
-import { TeamCard } from "@components/Card/TeamCard";
-import { PlayerCard } from "@components/Card/PlayerCard";
-import { MatchCard } from "@components/Card/MatchCard"; // Import MatchCard
+import { TeamCard, PlayerCard, MatchCard } from "@components"; // Import MatchCard
 import {
   teamStatsForScrimAtom,
   playerStatsForScrimAtom,
   matchStatsForScrimAtom,
 } from "@atoms/contextualStatAtoms"; // Import contextual atoms
 import { MatchData } from "@atoms/matchDataAtom"; // Import MatchData type for matchStatsForScrimAtom
-import Container from "@components/Container/Container"; // Added import
+import { Container } from "@components"; // Added import
 
 export const ScrimPage = () => {
   const { scrimId } = useParams<{ scrimId: string }>(); // Use the constructed scrimId

@@ -10,7 +10,7 @@ import ReactFlow, {
   BackgroundVariant,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { Layout } from "@components/Layout/Layout";
+import { Layout } from "@components";
 import AtomNode from "@pages/SchemaVisualizer/components/AtomNode";
 import EdgeLabel from "@pages/SchemaVisualizer/components/EdgeLabel";
 import { getLayoutedElements } from "@pages/SchemaVisualizer/utils/dagre";

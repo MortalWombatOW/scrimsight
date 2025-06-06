@@ -4,10 +4,8 @@ import { teamNamesAtom } from "@atoms/teamNamesAtom";
 import { teamStatsAtom } from "@atoms/teamStatsAtom";
 // Removed unused imports: allPlayersForTeamAtom, matchDataAtom
 // Removed unused component imports: TeamOverview, TeamPlayers, TeamMatches, TeamCompositions
-import { StatCard } from "@components/StatCard";
-import { ErrorMessage } from "@components/Common/ErrorMessage";
-import { SubPageNavigation } from "@components/Layout/SubPageNavigation";
-import Container from "@components/Container/Container"; // Added import
+import { StatCard, ErrorMessage, SubPageNavigation } from "@components";
+import { Container } from "@components"; // Added import
 
 export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();

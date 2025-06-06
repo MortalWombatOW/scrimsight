@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useStats } from "@atoms";
 import { OverwatchRole } from "@library/hero";
-import RoleIcon from "@components/Common/RoleIcon";
+import { RoleIcon } from "@icons";
 import { prettyFormat } from "@library/format";
 
 type StatCategory = "damage" | "healing" | "utility";

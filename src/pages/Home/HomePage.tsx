@@ -8,10 +8,7 @@ import {
   teamListSummaryAtom,
   playerListSummaryAtom,
 } from "@atoms/listSummaryAtoms"; // Import summary atoms
-import { ScrimCard } from "@components/Card/ScrimCard";
-import { TeamCard } from "@components/Card/TeamCard";
-import { PlayerCard } from "@components/Card/PlayerCard";
-import Container from "@components/Container/Container"; // Added import
+import { ScrimCard, TeamCard, PlayerCard, Container } from "@components"; // Added import
 import { formatTime, formatPercentage, prettyFormat } from "@lib"; // Import formatters
 
 const NUM_ITEMS_TO_SHOW = 3; // Number of cards to show per section

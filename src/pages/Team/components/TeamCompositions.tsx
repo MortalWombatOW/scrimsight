@@ -8,8 +8,8 @@ import {
   getRankForRole,
 } from "@library/hero";
 import { formatDuration } from "@library/time";
-import RoleIcon from "@components/Common/RoleIcon";
-import { ErrorMessage } from "@components/Common/ErrorMessage"; // Import ErrorMessage
+import { RoleIcon } from "@icons";
+import { ErrorMessage } from "@components"; // Import ErrorMessage
 
 export const TeamCompositions = (): ReactNode => {
   const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL

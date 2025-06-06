@@ -6,7 +6,7 @@ import {
   camelCaseToWords,
   prettyFormat,
 } from "@lib";
-import { ProgressBar } from "@components/ProgressBar";
+import { ProgressBar } from "@components";
 
 interface PlayerStatsCardProps {
   playerName: string;

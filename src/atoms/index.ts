@@ -53,6 +53,10 @@ import teamStatsAtom from '@atoms/teamStatsAtom';
 import mapTimesAtom from '@atoms/mapTimesAtom';
 import matchExtractorAtom from '@atoms/matchExtractorAtom';
 import heroPlaytimeAtom from '@atoms/heroPlaytimeAtom';
+import teamNamesAtom from '@atoms/teamNamesAtom';
+import killMatrixAtom from '@atoms/killMatrixAtom';
+import playerLivesAtom from '@atoms/playerLivesAtom';
+import groupedEventsAtom from '@atoms/groupedEventsAtom';
 
 // All atoms are of this type
 export type ScrimsightAtom<Value> = {
@@ -490,8 +494,10 @@ export type UniqueHeroNamesType = string[];
 export const uniqueHeroNames: ScrimsightAtom<Promise<UniqueHeroNamesType>> = { name: 'uniqueHeroNamesAtom', description: 'A list of all unique hero names found in the log files.', atom: uniqueHeroNamesAtom };
 export type SampleDataEnabledType = boolean;
 export const sampleDataEnabled: ScrimsightAtom<SampleDataEnabledType> = { name: 'sampleDataEnabled', description: 'Whether sample data is enabled', atom: sampleDataEnabledAtom };
+export { default as sampleDataEnabledAtom } from '@atoms/sampleDataEnabled';
 export type LogFileInputType = { files: File[]; };
 export const logFileInput: ScrimsightAtom<LogFileInputType> = { name: 'logFileInput', description: 'Atom that stores the uploaded log files and provides a setter', atom: logFileInputAtom };
+export { default as logFileInputAtom } from '@atoms/logFileInputAtom';
 export type LogFileLoaderType = { fileName: string; fileModified: number; fileContent: string; }[];
 export const sampleData: ScrimsightAtom<LogFileLoaderType> = { name: 'sampleData', description: 'Sample log file data', atom: sampleDataAtom };
 export const logFileLoader: ScrimsightAtom<Promise<LogFileLoaderType>> = { name: 'logFileLoader', description: 'Loads the content of uploaded log files', atom: logFileLoaderAtom };
@@ -538,3 +544,7 @@ export const teamStats: ScrimsightAtom<Promise<TeamStats[]>> = { name: 'teamStat
 export const mapTimes: ScrimsightAtom<Promise<MapTimes[]>> = { name: 'mapTimes', description: 'Atom that calculates duration and timing data for each map/match.', atom: mapTimesAtom };
 export const matchExtractor: ScrimsightAtom<Promise<MatchFileInfo[]>> = { name: 'matchExtractor', description: 'Atom that extracts match file information from log files.', atom: matchExtractorAtom };
 export const heroPlaytime: ScrimsightAtom<Promise<Metric<HeroPlaytime, HeroPlaytimeCategoryKeys, HeroPlaytimeNumericalKeys>>> = { name: 'heroPlaytime', description: 'Atom that calculates hero playtime for each player per round.', atom: heroPlaytimeAtom };
+export const teamNames: ScrimsightAtom<Promise<string[]>> = { name: 'teamNames', description: 'Atom that extracts unique team names from all matches.', atom: teamNamesAtom };
+export const killMatrixAtomFamily = killMatrixAtom;
+export const playerLives: ScrimsightAtom<Promise<PlayerLife[]>> = { name: 'playerLives', description: 'Atom that calculates player lives from spawn/death events.', atom: playerLivesAtom };
+export const groupedEvents: ScrimsightAtom<Promise<GroupedKillOffensiveAssistEvent[]>> = { name: 'groupedEvents', description: 'Atom that groups kill events and offensive assists by matchId and matchTime.', atom: groupedEventsAtom };

@@ -1,4 +1,4 @@
-import { TeamCard } from "@components/Card/TeamCard";
+import { TeamCard } from "@components";
 // Import the new summary type
 import { TeamListSummary } from "@atoms/listSummaryAtoms";
 import { formatPercentage } from "@library/format"; // Assuming a formatting function exists

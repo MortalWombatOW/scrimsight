@@ -5,7 +5,7 @@ import {
   getRoleFromHero,
   getHeroImage,
 } from "@library/hero";
-import RoleIcon from "@components/Common/RoleIcon";
+import { RoleIcon } from "@icons";
 import {
   BarChart,
   Bar,

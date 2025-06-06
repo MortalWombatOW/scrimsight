@@ -6,8 +6,8 @@ import { IoMdCalendar } from "react-icons/io";
 import { MdAccessTime } from "react-icons/md";
 import { TbClockHour1 } from "react-icons/tb";
 import { FiMapPin } from "react-icons/fi";
-import { SubPageNavigation } from "@components/Layout/SubPageNavigation"; // Added import
-import Container from "@components/Container/Container"; // Added import
+import { SubPageNavigation } from "@components"; // Added import
+import { Container } from "@components"; // Added import
 
 // Import the extracted components
 import { MatchScoreCard } from "@pages/Match/components/scorecard/MatchScoreCard";

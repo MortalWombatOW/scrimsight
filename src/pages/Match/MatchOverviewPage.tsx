@@ -5,13 +5,12 @@ import {
   teamStatsForMatchAtom,
   // Removed unused playerStatsForMatchAtom
 } from "@atoms/contextualStatAtoms";
-import { MatchCard } from "@components/Card/MatchCard";
-import { TeamCard } from "@components/Card/TeamCard";
+import { MatchCard, TeamCard } from "@components";
 // Removed unused PlayerCard
 import { formatTime, prettyFormat } from "@lib"; // Import formatters
 // Removed PlayerStatsComparison import
 import { TeamStatsComparison } from "@pages/Match/components/stats/TeamStatsComparison";
-import KillsTable from "@components/KillsTable/KillsTable";
+import { KillsTable } from "@components";
 
 export const MatchOverviewPage = () => {
   const { matchId } = useParams<{ matchId: string }>();

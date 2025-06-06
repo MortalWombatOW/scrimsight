@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAtom } from "jotai";
 import { teamCompositionsAtom } from "@atoms/teamCompositionsAtom";
 import { getRoleFromHero, getHeroImage, formatDuration } from "@lib";
-import RoleIcon from "@components/Common/RoleIcon";
+import { RoleIcon } from "@icons";
 
 interface TeamCompositionsProps {
   teamName: string;

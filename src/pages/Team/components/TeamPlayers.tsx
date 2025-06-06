@@ -2,9 +2,8 @@ import { useParams, Link } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import { allPlayersForTeamAtom } from "@atoms/teamPlayers";
 import { playerStatsForTeamAtom } from "@atoms/contextualStatAtoms";
-import { PlayerCard } from "@components/Card/PlayerCard";
+import { PlayerCard, ErrorMessage } from "@components";
 import { prettyFormat } from "@library/format";
-import { ErrorMessage } from "@components/Common/ErrorMessage";
 
 // Component to render a single player card using the atom family
 const PlayerCardLoader = ({

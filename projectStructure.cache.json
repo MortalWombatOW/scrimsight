@@ -200,63 +200,7 @@
     "errorMessage": "🔥 Folder 'AddFiles' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/AddFiles\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/Timeline/TimeSegmentDisplay.tsx",
-    "errorMessage": "🔥 Folder 'Timeline' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/Timeline\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/StatCard.tsx",
-    "errorMessage": "🔥 File 'StatCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/StatCard.stories.tsx\nError location = ./src/components/StatCard.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ProgressBar.tsx",
-    "errorMessage": "🔥 File 'ProgressBar.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ProgressBar.stories.tsx\nError location = ./src/components/ProgressBar.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/LoadFilesButton.tsx",
-    "errorMessage": "🔥 File 'LoadFilesButton.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/LoadFilesButton.stories.tsx\nError location = ./src/components/LoadFilesButton.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/Layout/Layout.tsx",
-    "errorMessage": "🔥 Folder 'Layout' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/Layout\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/KillsTable/KillsTable.tsx",
-    "errorMessage": "🔥 Folder 'KillsTable' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/KillsTable\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/Icons/BeamsAuraIcon.tsx",
-    "errorMessage": "🔥 Folder 'Icons' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/Icons\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/Heatmap/HeatmapGrid.tsx",
-    "errorMessage": "🔥 Folder 'Heatmap' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/Heatmap\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ControlPanel/IconAutocomplete.stories.tsx",
-    "errorMessage": "🔥 Folder 'ControlPanel' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/ControlPanel\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/Container/Container.tsx",
-    "errorMessage": "🔥 Folder 'Container' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/Container\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/CompositionCard.tsx",
-    "errorMessage": "🔥 File 'CompositionCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/CompositionCard.stories.tsx\nError location = ./src/components/CompositionCard.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/Common/ErrorMessage.tsx",
-    "errorMessage": "🔥 Folder 'Common' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/Common\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/Card/CardBase.tsx",
-    "errorMessage": "🔥 Folder 'Card' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/Card\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/pages/AddFiles/AddFilesPage.tsx",
     "errorMessage": "🔥 Folder 'pages' is invalid. 🔥\n\nAllowed names  = atoms\nError location = ./src/pages\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/Card/CardBase.tsx",
-    "errorMessage": "🔥 Folder 'components' is invalid. 🔥\n\nAllowed names  = atoms\nError location = ./src/components\n\n"
   }
 ]

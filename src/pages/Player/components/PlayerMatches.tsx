@@ -3,7 +3,7 @@ import { type ReactNode } from "react";
 import { useAtomValue } from "jotai";
 import { MatchData, matchDataAtom } from "@atoms/matchDataAtom";
 import { useParams } from "react-router-dom"; // Removed unused Link
-import { MatchCard } from "@components/Card/MatchCard";
+import { MatchCard } from "@components";
 import { formatTime } from "@library/format";
 
 export const PlayerMatches = (): ReactNode => {

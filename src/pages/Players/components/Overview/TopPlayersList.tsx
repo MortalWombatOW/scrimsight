@@ -1,5 +1,5 @@
 import { useStats } from "@atoms";
-import RoleIcon from "@components/Common/RoleIcon";
+import { RoleIcon } from "@icons";
 import { prettyFormat } from "@library/format";
 import { Link } from "react-router-dom";
 

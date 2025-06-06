@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Timeline } from "@components/Timeline/Timeline";
+import { Timeline } from "@components";
 export const TimelinePage = () => {
   const { matchId } = useParams<{ matchId: string }>();
 
