@@ -1,3 +1,4 @@
+// folderStructure.mjs
 // @ts-check
 
 import { createFolderStructure } from "eslint-plugin-project-structure";

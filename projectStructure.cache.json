@@ -24,10 +24,6 @@
     "errorMessage": "🔥 File 'ultimateImpactAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ultimateImpactAtom.test.ts\nError location = ./src/atoms/ultimateImpactAtom.ts\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/ultimateEventsAtom.ts",
-    "errorMessage": "🔥 File 'ultimateEventsAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ultimateEventsAtom.test.ts\nError location = ./src/atoms/ultimateEventsAtom.ts\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/ultimateEnd.ts",
     "errorMessage": "🔥 File 'ultimateEnd.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ultimateEnd.test.ts\nError location = ./src/atoms/ultimateEnd.ts\n\n"
   },
@@ -124,16 +120,8 @@
     "errorMessage": "🔥 File 'killMatrixAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/killMatrixAtom.test.ts\nError location = ./src/atoms/killMatrixAtom.ts\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/listSummaryAtoms.ts",
-    "errorMessage": "🔥 File 'listSummaryAtoms.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/listSummaryAtoms.test.ts\nError location = ./src/atoms/listSummaryAtoms.ts\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/heroSwap.ts",
     "errorMessage": "🔥 File 'heroSwap.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/heroSwap.test.ts\nError location = ./src/atoms/heroSwap.ts\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/groupedEventsAtom.ts",
-    "errorMessage": "🔥 File 'groupedEventsAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/groupedEventsAtom.test.ts\nError location = ./src/atoms/groupedEventsAtom.ts\n\n"
   },
   {
     "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/firstKillImpactAtom.ts",

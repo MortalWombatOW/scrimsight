@@ -14,15 +14,21 @@ export const fileCompositionConfig = createFileComposition({
         nestedSelectors: false,
       },
       rootSelectorsLimits: [
-        { selector: "variable", limit: 1 }, // Only the default atomFamily export
+        { selector: "variable", limit: 1 }, // unnamed default export
+        { selector: "arrowFunction", limit: 1 }, // named implementation function
       ],
       rules: [
-        // AtomFamily default export (unnamed default)
         {
-          selector: "variable",
+          selector: "arrowFunction",
           scope: "fileExport", 
-          format: "default",
-          positionIndex: 0,
+          format: "{fileName}Fn", // Named function export
+          positionIndex: 0, 
+        },
+        {
+          selector: "variable", 
+          scope: "fileExport",
+          format: "default", // Default export
+          positionIndex: 1,
         },
       ],
     },
