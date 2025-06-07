@@ -45,11 +45,35 @@
       "@library": [
         "src/lib/index.ts"
       ],
+      "@lib/*": [
+        "src/lib/*"
+      ],
+      "@lib": [
+        "src/lib/index.ts"
+      ],
       "@icons/*": [
         "src/icons/*"
       ],
       "@icons": [
         "src/icons/index.ts"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@hooks": [
+        "src/hooks/index.ts"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@services": [
+        "src/services/index.ts"
+      ],
+      "@types/*": [
+        "src/types/*"
+      ],
+      "@types": [
+        "src/types/index.ts"
       ],
     },
     "types": [

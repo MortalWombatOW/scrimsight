@@ -1,206 +1,190 @@
 [
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/uniquePlayerNamesAtom.ts",
-    "errorMessage": "🔥 File 'uniquePlayerNamesAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/uniquePlayerNamesAtom.test.ts\nError location = ./src/atoms/uniquePlayerNamesAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/lib/sampledata/Log-2023-08-28-17-29-57.txt",
+    "errorMessage": "🔥 Folder 'sampledata' is invalid. 🔥\n\nAccording to the structure, the 'lib' folder can only contain files.\nError location = ./src/lib/sampledata\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/uniqueMapNamesAtom.ts",
-    "errorMessage": "🔥 File 'uniqueMapNamesAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/uniqueMapNamesAtom.test.ts\nError location = ./src/atoms/uniqueMapNamesAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/ZeroState.tsx",
+    "errorMessage": "🔥 File 'ZeroState.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/ZeroState.stories.tsx\nError location = ./src/pages/ZeroState.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/uniqueGameModesAtom.ts",
-    "errorMessage": "🔥 File 'uniqueGameModesAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/uniqueGameModesAtom.test.ts\nError location = ./src/atoms/uniqueGameModesAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/TimelinePage.tsx",
+    "errorMessage": "🔥 File 'TimelinePage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/TimelinePage.stories.tsx\nError location = ./src/pages/TimelinePage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/uniqueCategoryValuesAtom.ts",
-    "errorMessage": "🔥 File 'uniqueCategoryValuesAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/uniqueCategoryValuesAtom.test.ts\nError location = ./src/atoms/uniqueCategoryValuesAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/TeamsPage.tsx",
+    "errorMessage": "🔥 File 'TeamsPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/TeamsPage.stories.tsx\nError location = ./src/pages/TeamsPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/ultimateStart.ts",
-    "errorMessage": "🔥 File 'ultimateStart.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ultimateStart.test.ts\nError location = ./src/atoms/ultimateStart.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/TeamPage.tsx",
+    "errorMessage": "🔥 File 'TeamPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/TeamPage.stories.tsx\nError location = ./src/pages/TeamPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/ultimateImpactAtom.ts",
-    "errorMessage": "🔥 File 'ultimateImpactAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ultimateImpactAtom.test.ts\nError location = ./src/atoms/ultimateImpactAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/ScrimsPage.tsx",
+    "errorMessage": "🔥 File 'ScrimsPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/ScrimsPage.stories.tsx\nError location = ./src/pages/ScrimsPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/ultimateEnd.ts",
-    "errorMessage": "🔥 File 'ultimateEnd.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ultimateEnd.test.ts\nError location = ./src/atoms/ultimateEnd.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/ScrimPage.tsx",
+    "errorMessage": "🔥 File 'ScrimPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/ScrimPage.stories.tsx\nError location = ./src/pages/ScrimPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/ultimateCharged.ts",
-    "errorMessage": "🔥 File 'ultimateCharged.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/ultimateCharged.test.ts\nError location = ./src/atoms/ultimateCharged.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/SchemaVisualizerPage.tsx",
+    "errorMessage": "🔥 File 'SchemaVisualizerPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/SchemaVisualizerPage.stories.tsx\nError location = ./src/pages/SchemaVisualizerPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/teamfightParticipationAtom.ts",
-    "errorMessage": "🔥 File 'teamfightParticipationAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/teamfightParticipationAtom.test.ts\nError location = ./src/atoms/teamfightParticipationAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/PlayersPage.tsx",
+    "errorMessage": "🔥 File 'PlayersPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/PlayersPage.stories.tsx\nError location = ./src/pages/PlayersPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/teamStatsAtom.ts",
-    "errorMessage": "🔥 File 'teamStatsAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/teamStatsAtom.test.ts\nError location = ./src/atoms/teamStatsAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/PlayerPage.tsx",
+    "errorMessage": "🔥 File 'PlayerPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/PlayerPage.stories.tsx\nError location = ./src/pages/PlayerPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/teamPlayers.ts",
-    "errorMessage": "🔥 File 'teamPlayers.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/teamPlayers.test.ts\nError location = ./src/atoms/teamPlayers.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MetricsExplorerPage.tsx",
+    "errorMessage": "🔥 File 'MetricsExplorerPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MetricsExplorerPage.stories.tsx\nError location = ./src/pages/MetricsExplorerPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/teamMapTypeStatsAtom.ts",
-    "errorMessage": "🔥 File 'teamMapTypeStatsAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/teamMapTypeStatsAtom.test.ts\nError location = ./src/atoms/teamMapTypeStatsAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MatchStatComparisonPage.tsx",
+    "errorMessage": "🔥 File 'MatchStatComparisonPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MatchStatComparisonPage.stories.tsx\nError location = ./src/pages/MatchStatComparisonPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/teamCompositionsAtom.ts",
-    "errorMessage": "🔥 File 'teamCompositionsAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/teamCompositionsAtom.test.ts\nError location = ./src/atoms/teamCompositionsAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MatchPlayersPage.tsx",
+    "errorMessage": "🔥 File 'MatchPlayersPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MatchPlayersPage.stories.tsx\nError location = ./src/pages/MatchPlayersPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/setupComplete.ts",
-    "errorMessage": "🔥 File 'setupComplete.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/setupComplete.test.ts\nError location = ./src/atoms/setupComplete.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MatchPage2.tsx",
+    "errorMessage": "🔥 File 'MatchPage2.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MatchPage2.stories.tsx\nError location = ./src/pages/MatchPage2.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/segmentStatsAtomFamily.ts",
-    "errorMessage": "🔥 File 'segmentStatsAtomFamily.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/segmentStatsAtomFamily.test.ts\nError location = ./src/atoms/segmentStatsAtomFamily.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MatchOverviewPage.tsx",
+    "errorMessage": "🔥 File 'MatchOverviewPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MatchOverviewPage.stories.tsx\nError location = ./src/pages/MatchOverviewPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/scrimAtom.ts",
-    "errorMessage": "🔥 File 'scrimAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/scrimAtom.test.ts\nError location = ./src/atoms/scrimAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/HomePage.tsx",
+    "errorMessage": "🔥 File 'HomePage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/HomePage.stories.tsx\nError location = ./src/pages/HomePage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/sampleDataEnabled.ts",
-    "errorMessage": "🔥 File 'sampleDataEnabled.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/sampleDataEnabled.test.ts\nError location = ./src/atoms/sampleDataEnabled.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/CallbackPage.tsx",
+    "errorMessage": "🔥 File 'CallbackPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/CallbackPage.stories.tsx\nError location = ./src/pages/CallbackPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerStatusTimelineAtom.ts",
-    "errorMessage": "🔥 File 'playerStatusTimelineAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerStatusTimelineAtom.test.ts\nError location = ./src/atoms/playerStatusTimelineAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/AddFilesPage.tsx",
+    "errorMessage": "🔥 File 'AddFilesPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/AddFilesPage.stories.tsx\nError location = ./src/pages/AddFilesPage.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerStatExpandedAtom.ts",
-    "errorMessage": "🔥 File 'playerStatExpandedAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerStatExpandedAtom.test.ts\nError location = ./src/atoms/playerStatExpandedAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TopPlayersList.tsx",
+    "errorMessage": "🔥 File 'TopPlayersList.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TopPlayersList.stories.tsx\nError location = ./src/components/TopPlayersList.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerStat.ts",
-    "errorMessage": "🔥 File 'playerStat.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerStat.test.ts\nError location = ./src/atoms/playerStat.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamsVisualization.tsx",
+    "errorMessage": "🔥 File 'TeamsVisualization.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamsVisualization.stories.tsx\nError location = ./src/components/TeamsVisualization.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerMatchHistoryAtom.ts",
-    "errorMessage": "🔥 File 'playerMatchHistoryAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerMatchHistoryAtom.test.ts\nError location = ./src/atoms/playerMatchHistoryAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamsSummaryStats.tsx",
+    "errorMessage": "🔥 File 'TeamsSummaryStats.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamsSummaryStats.stories.tsx\nError location = ./src/components/TeamsSummaryStats.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerLivesAtom.ts",
-    "errorMessage": "🔥 File 'playerLivesAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerLivesAtom.test.ts\nError location = ./src/atoms/playerLivesAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamsList.tsx",
+    "errorMessage": "🔥 File 'TeamsList.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamsList.stories.tsx\nError location = ./src/components/TeamsList.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerListSummary.ts",
-    "errorMessage": "🔥 File 'playerListSummary.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerListSummary.test.ts\nError location = ./src/atoms/playerListSummary.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamsFilter.tsx",
+    "errorMessage": "🔥 File 'TeamsFilter.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamsFilter.stories.tsx\nError location = ./src/components/TeamsFilter.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerFirstKillDeathRateAtom.ts",
-    "errorMessage": "🔥 File 'playerFirstKillDeathRateAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerFirstKillDeathRateAtom.test.ts\nError location = ./src/atoms/playerFirstKillDeathRateAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamStatsComparison.tsx",
+    "errorMessage": "🔥 File 'TeamStatsComparison.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamStatsComparison.stories.tsx\nError location = ./src/components/TeamStatsComparison.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerComparisonAtomFamily.ts",
-    "errorMessage": "🔥 File 'playerComparisonAtomFamily.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerComparisonAtomFamily.test.ts\nError location = ./src/atoms/playerComparisonAtomFamily.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamPlayers.tsx",
+    "errorMessage": "🔥 File 'TeamPlayers.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamPlayers.stories.tsx\nError location = ./src/components/TeamPlayers.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerComparison.ts",
-    "errorMessage": "🔥 File 'playerComparison.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerComparison.test.ts\nError location = ./src/atoms/playerComparison.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamOverview.tsx",
+    "errorMessage": "🔥 File 'TeamOverview.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamOverview.stories.tsx\nError location = ./src/components/TeamOverview.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/offensiveAssist.ts",
-    "errorMessage": "🔥 File 'offensiveAssist.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/offensiveAssist.test.ts\nError location = ./src/atoms/offensiveAssist.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamMatches.tsx",
+    "errorMessage": "🔥 File 'TeamMatches.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamMatches.stories.tsx\nError location = ./src/components/TeamMatches.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/mercyRez.ts",
-    "errorMessage": "🔥 File 'mercyRez.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/mercyRez.test.ts\nError location = ./src/atoms/mercyRez.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamCompositions.tsx",
+    "errorMessage": "🔥 File 'TeamCompositions.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamCompositions.stories.tsx\nError location = ./src/components/TeamCompositions.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/matchExtractorAtom.ts",
-    "errorMessage": "🔥 File 'matchExtractorAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/matchExtractorAtom.test.ts\nError location = ./src/atoms/matchExtractorAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/SingleStatPlayerComparison.tsx",
+    "errorMessage": "🔥 File 'SingleStatPlayerComparison.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/SingleStatPlayerComparison.stories.tsx\nError location = ./src/components/SingleStatPlayerComparison.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/killMatrixAtom.ts",
-    "errorMessage": "🔥 File 'killMatrixAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/killMatrixAtom.test.ts\nError location = ./src/atoms/killMatrixAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScrimsMatchCard.tsx",
+    "errorMessage": "🔥 File 'ScrimsMatchCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScrimsMatchCard.stories.tsx\nError location = ./src/components/ScrimsMatchCard.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/heroSwap.ts",
-    "errorMessage": "🔥 File 'heroSwap.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/heroSwap.test.ts\nError location = ./src/atoms/heroSwap.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayersPerformance.tsx",
+    "errorMessage": "🔥 File 'PlayersPerformance.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayersPerformance.stories.tsx\nError location = ./src/components/PlayersPerformance.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/firstKillImpactAtom.ts",
-    "errorMessage": "🔥 File 'firstKillImpactAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/firstKillImpactAtom.test.ts\nError location = ./src/atoms/firstKillImpactAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayersOverview.tsx",
+    "errorMessage": "🔥 File 'PlayersOverview.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayersOverview.stories.tsx\nError location = ./src/components/PlayersOverview.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/dvaRemech.ts",
-    "errorMessage": "🔥 File 'dvaRemech.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/dvaRemech.test.ts\nError location = ./src/atoms/dvaRemech.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayersHeroes.tsx",
+    "errorMessage": "🔥 File 'PlayersHeroes.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayersHeroes.stories.tsx\nError location = ./src/components/PlayersHeroes.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/dvaDemech.ts",
-    "errorMessage": "🔥 File 'dvaDemech.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/dvaDemech.test.ts\nError location = ./src/atoms/dvaDemech.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerStatsComparison.tsx",
+    "errorMessage": "🔥 File 'PlayerStatsComparison.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerStatsComparison.stories.tsx\nError location = ./src/components/PlayerStatsComparison.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/detailedTeamCompositionsAtom.ts",
-    "errorMessage": "🔥 File 'detailedTeamCompositionsAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/detailedTeamCompositionsAtom.test.ts\nError location = ./src/atoms/detailedTeamCompositionsAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerStatsCard.tsx",
+    "errorMessage": "🔥 File 'PlayerStatsCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerStatsCard.stories.tsx\nError location = ./src/components/PlayerStatsCard.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/contextualStatAtoms.ts",
-    "errorMessage": "🔥 File 'contextualStatAtoms.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/contextualStatAtoms.test.ts\nError location = ./src/atoms/contextualStatAtoms.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerOverview.tsx",
+    "errorMessage": "🔥 File 'PlayerOverview.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerOverview.stories.tsx\nError location = ./src/components/PlayerOverview.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/averageMetricPerRoleAtom.ts",
-    "errorMessage": "🔥 File 'averageMetricPerRoleAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/averageMetricPerRoleAtom.test.ts\nError location = ./src/atoms/averageMetricPerRoleAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerMatches.tsx",
+    "errorMessage": "🔥 File 'PlayerMatches.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerMatches.stories.tsx\nError location = ./src/components/PlayerMatches.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/averageMetricPerMapAtom.ts",
-    "errorMessage": "🔥 File 'averageMetricPerMapAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/averageMetricPerMapAtom.test.ts\nError location = ./src/atoms/averageMetricPerMapAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerList.tsx",
+    "errorMessage": "🔥 File 'PlayerList.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerList.stories.tsx\nError location = ./src/components/PlayerList.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Teams/TeamsPage.tsx",
-    "errorMessage": "🔥 Folder 'Teams' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Teams\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerHeroes.tsx",
+    "errorMessage": "🔥 File 'PlayerHeroes.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerHeroes.stories.tsx\nError location = ./src/components/PlayerHeroes.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Team/TeamCompositions.tsx",
-    "errorMessage": "🔥 Folder 'Team' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Team\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MetricsDataTable.tsx",
+    "errorMessage": "🔥 File 'MetricsDataTable.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MetricsDataTable.stories.tsx\nError location = ./src/components/MetricsDataTable.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Scrims/ScrimsPage.tsx",
-    "errorMessage": "🔥 Folder 'Scrims' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Scrims\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MetricsControls.tsx",
+    "errorMessage": "🔥 File 'MetricsControls.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MetricsControls.stories.tsx\nError location = ./src/components/MetricsControls.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Scrim/ScrimPage.tsx",
-    "errorMessage": "🔥 Folder 'Scrim' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Scrim\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MetricsChart.tsx",
+    "errorMessage": "🔥 File 'MetricsChart.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MetricsChart.stories.tsx\nError location = ./src/components/MetricsChart.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/SchemaVisualizer/SchemaVisualizerPage.tsx",
-    "errorMessage": "🔥 Folder 'SchemaVisualizer' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/SchemaVisualizer\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MatchScoreCard.tsx",
+    "errorMessage": "🔥 File 'MatchScoreCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MatchScoreCard.stories.tsx\nError location = ./src/components/MatchScoreCard.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Players/PlayersPage.tsx",
-    "errorMessage": "🔥 Folder 'Players' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Players\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/LayerSelector.tsx",
+    "errorMessage": "🔥 File 'LayerSelector.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/LayerSelector.stories.tsx\nError location = ./src/components/LayerSelector.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Player/PlayerPage.tsx",
-    "errorMessage": "🔥 Folder 'Player' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Player\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/EdgeLabel.tsx",
+    "errorMessage": "🔥 File 'EdgeLabel.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/EdgeLabel.stories.tsx\nError location = ./src/components/EdgeLabel.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MetricsExplorer/MetricsExplorerPage.tsx",
-    "errorMessage": "🔥 Folder 'MetricsExplorer' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/MetricsExplorer\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/AtomNode.tsx",
+    "errorMessage": "🔥 File 'AtomNode.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/AtomNode.stories.tsx\nError location = ./src/components/AtomNode.tsx\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Match/MatchOverviewPage.tsx",
-    "errorMessage": "🔥 Folder 'Match' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Match\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Home/HomePage.tsx",
-    "errorMessage": "🔥 Folder 'Home' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Home\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/Auth/CallbackPage.tsx",
-    "errorMessage": "🔥 Folder 'Auth' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/Auth\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/AddFiles/AddFilesPage.tsx",
-    "errorMessage": "🔥 Folder 'AddFiles' is invalid. 🔥\n\nAccording to the structure, the 'pages' folder can only contain files.\nError location = ./src/pages/AddFiles\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/AddFiles/AddFilesPage.tsx",
-    "errorMessage": "🔥 Folder 'pages' is invalid. 🔥\n\nAllowed names  = atoms\nError location = ./src/pages\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/AllPlayerComparison.tsx",
+    "errorMessage": "🔥 File 'AllPlayerComparison.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/AllPlayerComparison.stories.tsx\nError location = ./src/components/AllPlayerComparison.tsx\n\n"
   }
 ]

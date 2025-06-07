@@ -3,14 +3,13 @@ import { killFn } from '@atoms/kill';
 import type { LogFileParserAtomType, KillType } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
-// Mock @library functions
-const mockExtractEventsFromFiles = extractEventsFromFiles as MockedFunction<typeof extractEventsFromFiles>;
-
 vi.mock('@library', () => ({
   extractEventsFromFiles: vi.fn(),
 }));
 
 describe('killFn', () => {
+  // Mock @library functions
+  const mockExtractEventsFromFiles = extractEventsFromFiles as MockedFunction<typeof extractEventsFromFiles>;
   const mockParsedFiles: LogFileParserAtomType = [
     {
       fileName: 'test-match1.log',

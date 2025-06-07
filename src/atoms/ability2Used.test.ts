@@ -3,14 +3,13 @@ import { ability2UsedFn } from '@atoms/ability2Used';
 import type { LogFileParserAtomType, Ability2UsedLogEvent, Ability2UsedType } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
-// Mock @library functions
-const mockExtractEventsFromFiles = extractEventsFromFiles as MockedFunction<typeof extractEventsFromFiles>;
-
 vi.mock('@library', () => ({
   extractEventsFromFiles: vi.fn(),
 }));
 
 describe('ability2UsedFn', () => {
+  // Mock @library functions
+  const mockExtractEventsFromFiles = extractEventsFromFiles as MockedFunction<typeof extractEventsFromFiles>;
   const mockParsedFiles: LogFileParserAtomType = [
     {
       fileName: 'test-match-1.txt',

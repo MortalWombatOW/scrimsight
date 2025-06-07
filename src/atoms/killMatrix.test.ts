@@ -7,87 +7,86 @@ import {
 } from '@library';
 import { MatchData, PlayerInteractionEvent } from '@atoms';
 
-// Sample interaction events for testing
-const sampleInteractionEvents: PlayerInteractionEvent[] = [
-  {
-    id: 'interaction1',
-    matchId: 'match1',
-    playerName: 'player1',
-    playerTeam: 'team1',
-    playerHero: 'hero1',
-    playerInteractionEventType: 'Killed player',
-    otherPlayerName: 'player3',
-    playerInteractionEventTime: 100,
-    direction: 'outgoing'
-  },
-  {
-    id: 'interaction2',
-    matchId: 'match1',
-    playerName: 'player1',
-    playerTeam: 'team1',
-    playerHero: 'hero1',
-    playerInteractionEventType: 'Killed player',
-    otherPlayerName: 'player4',
-    playerInteractionEventTime: 120,
-    direction: 'outgoing'
-  },
-  {
-    id: 'interaction3',
-    matchId: 'match1',
-    playerName: 'player2',
-    playerTeam: 'team1',
-    playerHero: 'hero2',
-    playerInteractionEventType: 'Killed player',
-    otherPlayerName: 'player3',
-    playerInteractionEventTime: 140,
-    direction: 'outgoing'
-  },
-  {
-    id: 'interaction4',
-    matchId: 'match1',
-    playerName: 'player3',
-    playerTeam: 'team2',
-    playerHero: 'hero3',
-    playerInteractionEventType: 'Killed player',
-    otherPlayerName: 'player1',
-    playerInteractionEventTime: 160,
-    direction: 'outgoing'
-  },
-  {
-    id: 'interaction5',
-    matchId: 'match1',
-    playerName: 'player4',
-    playerTeam: 'team2',
-    playerHero: 'hero4',
-    playerInteractionEventType: 'Shot fired',
-    otherPlayerName: 'player2',
-    playerInteractionEventTime: 180,
-    direction: 'outgoing'
-  }
-];
-
-// Sample match data
-const sampleMatchData: MatchData[] = [
-  {
-    matchId: 'match1',
-    fileName: 'sample.log',
-    fileModified: new Date().getTime(),
-    dateString: '2023-01-01',
-    map: 'Lijiang Tower',
-    team1Name: 'team1',
-    team2Name: 'team2',
-    team1Players: ['player1', 'player2'],
-    team2Players: ['player3', 'player4'],
-    winner: 'team1', // Corrected from mapWinner
-    mode: 'Control', // Added placeholder
-    team1Score: 2, // Added placeholder
-    team2Score: 1, // Added placeholder
-    duration: 1200, // Added placeholder
-    roundWinners: ['team1', 'team2', 'team1'], // Added placeholder
-  }
-];
-
 describe('killMatrix pure functions', () => {
+  // Sample interaction events for testing
+  const sampleInteractionEvents: PlayerInteractionEvent[] = [
+    {
+      id: 'interaction1',
+      matchId: 'match1',
+      playerName: 'player1',
+      playerTeam: 'team1',
+      playerHero: 'hero1',
+      playerInteractionEventType: 'Killed player',
+      otherPlayerName: 'player3',
+      playerInteractionEventTime: 100,
+      direction: 'outgoing'
+    },
+    {
+      id: 'interaction2',
+      matchId: 'match1',
+      playerName: 'player1',
+      playerTeam: 'team1',
+      playerHero: 'hero1',
+      playerInteractionEventType: 'Killed player',
+      otherPlayerName: 'player4',
+      playerInteractionEventTime: 120,
+      direction: 'outgoing'
+    },
+    {
+      id: 'interaction3',
+      matchId: 'match1',
+      playerName: 'player2',
+      playerTeam: 'team1',
+      playerHero: 'hero2',
+      playerInteractionEventType: 'Killed player',
+      otherPlayerName: 'player3',
+      playerInteractionEventTime: 140,
+      direction: 'outgoing'
+    },
+    {
+      id: 'interaction4',
+      matchId: 'match1',
+      playerName: 'player3',
+      playerTeam: 'team2',
+      playerHero: 'hero3',
+      playerInteractionEventType: 'Killed player',
+      otherPlayerName: 'player1',
+      playerInteractionEventTime: 160,
+      direction: 'outgoing'
+    },
+    {
+      id: 'interaction5',
+      matchId: 'match1',
+      playerName: 'player4',
+      playerTeam: 'team2',
+      playerHero: 'hero4',
+      playerInteractionEventType: 'Shot fired',
+      otherPlayerName: 'player2',
+      playerInteractionEventTime: 180,
+      direction: 'outgoing'
+    }
+  ];
+
+  // Sample match data
+  const sampleMatchData: MatchData[] = [
+    {
+      matchId: 'match1',
+      fileName: 'sample.log',
+      fileModified: new Date().getTime(),
+      dateString: '2023-01-01',
+      map: 'Lijiang Tower',
+      team1Name: 'team1',
+      team2Name: 'team2',
+      team1Players: ['player1', 'player2'],
+      team2Players: ['player3', 'player4'],
+      winner: 'team1', // Corrected from mapWinner
+      mode: 'Control', // Added placeholder
+      team1Score: 2, // Added placeholder
+      team2Score: 1, // Added placeholder
+      duration: 1200, // Added placeholder
+      roundWinners: ['team1', 'team2', 'team1'], // Added placeholder
+    }
+  ];
   it('transforms player interactions correctly', () => {
     const interactions = transformPlayerInteractions(sampleInteractionEvents);
     

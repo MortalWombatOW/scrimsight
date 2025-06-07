@@ -3,14 +3,13 @@ import { matchEndFn } from '@atoms/matchEnd';
 import type { LogFileParserAtomType, MatchEndType } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
-// Mock @library functions
-const mockExtractEventsFromFiles = extractEventsFromFiles as MockedFunction<typeof extractEventsFromFiles>;
-
 vi.mock('@library', () => ({
   extractEventsFromFiles: vi.fn(),
 }));
 
 describe('matchEndFn', () => {
+  // Mock @library functions
+  const mockExtractEventsFromFiles = extractEventsFromFiles as MockedFunction<typeof extractEventsFromFiles>;
   const mockParsedFiles: LogFileParserAtomType = [
     {
       fileName: 'test-match1.log',

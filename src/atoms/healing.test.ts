@@ -3,14 +3,13 @@ import { healingFn } from '@atoms/healing';
 import type { LogFileParserAtomType, HealingType } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
-// Mock @library functions
-const mockExtractEventsFromFiles = extractEventsFromFiles as MockedFunction<typeof extractEventsFromFiles>;
-
 vi.mock('@library', () => ({
   extractEventsFromFiles: vi.fn(),
 }));
 
 describe('healingFn', () => {
+  // Mock @library functions
+  const mockExtractEventsFromFiles = extractEventsFromFiles as MockedFunction<typeof extractEventsFromFiles>;
   const mockParsedFiles: LogFileParserAtomType = [
     {
       fileName: 'test-match1.log',

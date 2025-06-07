@@ -27,8 +27,15 @@ createIndependentModules({
         "src/components/index.ts",  // component-index 
         "src/atoms/index.ts",     // atom-index 
         "src/lib/index.ts",       // library-index 
+        // Path aliases
+        "@pages",                 // page-index alias
+        "@components",            // component-index alias  
+        "@atoms",                 // atom-index alias
+        "@lib",                   // library-index alias
+        "@library",               // library-index alias (alternative name)
       ],
-      errorMessage: "App (src/App.tsx) has restricted dependencies, can only import from pages index (@pages), components index (@components), atom index (@atoms), and library index (@library).",
+      allowExternalImports: true,
+      errorMessage: "App (src/App.tsx) has restricted dependencies, can only import from pages index (@pages), components index (@components), atom index (@atoms), library index (@library), and external packages.",
     },
     // Atom Index: src/atoms/index.ts
     {
@@ -197,7 +204,7 @@ createIndependentModules({
       name: "page",
       pattern: [["src/pages/*.tsx", "!src/pages/index.tsx", "!src/pages/*.stories.tsx"]], 
       allowImportsFrom: [
-        "src/components/index.tsx",// component-index 
+        "src/components/index.ts", // component-index 
         "src/lib/index.ts",        // library-index 
       ],
       errorMessage: "Pages (src/pages/*.tsx) can only import from the component index (@components), or the library index (@library).",

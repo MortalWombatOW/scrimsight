@@ -3,16 +3,15 @@ import { logFileParserAtomFn } from '@atoms/logFileParserAtom';
 import type { LogFileLoaderType } from '@atoms';
 import { parseFile, stringHash } from '@library';
 
-// Mock @library functions
-const mockParseFile = parseFile as MockedFunction<typeof parseFile>;
-const mockStringHash = stringHash as MockedFunction<typeof stringHash>;
-
 vi.mock('@library', () => ({
   parseFile: vi.fn(),
   stringHash: vi.fn(),
 }));
 
 describe('logFileParserAtomFn', () => {
+  // Mock @library functions
+  const mockParseFile = parseFile as MockedFunction<typeof parseFile>;
+  const mockStringHash = stringHash as MockedFunction<typeof stringHash>;
   const mockLoadedFile: LogFileLoaderType[0] = {
     fileName: 'loaded.txt',
     fileContent: 'loaded content',
