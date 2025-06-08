@@ -2,11 +2,11 @@ import { type ReactNode, useState } from "react";
 // Removed useStats import
 import { useAtomValue } from "jotai";
 // Removed duplicate imports below
-import { playerListSummaryAtom } from "@atoms/listSummaryAtoms";
+import { playerListSummaryAtom } from "@atoms";
 import { RoleIcon } from "@icons";
-import { getRoleFromHero, OverwatchRole } from "@library/hero";
+import { getRoleFromHero, OverwatchRole } from "@library";
 // Removed unused: import { TopPlayersList } from "./TopPlayersList";
-import { PlayerList } from "@components/PlayerList";
+import { PlayerList } from "@components";
 // TODO: Create or import a PlayersFilter component similar to TeamsFilter
 // import { PlayersFilter, PlayerSortOption } from "./PlayersFilter";
 

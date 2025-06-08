@@ -1,7 +1,7 @@
 // Removed useState, useStats, RoleIcon, prettyFormat, Link, PlayerStatsNumericalKeys imports as they are no longer needed here
 import { PlayerCard } from "@components"; // Import PlayerCard
-import { PlayerListSummary } from "@atoms/listSummaryAtoms"; // Import the summary type
-import { prettyFormat } from "@library/format"; // Keep prettyFormat for KDA
+import { PlayerListSummary } from "@atoms"; // Import the summary type
+import { prettyFormat } from "@library"; // Keep prettyFormat for KDA
 
 interface PlayerListProps {
   players: PlayerListSummary[]; // Accept players summary as prop

@@ -1,20 +1,14 @@
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import { matchDataAtom } from "@atoms/matchDataAtom"; // Removed unused MatchData type
-import {
-  teamStatsForMatchAtom,
-  // Removed unused playerStatsForMatchAtom
-} from "@atoms/contextualStatAtoms";
-import { MatchCard, TeamCard } from "@components";
+import { matchData, contextualStatAtoms } from "@library";
+import { MatchCard, TeamCard, TeamStatsComparison, KillsTable } from "@components";
 // Removed unused PlayerCard
-import { formatTime, prettyFormat } from "@lib"; // Import formatters
+import { formatTime, prettyFormat } from "@library"; // Import formatters
 // Removed PlayerStatsComparison import
-import { TeamStatsComparison } from "@components/TeamStatsComparison";
-import { KillsTable } from "@components";
 
 export const MatchOverviewPage = () => {
   const { matchId } = useParams<{ matchId: string }>();
-  const allMatches = useAtomValue(matchDataAtom);
+  const allMatches = useAtomValue(matchData.atom);
 
   if (!matchId) {
     return <div className="text-center p-4">No match ID provided.</div>;
@@ -29,7 +23,7 @@ export const MatchOverviewPage = () => {
   // Fetch contextual stats using the atoms (components to handle loading/undefined states)
   const TeamStatsDisplay = ({ teamName }: { teamName: string }) => {
     const teamStats = useAtomValue(
-      teamStatsForMatchAtom({ matchId, teamName })
+      contextualStatAtoms.teamStatsForMatchAtom({ matchId, teamName })
     );
     if (!teamStats) return null; // Or loading indicator
     // TODO: Define relevant stats for TeamCard based on teamStats structure
@@ -157,3 +151,5 @@ export const MatchOverviewPage = () => {
     </div>
   );
 };
+
+export default MatchOverviewPage;

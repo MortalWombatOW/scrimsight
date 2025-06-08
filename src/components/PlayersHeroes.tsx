@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useStats } from "@atoms";
-import { OverwatchRole, getHeroImage } from "@library/hero";
+import { useStats } from "@library";
+import { OverwatchRole, getHeroImage } from "@library";
 import { RoleIcon } from "@icons";
-import { prettyFormat } from "@library/format";
+import { prettyFormat } from "@library";
 
 export const PlayersHeroes = () => {
   const [selectedRole, setSelectedRole] = useState<OverwatchRole | "all">(

@@ -1,8 +1,8 @@
 import { type ReactNode } from "react";
 // Removed useStats import for overall stats, keep for hero stats for now
-import { useStats } from "@atoms";
+import { useStats } from "@library";
 import { useAtomValue } from "jotai"; // Import useAtomValue
-import { playerListSummaryAtom } from "@atoms/listSummaryAtoms"; // Import summary atom
+import { playerListSummaryAtom } from "@atoms"; // Import summary atom
 import { PlayerCard } from "@components"; // Import PlayerCard
 import { StatCard } from "@components";
 import {
@@ -17,11 +17,11 @@ import {
   Cell,
 } from "recharts";
 // Removed duplicate import: import { useAtomValue } from "jotai";
-import { matchDataAtom } from "@atoms/matchDataAtom";
+import { matchData } from "@atoms";
 import { format } from "date-fns";
-import { getRoleFromHero } from "@library/hero";
+import { getRoleFromHero } from "@library";
 import { useParams } from "react-router-dom";
-import { prettyFormat } from "@library/format"; // Import prettyFormat
+import { prettyFormat } from "@library"; // Import prettyFormat
 
 // interface PlayerOverviewProps { // Remove prop interface
 //   playerName: string;
@@ -46,8 +46,10 @@ export const PlayerOverview = (): ReactNode => { // Remove props
     playerName: playerName ? [playerName] : [], // Pass playerName if available
   });
   // Keep matches for performance trend chart for now
-  const matches = useAtomValue(matchDataAtom);
-
+  const matches = useAtomValue(matchData.atom);
+  
+  // Move this hook to top to avoid conditional hook call
+  const detailedOverallStats = useStats(["playerName"], { playerName: playerName ? [playerName] : [] });
 
   if (!playerName) {
     return <div>Player name not found in URL.</div>;
@@ -69,7 +71,7 @@ export const PlayerOverview = (): ReactNode => { // Remove props
        match.team2Players.includes(playerName)
   );
   // Calculate performance trends (keep function as is for now)
-  const calculatePerformanceTrends = (matches: any[]): PerformanceTrend[] => {
+  const calculatePerformanceTrends = (matches: Array<{ fileModified: number; team1Players: string[]; team2Players: string[]; team1Score: number; team2Score: number; playerStats?: Record<string, { eliminations?: number; deaths?: number }>}>): PerformanceTrend[] => {
     // Filter out any invalid matches first
     const validMatches = matches.filter(
       (match) =>
@@ -80,12 +82,12 @@ export const PlayerOverview = (): ReactNode => { // Remove props
 
     // Group matches by date
     const matchesByDate = validMatches.reduce(
-      (acc: Record<string, any[]>, match) => {
+      (acc: Record<string, typeof validMatches>, match) => {
         try {
           const date = format(match.fileModified, "MMM d");
           if (!acc[date]) acc[date] = [];
           acc[date].push(match);
-        } catch (error) {
+        } catch {
           console.warn("Invalid date for match:", match);
         }
         return acc;
@@ -141,9 +143,7 @@ export const PlayerOverview = (): ReactNode => { // Remove props
     }));
 
   // --- Detailed Stats Calculation (Keep for StatCards below) ---
-  // Fetch detailed overall stats again using useStats for the lower sections
-  // This isn't ideal, could be optimized later by passing data or using context
-  const detailedOverallStats = useStats(["playerName"], { playerName: [playerName] });
+  // Use the stats we already fetched at the top to avoid conditional hook call
   const detailedStats = detailedOverallStats.rows[0];
 
   const avgDamage = detailedStats?.heroDamageDealtPer10Minutes?.toFixed(0) ?? 'N/A';
@@ -156,29 +156,30 @@ export const PlayerOverview = (): ReactNode => { // Remove props
 
 
   // Custom tooltip styles (keep as is)
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: unknown }) => {
+    const payloadArray = payload as Array<{ value: number | string }> | undefined;
+    if (active && payloadArray && payloadArray.length) {
       return (
         <div className="custom-tooltip bg-base-200 p-3 rounded-lg">
           <div className="space-y-1">
             <p>
               KDA:{" "}
-              {typeof payload[0]?.value === "number"
-                ? payload[0].value.toFixed(2)
-                : payload[0]?.value}
+              {typeof payloadArray[0]?.value === "number"
+                ? payloadArray[0].value.toFixed(2)
+                : payloadArray[0]?.value}
             </p>
             <p>
               Win Rate:{" "}
-              {typeof payload[1]?.value === "number"
-                ? payload[1].value.toFixed(1)
-                : payload[1]?.value}
+              {typeof payloadArray[1]?.value === "number"
+                ? payloadArray[1].value.toFixed(1)
+                : payloadArray[1]?.value}
               %
             </p>
             <p>
               Avg Elims:{" "}
-              {typeof payload[2]?.value === "number"
-                ? payload[2].value.toFixed(1)
-                : payload[2]?.value}
+              {typeof payloadArray[2]?.value === "number"
+                ? payloadArray[2].value.toFixed(1)
+                : payloadArray[2]?.value}
             </p>
           </div>
         </div>

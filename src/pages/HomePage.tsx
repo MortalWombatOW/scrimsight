@@ -1,15 +1,10 @@
 import React, { Suspense } from "react";
 import { Link } from "react-router-dom";
-import { matchDataAtom } from "@atoms"; // Keep for hasData check
+import { matchData, scrimListSummaryAtom, teamListSummaryAtom, playerListSummaryAtom } from "@library";
 import { useAtomValue } from "jotai";
-import { ZeroState } from "@pages";
-import {
-  scrimListSummaryAtom,
-  teamListSummaryAtom,
-  playerListSummaryAtom,
-} from "@atoms"; // Import summary atoms
+import { ZeroState } from "@components";
 import { ScrimCard, TeamCard, PlayerCard, Container } from "@components"; // Added import
-import { formatTime, formatPercentage, prettyFormat } from "@lib"; // Import formatters
+import { formatTime, formatPercentage, prettyFormat } from "@library"; // Import formatters
 
 const NUM_ITEMS_TO_SHOW = 3; // Number of cards to show per section
 
@@ -143,8 +138,8 @@ const TopPlayersSection = () => {
 };
 
 export const HomePage = (): React.ReactNode => {
-  const matchData = useAtomValue(matchDataAtom);
-  const hasData = matchData.length > 0;
+  const matchDataValue = useAtomValue(matchData.atom);
+  const hasData = matchDataValue.length > 0;
 
   // If no data, show ZeroState immediately
   if (!hasData) {
@@ -169,3 +164,5 @@ export const HomePage = (): React.ReactNode => {
     </Container> // Closing Container tag
   );
 };
+
+export default HomePage;

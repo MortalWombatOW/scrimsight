@@ -1,14 +1,14 @@
 import { type ReactNode } from "react";
 // Removed useStats import
 import { useAtomValue } from "jotai";
-import { MatchData, matchDataAtom } from "@atoms/matchDataAtom";
+import { matchData } from "@atoms";
 import { useParams } from "react-router-dom"; // Removed unused Link
 import { MatchCard } from "@components";
-import { formatTime } from "@library/format";
+import { formatTime } from "@library";
 
 export const PlayerMatches = (): ReactNode => {
   const { playerName } = useParams<{ playerName: string }>();
-  const allMatches = useAtomValue(matchDataAtom);
+  const allMatches = useAtomValue(matchData.atom);
 
   if (!playerName) {
     return <div>Player name not found in URL.</div>;
@@ -30,7 +30,7 @@ export const PlayerMatches = (): ReactNode => {
       {/* Use flex layout for cards */}
       <div className="flex flex-col md:flex-row flex-wrap gap-6">
         {playerMatches.length > 0 ? (
-          playerMatches.map((match: MatchData) => (
+          playerMatches.map((match) => (
             <MatchCard
               key={match.matchId}
               title={`${match.map} (${match.mode})`}

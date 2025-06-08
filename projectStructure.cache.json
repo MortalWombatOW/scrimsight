@@ -1,190 +1,70 @@
 [
   {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/UpCardIcon.tsx",
+    "errorMessage": "🔥 File 'UpCardIcon.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/UpCardIconIcon.stories.tsx\nError location = ./src/icons/UpCardIcon.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/UpCardIcon.stories.tsx",
+    "errorMessage": "🔥 File 'UpCardIcon.stories.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/UpCardIcon.storiesIcon.tsx\nError location = ./src/icons/UpCardIcon.stories.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/RoleIconSvg.tsx",
+    "errorMessage": "🔥 File 'RoleIconSvg.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}Icon.tsx, {PascalCase}Icon.stories.tsx, *.svg\nError location = ./src/icons/RoleIconSvg.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/RoleIconSvg.stories.tsx",
+    "errorMessage": "🔥 File 'RoleIconSvg.stories.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}Icon.tsx, {PascalCase}Icon.stories.tsx, *.svg\nError location = ./src/icons/RoleIconSvg.stories.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/RoleIcon.stories.tsx",
+    "errorMessage": "🔥 File 'RoleIcon.stories.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/RoleIcon.storiesIcon.tsx\nError location = ./src/icons/RoleIcon.stories.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/RoleIcon.tsx",
+    "errorMessage": "🔥 File 'RoleIcon.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/RoleIconIcon.stories.tsx\nError location = ./src/icons/RoleIcon.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/MacheteIcon.stories.tsx",
+    "errorMessage": "🔥 File 'MacheteIcon.stories.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/MacheteIcon.storiesIcon.tsx\nError location = ./src/icons/MacheteIcon.stories.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/MacheteIcon.tsx",
+    "errorMessage": "🔥 File 'MacheteIcon.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/MacheteIconIcon.stories.tsx\nError location = ./src/icons/MacheteIcon.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/GrimReaperIcon.stories.tsx",
+    "errorMessage": "🔥 File 'GrimReaperIcon.stories.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/GrimReaperIcon.storiesIcon.tsx\nError location = ./src/icons/GrimReaperIcon.stories.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/GrimReaperIcon.tsx",
+    "errorMessage": "🔥 File 'GrimReaperIcon.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/GrimReaperIconIcon.stories.tsx\nError location = ./src/icons/GrimReaperIcon.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/HealingIcon.tsx",
+    "errorMessage": "🔥 File 'HealingIcon.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/HealingIconIcon.stories.tsx\nError location = ./src/icons/HealingIcon.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/HealingIcon.stories.tsx",
+    "errorMessage": "🔥 File 'HealingIcon.stories.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/HealingIcon.storiesIcon.tsx\nError location = ./src/icons/HealingIcon.stories.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/GhostAllyIcon.tsx",
+    "errorMessage": "🔥 File 'GhostAllyIcon.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/GhostAllyIconIcon.stories.tsx\nError location = ./src/icons/GhostAllyIcon.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/BeamsAuraIcon.tsx",
+    "errorMessage": "🔥 File 'BeamsAuraIcon.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/BeamsAuraIconIcon.stories.tsx\nError location = ./src/icons/BeamsAuraIcon.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/GhostAllyIcon.stories.tsx",
+    "errorMessage": "🔥 File 'GhostAllyIcon.stories.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/GhostAllyIcon.storiesIcon.tsx\nError location = ./src/icons/GhostAllyIcon.stories.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/icons/BeamsAuraIcon.stories.tsx",
+    "errorMessage": "🔥 File 'BeamsAuraIcon.stories.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/icons/BeamsAuraIcon.storiesIcon.tsx\nError location = ./src/icons/BeamsAuraIcon.stories.tsx\n\n"
+  },
+  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/lib/sampledata/Log-2023-08-28-17-29-57.txt",
     "errorMessage": "🔥 Folder 'sampledata' is invalid. 🔥\n\nAccording to the structure, the 'lib' folder can only contain files.\nError location = ./src/lib/sampledata\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/ZeroState.tsx",
-    "errorMessage": "🔥 File 'ZeroState.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/ZeroState.stories.tsx\nError location = ./src/pages/ZeroState.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/TimelinePage.tsx",
-    "errorMessage": "🔥 File 'TimelinePage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/TimelinePage.stories.tsx\nError location = ./src/pages/TimelinePage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/TeamsPage.tsx",
-    "errorMessage": "🔥 File 'TeamsPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/TeamsPage.stories.tsx\nError location = ./src/pages/TeamsPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/TeamPage.tsx",
-    "errorMessage": "🔥 File 'TeamPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/TeamPage.stories.tsx\nError location = ./src/pages/TeamPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/ScrimsPage.tsx",
-    "errorMessage": "🔥 File 'ScrimsPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/ScrimsPage.stories.tsx\nError location = ./src/pages/ScrimsPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/ScrimPage.tsx",
-    "errorMessage": "🔥 File 'ScrimPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/ScrimPage.stories.tsx\nError location = ./src/pages/ScrimPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/SchemaVisualizerPage.tsx",
-    "errorMessage": "🔥 File 'SchemaVisualizerPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/SchemaVisualizerPage.stories.tsx\nError location = ./src/pages/SchemaVisualizerPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/PlayersPage.tsx",
-    "errorMessage": "🔥 File 'PlayersPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/PlayersPage.stories.tsx\nError location = ./src/pages/PlayersPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/PlayerPage.tsx",
-    "errorMessage": "🔥 File 'PlayerPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/PlayerPage.stories.tsx\nError location = ./src/pages/PlayerPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MetricsExplorerPage.tsx",
-    "errorMessage": "🔥 File 'MetricsExplorerPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MetricsExplorerPage.stories.tsx\nError location = ./src/pages/MetricsExplorerPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MatchStatComparisonPage.tsx",
-    "errorMessage": "🔥 File 'MatchStatComparisonPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MatchStatComparisonPage.stories.tsx\nError location = ./src/pages/MatchStatComparisonPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MatchPlayersPage.tsx",
-    "errorMessage": "🔥 File 'MatchPlayersPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MatchPlayersPage.stories.tsx\nError location = ./src/pages/MatchPlayersPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MatchPage2.tsx",
-    "errorMessage": "🔥 File 'MatchPage2.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MatchPage2.stories.tsx\nError location = ./src/pages/MatchPage2.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/MatchOverviewPage.tsx",
-    "errorMessage": "🔥 File 'MatchOverviewPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/MatchOverviewPage.stories.tsx\nError location = ./src/pages/MatchOverviewPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/HomePage.tsx",
-    "errorMessage": "🔥 File 'HomePage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/HomePage.stories.tsx\nError location = ./src/pages/HomePage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/CallbackPage.tsx",
-    "errorMessage": "🔥 File 'CallbackPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/CallbackPage.stories.tsx\nError location = ./src/pages/CallbackPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/pages/AddFilesPage.tsx",
-    "errorMessage": "🔥 File 'AddFilesPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/pages/AddFilesPage.stories.tsx\nError location = ./src/pages/AddFilesPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TopPlayersList.tsx",
-    "errorMessage": "🔥 File 'TopPlayersList.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TopPlayersList.stories.tsx\nError location = ./src/components/TopPlayersList.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamsVisualization.tsx",
-    "errorMessage": "🔥 File 'TeamsVisualization.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamsVisualization.stories.tsx\nError location = ./src/components/TeamsVisualization.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamsSummaryStats.tsx",
-    "errorMessage": "🔥 File 'TeamsSummaryStats.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamsSummaryStats.stories.tsx\nError location = ./src/components/TeamsSummaryStats.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamsList.tsx",
-    "errorMessage": "🔥 File 'TeamsList.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamsList.stories.tsx\nError location = ./src/components/TeamsList.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamsFilter.tsx",
-    "errorMessage": "🔥 File 'TeamsFilter.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamsFilter.stories.tsx\nError location = ./src/components/TeamsFilter.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamStatsComparison.tsx",
-    "errorMessage": "🔥 File 'TeamStatsComparison.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamStatsComparison.stories.tsx\nError location = ./src/components/TeamStatsComparison.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamPlayers.tsx",
-    "errorMessage": "🔥 File 'TeamPlayers.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamPlayers.stories.tsx\nError location = ./src/components/TeamPlayers.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamOverview.tsx",
-    "errorMessage": "🔥 File 'TeamOverview.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamOverview.stories.tsx\nError location = ./src/components/TeamOverview.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamMatches.tsx",
-    "errorMessage": "🔥 File 'TeamMatches.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamMatches.stories.tsx\nError location = ./src/components/TeamMatches.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamCompositions.tsx",
-    "errorMessage": "🔥 File 'TeamCompositions.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamCompositions.stories.tsx\nError location = ./src/components/TeamCompositions.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/SingleStatPlayerComparison.tsx",
-    "errorMessage": "🔥 File 'SingleStatPlayerComparison.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/SingleStatPlayerComparison.stories.tsx\nError location = ./src/components/SingleStatPlayerComparison.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScrimsMatchCard.tsx",
-    "errorMessage": "🔥 File 'ScrimsMatchCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScrimsMatchCard.stories.tsx\nError location = ./src/components/ScrimsMatchCard.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayersPerformance.tsx",
-    "errorMessage": "🔥 File 'PlayersPerformance.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayersPerformance.stories.tsx\nError location = ./src/components/PlayersPerformance.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayersOverview.tsx",
-    "errorMessage": "🔥 File 'PlayersOverview.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayersOverview.stories.tsx\nError location = ./src/components/PlayersOverview.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayersHeroes.tsx",
-    "errorMessage": "🔥 File 'PlayersHeroes.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayersHeroes.stories.tsx\nError location = ./src/components/PlayersHeroes.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerStatsComparison.tsx",
-    "errorMessage": "🔥 File 'PlayerStatsComparison.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerStatsComparison.stories.tsx\nError location = ./src/components/PlayerStatsComparison.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerStatsCard.tsx",
-    "errorMessage": "🔥 File 'PlayerStatsCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerStatsCard.stories.tsx\nError location = ./src/components/PlayerStatsCard.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerOverview.tsx",
-    "errorMessage": "🔥 File 'PlayerOverview.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerOverview.stories.tsx\nError location = ./src/components/PlayerOverview.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerMatches.tsx",
-    "errorMessage": "🔥 File 'PlayerMatches.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerMatches.stories.tsx\nError location = ./src/components/PlayerMatches.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerList.tsx",
-    "errorMessage": "🔥 File 'PlayerList.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerList.stories.tsx\nError location = ./src/components/PlayerList.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerHeroes.tsx",
-    "errorMessage": "🔥 File 'PlayerHeroes.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerHeroes.stories.tsx\nError location = ./src/components/PlayerHeroes.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MetricsDataTable.tsx",
-    "errorMessage": "🔥 File 'MetricsDataTable.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MetricsDataTable.stories.tsx\nError location = ./src/components/MetricsDataTable.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MetricsControls.tsx",
-    "errorMessage": "🔥 File 'MetricsControls.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MetricsControls.stories.tsx\nError location = ./src/components/MetricsControls.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MetricsChart.tsx",
-    "errorMessage": "🔥 File 'MetricsChart.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MetricsChart.stories.tsx\nError location = ./src/components/MetricsChart.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MatchScoreCard.tsx",
-    "errorMessage": "🔥 File 'MatchScoreCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MatchScoreCard.stories.tsx\nError location = ./src/components/MatchScoreCard.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/LayerSelector.tsx",
-    "errorMessage": "🔥 File 'LayerSelector.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/LayerSelector.stories.tsx\nError location = ./src/components/LayerSelector.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/EdgeLabel.tsx",
-    "errorMessage": "🔥 File 'EdgeLabel.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/EdgeLabel.stories.tsx\nError location = ./src/components/EdgeLabel.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/AtomNode.tsx",
-    "errorMessage": "🔥 File 'AtomNode.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/AtomNode.stories.tsx\nError location = ./src/components/AtomNode.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/AllPlayerComparison.tsx",
-    "errorMessage": "🔥 File 'AllPlayerComparison.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/AllPlayerComparison.stories.tsx\nError location = ./src/components/AllPlayerComparison.tsx\n\n"
   }
 ]

@@ -1,9 +1,8 @@
 import { Suspense } from "react"; // Removed React import as it's not needed explicitly
 import { useParams, Outlet } from "react-router-dom"; // Added Outlet
-import { useStats } from "@atoms";
-import { getRoleFromHero } from "@library/hero";
+import { useStats, getRoleFromHero } from "@library";
 import { SubPageNavigation } from "@components"; // Added SubPageNavigation
-import { RoleIcon } from "@icons";
+import { RoleIcon } from "@components";
 import { ErrorBoundary } from "react-error-boundary";
 import { Container } from "@components"; // Added import
 // Removed direct imports of child components as they are handled by Outlet
@@ -32,6 +31,11 @@ export const PlayerPage = () => {
   //   "overview" | "heroes" | "matches"
   // >("overview");
 
+  // Move useStats call before any conditional returns to fix React hooks rule
+  const stats = useStats(["playerName", "playerHero"], {
+    playerName: playerName ? [playerName] : [],
+  });
+
   if (!playerName) {
     return (
       <div className="alert alert-error">
@@ -41,10 +45,6 @@ export const PlayerPage = () => {
       </div>
     );
   }
-
-  const stats = useStats(["playerName", "playerHero"], {
-    playerName: [playerName],
-  });
   const playerExists = stats.rows.length > 0;
 
   if (!playerExists) {
@@ -96,3 +96,5 @@ export const PlayerPage = () => {
     </Container> // Added closing Container
   );
 };
+
+export default PlayerPage;

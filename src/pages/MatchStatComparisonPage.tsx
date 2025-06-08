@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
-import { SingleStatPlayerComparison } from "@components/SingleStatPlayerComparison";
-import { AllPlayerComparison } from "@components/AllPlayerComparison";
+import { SingleStatPlayerComparison, AllPlayerComparison } from "@components";
 
 export const MatchStatComparisonPage = () => {
   const { matchId } = useParams<{ matchId: string }>();
@@ -19,3 +18,5 @@ export const MatchStatComparisonPage = () => {
     </>
   );
 };
+
+export default MatchStatComparisonPage;

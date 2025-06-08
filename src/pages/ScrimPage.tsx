@@ -1,29 +1,20 @@
 import { useAtomValue } from "jotai";
-import { scrimAtom } from "@atoms/scrimAtom"; // Keep scrimAtom for finding the scrim
-// Removed matchDataAtom import
-// Removed duplicate imports below
-import { formatTime, prettyFormat } from "@lib";
+import { scrims, contextualStatAtoms, formatTime, prettyFormat, MatchData } from "@library";
 import { IoTimeOutline } from "react-icons/io5";
 import { TbTournament } from "react-icons/tb";
 import { useParams } from "react-router-dom"; // Removed unused Link
 import { TeamCard, PlayerCard, MatchCard } from "@components"; // Import MatchCard
-import {
-  teamStatsForScrimAtom,
-  playerStatsForScrimAtom,
-  matchStatsForScrimAtom,
-} from "@atoms/contextualStatAtoms"; // Import contextual atoms
-import { MatchData } from "@atoms/matchDataAtom"; // Import MatchData type for matchStatsForScrimAtom
 import { Container } from "@components"; // Added import
 
 export const ScrimPage = () => {
   const { scrimId } = useParams<{ scrimId: string }>(); // Use the constructed scrimId
-  const scrims = useAtomValue(scrimAtom);
+  const scrimData = useAtomValue(scrims.atom);
 
   if (!scrimId)
     return <div className="text-center p-4">No Scrim ID provided.</div>;
 
   // Find the scrim using the constructed scrimId format
-  const scrim = scrims.find(
+  const scrim = scrimData.find(
     (s) => `${s.dateString}-${s.team1Name}-vs-${s.team2Name}` === scrimId
   );
 
@@ -42,7 +33,7 @@ export const ScrimPage = () => {
   // Display components for contextual data
   const TeamStatsDisplay = ({ teamName }: { teamName: string }) => {
     const teamStats = useAtomValue(
-      teamStatsForScrimAtom({ scrimId, teamName })
+      contextualStatAtoms.teamStatsForScrimAtom({ scrimId, teamName })
     );
     if (!teamStats)
       return (
@@ -68,7 +59,7 @@ export const ScrimPage = () => {
 
   const PlayerStatsDisplay = ({ playerId }: { playerId: string }) => {
     const playerStats = useAtomValue(
-      playerStatsForScrimAtom({ scrimId, playerId })
+      contextualStatAtoms.playerStatsForScrimAtom({ scrimId, playerId })
     );
     if (!playerStats) return null; // Loading handled elsewhere or skip card
 
@@ -102,7 +93,7 @@ export const ScrimPage = () => {
   };
 
   const MatchListDisplay = () => {
-    const matches = useAtomValue(matchStatsForScrimAtom({ scrimId }));
+    const matches = useAtomValue(contextualStatAtoms.matchStatsForScrimAtom({ scrimId }));
     if (!matches || matches.length === 0)
       return <p>No match data found for this scrim.</p>;
 
@@ -196,3 +187,5 @@ export const ScrimPage = () => {
     </Container> // Added closing Container
   );
 };
+
+export default ScrimPage;

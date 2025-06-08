@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { Suspense } from "react";
-import { Layout } from "@components";
+import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 import {
   HomePage,
   AddFilesPage,
@@ -11,7 +11,7 @@ import {
   TeamsPage,
   PlayerPage,
   TeamPage,
-  MatchPage2,
+  MatchPage,
   CallbackPage,
   TimelinePage,
   MatchOverviewPage,
@@ -22,6 +22,7 @@ import {
   SchemaVisualizerPage,
 } from "@pages";
 import {
+  Layout,
   PlayersOverview,
   PlayersPerformance,
   PlayersHeroes,
@@ -33,7 +34,6 @@ import {
   TeamMatches,
   TeamCompositions,
 } from "@components";
-import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -71,7 +71,7 @@ const App = () => {
                   <Route path="/callback" element={<CallbackPage />} />
                   <Route path="/scrims" element={<ScrimsPage />} />
                   <Route path="/scrims/:scrimId" element={<ScrimPage />} />
-                  <Route path="/matches/:matchId" element={<MatchPage2 />}>
+                  <Route path="/matches/:matchId" element={<MatchPage />}>
                     <Route index element={<MatchOverviewPage />} />
                     <Route path="timeline" element={<TimelinePage />} />
                     <Route

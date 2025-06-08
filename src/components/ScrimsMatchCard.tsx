@@ -1,30 +1,28 @@
 import { useAtomValue } from "jotai";
 import { useNavigate } from "react-router-dom";
-import { matchDataAtom } from "@atoms/matchDataAtom";
-import { useStats } from "@library/playerMetricsAtoms";
-import { getHeroImage, formatTime } from "@library";
+import { matchData } from "@atoms";
+import { useStats } from "@library";
+import { getHeroImage, formatTime, mapNameToFileName } from "@library";
 import { useMemo } from "react";
-import { mapNameToFileName } from "@library/string";
 import { CiMap } from "react-icons/ci";
 
 const PlayerCard = ({
   playerName,
-  matchId,
 }: {
   playerName: string;
-  matchId: string;
 }) => {
   const playerStats = useStats(
-    ["playerHero"],
-    { playerName: [playerName], matchId: [matchId] },
+    ["playerHero", "playerName"],
+    undefined,
     "playtime"
   );
+  const playerRow = playerStats.rows.find(row => row.playerName === playerName);
   const tooltipContent = useMemo(
-    () =>
-      `${playerStats.rows[0].playerHero} - ${formatTime(
-        playerStats.rows[0].playtime
-      )}`,
-    [playerStats]
+    () => {
+      if (!playerRow) return '';
+      return `${playerRow.playerHero} - ${formatTime(playerRow.playtime)}`;
+    },
+    [playerRow]
   );
 
   return (
@@ -32,8 +30,8 @@ const PlayerCard = ({
       <div className="flex items-center">
         <div className="relative group">
           <img
-            src={getHeroImage(playerStats.rows[0].playerHero, true)}
-            alt={playerStats.rows[0].playerHero}
+            src={getHeroImage(playerRow?.playerHero, true)}
+            alt={playerRow?.playerHero || 'Unknown Hero'}
             className="h-6 w-6 rounded-lg mr-2"
           />
           <div className="tooltip tooltip-top" data-tip={tooltipContent}>
@@ -46,11 +44,9 @@ const PlayerCard = ({
 };
 
 export const MatchCard = ({ matchId }: { matchId: string }) => {
-  const matchData = useAtomValue(matchDataAtom);
-  const match = matchData.find((match) => match.matchId === matchId);
-  const playerStats = useStats(["playerName", "playerRole", "playerTeam"], {
-    matchId: [matchId],
-  });
+  const matchDataValue = useAtomValue(matchData.atom);
+  const match = matchDataValue.find((match) => match.matchId === matchId);
+  const playerStats = useStats(["playerName", "playerRole", "playerTeam"]);
   const navigate = useNavigate();
 
   if (!match) {
@@ -73,7 +69,6 @@ export const MatchCard = ({ matchId }: { matchId: string }) => {
                   <PlayerCard
                     key={stats.playerName}
                     playerName={stats.playerName}
-                    matchId={matchId}
                   />
                 ))}
 
@@ -87,7 +82,6 @@ export const MatchCard = ({ matchId }: { matchId: string }) => {
                   <PlayerCard
                     key={stats.playerName}
                     playerName={stats.playerName}
-                    matchId={matchId}
                   />
                 ))}
 
@@ -101,7 +95,6 @@ export const MatchCard = ({ matchId }: { matchId: string }) => {
                   <PlayerCard
                     key={stats.playerName}
                     playerName={stats.playerName}
-                    matchId={matchId}
                   />
                 ))}
             </div>
@@ -151,7 +144,6 @@ export const MatchCard = ({ matchId }: { matchId: string }) => {
                   <PlayerCard
                     key={stats.playerName}
                     playerName={stats.playerName}
-                    matchId={matchId}
                   />
                 ))}
 
@@ -165,7 +157,6 @@ export const MatchCard = ({ matchId }: { matchId: string }) => {
                   <PlayerCard
                     key={stats.playerName}
                     playerName={stats.playerName}
-                    matchId={matchId}
                   />
                 ))}
 
@@ -179,7 +170,6 @@ export const MatchCard = ({ matchId }: { matchId: string }) => {
                   <PlayerCard
                     key={stats.playerName}
                     playerName={stats.playerName}
-                    matchId={matchId}
                   />
                 ))}
             </div>

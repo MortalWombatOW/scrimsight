@@ -71,11 +71,11 @@ export const folderStructureConfig = createFolderStructure({
             { name: "index.ts" }, // Icon index file
             // Icon implementation files
             {
-              name: "{PascalCase}.tsx",
-              enforceExistence: ["{NodeName}.stories.tsx"]
+              name: "{PascalCase}Icon.tsx",
+              enforceExistence: ["{NodeName}Icon.stories.tsx"]
             },
             // Icon story files
-            { name: "{PascalCase}.stories.tsx", enforceExistence: ["{NodeName}.tsx"] },
+            { name: "{PascalCase}Icon.stories.tsx", enforceExistence: ["{NodeName}Icon.tsx"] },
             // SVG files
             { name: "*.svg" },
           ],
@@ -86,9 +86,7 @@ export const folderStructureConfig = createFolderStructure({
           children: [
             { name: "index.tsx" }, // Page index file
             // Page implementation files
-            { name: "{PascalCase}.tsx", enforceExistence: ["{NodeName}.stories.tsx"] },
-            // Page test files
-            { name: "{PascalCase}.stories.tsx", enforceExistence: ["{NodeName}.tsx"] },
+            { name: "{PascalCase}Page.tsx" },
           ],
         },
       ]},

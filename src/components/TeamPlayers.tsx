@@ -1,9 +1,10 @@
 import { useParams, Link } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import { allPlayersForTeamAtom } from "@atoms/teamPlayers";
-import { playerStatsForTeamAtom } from "@atoms/contextualStatAtoms";
+import { contextualStatAtoms, teamPlayers } from "@atoms";
 import { PlayerCard, ErrorMessage } from "@components";
-import { prettyFormat } from "@library/format";
+import { prettyFormat } from "@library";
+
+const { playerStatsForTeamAtom } = contextualStatAtoms;
 
 // Component to render a single player card using the atom family
 const PlayerCardLoader = ({
@@ -60,7 +61,7 @@ const PlayerCardLoader = ({
 
 export const TeamPlayers = () => {
   const { teamId } = useParams<{ teamId: string }>(); // teamId is the teamName
-  const allTeamPlayers = useAtomValue(allPlayersForTeamAtom);
+  const allTeamPlayers = useAtomValue(teamPlayers.atom);
 
   if (!teamId) {
     return <ErrorMessage message="Team ID not found in URL." />;

@@ -9,3 +9,5 @@ export const TimelinePage = () => {
 
   return <Timeline matchId={matchId} />;
 };
+
+export default TimelinePage;

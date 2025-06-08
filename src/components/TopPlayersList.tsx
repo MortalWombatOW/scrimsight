@@ -1,6 +1,6 @@
-import { useStats } from "@atoms";
+import { useStats } from "@library";
 import { RoleIcon } from "@icons";
-import { prettyFormat } from "@library/format";
+import { prettyFormat } from "@library";
 import { Link } from "react-router-dom";
 
 export const TopPlayersList = () => {

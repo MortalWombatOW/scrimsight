@@ -40,7 +40,7 @@ export const WithIcon: Story = {
   args: {
     title: "Eliminations",
     value: "42",
-    icon: <GrimReaperIcon size={32} fill="currentColor" />,
+    icon: <GrimReaperIcon size={32} />,
   },
 };
 
@@ -57,7 +57,7 @@ export const LargeNumber: Story = {
   args: {
     title: "Damage Blocked",
     value: "45,678",
-    icon: <BeamsAuraIcon size={32} fill="currentColor" />,
+    icon: <BeamsAuraIcon size={32} />,
     description: "Tank role performance",
   },
 };

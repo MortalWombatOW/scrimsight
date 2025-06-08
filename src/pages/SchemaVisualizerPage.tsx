@@ -10,12 +10,8 @@ import ReactFlow, {
   BackgroundVariant,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { Layout } from "@components";
-import AtomNode from "@components/AtomNode";
-import EdgeLabel from "@components/EdgeLabel";
-import { getLayoutedElements } from "@lib/dagre";
-import { useAtomData } from "@lib";
-import LayerSelector from "@components/LayerSelector";
+import { Layout, AtomNode, EdgeLabel, LayerSelector } from "@components";
+import { getLayoutedElements, useAtomData } from "@library";
 
 const SchemaVisualizerPage: React.FC = () => {
   const {

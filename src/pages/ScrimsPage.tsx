@@ -4,9 +4,9 @@ import { useAtomValue } from "jotai";
 import {
   scrimListSummaryAtom,
   ScrimListSummary,
-} from "@atoms";
+} from "@library";
 // Removed unused: import { useNavigate } from "react-router-dom";
-import { formatTime } from "@lib"; // Removed unused mapNameToFileName
+import { formatTime } from "@library"; // Removed unused mapNameToFileName
 import { ScrimCard, Container } from "@components"; // Combined imports
 
 export const ScrimsPage = () => {
@@ -59,3 +59,5 @@ export const ScrimsPage = () => {
     </Container> // Added closing Container
   );
 };
+
+export default ScrimsPage;

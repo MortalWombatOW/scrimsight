@@ -1,28 +1,24 @@
 import { useState } from "react";
-import { useStats } from "@atoms";
+import { useStats } from "@library";
 import {
   getHeroImage,
   camelCaseToAbbreviation,
   camelCaseToWords,
   prettyFormat,
-} from "@lib";
+} from "@library";
 import { ProgressBar } from "@components";
 
 interface PlayerStatsCardProps {
   playerName: string;
-  matchId: string;
 }
 
 export const PlayerStatsCard = ({
   playerName,
-  matchId,
 }: PlayerStatsCardProps) => {
-  const playerStats = useStats(["playerName", "playerTeam", "playerRole"], {
-    matchId: [matchId],
-  });
+  const playerStats = useStats(["playerName", "playerTeam", "playerRole"]);
   const heroStats = useStats(
     ["playerName", "playerHero"],
-    { matchId: [matchId] },
+    undefined,
     "playtime",
     "desc"
   ).rows.filter((stats) => stats.playerName === playerName);

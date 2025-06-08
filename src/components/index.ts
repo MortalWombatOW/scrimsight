@@ -31,9 +31,9 @@ export { TimelineTable } from './TimelineTable';
 
 // Additional component exports that were missing
 export { AllPlayerComparison } from './AllPlayerComparison';
-export { AtomNode } from './AtomNode';
-export { EdgeLabel } from './EdgeLabel';
-export { LayerSelector } from './LayerSelector';
+export { default as AtomNode } from './AtomNode';
+export { default as EdgeLabel } from './EdgeLabel';
+export { default as LayerSelector } from './LayerSelector';
 export { MatchScoreCard } from './MatchScoreCard';
 export { MetricsChart } from './MetricsChart';
 export { MetricsControls } from './MetricsControls';
@@ -47,7 +47,7 @@ export { PlayerStatsComparison } from './PlayerStatsComparison';
 export { PlayersHeroes } from './PlayersHeroes';
 export { PlayersOverview } from './PlayersOverview';
 export { PlayersPerformance } from './PlayersPerformance';
-export { ScrimsMatchCard } from './ScrimsMatchCard';
+export { MatchCard as ScrimsMatchCard } from './ScrimsMatchCard';
 export { SingleStatPlayerComparison } from './SingleStatPlayerComparison';
 export { TeamCompositions } from './TeamCompositions';
 export { TeamMatches } from './TeamMatches';
@@ -59,3 +59,7 @@ export { TeamsList } from './TeamsList';
 export { TeamsSummaryStats } from './TeamsSummaryStats';
 export { TeamsVisualization } from './TeamsVisualization';
 export { TopPlayersList } from './TopPlayersList';
+export { default as ZeroState } from './ZeroState';
+
+// Re-export from icons for convenience
+export { RoleIcon } from '../icons';

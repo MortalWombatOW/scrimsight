@@ -27,12 +27,6 @@ createIndependentModules({
         "src/components/index.ts",  // component-index 
         "src/atoms/index.ts",     // atom-index 
         "src/lib/index.ts",       // library-index 
-        // Path aliases
-        "@pages",                 // page-index alias
-        "@components",            // component-index alias  
-        "@atoms",                 // atom-index alias
-        "@lib",                   // library-index alias
-        "@library",               // library-index alias (alternative name)
       ],
       allowExternalImports: true,
       errorMessage: "App (src/App.tsx) has restricted dependencies, can only import from pages index (@pages), components index (@components), atom index (@atoms), library index (@library), and external packages.",
@@ -132,17 +126,6 @@ createIndependentModules({
       ],
       errorMessage: "Icon stories (src/icons/*.stories.tsx) have restricted dependencies, can only import from an icon (@icons/iconName), the icon index (@icons), or the library index (@library).",
     },
-    // Page Test: src/pages/*.stories.tsx
-    {
-      name: "page-test",
-      pattern: "src/pages/*.stories.tsx", 
-      allowImportsFrom: [
-        "src/pages/*.tsx",         // page (for testing specific page) 
-        "src/components/index.tsx",// component-index 
-        "src/lib/index.ts",        // library-index 
-      ],
-      errorMessage: "Page stories (src/pages/*.stories.tsx) have restricted dependencies, can only import from a page (@pages/pageName), the component index (@components), or the library index (@library).",
-    },
     // Library Test: src/lib/*.test.ts
     {
       name: "library-test",
@@ -202,7 +185,7 @@ createIndependentModules({
     // Page: src/pages/*.tsx (excluding index and stories files)
     {
       name: "page",
-      pattern: [["src/pages/*.tsx", "!src/pages/index.tsx", "!src/pages/*.stories.tsx"]], 
+      pattern: [["src/pages/*.tsx", "!src/pages/index.tsx"]], 
       allowImportsFrom: [
         "src/components/index.ts", // component-index 
         "src/lib/index.ts",        // library-index 

@@ -1,28 +1,28 @@
 import { type ReactNode } from "react";
 import { useParams } from "react-router-dom"; // Import useParams
 import { useAtomValue } from "jotai";
-import { detailedTeamCompositionsAtom } from "@atoms/detailedTeamCompositionsAtom";
+import { detailedTeamCompositionsAtom } from "@atoms";
 import {
   getHeroImage,
   getRoleFromHero,
   getRankForRole,
-} from "@library/hero";
-import { formatDuration } from "@library/time";
+} from "@library";
+import { formatDuration } from "@library";
 import { RoleIcon } from "@icons";
 import { ErrorMessage } from "@components"; // Import ErrorMessage
 
 export const TeamCompositions = (): ReactNode => {
   const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL
 
+  // Fetch data from the atom family, passing teamId (use empty string if no teamId)
+  const detailedCompositionsData = useAtomValue(
+    detailedTeamCompositionsAtom(teamId || "")
+  );
+
   if (!teamId) {
     // Handle case where teamId is not available
     return <ErrorMessage message="Team ID not found in URL." />;
   }
-
-  // Fetch data from the new atom, passing teamId to the atomFamily
-  const detailedCompositionsData = useAtomValue(
-    detailedTeamCompositionsAtom(teamId)
-  ); // Removed type coercion
 
   // Sort compositions by playtime descending
   const sortedCompositions = [...detailedCompositionsData].sort(

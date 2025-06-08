@@ -498,7 +498,7 @@ export const sampleDataEnabled: ScrimsightAtom<SampleDataEnabledType> = { name: 
 export { default as sampleDataEnabledAtom } from './sampleDataEnabled';
 export type LogFileInputType = { files: File[]; };
 export const logFileInput: ScrimsightAtom<LogFileInputType> = { name: 'logFileInput', description: 'Atom that stores the uploaded log files and provides a setter', atom: logFileInputAtom };
-export { default as logFileInputAtom } from './logFileInputAtom';
+export { default as logFileInputAtom, logFileInputMutationAtom } from './logFileInputAtom';
 export type LogFileLoaderType = { fileName: string; fileModified: number; fileContent: string; }[];
 export const sampleData: ScrimsightAtom<LogFileLoaderType> = { name: 'sampleData', description: 'Sample log file data', atom: sampleDataAtom };
 export const logFileLoader: ScrimsightAtom<Promise<LogFileLoaderType>> = { name: 'logFileLoader', description: 'Loads the content of uploaded log files', atom: logFileLoaderAtom };
@@ -552,3 +552,8 @@ export const groupedEvents: ScrimsightAtom<Promise<GroupedKillOffensiveAssistEve
 
 // List Summary Atoms
 export const { playerListSummaryAtom, scrimListSummaryAtom, teamListSummaryAtom, latestScrimSummaryAtom } = listSummaryAtoms;
+
+// Import and export the missing atom families
+export { default as detailedTeamCompositionsAtom } from './detailedTeamCompositionsAtom';
+export { default as teamMapTypeStatsAtom } from './teamMapTypeStatsAtom';
+export { default as contextualStatAtoms } from './contextualStatAtoms';

@@ -10,11 +10,11 @@ import {
 } from "recharts";
 import {
   PlayerStatsNumericalKeys,
-  matchDataAtom,
   playerStatsNumericalKeys,
-  useStats,
+  matchData,
 } from "@atoms";
-import { camelCaseToWords, prettyFormat } from "@lib";
+import { useStats } from "@library";
+import { camelCaseToWords, prettyFormat } from "@library";
 
 interface SingleStatPlayerComparisonProps {
   matchId: string;
@@ -32,24 +32,22 @@ const chartStyle = {
 export const SingleStatPlayerComparison = ({
   matchId,
 }: SingleStatPlayerComparisonProps) => {
-  const matchData = useAtomValue(matchDataAtom).find(
+  const matchDataValue = useAtomValue(matchData.atom);
+  const matchDataItem = matchDataValue.find(
     (match) => match.matchId === matchId
   );
-  const playerStats = useStats(["playerName", "playerTeam"], {
-    matchId: [matchId],
-  });
+  const playerStats = useStats(["playerName", "playerTeam"]);
   const [stat, setStat] = useState<PlayerStatsNumericalKeys>("finalBlows");
   const [sortBy, setSortBy] = useState<string>(stat);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
-  if (!matchData) {
-    return null;
-  }
-
-  // Process team data with useMemo for performance
+  // Process team data with useMemo for performance - moved before conditional return
   const { team1Data, team2Data, allPlayerData } = useMemo(() => {
+    if (!matchDataItem) {
+      return { team1Data: [], team2Data: [], allPlayerData: [] };
+    }
     const team1 = playerStats.rows
-      .filter((stats) => stats.playerTeam === matchData.team1Name)
+      .filter((stats) => stats.playerTeam === matchDataItem.team1Name)
       .map((player) => ({
         ...player,
         [stat]: player[stat] || 0, // Ensure the stat value is properly mapped
@@ -57,7 +55,7 @@ export const SingleStatPlayerComparison = ({
       }));
 
     const team2 = playerStats.rows
-      .filter((stats) => stats.playerTeam === matchData.team2Name)
+      .filter((stats) => stats.playerTeam === matchDataItem.team2Name)
       .map((player) => ({
         ...player,
         [stat]: player[stat] || 0, // Ensure the stat value is properly mapped
@@ -72,9 +70,9 @@ export const SingleStatPlayerComparison = ({
       team2Data: team2,
       allPlayerData: all,
     };
-  }, [playerStats.rows, matchData, stat]);
+  }, [playerStats.rows, matchDataItem, stat]);
 
-  // Sort data for the table
+  // Sort data for the table - moved before conditional return
   const sortedData = useMemo(() => {
     return [...allPlayerData].sort((a, b) => {
       let aValue = a[sortBy];
@@ -90,6 +88,10 @@ export const SingleStatPlayerComparison = ({
     });
   }, [allPlayerData, sortBy, sortDirection]);
 
+  if (!matchDataItem) {
+    return null;
+  }
+
   // Function to handle column sorting
   const handleSort = (column: string) => {
     if (sortBy === column) {
@@ -101,7 +103,7 @@ export const SingleStatPlayerComparison = ({
   };
 
   // Custom tooltip component
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { playerName: string; playerTeam: string; value: number } }> }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -156,7 +158,7 @@ export const SingleStatPlayerComparison = ({
           {/* Team 1 */}
           <div className="flex-1">
             <h4 className="text-lg font-medium text-base-800 dark:text-base-200 mb-4 flex items-center">
-              {matchData.team1Name}
+              {matchDataItem.team1Name}
             </h4>
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -203,7 +205,7 @@ export const SingleStatPlayerComparison = ({
           {/* Team 2 */}
           <div className="flex-1">
             <h4 className="text-lg font-medium text-base-800 dark:text-base-200 mb-4 flex items-center">
-              {matchData.team2Name}
+              {matchDataItem.team2Name}
             </h4>
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -312,7 +314,7 @@ export const SingleStatPlayerComparison = ({
                         <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center">
                           <div
                             className={`w-5 h-5 rounded-full border-2 ${
-                              player.playerTeam === matchData.team1Name
+                              player.playerTeam === matchDataItem.team1Name
                                 ? "border-gray-700 dark:border-gray-700"
                                 : "border-gray-700 dark:border-base-500"
                             } flex items-center justify-center`}

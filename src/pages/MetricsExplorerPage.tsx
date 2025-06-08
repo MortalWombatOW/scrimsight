@@ -4,17 +4,15 @@ import { useAtomValue } from "jotai";
 import { Container } from "@components";
 import {
   useStats,
-  uniqueCategoryValuesAtom,
+  uniqueCategoryValues,
   PlayerStatsCategoryKeys, // Keep this type
   PlayerStatsNumericalKeys, // Keep this type
   // Removed playerStatsCategoryKeys array import
   // Removed playerStatsNumericalKeys array import
-} from "@library/playerMetricsAtoms";
+} from "@library";
 // Removed customSelectStyles import
-import { useMetricsTableColumns } from "@lib";
-import { MetricsDataTable } from "@components/MetricsDataTable";
-import { MetricsChart } from "@components/MetricsChart";
-import { MetricsControls } from "@components/MetricsControls"; // Import the new controls component
+import { useMetricsTableColumns } from "@library";
+import { MetricsDataTable, MetricsChart, MetricsControls } from "@components"; // Import the new controls component
 
 export const MetricsExplorerPage: React.FC = () => {
   // State for user selections (will be expanded)
@@ -41,7 +39,7 @@ export const MetricsExplorerPage: React.FC = () => {
   const statsData = useStats(groupBy, filters, sortBy, sortDirection);
 
   // Fetch unique values for potential filters
-  const uniqueValues = useAtomValue(uniqueCategoryValuesAtom);
+  const uniqueValues = useAtomValue(uniqueCategoryValues.atom);
 
   // Define table columns using the imported hook
   const tableColumns = useMetricsTableColumns(groupBy, metrics);
@@ -153,3 +151,5 @@ export const MetricsExplorerPage: React.FC = () => {
     </Container>
   );
 };
+
+export default MetricsExplorerPage;

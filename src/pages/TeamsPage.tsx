@@ -6,8 +6,10 @@ import { useAtomValue } from "jotai"; // Use useAtomValue for read-only atoms
 import {
   teamListSummaryAtom,
   // Removed unused: TeamListSummary,
-} from "@atoms";
+} from "@library";
 import { TeamsSummaryStats, TeamsFilter, TeamsList, Container } from "@components"; // Combined imports
+
+type SortOption = "name" | "wins" | "players";
 
 export const TeamsPage = () => {
   // Use the new summary atom
@@ -92,3 +94,5 @@ export const TeamsPage = () => {
     </Container> // Added closing Container
   );
 };
+
+export default TeamsPage;

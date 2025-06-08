@@ -15,4 +15,7 @@ const logFileInputAtom: WritableAtom<LogFileInputType, [File[]], void> = atom(
   }
 );
 
+// Export the mutation version (same as main atom but used for writing)
+export const logFileInputMutationAtom = logFileInputAtom;
+
 export default logFileInputAtom;

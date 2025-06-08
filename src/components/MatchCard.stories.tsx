@@ -3,11 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof MatchCard> = {
   component: MatchCard,
-  argTypes: {
-    matchId: {
-      control: "text",
-    },
-  },
   parameters: {
     docs: {
       description: {
@@ -23,26 +18,54 @@ type Story = StoryObj<typeof MatchCard>;
 
 export const Default: Story = {
   args: {
-    matchId: "sample-match-1",
+    title: "King's Row Match",
+    teamNames: ["Team Alpha", "Team Beta"],
+    date: "2024-01-15",
+    mapName: "King's Row",
+    primaryStats: [
+      { value: "2-1", label: "Score" },
+      { value: "Victory", label: "Result" },
+    ],
+    secondaryStats: [
+      { value: "15:30", label: "Duration" },
+      { value: "Escort", label: "Mode" },
+    ],
+    linkUrl: "/match/sample-match-1",
   },
 };
 
 export const AlternateMatch: Story = {
   args: {
-    matchId: "sample-match-2", 
+    title: "Hanamura Clash",
+    teamNames: ["Dragons", "Phoenix"],
+    date: "2024-01-16",
+    mapName: "Hanamura",
+    primaryStats: [
+      { value: "0-2", label: "Score" },
+      { value: "Defeat", label: "Result" },
+    ],
+    secondaryStats: [
+      { value: "12:45", label: "Duration" },
+      { value: "Assault", label: "Mode" },
+    ],
+    linkUrl: "/match/sample-match-2",
   },
 };
 
-export const LoadingState: Story = {
+export const WithoutLink: Story = {
   args: {
-    matchId: "loading-match",
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: "Shows the loading state when match data is being fetched.",
-      },
-    },
+    title: "Gibraltar Defense",
+    teamNames: ["Storm", "Thunder"],
+    date: "2024-01-17",
+    mapName: "Watchpoint: Gibraltar",
+    primaryStats: [
+      { value: "1-1", label: "Score" },
+      { value: "Draw", label: "Result" },
+    ],
+    secondaryStats: [
+      { value: "20:00", label: "Duration" },
+      { value: "Escort", label: "Mode" },
+    ],
   },
 };
 

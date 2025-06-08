@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useStats } from "@library/playerMetricsAtoms";
+import { useStats } from "@library";
 import { ErrorMessage, SubPageNavigation } from "@components";
 import { Container } from "@components"; // Added import
 
@@ -50,3 +50,5 @@ export const PlayersPage = () => {
     </Container> // Added closing Container
   );
 };
+
+export default PlayersPage;

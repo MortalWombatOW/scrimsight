@@ -17,11 +17,11 @@ import {
 import {
   PlayerStatsCategoryKeys,
   PlayerStatsNumericalKeys,
-} from "@library/playerMetricsAtoms";
-import { getColor } from "@lib/metricExplorerStyles"; // Import color function
+} from "@atoms";
+import { getColor } from "@library"; // Import color function
 
 interface MetricsChartProps {
-  data: any[]; // Consider defining a more specific type if possible
+  data: Record<string, unknown>[];
   groupBy: PlayerStatsCategoryKeys[];
   metrics: PlayerStatsNumericalKeys[];
 }

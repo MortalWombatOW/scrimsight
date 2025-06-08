@@ -1,10 +1,10 @@
 import { type ReactNode } from "react";
-import { useStats } from "@atoms";
+import { useStats } from "@library";
 import {
   OverwatchRole,
   getRoleFromHero,
   getHeroImage,
-} from "@library/hero";
+} from "@library";
 import { RoleIcon } from "@icons";
 import {
   BarChart,
@@ -22,8 +22,20 @@ import { useParams } from "react-router-dom"; // Import useParams
 // }
 
 // Custom bar component with hero image
-const CustomBar = (props: any) => {
-  const { x, y, width, height, hero } = props;
+interface CustomBarProps {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  hero?: string;
+  payload?: {
+    hero: string;
+  };
+}
+
+const CustomBar = (props: CustomBarProps) => {
+  const { x = 0, y = 0, width = 0, height = 0, hero, payload } = props;
+  const heroName = hero || payload?.hero || "";
   const imageSize = 32; // Size of hero image
 
   return (
@@ -41,13 +53,13 @@ const CustomBar = (props: any) => {
       />
 
       {/* Hero image centered at the top of the bar */}
-      {height > 0 && (
+      {height > 0 && heroName && (
         <image
           x={x + width / 2 - imageSize / 2}
           y={y - imageSize - 5} // Position above the bar with 5px gap
           width={imageSize}
           height={imageSize}
-          href={getHeroImage(hero, true)}
+          href={getHeroImage(heroName, true)}
           style={{
             filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
           }}
@@ -58,7 +70,19 @@ const CustomBar = (props: any) => {
 };
 
 // Custom tooltip component
-const CustomTooltip = ({ active, payload }: any) => {
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: {
+      hero: string;
+      role: string;
+      playtime: number;
+      elimsPerLife: string;
+    };
+  }>;
+}
+
+const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
@@ -86,15 +110,16 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export const PlayerHeroes = (): ReactNode => { // Remove props
   const { playerName } = useParams<{ playerName: string }>(); // Get playerName from URL params
-
+  
+  // Always call hooks before any conditional logic
+  const heroStats = useStats(["playerName", "playerHero"], {
+    playerName: playerName ? [playerName] : [],
+  });
+  
   if (!playerName) {
     // Handle case where playerName is not in URL
     return <div>Player name not found in URL.</div>;
   }
-
-  const heroStats = useStats(["playerName", "playerHero"], {
-    playerName: [playerName],
-  });
 
   // Prepare hero statistics
   const heroData = heroStats.rows

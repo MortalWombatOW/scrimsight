@@ -10,11 +10,11 @@ import {
 } from "recharts";
 import {
   PlayerStatsNumericalKeys,
-  matchDataAtom,
+  matchData,
   playerStatsNumericalKeys,
-  useStats,
 } from "@atoms";
-import { camelCaseToWords, prettyFormat } from "@lib";
+import { useStats } from "@library";
+import { camelCaseToWords, prettyFormat } from "@library";
 
 interface AllPlayerComparisonProps {
   matchId: string;
@@ -26,7 +26,7 @@ interface PlayerDataPoint {
   y: number;
   z: number;
   team: string;
-  [key: string]: any;
+  [key: string]: string | number;
 }
 
 const chartStyle = {
@@ -36,45 +36,51 @@ const chartStyle = {
 };
 
 export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
-  const matchData = useAtomValue(matchDataAtom).find(
-    (match) => match.matchId === matchId
-  );
-  if (!matchData) {
-    return null;
-  }
-  const playerStats = useStats(["playerName", "playerTeam"], {
-    matchId: [matchId],
-  });
-
+  // All hooks must be called before any conditional returns
+  const matchDataValue = useAtomValue(matchData.atom);
+  const playerStats = useStats(["playerName", "playerTeam"]);
   const [xStat, setXStat] = useState<PlayerStatsNumericalKeys>("finalBlows");
   const [yStat, setYStat] = useState<PlayerStatsNumericalKeys>("deaths");
   const [sortBy, setSortBy] = useState<string>("playerName");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  // Prepare data for both teams
+  // Find match data after all hooks
+  const matchDataItem = matchDataValue.find(
+    (match) => match.matchId === matchId
+  );
+
+  // Prepare data for both teams (conditional logic moved inside useMemo)
   const allPlayerData = useMemo(() => {
-    const team1Data: PlayerDataPoint[] = playerStats.rows
-      .filter((stats) => stats.playerTeam === matchData.team1Name)
+    if (!matchDataItem) return [];
+    
+    // Filter player stats for this specific match first
+    const matchPlayerStats = playerStats.rows.filter((stats) => 
+      // Assuming playerStats has a matchId field, or we need to filter by the teams in this match
+      stats.playerTeam === matchDataItem.team1Name || stats.playerTeam === matchDataItem.team2Name
+    );
+    
+    const team1Data: PlayerDataPoint[] = matchPlayerStats
+      .filter((stats) => stats.playerTeam === matchDataItem.team1Name)
       .map((player) => ({
         ...player,
         x: player[xStat] || 0,
         y: player[yStat] || 0,
         z: 10,
-        team: matchData.team1Name,
+        team: matchDataItem.team1Name,
       }));
 
-    const team2Data: PlayerDataPoint[] = playerStats.rows
-      .filter((stats) => stats.playerTeam === matchData.team2Name)
+    const team2Data: PlayerDataPoint[] = matchPlayerStats
+      .filter((stats) => stats.playerTeam === matchDataItem.team2Name)
       .map((player) => ({
         ...player,
         x: player[xStat] || 0,
         y: player[yStat] || 0,
         z: 10,
-        team: matchData.team2Name,
+        team: matchDataItem.team2Name,
       }));
 
     return [...team1Data, ...team2Data];
-  }, [playerStats.rows, matchData, xStat, yStat]);
+  }, [playerStats.rows, matchDataItem, xStat, yStat]);
 
   // Sort data for the table
   const sortedData = useMemo(() => {
@@ -84,17 +90,21 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
 
       // Handle numeric vs string sorting
       const comparison =
-        typeof aValue === "number"
+        typeof aValue === "number" && typeof bValue === "number"
           ? aValue - bValue
           : String(aValue).localeCompare(String(bValue));
 
       return sortDirection === "asc" ? comparison : -comparison;
     });
   }, [allPlayerData, sortBy, sortDirection]);
+  
+  if (!matchDataItem) {
+    return null;
+  }
 
   // Custom renderShape function for the scatter plot with annotations
-  const renderShape = (props: any) => {
-    const { cx, cy, payload } = props;
+  const renderShape = (props: unknown) => {
+    const { cx, cy, payload } = props as { cx: number; cy: number; payload: PlayerDataPoint & { team1Name: string; team2Name: string } };
 
     // Format the x and y values nicely
     const xValue = prettyFormat(payload.x);
@@ -291,11 +301,11 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
               {/* Tooltip removed as we now have permanent annotations */}
 
               <Scatter
-                name={matchData.team1Name}
+                name={matchDataItem.team1Name}
                 data={allPlayerData.map((item) => ({
                   ...item,
-                  team1Name: matchData.team1Name,
-                  team2Name: matchData.team2Name,
+                  team1Name: matchDataItem.team1Name,
+                  team2Name: matchDataItem.team2Name,
                 }))}
                 style={chartStyle.scatter}
                 shape={renderShape}

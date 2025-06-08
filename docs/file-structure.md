@@ -12,6 +12,7 @@ atoms/        Jotai business logic & state
 components/   Re-usable UI building blocks  
 pages/        Route-level views
 lib/          Pure TypeScript utilities
+icons/        SVG icons
 
 ```
 
@@ -24,6 +25,8 @@ lib/          Pure TypeScript utilities
 **Pages** (`src/pages/`) define top-level UI views and primarily depend on components and utility libraries, receiving props from the URL.
 
 **Libraries** (`src/lib/`) provide reusable functionality consumed by atoms, components, pages, or other libraries. Key files include `playerMetricsUtils.ts` for player stat processing and `eventExtractionUtils.ts` for log parsing helpers.
+
+**Icons** (`src/icons/`) are SVG files used in the UI. They are imported as React components and can be used directly in JSX.
 
 ### Data processing pipeline
 
@@ -45,6 +48,7 @@ The rule set lives in `folderStructure.mjs`; the table below is a human-readable
 | `src/components/` | `<Component>.tsx`, `<Component>.stories.tsx`, `index.tsx` | component ↔ story must coexist |
 | `src/pages/` | `<Page>.tsx`, `<Page>.stories.tsx`, `index.tsx` | page ↔ story must coexist |
 | `src/lib/` | `<util>.ts`, `<util>.test.ts`, `index.ts` | util ↔ test must coexist |
+| `src/icons/` | `<icon>.tsx`, `<icon>.svg` | — |
 
 See the [plugin docs] for advanced syntax such as recursion and `enforceExistence`. :contentReference[oaicite:0]{index=0}
 

@@ -3,11 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof SubPageNavigation> = {
   component: SubPageNavigation,
-  argTypes: {
-    pages: {
-      control: "object",
-    },
-  },
   parameters: {
     docs: {
       description: {
@@ -21,46 +16,46 @@ export default meta;
 
 type Story = StoryObj<typeof SubPageNavigation>;
 
-const samplePages = [
-  { name: "Overview", href: "/overview" },
-  { name: "Statistics", href: "/stats" },
-  { name: "Timeline", href: "/timeline" },
-  { name: "Players", href: "/players" },
+const sampleNavItems = [
+  { path: "/overview", label: "Overview", end: true },
+  { path: "/stats", label: "Statistics" },
+  { path: "/timeline", label: "Timeline" },
+  { path: "/players", label: "Players" },
 ];
 
 export const Default: Story = {
   args: {
-    pages: samplePages,
+    navItems: sampleNavItems,
   },
 };
 
 export const FewPages: Story = {
   args: {
-    pages: [
-      { name: "Overview", href: "/overview" },
-      { name: "Details", href: "/details" },
+    navItems: [
+      { path: "/overview", label: "Overview", end: true },
+      { path: "/details", label: "Details" },
     ],
   },
 };
 
 export const ManyPages: Story = {
   args: {
-    pages: [
-      { name: "Overview", href: "/overview" },
-      { name: "Statistics", href: "/stats" },
-      { name: "Timeline", href: "/timeline" },
-      { name: "Players", href: "/players" },
-      { name: "Teams", href: "/teams" },
-      { name: "Matches", href: "/matches" },
-      { name: "Analysis", href: "/analysis" },
+    navItems: [
+      { path: "/overview", label: "Overview", end: true },
+      { path: "/stats", label: "Statistics" },
+      { path: "/timeline", label: "Timeline" },
+      { path: "/players", label: "Players" },
+      { path: "/teams", label: "Teams" },
+      { path: "/matches", label: "Matches" },
+      { path: "/analysis", label: "Analysis" },
     ],
   },
 };
 
 export const SinglePage: Story = {
   args: {
-    pages: [
-      { name: "Overview", href: "/overview" },
+    navItems: [
+      { path: "/overview", label: "Overview", end: true },
     ],
   },
 };

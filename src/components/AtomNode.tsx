@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import type { Atom } from '@lib';
+import type { Atom } from '@library';
 
 const AtomNode: React.FC<NodeProps<Atom>> = ({ data, sourcePosition, targetPosition }) => {
   const { id, label, type, fields, layer } = data;

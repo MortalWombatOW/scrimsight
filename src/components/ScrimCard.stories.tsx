@@ -3,11 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof ScrimCard> = {
   component: ScrimCard,
-  argTypes: {
-    scrimId: {
-      control: "text",
-    },
-  },
   parameters: {
     docs: {
       description: {
@@ -23,26 +18,54 @@ type Story = StoryObj<typeof ScrimCard>;
 
 export const Default: Story = {
   args: {
-    scrimId: "sample-scrim-1",
+    title: "Weekend Scrim Session",
+    teamNames: ["Team Alpha", "Team Beta"],
+    date: "2024-01-20",
+    mapsPlayed: ["King's Row", "Hanamura", "Gibraltar"],
+    primaryStats: [
+      { value: "2-1", label: "Final Score" },
+      { value: "3", label: "Maps Played" },
+    ],
+    secondaryStats: [
+      { value: "45 min", label: "Duration" },
+      { value: "Mixed", label: "Mode" },
+    ],
+    linkUrl: "/scrim/sample-scrim-1",
   },
 };
 
-export const AlternateScrim: Story = {
+export const LongScrim: Story = {
   args: {
-    scrimId: "sample-scrim-2",
+    title: "Championship Practice",
+    teamNames: ["Dragons", "Phoenix", "Storm"],
+    date: "2024-01-21", 
+    mapsPlayed: ["King's Row", "Hanamura", "Gibraltar", "Dorado", "Temple of Anubis"],
+    primaryStats: [
+      { value: "3-2", label: "Final Score" },
+      { value: "5", label: "Maps Played" },
+    ],
+    secondaryStats: [
+      { value: "90 min", label: "Duration" },
+      { value: "Competitive", label: "Format" },
+    ],
+    linkUrl: "/scrim/sample-scrim-2",
   },
 };
 
-export const LoadingState: Story = {
+export const QuickScrim: Story = {
   args: {
-    scrimId: "loading-scrim",
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: "Shows the loading state when scrim data is being fetched.",
-      },
-    },
+    title: "Quick Practice",
+    teamNames: ["Team Gamma", "Team Delta"],
+    date: "2024-01-22",
+    mapsPlayed: ["King's Row"],
+    primaryStats: [
+      { value: "1-0", label: "Final Score" },
+      { value: "1", label: "Maps Played" },
+    ],
+    secondaryStats: [
+      { value: "15 min", label: "Duration" },
+      { value: "Practice", label: "Format" },
+    ],
   },
 };
 

@@ -1,7 +1,8 @@
 import React from "react";
 import { useAtomValue } from "jotai";
-import { matchDataAtom, useStats } from "@atoms";
-import { camelCaseToWords, prettyFormat } from "@lib";
+import { matchData } from "@atoms";
+import { useStats } from "@library";
+import { camelCaseToWords, prettyFormat } from "@library";
 import { ProgressBar } from "@components";
 
 interface TeamStatsComparisonProps {
@@ -9,14 +10,15 @@ interface TeamStatsComparisonProps {
 }
 
 export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
-  const matchData = useAtomValue(matchDataAtom).find(
+  const matchDataValue = useAtomValue(matchData.atom);
+  const matchDataItem = matchDataValue.find(
     (match) => match.matchId === matchId
   );
-  if (!matchData) {
+  if (!matchDataItem) {
     throw new Error("No match data");
   }
 
-  const teamStats = useStats(["playerTeam"], { matchId: [matchId] });
+  const teamStats = useStats(["playerTeam"]);
 
   const statsToShow = [
     "finalBlows",
@@ -28,8 +30,8 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   // Get the team data in a structured format
   const getTeamData = () => {
     const result = {
-      [matchData.team1Name]: {} as Record<string, number>,
-      [matchData.team2Name]: {} as Record<string, number>,
+      [matchDataItem.team1Name]: {} as Record<string, number>,
+      [matchDataItem.team2Name]: {} as Record<string, number>,
     };
 
     for (const stat of statsToShow) {
@@ -46,11 +48,11 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
 
   // Calculate which team has the higher value for each stat
   const getWinnerTeam = (stat: string) => {
-    const team1Value = teamData[matchData.team1Name][stat] || 0;
-    const team2Value = teamData[matchData.team2Name][stat] || 0;
+    const team1Value = teamData[matchDataItem.team1Name][stat] || 0;
+    const team2Value = teamData[matchDataItem.team2Name][stat] || 0;
 
-    if (team1Value > team2Value) return matchData.team1Name;
-    if (team2Value > team1Value) return matchData.team2Name;
+    if (team1Value > team2Value) return matchDataItem.team1Name;
+    if (team2Value > team1Value) return matchDataItem.team2Name;
     return null; // Tie
   };
 
@@ -59,19 +61,19 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
       {/* Header row */}
       <div className="col-span-3 text-right">
         <span className="text-md font-semibold text-base-800 dark:text-base-200">
-          {matchData.team1Name}
+          {matchDataItem.team1Name}
         </span>
       </div>
       <div className="col-span-1"></div> {/* Center spacer */}
       <div className="col-span-3">
         <span className="text-md font-semibold text-base-800 dark:text-base-200">
-          {matchData.team2Name}
+          {matchDataItem.team2Name}
         </span>
       </div>
       {/* Stat rows */}
       {statsToShow.map((stat) => {
-        const team1Value = teamData[matchData.team1Name][stat] || 0;
-        const team2Value = teamData[matchData.team2Name][stat] || 0;
+        const team1Value = teamData[matchDataItem.team1Name][stat] || 0;
+        const team2Value = teamData[matchDataItem.team2Name][stat] || 0;
         const winner = getWinnerTeam(stat);
         return (
           <React.Fragment key={stat}>
@@ -81,7 +83,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
                 <span className="text-sm font-medium text-base-800 dark:text-base-200 mr-2">
                   {prettyFormat(team1Value)}
                 </span>
-                {winner === matchData.team1Name && (
+                {winner === matchDataItem.team1Name && (
                   <span className="text-xs px-1 py-0.5 bg-base-600 text-white dark:bg-base-200 dark:text-base-800 rounded">
                     +{prettyFormat(team1Value - team2Value)}
                   </span>
@@ -108,7 +110,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
                 <span className="text-sm font-medium text-base-800 dark:text-base-200 ml-2">
                   {prettyFormat(team2Value)}
                 </span>
-                {winner === matchData.team2Name && (
+                {winner === matchDataItem.team2Name && (
                   <span className="text-xs px-1 py-0.5 bg-base-600 text-white dark:bg-base-200 dark:text-base-800 rounded ml-2">
                     +{prettyFormat(team2Value - team1Value)}
                   </span>

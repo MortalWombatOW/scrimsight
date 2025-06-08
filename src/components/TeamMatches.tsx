@@ -1,9 +1,9 @@
 import { useState, useMemo, type ReactNode } from "react";
 import { useParams } from "react-router-dom"; // Removed unused Link
 import { useAtomValue } from "jotai";
-import { MatchData, matchDataAtom } from "@atoms/matchDataAtom";
+import { matchData, MatchData } from "@atoms";
 // Removed unused: import { formatDate } from "../../../lib/date";
-import { formatTime } from "@library/format";
+import { formatTime } from "@library";
 import { ErrorMessage } from "@components";
 import { MatchCard } from "@components"; // Import MatchCard
 
@@ -28,7 +28,7 @@ const getUniqueOpponents = (matches: MatchData[], teamId: string) => [
 
 export const TeamMatches = (): ReactNode => {
   const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL
-  const allMatches = useAtomValue(matchDataAtom); // Get all matches
+  const allMatches = useAtomValue(matchData.atom); // Get all matches
 
   const [opponentFilter, setOpponentFilter] = useState<string>("");
   const [mapFilter, setMapFilter] = useState<string>("");

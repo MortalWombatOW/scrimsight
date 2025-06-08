@@ -5,7 +5,7 @@ import { HealingIcon } from "@icons";
 const meta: Meta<typeof CardBase> = {
   component: CardBase,
   argTypes: {
-    to: {
+    linkUrl: {
       control: "text",
     },
   },
@@ -18,11 +18,17 @@ type Story = StoryObj<typeof CardBase>;
 export const Default: Story = {
   args: {
     title: "Sample Card",
-    children: (
+    primaryStats: [
+      { value: "1,234", label: "Total Damage" },
+      { value: "567", label: "Healing Done" },
+    ],
+    secondaryStats: [
+      { value: "89%", label: "Accuracy" },
+    ],
+    info: (
       <div className="space-y-2">
-        <CardBaseFact value="1,234" label="Total Damage" />
-        <CardBaseFact value="567" label="Healing Done" />
-        <CardBaseFact value="89%" label="Accuracy" />
+        <CardBaseFact value="Team Alpha" label="Team" />
+        <CardBaseFact value="DPS" label="Role" />
       </div>
     ),
   },
@@ -32,11 +38,17 @@ export const WithIcon: Story = {
   args: {
     title: "Player Stats",
     icon: <HealingIcon size={24} fill="currentColor" />,
-    children: (
+    primaryStats: [
+      { value: "2,500", label: "Eliminations" },
+      { value: "1,800", label: "Healing" },
+    ],
+    secondaryStats: [
+      { value: "3:45", label: "Objective Time" },
+    ],
+    info: (
       <div className="space-y-2">
-        <CardBaseFact value="2,500" label="Eliminations" />
-        <CardBaseFact value="1,800" label="Healing" />
-        <CardBaseFact value="3:45" label="Objective Time" />
+        <CardBaseFact value="Support" label="Role" />
+        <CardBaseFact value="Mercy" label="Hero" />
       </div>
     ),
   },
@@ -45,12 +57,19 @@ export const WithIcon: Story = {
 export const WithLink: Story = {
   args: {
     title: "Match Details",
-    to: "/match/123",
-    children: (
+    linkUrl: "/match/123",
+    linkText: "View Details",
+    primaryStats: [
+      { value: "Victory", label: "Result" },
+      { value: "2-1", label: "Score" },
+    ],
+    secondaryStats: [
+      { value: "15:30", label: "Duration" },
+    ],
+    info: (
       <div className="space-y-2">
-        <CardBaseFact value="Victory" label="Result" />
-        <CardBaseFact value="2-1" label="Score" />
-        <CardBaseFact value="15:30" label="Duration" />
+        <CardBaseFact value="King's Row" label="Map" />
+        <CardBaseFact value="Escort" label="Mode" />
       </div>
     ),
   },
@@ -59,14 +78,20 @@ export const WithLink: Story = {
 export const LargeContent: Story = {
   args: {
     title: "Detailed Statistics",
-    children: (
-      <div className="grid grid-cols-2 gap-4">
-        <CardBaseFact value="5,678" label="Damage Done" />
-        <CardBaseFact value="3,421" label="Damage Blocked" />
-        <CardBaseFact value="2,109" label="Healing Done" />
-        <CardBaseFact value="876" label="Environmental Kills" />
-        <CardBaseFact value="12" label="Eliminations" />
-        <CardBaseFact value="3" label="Deaths" />
+    primaryStats: [
+      { value: "5,678", label: "Damage Done" },
+      { value: "3,421", label: "Damage Blocked" },
+    ],
+    secondaryStats: [
+      { value: "2,109", label: "Healing Done" },
+      { value: "876", label: "Environmental Kills" },
+      { value: "12", label: "Eliminations" },
+      { value: "3", label: "Deaths" },
+    ],
+    info: (
+      <div className="space-y-2">
+        <CardBaseFact value="Reinhardt" label="Hero" />
+        <CardBaseFact value="Tank" label="Role" />
       </div>
     ),
   },

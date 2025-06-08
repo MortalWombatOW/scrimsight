@@ -9,11 +9,11 @@ import {
   Tooltip,
 } from "recharts";
 // Removed useStats import
-import { teamListSummaryAtom } from "@atoms/listSummaryAtoms"; // Import summary atom
+import { teamListSummaryAtom } from "@atoms"; // Import summary atom
 import { TeamCard } from "@components";
 // Removed unused: import { StatCard } from "../../../components/StatCard";
-import { teamMapTypeStatsAtom } from "@atoms/teamMapTypeStatsAtom";
-import { formatPercentage } from "@library/format"; // Removed unused prettyFormat
+import { teamMapTypeStatsAtom } from "@atoms";
+import { formatPercentage } from "@library"; // Removed unused prettyFormat
 import { ErrorMessage } from "@components";
 
 export const TeamOverview = () => {
@@ -22,7 +22,7 @@ export const TeamOverview = () => {
   // Fetch all team summaries
   const teamSummaries = useAtomValue(teamListSummaryAtom);
   // Get map type stats by passing teamId to the atomFamily
-  const mapTypeStats = useAtomValue(teamMapTypeStatsAtom(teamId || "")); // Pass empty string if teamId is undefined
+  const mapTypeStats = useAtomValue(teamMapTypeStatsAtom(teamId || ""));
 
   if (!teamId) {
     return <ErrorMessage message="Team ID not found in URL." />;
@@ -48,7 +48,7 @@ export const TeamOverview = () => {
     .filter((entry) => entry.gamesPlayed > 0); // Only show map types played
 
   // Custom label for Bar chart to show percentage
-  const renderCustomBarLabel = ({ x, y, width, value }: any) => {
+  const renderCustomBarLabel = ({ x, y, width, value }: { x: number; y: number; width: number; value: number }) => {
     return (
       <text x={x + width / 2} y={y} fill="#666" textAnchor="middle" dy={-6}>
         {`${value.toFixed(0)}%`}

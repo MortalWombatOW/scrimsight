@@ -1,7 +1,6 @@
 import { useParams, Outlet } from "react-router-dom";
 import { useAtom, useAtomValue } from "jotai";
-import { teamNamesAtom } from "@atoms/teamNamesAtom";
-import { teamStatsAtom } from "@atoms/teamStatsAtom";
+import { teamNames, teamStats } from "@library";
 // Removed unused imports: allPlayersForTeamAtom, matchDataAtom
 // Removed unused component imports: TeamOverview, TeamPlayers, TeamMatches, TeamCompositions
 import { StatCard, ErrorMessage, SubPageNavigation } from "@components";
@@ -9,14 +8,14 @@ import { Container } from "@components"; // Added import
 
 export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
-  const [teamNames] = useAtom(teamNamesAtom);
-  const teamStats = useAtomValue(teamStatsAtom);
+  const [teamNamesValue] = useAtom(teamNames.atom);
+  const teamStatsValue = useAtomValue(teamStats.atom);
 
   if (!teamId) {
     return <ErrorMessage message="Team ID not provided" />;
   }
 
-  const teamRecord = teamStats.find((stat) => stat.teamName === teamId);
+  const teamRecord = teamStatsValue.find((stat) => stat.teamName === teamId);
 
   // Basic check if team exists based on stats
   if (!teamRecord) {
@@ -24,7 +23,7 @@ export const TeamPage = () => {
   }
 
   const teamNameDisplay = String(
-    teamNames[teamId as keyof typeof teamNames] || teamId
+    teamNamesValue[teamId as keyof typeof teamNamesValue] || teamId
   );
 
   const winRate = (teamRecord.wins / teamRecord.gamesPlayed) * 100 || 0;
@@ -71,3 +70,5 @@ export const TeamPage = () => {
     </Container> // Added closing Container
   );
 };
+
+export default TeamPage;

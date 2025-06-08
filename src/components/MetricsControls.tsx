@@ -5,7 +5,7 @@ import {
   PlayerStatsNumericalKeys,
   playerStatsCategoryKeys,
   playerStatsNumericalKeys,
-} from "@library/playerMetricsAtoms";
+} from "@atoms";
 // Import specific style objects
 import {
   groupBySelectStyles,
@@ -13,7 +13,7 @@ import {
   sortBySelectStyles,
   sortDirectionSelectStyles,
   filterSelectStyles,
-} from "@lib/metricExplorerStyles";
+} from "@library";
 
 // Define option type for react-select
 type OptionType = { value: string; label: string };

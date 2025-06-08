@@ -1,9 +1,8 @@
 import { GoLinkExternal } from "react-icons/go";
 import { useAtom } from "jotai";
-import { sampleDataEnabledAtom } from "@atoms/sampleDataAtoms";
+import { sampleDataEnabledAtom, logFileInputMutationAtom } from "@library";
 import { MdOutlineFileOpen } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
-import { logFileInputMutationAtom } from "@atoms/files";
 import { useState, useCallback } from "react";
 
 const ZeroState = () => {

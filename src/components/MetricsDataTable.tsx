@@ -8,7 +8,7 @@ import {
 // Reusable Table component specifically for Metrics Explorer (or could be made more generic)
 interface MetricsDataTableProps<TData> {
   data: TData[];
-  columns: ColumnDef<TData, any>[];
+  columns: ColumnDef<TData, unknown>[];
 }
 
 export function MetricsDataTable<TData>({

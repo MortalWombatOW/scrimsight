@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useStats } from "@atoms";
-import { OverwatchRole } from "@library/hero";
+import { useStats } from "@library";
+import { OverwatchRole } from "@library";
 import { RoleIcon } from "@icons";
-import { prettyFormat } from "@library/format";
+import { prettyFormat } from "@library";
 
 type StatCategory = "damage" | "healing" | "utility";
 
