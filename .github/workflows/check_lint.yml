@@ -1,4 +1,4 @@
-name: Check Build
+name: Check Lint
 
 on:
   pull_request:
