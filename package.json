@@ -4,21 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "vite",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings 0",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "type-check": "tsc --noEmit",
-    "build-graph": "npx tsg --tsconfig=tsconfig.json --exclude node_modules --md=codebase-structure-graph.md",
-    "scan": "npm run start && npx react-scan@latest localhost:3000",
+    "build-graph": "./codebase_structure_graph.sh",
+    "scan": "npm run dev && npx react-scan@latest localhost:3000",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest run",
-    "test:watch": "vitest --watch",
-    "test:v2": "vitest run src/v2/tests/",
-    "test:v2:watch": "vitest --watch src/v2/tests/"
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
