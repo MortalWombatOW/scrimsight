@@ -101,3 +101,10 @@ Vitest generates Istanbul reports in `coverage/`; CI fails if totals drop.
 | Lint & types | `./check-lint-build-errors.sh` |
 | Unit tests   | `vitest run --coverage`        |
 | Visual tests | Chromatic via GitHub action    |
+
+---
+
+**See also:**
+- [atom-patterns.md](atom-patterns.md) — Atom testing patterns and examples
+- [ui-guidelines.md](ui-guidelines.md) — Component and styling guidelines
+- [troubleshooting.md](troubleshooting.md) — Common testing and Storybook issues

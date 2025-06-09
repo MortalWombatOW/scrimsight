@@ -44,3 +44,10 @@ Fix by routing imports through the appropriate index barrel.
 ## 6 Long path warnings
 
 `folderStructure` warns at 240-character paths by default; override in the rule config if your filesystem supports longer paths.
+
+---
+
+**See also:**
+- [file-structure.md](file-structure.md) — Folder structure rules and architecture
+- [atom-patterns.md](atom-patterns.md) — File composition patterns
+- [troubleshooting.md](troubleshooting.md) — Common ESLint error solutions
