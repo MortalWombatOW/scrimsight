@@ -1,52 +1,22 @@
-import { atom } from 'jotai';
-import { PlayerInteractionEvent, playerInteractionEventsAtom} from './derived_events';
-import { ultimateEventsAtom } from './derived_events/ultimateEventsAtom';
-import { matchDataAtom } from './matchDataAtom';
-const TEAMFIGHT_BUFFER_TIME = 10; // seconds
-const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
-
-// A teamfight is a period of time where a teams are engaged in a fight.
-// The teamfights in a match are seperated by periods of at least TEAMFIGHT_BUFFER_TIME seconds of kill-less time.
-export interface Teamfight {
-  fightId: string; // Unique identifier for the fight (e.g., {matchId}-{startTime})
-  matchId: string;
-  startTime: number;
-  endTime: number;
-  team1Name: string;
-  team2Name: string;
-  winner: string | null; // Changed type from 'team1'|'team2'|'draw' to string | null
-  duration: number;
-  team1Kills: number;
-  team2Kills: number;
-  // names of players
-  team1PlayersWithUltimatesChargedAtStart: string[];
-  team2PlayersWithUltimatesChargedAtStart: string[];
-  team1PlayersWithUltimatesUsed: string[];
-  team2PlayersWithUltimatesUsed: string[];
-  // First kill/death details
-  firstKillPlayer?: string;
-  firstKillTeam?: string;
-  firstKillTime?: number;
-  firstDeathPlayer?: string; // Victim of the first kill
-  firstDeathTeam?: string;
-  firstDeathTime?: number; // Same as firstKillTime
-}
-
-// Define the type for the intermediate teamfight data structure
-type TeamfightPass1 = Pick<Teamfight, 'matchId' | 'startTime' | 'endTime' | 'duration' | 'team1Kills' | 'team2Kills' | 'team1Name' | 'team2Name'>;
-
-export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
-  const playerInteractionEvents = await get(playerInteractionEventsAtom);
+import { atom, Getter } from 'jotai'; // Added Getter
+import { playerInteractionEvents, PlayerInteractionEvent, Teamfight, TeamfightPass1 } from '@atoms';
+import { ultimateEvents } from '@atoms';
+import { matchData } from '@atoms';
+export const teamfightsAtomFn = async (get: Getter): Promise<Teamfight[]> => {
+  const TEAMFIGHT_BUFFER_TIME = 10; // seconds
+  const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
+  
+  const allPlayerInteractionEvents = await get(playerInteractionEvents.atom);
   
 
   // use this to compute which players had an ultimate at the teamfight start or used it during the teamfight
-  const ultimateEvents = await get(ultimateEventsAtom);
+  const allUltimateEvents = await get(ultimateEvents.atom);
 
   // can get the team names from matchData.team1Name and matchData.team2Name
-  const matchDatas = await get(matchDataAtom);
+  const matchDatas = await get(matchData.atom);
   
   // Extract death events as markers for teamfights
-  const killEvents = playerInteractionEvents.filter(event => 
+  const killEvents = allPlayerInteractionEvents.filter(event => 
     event.playerInteractionEventType === 'Killed player'
   );
 
@@ -57,13 +27,13 @@ export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
       acc[matchId] = [];
     }
     acc[matchId].push(event);
-     return acc;
-   }, {} as Record<string, PlayerInteractionEvent[]>);
+    return acc;
+  }, {} as Record<string, PlayerInteractionEvent[]>);
    
   const teamfightsPass1: TeamfightPass1[] = [];
    
-   // First pass: process kills to identify teamfights
-   Object.entries(killEventsByMatch).forEach(([matchId, killEvents]) => {
+  // First pass: process kills to identify teamfights
+  Object.entries(killEventsByMatch).forEach(([matchId, killEvents]) => {
     // Sort deaths chronologically
     killEvents.sort((a, b) => a.playerInteractionEventTime - b.playerInteractionEventTime);
     
@@ -167,8 +137,8 @@ export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
 
     // Combine players with their team names for easier lookup
     const allPlayersWithTeams = [
-      ...team1Players.map(p => ({ playerName: p, teamName: team1Name })),
-      ...team2Players.map(p => ({ playerName: p, teamName: team2Name })),
+      ...team1Players.map((p: string) => ({ playerName: p, teamName: team1Name })),
+      ...team2Players.map((p: string) => ({ playerName: p, teamName: team2Name })),
     ];
 
     // Calculate winner using actual team names
@@ -212,28 +182,28 @@ export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
 
 
     // Filter ultimate events (using matchData for team names as before)
-    const team1PlayersWithUltimatesChargedAtStart = ultimateEvents.filter(ultimateEvent =>
+    const team1PlayersWithUltimatesChargedAtStart = allUltimateEvents.filter(ultimateEvent =>
       ultimateEvent.matchId === t.matchId &&
       ultimateEvent.playerTeam === matchData.team1Name && // Use matchData here for consistency
       ultimateEvent.ultimateChargedTime <= t.startTime &&
       ultimateEvent.ultimateStartTime >= t.endTime // Check if ult started AFTER fight ended
     ).map(event => event.playerName);
     
-    const team2PlayersWithUltimatesChargedAtStart = ultimateEvents.filter(ultimateEvent => 
+    const team2PlayersWithUltimatesChargedAtStart = allUltimateEvents.filter(ultimateEvent => 
       ultimateEvent.matchId === t.matchId &&
       ultimateEvent.playerTeam === matchData.team2Name && // Use matchData here for consistency
       ultimateEvent.ultimateChargedTime <= t.startTime &&
       ultimateEvent.ultimateStartTime >= t.endTime // Check if ult started AFTER fight ended
     ).map(event => event.playerName);
 
-    const team1PlayersWithUltimatesUsed = ultimateEvents.filter(ultimateEvent => 
+    const team1PlayersWithUltimatesUsed = allUltimateEvents.filter(ultimateEvent => 
       ultimateEvent.matchId === t.matchId &&
       ultimateEvent.playerTeam === matchData.team1Name && // Use matchData here for consistency
       ultimateEvent.ultimateStartTime >= t.startTime &&
       ultimateEvent.ultimateStartTime <= t.endTime
     ).map(event => event.playerName);
     
-    const team2PlayersWithUltimatesUsed = ultimateEvents.filter(ultimateEvent => 
+    const team2PlayersWithUltimatesUsed = allUltimateEvents.filter(ultimateEvent => 
       ultimateEvent.matchId === t.matchId &&
       ultimateEvent.playerTeam === matchData.team2Name && // Use matchData here for consistency
       ultimateEvent.ultimateStartTime >= t.startTime &&
@@ -260,4 +230,11 @@ export const teamfightsAtom = atom(async (get): Promise<Teamfight[]> => {
   });
   
   return teamfights;
+}; // seconds
+
+// A teamfight is a period of time where a teams are engaged in a fight.
+// The teamfights in a match are seperated by periods of at least TEAMFIGHT_BUFFER_TIME seconds of kill-less time.
+
+export default atom(async (get) => {
+  return teamfightsAtomFn(get);
 });

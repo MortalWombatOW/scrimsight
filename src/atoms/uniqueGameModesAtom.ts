@@ -1,23 +1,16 @@
 import { atom } from 'jotai';
-import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
+import { matchStart, UniqueGameMode, MatchStartType } from '@atoms';
 
-/**
- * Interface for unique game modes
- */
-export interface UniqueGameMode {
-  mapType: string;
-}
-
-/**
- * Atom that extracts unique game modes from all matches
- */
-export const uniqueGameModesAtom = atom(async (get): Promise<UniqueGameMode[]> => {
-  const matchStarts = await get(matchStartExtractorAtom);
-  
+export const uniqueGameModesAtomFn = (matchStarts: MatchStartType): UniqueGameMode[] => {
   // Get unique map types (game modes)
   const uniqueModes = Array.from(new Set(
     matchStarts.map(match => match.mapType)
   ));
 
   return uniqueModes.map(mode => ({ mapType: mode }));
+};
+
+export default atom(async (get): Promise<UniqueGameMode[]> => {
+  const matchStarts = await get(matchStart.atom);
+  return uniqueGameModesAtomFn(matchStarts);
 }); 

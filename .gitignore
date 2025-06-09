@@ -31,3 +31,29 @@ package-lock.json
 
 codebase.txt
 *storybook.log
+
+# Added by Claude Task Master
+# Logs
+logs
+*.log
+dev-debug.log
+# Dependency directories
+# Environment variables
+.env
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+
+# Added by Task Master AI
+# Task files
+tasks.json
+tasks/ 
+
+package-lock.json
+storybook-static

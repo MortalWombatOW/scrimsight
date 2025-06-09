@@ -1,10 +1,7 @@
 import type { Preview } from "@storybook/react";
 
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import { withThemeFromJSXProvider } from '@storybook/addon-themes';
+import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 
-import { themeDef } from '../src/theme';
-import WombatDataWrapper from '../src/components/WombatDataWrapper/WombatDataWrapper';
 import React from "react";
 
 const preview: Preview = {
@@ -20,22 +17,22 @@ const preview: Preview = {
   },
 
   decorators: [
-  (Story) => (
-    <WombatDataWrapper>
-      <Story />
-    </WombatDataWrapper>
-  ),
-  withThemeFromJSXProvider({
-    GlobalStyles: CssBaseline,
-    Provider: ThemeProvider,
-    themes: {
-      // Provide your custom themes here
-      light: themeDef,
-      dark: themeDef,
-    },
-    defaultTheme: 'dark',
-  }),
-]
+    // (Story) => (
+    //   <WombatDataWrapper>
+    //     <Story />
+    //   </WombatDataWrapper>
+    // ),
+    // withThemeFromJSXProvider({
+    //   GlobalStyles: CssBaseline,
+    //   Provider: ThemeProvider,
+    //   themes: {
+    //     // Provide your custom themes here
+    //     light: themeDef,
+    //     dark: themeDef,
+    //   },
+    //   defaultTheme: 'dark',
+    // }),
+  ],
 };
 
 export default preview;

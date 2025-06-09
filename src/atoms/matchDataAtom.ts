@@ -1,47 +1,33 @@
 import { atom } from 'jotai';
-import { matchExtractorAtom } from './event_extractors/matchExtractorAtom';
-import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
-import { matchEndExtractorAtom } from './event_extractors/matchEndExtractorAtom';
-import { playerStatExtractorAtom } from './event_extractors/playerStatExtractorAtom';
-import { mapTimesAtom } from './mapTimesAtom';
-import { roundEndExtractorAtom } from './event_extractors/roundEndExtractorAtom';
-/**
- * Interface for combined match data
- */
-export interface MatchData {
-  matchId: string;
-  fileName: string;
-  fileModified: number;
-  dateString: string;
-  map: string;
-  mode: string;
-  team1Name: string;
-  team2Name: string;
-  team1Score: number;
-  team2Score: number;
-  team1Players: string[];
-  team2Players: string[];
-  duration: number;
-  roundWinners: ('team1' | 'team2' | 'draw')[];
-  winner: string | null; // Added: team1Name, team2Name, or null for draw
-}
+import {
+  matchExtractor,
+  matchStart,
+  matchEnd,
+  playerStat,
+  mapTimes,
+  roundEnd,
+  MatchStartLogEvent,
+  MatchEndLogEvent,
+  PlayerStatLogEvent,
+  RoundEndLogEvent,
+  MatchFileInfo,
+  MatchData,
+  MapTimes,
+} from '@atoms';
 
-/**
- * Atom that combines match information from various sources
- */
-export const matchDataAtom = atom(async (get): Promise<MatchData[]> => {
-  const matchInfo = await get(matchExtractorAtom);
-  const matchStarts = await get(matchStartExtractorAtom);
-  const matchEnds = await get(matchEndExtractorAtom);
-  const playerStats = await get(playerStatExtractorAtom);
-  const mapTimes = await get(mapTimesAtom);
-  const roundEnds = await get(roundEndExtractorAtom);
-
+export const matchDataAtomFn = (
+  matchInfo: MatchFileInfo[],
+  matchStarts: MatchStartLogEvent[],
+  matchEnds: MatchEndLogEvent[],
+  playerStats: PlayerStatLogEvent[],
+  allMapTimes: MapTimes[],
+  roundEnds: RoundEndLogEvent[]
+): MatchData[] => {
   return matchInfo.map(info => {
     const start = matchStarts.find(s => s.matchId === info.matchId);
     const end = matchEnds.find(e => e.matchId === info.matchId);
     const stats = playerStats.filter(s => s.matchId === info.matchId);
-    const mapTime = mapTimes.find(m => m.matchId === info.matchId);
+    const mapTime = allMapTimes.find(m => m.matchId === info.matchId);
 
     // Get unique players for each team
     const team1Players = Array.from(new Set(
@@ -85,4 +71,19 @@ export const matchDataAtom = atom(async (get): Promise<MatchData[]> => {
       winner, // Added winner
     };
   });
+};
+
+
+/**
+ * Atom that combines match information from various sources
+ */
+export default atom(async (get): Promise<MatchData[]> => {
+  const matchInfo = await get(matchExtractor.atom);
+  const matchStarts = await get(matchStart.atom);
+  const matchEnds = await get(matchEnd.atom);
+  const playerStats = await get(playerStat.atom);
+  const mapTimesData = await get(mapTimes.atom);
+  const roundEndsData = await get(roundEnd.atom);
+
+  return matchDataAtomFn(matchInfo, matchStarts, matchEnds, playerStats, mapTimesData, roundEndsData);
 });

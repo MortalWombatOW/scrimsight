@@ -1,4 +1,4 @@
-import {heroNameToNormalized} from './string';
+import {heroNameToNormalized} from '@library';
 
 export const getHeroImage = (heroName: string, rounded = true): string => `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(heroName)}.png`;
 

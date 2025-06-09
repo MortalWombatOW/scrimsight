@@ -1,17 +1,36 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
+import tseslint from 'typescript-eslint';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import _import from 'eslint-plugin-import';
 import tsParser from '@typescript-eslint/parser';
 import unusedImports from 'eslint-plugin-unused-imports';
 import stylistic from '@stylistic/eslint-plugin';
-
-export default [
+import { projectStructurePlugin, projectStructureParser } from "eslint-plugin-project-structure";
+import { independentModulesConfig } from "./independentModules.mjs";
+import { fileCompositionConfig } from "./fileComposition.mjs";
+import { folderStructureConfig } from "./folderStructure.mjs";
+export default tseslint.config([
+  {
+    files: ['**'],
+    ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/coverage/**', 'projectStructure.cache.json'],
+    languageOptions: {
+      parser: projectStructureParser,
+    },
+    plugins: {
+      'project-structure': projectStructurePlugin,
+    },
+    rules: {
+      "project-structure/folder-structure": ["error", folderStructureConfig],
+    },
+  },
   {
     // Base config for JS/TS files
     files: ['**/*.{js,jsx,ts,tsx}'],
     ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/coverage/**'],
-    
     plugins: {
       '@typescript-eslint': typescriptEslint,
       react,
@@ -19,6 +38,7 @@ export default [
       import: _import,
       'unused-imports': unusedImports,
       stylistic,
+      'project-structure': projectStructurePlugin,
     },
     languageOptions: {
       parser: tsParser,
@@ -55,18 +75,8 @@ export default [
         'ignoreTrailingComments': false,
         'ignorePattern': '^import\\s.+\\sfrom\\s.+\\s;',
       }],
+      "project-structure/independent-modules": ["error", independentModulesConfig],
+      "project-structure/file-composition": ["error", fileCompositionConfig],
     },
   },
-  {
-    // TypeScript-specific config with project references
-    files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.json'],
-      },
-    },
-    rules: {
-      // Add any TypeScript-specific rules here
-    }
-  }
-];
+], storybook.configs["flat/recommended"]);

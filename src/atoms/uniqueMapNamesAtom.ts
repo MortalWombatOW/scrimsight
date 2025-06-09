@@ -1,17 +1,23 @@
 import { atom } from 'jotai';
-import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
-
+import { matchStart } from '@atoms';
+import { MatchStartType } from '@atoms'; // Import MatchStartType
 
 /**
- * Atom that extracts unique map names from all matches
+ * Pure function that extracts unique map names from all matches
  */
-export const uniqueMapNamesAtom = atom(async (get): Promise<string[]> => {
-  const matchStarts = await get(matchStartExtractorAtom);
-  
+export const uniqueMapNamesAtomFn = (matchStarts: MatchStartType): string[] => {
   // Get unique map names
   const uniqueNames = Array.from(new Set(
     matchStarts.map(match => match.mapName)
   ));
 
   return uniqueNames;
-}); 
+};
+
+/**
+ * Atom that extracts unique map names from all matches
+ */
+export default atom(async (get): Promise<string[]> => {
+  const matchStartsData = await get(matchStart.atom);
+  return uniqueMapNamesAtomFn(matchStartsData);
+});

@@ -1,24 +1,15 @@
 import { atom } from 'jotai';
-import { playerStatExtractorAtom } from './event_extractors/playerStatExtractorAtom';
-import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
-import { matchEndExtractorAtom } from './event_extractors/matchEndExtractorAtom';
-import { matchExtractorAtom } from './event_extractors/matchExtractorAtom';
+import {
+  playerStat,
+  matchStart,
+  matchEnd,
+  matchExtractor,
+  PlayerMatch,
+} from '@atoms';
 
-export interface PlayerMatch {
-  matchId: string;
-  matchTime: number;   // for sorting purposes (from match start event)
-  date: string;
-  time: string;
-  mapName: string;
-  mapType: string;
-  playerTeam: string;
-  won: boolean;
-}
-
-// Derived atom that takes a player's name and returns the last 10 matches
-export const playerMatchHistoryAtom = (playerName: string) => atom(async (get): Promise<PlayerMatch[]> => {
+export const playerMatchHistoryAtomFn = (playerName: string) => atom(async (get): Promise<PlayerMatch[]> => {
   // Get the player's stat events to know in which match they participated and on which team
-  const playerStats = await get(playerStatExtractorAtom);
+  const playerStats = await get(playerStat.atom);
   const relevantStats = playerStats.filter(stat => stat.playerName === playerName);
 
   // Group unique matchIds along with the player's team from their stats
@@ -30,9 +21,9 @@ export const playerMatchHistoryAtom = (playerName: string) => atom(async (get): 
   });
 
   // Get match start (provides map details and matchTime), match end (provides scores), and file info for date/time
-  const matchStarts = await get(matchStartExtractorAtom);
-  const matchEnds = await get(matchEndExtractorAtom);
-  const matchFiles = await get(matchExtractorAtom);
+  const matchStarts = await get(matchStart.atom);
+  const matchEnds = await get(matchEnd.atom);
+  const matchFiles = await get(matchExtractor.atom);
 
   const playerMatches: PlayerMatch[] = [];
 
@@ -74,4 +65,6 @@ export const playerMatchHistoryAtom = (playerName: string) => atom(async (get): 
 
   // Return only the last 10 matches
   return playerMatches.slice(0, 10);
-}); 
+});
+
+export default playerMatchHistoryAtomFn; 

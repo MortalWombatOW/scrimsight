@@ -1,24 +1,10 @@
 import { atom } from 'jotai';
-import { MatchData, matchDataAtom } from './matchDataAtom';
+import { MatchData, matchData, Scrim } from '@atoms';
 
-export interface Scrim {
-  dateString: string;
-  team1Name: string;
-  team2Name: string;
-  team1Players: string[];
-  team2Players: string[];
-  team1Wins: number;
-  team2Wins: number;
-  draws: number;
-  matchIds: string[];
-  duration: number;
-}
-
-export const scrimAtom = atom<Promise<Scrim[]>>(async (get) => {
+export const scrimAtomFn = (allMatchData: MatchData[]): Scrim[] => {
   // group matches by date and teams
-  const matchData = await get(matchDataAtom);
   const groupedMatches: Record<string, MatchData[]> = {};
-  for (const match of matchData) {
+  for (const match of allMatchData) {
     const key = `${match.dateString}-${match.team1Name}-${match.team2Name}`;
     if (!groupedMatches[key]) {
       groupedMatches[key] = [];
@@ -48,4 +34,9 @@ export const scrimAtom = atom<Promise<Scrim[]>>(async (get) => {
     scrims.push(scrim);
   }
   return scrims;
+};
+
+export default atom<Promise<Scrim[]>>(async (get) => {
+  const allMatchData = await get(matchData.atom);
+  return scrimAtomFn(allMatchData);
 });

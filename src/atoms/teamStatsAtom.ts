@@ -1,41 +1,29 @@
-import { Atom, atom } from 'jotai';
-import { allPlayersForTeamAtom } from './allPlayersForTeamAtom';
-import { matchDataAtom } from './matchDataAtom';
-import { TeamPlayers } from './allPlayersForTeamAtom';
-import { MatchData } from './matchDataAtom';
+import { atom } from 'jotai';
+import { teamPlayers, matchData, TeamPlayersType, MatchData, TeamStats } from '@atoms';
 
-// Define the interface for team stats
-export interface TeamStats {
-  teamName: string;
-  gamesPlayed: number;
-  wins: number;
-  losses: number;
-  draws: number;
-  mostRecentGameDate: Date | null;
-  players: string[];
-}
-
-// Create the team stats atom
-export const teamStatsAtom: Atom<Promise<TeamStats[]>> = atom(async (get) => {
-  const allPlayers = await get(allPlayersForTeamAtom);
-  const matchData = await get(matchDataAtom);
-
+export const teamStatsAtomFn = (
+  allPlayers: TeamPlayersType[],
+  allMatchData: MatchData[]
+): TeamStats[] => {
   // Process each team to gather stats
-  return allPlayers.map((team: TeamPlayers) => {
-    const teamMatches = matchData.filter((match: MatchData) =>
+  return allPlayers.map((team) => {
+    const teamMatches = allMatchData.filter((match) =>
       match.team1Name === team.teamName || match.team2Name === team.teamName
     );
 
     const gamesPlayed = teamMatches.length;
-    const wins = teamMatches.filter((match: MatchData) =>
+    const wins = teamMatches.filter((match) =>
       (match.team1Name === team.teamName && match.team1Score > match.team2Score) ||
       (match.team2Name === team.teamName && match.team2Score > match.team1Score)
     ).length;
-    const losses = gamesPlayed - wins;
-    const draws = teamMatches.filter((match: MatchData) =>
+    const losses = teamMatches.filter((match) =>
+      (match.team1Name === team.teamName && match.team1Score < match.team2Score) ||
+      (match.team2Name === team.teamName && match.team2Score < match.team1Score)
+    ).length;
+    const draws = teamMatches.filter((match) =>
       match.team1Score === match.team2Score
     ).length;
-    const mostRecentGameDate = teamMatches.reduce((latest: Date, match: MatchData) => {
+    const mostRecentGameDate = teamMatches.reduce((latest: Date, match) => {
       const matchDate = new Date(match.dateString);
       return matchDate > latest ? matchDate : latest;
     }, new Date(0));
@@ -50,4 +38,11 @@ export const teamStatsAtom: Atom<Promise<TeamStats[]>> = atom(async (get) => {
       players: team.players,
     };
   });
+};
+
+export default atom(async (get) => {
+  const allPlayers = await get(teamPlayers.atom);
+  const allMatchData = await get(matchData.atom);
+  
+  return teamStatsAtomFn(allPlayers, allMatchData);
 }); 

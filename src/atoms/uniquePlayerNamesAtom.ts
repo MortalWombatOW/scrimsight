@@ -1,17 +1,16 @@
 import { atom } from 'jotai';
-import { playerStatExtractorAtom } from './event_extractors/playerStatExtractorAtom';
-
+import { playerStat, PlayerStatType } from '@atoms';
 
 /**
- * Atom that extracts unique player names from all matches
+ * Pure function that extracts unique player names from player stats
  */
-export const uniquePlayerNamesAtom = atom(async (get): Promise<string[]> => {
-  const playerStats = await get(playerStatExtractorAtom);
-  
-  // Get unique player names
-  const uniqueNames = Array.from(new Set(
+export const uniquePlayerNamesAtomFn = (playerStats: PlayerStatType): string[] => {
+  return Array.from(new Set(
     playerStats.map(stat => stat.playerName)
   ));
+};
 
-  return uniqueNames;
+export default atom(async (get): Promise<string[]> => {
+  const playerStats = await get(playerStat.atom);
+  return uniquePlayerNamesAtomFn(playerStats);
 }); 

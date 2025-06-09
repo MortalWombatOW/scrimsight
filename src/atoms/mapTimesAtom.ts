@@ -1,27 +1,23 @@
-import { Atom, atom } from 'jotai';
-import { matchStartExtractorAtom } from './event_extractors/matchStartExtractorAtom';
-import { matchEndExtractorAtom } from './event_extractors/matchEndExtractorAtom';
-import { roundTimesAtom } from './roundTimesAtom';
+import { atom } from 'jotai';
+import {
+  matchStart,
+  matchEnd,
+  roundTimes,
+  MatchStartType,
+  MatchEndType,
+  RoundTimes,
+  MapTimes,
+} from '@atoms';
 
 /**
  * Interface for map times data
  */
-export interface MapTimes {
-  matchId: string;
-  startTime: number;
-  endTime: number;
-  duration: number;
-}
-
-/**
- * Atom that combines match start, end, and round events to calculate map times
- */
-export const mapTimesAtom: Atom<Promise<MapTimes[]>> = atom(async (get) => {
-  const matchStarts = await get(matchStartExtractorAtom);
-  const matchEnds = await get(matchEndExtractorAtom);
-  const roundTimes = await get(roundTimesAtom);
-
-  if (!matchStarts || !matchEnds || !roundTimes) return [];
+export const mapTimesAtomFn = (
+  matchStarts: MatchStartType,
+  matchEnds: MatchEndType,
+  roundTimesData: RoundTimes[] // Changed parameter name and type
+): MapTimes[] => {
+  if (!matchStarts || !matchEnds || !roundTimesData) return [];
 
   return matchStarts.map((start) => {
     const end = matchEnds.find((e) => e.matchId === start.matchId);
@@ -34,4 +30,16 @@ export const mapTimesAtom: Atom<Promise<MapTimes[]>> = atom(async (get) => {
       duration: end.matchTime - start.matchTime,
     };
   }).filter((time): time is MapTimes => time !== null);
-}); 
+};
+
+
+/**
+ * Atom that combines match start, end, and round events to calculate map times
+ */
+export default atom(async (get): Promise<MapTimes[]> => {
+  const matchStartsData = await get(matchStart.atom);
+  const matchEndsData = await get(matchEnd.atom);
+  const roundTimesData = await get(roundTimes.atom); // Use the imported atom
+
+  return mapTimesAtomFn(matchStartsData, matchEndsData, roundTimesData);
+});

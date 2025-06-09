@@ -1,0 +1,118 @@
+import { atom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
+import { playerInteractionEvents, PlayerInteractionEvent, SegmentParams, SegmentStats, PlayerStatusTimeline } from '@atoms';
+import { ultimateEvents, UltimateEvent } from '@atoms';
+import { teamfights } from '@atoms';
+import { playerStatusTimeline } from '@atoms';
+import { matchData, MatchData } from '@atoms';
+
+export const segmentStatsAtomFamilyFn = (params: SegmentParams) => {
+  return async (get: any): Promise<SegmentStats | null> => {
+    // Helper function to find player counts at a specific time
+    const getPlayerCountsAtTime = (timeline: PlayerStatusTimeline | undefined, time: number): { team1Count: number; team2Count: number } => {
+      if (!timeline || timeline.length === 0) {
+        return { team1Count: 0, team2Count: 0 }; // Default or error state
+      }
+      // Find the latest entry at or before the target time
+      let relevantEntry = timeline[0];
+      for (let i = timeline.length - 1; i >= 0; i--) {
+        if (timeline[i].timestamp <= time) {
+          relevantEntry = timeline[i];
+          break;
+        }
+      }
+      return {
+        team1Count: relevantEntry.team1Players.size,
+        team2Count: relevantEntry.team2Players.size,
+      };
+    };
+    const { matchId, startTime, endTime, type } = params;
+
+    // Get necessary data sources
+    const allPlayerStatusTimelines = await get(playerStatusTimeline.atom);
+    const allMatchData: MatchData[] = await get(matchData.atom);
+    const allTeamfights = await get(teamfights.atom);
+    const allInteractionEvents = await get(playerInteractionEvents.atom);
+    const allUltimateEvents = await get(ultimateEvents.atom);
+
+    // Find data specific to this match
+    const matchPlayerStatusTimeline = allPlayerStatusTimelines.get(matchId);
+    const currentMatchData = allMatchData.find((md: MatchData) => md.matchId === matchId);
+
+    if (!currentMatchData) {
+      console.error(`segmentStatsAtomFamily: MatchData not found for matchId ${matchId}`);
+      return null; // Or return default stats
+    }
+    const { team1Name, team2Name } = currentMatchData;
+
+    // --- Calculate Player Counts ---
+    const startCounts = getPlayerCountsAtTime(matchPlayerStatusTimeline, startTime);
+    const endCounts = getPlayerCountsAtTime(matchPlayerStatusTimeline, endTime);
+
+    let team1Kills = 0;
+    let team2Kills = 0;
+    let team1UltsUsed = 0;
+    let team2UltsUsed = 0;
+
+    // --- Calculate Kills & Ults ---
+    if (type === 'teamfight') {
+      const teamfight = allTeamfights.find((tf: any) => tf.matchId === matchId && tf.startTime === startTime && tf.endTime === endTime);
+      if (teamfight) {
+        team1Kills = teamfight.team1Kills;
+        team2Kills = teamfight.team2Kills;
+        team1UltsUsed = teamfight.team1PlayersWithUltimatesUsed.length;
+        team2UltsUsed = teamfight.team2PlayersWithUltimatesUsed.length;
+      } else {
+        console.warn(`segmentStatsAtomFamily: Teamfight data not found for segment`, params);
+        // Optionally calculate from raw events as a fallback?
+      }
+    } else { // 'map' or 'round'
+      // Calculate Kills
+      const killEventsInSegment = allInteractionEvents.filter(
+        (event: any): event is PlayerInteractionEvent & { playerInteractionEventType: 'Killed player' } =>
+          event.matchId === matchId &&
+          event.playerInteractionEventType === 'Killed player' &&
+          event.playerInteractionEventTime >= startTime &&
+          event.playerInteractionEventTime <= endTime
+      );
+      killEventsInSegment.forEach((kill: any) => {
+        if (kill.playerTeam === team1Name) {
+          team1Kills++;
+        } else if (kill.playerTeam === team2Name) {
+          team2Kills++;
+        }
+      });
+
+      // Calculate Ults Used
+      const ultEventsInSegment = allUltimateEvents.filter(
+        (event: UltimateEvent) =>
+          event.matchId === matchId &&
+          event.ultimateStartTime >= startTime &&
+          event.ultimateStartTime <= endTime
+      );
+      ultEventsInSegment.forEach((ult: any) => {
+        if (ult.playerTeam === team1Name) {
+          team1UltsUsed++;
+        } else if (ult.playerTeam === team2Name) {
+          team2UltsUsed++;
+        }
+      });
+    }
+
+    return {
+      team1Kills,
+      team2Kills,
+      team1UltsUsed,
+      team2UltsUsed,
+      startPlayerCountTeam1: startCounts.team1Count,
+      startPlayerCountTeam2: startCounts.team2Count,
+      endPlayerCountTeam1: endCounts.team1Count,
+      endPlayerCountTeam2: endCounts.team2Count,
+    };
+  };
+};
+
+// AtomFamily for calculating segment statistics
+export default atomFamily((params: SegmentParams) => 
+  atom(segmentStatsAtomFamilyFn(params))
+);
