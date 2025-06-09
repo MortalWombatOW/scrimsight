@@ -60,9 +60,9 @@ export const Default: Story = {
 };
 
 export const EmptyLocations: Story = {
+  ...Template,
   args: {
     options: sampleLocations,
-    onChange: (newValue: string[]) => console.log('Changed:', newValue),
     icon: null, // Replaced LocationOnIcon
     label: "Select Maps",
     noOptionsText: "No maps found",

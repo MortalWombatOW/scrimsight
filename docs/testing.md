@@ -1,6 +1,6 @@
 # Testing Playbook
 
-Scrimsight relies exclusively on **Vitest** for unit & integration coverage and **Storybook 8** for visual regression.
+Scrimsight relies exclusively on **Vitest** for unit coverage and **Storybook** for visual and interaction regression.
 
 ## 1 Vitest setup
 
@@ -32,8 +32,6 @@ Primary.play = async ({ canvasElement }) => {
   await expect(canvas.getByText(/Submit/i)).toBeVisible();
 };
 ```
-
-Run locally via the Storybook Visual Tests addon or automatically on PRs via Chromatic.
 
 ### 3.1 Playwright MCP testing for Storybook
 

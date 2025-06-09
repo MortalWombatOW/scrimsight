@@ -14,6 +14,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    // Add component props as needed
+    matchData: {
+      team1Name: "Team Alpha",
+      team2Name: "Team Beta", 
+      team1Score: 3,
+      team2Score: 2,
+      roundWinners: ["team1", "team2", "team1", "team2", "team1"],
+    },
   },
 };

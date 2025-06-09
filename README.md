@@ -33,7 +33,7 @@ See **docs/file-structure.md** for the rule matrix and examples.
 
 ## Tech stack
 
-**React 18** + **Tailwind CSS/daisyUI** + **Jotai** atoms + **Vite** + **Vitest** + **Storybook 8**
+**React 18** + **Tailwind CSS/daisyUI** + **Jotai** atoms + **Vite** + **Vitest** + **Storybook**
 
 For detailed tech stack information, tool versions, and configuration files, see **[docs/README.md](docs/README.md#🛠️-tech-stack--tool-versions)**.
 
@@ -72,8 +72,7 @@ All three must pass for a clean build.
 
 * **Unit & integration** – Vitest + `@testing-library/react`
   *Atoms are tested via their `{fileName}Fn` helper; components via Storybook stories.*
-* **Visual regressions** – Storybook Visual Tests addon (Chromatic cloud).
-* **Coverage** goals: atoms 100 %, components 80 %.
+* **Coverage** goal: 100% of files must have a test that validates the file's functionality.
 
 See **docs/testing.md** for recipes.
 
