@@ -1,4 +1,4 @@
-# PRIME COMMAND — *2025‑06‑09 Revision*
+# PRIME COMMAND
 
 > **Audience:** The **Agent** (planner / orchestrator) and their disposable **Sub‑Agents** (executors).
 > **Scope:** Defines the **only** acceptable workflow for every new user request.
