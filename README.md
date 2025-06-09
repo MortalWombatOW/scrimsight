@@ -33,14 +33,9 @@ See **docs/file-structure.md** for the rule matrix and examples.
 
 ## Tech stack
 
-| Layer              | Choice                                       | Why                                                                                                           |
-| ------------------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Build / dev-server | **Vite**                                     | sub-100 ms HMR and Rollup-powered prod builds                                |
-| UI                 | **React 18**, **Tailwind CSS** + **daisyUI** | high-level design system on top of utility classes                        |
-| State              | **Jotai** atoms                              | atomic, type-safe, minimal re-renders                                       |
-| Tests              | **Vitest**                                   | Vite-native runner; zero Jest shims needed                                 |
-| Visual tests       | **Storybook 8** + Chromatic                  | snapshot & diff every story automatically                    |
-| Lint / structure   | **ESLint** + *project-structure* plugin      | enforces file-composition, folder-structure, and independent-modules rules |
+**React 18** + **Tailwind CSS/daisyUI** + **Jotai** atoms + **Vite** + **Vitest** + **Storybook 8**
+
+For detailed tech stack information, tool versions, and configuration files, see **[docs/README.md](docs/README.md#🛠️-tech-stack--tool-versions)**.
 
 ---
 

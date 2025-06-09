@@ -76,7 +76,20 @@ open PR → Chromatic runs visuals → review → squash & merge
 
 ---
 
-## 🛠️  Tool versions
+## 🛠️  Tech stack & tool versions
+
+### Core Technology Stack
+
+| Layer              | Choice                                       | Why                                                                    |
+| ------------------ | -------------------------------------------- | ---------------------------------------------------------------------- |
+| Build / dev-server | **Vite**                                     | sub-100 ms HMR and Rollup-powered prod builds                         |
+| UI                 | **React 18**, **Tailwind CSS** + **daisyUI** | high-level design system on top of utility classes                    |
+| State              | **Jotai** atoms                              | atomic, type-safe, minimal re-renders                                 |
+| Tests              | **Vitest**                                   | Vite-native runner; zero Jest shims needed                            |
+| Visual tests       | **Storybook 8** + Chromatic                  | snapshot & diff every story automatically                              |
+| Lint / structure   | **ESLint** + *project-structure* plugin      | enforces file-composition, folder-structure, and independent-modules rules |
+
+### Tool Versions & Configuration
 
 | Tool           | Version (min)       | Config file              |
 | -------------- | ------------------- | ------------------------ |
