@@ -1,8 +1,12 @@
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/react-vite";
 
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 
 import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { Provider as JotaiProvider } from "jotai";
+import { TimelineProvider } from "../src/components/TimelineContext";
+import "../src/index.css";
 
 const preview: Preview = {
   tags: ["autodocs"],
@@ -17,21 +21,15 @@ const preview: Preview = {
   },
 
   decorators: [
-    // (Story) => (
-    //   <WombatDataWrapper>
-    //     <Story />
-    //   </WombatDataWrapper>
-    // ),
-    // withThemeFromJSXProvider({
-    //   GlobalStyles: CssBaseline,
-    //   Provider: ThemeProvider,
-    //   themes: {
-    //     // Provide your custom themes here
-    //     light: themeDef,
-    //     dark: themeDef,
-    //   },
-    //   defaultTheme: 'dark',
-    // }),
+    (Story) => (
+      <JotaiProvider>
+        <BrowserRouter>
+          <div style={{ padding: '16px' }}>
+            <Story />
+          </div>
+        </BrowserRouter>
+      </JotaiProvider>
+    ),
   ],
 };
 
