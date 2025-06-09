@@ -71,6 +71,17 @@ mcp__playwright__playwright_screenshot({
 - TypeScript errors in component props
 - CSS/styling issues causing layout breaks
 
+**Context provider requirements:**
+- Components using React Router `Link` require Router context in stories
+- Components using Jotai atoms need Provider setup in `.storybook/preview.ts`
+- Always check console for context-related errors before committing
+
+**Story URL format:**
+```
+http://localhost:6006/?path=/story/[folder]-[component]--[variant]
+```
+Example: `components-cardbase--with-link` for CardBase component's "With Link" story.
+
 **Important**: Always start Storybook (`npm run storybook`) before using Playwright MCP tools. Use the MCP functions rather than console commands for automated testing.
 
 ## 4 Coverage targets
