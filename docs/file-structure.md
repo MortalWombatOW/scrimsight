@@ -87,3 +87,10 @@ Use these standard path aliases consistently:
 |------|---------|
 | Validate only atoms folder | `./check-lint-build-errors.sh src/atoms/` |
 | List long paths >240 chars | `eslint --rule 'project-structure/folder-structure: warn'` |
+
+---
+
+**See also:**
+- [atom-patterns.md](atom-patterns.md) — Detailed atom implementation patterns
+- [linting.md](linting.md) — ESLint configuration and troubleshooting
+- [typescript-guidelines.md](typescript-guidelines.md) — Import and type patterns

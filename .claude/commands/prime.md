@@ -1,4 +1,4 @@
-# PRIME COMMAND  (Updated 2025-06-08)
+# PRIME COMMAND
 
 > **Audience:** The **Agent** (planner/orchestrator) and their disposable **Sub-Agents** (executors).
 > **Scope:** Defines the exact, repeatable workflow for handling every new user request.
@@ -170,15 +170,15 @@ git commit -m "<short: Sub-Agent step – result>"
 ## 8 POST-IMPLEMENTATION WRAP-UP — Final Commit & Push
 
 8.1 Report completion to the user and **🛑 STOP & ASK** for final approval.
-8.2 Upon approval:
+8.2 Update `notes/`, `docs/`, and Task-Master so all reflect final status and knowledge gained.
+8.3 Push to Github and create a PR for review
 
 ```bash
 git add -A
 git commit -m "final: complete task <id> – user-approved wrap-up"
 git push -u origin {task-type}/{slug}
+gh pr create --base {base-branch} --head {task-type}/{slug} --title "{short description of changes}" --body "Task {id}: {task-name}/n/n{detailed description of changes}"
 ```
-
-8.3 Update `notes/`, `docs/`, and Task-Master so all reflect final status and knowledge gained.
 
 ---
 
