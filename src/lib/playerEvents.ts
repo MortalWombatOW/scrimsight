@@ -11,7 +11,7 @@ import type {
   HeroSwapLogEvent,
   Ability1UsedLogEvent,
   Ability2UsedLogEvent
-} from '@atoms';
+} from '@library';
 
 /**
  * Interface for combined player events

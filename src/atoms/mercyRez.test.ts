@@ -41,12 +41,12 @@ describe('mercyRezFn', () => {
       matchId: 'match1',
       type: 'mercy_rez',
       matchTime: 120,
-      playerTeam: 'Team A',
-      playerName: 'Mercy_Player',
-      playerHero: 'Mercy',
+      mercyTeam: 'Team A',
+      mercyName: 'Mercy_Player',
       revivedHero: 'Tracer',
       revivedName: 'Player1',
       revivedTeam: 'Team A',
+      eventAbility: 'Resurrect',
     }
   ];
 

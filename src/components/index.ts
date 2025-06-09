@@ -29,6 +29,9 @@ export { TimelineDisplay } from './TimelineDisplay';
 export { TimelineEvents } from './TimelineEvents';
 export { TimelineTable } from './TimelineTable';
 
+// Re-export commonly used icons for pages
+export { RoleIcon } from '@icons';
+
 // Additional component exports that were missing
 export { AllPlayerComparison } from './AllPlayerComparison';
 export { default as AtomNode } from './AtomNode';
@@ -61,5 +64,4 @@ export { TeamsVisualization } from './TeamsVisualization';
 export { TopPlayersList } from './TopPlayersList';
 export { default as ZeroState } from './ZeroState';
 
-// Re-export from icons for convenience
-export { RoleIcon } from '../icons';
+// Note: RoleIcon is available from @icons if needed

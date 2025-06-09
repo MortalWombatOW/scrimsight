@@ -3,9 +3,13 @@ import { ability1UsedFn } from '@atoms/ability1Used';
 import type { LogFileParserAtomType, Ability1UsedLogEvent } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
-vi.mock('@library', () => ({
-  extractEventsFromFiles: vi.fn(),
-}));
+vi.mock('@library', async (importOriginal) => {
+  const actual = await importOriginal() as any;
+  return {
+    ...actual,
+    extractEventsFromFiles: vi.fn(),
+  };
+});
 
 describe('ability1UsedFn', () => {
   // Mock @library functions

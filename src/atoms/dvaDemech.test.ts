@@ -38,9 +38,16 @@ describe('dvaDemechFn', () => {
       matchId: 'match1',
       type: 'dva_demech',
       matchTime: 150,
-      playerTeam: 'Team A',
-      playerName: 'DVa_Player',
-      playerHero: 'D.Va',
+      attackerTeam: 'Team A',
+      attackerName: 'DVa_Player',
+      attackerHero: 'D.Va',
+      victimTeam: 'Team B',
+      victimName: 'Enemy',
+      victimHero: 'D.Va',
+      eventAbility: 'Mech Call',
+      eventDamage: 50,
+      isCriticalHit: false,
+      isEnvironmental: false,
     }
   ];
 

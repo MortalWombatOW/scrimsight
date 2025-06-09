@@ -641,7 +641,7 @@ describe('damageFn', () => {
 
     mockExtractEventsFromFiles.mockReturnValueOnce(edgeCaseEvents);
 
-    const result = await damageFn(edgeCaseEvents);
+    const result = await damageFn(mockParsedFiles);
 
     expect(result).toEqual(edgeCaseEvents);
     expect(result[0].matchTime).toBe(0);

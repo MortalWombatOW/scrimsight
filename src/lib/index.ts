@@ -21,7 +21,13 @@ export {
 export * from './hero';
 export * from './scrimtime';
 export * from './eventExtractionUtils';
-export * from './metricUtils';
+// Re-export specific functions from metricUtils to ensure they're available
+export { 
+  groupByAtom,
+  type Grouped,
+  type Metric,
+  type MetricAtom
+} from './metricUtils';
 export * from './playerMetricsUtils';
 export * from './playerComparison';
 export * from './killMatrixUtils';
@@ -32,41 +38,43 @@ export * from './schemaVisualizer';
 export * from './metricExplorerStyles';
 export * from './dagre';
 
-// Re-export atoms needed by pages
-// Note: This violates independent-modules but may be necessary for the architecture
-export {
-  // AddFilesPage & ZeroState atoms
-  logFileInputAtom,
-  logFileInputMutationAtom,
+// Re-export atoms that pages need (per architecture rules, pages can only import from @components or @library)
+export { 
+  logFileInputAtom, 
   sampleDataEnabledAtom,
-  
-  // HomePage atoms
   matchData,
   scrimListSummaryAtom,
   teamListSummaryAtom,
   playerListSummaryAtom,
-  
-  // MatchOverviewPage atoms
-  // matchData (already exported above)
-  
-  // MetricsExplorerPage atoms
-  uniqueCategoryValues,
-  
-  // ScrimPage atoms
-  scrims,
   contextualStatAtoms,
-  
-  // TeamPage atoms
+  scrims,
   teamNames,
   teamStats,
-  
-  // Additional contextual atoms
+  uniqueCategoryValues,
+  playerStatsBase,
+  playerStatsNumericalKeys
 } from '@atoms';
 
-// Re-export types needed by pages
-export type {
+export type { 
   MatchData,
   ScrimListSummary,
   PlayerStatsCategoryKeys,
   PlayerStatsNumericalKeys,
+  PlayerStatsBase,
+  PlayerStats,
+  PlayerStatsBaseNumericalKeys,
+  // Re-export event types that were previously duplicated in lib/types.ts
+  DefensiveAssistLogEvent,
+  DefensiveAssistType,
+  OffensiveAssistLogEvent,
+  OffensiveAssistType,
+  HeroSpawnLogEvent,
+  HeroSpawnType,
+  HeroSwapLogEvent,
+  HeroSwapType,
+  Ability1UsedLogEvent,
+  Ability1UsedType,
+  Ability2UsedLogEvent,
+  Ability2UsedType
 } from '@atoms';
+

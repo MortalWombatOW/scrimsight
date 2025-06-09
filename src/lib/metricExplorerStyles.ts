@@ -1,8 +1,8 @@
-import { StylesConfig } from "react-select"; // Removed GroupBase
-import {
+import { StylesConfig, CSSObjectWithLabel } from "react-select";
+import type {
   PlayerStatsCategoryKeys,
   PlayerStatsNumericalKeys,
-} from "@atoms";
+} from "@library";
 
 // Define option types used in controls
 type OptionType = { value: string; label: string };
@@ -13,7 +13,7 @@ type SortDirectionOptionType = { value: "asc" | "desc"; label: string };
 
 
 // Base styles (common parts) using DaisyUI theme variables
-const baseControlStyles = (provided: any, state: any) => ({
+const baseControlStyles = (provided: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
   ...provided,
   backgroundColor: "hsl(var(--b2))", // Use base-200
   borderColor: state.isFocused ? "hsl(var(--p))" : "hsl(var(--b3))", // Use primary on focus, base-300 otherwise
@@ -25,14 +25,14 @@ const baseControlStyles = (provided: any, state: any) => ({
   borderRadius: 'var(--radius-field, 0.25rem)', // Use theme radius
 });
 
-const baseMenuStyles = (provided: any) => ({
+const baseMenuStyles = (provided: CSSObjectWithLabel) => ({
   ...provided,
   backgroundColor: "hsl(var(--b1))", // Use base-100
   zIndex: 20,
   borderRadius: 'var(--radius-box, 0.5rem)', // Use theme radius
 });
 
-const baseOptionStyles = (provided: any, state: any) => ({
+const baseOptionStyles = (provided: CSSObjectWithLabel, state: { isSelected: boolean; isFocused: boolean }) => ({
   ...provided,
   backgroundColor: state.isSelected
     ? "hsl(var(--p))" // Use primary for selected
@@ -46,22 +46,22 @@ const baseOptionStyles = (provided: any, state: any) => ({
   borderRadius: 'var(--radius-field, 0.25rem)', // Use theme radius
 });
 
-const baseInputStyles = (provided: any) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
-const baseSingleValueStyles = (provided: any) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
-const baseMultiValueStyles = (provided: any) => ({
+const baseInputStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
+const baseSingleValueStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
+const baseMultiValueStyles = (provided: CSSObjectWithLabel) => ({
   ...provided,
   backgroundColor: "hsl(var(--b3))", // Use base-300
   borderRadius: 'var(--radius-badge, 1.9rem)', // Use badge radius for pill shape
 });
-const baseMultiValueLabelStyles = (provided: any) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
-const baseMultiValueRemoveStyles = (provided: any) => ({
+const baseMultiValueLabelStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
+const baseMultiValueRemoveStyles = (provided: CSSObjectWithLabel) => ({
   ...provided,
   color: "hsl(var(--bc) / 0.7)", // Use base-content with opacity
   ":hover": { backgroundColor: "hsl(var(--er) / 0.3)", color: "hsl(var(--er))" }, // Use error color on hover
   borderTopRightRadius: 'var(--radius-badge, 1.9rem)', // Match pill shape
   borderBottomRightRadius: 'var(--radius-badge, 1.9rem)', // Match pill shape
 });
-const basePlaceholderStyles = (provided: any) => ({ ...provided, color: "hsl(var(--bc) / 0.5)" }); // Use base-content with opacity
+const basePlaceholderStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "hsl(var(--bc) / 0.5)" }); // Use base-content with opacity
 
 
 // Specific Styles Configurations

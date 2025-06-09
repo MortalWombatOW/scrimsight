@@ -43,6 +43,7 @@ describe('ultimateChargedFn', () => {
       playerName: 'Player1',
       playerHero: 'Genji',
       heroDuplicated: '',
+      ultimateId: 1,
     }
   ];
 

@@ -9,23 +9,42 @@ describe('averageMetricPerMapAtomFn', () => {
       rows: [
         {
           matchId: 'match1',
-          playerName: 'Player1',
+          roundNumber: '1',
           playerTeam: 'Team A',
+          playerName: 'Player1',
           playerHero: 'Tracer',
+          playerRole: 'damage',
           playtime: 600,
           eliminations: 10,
+          finalBlows: 8,
           deaths: 5,
-          damage: 5000,
-          healing: 0,
+          allDamageDealt: 5000,
+          barrierDamageDealt: 1000,
+          heroDamageDealt: 4000,
+          healingDealt: 0,
+          healingReceived: 200,
+          selfHealing: 50,
+          damageTaken: 1000,
+          damageBlocked: 0,
+          defensiveAssists: 2,
+          offensiveAssists: 5,
+          ultimatesEarned: 3,
+          ultimatesUsed: 3,
+          multikills: 1,
+          soloKills: 3,
+          objectiveKills: 4,
+          environmentalKills: 0,
+          environmentalDeaths: 0,
+          criticalHits: 20,
           shotsFired: 100,
           shotsHit: 60,
+          shotsMissed: 40,
           scopedShotsFired: 0,
           scopedShotsHit: 0,
-          criticalHits: 20,
         }
       ],
       categoryKeys: ['playerName', 'playerTeam', 'playerHero'],
-      numericalKeys: ['playtime', 'eliminations', 'deaths', 'damage', 'healing', 'shotsFired', 'shotsHit', 'scopedShotsFired', 'scopedShotsHit', 'criticalHits']
+      numericalKeys: ['playtime', 'eliminations', 'deaths', 'allDamageDealt', 'healingDealt', 'shotsFired', 'shotsHit', 'scopedShotsFired', 'scopedShotsHit', 'criticalHits']
     };
 
     const mockAllMatches: MatchData[] = [
@@ -44,7 +63,7 @@ describe('averageMetricPerMapAtomFn', () => {
         team1Score: 2,
         team2Score: 1,
         duration: 1200,
-        roundWinners: ['Team A', 'Team B', 'Team A'],
+        roundWinners: ['team1', 'team2', 'team1'],
       }
     ];
 
@@ -61,7 +80,7 @@ describe('averageMetricPerMapAtomFn', () => {
     const mockPlayerStatsData: Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys> = {
       rows: [],
       categoryKeys: ['playerName', 'playerTeam', 'playerHero'],
-      numericalKeys: ['playtime', 'eliminations', 'deaths', 'damage', 'healing', 'shotsFired', 'shotsHit', 'scopedShotsFired', 'scopedShotsHit', 'criticalHits']
+      numericalKeys: ['playtime', 'eliminations', 'deaths', 'allDamageDealt', 'healingDealt', 'shotsFired', 'shotsHit', 'scopedShotsFired', 'scopedShotsHit', 'criticalHits']
     };
 
     const result = averageMetricPerMapAtomFn(mockPlayerStatsData, [], []);

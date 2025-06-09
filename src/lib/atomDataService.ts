@@ -1,4 +1,4 @@
-import type { AtomCollection } from './schemaVisualizer';
+import type { AtomCollection } from '@library';
 
 /**
  * Extract atoms and their dependencies from the codebase

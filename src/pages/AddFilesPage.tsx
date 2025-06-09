@@ -18,13 +18,13 @@ declare global {
 }
 
 import { useAtom, useAtomValue } from "jotai";
-import { logFileInputAtom, logFileInputMutationAtom, sampleDataEnabledAtom } from "@library";
+import { logFileInputAtom, sampleDataEnabledAtom } from "@library";
 import { ChangeEvent } from "react";
 import { MdDelete } from "react-icons/md";
 import { Container } from "@components";
 
 export const AddFilesPage = () => {
-  const [, setFiles] = useAtom(logFileInputMutationAtom);
+  const [, setFiles] = useAtom(logFileInputAtom);
   const logFileInput = useAtomValue(logFileInputAtom);
   const [sampleDataEnabled, setSampleDataEnabled] = useAtom(
     sampleDataEnabledAtom

@@ -38,9 +38,8 @@ describe('setupCompleteFn', () => {
       matchId: 'match1',
       type: 'setup_complete',
       matchTime: 0,
-      playerTeam: '',
-      playerName: '',
-      playerHero: '',
+      roundNumber: 1,
+      matchTimeRemaining: 600,
     }
   ];
 

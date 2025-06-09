@@ -30,7 +30,7 @@ const PlayerCard = ({
       <div className="flex items-center">
         <div className="relative group">
           <img
-            src={getHeroImage(playerRow?.playerHero, true)}
+            src={getHeroImage(playerRow?.playerHero || 'Unknown', true)}
             alt={playerRow?.playerHero || 'Unknown Hero'}
             className="h-6 w-6 rounded-lg mr-2"
           />

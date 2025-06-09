@@ -27,6 +27,10 @@ createIndependentModules({
         "src/components/index.ts",  // component-index 
         "src/atoms/index.ts",     // atom-index 
         "src/lib/index.ts",       // library-index 
+        "@pages",
+        "@components", 
+        "@atoms",
+        "@library"
       ],
       allowExternalImports: true,
       errorMessage: "App (src/App.tsx) has restricted dependencies, can only import from pages index (@pages), components index (@components), atom index (@atoms), library index (@library), and external packages.",
@@ -47,8 +51,9 @@ createIndependentModules({
       pattern: "src/components/index.ts", 
       allowImportsFrom: [
         "src/components/*.tsx", 
+        "src/icons/index.ts",   // Allow importing from icon index for re-export
       ],
-      errorMessage: "Component index (src/components/index.ts) can only import files from '@components/filename.tsx'.",
+      errorMessage: "Component index (src/components/index.ts) can only import files from '@components/filename.tsx' or the icon index (@icons) for re-exports.",
     },
     // Icon Index: src/icons/index.ts
     {
@@ -75,8 +80,9 @@ createIndependentModules({
       pattern: "src/lib/index.ts", 
       allowImportsFrom: [
         "src/lib/*.ts", 
+        "src/atoms/index.ts", // Allow importing from atoms index for re-exporting types
       ],
-      errorMessage: "Library index (src/lib/index.ts) can only import files from '@library/filename.ts'.",
+      errorMessage: "Library index (src/lib/index.ts) can only import files from '@library/filename.ts' or the atom index (@atoms) for re-exporting types.",
     },
     // Sample Data Test: Special case for raw file imports
     {

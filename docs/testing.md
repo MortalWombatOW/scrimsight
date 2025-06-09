@@ -35,6 +35,44 @@ Primary.play = async ({ canvasElement }) => {
 
 Run locally via the Storybook Visual Tests addon or automatically on PRs via Chromatic.
 
+### 3.1 Playwright MCP testing for Storybook
+
+Use Playwright MCP tools to test Storybook stories during development. The MCP server provides built-in Playwright functions that don't require separate installation or setup.
+
+**Essential error checking workflow:**
+1. **Navigate to story**: Use `mcp__playwright__playwright_navigate` with the story URL
+2. **Check console errors**: Always use `mcp__playwright__playwright_console_logs` with `type: "error"` to catch runtime errors
+3. **Visual verification**: Use `mcp__playwright__playwright_screenshot` to verify rendering
+4. **Context validation**: For components using React Router, ensure proper context providers are set up
+
+**Example MCP workflow:**
+```typescript
+// Navigate to a specific story
+mcp__playwright__playwright_navigate({
+  url: "http://localhost:6006/?path=/story/components-cardbase--with-link",
+  headless: true
+})
+
+// Check for errors immediately after navigation
+mcp__playwright__playwright_console_logs({
+  type: "error"
+})
+
+// Take screenshot for visual verification
+mcp__playwright__playwright_screenshot({
+  name: "story-test",
+  fullPage: true
+})
+```
+
+**Common error patterns to check for:**
+- React Router context errors (e.g., "Cannot destructure property 'basename'")
+- Missing Jotai providers for atom-dependent components  
+- TypeScript errors in component props
+- CSS/styling issues causing layout breaks
+
+**Important**: Always start Storybook (`npm run storybook`) before using Playwright MCP tools. Use the MCP functions rather than console commands for automated testing.
+
 ## 4 Coverage targets
 
 | Layer        | Target                   |

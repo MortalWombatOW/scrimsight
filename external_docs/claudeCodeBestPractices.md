@@ -26,7 +26,8 @@ There’s no required format for `CLAUDE.md` files. We recommend keeping them co
 ```markdown
 # Bash commands
 - npm run build: Build the project
-- npm run typecheck: Run the typechecker
+- npm run type-check: Run the typechecker
+- ./check-lint-build-errors.sh: Run the linter and type checker
 
 # Code style
 - Use ES modules (import/export) syntax, not CommonJS (require)

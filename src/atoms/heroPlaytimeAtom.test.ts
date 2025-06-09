@@ -10,6 +10,7 @@ describe('heroPlaytimeAtomFn', () => {
       roundStartTime: 100,
       roundSetupCompleteTime: 120,
       roundEndTime: 200,
+      roundDuration: 100,
     },
     {
       matchId: 'match1',
@@ -17,6 +18,7 @@ describe('heroPlaytimeAtomFn', () => {
       roundStartTime: 300,
       roundSetupCompleteTime: 320,
       roundEndTime: 400,
+      roundDuration: 100,
     }
   ];
 
@@ -28,6 +30,7 @@ describe('heroPlaytimeAtomFn', () => {
       playerEventType: 'heroSpawn',
       playerEventTime: 125,
       matchTime: 125,
+      eventType: 'heroSpawn',
     },
     {
       matchId: 'match1',
@@ -36,6 +39,7 @@ describe('heroPlaytimeAtomFn', () => {
       playerEventType: 'heroSwap',
       playerEventTime: 150,
       matchTime: 150,
+      eventType: 'heroSwap',
     },
     {
       matchId: 'match1',
@@ -44,6 +48,7 @@ describe('heroPlaytimeAtomFn', () => {
       playerEventType: 'heroSpawn',
       playerEventTime: 325,
       matchTime: 325,
+      eventType: 'heroSpawn',
     }
   ];
 
@@ -95,6 +100,7 @@ describe('heroPlaytimeAtomFn', () => {
         playerEventType: 'heroSpawn',
         playerEventTime: 50, // Before round start
         matchTime: 50,
+        eventType: 'heroSpawn',
       },
       {
         matchId: 'match1',
@@ -103,6 +109,7 @@ describe('heroPlaytimeAtomFn', () => {
         playerEventType: 'heroSwap',
         playerEventTime: 500, // After round end
         matchTime: 500,
+        eventType: 'heroSpawn',
       }
     ];
 
@@ -119,6 +126,7 @@ describe('heroPlaytimeAtomFn', () => {
         playerEventType: 'heroSpawn',
         playerEventTime: 125,
         matchTime: 125,
+        eventType: 'heroSpawn',
       },
       {
         matchId: 'match1',
@@ -127,6 +135,7 @@ describe('heroPlaytimeAtomFn', () => {
         playerEventType: 'heroSwap',
         playerEventTime: 150,
         matchTime: 150,
+        eventType: 'heroSwap',
       },
       {
         matchId: 'match1',
@@ -135,6 +144,7 @@ describe('heroPlaytimeAtomFn', () => {
         playerEventType: 'heroSwap',
         playerEventTime: 175,
         matchTime: 175,
+        eventType: 'heroSwap',
       }
     ];
 

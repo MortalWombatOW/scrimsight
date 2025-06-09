@@ -1,5 +1,6 @@
 import { useAtomValue } from "jotai";
-import { scrims, contextualStatAtoms, formatTime, prettyFormat, MatchData } from "@library";
+import { scrims, contextualStatAtoms, MatchData } from "@library";
+import { formatTime, prettyFormat } from "@library";
 import { IoTimeOutline } from "react-icons/io5";
 import { TbTournament } from "react-icons/tb";
 import { useParams } from "react-router-dom"; // Removed unused Link

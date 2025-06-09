@@ -56,3 +56,4 @@ tasks.json
 tasks/ 
 
 package-lock.json
+storybook-static

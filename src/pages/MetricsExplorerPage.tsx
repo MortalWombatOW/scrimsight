@@ -2,8 +2,8 @@ import React, { useState } from "react"; // Removed useMemo
 import { useAtomValue } from "jotai";
 // Removed unused imports: @tanstack/react-table, recharts, react-select
 import { Container } from "@components";
+import { useStats } from "@library";
 import {
-  useStats,
   uniqueCategoryValues,
   PlayerStatsCategoryKeys, // Keep this type
   PlayerStatsNumericalKeys, // Keep this type

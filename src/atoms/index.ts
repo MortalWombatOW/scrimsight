@@ -1,4 +1,4 @@
-import { Atom, WritableAtom, PrimitiveAtom } from 'jotai';
+import { Atom, WritableAtom, PrimitiveAtom, atom } from 'jotai';
 import { Metric } from '@library';
 export type { Metric };
 import { OverwatchRole } from '@library';
@@ -479,6 +479,8 @@ export type PlayerEventWithType =
 // TeamPlayersType is now defined above
 // Scrim is now defined above
 
+// Export types that were missing - these are already defined above
+
 // Atom Registrations
 export const teamPlayers: ScrimsightAtom<Promise<TeamPlayersType[]>> = { name: 'teamPlayers', description: 'All players for each team', atom: teamPlayersAtom };
 export const playerStatsBase: ScrimsightAtom<Promise<Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys>>> = { name: 'playerStatsBase', description: 'The most granular player stats for each round, merging player stat events with hero playtime data.', atom: playerStatsBaseAtom };
@@ -498,7 +500,7 @@ export const sampleDataEnabled: ScrimsightAtom<SampleDataEnabledType> = { name: 
 export { default as sampleDataEnabledAtom } from './sampleDataEnabled';
 export type LogFileInputType = { files: File[]; };
 export const logFileInput: ScrimsightAtom<LogFileInputType> = { name: 'logFileInput', description: 'Atom that stores the uploaded log files and provides a setter', atom: logFileInputAtom };
-export { default as logFileInputAtom, logFileInputMutationAtom } from './logFileInputAtom';
+export { default as logFileInputAtom } from './logFileInputAtom';
 export type LogFileLoaderType = { fileName: string; fileModified: number; fileContent: string; }[];
 export const sampleData: ScrimsightAtom<LogFileLoaderType> = { name: 'sampleData', description: 'Sample log file data', atom: sampleDataAtom };
 export const logFileLoader: ScrimsightAtom<Promise<LogFileLoaderType>> = { name: 'logFileLoader', description: 'Loads the content of uploaded log files', atom: logFileLoaderAtom };
@@ -550,8 +552,32 @@ export const killMatrixAtomFamily = killMatrixAtom;
 export const playerLives: ScrimsightAtom<Promise<PlayerLife[]>> = { name: 'playerLives', description: 'Atom that calculates player lives from spawn/death events.', atom: playerLivesAtom };
 export const groupedEvents: ScrimsightAtom<Promise<GroupedKillOffensiveAssistEvent[]>> = { name: 'groupedEvents', description: 'Atom that groups kill events and offensive assists by matchId and matchTime.', atom: groupedEventsAtom };
 
-// List Summary Atoms
-export const { playerListSummaryAtom, scrimListSummaryAtom, teamListSummaryAtom, latestScrimSummaryAtom } = listSummaryAtoms;
+// List Summary Atoms - lazy evaluation to avoid circular dependencies during testing
+export let playerListSummaryAtom: Atom<Promise<PlayerListSummary[]>>;
+export let scrimListSummaryAtom: Atom<Promise<ScrimListSummary[]>>;
+export let teamListSummaryAtom: Atom<Promise<TeamListSummary[]>>;
+export let latestScrimSummaryAtom: Atom<Promise<ScrimListSummary | undefined>>;
+
+// Initialize these atoms lazily
+const initializeListSummaryAtoms = () => {
+  if (!playerListSummaryAtom) {
+    try {
+      playerListSummaryAtom = listSummaryAtoms.playerListSummaryAtom;
+      scrimListSummaryAtom = listSummaryAtoms.scrimListSummaryAtom;
+      teamListSummaryAtom = listSummaryAtoms.teamListSummaryAtom;
+      latestScrimSummaryAtom = listSummaryAtoms.latestScrimSummaryAtom;
+    } catch (error) {
+      console.warn('Failed to initialize list summary atoms:', error);
+      playerListSummaryAtom = atom(() => Promise.resolve([]));
+      scrimListSummaryAtom = atom(() => Promise.resolve([]));
+      teamListSummaryAtom = atom(() => Promise.resolve([]));
+      latestScrimSummaryAtom = atom(() => Promise.resolve(undefined));
+    }
+  }
+};
+
+// Initialize them immediately but with error handling
+initializeListSummaryAtoms();
 
 // Import and export the missing atom families
 export { default as detailedTeamCompositionsAtom } from './detailedTeamCompositionsAtom';

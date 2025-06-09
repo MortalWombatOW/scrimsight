@@ -72,10 +72,10 @@ export const folderStructureConfig = createFolderStructure({
             // Icon implementation files
             {
               name: "{PascalCase}Icon.tsx",
-              enforceExistence: ["{NodeName}Icon.stories.tsx"]
+              enforceExistence: ["{NodeName}.stories.tsx"]
             },
             // Icon story files
-            { name: "{PascalCase}Icon.stories.tsx", enforceExistence: ["{NodeName}Icon.tsx"] },
+            { name: "{PascalCase}Icon.stories.tsx", enforceExistence: ["{NodeName}.tsx"] },
             // SVG files
             { name: "*.svg" },
           ],

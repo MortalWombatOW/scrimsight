@@ -36,14 +36,14 @@ export const PlayerStatsCard = ({
 
   const getStat = (stat: string): number => {
     return (
-      playerStats.rows.find((stats) => stats.playerName === playerName)?.[
+      (playerStats.rows.find((stats) => stats.playerName === playerName) as any)?.[
         stat
       ] ?? 0
     );
   };
 
   const getMaxStat = (stat: string) => {
-    return Math.max(...playerStats.rows.map((stats) => stats[stat] || 0));
+    return Math.max(...playerStats.rows.map((stats) => (stats as any)[stat] || 0));
   };
 
   const getRanking = (
@@ -52,7 +52,7 @@ export const PlayerStatsCard = ({
     const max = getMaxStat(stat);
     const percentage = max > 0 ? (getStat(stat) / max) * 100 : 0;
     const rank =
-      playerStats.rows.filter((stats) => (stats[stat] || 0) > getStat(stat))
+      playerStats.rows.filter((stats) => ((stats as any)[stat] || 0) > getStat(stat))
         .length + 1;
     return { rank, max, percentage };
   };

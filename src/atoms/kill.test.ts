@@ -51,7 +51,8 @@ describe('killFn', () => {
       victimHero: 'Mercy',
       eventAbility: 'Scoped Shot',
       eventDamage: 200,
-      isCriticalHit: true
+      isCriticalHit: true,
+      isEnvironmental: false
     }
   ];
 
@@ -99,7 +100,8 @@ describe('killFn', () => {
         victimHero: 'Tracer',
         eventAbility: 'Widow\'s Kiss',
         eventDamage: 300,
-        isCriticalHit: true
+        isCriticalHit: true,
+        isEnvironmental: false
       }
     ];
 

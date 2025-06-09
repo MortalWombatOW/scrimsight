@@ -1,51 +1,130 @@
-READ and UNDERSTAND the README.md file in the project root.
-THEN read the project documentation by listing the files in the `docs` directory and reading them, beginning with `docs/README.md`.
-THEN run `git ls-files` to see all files in the project.
-THEN run `npx task-master list --with-subtasks` to see the current status of the project tasks.
-THEN get the user's request and compare it to the project documentation and existing tasks. Reason about how the request fits into the project - should it be a new task? Should it be a subtask of an existing task? 
-THEN Update the task-master CLI to reflect the new status.
-THEN run `date` to get the current date.
-THEN create a new file in the `notes` directory with the name `YYYY-MM-DD-TASK-<task-id>-<request-summary>.md`. You will fill in the following sections, asking the user for clarification as needed:
-```
+# PRIME COMMAND
+
+> **Audience:** The **Agent** (planner/orchestrator) and their disposable **Sub‑Agents** (executors).  
+> **Scope:** Defines the exact, repeatable workflow for handling every new user request **without ever committing code or changing Git history**.  
+> **Penalty for deviation:** Immediate removal from the project.
+
+---
+
+## 0 GROUND RULES
+
+0.1 **Read‑Only Git** – The Agent and Sub‑Agents may run *only* read‑only commands such as `git ls-files`, `git show`, `git diff --no-index`, etc. **Never** run `git add`, `git commit`, `git push`, or alter branches/tags in any way.  
+0.2 **No Direct Code Changes** – All implementation is captured in `/notes/*` and executed by Sub‑Agents; the human maintainer will handle actual commits/PRs.  
+0.3 **Single Source of Truth** – Keep `notes/`, `docs/`, and **Task‑Master** tasks perfectly in sync.  
+0.4 **STOP‑QUESTIONS** – Whenever a step is marked **🛑 STOP & ASK**, immediately pause, ask the user, and await an explicit go‑ahead (`"Looks good, proceed"` or similar).
+
+---
+
+## 1 PREPARATION PHASE
+
+1.1 Read `README.md` in the project root.  
+1.2 Read documentation: 
+  1.2.1 Read `docs/README.md`
+  1.2.2 List under `docs/` using `ls docs/`
+  1.2.3 Read all files under `docs/`
+1.3 Inspect repository structure with `git ls-files` (read‑only).  
+1.4 List tasks with `npx task-master list --with-subtasks`.
+1.5 **🛑 STOP & ASK** the user for their request.
+
+---
+
+## 2 REQUEST TRIAGE
+ 
+2.1 Compare the request with existing docs and tasks; decide whether it is  
+   - a new task,  
+   - a subtask of an existing task, or  
+   - duplicate/invalid.
+2.2 **🛑 STOP & ASK** the user if the mapping is unclear.
+
+---
+
+## 3 TASK‑MASTER UPDATE
+
+3.1 Update Task‑Master CLI to reflect the decision from Request Triage.  
+3.2 Record the current date/time by running `date`.
+
+---
+
+## 4 NOTE INITIALISATION
+
+4.1 Create `/notes/YYYY‑MM‑DD‑task‑<task‑id>-<slug>.md` containing:
+
+```markdown
 ## BACKGROUND
-* A summary of the current status of the project, and the current date and time.
+* <brief project status> — <YYYY‑MM‑DD HH:MM>
 
 ## TASK
-* Note the task ID and name that you're working on, e.g. "Task #1: Add a new feature". or "Task #2.3: Fix a bug".
+* Task <id>: <task name or subtask path>
 
 ## SUMMARY
-* A summary of the user's request.
+* <one‑sentence paraphrase of user request>
 
 ## OBJECTIVES
-* The key objectives of the user's request. Make sure to think carefully about how to measure success, preferring measuring with quantitative data over qualitative feedback, e.g. using build scripts to verify all errors are fixed.
+* <bullet list of measurable outcomes>
 ```
-THEN do detailed research on the user's request, reading project files and documentation, and asking the user for clarification as needed.
-THEN Ask any clarifying questions that came up.
-THEN update the `notes` file by appending the following sections:
-```
-## HIGH-LEVEL PLAN
-* A high-level plan of how to achieve the objectives.
 
-## IMPLEMENTATION
-* A detailed checklist of how to implement the user's request. These will be executed by subagents in order. 
-```
-THEN get approval from the user. You CANNOT start working on the code until they approve. Document their approval in the `notes` file:
-```
---- APPROVAL GRANTED ---
-* the exact message from the user that you think means they approved, in quotes. E.g. "looks good, proceed."
-```
-IF YOU START WORKING ON THE CODE BEFORE THEY APPROVE, YOU WILL BE BANNED FROM THE PROJECT.
+4.2 **🛑 STOP & ASK** the user at least 3 clarification questions to confirm the project scope. Update the notes file based on the answers.
 
-THEN execute the implementation plan by dispatching a subagent for each step. This agent is responsible for executing the step and updating the `notes` file with any learnings or challenges encountered. If they aren't able to complete the step quickly, they report back failure and update the `notes` file accordingly with the challenges they encountered.
+---
 
- You must keep an implmenentation log in the `notes` file:
+## 5 RESEARCH & PLANNING
+
+5.1 Append to the note file a `## RESEARCH PLAN` section with a bullet list of research questions.
+5.2 For **each** research question in the bullet list:
+  5.2.1 Dispatch a Sub‑Agent to research each question by studying relevant code and docs and running read‑only commands as needed. They must update the `notes` file with their findings.
+5.3 Review the `notes` file and confirm the research plan is complete.
+5.4 Append to the note file:
+   5.4.1 `## HIGH‑LEVEL PLAN` – bullet outline.
+   5.4.2 `## IMPLEMENTATION` – ordered checklist (each item = one Sub‑Agent).
+5.5 **🛑 STOP & ASK** the user to approve the plan.
+
+---
+
+## 6 USER APPROVAL GATE
+
+6.1 Upon approval, append to the note file:
+
+   ```markdown
+   --- APPROVAL GRANTED ---
+   "<exact user message>"
+   ```
+
+6.2 If approval is **not** granted, revise the plan and repeat §5.
+
+---
+
+## 7 IMPLEMENTATION EXECUTION
+
+7.1 For **each** checklist item in `## IMPLEMENTATION`:
+
+   7.1.1 Spawn a Sub‑Agent with a single, precise objective.
+   7.1.2 Sub‑Agent executes and appends a line to `## IMPLEMENTATION LOG`:
+
+   ```markdown
+   * <action> – <result/challenges>
+   ```
+
+   7.1.3 On failure or major discovery → **🛑 STOP & ASK** the user before adjusting the plan.
+
+---
+
+## 8 POST‑IMPLEMENTATION WRAP‑UP
+
+8.1 Report completion to the user and **🛑 STOP & ASK** the user for final approval.
+8.2 After approval, you must update `notes/`, `docs/`, and Task‑Master to all reflect final status and any knowledge gained.
+
+
+---
+
+## 9 CHECKLIST SUMMARY (PIN ME)
+
 ```
-## IMPLEMENTATION LOG
-* Actions taken to implement the user's request, with any learnings or challenges encountered.
+[ ] 1 Preparation
+[ ] 2 Request triage       🛑
+[ ] 3 Task‑Master update
+[ ] 4 Note initialisation  🛑
+[ ] 5 Research & planning  🛑
+[ ] 6 User approval gate   🛑
+[ ] 7 Run Sub‑Agents       🛑 as needed
+[ ] 8 Wrap‑up & report     🛑
 ```
-YOU MUST UPDATE THE IMPLEMENTATION LOG WITH EVERY ACTION YOU TAKE TO IMPLEMENT THE REQUEST.
-IF YOU LEARN SOMETHING THAT REQUIRES AN UPDATE TO THE PLAN, YOU MUST STOP AND ASK THE USER FOR CLARIFICATION BEFORE CONTINUING.
-
-IMPORTANT: a good software engineer will always keep documentation up-to-date. Make sure to keep the `notes` and `docs` files and the taskmaster tasks up-to-date with the latest status of the project, not just for the user but for future reference as well.
-
-STRICT ADHERENCE TO THIS PROCESS IS ABSOLUTELY CRITICAL. IF YOU DON'T FOLLOW THIS PROCESS, YOU WILL BE BANNED FROM THE PROJECT.

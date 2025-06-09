@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { RoleIconSvg } from "@icons";
+import RoleSvgIcon from "./RoleSvgIcon";
 
-const meta: Meta<typeof RoleIconSvg> = {
-  component: RoleIconSvg,
+const meta: Meta<typeof RoleSvgIcon> = {
+  component: RoleSvgIcon,
   argTypes: {
     role: {
       control: "select",
@@ -29,7 +29,7 @@ const meta: Meta<typeof RoleIconSvg> = {
 
 export default meta;
 
-type Story = StoryObj<typeof RoleIconSvg>;
+type Story = StoryObj<typeof RoleSvgIcon>;
 
 export const Tank: Story = {
   args: {
@@ -59,9 +59,9 @@ export const Support: Story = {
 export const AllRoles: Story = {
   render: () => (
     <svg width="300" height="100" style={{ background: "#2c2c2c" }}>
-      <RoleIconSvg role="tank" x={50} y={50} />
-      <RoleIconSvg role="damage" x={150} y={50} />
-      <RoleIconSvg role="support" x={250} y={50} />
+      <RoleSvgIcon role="tank" x={50} y={50} />
+      <RoleSvgIcon role="damage" x={150} y={50} />
+      <RoleSvgIcon role="support" x={250} y={50} />
 
       {/* Labels */}
       <text x="50" y="90" textAnchor="middle" fill="white" fontSize="14">
@@ -88,10 +88,10 @@ export const AllRoles: Story = {
 export const Positions: Story = {
   render: () => (
     <svg width="200" height="200" style={{ background: "#2c2c2c" }}>
-      <RoleIconSvg role="tank" x={50} y={50} />
-      <RoleIconSvg role="tank" x={150} y={50} />
-      <RoleIconSvg role="tank" x={50} y={150} />
-      <RoleIconSvg role="tank" x={150} y={150} />
+      <RoleSvgIcon role="tank" x={50} y={50} />
+      <RoleSvgIcon role="tank" x={150} y={50} />
+      <RoleSvgIcon role="tank" x={50} y={150} />
+      <RoleSvgIcon role="tank" x={150} y={150} />
 
       {/* Position markers */}
       <text x="50" y="30" textAnchor="middle" fill="white" fontSize="12">
@@ -161,7 +161,7 @@ export const WithGrid: Story = {
         strokeWidth="1"
       />
 
-      <RoleIconSvg role="tank" x={50} y={50} />
+      <RoleSvgIcon role="tank" x={50} y={50} />
     </svg>
   ),
   parameters: {

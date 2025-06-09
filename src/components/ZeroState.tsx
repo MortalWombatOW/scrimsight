@@ -1,13 +1,13 @@
 import { GoLinkExternal } from "react-icons/go";
 import { useAtom } from "jotai";
-import { sampleDataEnabledAtom, logFileInputMutationAtom } from "@library";
+import { sampleDataEnabledAtom, logFileInputAtom } from "@library";
 import { MdOutlineFileOpen } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { useState, useCallback } from "react";
 
 const ZeroState = () => {
   const [_, setSampleDataEnabled] = useAtom(sampleDataEnabledAtom);
-  const [__, setFiles] = useAtom(logFileInputMutationAtom);
+  const [__, setFiles] = useAtom(logFileInputAtom);
   const [isDragActive, setIsDragActive] = useState(false);
   const [isDragAccept, setIsDragAccept] = useState(false);
   const [isDragReject, setIsDragReject] = useState(false);

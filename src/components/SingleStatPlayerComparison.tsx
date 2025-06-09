@@ -75,8 +75,8 @@ export const SingleStatPlayerComparison = ({
   // Sort data for the table - moved before conditional return
   const sortedData = useMemo(() => {
     return [...allPlayerData].sort((a, b) => {
-      let aValue = a[sortBy];
-      let bValue = b[sortBy];
+      let aValue = (a as any)[sortBy];
+      let bValue = (b as any)[sortBy];
 
       // Handle numeric vs string sorting
       const comparison =

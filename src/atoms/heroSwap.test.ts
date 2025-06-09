@@ -43,6 +43,7 @@ describe('heroSwapFn', () => {
       playerName: 'Player1',
       playerHero: 'Tracer',
       previousHero: 'Soldier: 76',
+      heroTimePlayed: 60,
     }
   ];
 

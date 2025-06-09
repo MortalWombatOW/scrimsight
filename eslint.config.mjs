@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import tseslint from 'typescript-eslint';
 import react from 'eslint-plugin-react';
@@ -6,9 +9,8 @@ import _import from 'eslint-plugin-import';
 import tsParser from '@typescript-eslint/parser';
 import unusedImports from 'eslint-plugin-unused-imports';
 import stylistic from '@stylistic/eslint-plugin';
-import pathAlias from 'eslint-plugin-path-alias'
 import { projectStructurePlugin, projectStructureParser } from "eslint-plugin-project-structure";
-import { independentModulesConfig } from "./independentModules.mjs"; 
+import { independentModulesConfig } from "./independentModules.mjs";
 import { fileCompositionConfig } from "./fileComposition.mjs";
 import { folderStructureConfig } from "./folderStructure.mjs";
 export default tseslint.config([
@@ -36,7 +38,6 @@ export default tseslint.config([
       import: _import,
       'unused-imports': unusedImports,
       stylistic,
-      'path-alias': pathAlias,
       'project-structure': projectStructurePlugin,
     },
     languageOptions: {
@@ -74,9 +75,8 @@ export default tseslint.config([
         'ignoreTrailingComments': false,
         'ignorePattern': '^import\\s.+\\sfrom\\s.+\\s;',
       }],
-      'path-alias/no-relative': ['error', {}],
       "project-structure/independent-modules": ["error", independentModulesConfig],
       "project-structure/file-composition": ["error", fileCompositionConfig],
     },
   },
-]);
+], storybook.configs["flat/recommended"]);

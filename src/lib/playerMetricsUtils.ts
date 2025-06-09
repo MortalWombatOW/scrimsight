@@ -1,16 +1,18 @@
 import { useAtomValue, atom, Atom, Getter } from "jotai";
-import { groupByAtom, Grouped, Metric } from "./metricUtils";
-import { OverwatchRole, getRankForRole } from "./hero";
 import { 
+  groupByAtom, 
+  Grouped, 
+  Metric, 
+  OverwatchRole, 
+  getRankForRole,
   PlayerStatsCategoryKeys, 
   PlayerStatsBaseNumericalKeys,
   PlayerStatsBase,
   PlayerStats,
   PlayerStatsNumericalKeys,
-  playerStatsNumericalKeys
-} from '@atoms';
-
-import playerStatsBaseAtom from '@atoms/playerStatsBaseAtom';
+  playerStatsNumericalKeys,
+  playerStatsBase
+} from '@library';
 
 function filterBaseAtom<T extends PlayerStatsCategoryKeys>(
   metricAtom: Atom<Promise<Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys>>>,
@@ -153,7 +155,7 @@ export const getStatsAtom =  <T extends PlayerStatsCategoryKeys>(
   groupBy: T[], 
   filter?: Partial<Record<T, string[]>> // Changed to Partial
 ): Atom<Promise<Metric<Grouped<PlayerStats, T, PlayerStatsNumericalKeys>, T, PlayerStatsNumericalKeys>>> => {
-  const baseAtomToUse = playerStatsBaseAtom;
+  const baseAtomToUse = playerStatsBase.atom;
 
   if (filter && Object.keys(filter).length > 0) { // Ensure filter is not empty
     // Cast filter to Record<T, string[]> as filterBaseAtom expects a non-partial record
@@ -164,8 +166,8 @@ export const getStatsAtom =  <T extends PlayerStatsCategoryKeys>(
   }
 }
 
-// Reverting to 'any' for cache type to resolve immediate errors, will revisit if possible.
-const statsAtomCache = new Map<string, Atom<Promise<Metric<any, any, any>>>>();
+// Improved cache typing with proper generic constraints while maintaining flexibility for different T types
+const statsAtomCache = new Map<string, Atom<Promise<Metric<Grouped<PlayerStats, PlayerStatsCategoryKeys, PlayerStatsNumericalKeys>, PlayerStatsCategoryKeys, PlayerStatsNumericalKeys>>>>();
 
 export const useStats = <T extends PlayerStatsCategoryKeys>(
   groupBy: T[], 
@@ -175,9 +177,9 @@ export const useStats = <T extends PlayerStatsCategoryKeys>(
   sortDirection?: 'asc' | 'desc'
 ) => {
   const cacheKey = JSON.stringify({ groupBy, filter, sortBy, sortDirection });
-  const statsAtom = statsAtomCache.has(cacheKey) ? statsAtomCache.get(cacheKey)! : getStatsAtom(groupBy, filter);
+  const statsAtom = statsAtomCache.has(cacheKey) ? statsAtomCache.get(cacheKey)! as unknown as Atom<Promise<Metric<Grouped<PlayerStats, T, PlayerStatsNumericalKeys>, T, PlayerStatsNumericalKeys>>> : getStatsAtom(groupBy, filter);
   if (!statsAtomCache.has(cacheKey)) {
-    statsAtomCache.set(cacheKey, statsAtom);
+    statsAtomCache.set(cacheKey, statsAtom as unknown as Atom<Promise<Metric<Grouped<PlayerStats, PlayerStatsCategoryKeys, PlayerStatsNumericalKeys>, PlayerStatsCategoryKeys, PlayerStatsNumericalKeys>>>);
   }
   const stats = useAtomValue(statsAtom);
   if (sortBy && stats.rows) {

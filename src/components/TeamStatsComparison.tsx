@@ -37,7 +37,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
     for (const stat of statsToShow) {
       for (const teamStat of teamStats.rows) {
         const teamName = teamStat.playerTeam;
-        result[teamName][stat] = teamStat[stat] || 0;
+        result[teamName][stat] = (teamStat as any)[stat] || 0;
       }
     }
 

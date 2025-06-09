@@ -178,17 +178,21 @@ describe('playerEventsAtomFn', () => {
     const multipleDefensiveAssists: DefensiveAssistType = [
       {
         matchId: 'match1',
-        playerName: 'Player1',
-        playerTeam: 'Team A',
-        playerHero: 'Ana',
+        type: 'defensive_assist',
         matchTime: 100,
+        playerTeam: 'Team A',
+        playerName: 'Player1',
+        playerHero: 'Ana',
+        heroDuplicated: '',
       },
       {
         matchId: 'match1',
-        playerName: 'Player1',
-        playerTeam: 'Team A',
-        playerHero: 'Ana',
+        type: 'defensive_assist',
         matchTime: 300,
+        playerTeam: 'Team A',
+        playerName: 'Player1',
+        playerHero: 'Ana',
+        heroDuplicated: '',
       }
     ];
 
@@ -211,20 +215,25 @@ describe('playerEventsAtomFn', () => {
     const sameTimeEvents: DefensiveAssistType = [
       {
         matchId: 'match1',
-        playerName: 'Player1',
-        playerTeam: 'Team A',
-        playerHero: 'Ana',
+        type: 'defensive_assist',
         matchTime: 100,
+        playerTeam: 'Team A',
+        playerName: 'Player1',
+        playerHero: 'Ana',
+        heroDuplicated: '',
       }
     ];
 
     const sameTimeSpawns: HeroSpawnType = [
       {
         matchId: 'match1',
-        playerName: 'Player2',
-        playerTeam: 'Team B',
-        playerHero: 'Mercy',
+        type: 'hero_spawn',
         matchTime: 100,
+        playerTeam: 'Team B',
+        playerName: 'Player2',
+        playerHero: 'Mercy',
+        previousHero: '',
+        heroTimePlayed: 0,
       }
     ];
 

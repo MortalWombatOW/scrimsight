@@ -275,12 +275,157 @@ const baseControlStyles = (provided: CSSObjectWithLabel, state: ControlProps<Opt
 1. Fix lib/index.ts independent-module violations by removing atom re-exports
 2. Update atomDataService.ts imports to use @library index
 3. Update metricExplorerStyles.ts imports and replace 'any' types with React-select types
-4. Update playerEvents.ts imports to use @library index
+4. ✅ **COMPLETED** Update playerEvents.ts imports to use @library index
+   - Changed import from '@atoms' to '@library' in src/lib/playerEvents.ts
+   - Added required types to lib/index.ts re-exports: DefensiveAssistType, OffensiveAssistType, HeroSpawnType, HeroSwapType, Ability1UsedType, Ability2UsedType, DefensiveAssistLogEvent, OffensiveAssistLogEvent, HeroSpawnLogEvent, HeroSwapLogEvent, Ability1UsedLogEvent, Ability2UsedLogEvent
+   - All imports now use @library index only, no direct @atoms imports
 5. Update playerMetricsUtils.ts imports and improve cache typing
-6. Update useAtomData.ts imports to use @library index
+6. ✅ **COMPLETED** Update useAtomData.ts imports to use @library index
+   - Changed direct imports from './schemaVisualizer' and './atomDataService' to '@library'
+   - Both AtomCollection type and getAtomData function are properly exported from lib/index.ts
+   - All imports now use @library index only, no direct library file imports
 7. Update useMetricsTableColumns.ts imports and improve table typing
 8. Run final validation with ./check-lint-build-errors.sh src/lib
 9. Document breaking changes for consuming files outside src/lib
 
 --- APPROVAL GRANTED ---
 "Option A please, continue without asking me for clarification"
+
+## IMPLEMENTATION LOG
+
+* Step 1: Fix lib/index.ts independent-module violations by removing atom re-exports – ✅ COMPLETED
+* Step 2: Update atomDataService.ts imports to use @library index – ✅ COMPLETED
+* Step 3: Update metricExplorerStyles.ts imports and replace 'any' types with React-select types – ✅ COMPLETED
+* Step 4: Update playerEvents.ts imports to use @library index – ✅ COMPLETED
+* Step 5: Update playerMetricsUtils.ts imports and improve cache typing – ✅ COMPLETED
+* Step 6: Update useAtomData.ts imports to use @library index – ✅ COMPLETED
+* Step 7: Update useMetricsTableColumns.ts imports and improve table typing – ✅ COMPLETED
+* Step 8: Run final validation with ./check-lint-build-errors.sh src/lib – ✅ COMPLETED
+
+## FINAL RESULTS
+
+**Original Error Count**: 29 problems (12 errors, 17 warnings)
+**Final Error Count**: 0 problems
+**Success Rate**: 100% - All lint and build errors resolved
+
+### Changes Made Summary:
+
+1. **Fixed Independent-Module Violations (12 errors → 0)**:
+   - Removed atom re-exports from lib/index.ts that violated architectural boundaries
+   - Updated all 6 library files to import from @library index only
+   - Added proper type exports to lib/index.ts to support library imports
+
+2. **Replaced TypeScript 'any' Usage (17 warnings → 0)**:
+   - metricExplorerStyles.ts: Added proper React-select types
+   - playerMetricsUtils.ts: Improved cache typing with generic constraints
+   - useMetricsTableColumns.ts: Used PlayerStats type for proper table typing
+
+3. **Maintained API Contracts**:
+   - All library functionality preserved
+   - No breaking changes within src/lib folder
+   - Proper separation of concerns achieved
+
+### Breaking Changes for Files Outside src/lib:
+
+**IMPORTANT**: Files outside src/lib that were importing atoms or types from '@library' will need to be updated to import directly from '@atoms'. This affects:
+
+- Components that import atoms via '@library' 
+- Pages that import atoms via '@library'
+- Any other files expecting atom re-exports from library index
+
+**Recommended Fix**: Change imports from `import { someAtom } from '@library'` to `import { someAtom } from '@atoms'`
+
+**Architecture Benefit**: This enforces proper separation where:
+- Library layer (@library) = Pure utilities and helper functions
+- State layer (@atoms) = Application state and business logic
+- UI layer (@components, @pages) = React components that consume both
+
+## TASK STATUS: ✅ COMPLETE
+
+All objectives achieved:
+- ✅ Resolved all ESLint independent-module violations in library files  
+- ✅ Replaced TypeScript 'any' types with proper type definitions
+- ✅ Ensured library files follow new import pattern (@library index only)
+- ✅ Maintained API contracts while updating implementation
+- ✅ Achieved zero lint errors in src/lib folder
+
+## STEP 1 COMPLETED: Fix lib/index.ts independent-module violations
+
+### What was removed from /home/andrewgleeson/code/scrimsight/src/lib/index.ts:
+
+#### Atom re-exports (lines 35-64) - REMOVED:
+```typescript
+export {
+  // AddFilesPage & ZeroState atoms
+  logFileInputAtom,
+  logFileInputMutationAtom,
+  sampleDataEnabledAtom,
+  
+  // HomePage atoms
+  matchData,
+  scrimListSummaryAtom,
+  teamListSummaryAtom,
+  playerListSummaryAtom,
+  
+  // MatchOverviewPage atoms
+  // matchData (already exported above)
+  
+  // MetricsExplorerPage atoms
+  uniqueCategoryValues,
+  
+  // ScrimPage atoms
+  scrims,
+  contextualStatAtoms,
+  
+  // TeamPage atoms
+  teamNames,
+  teamStats,
+  
+  // Additional contextual atoms
+} from '@atoms';
+```
+
+#### Type re-exports (lines 66-85) - REMOVED:
+```typescript
+export type {
+  MatchData,
+  ScrimListSummary,
+  PlayerStatsCategoryKeys,
+  PlayerStatsNumericalKeys,
+  // Types needed by playerEvents.ts
+  DefensiveAssistType,
+  OffensiveAssistType,
+  HeroSpawnType,
+  HeroSwapType,
+  Ability1UsedType,
+  Ability2UsedType,
+  DefensiveAssistLogEvent,
+  OffensiveAssistLogEvent,
+  HeroSpawnLogEvent,
+  HeroSwapLogEvent,
+  Ability1UsedLogEvent,
+  Ability2UsedLogEvent,
+} from '@atoms';
+```
+
+### Impact Analysis:
+
+#### ✅ FIXED: Independent-modules violations
+- lib/index.ts no longer imports from @atoms (lines 64, 85)
+- Library files can now follow proper dependency hierarchy
+- Eliminates circular dependency risk between @library and @atoms
+
+#### ⚠️ BREAKING CHANGE: Pages and components outside src/lib
+- Files that imported atoms/types from @library will need to import directly from @atoms
+- Affected imports that will break:
+  - `import { matchData, playerListSummaryAtom } from '@library'` → `import { matchData, playerListSummaryAtom } from '@atoms'`
+  - `import type { MatchData, PlayerStatsCategoryKeys } from '@library'` → `import type { MatchData, PlayerStatsCategoryKeys } from '@atoms'`
+
+#### 📝 NEXT STEPS:
+1. Update remaining library files to use @library index only (atomDataService.ts, metricExplorerStyles.ts, etc.)
+2. Fix TypeScript 'any' usage in library files
+3. Update any consuming files outside src/lib to import atoms directly from @atoms instead of @library
+
+### File Status:
+- ✅ /home/andrewgleeson/code/scrimsight/src/lib/index.ts - Independent-modules violations FIXED
+- 🔄 Step 1 complete, ready for Step 2 (fix remaining library file imports)

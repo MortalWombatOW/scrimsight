@@ -41,6 +41,7 @@ describe('dvaRemechFn', () => {
       playerTeam: 'Team A',
       playerName: 'DVa_Player',
       playerHero: 'D.Va',
+      ultimateId: 1,
     }
   ];
 

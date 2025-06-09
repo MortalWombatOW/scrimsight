@@ -37,7 +37,7 @@
         "src/pages/*"
       ],
       "@pages": [
-        "src/pages/index.ts"
+        "src/pages/index.tsx"
       ],
       "@library/*": [
         "src/lib/*"

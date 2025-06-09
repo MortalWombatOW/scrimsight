@@ -28,7 +28,7 @@ const SupportIconSvg = ({x, y}: {x: number; y: number}) => (
   </g>
 );
 
-const RoleIconSvg = ({role, x, y}: {role: string, x: number, y: number}) => {
+const RoleSvgIcon = ({role, x, y}: {role: string, x: number, y: number}) => {
   switch (role) {
     case 'tank':
       return <TankIconSvg x={x} y={y} />;
@@ -41,4 +41,4 @@ const RoleIconSvg = ({role, x, y}: {role: string, x: number, y: number}) => {
   }
 };
 
-export default RoleIconSvg;
+export default RoleSvgIcon;
