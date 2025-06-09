@@ -23,21 +23,4 @@ Use the Visual Tests addon for pixel diffs before committing.
 
 ### 3.1 Testing stories with Playwright MCP
 
-When working on Storybook stories, always use Playwright MCP tools to verify they work correctly:
-
-**Required testing steps:**
-1. **Navigate to story**: `mcp__playwright__playwright_navigate` to the story URL
-2. **Error check**: `mcp__playwright__playwright_console_logs` with `type: "error"` 
-3. **Visual check**: `mcp__playwright__playwright_screenshot` to verify appearance
-
-**Context provider requirements:**
-- Components using React Router `Link` require Router context in stories
-- Components using Jotai atoms need Provider setup in `.storybook/preview.ts`
-- Always check console for context-related errors before committing
-
-**Story URL format:**
-```
-http://localhost:6006/?path=/story/[folder]-[component]--[variant]
-```
-
-Example: `components-cardbase--with-link` for CardBase component's "With Link" story.
+For comprehensive Playwright MCP testing guidance, including error checking workflows, context provider requirements, and story URL formats, see [testing.md](testing.md#31-playwright-mcp-testing-for-storybook).
