@@ -176,6 +176,7 @@ git commit -m "<short: Sub-Agent step – result>"
 git add -A
 git commit -m "final: complete task <id> – user-approved wrap-up"
 git push -u origin {task-type}/{slug}
+gh pr create --base {base-branch} --head {task-type}/{slug} --title "{short description of changes}" --body "Task {id}: {task-name}/n/n{detailed description of changes}"
 ```
 
 8.3 Update `notes/`, `docs/`, and Task-Master so all reflect final status and knowledge gained.
