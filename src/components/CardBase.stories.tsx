@@ -1,5 +1,5 @@
 import { CardBase, CardBaseFact } from "./CardBase";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { HealingIcon } from "@icons";
 
 const meta: Meta<typeof CardBase> = {

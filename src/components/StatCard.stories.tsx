@@ -1,5 +1,5 @@
 import { StatCard } from "./StatCard";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { HealingIcon, BeamsAuraIcon, GrimReaperIcon } from "@icons";
 
 const meta: Meta<typeof StatCard> = {

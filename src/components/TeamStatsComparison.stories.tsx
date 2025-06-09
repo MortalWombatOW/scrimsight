@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TeamStatsComparison } from './TeamStatsComparison';
 
 const meta: Meta<typeof TeamStatsComparison> = {
