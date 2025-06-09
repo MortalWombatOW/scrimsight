@@ -8,6 +8,16 @@ vi.mock('@library', async (importOriginal) => {
   return {
     ...actual,
     extractEventsFromFiles: vi.fn(),
+    groupByAtom: vi.fn(),
+    getStatsAtom: vi.fn(),
+    getPlayerStatsFilter: vi.fn(),
+    transformPlayerInteractions: vi.fn(),
+    createKillMatrix: vi.fn(),
+    calculatePlayerTotals: vi.fn(),
+    parseFile: vi.fn(),
+    stringHash: vi.fn(),
+    readFileAsync: vi.fn(),
+    getRoleFromHero: vi.fn().mockReturnValue('damage'),
   };
 });
 
