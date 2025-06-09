@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/rules-of-hooks */
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { IconAutocomplete } from './IconAutocomplete';
 import React, { useState } from "react";
