@@ -14,12 +14,12 @@ If you’re new, start with **“Getting started”** below, then skim the topic
 | **Project overview** | [README (root)](/README.md) | Elevator pitch, quick-start commands, high-level structure |
 | **File & folder rules** | [file-structure.md](file-structure.md) | Allowed paths, naming patterns, folderStructure eslint config |
 | **Atoms & state** | [atom-patterns.md](atom-patterns.md) | Standard/Input/Family blueprints, selector limits, examples |
-| **Testing** | [testing.md](testing.md) | Vitest setup, Storybook visual tests, atom-Fn unit pattern |
-| **Linting details** | [linting.md](linting.md) | All custom ESLint rule-sets (file-composition, folder-structure, independent-modules) |
+| **Testing** | [testing.md](testing.md) | Vitest setup, Storybook visual tests, comprehensive Playwright MCP testing guide |
+| **Linting details** | [linting.md](linting.md) | ESLint configuration, custom rule-sets, project structure enforcement |
 | **TypeScript style** | [typescript-guidelines.md](typescript-guidelines.md) | Central type registry, import alias rules, strict-mode tips |
-| **UI conventions** | [ui-guidelines.md](ui-guidelines.md) | Tailwind & daisyUI theme tokens, accessibility checklist |
-| **Taskmaster CLI** | [taskmaster-cli.md](taskmaster-cli.md) | Full command reference and examples |
-| **Troubleshooting** | [troubleshooting.md](troubleshooting.md) | Common ESLint, Vite, Vitest errors and quick fixes |
+| **UI conventions** | [ui-guidelines.md](ui-guidelines.md) | Tailwind & daisyUI styling guidelines, component rules |
+| **Taskmaster CLI** | [taskmaster-cli.md](taskmaster-cli.md) | Complete project management CLI reference |
+| **Troubleshooting** | [troubleshooting.md](troubleshooting.md) | Categorized solutions for ESLint, testing, and Storybook issues |
 
 *(Links are relative—click within GitHub or VS Code to jump.)*
 
