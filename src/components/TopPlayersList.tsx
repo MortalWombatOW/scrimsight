@@ -40,7 +40,7 @@ export const TopPlayersList = () => {
               </div>
               <div className="text-sm">
                 <span className="font-medium">
-                  {prettyFormat(((player as any).winRate || 0) * 100)}%
+                  {prettyFormat(((player as Record<string, unknown>).winRate as number || 0) * 100)}%
                 </span>
                 <span className="text-base-content/70 ml-1">win rate</span>
               </div>

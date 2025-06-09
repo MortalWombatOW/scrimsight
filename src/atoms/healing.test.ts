@@ -4,7 +4,7 @@ import type { LogFileParserAtomType, HealingType } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
 vi.mock('@library', async (importOriginal) => {
-  const actual = await importOriginal() as any;
+  const actual = await importOriginal() as Record<string, unknown>;
   return {
     ...actual,
     extractEventsFromFiles: vi.fn(),

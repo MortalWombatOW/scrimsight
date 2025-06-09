@@ -1,6 +1,6 @@
-import { atom } from 'jotai';
+import { atom, Getter } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { getStatsAtom, getPlayerStatsFilter } from '@library';
+import { getStatsAtom, getPlayerStatsFilter, Grouped, PlayerStats, PlayerStatsNumericalKeys } from '@library';
 import { 
   averageMetricPerRole, 
   averageMetricPerHero, 
@@ -13,7 +13,7 @@ import {
 export const playerComparisonAtomFamilyFn = (params: PlayerComparisonParams) => {
   const { playerName, heroName } = params;
 
-  return async (get: any): Promise<MetricComparison[]> => {
+  return async (get: Getter): Promise<MetricComparison[]> => {
     // 1. Get Player Stats
     const { groupByKeys, filter } = getPlayerStatsFilter(playerName, heroName);
     const playerStatsAtom = getStatsAtom<typeof groupByKeys[number]>(
@@ -28,7 +28,9 @@ export const playerComparisonAtomFamilyFn = (params: PlayerComparisonParams) => 
 
     // 3. Find the specific player/hero row
     const playerRow = playerStatsData.rows.find(
-      (row: any) => 'playerName' in row && row.playerName === playerName && (!heroName || ('playerHero' in row && row.playerHero === heroName))
+      (row: Grouped<PlayerStats, typeof groupByKeys[number], PlayerStatsNumericalKeys>) => 
+        'playerName' in row && row.playerName === playerName && 
+        (!heroName || ('playerHero' in row && row.playerHero === heroName))
     );
 
     if (!playerRow) {

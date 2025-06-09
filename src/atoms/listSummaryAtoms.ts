@@ -20,6 +20,11 @@ import {
 } from '@atoms';
 import { groupByAtom, Grouped, Metric, OverwatchRole, getRoleFromHero } from '@library';
 
+// Mock atom type for fallback scenarios
+interface MockAtom {
+  atom: () => Promise<unknown>;
+}
+
 export const listSummaryAtomsFn = () => {
   // Helper function for latest scrim summary
   const latestScrimSummaryFn = async (get: Getter): Promise<ScrimListSummary | undefined> => {
@@ -210,11 +215,11 @@ export default new Proxy({} as ReturnType<typeof listSummaryAtomsFn>, {
     } catch (error) {
       // During testing, if atoms are not available, return mock atoms  
       console.warn('Failed to initialize listSummaryAtoms, using mock atoms:', error);
-      const mockAtoms = {
-        playerListSummaryAtom: { atom: () => Promise.resolve([]) } as any,
-        scrimListSummaryAtom: { atom: () => Promise.resolve([]) } as any,
-        teamListSummaryAtom: { atom: () => Promise.resolve([]) } as any,
-        latestScrimSummaryAtom: { atom: () => Promise.resolve(undefined) } as any,
+      const mockAtoms: Record<string, MockAtom> = {
+        playerListSummaryAtom: { atom: () => Promise.resolve([]) },
+        scrimListSummaryAtom: { atom: () => Promise.resolve([]) },
+        teamListSummaryAtom: { atom: () => Promise.resolve([]) },
+        latestScrimSummaryAtom: { atom: () => Promise.resolve(undefined) },
       };
       return mockAtoms[prop as keyof typeof mockAtoms];
     }

@@ -1,13 +1,13 @@
-import { atom } from 'jotai';
+import { atom, Getter } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { playerInteractionEvents, PlayerInteractionEvent, SegmentParams, SegmentStats, PlayerStatusTimeline } from '@atoms';
 import { ultimateEvents, UltimateEvent } from '@atoms';
-import { teamfights } from '@atoms';
+import { teamfights, Teamfight } from '@atoms';
 import { playerStatusTimeline } from '@atoms';
 import { matchData, MatchData } from '@atoms';
 
 export const segmentStatsAtomFamilyFn = (params: SegmentParams) => {
-  return async (get: any): Promise<SegmentStats | null> => {
+  return async (get: Getter): Promise<SegmentStats | null> => {
     // Helper function to find player counts at a specific time
     const getPlayerCountsAtTime = (timeline: PlayerStatusTimeline | undefined, time: number): { team1Count: number; team2Count: number } => {
       if (!timeline || timeline.length === 0) {
@@ -56,7 +56,7 @@ export const segmentStatsAtomFamilyFn = (params: SegmentParams) => {
 
     // --- Calculate Kills & Ults ---
     if (type === 'teamfight') {
-      const teamfight = allTeamfights.find((tf: any) => tf.matchId === matchId && tf.startTime === startTime && tf.endTime === endTime);
+      const teamfight = allTeamfights.find((tf: Teamfight) => tf.matchId === matchId && tf.startTime === startTime && tf.endTime === endTime);
       if (teamfight) {
         team1Kills = teamfight.team1Kills;
         team2Kills = teamfight.team2Kills;
@@ -69,13 +69,13 @@ export const segmentStatsAtomFamilyFn = (params: SegmentParams) => {
     } else { // 'map' or 'round'
       // Calculate Kills
       const killEventsInSegment = allInteractionEvents.filter(
-        (event: any): event is PlayerInteractionEvent & { playerInteractionEventType: 'Killed player' } =>
+        (event: PlayerInteractionEvent): event is PlayerInteractionEvent & { playerInteractionEventType: 'Killed player' } =>
           event.matchId === matchId &&
           event.playerInteractionEventType === 'Killed player' &&
           event.playerInteractionEventTime >= startTime &&
           event.playerInteractionEventTime <= endTime
       );
-      killEventsInSegment.forEach((kill: any) => {
+      killEventsInSegment.forEach((kill: PlayerInteractionEvent & { playerInteractionEventType: 'Killed player' }) => {
         if (kill.playerTeam === team1Name) {
           team1Kills++;
         } else if (kill.playerTeam === team2Name) {
@@ -90,7 +90,7 @@ export const segmentStatsAtomFamilyFn = (params: SegmentParams) => {
           event.ultimateStartTime >= startTime &&
           event.ultimateStartTime <= endTime
       );
-      ultEventsInSegment.forEach((ult: any) => {
+      ultEventsInSegment.forEach((ult: UltimateEvent) => {
         if (ult.playerTeam === team1Name) {
           team1UltsUsed++;
         } else if (ult.playerTeam === team2Name) {

@@ -112,9 +112,9 @@ describe('mapTimesAtomFn', () => {
   });
 
   it('should handle null/undefined inputs gracefully', () => {
-    expect(mapTimesAtomFn(null as any, mockMatchEnds, mockRoundTimes)).toEqual([]);
-    expect(mapTimesAtomFn(mockMatchStarts, null as any, mockRoundTimes)).toEqual([]);
-    expect(mapTimesAtomFn(mockMatchStarts, mockMatchEnds, null as any)).toEqual([]);
+    expect(mapTimesAtomFn([] as MatchStartType, mockMatchEnds, mockRoundTimes)).toEqual([]);
+    expect(mapTimesAtomFn(mockMatchStarts, [] as MatchEndType, mockRoundTimes)).toEqual([]);
+    expect(mapTimesAtomFn(mockMatchStarts, mockMatchEnds, [] as RoundTimes[])).toEqual([]);
   });
 
   it('should handle single match correctly', () => {

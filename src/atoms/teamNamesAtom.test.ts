@@ -98,7 +98,7 @@ describe('teamNamesAtomFn', () => {
         mapName: 'Test Map',
         mapType: 'Test Mode',
         team1Name: 'Valid Team',
-        team2Name: undefined as any,
+        team2Name: '' as string,
       },
       {
         matchId: 'match2',
@@ -106,7 +106,7 @@ describe('teamNamesAtomFn', () => {
         matchTime: 200,
         mapName: 'Test Map 2',
         mapType: 'Test Mode',
-        team1Name: undefined as any,
+        team1Name: '' as string,
         team2Name: 'Another Valid Team',
       }
     ];
