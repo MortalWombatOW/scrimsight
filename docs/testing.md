@@ -71,6 +71,17 @@ mcp__playwright__playwright_screenshot({
 - TypeScript errors in component props
 - CSS/styling issues causing layout breaks
 
+**Context provider requirements:**
+- Components using React Router `Link` require Router context in stories
+- Components using Jotai atoms need Provider setup in `.storybook/preview.ts`
+- Always check console for context-related errors before committing
+
+**Story URL format:**
+```
+http://localhost:6006/?path=/story/[folder]-[component]--[variant]
+```
+Example: `components-cardbase--with-link` for CardBase component's "With Link" story.
+
 **Important**: Always start Storybook (`npm run storybook`) before using Playwright MCP tools. Use the MCP functions rather than console commands for automated testing.
 
 ## 4 Coverage targets
@@ -90,3 +101,10 @@ Vitest generates Istanbul reports in `coverage/`; CI fails if totals drop.
 | Lint & types | `./check-lint-build-errors.sh` |
 | Unit tests   | `vitest run --coverage`        |
 | Visual tests | Chromatic via GitHub action    |
+
+---
+
+**See also:**
+- [atom-patterns.md](atom-patterns.md) — Atom testing patterns and examples
+- [ui-guidelines.md](ui-guidelines.md) — Component and styling guidelines
+- [troubleshooting.md](troubleshooting.md) — Common testing and Storybook issues

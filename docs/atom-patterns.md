@@ -66,4 +66,11 @@ These limits are enforced by ESLint rule **project-structure/file-composition**.
 ## 6 Performance tips
 
 * Compose atoms; avoid giant selector chains that recalculate needlessly.  
-* Use `selectAtom` from Jotai utils when a component needs only part of a large object. :contentReference[oaicite:3]{index=3}
+* Use `selectAtom` from Jotai utils when a component needs only part of a large object.
+
+---
+
+**See also:**
+- [file-structure.md](file-structure.md) — Architecture overview and import patterns
+- [testing.md](testing.md) — Atom testing strategies
+- [troubleshooting.md](troubleshooting.md) — Common ESLint issues with atoms
