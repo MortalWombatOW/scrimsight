@@ -18,61 +18,10 @@ If you’re new, start with **“Getting started”** below, then skim the topic
 | **Linting details** | [linting.md](linting.md) | ESLint configuration, custom rule-sets, project structure enforcement |
 | **TypeScript style** | [typescript-guidelines.md](typescript-guidelines.md) | Central type registry, import alias rules, strict-mode tips |
 | **UI conventions** | [ui-guidelines.md](ui-guidelines.md) | Tailwind & daisyUI styling guidelines, component rules |
-| **Taskmaster CLI** | [taskmaster-cli.md](taskmaster-cli.md) | Complete project management CLI reference |
 | **Troubleshooting** | [troubleshooting.md](troubleshooting.md) | Categorized solutions for ESLint, testing, and Storybook issues |
+| **Github Issues** | [github-issues-guide.md](github-issues-guide.md) | How to use GitHub Issues to track and manage tasks |
 
 *(Links are relative—click within GitHub or VS Code to jump.)*
-
----
-
-## 🚀 Getting started
-
-1. **Clone and install**
-
-   ```bash
-   git clone https://github.com/your-org/scrimsight.git
-   cd scrimsight
-   npm install
-````
-
-2. **Run dev server**
-
-   ```bash
-   npm run dev             # Vite HMR at http://localhost:5173
-   ```
-
-3. **Verify quality gates**
-
-   ```bash
-   ./check-lint-build-errors.sh   # ESLint + TS + Vitest headless
-   ```
-
-4. **Open Taskmaster**
-
-   ```bash
-   npx task-master list --with-subtasks
-   ```
-
-5. **First test edit**
-
-   *Pick an open “good-first-issue” atom, follow* **atom-patterns.md**, *run* `npm test`*, and open a PR.*
-
----
-
-## 🏗️ Development workflow (snapshot)
-
-```text
-task-master next → create branch → code w/ VS Code & Storybook
-   └─ ./check-lint-build-errors.sh  ✅
-   └─ npm test (Vitest)            ✅
-open PR → Chromatic runs visuals → review → squash & merge
-```
-
-**Key conventions**
-
-* Commit titles: `feat(atom): add teamStatsAtom`
-* Branch name: `<task-id>-short-slug`, e.g. `42-team-stats`
-* All new atoms must achieve --100 % unit coverage.
 
 ---
 
@@ -98,7 +47,6 @@ open PR → Chromatic runs visuals → review → squash & merge
 | ESLint         | 9 (new flat config) | `eslint.config.mjs`      |
 | Vitest         | 1.x                 | `vitest.config.ts`       |
 | Storybook      | 8.x                 | `.storybook/`            |
-| Taskmaster CLI | 0.9                 | auto-installed via `npx` |
 
 Run `npx envinfo --system --binaries` before filing bug reports.
 

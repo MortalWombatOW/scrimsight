@@ -1,0 +1,53 @@
+name: "Performance"
+description: Improve application performance without changing functionality.
+title: "[perf]: "
+labels: ["perf", "inbox"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Performance** improvements make the application faster or more efficient.
+        Include measurements and benchmarks where possible.
+  - type: textarea
+    id: performance-issue
+    attributes:
+      label: "Performance issue"
+      description: "What is slow or inefficient?"
+      placeholder: |
+        * Large dataset rendering takes 5+ seconds
+        * Memory usage grows over time
+        * Bundle size is too large
+    validations:
+      required: true
+  - type: textarea
+    id: measurements
+    attributes:
+      label: "Current measurements"
+      description: "Quantify the current performance (timing, memory, etc.)"
+      placeholder: |
+        * Initial load: 3.2s
+        * Memory usage: 150MB after 1 hour
+        * Bundle size: 2.5MB
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: "Proposed solution"
+      description: "How will performance be improved?"
+      placeholder: |
+        * Implement virtualization for large lists
+        * Add memoization to expensive calculations
+        * Code splitting for route-based chunks
+    validations:
+      required: true
+  - type: textarea
+    id: success-criteria
+    attributes:
+      label: "Success criteria"
+      description: "How will you measure improvement?"
+      placeholder: |
+        * Reduce load time to under 2s
+        * Memory usage stays under 100MB
+        * Improve Lighthouse score to 90+

@@ -88,6 +88,6 @@ See **docs/testing.md** for recipes.
 * **docs/linting.md** – ESLint config details
 * **docs/typescript-guidelines.md** – strict typing patterns
 * **docs/ui-guidelines.md** – Tailwind/DaisyUI conventions
-* **docs/taskmaster-cli.md** – taskmaster CLI reference
+* **docs/github-issues-guide.md** – GitHub Issues workflow
 * **docs/troubleshooting.md** – common error fixes
 

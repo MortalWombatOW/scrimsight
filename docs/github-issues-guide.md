@@ -38,19 +38,6 @@ gh issue edit <number> --add-label "investigation"
 ```
 
 ## 3 Label Taxonomy (keep tidy & semantic)
-| Label       | Meaning                            |
-|-------------|------------------------------------|
-| bug         | Something behaves incorrectly      |
-| feat        | New capability / feature request   |
-| docs        | Documentation only                 |
-| refactor    | Refactoring, no behavior change    |
-| test        | Adding or adjusting automated tests|
-| research    | Researching a new approach         |
-| chore       | Meta, infra, tooling               |
-| question    | A support or "how‑to" inquiry      |
-| inbox       | Newly filed, still un‑triaged      |
-| in‑progress | Someone actively working           |
-| blocked     | Needs decision/external dependency |
-| done        | Closed via PR merge                |
+For the complete list of standard issue labels and their purposes, see [PRIME COMMAND Appendix A](../.claude/commands/ghprime.md#appendix-a--standard-issue-labels).
 
 Manage labels via gh label API.

@@ -1,19 +1,19 @@
-name: "Research spike"
+name: "Research"
 description: Time‑boxed investigation to answer an open question and de‑risk future work.
-title: "[spike]: "
-labels: ["spike", "inbox"]
+title: "[research]: "
+labels: ["research", "inbox"]
 assignees: []
 body:
   - type: markdown
     attributes:
       value: |
-        A **spike** is a short, exploratory task whose output is a written report in /notes/, not shippable code.  
+        A **research** task is a short, exploratory task whose output is a written report in /notes/, not shippable code.  
         Be very explicit about what question must be answered. 🔍
   - type: textarea
     id: question
     attributes:
       label: "Primary research question"
-      description: "State the single question the spike must answer."
+      description: "State the single question the research task must answer."
       placeholder: "How can we migrate auth to OAuth 2.1 without breaking SSO?"
     validations:
       required: true
@@ -42,7 +42,7 @@ body:
     id: definition-of-done
     attributes:
       label: "Definition of done"
-      description: "Criteria for judging the spike complete."
+      description: "Criteria for judging the research task complete."
       placeholder: |
         * Report answers the primary question clearly.
         * Risks & next steps identified.

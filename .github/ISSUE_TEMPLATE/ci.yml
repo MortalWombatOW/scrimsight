@@ -1,0 +1,54 @@
+name: "CI/CD"
+description: Changes to continuous integration or deployment configuration.
+title: "[ci]: "
+labels: ["ci", "inbox"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **CI/CD** changes affect automated testing, builds, and deployments.
+        This includes GitHub Actions, pipeline configuration, and deployment scripts.
+  - type: dropdown
+    id: ci-type
+    attributes:
+      label: "CI/CD change type"
+      options:
+        - "GitHub Actions workflow"
+        - "Test automation"
+        - "Deployment process"
+        - "Pipeline optimization"
+        - "Environment configuration"
+    validations:
+      required: true
+  - type: textarea
+    id: current-state
+    attributes:
+      label: "Current CI/CD issue"
+      description: "What problem needs solving?"
+      placeholder: |
+        * Tests fail intermittently
+        * Deployment takes too long
+        * Missing environment checks
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: "Proposed solution"
+      description: "How will the CI/CD be improved?"
+      placeholder: |
+        * Add retry logic for flaky tests
+        * Parallelize build steps
+        * Add staging environment
+    validations:
+      required: true
+  - type: textarea
+    id: workflow-files
+    attributes:
+      label: "Files to modify"
+      description: "Which workflow files or configs will change?"
+      placeholder: |
+        * .github/workflows/test.yml
+        * .github/workflows/deploy.yml
+        * docker-compose.yml
