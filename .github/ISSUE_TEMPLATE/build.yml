@@ -1,0 +1,56 @@
+name: "Build"
+description: Changes to build system, dependencies, or tooling.
+title: "[build]: "
+labels: ["build", "inbox"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Build** changes affect the development or deployment process.
+        This includes dependency updates, build configuration, and tooling.
+  - type: dropdown
+    id: build-type
+    attributes:
+      label: "Build change type"
+      options:
+        - "Dependency update"
+        - "Build configuration"
+        - "Development tooling"
+        - "Deployment process"
+        - "Package.json changes"
+    validations:
+      required: true
+  - type: textarea
+    id: current-issue
+    attributes:
+      label: "Current issue or need"
+      description: "Why is this build change needed?"
+      placeholder: |
+        * Security vulnerability in dependency
+        * Build takes too long
+        * Missing development tool
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-changes
+    attributes:
+      label: "Proposed changes"
+      description: "What will be changed?"
+      placeholder: |
+        * Update React from 18.2.0 to 18.3.0
+        * Add pre-commit hooks
+        * Configure bundle analyzer
+    validations:
+      required: true
+  - type: textarea
+    id: impact-assessment
+    attributes:
+      label: "Impact assessment"
+      description: "What might break or change?"
+      placeholder: |
+        * Breaking changes in dependencies
+        * New build steps required
+        * Team workflow changes
+    validations:
+      required: true

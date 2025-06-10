@@ -1,0 +1,57 @@
+name: "Chore"
+description: Routine maintenance, tooling, or administrative tasks.
+title: "[chore]: "
+labels: ["chore", "inbox"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Chore** tasks are routine maintenance that doesn't affect user functionality.
+        This includes cleanup, tooling updates, and administrative work.
+  - type: dropdown
+    id: chore-type
+    attributes:
+      label: "Chore type"
+      options:
+        - "Code cleanup"
+        - "Tool configuration"
+        - "Documentation maintenance"
+        - "Repository organization"
+        - "Development workflow"
+    validations:
+      required: true
+  - type: textarea
+    id: task-description
+    attributes:
+      label: "Task description"
+      description: "What needs to be done?"
+      placeholder: |
+        * Remove unused files
+        * Update development setup docs
+        * Reorganize folder structure
+        * Configure new linting rule
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: "Motivation"
+      description: "Why is this chore important?"
+      placeholder: |
+        * Reduce repository clutter
+        * Improve developer experience
+        * Maintain consistency
+        * Prepare for upcoming changes
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: "Task checklist"
+      description: "Break down the work into specific steps."
+      placeholder: |
+        - [ ] Identify unused files
+        - [ ] Remove dead code
+        - [ ] Update documentation
+        - [ ] Test changes

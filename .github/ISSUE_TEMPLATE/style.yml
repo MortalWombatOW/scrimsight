@@ -1,0 +1,53 @@
+name: "Style"
+description: Code formatting, whitespace, or style-only changes.
+title: "[style]: "
+labels: ["style", "inbox"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Style** changes improve code formatting and consistency without affecting logic.
+        This includes linting fixes, formatting, and code style improvements.
+  - type: dropdown
+    id: style-type
+    attributes:
+      label: "Style change type"
+      options:
+        - "ESLint/Prettier fixes"
+        - "Code formatting"
+        - "Import organization"
+        - "Naming consistency"
+        - "Comment improvements"
+    validations:
+      required: true
+  - type: textarea
+    id: style-issues
+    attributes:
+      label: "Style issues"
+      description: "What style problems need fixing?"
+      placeholder: |
+        * Inconsistent indentation
+        * Mixed quote styles
+        * Unused imports
+        * Missing JSDoc comments
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: "Scope"
+      description: "Which files or areas will be affected?"
+      placeholder: |
+        * All TypeScript files
+        * Components directory
+        * Specific problematic files
+    validations:
+      required: true
+  - type: checkbox
+    id: automated
+    attributes:
+      label: "Can be automated"
+      description: "Can this be fixed with automated tools?"
+      options:
+        - label: "Yes, can use eslint --fix or prettier"

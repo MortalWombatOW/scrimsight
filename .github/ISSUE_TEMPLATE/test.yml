@@ -1,0 +1,51 @@
+name: "Test"
+description: Add or improve automated tests.
+title: "[test]: "
+labels: ["test", "inbox"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Testing** improves code quality and prevents regressions.
+        Be specific about what functionality needs test coverage.
+  - type: dropdown
+    id: test-type
+    attributes:
+      label: "Test type"
+      options:
+        - "Unit tests (functions/atoms)"
+        - "Component tests (React)"
+        - "Integration tests"
+        - "Visual regression tests (Storybook)"
+        - "End-to-end tests"
+    validations:
+      required: true
+  - type: textarea
+    id: coverage-gap
+    attributes:
+      label: "Coverage gap"
+      description: "What functionality lacks adequate testing?"
+      placeholder: |
+        * PlayerStatsAtom calculation logic
+        * Error handling in file upload
+        * Edge cases for time parsing
+    validations:
+      required: true
+  - type: textarea
+    id: test-scenarios
+    attributes:
+      label: "Test scenarios"
+      description: "What specific scenarios should be tested?"
+      placeholder: |
+        * Valid input produces expected output
+        * Invalid input throws appropriate errors
+        * Edge cases (empty data, malformed input)
+    validations:
+      required: true
+  - type: input
+    id: target-coverage
+    attributes:
+      label: "Target coverage"
+      description: "What coverage percentage are we aiming for?"
+      placeholder: "90% lines and branches"
