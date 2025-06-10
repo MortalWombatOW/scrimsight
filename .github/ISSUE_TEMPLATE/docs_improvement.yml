@@ -1,0 +1,21 @@
+name: "Docs update"
+description: Improve or add documentation.
+title: "[docs]: "
+labels: ["docs", "inbox"]
+body:
+  - type: textarea
+    id: location
+    attributes:
+      label: "Page / section to update"
+      placeholder: "README > Installation"
+    validations:
+      required: true
+  - type: textarea
+    id: suggestions
+    attributes:
+      label: "Suggested changes"
+      placeholder: |
+        * Clarify that Node >= 20 is required
+        * Add example for ...
+    validations:
+      required: true
