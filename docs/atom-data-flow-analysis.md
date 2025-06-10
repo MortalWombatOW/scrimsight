@@ -4,16 +4,219 @@
 
 This document provides a comprehensive analysis of the Scrimsight application's atom-based data architecture. The system uses **68 Jotai atoms** organized into 6 functional layers that transform raw Overwatch log files into rich analytics and visualizations. The architecture demonstrates sophisticated state management with atomic granularity, efficient dependency tracking, and powerful abstraction layers for UI consumption.
 
+## Context & Background
+
+### What is Scrimsight?
+Scrimsight is a web application for analyzing Overwatch esports match data. It parses log files from Overwatch matches to provide detailed analytics on player performance, team compositions, teamfights, ultimate usage, and match outcomes. The application is built for coaches, analysts, and competitive teams who need deep insights into their gameplay.
+
+### What is Jotai?
+Jotai is a React state management library based on atomic state management principles. Unlike traditional global state stores, Jotai allows you to create small, composable atoms that represent pieces of state. These atoms can depend on other atoms, creating a dependency graph that automatically manages updates and re-renders.
+
+**Key Jotai Concepts:**
+- **Atom**: A unit of state that can be read and written
+- **Derived Atom**: An atom whose value is computed from other atoms
+- **Atom Family**: A function that creates atoms dynamically based on parameters
+- **Dependency Tracking**: Automatic re-computation when dependencies change
+
+### What are Overwatch Log Files?
+Overwatch generates detailed log files during matches that contain timestamped events for every action in the game:
+- Player eliminations and deaths
+- Hero selections and swaps
+- Ultimate ability usage
+- Damage and healing events
+- Match and round start/end events
+- Team scores and objectives
+
+These logs are the raw data source that Scrimsight processes into meaningful analytics.
+
+### Sample Data Structure
+To understand the data flow, here's an example of what raw log data looks like:
+
+**Raw Log File Entry:**
+```
+[2023-08-28 17:05:42.123] Player_Stat,matchTime:127.45,roundNumber:1,playerTeam:"Team Alpha",playerName:"PlayerOne",playerHero:"Tracer",eliminations:5,deaths:2,allDamageDealt:3847
+[2023-08-28 17:05:43.456] Kill,matchTime:128.12,attackerTeam:"Team Alpha",attackerName:"PlayerOne",attackerHero:"Tracer",victimTeam:"Team Beta",victimName:"PlayerTwo",victimHero:"Mercy",eventAbility:"Pulse Pistols",eventDamage:150,isCriticalHit:true,isEnvironmental:false
+```
+
+This raw text gets parsed into structured JSON objects that feed into the atom system.
+
+### Example Data Flow Scenario
+**Scenario**: Analyzing a player's performance in a match
+
+1. **Raw Input**: User uploads match log file
+2. **File Processing**: `logFileLoaderAtom` reads content, `logFileParserAtom` structures data
+3. **Event Extraction**: `kill.atom`, `playerStat.atom`, etc. extract specific event types
+4. **Analytics**: `playerStatsBaseAtom` merges stats with playtime data
+5. **UI Consumption**: Components display player performance metrics
+
+**Data at Each Stage:**
+- **Stage 1**: Raw text file content
+- **Stage 2**: Structured arrays of event objects with `matchId`, `type`, `matchTime`
+- **Stage 3**: Typed arrays like `KillLogEvent[]`, `PlayerStatLogEvent[]`
+- **Stage 4**: Aggregated `Metric<PlayerStatsBase>` with computed fields
+- **Stage 5**: Rendered charts, tables, and statistics in the UI
+
+### Scale & Data Volumes
+To provide context for the architecture decisions:
+
+**Typical Data Volumes:**
+- **Single Match**: 10,000-50,000 individual events
+- **Match Duration**: 10-30 minutes of gameplay
+- **Players per Match**: 12 players (6 per team)
+- **Events per Second**: 20-100 during active gameplay
+- **Log File Size**: 1-5 MB per match
+- **Typical Analysis Session**: 5-20 matches (50-1000 MB of data)
+
+**Performance Considerations:**
+- Browser memory constraints for large datasets
+- Real-time analysis requirements during live matches
+- Complex aggregations across multiple matches
+- Interactive filtering and sorting of large result sets
+
+The atom architecture handles this by:
+- **Lazy Loading**: Only computing needed data
+- **Granular Caching**: Avoiding recomputation of unchanged data
+- **Incremental Processing**: Building complex analytics from simple building blocks
+- **Memory Management**: Allowing unused atoms to be garbage collected
+
 ## Table of Contents
 
 1. [Data Pipeline Overview](#data-pipeline-overview)
-2. [Complete Atom Inventory](#complete-atom-inventory)
-3. [Layer-by-Layer Analysis](#layer-by-layer-analysis)
-4. [Consumption Patterns](#consumption-patterns)
-5. [Performance & Optimization](#performance--optimization)
-6. [Dependency Graphs](#dependency-graphs)
-7. [Architectural Insights](#architectural-insights)
-8. [Recommendations](#recommendations)
+2. [Key Technology Concepts](#key-technology-concepts)
+3. [Business Domain Context](#business-domain-context)
+4. [Complete Atom Inventory](#complete-atom-inventory)
+5. [Layer-by-Layer Analysis](#layer-by-layer-analysis)
+6. [Consumption Patterns](#consumption-patterns)
+7. [Performance & Optimization](#performance--optimization)
+8. [Dependency Graphs](#dependency-graphs)
+9. [Architectural Insights](#architectural-insights)
+10. [Code Organization Patterns](#code-organization-patterns)
+11. [Recommendations](#recommendations)
+
+---
+
+## Key Technology Concepts
+
+### TypeScript Interface Patterns
+Throughout this document, you'll see TypeScript interface definitions. Here's what the key patterns mean:
+
+**Basic Interface:**
+```typescript
+interface PlayerData {
+  playerName: string;    // Required string field
+  eliminations: number;  // Required number field
+  team?: string;         // Optional string field (note the ?)
+}
+```
+
+**Array Types:**
+```typescript
+PlayerData[]              // Array of PlayerData objects
+string[]                  // Array of strings
+Array<{id: string}>       // Alternative array syntax
+```
+
+**Record Types:**
+```typescript
+Record<string, number>    // Object with string keys and number values
+// Equivalent to: { [key: string]: number }
+```
+
+**Union Types:**
+```typescript
+'team1' | 'team2' | 'draw'  // Value must be one of these exact strings
+```
+
+**Generic Types:**
+```typescript
+Metric<PlayerStatsBase, CategoryKeys, NumericalKeys>
+// Generic type with three type parameters
+```
+
+### Jotai Atom Patterns Used
+
+**Standard Atom:**
+```typescript
+// Creates an atom that computes its value from other atoms
+const derivedAtom = atom((get) => {
+  const data = get(sourceAtom);
+  return processData(data);
+});
+```
+
+**Atom Family:**
+```typescript
+// Creates atoms dynamically based on parameters
+const playerStatsFamily = atomFamily((playerId: string) =>
+  atom((get) => get(allStats).filter(stat => stat.playerId === playerId))
+);
+```
+
+**Writable Atom (Input Pattern):**
+```typescript
+// Atom that can be both read and written to
+const inputAtom = atom(
+  (get) => get(privateStateAtom),           // read function
+  (get, set, newValue) => {                 // write function
+    set(privateStateAtom, transform(newValue));
+  }
+);
+```
+
+---
+
+## Business Domain Context
+
+### Overwatch Game Mechanics
+To understand the data structures, it's helpful to know key Overwatch concepts:
+
+**Heroes & Roles:**
+- **Tank**: High health, protective abilities (e.g., Reinhardt, D.Va)
+- **Damage**: Primary damage dealers (e.g., Tracer, Widowmaker)  
+- **Support**: Healing and utility (e.g., Mercy, Ana)
+- Teams typically play 2 tanks, 2 damage, 2 support (2-2-2 composition)
+
+**Match Structure:**
+- **Match**: Complete game between two teams
+- **Round**: Subdivision of a match (multiple rounds per match)
+- **Setup Phase**: Pre-round preparation time
+- **Teamfight**: Period of intense combat between teams
+
+**Key Gameplay Events:**
+- **Elimination/Kill**: Player defeats an opponent
+- **Ultimate**: Powerful special ability that charges over time
+- **Hero Swap**: Player changes their character mid-match
+- **Objective**: Map-specific goals (capture point, escort payload, etc.)
+
+**Statistics Categories:**
+- **Eliminations**: Enemy players defeated
+- **Final Blows**: Killing blows that finish off enemies
+- **Damage**: Amount of damage dealt to enemies
+- **Healing**: Health restored to teammates
+- **Assists**: Contributing to eliminations without final blow
+
+### Analytics Use Cases
+The atoms support various analytical workflows:
+
+**Coach Analysis:**
+- Review team compositions and their effectiveness
+- Analyze teamfight outcomes and ultimate usage
+- Compare player performance against role benchmarks
+
+**Player Performance:**
+- Track individual statistics across matches
+- Compare performance on different heroes/maps
+- Identify improvement areas through detailed metrics
+
+**Team Strategy:**
+- Evaluate different team compositions
+- Analyze map-specific performance
+- Study opponent patterns and matchups
+
+**Meta Analysis:**
+- Understand which heroes are most effective
+- Identify emerging strategies and compositions
+- Track performance trends over time
 
 ---
 
@@ -1098,6 +1301,161 @@ contextualStatAtoms(params) → getStatsAtom → various context atoms
 
 ---
 
+## Code Organization Patterns
+
+### File Naming Conventions
+The codebase follows consistent naming patterns that make the architecture self-documenting:
+
+**Atom Files:**
+```
+src/atoms/
+├── {feature}Atom.ts           # Standard atoms
+├── {feature}AtomFamily.ts     # Parameterized atom families  
+├── {feature}.ts               # Simple atoms (shorter names)
+├── {feature}.test.ts          # Unit tests for each atom
+└── index.ts                   # Central type definitions and exports
+```
+
+**Component Integration:**
+```
+src/components/
+├── PlayerStatsCard.tsx        # Consumes playerStatsBase.atom
+├── TeamCompositions.tsx       # Uses teamCompositionsAtom
+├── MetricsChart.tsx           # Integrates multiple stat atoms
+└── {Component}.stories.tsx    # Storybook stories for each component
+```
+
+### Import Patterns
+The project uses path aliases for clean imports:
+
+**From Components:**
+```typescript
+import { useAtomValue } from 'jotai';
+import { playerStatsBase, matchData } from '@atoms';  // From index.ts
+import type { PlayerStatsBase } from '@atoms';        // Type imports
+```
+
+**Within Atoms:**
+```typescript
+import { atom } from 'jotai';
+import otherAtom from './otherAtom';                  // Relative imports between atoms
+import { utilityFunction } from '@lib';               // Utility functions
+```
+
+### Atom Registration Pattern
+All atoms are registered in `src/atoms/index.ts` with metadata:
+
+```typescript
+export const playerStatsBase: ScrimsightAtom<Promise<Metric<...>>> = {
+  name: 'playerStatsBase',
+  description: 'Most granular player statistics merged with playtime data',
+  atom: playerStatsBaseAtom
+};
+```
+
+This pattern provides:
+- **Discoverability**: All atoms listed in one place
+- **Documentation**: Built-in descriptions for each atom
+- **Type Safety**: Centralized type definitions
+- **Debugging**: Named atoms for dev tools
+
+### Error Handling Patterns
+Atoms implement defensive programming:
+
+**Null Checking:**
+```typescript
+const safeAtom = atom((get) => {
+  const data = get(sourceAtom);
+  if (!data || data.length === 0) {
+    return defaultValue;
+  }
+  return processData(data);
+});
+```
+
+**Data Validation:**
+```typescript
+const validatedAtom = atom((get) => {
+  const events = get(eventsAtom);
+  return events.filter(event => 
+    event.matchId && 
+    event.playerName && 
+    typeof event.matchTime === 'number'
+  );
+});
+```
+
+### Performance Optimization Patterns
+
+**Memoization Strategy:**
+```typescript
+// Expensive computation atom
+const expensiveAtom = atom((get) => {
+  const data = get(sourceAtom);
+  return useMemo(() => heavyComputation(data), [data]);
+});
+```
+
+**Selective Updates:**
+```typescript
+// Only recompute when specific fields change
+const optimizedAtom = atom((get) => {
+  const { relevantField } = get(sourceAtom);
+  return computeFromRelevantField(relevantField);
+});
+```
+
+### Testing Patterns
+Each atom follows the same testing approach:
+
+**Test Structure:**
+```typescript
+describe('atomNameFn', () => {
+  it('should calculate expected result', () => {
+    const mockDependency = mockData;
+    const result = atomNameFn(mockDependency);
+    expect(result).toEqual(expectedOutput);
+  });
+  
+  it('should handle edge cases', () => {
+    const emptyData = [];
+    const result = atomNameFn(emptyData);
+    expect(result).toEqual(defaultValue);
+  });
+});
+```
+
+**Key Testing Principles:**
+- Test the exported function (`atomNameFn`), not the atom directly
+- Use mock data that matches the expected input structure
+- Test both happy path and edge cases
+- Verify computed fields and aggregations
+
+### State Management Philosophy
+
+**Atomic Granularity:**
+- Each atom has a single, well-defined responsibility
+- Complex operations are built by composing simple atoms
+- Raw data atoms are never mutated, only derived from
+
+**Dependency Direction:**
+```
+Raw Data → Extracted Events → Organized Data → Analytics → UI
+```
+
+**Lazy Evaluation:**
+- Atoms only compute when their values are actually needed
+- Unused dependency branches don't trigger computation
+- Automatic cleanup when components unmount
+
+This organization enables:
+- **Predictable Data Flow**: Clear dependencies between atoms
+- **Testability**: Each atom can be tested in isolation
+- **Performance**: Granular updates only affect dependent atoms
+- **Maintainability**: Changes to one atom don't cascade unexpectedly
+
+---
+
 ## Architectural Insights
 
 ### Design Strengths
@@ -1225,6 +1583,97 @@ contextualStatAtoms(params) → getStatsAtom → various context atoms
 The Scrimsight atom architecture represents a sophisticated and well-designed state management system. With 68 atoms organized into clear functional layers, it successfully transforms raw Overwatch log data into rich analytics and visualizations. The system demonstrates excellent separation of concerns, type safety, and performance optimization while maintaining flexibility for future enhancements.
 
 The combination of atomic granularity, strategic caching, and powerful abstraction layers creates an efficient and maintainable foundation for complex esports analytics. The architecture's strengths significantly outweigh its complexity, providing a solid foundation for continued development and feature enhancement.
+
+---
+
+---
+
+## Glossary
+
+### Technical Terms
+
+**Atom**: A unit of state in Jotai that can be read from and optionally written to
+
+**Atom Family**: A factory function that creates atoms dynamically based on parameters
+
+**Derived Atom**: An atom whose value is computed from other atoms
+
+**Dependency Graph**: The network of relationships between atoms where changes propagate automatically
+
+**Event Sourcing**: Architecture pattern where state changes are stored as a sequence of events
+
+**Hot Path**: Frequently executed code paths that require optimization
+
+**Hydration**: The process of converting raw data into structured, typed objects
+
+**Lazy Evaluation**: Computing values only when they are actually needed
+
+**Memoization**: Caching computed values to avoid expensive recalculations
+
+**Reactive Programming**: Programming paradigm where data flows automatically update dependent computations
+
+### Domain-Specific Terms
+
+**Composition**: The combination of heroes a team is playing (e.g., "2-2-2" = 2 tanks, 2 damage, 2 support)
+
+**Elimination**: When a player defeats an opponent (includes assists, not just final blows)
+
+**Final Blow**: The killing blow that finishes off an enemy player
+
+**First Kill/Death**: The opening elimination in a teamfight, often decisive for the outcome
+
+**Hero Swap**: When a player changes their character during a match
+
+**Map Type/Mode**: The game mode (Escort, Assault, Hybrid, Control) which affects strategy
+
+**Scrim**: Short for "scrimmage" - a practice match between teams
+
+**Setup Phase**: The preparation time before a round begins
+
+**Teamfight**: A period of intense combat where multiple players from both teams engage
+
+**Ultimate**: A powerful special ability that charges over time through gameplay actions
+
+### Statistical Terms
+
+**Benchmark**: A reference point for comparison (role average, hero average)
+
+**Category Keys**: Dimensional fields used for grouping and filtering (playerName, heroName, etc.)
+
+**Derived Metrics**: Calculated statistics based on raw data (per-10-minute rates, percentages)
+
+**Numerical Keys**: Quantitative fields that can be aggregated (eliminations, damage, healing)
+
+**Per-10-Minutes**: Normalized statistics that account for different playtime amounts
+
+**Win Rate**: Percentage of games won, typically excluding draws from the calculation
+
+### File & Code Terms
+
+**Event Extraction**: The process of filtering raw parsed data by event type
+
+**Field Mapping**: Transforming field names during data processing
+
+**Interface Definition**: TypeScript type specification that defines the structure of data
+
+**Pattern Type**: The category of atom implementation (Standard, Input, Atom Family)
+
+**Schema**: The structure definition for data objects, including field names and types
+
+---
+
+## Conclusion
+
+The Scrimsight atom architecture represents a sophisticated and well-designed state management system. With 68 atoms organized into clear functional layers, it successfully transforms raw Overwatch log data into rich analytics and visualizations. The system demonstrates excellent separation of concerns, type safety, and performance optimization while maintaining flexibility for future enhancements.
+
+The combination of atomic granularity, strategic caching, and powerful abstraction layers creates an efficient and maintainable foundation for complex esports analytics. The architecture's strengths significantly outweigh its complexity, providing a solid foundation for continued development and feature enhancement.
+
+**Key Takeaways for External Analysis:**
+- **Event-Driven Architecture**: Raw events are preserved and never mutated, enabling replay and alternative analysis
+- **Layered Data Transformation**: Clear progression from raw data to UI-ready analytics
+- **Type-Safe Data Flow**: Comprehensive TypeScript integration prevents runtime errors
+- **Performance-Conscious Design**: Multiple levels of caching and lazy evaluation
+- **Scalable Foundation**: Well-positioned for real-time data, machine learning integration, and multi-game support
 
 ---
 
