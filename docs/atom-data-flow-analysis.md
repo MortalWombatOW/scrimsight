@@ -60,28 +60,73 @@ Raw Log Files → Data Loading → Event Extraction → Organization → Analyti
 The foundation layer handles file input and content extraction:
 
 #### `logFileInputAtom` (Input Atom)
-- **Data Type**: `LogFileInputType` - Object with `files: File[]`
+- **Data Type**: `LogFileInputType`
 - **Purpose**: Writable atom for file uploads with read/write interface
 - **Dependencies**: None (entry point)
 - **Pattern**: Input atom with internal state management
 
+**Exact Field Structure:**
+```typescript
+{
+  files: File[]  // Array of browser File objects
+}
+```
+
 #### `logFileLoaderAtom` (Standard Atom)
-- **Data Type**: `Promise<LogFileLoaderType>` - Array of file objects with content
+- **Data Type**: `Promise<LogFileLoaderType>`
 - **Purpose**: Asynchronously loads file content from uploaded files
 - **Calculation**: Concurrent file reading using `Promise.all` and `readFileAsync`
 - **Dependencies**: `logFileInput.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<{
+  fileName: string;        // Name of the uploaded file
+  fileModified: number;    // Unix timestamp of file modification
+  fileContent: string;     // Raw text content of the log file
+}>
+```
+
 #### `logFileParserAtom` (Standard Atom)
-- **Data Type**: `Promise<LogFileParserOutput[]>` - Structured log data with match IDs
+- **Data Type**: `Promise<LogFileParserOutput[]>`
 - **Purpose**: Parses loaded files into game events and generates unique match identifiers
 - **Calculation**: Combines files with sample data, uses `parseFile` utility, generates `matchId` with `stringHash`
 - **Dependencies**: `logFileLoader.atom`, `sampleData.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<{
+  fileName: string;        // Name of the source file
+  matchId: string;         // Unique hash-based identifier for the match
+  fileModified: number;    // Unix timestamp of file modification
+  logs: Array<{
+    specName: string;      // Event type name (e.g., "kill", "hero_spawn")
+    data: object[];        // Array of parsed event objects for that type
+  }>;
+}>
+```
+
 #### `sampleData` (Standard Atom)
-- **Data Type**: `LogFileLoaderType` - Sample file objects
+- **Data Type**: `LogFileLoaderType`
 - **Purpose**: Provides demonstration data when enabled
 - **Calculation**: Conditional return based on `sampleDataEnabled` flag
 - **Dependencies**: `sampleDataEnabled.atom`
+
+**Exact Field Structure:**
+```typescript
+Array<{
+  fileName: string;        // Pre-defined sample file names
+  fileModified: number;    // Pre-defined timestamps
+  fileContent: string;     // Raw log file content from samples
+}>
+```
+
+**Sample Files Included:**
+1. "Log-2023-08-28-17-05-38.txt"
+2. "Log-2023-08-28-17-29-57.txt"
+3. "Log-2023-08-28-17-52-17.txt"
+4. "Log-2023-08-28-18-28-25.txt"
+5. "Log-2023-08-28-18-40-39.txt"
 
 #### `sampleDataEnabled` (Standard Atom)
 - **Data Type**: `boolean`
@@ -90,10 +135,21 @@ The foundation layer handles file input and content extraction:
 - **Dependencies**: None
 
 #### `setupComplete` (Standard Atom)
-- **Data Type**: `Promise<SetupCompleteType>` - Array of setup completion events
+- **Data Type**: `Promise<SetupCompleteType>`
 - **Purpose**: Extracts round setup completion events
 - **Calculation**: Uses `extractEventsFromFiles` with 'setup_complete' type
 - **Dependencies**: `logFileParser.atom`
+
+**Exact Field Structure:**
+```typescript
+Array<{
+  matchId: string;              // Unique match identifier
+  type: string;                 // Always "setup_complete"
+  matchTime: number;            // Seconds from match start
+  roundNumber: number;          // Round number (1, 2, 3, etc.)
+  matchTimeRemaining: number;   // Seconds remaining in match/round
+}>
+```
 
 ### Layer 2: Event Extraction (19 atoms)
 
@@ -105,14 +161,237 @@ This layer extracts specific game events from parsed log files. All follow the s
 - **Dependencies**: `logFileParser.atom`
 - **Pattern**: Standard atom with async function
 
-#### Key Event Types:
-- **Combat Events**: `kill`, `damage`, `healing`, `defensiveAssist`, `offensiveAssist`
-- **Hero Events**: `heroSpawn`, `heroSwap`, `dvaDemech`, `dvaRemech`, `mercyRez`
-- **Ultimate Events**: `ultimateCharged`, `ultimateStart`, `ultimateEnd`
-- **Ability Events**: `ability1Used`, `ability2Used`
-- **Match Events**: `matchStart`, `matchEnd`, `roundStart`, `roundEnd`
+**Common Fields (All Events)**:
+- `matchId` (string): Unique match identifier
+- `type` (string): Event type name
+- `matchTime` (number): Seconds from match start
 
-#### Special Cases:
+## Complete Event Type Reference
+
+### Combat Events
+
+#### `kill` → `KillLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  attackerTeam: string;
+  attackerName: string;
+  attackerHero: string;
+  victimTeam: string;
+  victimName: string;
+  victimHero: string;
+  eventAbility: string;
+  eventDamage: number;
+  isCriticalHit: boolean;
+  isEnvironmental: boolean;
+}
+```
+
+#### `damage` → `DamageLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  attackerTeam: string;
+  attackerName: string;
+  attackerHero: string;
+  victimTeam: string;
+  victimName: string;
+  victimHero: string;
+  eventAbility: string;
+  eventDamage: number;
+  isCriticalHit: boolean;
+  isEnvironmental: boolean;
+}
+```
+
+#### `healing` → `HealingLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  healerTeam: string;
+  healerName: string;
+  healerHero: string;
+  healeeTeam: string;
+  healeeName: string;
+  healeeHero: string;
+  eventAbility: string;
+  eventHealing: number;
+  isHealthPack: boolean;
+}
+```
+
+#### `defensiveAssist` / `offensiveAssist` → `AssistLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+}
+```
+
+### Hero Events
+
+#### `heroSpawn` / `heroSwap` → `HeroEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  previousHero: string;
+  heroTimePlayed: number;
+}
+```
+
+#### `dvaDemech` → `DvaDemechLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  attackerTeam: string;
+  attackerName: string;
+  attackerHero: string;
+  victimTeam: string;
+  victimName: string;
+  victimHero: string;
+  eventAbility: string;
+  eventDamage: number;
+  isCriticalHit: boolean;
+  isEnvironmental: boolean;
+}
+```
+
+#### `dvaRemech` → `DvaRemechLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  ultimateId: number;
+}
+```
+
+#### `mercyRez` → `MercyRezLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  mercyTeam: string;
+  mercyName: string;
+  revivedTeam: string;
+  revivedName: string;
+  revivedHero: string;
+  eventAbility: string;
+}
+```
+
+### Ultimate Events
+
+#### `ultimateCharged` / `ultimateStart` / `ultimateEnd` → `UltimateEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+  ultimateId: number;
+}
+```
+
+### Ability Events
+
+#### `ability1Used` / `ability2Used` → `AbilityEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  heroDuplicated: string;
+}
+```
+
+### Match/Round Events
+
+#### `matchStart` → `MatchStartLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  mapName: string;
+  mapType: string;
+  team1Name: string;
+  team2Name: string;
+}
+```
+
+#### `matchEnd` → `MatchEndLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  roundNumber: number;
+  team1Score: number;
+  team2Score: number;
+}
+```
+
+#### `roundStart` → `RoundStartLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  roundNumber: number;
+  capturingTeam: string;
+  team1Score: number;
+  team2Score: number;
+  objectiveIndex: number;
+}
+```
+
+#### `roundEnd` → `RoundEndLogEvent[]`
+```typescript
+{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  roundNumber: number;
+  capturingTeam: string;
+  team1Score: number;
+  team2Score: number;
+  objectiveIndex: number;
+  controlTeam1Progress: number;
+  controlTeam2Progress: number;
+  matchTimeRemaining: number;
+}
+```
+
+**Special Cases:**
 - **`mercyRez.ts`**: Only event extractor with custom field mapping
 - **`damage.ts` & `defensiveAssist.ts`**: Include detailed JSDoc documentation
 
@@ -126,11 +405,42 @@ These atoms transform raw events into structured, analysis-ready formats:
 - **Calculation**: Creates Map with `${matchId}-${matchTime}` keys, combines simultaneous events
 - **Dependencies**: `kill.atom`, `offensiveAssist.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<{
+  matchId: string;
+  matchTime: number;
+  kills: KillLogEvent[];         // Array of kill events at this timestamp
+  assists: OffensiveAssistLogEvent[]; // Array of offensive assists at this timestamp
+}>
+```
+
 #### `matchDataAtom` (Standard Atom)
 - **Data Type**: `Promise<MatchData[]>`
 - **Purpose**: Comprehensive match objects with teams, scores, players, outcomes
 - **Calculation**: Enriches match info with start/end events, player rosters, duration, winner determination
 - **Dependencies**: `matchExtractor.atom`, `matchStart.atom`, `matchEnd.atom`, `playerStat.atom`, `mapTimes.atom`, `roundEnd.atom`
+
+**Exact Field Structure:**
+```typescript
+Array<{
+  matchId: string;
+  fileName: string;
+  fileModified: number;
+  dateString: string;           // Formatted as "YYYY-M-D"
+  map: string;                  // From MatchStartLogEvent
+  mode: string;                 // From MatchStartLogEvent (mapType)
+  team1Name: string;
+  team2Name: string;
+  team1Score: number;           // Final score from MatchEndLogEvent
+  team2Score: number;           // Final score from MatchEndLogEvent
+  team1Players: string[];       // Unique players derived from PlayerStatLogEvent
+  team2Players: string[];       // Unique players derived from PlayerStatLogEvent
+  duration: number;             // From MapTimes data
+  roundWinners: ('team1' | 'team2' | 'draw')[]; // Calculated from RoundEndLogEvent
+  winner: string | null;        // Team name or null for draws
+}>
+```
 
 #### `matchExtractorAtom` (Standard Atom)
 - **Data Type**: `Promise<MatchFileInfo[]>`
@@ -138,11 +448,33 @@ These atoms transform raw events into structured, analysis-ready formats:
 - **Calculation**: Maps parsed files to extract matchId, fileName, formatted timestamps
 - **Dependencies**: `logFileParser.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<{
+  matchId: string;
+  name: string;                 // Original fileName
+  fileModified: number;         // Unix timestamp
+  dateString: string;           // "YYYY-M-D" format
+  timeString: string;           // "H:M:S" format
+}>
+```
+
 #### `playerEventsAtom` (Standard Atom)
 - **Data Type**: `Promise<PlayerEventWithType[]>`
 - **Purpose**: Unified timeline of player actions with event type labels
 - **Calculation**: Combines multiple event types, adds `eventType` field, sorts chronologically
 - **Dependencies**: `defensiveAssist.atom`, `offensiveAssist.atom`, `heroSpawn.atom`, `heroSwap.atom`, `ability1Used.atom`, `ability2Used.atom`
+
+**Exact Field Structure:**
+```typescript
+type PlayerEventWithType = 
+  | (DefensiveAssistLogEvent & { eventType: 'defensiveAssist' })
+  | (OffensiveAssistLogEvent & { eventType: 'offensiveAssist' })
+  | (HeroSpawnLogEvent & { eventType: 'heroSpawn' })
+  | (HeroSwapLogEvent & { eventType: 'heroSwap' })
+  | (Ability1UsedLogEvent & { eventType: 'ability1Used' })
+  | (Ability2UsedLogEvent & { eventType: 'ability2Used' });
+```
 
 #### `playerInteractionEventsAtom` (Standard Atom)
 - **Data Type**: `Promise<PlayerInteractionEvent[]>`
@@ -150,11 +482,50 @@ These atoms transform raw events into structured, analysis-ready formats:
 - **Calculation**: Converts events to common format, creates directional relationships, assigns unique IDs
 - **Dependencies**: `mercyRez.atom`, `dvaDemech.atom`, `dvaRemech.atom`, `kill.atom`, `damage.atom`, `healing.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<{
+  id: string;                              // Unique identifier
+  matchId: string;
+  playerName: string;                      // The player this record is about
+  playerTeam: string;
+  playerHero: string;
+  otherPlayerName: string;                 // The other player involved
+  playerInteractionEventTime: number;      // matchTime
+  playerInteractionEventType: string;      // Type of interaction
+  direction: 'incoming' | 'outgoing';      // Perspective relative to playerName
+}>
+```
+
+**Supported Interaction Types:**
+- **Mercy Resurrect**: 'Resurrect' (outgoing), 'Resurrected' (incoming)
+- **D.Va Demech**: 'Demech player' (outgoing), 'Demeched' (incoming)
+- **D.Va Remech**: 'Remech' (outgoing, no other player)
+- **Kills**: 'Killed player' (outgoing), 'Killed by player' (incoming)
+- **Damage**: 'Damage to player' (outgoing), 'Damage from player' (incoming)
+- **Healing**: 'Healing to player' (outgoing), 'Healing from player' (incoming)
+
 #### `scrimAtom` (Standard Atom)
 - **Data Type**: `Promise<Scrim[]>`
 - **Purpose**: Groups matches into scrimmage sessions with aggregate statistics
 - **Calculation**: Groups by date-team combination, calculates win/loss records, total duration
 - **Dependencies**: `matchData.atom`
+
+**Exact Field Structure:**
+```typescript
+Array<{
+  dateString: string;           // Date of the scrim session
+  team1Name: string;
+  team2Name: string;
+  team1Players: string[];       // From first match in the scrim
+  team2Players: string[];       // From first match in the scrim
+  team1Wins: number;            // Count of matches won by team1
+  team2Wins: number;            // Count of matches won by team2
+  draws: number;                // Count of drawn matches
+  duration: number;             // Total duration of all matches in seconds
+  matchIds: string[];           // Array of all match IDs in this scrim
+}>
+```
 
 ### Layer 4: Player Analytics (10 atoms)
 
@@ -167,6 +538,54 @@ Focused on individual player performance analysis:
 - **Dependencies**: `playerStat.atom`, `heroPlaytime.atom`
 - **Note**: Foundation for most metrics views, used in 30+ components
 
+**Exact Field Structure:**
+```typescript
+{
+  categoryKeys: ['matchId', 'roundNumber', 'playerTeam', 'playerName', 'playerHero', 'playerRole'];
+  numericalKeys: PlayerStatsBaseNumericalKeys[]; // 26 base fields
+  rows: PlayerStatsBase[];
+}
+
+interface PlayerStatsBase {
+  // Category Fields
+  matchId: string;
+  roundNumber: number;
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  playerRole: string;           // Computed from hero using getRoleFromHero
+  
+  // Base Numerical Fields (26 total)
+  playtime: number;
+  eliminations: number;
+  finalBlows: number;
+  deaths: number;
+  allDamageDealt: number;
+  barrierDamageDealt: number;
+  heroDamageDealt: number;
+  healingDealt: number;
+  healingReceived: number;
+  selfHealing: number;
+  damageTaken: number;
+  damageBlocked: number;
+  defensiveAssists: number;
+  offensiveAssists: number;
+  ultimatesEarned: number;
+  ultimatesUsed: number;
+  multikills: number;
+  soloKills: number;
+  objectiveKills: number;
+  environmentalKills: number;
+  environmentalDeaths: number;
+  criticalHits: number;
+  shotsFired: number;
+  shotsHit: number;
+  shotsMissed: number;
+  scopedShotsFired: number;
+  scopedShotsHit: number;
+}
+```
+
 #### `playerComparisonAtomFamily` (Atom Family)
 - **Data Type**: `AtomFamily<Promise<MetricComparison[]>, PlayerComparisonParams>`
 - **Purpose**: Compares player stats against role/hero benchmarks
@@ -174,11 +593,35 @@ Focused on individual player performance analysis:
 - **Parameters**: `{ playerName: string, heroName?: string }`
 - **Dependencies**: `getStatsAtom`, `averageMetricPerRole.atom`, `averageMetricPerHero.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<{
+  metric: PlayerStatsNumericalKeys;    // The stat being compared
+  playerValue: number;                 // Player's actual value
+  benchmarkValue?: number;             // Role/Hero average (optional)
+  benchmarkType: 'Role Average' | 'Hero Average' | 'N/A';
+  delta?: number;                      // Difference from benchmark
+  percentDifference?: number;          // Percentage difference
+}>
+```
+
 #### `playerFirstKillDeathRateAtom` (Standard Atom)
 - **Data Type**: `Promise<Record<string, PlayerFirstKillDeathRateStats>>`
 - **Purpose**: First kill/death rates across teamfights
 - **Calculation**: Aggregates from teamfight data, calculates participation rates
 - **Dependencies**: `teamfights.atom`, `teamfightParticipation.atom`, `uniquePlayerNames.atom`
+
+**Exact Field Structure:**
+```typescript
+Record<string, {  // Key: playerName
+  playerName: string;
+  firstKills: number;              // Count of teamfights where player got first kill
+  firstDeaths: number;             // Count of teamfights where player died first
+  teamfightsParticipated: number;  // Total teamfights participated in
+  firstKillRate: number;           // firstKills / teamfightsParticipated
+  firstDeathRate: number;          // firstDeaths / teamfightsParticipated
+}>
+```
 
 #### `playerListSummary` (Standard Atom)
 - **Data Type**: `Promise<PlayerListSummary[]>`
@@ -186,11 +629,36 @@ Focused on individual player performance analysis:
 - **Calculation**: Groups stats by player, determines top hero/role by playtime, primary team
 - **Dependencies**: `playerStatsBase.atom`, `heroPlaytime.atom`, `playerFirstKillDeathRate.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<{
+  playerName: string;
+  teamName: string;         // Primary team (most playtime)
+  topHero: string;          // Hero with most playtime
+  eliminations: number;     // Total eliminations
+  deaths: number;           // Total deaths
+  assists: number;          // offensive + defensive assists
+  role: OverwatchRole;      // Primary role (most playtime)
+  firstKillRate: number;    // First kill rate in teamfights
+}>
+```
+
 #### `playerLivesAtom` (Standard Atom)
 - **Data Type**: `Promise<PlayerLife[]>`
 - **Purpose**: Tracks individual lives from spawn to death including hero swaps
 - **Calculation**: Chronological event processing with active life tracking
 - **Dependencies**: `playerInteractionEvents.atom`, `playerEvents.atom`, `roundTimes.atom`
+
+**Exact Field Structure:**
+```typescript
+Array<{
+  matchId: string;
+  playerName: string;
+  playerHero: string;
+  startTime: number;        // When life started (spawn/hero swap)
+  endTime: number;          // When life ended (death/hero swap/round end)
+}>
+```
 
 #### `playerMatchHistoryAtom` (Atom Factory)
 - **Data Type**: `(playerName: string) => Atom<Promise<PlayerMatch[]>>`
@@ -198,17 +666,72 @@ Focused on individual player performance analysis:
 - **Calculation**: Filters by player name, combines match data, determines outcomes
 - **Dependencies**: `playerStat.atom`, `matchStart.atom`, `matchEnd.atom`, `matchExtractor.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<{
+  matchId: string;
+  matchTime: number;        // For sorting
+  date: string;             // Human-readable date
+  time: string;             // Human-readable time
+  mapName: string;
+  mapType: string;
+  playerTeam: string;
+  won: boolean;             // Did player's team win
+}>
+```
+
+#### `playerStat` (Standard Atom) - Raw Extraction
+- **Data Type**: `Promise<PlayerStatType>`
+- **Purpose**: Raw player statistics extracted from log files
+- **Calculation**: Direct extraction using `extractEventsFromFiles`
+- **Dependencies**: `logFileParser.atom`
+
+**Exact Field Structure:**
+```typescript
+Array<{
+  matchId: string;
+  type: string;
+  matchTime: number;
+  roundNumber: string;
+  playerTeam: string;
+  playerName: string;
+  playerHero: string;
+  // All 26 base numerical fields plus:
+  eliminations: number;
+  finalBlows: number;
+  deaths: number;
+  // ... (complete list matches PlayerStatsBaseNumericalKeys)
+  weaponAccuracy: number;   // Only in raw, calculated separately in derived
+}>
+```
+
 #### `playerStatExpandedAtom` (Standard Atom)
 - **Data Type**: `Promise<PlayerStatsExpanded[]>`
 - **Purpose**: Player stats enhanced with derived role information
 - **Calculation**: Maps stats adding `playerRole` from `getRoleFromHero`
 - **Dependencies**: `playerStat.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<PlayerStatLogEvent & {
+  playerRole: string;       // Added computed field
+}>
+```
+
 #### `playerStatusTimelineAtom` (Standard Atom)
 - **Data Type**: `Promise<Map<string, PlayerStatusTimeline>>`
 - **Purpose**: Tracks alive/active players at each timestamp for composition analysis
 - **Calculation**: Processes spawn/death events, maintains team sets, creates timeline entries
 - **Dependencies**: `logFileParser.atom`, `matchData.atom`
+
+**Exact Field Structure:**
+```typescript
+Map<string, Array<{       // Key: matchId
+  timestamp: number;
+  team1Players: Set<string>;  // Active players on team 1
+  team2Players: Set<string>;  // Active players on team 2
+}>>
+```
 
 ### Layer 5: Team Analytics (8 atoms)
 
