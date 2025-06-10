@@ -1,0 +1,51 @@
+name: "Research spike"
+description: Time‑boxed investigation to answer an open question and de‑risk future work.
+title: "[spike]: "
+labels: ["spike", "inbox"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A **spike** is a short, exploratory task whose output is a written report in /notes/, not shippable code.  
+        Be very explicit about what question must be answered. 🔍
+  - type: textarea
+    id: question
+    attributes:
+      label: "Primary research question"
+      description: "State the single question the spike must answer."
+      placeholder: "How can we migrate auth to OAuth 2.1 without breaking SSO?"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: "Context / constraints"
+      description: "Why is this question important and what limits (tech, time, budget) apply?"
+      placeholder: |
+        * Legacy SSO currently uses SAML 1.1.
+        * Must remain compatible with Okta and Azure AD.
+    validations:
+      required: true
+  - type: textarea
+    id: approach
+    attributes:
+      label: "Proposed research approach"
+      description: "List the experiments, sources, or prototyping steps you intend to try."
+      placeholder: |
+        1. Survey OAuth 2.1 RFC changes.
+        2. Prototype token exchange with Okta sandbox.
+        3. Measure login latency vs. current flow.
+    validations:
+      required: true
+  - type: textarea
+    id: definition-of-done
+    attributes:
+      label: "Definition of done"
+      description: "Criteria for judging the spike complete."
+      placeholder: |
+        * Report answers the primary question clearly.
+        * Risks & next steps identified.
+        * Stakeholders review scheduled.
+    validations:
+      required: true

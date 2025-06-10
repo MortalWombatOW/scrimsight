@@ -1,0 +1,48 @@
+name: "Bug report"
+description: Report a reproducible problem.
+title: "[bug]: "
+labels: ["bug", "inbox"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for helping improve the project!**
+        Please fill in *all* required fields so we can triage quickly.
+  - type: input
+    id: repro-steps
+    attributes:
+      label: "Steps to reproduce"
+      description: "Numbered steps that reliably reproduce the issue."
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected behavior"
+      placeholder: "What *should* happen?"
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: "Actual behavior"
+      placeholder: "What *did* happen?"
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: "Environment"
+      description: "OS, browser/version, CLI version, etc."
+      placeholder: "macOS 14.5 / Node 20.11 / v1.2.3"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs & screenshots"
+      description: "Attach relevant logs to help diagnose the issue."
