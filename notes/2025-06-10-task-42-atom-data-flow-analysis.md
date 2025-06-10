@@ -44,10 +44,24 @@
 * Created `/docs/atom-data-flow-analysis.md` - Comprehensive documentation covering:
   - Complete inventory of 68 atoms across 6 functional layers
   - Detailed analysis of each atom's purpose, calculation, and dependencies
+  - **EXACT FIELD STRUCTURES** for all atoms with TypeScript interface definitions
+  - Complete Event Type Reference with all 19 event schemas
   - Consumption patterns and usage across components
   - Performance optimization strategies and caching
   - Dependency graphs and architectural insights
   - Specific recommendations for improvements
+
+## ADDITIONAL RESEARCH - EXACT DATA FIELDS
+* Extended analysis to include precise TypeScript field definitions for every atom
+* Documented exact data structures returned by each atom including:
+  - Field names, data types, and descriptions
+  - Computed/derived fields and their calculation methods
+  - Array structures and nested object interfaces
+  - 26 base + 29 derived numerical statistics fields for player metrics
+  - Complete event schemas for all 19 game event types
+* Added comprehensive Event Type Reference section
+* Included field mappings for complex aggregation atoms
+* Documented atom family parameter structures
 
 ## COMPREHENSIVE ATOM FILES CHECKLIST (68 files)
 

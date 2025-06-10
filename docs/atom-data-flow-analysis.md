@@ -743,6 +743,15 @@ Team-level performance analysis and composition tracking:
 - **Calculation**: Combines spawn/swap events, tracks composition changes, calculates durations
 - **Dependencies**: `heroSpawn.atom`, `heroSwap.atom`, `mapTimes.atom`
 
+**Exact Field Structure:**
+```typescript
+Array<{
+  teamName: string;     // Name of the team
+  heroes: string[];     // Array of 5 hero names (sorted alphabetically)
+  timePlayed: number;   // Total time this composition was active (seconds)
+}>
+```
+
 #### `detailedTeamCompositionsAtom` (Atom Family)
 - **Data Type**: `DetailedComposition[]`
 - **Purpose**: Comprehensive composition analytics for specific team
