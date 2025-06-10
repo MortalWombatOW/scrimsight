@@ -3,9 +3,23 @@ import { dvaDemechFn } from '@atoms/dvaDemech';
 import type { LogFileParserAtomType, DvaDemechLogEvent } from '@atoms';
 import { extractEventsFromFiles } from '@library';
 
-vi.mock('@library', () => ({
-  extractEventsFromFiles: vi.fn(),
-}));
+vi.mock('@library', async (importOriginal) => {
+  const actual = await importOriginal() as Record<string, unknown>;
+  return {
+    ...actual,
+    extractEventsFromFiles: vi.fn(),
+    groupByAtom: vi.fn(),
+    getStatsAtom: vi.fn(),
+    getPlayerStatsFilter: vi.fn(),
+    transformPlayerInteractions: vi.fn(),
+    createKillMatrix: vi.fn(),
+    calculatePlayerTotals: vi.fn(),
+    parseFile: vi.fn(),
+    stringHash: vi.fn(),
+    readFileAsync: vi.fn(),
+    getRoleFromHero: vi.fn().mockReturnValue('damage'),
+  };
+});
 
 describe('dvaDemechFn', () => {
   // Mock @library functions

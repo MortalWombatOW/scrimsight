@@ -1,5 +1,5 @@
 import { IconAndText as IconAndTextButton } from "@components";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { HealingIcon } from "@icons";
 // Removed MUI Icons: DeleteIcon, InfoIcon, WarningIcon
 

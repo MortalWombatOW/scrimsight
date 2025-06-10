@@ -81,7 +81,7 @@ export const PlayerPage = () => {
           <RoleIcon role={mostPlayedRole} className="w-12 h-12" />
           <div>
             <h1 className="text-3xl font-bold">{playerName}</h1>
-            <p className="text-base-content/70">{(playerData as any).playerTeam || 'Unknown Team'}</p>
+            <p className="text-base-content/70">{(playerData as Record<string, unknown>).playerTeam as string || 'Unknown Team'}</p>
           </div>
         </div>
       </header>

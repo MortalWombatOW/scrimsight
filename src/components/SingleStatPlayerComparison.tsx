@@ -75,12 +75,12 @@ export const SingleStatPlayerComparison = ({
   // Sort data for the table - moved before conditional return
   const sortedData = useMemo(() => {
     return [...allPlayerData].sort((a, b) => {
-      let aValue = (a as any)[sortBy];
-      let bValue = (b as any)[sortBy];
+      let aValue = (a as Record<string, unknown>)[sortBy];
+      let bValue = (b as Record<string, unknown>)[sortBy];
 
       // Handle numeric vs string sorting
       const comparison =
-        typeof aValue === "number"
+        typeof aValue === "number" && typeof bValue === "number"
           ? aValue - bValue
           : String(aValue).localeCompare(String(bValue));
 

@@ -1,5 +1,5 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import type { Meta, StoryObj } from "@storybook/react";
+
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { IconAutocomplete } from './IconAutocomplete';
 import React, { useState } from "react";
 // Removed MUI imports: LocationOnIcon, PersonIcon, Box
@@ -60,9 +60,9 @@ export const Default: Story = {
 };
 
 export const EmptyLocations: Story = {
+  ...Template,
   args: {
     options: sampleLocations,
-    onChange: (newValue: string[]) => console.log('Changed:', newValue),
     icon: null, // Replaced LocationOnIcon
     label: "Select Maps",
     noOptionsText: "No maps found",

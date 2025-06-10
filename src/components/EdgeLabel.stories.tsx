@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import EdgeLabel from './EdgeLabel';
 
 const meta: Meta<typeof EdgeLabel> = {

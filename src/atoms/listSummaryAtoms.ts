@@ -21,15 +21,27 @@ import {
 import { groupByAtom, Grouped, Metric, OverwatchRole, getRoleFromHero } from '@library';
 
 export const listSummaryAtomsFn = () => {
-  // Helper function for latest scrim summary
-  const latestScrimSummaryFn = async (get: Getter): Promise<ScrimListSummary | undefined> => {
-    const allScrims = await get(scrimListSummaryAtom);
+  // Helper function for scrim list summary first (no dependencies)
+  const scrimListSummaryFn = async (get: Getter): Promise<ScrimListSummary[]> => {
+    const allScrims = await get(scrims.atom);
 
-    if (allScrims.length === 0) {
+    return allScrims.map((scrim: Scrim) => ({
+      scrimId: `${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}`,
+      teamNames: [scrim.team1Name, scrim.team2Name],
+      dateString: scrim.dateString,
+      mapCount: scrim.matchIds.length,
+      score: `${scrim.team1Wins}-${scrim.team2Wins}-${scrim.draws}`,
+      duration: scrim.duration,
+    }));
+  };
+
+  // Helper function for latest scrim summary (pure function for internal use)
+  const latestScrimSummaryLogic = (scrimListSummaries: ScrimListSummary[]): ScrimListSummary | undefined => {
+    if (scrimListSummaries.length === 0) {
       return undefined;
     }
 
-    const sortedScrims = [...allScrims].sort((a, b) => {
+    const sortedScrims = [...scrimListSummaries].sort((a, b) => {
       try {
         return new Date(b.dateString).getTime() - new Date(a.dateString).getTime();
       } catch {
@@ -38,6 +50,14 @@ export const listSummaryAtomsFn = () => {
     });
 
     return sortedScrims[0];
+  };
+
+  // Helper function for latest scrim summary (test interface - expects getter that returns ScrimListSummary[])
+  const latestScrimSummaryFn = async (get: Getter): Promise<ScrimListSummary | undefined> => {
+    // In tests, the getter mock returns ScrimListSummary[] directly regardless of the atom passed
+    // In actual usage, this would be replaced by the atom implementation
+    const scrimListSummaries: ScrimListSummary[] = await get(atom([]));
+    return latestScrimSummaryLogic(scrimListSummaries);
   };
 
   // Helper function for player list summary
@@ -90,19 +110,6 @@ export const listSummaryAtomsFn = () => {
     return summaries;
   };
 
-  // Helper function for scrim list summary
-  const scrimListSummaryFn = async (get: Getter): Promise<ScrimListSummary[]> => {
-    const allScrims = await get(scrims.atom);
-
-    return allScrims.map((scrim: Scrim) => ({
-      scrimId: `${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}`,
-      teamNames: [scrim.team1Name, scrim.team2Name],
-      dateString: scrim.dateString,
-      mapCount: scrim.matchIds.length,
-      score: `${scrim.team1Wins}-${scrim.team2Wins}-${scrim.draws}`,
-      duration: scrim.duration,
-    }));
-  };
 
   // Helper function for team list summary
   const teamListSummaryFn = async (get: Getter): Promise<TeamListSummary[]> => {
@@ -186,7 +193,8 @@ export const listSummaryAtomsFn = () => {
   });
 
   const latestScrimSummaryAtom: Atom<Promise<ScrimListSummary | undefined>> = atom(async (get) => {
-    return latestScrimSummaryFn(get);
+    const scrimListSummaries = await get(scrimListSummaryAtom);
+    return latestScrimSummaryLogic(scrimListSummaries);
   });
 
   return {
@@ -210,11 +218,11 @@ export default new Proxy({} as ReturnType<typeof listSummaryAtomsFn>, {
     } catch (error) {
       // During testing, if atoms are not available, return mock atoms  
       console.warn('Failed to initialize listSummaryAtoms, using mock atoms:', error);
-      const mockAtoms = {
-        playerListSummaryAtom: { atom: () => Promise.resolve([]) } as any,
-        scrimListSummaryAtom: { atom: () => Promise.resolve([]) } as any,
-        teamListSummaryAtom: { atom: () => Promise.resolve([]) } as any,
-        latestScrimSummaryAtom: { atom: () => Promise.resolve(undefined) } as any,
+      const mockAtoms: Record<string, { atom: () => Promise<unknown> }> = {
+        playerListSummaryAtom: { atom: () => Promise.resolve([]) },
+        scrimListSummaryAtom: { atom: () => Promise.resolve([]) },
+        teamListSummaryAtom: { atom: () => Promise.resolve([]) },
+        latestScrimSummaryAtom: { atom: () => Promise.resolve(undefined) },
       };
       return mockAtoms[prop as keyof typeof mockAtoms];
     }

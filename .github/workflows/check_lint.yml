@@ -1,8 +1,8 @@
-name: Check Build
+name: Check Lint
 
 on:
   pull_request:
-    branches: [ prod ]
+    branches: [ prod, main ]
 
 jobs:
   build:

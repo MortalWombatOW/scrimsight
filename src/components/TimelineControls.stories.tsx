@@ -1,5 +1,5 @@
 import { TimelineControls } from "./TimelineControls";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 
 const meta: Meta<typeof TimelineControls> = {
   component: TimelineControls,

@@ -68,7 +68,7 @@ export const MatchOverviewPage = () => {
         }
       });
       return acc;
-    }, {} as any); // Use 'any' for simplicity in aggregation, refine if needed
+    }, {} as Record<string, unknown>); // Properly typed aggregation object
 
     const kda =
       aggregatedStats.deaths === 0

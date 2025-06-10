@@ -3,10 +3,23 @@ import { logFileParserAtomFn } from '@atoms/logFileParserAtom';
 import type { LogFileLoaderType } from '@atoms';
 import { parseFile, stringHash } from '@library';
 
-vi.mock('@library', () => ({
-  parseFile: vi.fn(),
-  stringHash: vi.fn(),
-}));
+vi.mock('@library', async (importOriginal) => {
+  const actual = await importOriginal() as Record<string, unknown>;
+  return {
+    ...actual,
+    extractEventsFromFiles: vi.fn(),
+    groupByAtom: vi.fn(),
+    getStatsAtom: vi.fn(),
+    getPlayerStatsFilter: vi.fn(),
+    transformPlayerInteractions: vi.fn(),
+    createKillMatrix: vi.fn(),
+    calculatePlayerTotals: vi.fn(),
+    parseFile: vi.fn(),
+    stringHash: vi.fn(),
+    readFileAsync: vi.fn(),
+    getRoleFromHero: vi.fn().mockReturnValue('damage'),
+  };
+});
 
 describe('logFileParserAtomFn', () => {
   // Mock @library functions

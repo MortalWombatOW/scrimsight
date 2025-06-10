@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Original: https://github.com/michael-mcanulty/tsBase64
 
 export class Base64 {
@@ -62,7 +61,7 @@ export class Base64 {
     return b.replace(/[\s\S]{1,3}/g, this._cb_encode);
   }
 
-  private static _btou(b: any): string {
+  private static _btou(b: string): string {
     return b.replace(this._re_btou(), this._cb_btou);
   }
 
