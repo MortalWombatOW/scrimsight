@@ -1,0 +1,52 @@
+name: "Refactor"
+description: Restructure code without changing external behavior.
+title: "[refactor]: "
+labels: ["refactor", "inbox"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Refactoring** improves code structure without changing functionality.
+        Focus on maintainability, readability, or technical debt reduction.
+  - type: textarea
+    id: current-state
+    attributes:
+      label: "Current state"
+      description: "Describe the code that needs refactoring."
+      placeholder: |
+        * Large function with multiple responsibilities
+        * Duplicated logic across components
+        * Poor separation of concerns
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-changes
+    attributes:
+      label: "Proposed changes"
+      description: "What refactoring will be done?"
+      placeholder: |
+        * Extract utility functions
+        * Split component into smaller pieces
+        * Consolidate shared logic
+    validations:
+      required: true
+  - type: textarea
+    id: benefits
+    attributes:
+      label: "Benefits"
+      description: "Why is this refactoring valuable?"
+      placeholder: |
+        * Easier to test
+        * Reduced duplication
+        * Better performance
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: "Scope & files affected"
+      description: "Which files or modules will change?"
+      placeholder: |
+        * src/components/PlayerCard.tsx
+        * src/lib/playerUtils.ts
