@@ -20,21 +20,23 @@ export const Default: Story = {
     metrics: ["eliminations", "deaths"] as PlayerStatsNumericalKeys[],
     setMetrics: () => {},
     filters: {
+      matchId: ["match1", "match2"],
+      roundNumber: ["1", "2"],
+      playerTeam: ["Team Alpha", "Team Beta"],
       playerName: ["Player1", "Player2"],
-      heroName: ["Ana", "Mercy"],
-      mapName: ["Hanamura"],
-      gameMode: ["Assault"],
-      teamName: ["Team Alpha"]
+      playerHero: ["Ana", "Mercy"],
+      playerRole: ["support", "damage"]
     },
     handleFilterChange: () => {},
     expandedFilters: new Set<PlayerStatsCategoryKeys>(["playerName"]),
     toggleFilterExpansion: () => {},
     uniqueValues: {
+      matchId: ["match1", "match2", "match3"],
+      roundNumber: ["1", "2", "3"],
+      playerTeam: ["Team Alpha", "Team Beta"],
       playerName: ["Player1", "Player2", "Player3"],
-      heroName: ["Ana", "Mercy", "Reinhardt", "Tracer"],
-      mapName: ["Hanamura", "King's Row", "Dorado"],
-      gameMode: ["Assault", "Escort", "Hybrid"],
-      teamName: ["Team Alpha", "Team Beta"]
+      playerHero: ["Ana", "Mercy", "Reinhardt", "Tracer"],
+      playerRole: ["support", "damage", "tank"]
     },
     sortBy: "eliminations" as PlayerStatsNumericalKeys,
     setSortBy: () => {},

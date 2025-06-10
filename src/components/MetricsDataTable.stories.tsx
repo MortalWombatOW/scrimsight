@@ -37,7 +37,7 @@ const mockData: MockMetricData[] = [
 ];
 
 // Mock columns
-const mockColumns: ColumnDef<MockMetricData>[] = [
+const mockColumns: ColumnDef<MockMetricData, unknown>[] = [
   {
     accessorKey: 'playerName',
     header: 'Player',
@@ -74,6 +74,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     data: mockData,
-    columns: mockColumns,
+    columns: mockColumns as ColumnDef<unknown, unknown>[],
   },
 };
