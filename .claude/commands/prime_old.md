@@ -210,58 +210,7 @@ gh pr create \
   --body  "Closes #<num>\n\n<detailed description of changes>"
 ```
 
-*(“Closes #<num>” ensures GitHub auto‑closes the Issue on merge.)*
 
 Do **not** close the Issue manually.
 Do **not** say that it was written by Claude.
 
----
-
-## 9 CHECKLIST SUMMARY (PIN ME)
-
-```
-[ ] 1 Preparation (clean‑state Git)
-[ ] 2 Request triage                         🛑
-[ ] 2a Branch set‑up
-[ ] 3 GitHub Issue update
-[ ] 4 Note initialisation                    🛑
-[ ] 5 Research & planning                    🛑
-[ ] 6 Approval + commit plan snapshot        🛑
-[ ] 7 Run Sub‑Agents & commit after each     🛑 as needed
-[ ] 8 Wrap‑up, final commit & push           🛑
-```
-
----
-
-### Appendix A — Standard Issue Labels
-
-*For detailed guidance on creating GitHub issues, see [docs/github-issues-guide.md](../docs/github-issues-guide.md).*
-
-| Label           | Purpose                                   |
-| --------------- | ----------------------------------------- |
-| **bug**         | Incorrect behaviour                       |
-| **feat**        | New feature / capability                  |
-| **docs**        | Documentation change                      |
-| **refactor**    | Code restructuring without behavior change |
-| **test**        | Adding or adjusting automated tests       |
-| **perf**        | Performance improvements                  |
-| **build**       | Build system or dependency changes        |
-| **ci**          | CI/CD configuration changes              |
-| **style**       | Code formatting/style changes            |
-| **chore**       | Tooling / meta / infra                    |
-| **research**    | Time‑boxed research task                  |
-| **question**    | Support / clarification                   |
-| **inbox**       | Newly filed, awaiting triage              |
-| **in‑progress** | Being actively worked on                  |
-| **blocked**     | Waiting on external dependency / decision |
-| **done**        | Completed & closed                        |
-
----
-
-#### Remember
-
-* **Always reference the Issue number** (`#<num>`) in commits and PRs.
-* **/notes/** captures all context; the Issue thread shows task state.
-* **CLI first**—avoid GitHub web UI unless reviewing or merging.
-
-Happy shipping! 🚀
