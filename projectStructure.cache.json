@@ -1,5 +1,13 @@
 [
   {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/lib/scrimsight_data_model.test.ts",
+    "errorMessage": "🔥 File 'scrimsight_data_model.test.ts' is invalid. 🔥\n\nAllowed names  = index.ts, {camelCase}.ts, {camelCase}.test.ts\nError location = ./src/lib/scrimsight_data_model.test.ts\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/lib/scrimsight_data_model.ts",
+    "errorMessage": "🔥 File 'scrimsight_data_model.ts' is invalid. 🔥\n\nAllowed names  = index.ts, {camelCase}.ts, {camelCase}.test.ts\nError location = ./src/lib/scrimsight_data_model.ts\n\n"
+  },
+  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/lib/sampledata/Log-2023-08-28-17-29-57.txt",
     "errorMessage": "🔥 Folder 'sampledata' is invalid. 🔥\n\nAccording to the structure, the 'lib' folder can only contain files.\nError location = ./src/lib/sampledata\n\n"
   }
