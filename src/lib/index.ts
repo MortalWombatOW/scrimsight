@@ -3,7 +3,6 @@
  */
 
 export * from './base64';
-export * from './color';
 export * from './date';
 export * from './string';
 export * from './time';
@@ -29,52 +28,4 @@ export {
   type MetricAtom
 } from './metricUtils';
 export * from './playerMetricsUtils';
-export * from './playerComparison';
-export * from './killMatrixUtils';
-export * from './useAtomData';
 export * from './useMetricsTableColumns';
-export * from './atomDataService';
-export * from './schemaVisualizer';
-export * from './metricExplorerStyles';
-export * from './dagre';
-
-// Re-export atoms that pages need (per architecture rules, pages can only import from @components or @library)
-export { 
-  logFileInputAtom, 
-  sampleDataEnabledAtom,
-  matchData,
-  scrimListSummaryAtom,
-  teamListSummaryAtom,
-  playerListSummaryAtom,
-  contextualStatAtoms,
-  scrims,
-  teamNames,
-  teamStats,
-  uniqueCategoryValues,
-  playerStatsBase,
-  playerStatsNumericalKeys
-} from '@atoms';
-
-export type { 
-  MatchData,
-  ScrimListSummary,
-  PlayerStatsCategoryKeys,
-  PlayerStatsNumericalKeys,
-  PlayerStatsBase,
-  PlayerStats,
-  PlayerStatsBaseNumericalKeys,
-  // Re-export event types that were previously duplicated in lib/types.ts
-  DefensiveAssistLogEvent,
-  DefensiveAssistType,
-  OffensiveAssistLogEvent,
-  OffensiveAssistType,
-  HeroSpawnLogEvent,
-  HeroSpawnType,
-  HeroSwapLogEvent,
-  HeroSwapType,
-  Ability1UsedLogEvent,
-  Ability1UsedType,
-  Ability2UsedLogEvent,
-  Ability2UsedType
-} from '@atoms';
-

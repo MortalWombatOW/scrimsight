@@ -25,6 +25,7 @@ type LogSpec = Record<string, DataSpec>;
 
 // Export the LOG_SPEC as public
 export { LOG_SPEC };
+export type { DataAndSpecName };
 
 // File Utilities
 export const readFileAsync = (file: File): Promise<string> => {
