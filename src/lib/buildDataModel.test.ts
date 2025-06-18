@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDataModel } from './buildDataModel';
+import { buildDataModel } from '@library/buildDataModel';
 import file1 from "@library/sampledata/Log-2023-08-28-17-05-38.txt?raw";
 import file2 from "@library/sampledata/Log-2023-08-28-17-29-57.txt?raw";
 import file3 from "@library/sampledata/Log-2023-08-28-17-52-17.txt?raw";

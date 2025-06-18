@@ -1,7 +1,8 @@
-import { parseFile, type DataAndSpecName } from "./scrimtime";
-import * as ScrimsightDataModel from "./ScrimsightDataModel";
+import { parseFile, type DataAndSpecName } from "@library/scrimtime";
+import * as ScrimsightDataModel from "@library/ScrimsightDataModel";
+import { extractEventsFromFiles } from "@library/eventExtractionUtils";
 import * as R from "remeda";
-import { extractEventsFromFiles } from "./eventExtractionUtils";
+
 
 const createEmptyDataModel = (): ScrimsightDataModel.ScrimsightDataModel => ({
   scrims: [],

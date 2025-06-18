@@ -60,3 +60,37 @@ export const formatPercentage = (value: number | undefined, decimals = 1): strin
   }
   return `${(value * 100).toFixed(decimals)}%`;
 };
+
+export function formatDate(date: Date): string {
+  return date.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+
+
+export function listToNaturalLanguage(list: string[]): string {
+  if (list.length === 0) {
+    return '';
+  }
+  if (list.length === 1) {
+    return list[0];
+  }
+  if (list.length === 2) {
+    return `${list[0]} and ${list[1]}`;
+  }
+  return `${list.slice(0, -1).join(', ')}, and ${list[list.length - 1]}`;
+}
+
+export function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export const getInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((word) => word[0])
+    .join("");
+};

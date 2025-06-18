@@ -24,50 +24,17 @@
       "@atoms/*": [
         "src/atoms/*"
       ],
-      "@atoms": [
-        "src/atoms/index.ts"
-      ],
       "@components/*": [
         "src/components/*"
-      ],
-      "@components": [
-        "src/components/index.ts"
       ],
       "@pages/*": [
         "src/pages/*"
       ],
-      "@pages": [
-        "src/pages/index.tsx"
-      ],
       "@library/*": [
         "src/lib/*"
       ],
-      "@library": [
-        "src/lib/index.ts"
-      ],
       "@icons/*": [
         "src/icons/*"
-      ],
-      "@icons": [
-        "src/icons/index.ts"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@hooks": [
-        "src/hooks/index.ts"
-      ],
-      "@services/*": [
-        "src/services/*"
-      ],
-      "@services": [
-        "src/services/index.ts"
-      ],
-      "@types/*": [
-        "src/types/*"
-      ],
-      "@types": [
-        "src/types/index.ts"
       ],
     },
     "types": [

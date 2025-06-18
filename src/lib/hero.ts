@@ -1,4 +1,3 @@
-import {heroNameToNormalized} from '@library';
 
 export const getHeroImage = (heroName: string, rounded = true): string => `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(heroName)}.png`;
 
@@ -75,3 +74,23 @@ export const getRoleFromHero = (hero: string): OverwatchRole => {
 export const getRankForRole = (role: OverwatchRole): number => {
   return {tank: 1, damage: 2, support: 3}[role];
 };
+
+function normalizeString(str: string): string {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replaceAll('.', '')
+    .replaceAll(' ', '')
+    .replaceAll(':', '')
+    .toLowerCase();
+}
+
+export function heroNameToNormalized(name: string | undefined): string {
+  if (name === undefined) {
+    return '';
+  }
+  if (name === 'McCree') {
+    return 'cassidy';
+  }
+  return normalizeString(name);
+}

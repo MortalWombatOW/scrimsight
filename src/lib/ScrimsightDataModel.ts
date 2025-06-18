@@ -128,6 +128,9 @@ export interface ScrimsightDataModel {
   playerLives: PlayerLife[];
   teamfights: Teamfight[];
 
+  // Enriched player stats
+  playerStats: PlayerStats[];
+
   // Log events parsed from the raw log files
   ability1Used: Ability1UsedLogEvent[];
   ability2Used: Ability2UsedLogEvent[];

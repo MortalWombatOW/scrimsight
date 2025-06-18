@@ -1,6 +1,6 @@
 import * as Comlink from 'comlink';
-import { buildDataModel } from './buildDataModel';
-import type { ScrimsightDataModel } from './ScrimsightDataModel';
+import { buildDataModel } from '@library/buildDataModel';
+import type { ScrimsightDataModel } from '@library/ScrimsightDataModel';
 
 export async function processFiles(
   files: { fileName: string; fileModified: number; fileContent: string }[]
