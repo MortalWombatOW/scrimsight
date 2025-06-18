@@ -184,5 +184,279 @@ describe('buildDataModel', () => {
     expect(dataModel.teams).toHaveLength(0);
     expect(dataModel.players).toHaveLength(0);
     expect(dataModel.matchStart).toHaveLength(0);
+    expect(dataModel.playerLives).toHaveLength(0);
+  });
+
+  it('should build player lives correctly', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    // Player lives should be populated
+    expect(dataModel.playerLives.length).toBeGreaterThan(0);
+
+    // Each player life should have required properties
+    dataModel.playerLives.forEach(life => {
+      expect(typeof life.matchId).toBe('string');
+      expect(typeof life.player).toBe('string');
+      expect(typeof life.hero).toBe('string');
+      expect(typeof life.startTime).toBe('number');
+      expect(typeof life.endTime).toBe('number');
+      expect(typeof life.duration).toBe('number');
+      expect(typeof life.roundIndex).toBe('number');
+      expect(['spawn', 'swap']).toContain(life.causeOfStart);
+      expect(['death', 'swap', 'round_end']).toContain(life.causeOfEnd);
+      expect(typeof life.eliminations).toBe('number');
+      expect(typeof life.assists).toBe('number');
+      expect(typeof life.ultimatesUsed).toBe('number');
+    });
+  });
+
+  it('should calculate player life durations correctly', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    dataModel.playerLives.forEach(life => {
+      // Duration should be positive
+      expect(life.duration).toBeGreaterThanOrEqual(0);
+      // Duration should match endTime - startTime
+      expect(life.duration).toBe(life.endTime - life.startTime);
+      // Start time should be before end time
+      expect(life.startTime).toBeLessThanOrEqual(life.endTime);
+    });
+  });
+
+  it('should link player lives to existing matches and players', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    const matchIds = new Set(dataModel.matches.map(m => m.match));
+    const playerNames = new Set(dataModel.players.map(p => p.player));
+
+    dataModel.playerLives.forEach(life => {
+      // Match should exist
+      expect(matchIds.has(life.matchId)).toBe(true);
+      // Player should exist
+      expect(playerNames.has(life.player)).toBe(true);
+    });
+  });
+
+  it('should sort player lives by match and start time', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    // Check that lives are sorted properly
+    for (let i = 1; i < dataModel.playerLives.length; i++) {
+      const prev = dataModel.playerLives[i - 1];
+      const curr = dataModel.playerLives[i];
+      
+      // Should be sorted by matchId first, then by startTime
+      if (prev.matchId === curr.matchId) {
+        expect(prev.startTime).toBeLessThanOrEqual(curr.startTime);
+      } else {
+        expect(prev.matchId.localeCompare(curr.matchId)).toBeLessThanOrEqual(0);
+      }
+    }
+  });
+
+  it('should have valid round indices for player lives', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    dataModel.playerLives.forEach(life => {
+      // Round index should be a valid round number (1, 2, or 3)
+      expect([1, 2, 3]).toContain(life.roundIndex);
+    });
+  });
+
+  it('should handle hero spawns and swaps correctly', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    // Should have lives that start with both spawn and swap
+    const spawnLives = dataModel.playerLives.filter(life => life.causeOfStart === 'spawn');
+    const swapLives = dataModel.playerLives.filter(life => life.causeOfStart === 'swap');
+
+    expect(spawnLives.length).toBeGreaterThan(0);
+    if (dataModel.heroSwap.length > 0) {
+      expect(swapLives.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('should handle different causes of life end correctly', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    // Should have lives that end with different causes
+    const deathLives = dataModel.playerLives.filter(life => life.causeOfEnd === 'death');
+    const roundEndLives = dataModel.playerLives.filter(life => life.causeOfEnd === 'round_end');
+
+    expect(deathLives.length).toBeGreaterThan(0);
+    expect(roundEndLives.length).toBeGreaterThan(0);
+  });
+
+  it('should build teamfights correctly', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    // Teamfights should be populated
+    expect(dataModel.teamfights.length).toBeGreaterThan(0);
+
+    // Each teamfight should have required properties
+    dataModel.teamfights.forEach(teamfight => {
+      expect(typeof teamfight.matchId).toBe('string');
+      expect(typeof teamfight.roundIndex).toBe('number');
+      expect([1, 2, 3]).toContain(teamfight.roundIndex);
+      expect(typeof teamfight.startTime).toBe('number');
+      expect(typeof teamfight.endTime).toBe('number');
+      expect(typeof teamfight.duration).toBe('number');
+      
+      // Duration should be positive and match endTime - startTime
+      expect(teamfight.duration).toBeGreaterThan(0);
+      expect(teamfight.duration).toBe(teamfight.endTime - teamfight.startTime);
+      
+      // Start time should be before end time
+      expect(teamfight.startTime).toBeLessThan(teamfight.endTime);
+    });
+  });
+
+  it('should have correct teamfight structure', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    dataModel.teamfights.forEach(teamfight => {
+      // Should have start and end states
+      expect(teamfight.start).toBeDefined();
+      expect(teamfight.end).toBeDefined();
+      
+      // Start states should have team1 and team2
+      expect(teamfight.start.team1).toBeDefined();
+      expect(teamfight.start.team2).toBeDefined();
+      expect(Array.isArray(teamfight.start.team1.alivePlayers)).toBe(true);
+      expect(Array.isArray(teamfight.start.team1.ultimatesReady)).toBe(true);
+      expect(Array.isArray(teamfight.start.team2.alivePlayers)).toBe(true);
+      expect(Array.isArray(teamfight.start.team2.ultimatesReady)).toBe(true);
+
+      // End states should have team1 and team2 with additional properties
+      expect(teamfight.end.team1).toBeDefined();
+      expect(teamfight.end.team2).toBeDefined();
+      expect(Array.isArray(teamfight.end.team1.alivePlayers)).toBe(true);
+      expect(Array.isArray(teamfight.end.team1.ultimatesReady)).toBe(true);
+      expect(Array.isArray(teamfight.end.team1.ultimatesUsed)).toBe(true);
+      expect(Array.isArray(teamfight.end.team1.kills)).toBe(true);
+      expect(Array.isArray(teamfight.end.team2.alivePlayers)).toBe(true);
+      expect(Array.isArray(teamfight.end.team2.ultimatesReady)).toBe(true);
+      expect(Array.isArray(teamfight.end.team2.ultimatesUsed)).toBe(true);
+      expect(Array.isArray(teamfight.end.team2.kills)).toBe(true);
+    });
+  });
+
+  it('should link teamfights to existing matches', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    const matchIds = new Set(dataModel.matches.map(m => m.match));
+
+    dataModel.teamfights.forEach(teamfight => {
+      // Match should exist
+      expect(matchIds.has(teamfight.matchId)).toBe(true);
+    });
+  });
+
+  it('should have logical teamfight timing', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    // Group teamfights by match
+    const teamfightsByMatch = dataModel.teamfights.reduce((acc, teamfight) => {
+      if (!acc[teamfight.matchId]) {
+        acc[teamfight.matchId] = [];
+      }
+      acc[teamfight.matchId].push(teamfight);
+      return acc;
+    }, {} as Record<string, typeof dataModel.teamfights>);
+
+    // Check that teamfights within each match don't overlap
+    Object.values(teamfightsByMatch).forEach(matchTeamfights => {
+      const sortedTeamfights = matchTeamfights.sort((a, b) => a.startTime - b.startTime);
+      
+      for (let i = 1; i < sortedTeamfights.length; i++) {
+        const prev = sortedTeamfights[i - 1];
+        const curr = sortedTeamfights[i];
+        
+        // Current teamfight should start after previous one ends
+        expect(curr.startTime).toBeGreaterThanOrEqual(prev.endTime);
+      }
+    });
+  });
+
+  it('should handle matches with no kills (no teamfights)', () => {
+    // Create a minimal file with no kill events - just use empty file
+    const noKillFiles = [{
+      fileName: 'no-kills.txt',
+      fileModified: new Date("2023-08-28T17:00:00.000Z").getTime(),
+      fileContent: ``
+    }];
+
+    const dataModel = buildDataModel(noKillFiles);
+    
+    // Should have no teamfights for matches with no kills
+    expect(dataModel.teamfights).toHaveLength(0);
+  });
+
+  it('should have valid player names in teamfight states', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    // Get all known players
+    const allPlayers = new Set(dataModel.players.map(p => p.player));
+
+    dataModel.teamfights.forEach(teamfight => {
+      // All alive players should be valid player names
+      [...teamfight.start.team1.alivePlayers, ...teamfight.start.team2.alivePlayers].forEach(player => {
+        expect(allPlayers.has(player)).toBe(true);
+      });
+      
+      [...teamfight.end.team1.alivePlayers, ...teamfight.end.team2.alivePlayers].forEach(player => {
+        expect(allPlayers.has(player)).toBe(true);
+      });
+
+      // All killed players should be valid player names
+      [...teamfight.end.team1.kills, ...teamfight.end.team2.kills].forEach(player => {
+        expect(allPlayers.has(player)).toBe(true);
+      });
+    });
+  });
+
+  it('should track ultimate usage correctly', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    dataModel.teamfights.forEach(teamfight => {
+      // Ultimate names should be strings
+      [...teamfight.start.team1.ultimatesReady, ...teamfight.start.team2.ultimatesReady].forEach(heroName => {
+        expect(typeof heroName).toBe('string');
+        expect(heroName.length).toBeGreaterThan(0);
+      });
+
+      [...teamfight.end.team1.ultimatesReady, ...teamfight.end.team2.ultimatesReady].forEach(heroName => {
+        expect(typeof heroName).toBe('string');
+        expect(heroName.length).toBeGreaterThan(0);
+      });
+
+      [...teamfight.end.team1.ultimatesUsed, ...teamfight.end.team2.ultimatesUsed].forEach(heroName => {
+        expect(typeof heroName).toBe('string');
+        expect(heroName.length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  it('should have consistent teamfight data', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    dataModel.teamfights.forEach(teamfight => {
+      // The number of alive players should be reasonable (0-6 per team)
+      expect(teamfight.start.team1.alivePlayers.length).toBeLessThanOrEqual(6);
+      expect(teamfight.start.team2.alivePlayers.length).toBeLessThanOrEqual(6);
+      expect(teamfight.end.team1.alivePlayers.length).toBeLessThanOrEqual(6);
+      expect(teamfight.end.team2.alivePlayers.length).toBeLessThanOrEqual(6);
+
+      // Total kills by both teams should be reasonable for a teamfight
+      const totalKills = teamfight.end.team1.kills.length + teamfight.end.team2.kills.length;
+      expect(totalKills).toBeGreaterThanOrEqual(0);
+      expect(totalKills).toBeLessThanOrEqual(12); // Max possible kills in a teamfight
+
+      // The number of ultimates should be reasonable (0-6 per team)
+      expect(teamfight.start.team1.ultimatesReady.length).toBeLessThanOrEqual(6);
+      expect(teamfight.start.team2.ultimatesReady.length).toBeLessThanOrEqual(6);
+      expect(teamfight.end.team1.ultimatesUsed.length).toBeLessThanOrEqual(6);
+      expect(teamfight.end.team2.ultimatesUsed.length).toBeLessThanOrEqual(6);
+    });
   });
 });

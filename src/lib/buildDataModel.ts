@@ -209,6 +209,383 @@ const buildPlayerRelationships = (dataModel: ScrimsightDataModel.ScrimsightDataM
   });
 };
 
+const buildPlayerLives = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.PlayerLife[] => {
+  const lives: ScrimsightDataModel.PlayerLife[] = [];
+  const activeLifeByPlayer: Map<string, ScrimsightDataModel.PlayerLife> = new Map();
+
+  const getPlayerKey = (matchId: string, playerName: string) => `${matchId}-${playerName}`;
+
+  const getRoundIndex = (matchId: string, eventTime: number): ScrimsightDataModel.RoundNumber => {
+    const roundStarts = R.pipe(
+      dataModel.roundStart,
+      R.filter(r => r.matchId === matchId),
+      R.sortBy(r => r.matchTime)
+    );
+    
+    const activeRound = R.findLast(roundStarts, r => r.matchTime <= eventTime);
+    return (activeRound?.roundNumber || 1) as ScrimsightDataModel.RoundNumber;
+  };
+
+  const endPlayerLife = (matchId: string, playerName: string, endTime: number, causeOfEnd: 'death' | 'swap' | 'round_end') => {
+    const playerKey = getPlayerKey(matchId, playerName);
+    const currentLife = activeLifeByPlayer.get(playerKey);
+    if (currentLife) {
+      currentLife.endTime = endTime;
+      currentLife.duration = endTime - currentLife.startTime;
+      currentLife.causeOfEnd = causeOfEnd;
+      lives.push(currentLife);
+      activeLifeByPlayer.delete(playerKey);
+    }
+  };
+
+  const allEvents = R.pipe([
+    ...R.map(dataModel.heroSpawn, e => ({
+      matchId: e.matchId,
+      playerName: e.playerName,
+      playerHero: e.playerHero,
+      time: e.matchTime,
+      type: 'heroSpawn' as const
+    })),
+    ...R.map(dataModel.heroSwap, e => ({
+      matchId: e.matchId,
+      playerName: e.playerName,
+      playerHero: e.playerHero,
+      time: e.matchTime,
+      type: 'heroSwap' as const
+    })),
+    ...R.map(dataModel.kill, e => ({
+      matchId: e.matchId,
+      playerName: e.victimName,
+      playerHero: e.victimHero,
+      time: e.matchTime,
+      type: 'death' as const
+    }))
+  ], R.sortBy(event => event.time));
+
+  for (const event of allEvents) {
+    const playerKey = getPlayerKey(event.matchId, event.playerName);
+    const roundIndex = getRoundIndex(event.matchId, event.time);
+
+    switch (event.type) {
+      case 'heroSpawn':
+        endPlayerLife(event.matchId, event.playerName, event.time, 'round_end');
+        activeLifeByPlayer.set(playerKey, {
+          matchId: event.matchId,
+          roundIndex,
+          startTime: event.time,
+          endTime: Infinity,
+          duration: 0,
+          player: event.playerName,
+          hero: event.playerHero,
+          causeOfStart: 'spawn',
+          causeOfEnd: 'round_end',
+          eliminations: 0,
+          assists: 0,
+          ultimatesUsed: 0
+        });
+        break;
+
+      case 'heroSwap':
+        endPlayerLife(event.matchId, event.playerName, event.time, 'swap');
+        activeLifeByPlayer.set(playerKey, {
+          matchId: event.matchId,
+          roundIndex,
+          startTime: event.time,
+          endTime: Infinity,
+          duration: 0,
+          player: event.playerName,
+          hero: event.playerHero,
+          causeOfStart: 'swap',
+          causeOfEnd: 'round_end',
+          eliminations: 0,
+          assists: 0,
+          ultimatesUsed: 0
+        });
+        break;
+
+      case 'death':
+        endPlayerLife(event.matchId, event.playerName, event.time, 'death');
+        break;
+    }
+  }
+
+  activeLifeByPlayer.forEach((life) => {
+    const roundEnd = R.pipe(
+      dataModel.roundEnd,
+      R.filter(r => r.matchId === life.matchId),
+      R.sortBy(r => r.matchTime),
+      R.findLast(r => r.matchTime > life.startTime)
+    );
+
+    if (roundEnd) {
+      life.endTime = roundEnd.matchTime;
+      life.duration = life.endTime - life.startTime;
+      life.causeOfEnd = 'round_end';
+      lives.push(life);
+    }
+  });
+
+  return lives.sort((a, b) => {
+    if (a.matchId !== b.matchId) {
+      return a.matchId.localeCompare(b.matchId);
+    }
+    return a.startTime - b.startTime;
+  });
+};
+
+const buildTeamfights = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.Teamfight[] => {
+  const TEAMFIGHT_BUFFER_TIME = 10; // seconds
+  const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
+
+  // Group kill events by match
+  const killEventsByMatch = R.pipe(
+    dataModel.kill,
+    R.groupBy(event => event.matchId)
+  );
+
+  const teamfights: ScrimsightDataModel.Teamfight[] = [];
+
+  // Process each match
+  R.entries(killEventsByMatch).forEach(([matchId, killEvents]) => {
+    // Sort kills chronologically
+    const sortedKills = R.sortBy(killEvents, event => event.matchTime);
+
+    // Get match and team information
+    const matchStart = dataModel.matchStart.find(m => m.matchId === matchId);
+    if (!matchStart) return;
+
+    const team1Name = matchStart.team1Name;
+    const team2Name = matchStart.team2Name;
+
+    // Find teamfight periods
+    let teamfightStartTime: number | null = null;
+    let teamfightKills: ScrimsightDataModel.KillLogEvent[] = [];
+
+    for (let i = 0; i < sortedKills.length; i++) {
+      const currentKill = sortedKills[i];
+      const currentTime = currentKill.matchTime;
+
+      // If this is the first death or there was a long gap before this death,
+      // start a new teamfight
+      if (teamfightStartTime === null || 
+          (i > 0 && currentTime - sortedKills[i-1].matchTime > TEAMFIGHT_BUFFER_TIME)) {
+        
+        // If we had an ongoing teamfight, end it before the gap
+        if (teamfightStartTime !== null && i > 0) {
+          const endTime = sortedKills[i-1].matchTime + TEAMFIGHT_PADDING;
+          const startTime = Math.max(0, teamfightStartTime - TEAMFIGHT_PADDING);
+          
+          const teamfight = createTeamfight(dataModel, matchId, team1Name, team2Name, startTime, endTime, teamfightKills);
+          teamfights.push(teamfight);
+        }
+        
+        // Start a new teamfight
+        teamfightStartTime = currentTime;
+        teamfightKills = [currentKill];
+      } else {
+        // Continue the current teamfight
+        teamfightKills.push(currentKill);
+      }
+      
+      // If this is the last death, end the current teamfight
+      if (i === sortedKills.length - 1 && teamfightStartTime !== null) {
+        const startTime = Math.max(0, teamfightStartTime - TEAMFIGHT_PADDING);
+        const endTime = currentTime + TEAMFIGHT_PADDING;
+        
+        const teamfight = createTeamfight(dataModel, matchId, team1Name, team2Name, startTime, endTime, teamfightKills);
+        teamfights.push(teamfight);
+      }
+    }
+  });
+
+  return teamfights;
+};
+
+const createTeamfight = (
+  dataModel: ScrimsightDataModel.ScrimsightDataModel,
+  matchId: string,
+  team1Name: string,
+  team2Name: string,
+  startTime: number,
+  endTime: number,
+  killEvents: ScrimsightDataModel.KillLogEvent[]
+): ScrimsightDataModel.Teamfight => {
+  // Get round index for this teamfight
+  const roundIndex = getRoundIndexForTime(dataModel, matchId, startTime);
+
+  // Find all players alive at the start of the teamfight
+  const team1PlayersAliveAtStart = getPlayersAliveAtTime(dataModel, matchId, team1Name, startTime);
+  const team2PlayersAliveAtStart = getPlayersAliveAtTime(dataModel, matchId, team2Name, startTime);
+
+  // Find all players alive at the end of the teamfight
+  const team1PlayersAliveAtEnd = getPlayersAliveAtTime(dataModel, matchId, team1Name, endTime);
+  const team2PlayersAliveAtEnd = getPlayersAliveAtTime(dataModel, matchId, team2Name, endTime);
+
+  // Find ultimates ready at start
+  const team1UltimatesReadyAtStart = getUltimatesReadyAtTime(dataModel, matchId, team1Name, startTime);
+  const team2UltimatesReadyAtStart = getUltimatesReadyAtTime(dataModel, matchId, team2Name, startTime);
+
+  // Find ultimates ready at end
+  const team1UltimatesReadyAtEnd = getUltimatesReadyAtTime(dataModel, matchId, team1Name, endTime);
+  const team2UltimatesReadyAtEnd = getUltimatesReadyAtTime(dataModel, matchId, team2Name, endTime);
+
+  // Find ultimates used during the teamfight
+  const team1UltimatesUsed = getUltimatesUsedDuring(dataModel, matchId, team1Name, startTime, endTime);
+  const team2UltimatesUsed = getUltimatesUsedDuring(dataModel, matchId, team2Name, startTime, endTime);
+
+  // Find kills during the teamfight
+  const team1Kills = R.pipe(
+    killEvents,
+    R.filter(kill => kill.attackerTeam === team1Name),
+    R.map(kill => kill.victimName)
+  );
+
+  const team2Kills = R.pipe(
+    killEvents,
+    R.filter(kill => kill.attackerTeam === team2Name),
+    R.map(kill => kill.victimName)
+  );
+
+  return {
+    matchId,
+    roundIndex,
+    startTime,
+    endTime,
+    duration: endTime - startTime,
+    start: {
+      team1: {
+        alivePlayers: team1PlayersAliveAtStart,
+        ultimatesReady: team1UltimatesReadyAtStart
+      },
+      team2: {
+        alivePlayers: team2PlayersAliveAtStart,
+        ultimatesReady: team2UltimatesReadyAtStart
+      }
+    },
+    end: {
+      team1: {
+        alivePlayers: team1PlayersAliveAtEnd,
+        ultimatesReady: team1UltimatesReadyAtEnd,
+        ultimatesUsed: team1UltimatesUsed,
+        kills: team1Kills
+      },
+      team2: {
+        alivePlayers: team2PlayersAliveAtEnd,
+        ultimatesReady: team2UltimatesReadyAtEnd,
+        ultimatesUsed: team2UltimatesUsed,
+        kills: team2Kills
+      }
+    }
+  };
+};
+
+const getRoundIndexForTime = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, time: number): ScrimsightDataModel.RoundNumber => {
+  const roundStarts = R.pipe(
+    dataModel.roundStart,
+    R.filter(r => r.matchId === matchId),
+    R.sortBy(r => r.matchTime)
+  );
+  
+  const activeRound = R.findLast(roundStarts, r => r.matchTime <= time);
+  return (activeRound?.roundNumber || 1) as ScrimsightDataModel.RoundNumber;
+};
+
+const getPlayersAliveAtTime = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, teamName: string, time: number): ScrimsightDataModel.PlayerName[] => {
+  // Find all player lives that were active at the given time
+  const activeLives = R.pipe(
+    dataModel.playerLives,
+    R.filter(life => 
+      life.matchId === matchId &&
+      life.startTime <= time &&
+      life.endTime >= time
+    )
+  );
+
+  // Get team players from player stats
+  const teamPlayers = R.pipe(
+    dataModel.playerStat,
+    R.filter(stat => stat.matchId === matchId && stat.playerTeam === teamName),
+    R.map(stat => stat.playerName),
+    R.unique()
+  );
+
+  // Return players who are both on the team and have an active life
+  return R.pipe(
+    activeLives,
+    R.filter(life => teamPlayers.includes(life.player)),
+    R.map(life => life.player),
+    R.unique()
+  );
+};
+
+const getUltimatesReadyAtTime = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, teamName: string, time: number): ScrimsightDataModel.HeroName[] => {
+  // Find ultimates that were charged before the time and not yet used
+  const readyUltimates = R.pipe(
+    dataModel.ultimateCharged,
+    R.filter(ultimate => 
+      ultimate.matchId === matchId &&
+      ultimate.matchTime <= time
+    )
+  );
+
+  // Find ultimates that were used before or at the time
+  const usedUltimates = R.pipe(
+    dataModel.ultimateStart,
+    R.filter(ultimate => 
+      ultimate.matchId === matchId &&
+      ultimate.matchTime <= time
+    )
+  );
+
+  // Get team players
+  const teamPlayers = R.pipe(
+    dataModel.playerStat,
+    R.filter(stat => stat.matchId === matchId && stat.playerTeam === teamName),
+    R.map(stat => stat.playerName),
+    R.unique()
+  );
+
+  // Find ultimates ready but not used
+  const ultimatesReadyByPlayer = new Map<string, string>(); // player -> hero
+
+  // Add charged ultimates
+  readyUltimates.forEach(ultimate => {
+    if (teamPlayers.includes(ultimate.playerName)) {
+      ultimatesReadyByPlayer.set(ultimate.playerName, ultimate.playerHero);
+    }
+  });
+
+  // Remove used ultimates
+  usedUltimates.forEach(ultimate => {
+    if (teamPlayers.includes(ultimate.playerName)) {
+      ultimatesReadyByPlayer.delete(ultimate.playerName);
+    }
+  });
+
+  return Array.from(ultimatesReadyByPlayer.values());
+};
+
+const getUltimatesUsedDuring = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, teamName: string, startTime: number, endTime: number): ScrimsightDataModel.HeroName[] => {
+  // Get team players
+  const teamPlayers = R.pipe(
+    dataModel.playerStat,
+    R.filter(stat => stat.matchId === matchId && stat.playerTeam === teamName),
+    R.map(stat => stat.playerName),
+    R.unique()
+  );
+
+  return R.pipe(
+    dataModel.ultimateStart,
+    R.filter(ultimate => 
+      ultimate.matchId === matchId &&
+      ultimate.matchTime >= startTime &&
+      ultimate.matchTime <= endTime &&
+      teamPlayers.includes(ultimate.playerName)
+    ),
+    R.map(ultimate => ultimate.playerHero)
+  );
+};
+
 export const buildDataModel = (files: {fileName: string, fileModified: number, fileContent: string}[]): ScrimsightDataModel.ScrimsightDataModel => {
   const dataModel = createEmptyDataModel();
   
@@ -221,6 +598,9 @@ export const buildDataModel = (files: {fileName: string, fileModified: number, f
   dataModel.matches = buildMatchRelationships(dataModel, parsedFiles);
   dataModel.teams = buildTeamRelationships(dataModel);
   dataModel.players = buildPlayerRelationships(dataModel);
+  
+  dataModel.playerLives = buildPlayerLives(dataModel);
+  dataModel.teamfights = buildTeamfights(dataModel);
 
   return dataModel;
 };
