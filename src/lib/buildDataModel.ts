@@ -1,6 +1,7 @@
 import { parseFile, type DataAndSpecName } from "@library/scrimtime";
 import * as ScrimsightDataModel from "@library/ScrimsightDataModel";
 import { extractEventsFromFiles } from "@library/eventExtractionUtils";
+import { getRoleFromHero } from "@library/hero";
 import * as R from "remeda";
 
 
@@ -11,6 +12,7 @@ const createEmptyDataModel = (): ScrimsightDataModel.ScrimsightDataModel => ({
   matches: [],
   playerLives: [],
   teamfights: [],
+  playerStats: [],
   ability1Used: [],
   ability2Used: [],
   damage: [],
@@ -587,6 +589,112 @@ const getUltimatesUsedDuring = (dataModel: ScrimsightDataModel.ScrimsightDataMod
   );
 };
 
+const buildPlayerStats = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.PlayerStats[] => {
+  // Helper function to calculate playtime for a player in a match/round
+  const calculatePlaytime = (matchId: string, roundNumber: string, playerName: string): number => {
+    const playerLivesInRound = R.pipe(
+      dataModel.playerLives,
+      R.filter(life => 
+        life.matchId === matchId && 
+        life.roundIndex === parseInt(roundNumber) && 
+        life.player === playerName
+      )
+    );
+
+    return R.pipe(
+      playerLivesInRound,
+      R.sumBy(life => life.duration)
+    );
+  };
+
+
+  return R.pipe(
+    dataModel.playerStat,
+    R.map((statEvent): ScrimsightDataModel.PlayerStats => {
+      const playtime = calculatePlaytime(statEvent.matchId, statEvent.roundNumber, statEvent.playerName);
+      const playtimeMinutes = playtime / 60;
+      const per10Minutes = playtimeMinutes > 0 ? (10 / playtimeMinutes) : 0;
+
+      // Calculate derived metrics
+      const weaponAccuracy = statEvent.shotsFired > 0 ? (statEvent.shotsHit / statEvent.shotsFired) * 100 : 0;
+      const scopedWeaponAccuracy = statEvent.scopedShotsFired > 0 ? (statEvent.scopedShotsHit / statEvent.scopedShotsFired) * 100 : 0;
+      const criticalHitRate = statEvent.shotsHit > 0 ? (statEvent.criticalHits / statEvent.shotsHit) * 100 : 0;
+
+      return {
+        // Category fields
+        matchId: statEvent.matchId,
+        roundNumber: statEvent.roundNumber,
+        playerTeam: statEvent.playerTeam,
+        playerName: statEvent.playerName,
+        playerHero: statEvent.playerHero,
+        playerRole: getRoleFromHero(statEvent.playerHero),
+
+        // Base numerical fields (including calculated playtime)
+        playtime,
+        eliminations: statEvent.eliminations,
+        finalBlows: statEvent.finalBlows,
+        deaths: statEvent.deaths,
+        allDamageDealt: statEvent.allDamageDealt,
+        barrierDamageDealt: statEvent.barrierDamageDealt,
+        heroDamageDealt: statEvent.heroDamageDealt,
+        healingDealt: statEvent.healingDealt,
+        healingReceived: statEvent.healingReceived,
+        selfHealing: statEvent.selfHealing,
+        damageTaken: statEvent.damageTaken,
+        damageBlocked: statEvent.damageBlocked,
+        defensiveAssists: statEvent.defensiveAssists,
+        offensiveAssists: statEvent.offensiveAssists,
+        ultimatesEarned: statEvent.ultimatesEarned,
+        ultimatesUsed: statEvent.ultimatesUsed,
+        multikills: statEvent.multikills,
+        soloKills: statEvent.soloKills,
+        objectiveKills: statEvent.objectiveKills,
+        environmentalKills: statEvent.environmentalKills,
+        environmentalDeaths: statEvent.environmentalDeaths,
+        criticalHits: statEvent.criticalHits,
+        shotsFired: statEvent.shotsFired,
+        shotsHit: statEvent.shotsHit,
+        shotsMissed: statEvent.shotsMissed,
+        scopedShotsFired: statEvent.scopedShotsFired,
+        scopedShotsHit: statEvent.scopedShotsHit,
+
+        // Derived per-10-minute metrics
+        eliminationsPer10Minutes: statEvent.eliminations * per10Minutes,
+        finalBlowsPer10Minutes: statEvent.finalBlows * per10Minutes,
+        deathsPer10Minutes: statEvent.deaths * per10Minutes,
+        allDamageDealtPer10Minutes: statEvent.allDamageDealt * per10Minutes,
+        barrierDamageDealtPer10Minutes: statEvent.barrierDamageDealt * per10Minutes,
+        heroDamageDealtPer10Minutes: statEvent.heroDamageDealt * per10Minutes,
+        healingDealtPer10Minutes: statEvent.healingDealt * per10Minutes,
+        healingReceivedPer10Minutes: statEvent.healingReceived * per10Minutes,
+        selfHealingPer10Minutes: statEvent.selfHealing * per10Minutes,
+        damageTakenPer10Minutes: statEvent.damageTaken * per10Minutes,
+        damageBlockedPer10Minutes: statEvent.damageBlocked * per10Minutes,
+        defensiveAssistsPer10Minutes: statEvent.defensiveAssists * per10Minutes,
+        offensiveAssistsPer10Minutes: statEvent.offensiveAssists * per10Minutes,
+        ultimatesEarnedPer10Minutes: statEvent.ultimatesEarned * per10Minutes,
+        ultimatesUsedPer10Minutes: statEvent.ultimatesUsed * per10Minutes,
+        multikillsPer10Minutes: statEvent.multikills * per10Minutes,
+        soloKillsPer10Minutes: statEvent.soloKills * per10Minutes,
+        objectiveKillsPer10Minutes: statEvent.objectiveKills * per10Minutes,
+        environmentalKillsPer10Minutes: statEvent.environmentalKills * per10Minutes,
+        environmentalDeathsPer10Minutes: statEvent.environmentalDeaths * per10Minutes,
+        criticalHitsPer10Minutes: statEvent.criticalHits * per10Minutes,
+        shotsFiredPer10Minutes: statEvent.shotsFired * per10Minutes,
+        shotsHitPer10Minutes: statEvent.shotsHit * per10Minutes,
+        shotsMissedPer10Minutes: statEvent.shotsMissed * per10Minutes,
+        scopedShotsFiredPer10Minutes: statEvent.scopedShotsFired * per10Minutes,
+        scopedShotsHitPer10Minutes: statEvent.scopedShotsHit * per10Minutes,
+
+        // Derived percentage metrics
+        weaponAccuracy,
+        scopedWeaponAccuracy,
+        criticalHitRate
+      };
+    })
+  );
+};
+
 export const buildDataModel = (files: {fileName: string, fileModified: number, fileContent: string}[]): ScrimsightDataModel.ScrimsightDataModel => {
   const dataModel = createEmptyDataModel();
   
@@ -602,6 +710,8 @@ export const buildDataModel = (files: {fileName: string, fileModified: number, f
   
   dataModel.playerLives = buildPlayerLives(dataModel);
   dataModel.teamfights = buildTeamfights(dataModel);
+  
+  dataModel.playerStats = buildPlayerStats(dataModel);
 
   return dataModel;
 };

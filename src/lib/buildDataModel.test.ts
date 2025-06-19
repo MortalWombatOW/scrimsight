@@ -185,6 +185,7 @@ describe('buildDataModel', () => {
     expect(dataModel.players).toHaveLength(0);
     expect(dataModel.matchStart).toHaveLength(0);
     expect(dataModel.playerLives).toHaveLength(0);
+    expect(dataModel.playerStats).toHaveLength(0);
   });
 
   it('should build player lives correctly', () => {
@@ -457,6 +458,250 @@ describe('buildDataModel', () => {
       expect(teamfight.start.team2.ultimatesReady.length).toBeLessThanOrEqual(6);
       expect(teamfight.end.team1.ultimatesUsed.length).toBeLessThanOrEqual(6);
       expect(teamfight.end.team2.ultimatesUsed.length).toBeLessThanOrEqual(6);
+    });
+  });
+
+  describe('playerStats', () => {
+    it('should build player stats correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Player stats should be populated
+      expect(dataModel.playerStats.length).toBeGreaterThan(0);
+
+      // Each player stat should have required properties
+      dataModel.playerStats.forEach(stat => {
+        // Category fields
+        expect(typeof stat.matchId).toBe('string');
+        expect(typeof stat.roundNumber).toBe('string');
+        expect(typeof stat.playerTeam).toBe('string');
+        expect(typeof stat.playerName).toBe('string');
+        expect(typeof stat.playerHero).toBe('string');
+        expect(['tank', 'damage', 'support']).toContain(stat.playerRole);
+
+        // Base numerical fields
+        expect(typeof stat.playtime).toBe('number');
+        expect(stat.playtime).toBeGreaterThanOrEqual(0);
+        expect(typeof stat.eliminations).toBe('number');
+        expect(typeof stat.finalBlows).toBe('number');
+        expect(typeof stat.deaths).toBe('number');
+        expect(typeof stat.allDamageDealt).toBe('number');
+        expect(typeof stat.heroDamageDealt).toBe('number');
+        expect(typeof stat.healingDealt).toBe('number');
+
+        // Derived per-10-minute fields
+        expect(typeof stat.eliminationsPer10Minutes).toBe('number');
+        expect(stat.eliminationsPer10Minutes).toBeGreaterThanOrEqual(0);
+        expect(typeof stat.deathsPer10Minutes).toBe('number');
+        expect(stat.deathsPer10Minutes).toBeGreaterThanOrEqual(0);
+        expect(typeof stat.allDamageDealtPer10Minutes).toBe('number');
+        expect(stat.allDamageDealtPer10Minutes).toBeGreaterThanOrEqual(0);
+
+        // Derived percentage fields
+        expect(typeof stat.weaponAccuracy).toBe('number');
+        expect(stat.weaponAccuracy).toBeGreaterThanOrEqual(0);
+        expect(stat.weaponAccuracy).toBeLessThanOrEqual(100);
+        expect(typeof stat.criticalHitRate).toBe('number');
+        expect(stat.criticalHitRate).toBeGreaterThanOrEqual(0);
+        expect(stat.criticalHitRate).toBeLessThanOrEqual(100);
+      });
+    });
+
+    it('should calculate per-10-minute stats correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.playerStats.forEach(stat => {
+        const playtimeMinutes = stat.playtime / 60;
+        
+        if (playtimeMinutes > 0) {
+          const expectedMultiplier = 10 / playtimeMinutes;
+          
+          // Check that per-10-minute calculations are correct
+          expect(stat.eliminationsPer10Minutes).toBeCloseTo(stat.eliminations * expectedMultiplier, 1);
+          expect(stat.deathsPer10Minutes).toBeCloseTo(stat.deaths * expectedMultiplier, 1);
+          expect(stat.allDamageDealtPer10Minutes).toBeCloseTo(stat.allDamageDealt * expectedMultiplier, 1);
+        } else {
+          // If no playtime, per-10-minute stats should be 0
+          expect(stat.eliminationsPer10Minutes).toBe(0);
+          expect(stat.deathsPer10Minutes).toBe(0);
+          expect(stat.allDamageDealtPer10Minutes).toBe(0);
+        }
+      });
+    });
+
+    it('should calculate accuracy percentages correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.playerStats.forEach(stat => {
+        // Weapon accuracy should be calculated correctly
+        if (stat.shotsFired > 0) {
+          const expectedAccuracy = (stat.shotsHit / stat.shotsFired) * 100;
+          expect(stat.weaponAccuracy).toBeCloseTo(expectedAccuracy, 1);
+        } else {
+          expect(stat.weaponAccuracy).toBe(0);
+        }
+
+        // Scoped weapon accuracy should be calculated correctly
+        if (stat.scopedShotsFired > 0) {
+          const expectedScopedAccuracy = (stat.scopedShotsHit / stat.scopedShotsFired) * 100;
+          expect(stat.scopedWeaponAccuracy).toBeCloseTo(expectedScopedAccuracy, 1);
+        } else {
+          expect(stat.scopedWeaponAccuracy).toBe(0);
+        }
+
+        // Critical hit rate should be calculated correctly
+        if (stat.shotsHit > 0) {
+          const expectedCritRate = (stat.criticalHits / stat.shotsHit) * 100;
+          expect(stat.criticalHitRate).toBeCloseTo(expectedCritRate, 1);
+        } else {
+          expect(stat.criticalHitRate).toBe(0);
+        }
+      });
+    });
+
+    it('should assign correct player roles', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Group stats by hero to check role assignments
+      const statsByHero = dataModel.playerStats.reduce((acc, stat) => {
+        if (!acc[stat.playerHero]) {
+          acc[stat.playerHero] = [];
+        }
+        acc[stat.playerHero].push(stat);
+        return acc;
+      }, {} as Record<string, typeof dataModel.playerStats>);
+
+      Object.entries(statsByHero).forEach(([hero, stats]) => {
+        // All stats for the same hero should have the same role
+        const roles = [...new Set(stats.map(s => s.playerRole))];
+        expect(roles).toHaveLength(1);
+
+        // Verify some known hero role assignments
+        const role = roles[0];
+        
+        // Common tank heroes
+        if (['D.Va', 'Reinhardt', 'Winston', 'Zarya'].includes(hero)) {
+          expect(role).toBe('tank');
+        }
+        
+        // Common damage heroes
+        if (['Tracer', 'Genji', 'Soldier: 76', 'Widowmaker'].includes(hero)) {
+          expect(role).toBe('damage');
+        }
+        
+        // Common support heroes
+        if (['Mercy', 'Ana', 'Lúcio', 'Zenyatta'].includes(hero)) {
+          expect(role).toBe('support');
+        }
+      });
+    });
+
+    it('should link player stats to existing matches and players', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      const matchIds = new Set(dataModel.matches.map(m => m.match));
+      const playerNames = new Set(dataModel.players.map(p => p.player));
+
+      dataModel.playerStats.forEach(stat => {
+        // Match should exist
+        expect(matchIds.has(stat.matchId)).toBe(true);
+        // Player should exist
+        expect(playerNames.has(stat.playerName)).toBe(true);
+      });
+    });
+
+    it('should have consistent data with raw playerStat events', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Player stats count should match raw playerStat events count
+      expect(dataModel.playerStats.length).toBe(dataModel.playerStat.length);
+
+      // Create lookup for raw events
+      const rawStatsByKey = dataModel.playerStat.reduce((acc, event) => {
+        const key = `${event.matchId}-${event.roundNumber}-${event.playerName}-${event.playerHero}`;
+        acc[key] = event;
+        return acc;
+      }, {} as Record<string, typeof dataModel.playerStat[0]>);
+
+      dataModel.playerStats.forEach(stat => {
+        const key = `${stat.matchId}-${stat.roundNumber}-${stat.playerName}-${stat.playerHero}`;
+        const rawStat = rawStatsByKey[key];
+        
+        expect(rawStat).toBeDefined();
+
+        // Verify that base stats match raw events
+        expect(stat.eliminations).toBe(rawStat.eliminations);
+        expect(stat.finalBlows).toBe(rawStat.finalBlows);
+        expect(stat.deaths).toBe(rawStat.deaths);
+        expect(stat.allDamageDealt).toBe(rawStat.allDamageDealt);
+        expect(stat.heroDamageDealt).toBe(rawStat.heroDamageDealt);
+        expect(stat.healingDealt).toBe(rawStat.healingDealt);
+        expect(stat.shotsFired).toBe(rawStat.shotsFired);
+        expect(stat.shotsHit).toBe(rawStat.shotsHit);
+      });
+    });
+
+    it('should handle edge cases correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.playerStats.forEach(stat => {
+        // Should handle division by zero gracefully
+        if (stat.shotsFired === 0) {
+          expect(stat.weaponAccuracy).toBe(0);
+        }
+        
+        if (stat.scopedShotsFired === 0) {
+          expect(stat.scopedWeaponAccuracy).toBe(0);
+        }
+        
+        if (stat.shotsHit === 0) {
+          expect(stat.criticalHitRate).toBe(0);
+        }
+
+        if (stat.playtime === 0) {
+          expect(stat.eliminationsPer10Minutes).toBe(0);
+          expect(stat.deathsPer10Minutes).toBe(0);
+          expect(stat.allDamageDealtPer10Minutes).toBe(0);
+        }
+
+        // All numerical values should be finite
+        expect(Number.isFinite(stat.playtime)).toBe(true);
+        expect(Number.isFinite(stat.weaponAccuracy)).toBe(true);
+        expect(Number.isFinite(stat.eliminationsPer10Minutes)).toBe(true);
+      });
+    });
+
+    it('should calculate playtime from player lives correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Group player stats by match/round/player for validation
+      const statsGrouped = dataModel.playerStats.reduce((acc, stat) => {
+        const key = `${stat.matchId}-${stat.roundNumber}-${stat.playerName}`;
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(stat);
+        return acc;
+      }, {} as Record<string, typeof dataModel.playerStats>);
+
+      Object.entries(statsGrouped).forEach(([key, stats]) => {
+        const [matchId, roundNumber, playerName] = key.split('-');
+        
+        // Find corresponding player lives
+        const relevantLives = dataModel.playerLives.filter(life =>
+          life.matchId === matchId &&
+          life.roundIndex === parseInt(roundNumber) &&
+          life.player === playerName
+        );
+
+        const expectedPlaytime = relevantLives.reduce((sum, life) => sum + life.duration, 0);
+
+        // All stats for this player/match/round should have the same playtime
+        const playtimes = [...new Set(stats.map(s => s.playtime))];
+        expect(playtimes).toHaveLength(1);
+        
+        // Playtime should match sum of player life durations
+        expect(playtimes[0]).toBeCloseTo(expectedPlaytime, 1);
+      });
     });
   });
 });

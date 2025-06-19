@@ -1,12 +1,23 @@
 
+// Hero lists by role
+export const TANK_HEROES = [ 'D.Va', 'Orisa', 'Reinhardt', 'Roadhog', 'Winston', 'Sigma', 'Wrecking Ball', 'Zarya', 'Rammatra', 'Mauga', 'Junker Queen', 'Hazard'] as const;
+export const DAMAGE_HEROES = ['Ashe', 'Bastion', 'Cassidy', 'McCree', 'Doomfist', 'Echo', 'Genji', 'Hanzo', 'Junkrat', 'Mei', 'Pharah', 'Reaper', 'Soldier: 76', 'Sombra', 'Symmetra', 'Torbjörn', 'Tracer', 'Widowmaker', 'Sojourn'] as const;
+export const SUPPORT_HEROES = ['Ana', 'Baptiste', 'Brigitte', 'Lúcio', 'Mercy', 'Moira', 'Zenyatta', 'Kiriko', 'Lifeweaver', 'Illari', 'Juno'] as const;
+export const ROLES = ['tank', 'damage', 'support'] as const;
+export const MAP_NAMES = ['Antarctic Peninsula', 'Busan', 'Ilios', 'Lijiang Tower', 'Nepal', 'Oasis', 'Samoa', 'Circuit Royal', 'Dorado', 'Havana', 'Junkertown', 'Rialto', 'Route 66', 'Shambali Monastary', 'Watchpoint: Gibraltar', 'New Junk City', 'Suravasa', 'Blizzard World', 'Eichenwalde', 'Hollywood', 'King\'s Row', 'Midtown', 'Numbani', 'Paraiso', 'Colosseo', 'Esperanca', 'New Queen Street', 'Runasapi', 'Hanaoka', 'Throne of Anubis'] as const;
+export const GAME_MODES = ['Control', 'Escort', 'Hybrid', 'Flashpoint', 'Push', 'Clash'] as const;
+
+
 export type ScrimID = string;
 export type MatchID = string;
 export type RoundNumber = 1 | 2 | 3;
 export type PlayerName = string;
 export type TeamName = string;
-export type HeroName = string;
-export type MapName = string;
-export type Role = 'tank' | 'damage' | 'support';
+export type Hero = typeof TANK_HEROES[number] | typeof DAMAGE_HEROES[number] | typeof SUPPORT_HEROES[number];
+
+export type GameMode = typeof GAME_MODES[number];
+export type Role = typeof ROLES[number];
+export type MapName = typeof MAP_NAMES[number];
 
 // These interfaces are used to parse the raw log data into structured events
 export interface Ability1UsedLogEvent { matchId: string; type: string; matchTime: number; playerTeam: string; playerName: string; playerHero: string; heroDuplicated: string; }
@@ -88,7 +99,7 @@ export interface MatchTimeSegment {
 
 export interface PlayerLife extends MatchTimeSegment {
   player: PlayerName;
-  hero: HeroName;
+  hero: Hero;
   causeOfStart: 'spawn' | 'swap';
   causeOfEnd: 'death' | 'swap' | 'round_end';
   eliminations: number;
@@ -98,11 +109,11 @@ export interface PlayerLife extends MatchTimeSegment {
 
 interface TeamfightTeamStartState {
   alivePlayers: PlayerName[];
-  ultimatesReady: HeroName[];
+  ultimatesReady: Hero[];
 }
 
 interface TeamfightTeamEndState extends TeamfightTeamStartState {
-  ultimatesUsed: HeroName[];
+  ultimatesUsed: Hero[];
   kills: PlayerName[];
 }
 
