@@ -521,7 +521,7 @@ const getPlayersAliveAtTime = (dataModel: ScrimsightDataModel.ScrimsightDataMode
   );
 };
 
-const getUltimatesReadyAtTime = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, teamName: string, time: number): ScrimsightDataModel.HeroName[] => {
+const getUltimatesReadyAtTime = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, teamName: string, time: number): ScrimsightDataModel.Hero[] => {
   // Find ultimates that were charged before the time and not yet used
   const readyUltimates = R.pipe(
     dataModel.ultimateCharged,
@@ -565,10 +565,18 @@ const getUltimatesReadyAtTime = (dataModel: ScrimsightDataModel.ScrimsightDataMo
     }
   });
 
-  return Array.from(ultimatesReadyByPlayer.values());
+  const rawHeroes = Array.from(ultimatesReadyByPlayer.values());
+
+  // validate heroes
+  const invalidHeroes = R.difference(rawHeroes, [...ScrimsightDataModel.DAMAGE_HEROES, ...ScrimsightDataModel.TANK_HEROES, ...ScrimsightDataModel.SUPPORT_HEROES]);
+  if (invalidHeroes.length > 0) {
+    console.warn(`Invalid heroes detected in ultimates ready: ${invalidHeroes.join(', ')}`);
+  }
+
+  return rawHeroes as ScrimsightDataModel.Hero[];
 };
 
-const getUltimatesUsedDuring = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, teamName: string, startTime: number, endTime: number): ScrimsightDataModel.HeroName[] => {
+const getUltimatesUsedDuring = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, teamName: string, startTime: number, endTime: number): ScrimsightDataModel.Hero[] => {
   // Get team players
   const teamPlayers = R.pipe(
     dataModel.playerStat,
