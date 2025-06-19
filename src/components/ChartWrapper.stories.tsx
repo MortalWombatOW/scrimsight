@@ -94,9 +94,9 @@ export const LineChart: Story = {
       type: 'line',
       data: lineChartData,
       series: [
-        { dataKey: 'sales', name: 'Sales', stroke: 'hsl(var(--p))' },
-        { dataKey: 'profit', name: 'Profit', stroke: 'hsl(var(--s))' },
-        { dataKey: 'expenses', name: 'Expenses', stroke: 'hsl(var(--er))' },
+        { dataKey: 'sales', name: 'Sales', stroke: '#84d84b' },
+        { dataKey: 'profit', name: 'Profit', stroke: '#a855f7' },
+        { dataKey: 'expenses', name: 'Expenses', stroke: '#ef4444' },
       ],
       xAxis: { dataKey: 'month' },
       yAxis: {},
@@ -115,8 +115,8 @@ export const BarChart: Story = {
       type: 'bar',
       data: barChartData,
       series: [
-        { dataKey: 'users', name: 'Users', fill: 'hsl(var(--p))' },
-        { dataKey: 'sessions', name: 'Sessions', fill: 'hsl(var(--s))' },
+        { dataKey: 'users', name: 'Users', fill: '#84d84b' },
+        { dataKey: 'sessions', name: 'Sessions', fill: '#a855f7' },
       ],
       xAxis: { dataKey: 'category' },
       yAxis: {},
@@ -135,8 +135,8 @@ export const AreaChart: Story = {
       type: 'area',
       data: areaChartData,
       series: [
-        { dataKey: 'active', name: 'Active Users', fill: 'hsl(var(--su))' },
-        { dataKey: 'inactive', name: 'Inactive Users', fill: 'hsl(var(--wa))' },
+        { dataKey: 'active', name: 'Active Users', fill: '#10b981' },
+        { dataKey: 'inactive', name: 'Inactive Users', fill: '#f59e0b' },
       ],
       xAxis: { dataKey: 'time' },
       yAxis: {},
@@ -175,13 +175,13 @@ export const AdvancedLineChart: Story = {
         { 
           dataKey: 'responseTime', 
           name: 'Response Time (ms)', 
-          stroke: 'hsl(var(--in))',
+          stroke: '#3b82f6',
           strokeWidth: 3,
         },
         { 
           dataKey: 'throughput', 
           name: 'Throughput (req/s)', 
-          stroke: 'hsl(var(--su))',
+          stroke: '#10b981',
           strokeWidth: 2,
         },
       ],
@@ -281,7 +281,7 @@ export const MultipleChartsLayout: Story = {
         config={{
           type: 'line',
           data: lineChartData.slice(0, 4),
-          series: [{ dataKey: 'sales', name: 'Sales', stroke: 'hsl(var(--p))' }],
+          series: [{ dataKey: 'sales', name: 'Sales', stroke: '#84d84b' }],
           xAxis: { dataKey: 'month' },
           yAxis: {},
           height: 250,
@@ -293,7 +293,7 @@ export const MultipleChartsLayout: Story = {
         config={{
           type: 'bar',
           data: barChartData.slice(0, 3),
-          series: [{ dataKey: 'users', name: 'Users', fill: 'hsl(var(--s))' }],
+          series: [{ dataKey: 'users', name: 'Users', fill: '#a855f7' }],
           xAxis: { dataKey: 'category' },
           yAxis: {},
           height: 250,
@@ -305,7 +305,7 @@ export const MultipleChartsLayout: Story = {
         config={{
           type: 'area',
           data: areaChartData.slice(0, 4),
-          series: [{ dataKey: 'active', name: 'Active', fill: 'hsl(var(--su))' }],
+          series: [{ dataKey: 'active', name: 'Active', fill: '#10b981' }],
           xAxis: { dataKey: 'time' },
           yAxis: {},
           height: 250,
@@ -335,8 +335,8 @@ export const ResponsiveDesign: Story = {
       type: 'line',
       data: performanceData,
       series: [
-        { dataKey: 'responseTime', name: 'Response Time', stroke: 'hsl(var(--in))' },
-        { dataKey: 'throughput', name: 'Throughput', stroke: 'hsl(var(--su))' },
+        { dataKey: 'responseTime', name: 'Response Time', stroke: '#3b82f6' },
+        { dataKey: 'throughput', name: 'Throughput', stroke: '#10b981' },
       ],
       xAxis: { dataKey: 'date' },
       yAxis: {},

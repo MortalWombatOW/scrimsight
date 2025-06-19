@@ -1,5 +1,9 @@
 [
   {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/AuthGuard.tsx",
+    "errorMessage": "🔥 File 'AuthGuard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/AuthGuard.stories.tsx\nError location = ./src/components/AuthGuard.tsx\n\n"
+  },
+  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/lib/sampledata/Log-2023-08-28-17-29-57.txt",
     "errorMessage": "🔥 Folder 'sampledata' is invalid. 🔥\n\nAccording to the structure, the 'lib' folder can only contain files.\nError location = ./src/lib/sampledata\n\n"
   }
