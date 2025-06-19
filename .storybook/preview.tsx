@@ -5,7 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider as JotaiProvider, createStore } from "jotai";
 import { ReactFlowProvider } from "reactflow";
 import "../src/index.css";
-
+import { themes } from "storybook/theming";
 // Mock AuthProvider for Storybook
 import { AuthContext } from "react-oidc-context";
 
@@ -87,6 +87,9 @@ const preview: Preview = {
   tags: ["autodocs"],
 
   parameters: {
+    docs: {
+      theme: themes.dark, // Use dark theme for Storybook
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

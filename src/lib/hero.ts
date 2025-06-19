@@ -1,7 +1,7 @@
 
 import * as ScrimsightDataModel from "@library/ScrimsightDataModel";
 
-export const getHeroImage = (heroName: string, rounded = true): string => `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(heroName)}.png`;
+export const getHeroImage = (heroName: ScrimsightDataModel.Hero, rounded = true): string => `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(heroName)}.png`;
 
 export const getRoleFromHero = (hero: string): ScrimsightDataModel.Role => {
   if (ScrimsightDataModel.TANK_HEROES.includes(hero as typeof ScrimsightDataModel.TANK_HEROES[number])) return 'tank';
