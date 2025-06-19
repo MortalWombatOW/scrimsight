@@ -6,8 +6,6 @@ export function stringHash(str: string): number {
   return Math.abs(hash);
 }
 
-
-
 export function mapNameToFileName(name: string, overhead: boolean): string {
   const lower = name.toLowerCase().replaceAll(' ', '').replaceAll("'", '');
   if (overhead) {
