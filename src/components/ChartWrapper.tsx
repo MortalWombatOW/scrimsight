@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement } from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -16,10 +16,12 @@ import {
   Pie,
   Cell,
   TooltipProps,
-} from 'recharts';
+} from "recharts";
+import { BarChart3 } from "lucide-react";
+import EmptyState from "./EmptyState";
 
 // Chart type definitions
-export type ChartType = 'line' | 'bar' | 'area' | 'pie';
+export type ChartType = "line" | "bar" | "area" | "pie";
 
 // Data structure for charts
 export interface ChartDataPoint {
@@ -29,7 +31,7 @@ export interface ChartDataPoint {
 // Configuration for chart axes
 export interface AxisConfig {
   dataKey?: string;
-  label?: string;  
+  label?: string;
   domain?: [number | string, number | string];
   tick?: boolean;
   tickFormatter?: (value: string | number | undefined) => string;
@@ -40,7 +42,7 @@ export interface SeriesConfig {
   dataKey: string;
   name?: string;
   color?: string;
-  type?: 'monotone' | 'linear' | 'step';
+  type?: "monotone" | "linear" | "step";
   strokeWidth?: number;
   fill?: string;
   stroke?: string;
@@ -78,18 +80,22 @@ export interface ChartWrapperProps {
 
 // Default color palette based on DaisyUI theme
 const DEFAULT_COLORS = [
-  'hsl(var(--p))', // primary
-  'hsl(var(--s))', // secondary
-  'hsl(var(--a))', // accent
-  'hsl(var(--in))', // info
-  'hsl(var(--su))', // success
-  'hsl(var(--wa))', // warning
-  'hsl(var(--er))', // error
-  'hsl(var(--n))', // neutral
+  "#ff8f00", // primary - bright green
+  "#a855f7", // secondary - purple
+  "#4ade80", // accent - green accent
+  "#3b82f6", // info - blue
+  "#10b981", // success - emerald
+  "#f59e0b", // warning - amber
+  "#ef4444", // error - red
+  "#6b7280", // neutral - gray
 ];
 
 // Custom tooltip component
-const CustomTooltip = ({ active, payload, label }: TooltipProps<string | number, string | number>) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: TooltipProps<string | number, string | number>) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-base-100 p-3 rounded-lg shadow-lg border border-base-300">
@@ -116,8 +122,18 @@ const LoadingSpinner = () => (
 const ErrorDisplay = ({ error }: { error: string }) => (
   <div className="flex items-center justify-center h-64">
     <div className="alert alert-error max-w-md">
-      <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="stroke-current shrink-0 h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
       </svg>
       <span>{error}</span>
     </div>
@@ -130,7 +146,7 @@ const ChartWrapper = ({
   subtitle,
   loading = false,
   error,
-  className = '',
+  className = "",
 }: ChartWrapperProps) => {
   const {
     type,
@@ -159,12 +175,12 @@ const ChartWrapper = ({
   // Handle empty data
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-base-content/70 text-center">
-          <p className="text-lg font-medium">No data available</p>
-          <p className="text-sm">Please provide data to display the chart</p>
-        </div>
-      </div>
+      <EmptyState
+        icon={BarChart3}
+        title="No data available"
+        description="Please provide data to display the chart"
+        size="md"
+      />
     );
   }
 
@@ -176,10 +192,15 @@ const ChartWrapper = ({
     };
 
     switch (type) {
-      case 'line':
+      case "line":
         return (
           <LineChart {...commonProps}>
-            {showGrid && <CartesianGrid strokeDasharray="3 3" className="stroke-base-300" />}
+            {showGrid && (
+              <CartesianGrid
+                strokeDasharray="3 3"
+                className="stroke-base-300"
+              />
+            )}
             {xAxis && xAxis.dataKey && (
               <XAxis
                 dataKey={xAxis.dataKey}
@@ -202,7 +223,7 @@ const ChartWrapper = ({
             {series.map((s, index) => (
               <Line
                 key={s.dataKey}
-                type={s.type || 'monotone'}
+                type={s.type || "monotone"}
                 dataKey={s.dataKey}
                 name={s.name}
                 stroke={s.stroke || colors[index % colors.length]}
@@ -213,10 +234,15 @@ const ChartWrapper = ({
           </LineChart>
         );
 
-      case 'bar':
+      case "bar":
         return (
           <BarChart {...commonProps}>
-            {showGrid && <CartesianGrid strokeDasharray="3 3" className="stroke-base-300" />}
+            {showGrid && (
+              <CartesianGrid
+                strokeDasharray="3 3"
+                className="stroke-base-300"
+              />
+            )}
             {xAxis && xAxis.dataKey && (
               <XAxis
                 dataKey={xAxis.dataKey}
@@ -247,10 +273,15 @@ const ChartWrapper = ({
           </BarChart>
         );
 
-      case 'area':
+      case "area":
         return (
           <AreaChart {...commonProps}>
-            {showGrid && <CartesianGrid strokeDasharray="3 3" className="stroke-base-300" />}
+            {showGrid && (
+              <CartesianGrid
+                strokeDasharray="3 3"
+                className="stroke-base-300"
+              />
+            )}
             {xAxis && xAxis.dataKey && (
               <XAxis
                 dataKey={xAxis.dataKey}
@@ -273,7 +304,7 @@ const ChartWrapper = ({
             {series.map((s, index) => (
               <Area
                 key={s.dataKey}
-                type={s.type || 'monotone'}
+                type={s.type || "monotone"}
                 dataKey={s.dataKey}
                 name={s.name}
                 stroke={s.stroke || colors[index % colors.length]}
@@ -284,29 +315,34 @@ const ChartWrapper = ({
           </AreaChart>
         );
 
-      case 'pie':
+      case "pie":
         return (
           <PieChart {...commonProps}>
             {showTooltip && <Tooltip content={<CustomTooltip />} />}
             {showLegend && <Legend className="text-base-content" />}
             <Pie
               data={data}
-              dataKey={series[0]?.dataKey || 'value'}
-              nameKey={xAxis?.dataKey || 'name'}
+              dataKey={series[0]?.dataKey || "value"}
+              nameKey={xAxis?.dataKey || "name"}
               cx="50%"
               cy="50%"
               outerRadius={Math.min(height * 0.3, 120)}
               label
             >
               {data.map((_, index) => (
-                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={colors[index % colors.length]}
+                />
               ))}
             </Pie>
           </PieChart>
         );
 
       default:
-        return <div className="text-error">Unsupported chart type: {type}</div> as ReactElement;
+        return (
+          <div className="text-error">Unsupported chart type: {type}</div>
+        ) as ReactElement;
     }
   };
 
