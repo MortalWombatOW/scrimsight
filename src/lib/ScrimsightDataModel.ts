@@ -77,6 +77,8 @@ export interface ScrimRelationships {
   teams: [TeamName, TeamName];
   matches: MatchID[];
   date: Date;
+  team1MatchesWon: number;
+  team2MatchesWon: number;
 }
 
 export interface TeamRelationships {

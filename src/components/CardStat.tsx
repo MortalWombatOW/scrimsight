@@ -28,7 +28,7 @@ const CardStat = ({
 
   return (
     <div
-      className={`bg-base-200 rounded-lg p-4 border-l-4 max-w-sm ${getSeverityBorderClass(
+      className={`bg-base-200 rounded-lg p-4 border-l-4 max-w-sm min-w-max ${getSeverityBorderClass(
         severity
       )}`}
       title={tooltip}

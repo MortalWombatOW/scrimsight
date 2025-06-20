@@ -109,11 +109,42 @@ const groupMatchesIntoScrims = (dataModel: ScrimsightDataModel.ScrimsightDataMod
     R.entries(),
     R.map(([scrimId, matchIds]) => {
       const firstMatch = matchesWithDate.find(m => m.matchId === matchIds[0])!;
+      
+      // Calculate team1MatchesWon and team2MatchesWon by counting wins per team
+      let team1MatchesWon = 0;
+      let team2MatchesWon = 0;
+      
+      matchIds.forEach(matchId => {
+        // Get final scores from match end event or last round end event
+        const matchEnd = dataModel.matchEnd.find(event => event.matchId === matchId);
+        const lastRoundEnd = R.pipe(
+          dataModel.roundEnd,
+          R.filter(event => event.matchId === matchId),
+          R.sortBy(event => event.matchTime),
+          R.last()
+        );
+
+        const team1Score = matchEnd?.team1Score ?? lastRoundEnd?.team1Score ?? 0;
+        const team2Score = matchEnd?.team2Score ?? lastRoundEnd?.team2Score ?? 0;
+
+        // Determine winning team and increment count
+        if (team1Score > team2Score) {
+          team1MatchesWon++;
+        } else if (team2Score > team1Score) {
+          team2MatchesWon++;
+        } else {
+          // In case of tie, award to team1 (consistent with match winner logic)
+          team1MatchesWon++;
+        }
+      });
+      
       return {
         scrim: scrimId,
         teams: [firstMatch.team1Name, firstMatch.team2Name] as [ScrimsightDataModel.TeamName, ScrimsightDataModel.TeamName],
         matches: matchIds,
-        date: new Date(firstMatch.dateString)
+        date: new Date(firstMatch.dateString),
+        team1MatchesWon,
+        team2MatchesWon
       };
     })
   );
@@ -807,30 +838,107 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     })
   );
 
-  // Get all numerical keys from the PlayerStatsNumericalKeys type
-  const numericalKeys: ScrimsightDataModel.PlayerStatsNumericalKeys[] = ScrimsightDataModel.playerStatsNumericalKeys;
-
-  // Helper function to sum numerical fields across grouped records
-  const sumNumericalFields = (records: ScrimsightDataModel.PlayerStats[]): Record<ScrimsightDataModel.PlayerStatsNumericalKeys, number> => {
+  // Helper function to sum only base numerical fields across grouped records
+  const sumBaseNumericalFields = (records: ScrimsightDataModel.PlayerStats[]): Record<ScrimsightDataModel.PlayerStatsBaseNumericalKeys, number> => {
     return R.pipe(
-      numericalKeys,
+      ScrimsightDataModel.playerStatsBaseNumericalKeys,
       R.map(key => [key, R.sumBy(records, record => record[key])] as const),
       R.fromEntries()
-    ) as Record<ScrimsightDataModel.PlayerStatsNumericalKeys, number>;
+    ) as Record<ScrimsightDataModel.PlayerStatsBaseNumericalKeys, number>;
   };
 
-  // Build total aggregation (sum all numerical fields across all records)
-  const total = sumNumericalFields(playerStats);
+  // Helper function to calculate derived fields from summed base fields
+  const calculateDerivedFields = (summedData: Record<ScrimsightDataModel.PlayerStatsBaseNumericalKeys, number>): Record<ScrimsightDataModel.PlayerStatsDerivedNumericalKeys, number> => {
+    const playtimeMinutes = summedData.playtime / 60;
+    const per10Minutes = playtimeMinutes > 0 ? (10 * 60) / summedData.playtime : 0;
+
+    // Calculate per-10-minute metrics
+    const eliminationsPer10Minutes = summedData.eliminations * per10Minutes;
+    const finalBlowsPer10Minutes = summedData.finalBlows * per10Minutes;
+    const deathsPer10Minutes = summedData.deaths * per10Minutes;
+    const allDamageDealtPer10Minutes = summedData.allDamageDealt * per10Minutes;
+    const barrierDamageDealtPer10Minutes = summedData.barrierDamageDealt * per10Minutes;
+    const heroDamageDealtPer10Minutes = summedData.heroDamageDealt * per10Minutes;
+    const healingDealtPer10Minutes = summedData.healingDealt * per10Minutes;
+    const healingReceivedPer10Minutes = summedData.healingReceived * per10Minutes;
+    const selfHealingPer10Minutes = summedData.selfHealing * per10Minutes;
+    const damageTakenPer10Minutes = summedData.damageTaken * per10Minutes;
+    const damageBlockedPer10Minutes = summedData.damageBlocked * per10Minutes;
+    const defensiveAssistsPer10Minutes = summedData.defensiveAssists * per10Minutes;
+    const offensiveAssistsPer10Minutes = summedData.offensiveAssists * per10Minutes;
+    const ultimatesEarnedPer10Minutes = summedData.ultimatesEarned * per10Minutes;
+    const ultimatesUsedPer10Minutes = summedData.ultimatesUsed * per10Minutes;
+    const multikillsPer10Minutes = summedData.multikills * per10Minutes;
+    const soloKillsPer10Minutes = summedData.soloKills * per10Minutes;
+    const objectiveKillsPer10Minutes = summedData.objectiveKills * per10Minutes;
+    const environmentalKillsPer10Minutes = summedData.environmentalKills * per10Minutes;
+    const environmentalDeathsPer10Minutes = summedData.environmentalDeaths * per10Minutes;
+    const criticalHitsPer10Minutes = summedData.criticalHits * per10Minutes;
+    const shotsFiredPer10Minutes = summedData.shotsFired * per10Minutes;
+    const shotsHitPer10Minutes = summedData.shotsHit * per10Minutes;
+    const shotsMissedPer10Minutes = summedData.shotsMissed * per10Minutes;
+    const scopedShotsFiredPer10Minutes = summedData.scopedShotsFired * per10Minutes;
+    const scopedShotsHitPer10Minutes = summedData.scopedShotsHit * per10Minutes;
+
+    // Calculate percentage metrics
+    const weaponAccuracy = summedData.shotsFired > 0 ? (summedData.shotsHit / summedData.shotsFired) * 100 : 0;
+    const scopedWeaponAccuracy = summedData.scopedShotsFired > 0 ? (summedData.scopedShotsHit / summedData.scopedShotsFired) * 100 : 0;
+    const criticalHitRate = summedData.shotsHit > 0 ? (summedData.criticalHits / summedData.shotsHit) * 100 : 0;
+
+    return {
+      eliminationsPer10Minutes,
+      finalBlowsPer10Minutes,
+      deathsPer10Minutes,
+      allDamageDealtPer10Minutes,
+      barrierDamageDealtPer10Minutes,
+      heroDamageDealtPer10Minutes,
+      healingDealtPer10Minutes,
+      healingReceivedPer10Minutes,
+      selfHealingPer10Minutes,
+      damageTakenPer10Minutes,
+      damageBlockedPer10Minutes,
+      defensiveAssistsPer10Minutes,
+      offensiveAssistsPer10Minutes,
+      ultimatesEarnedPer10Minutes,
+      ultimatesUsedPer10Minutes,
+      multikillsPer10Minutes,
+      soloKillsPer10Minutes,
+      objectiveKillsPer10Minutes,
+      environmentalKillsPer10Minutes,
+      environmentalDeathsPer10Minutes,
+      criticalHitsPer10Minutes,
+      shotsFiredPer10Minutes,
+      shotsHitPer10Minutes,
+      shotsMissedPer10Minutes,
+      scopedShotsFiredPer10Minutes,
+      scopedShotsHitPer10Minutes,
+      weaponAccuracy,
+      scopedWeaponAccuracy,
+      criticalHitRate
+    };
+  };
+
+
+
+  // Build total aggregation (sum base fields, then calculate derived fields)
+  const totalBase = sumBaseNumericalFields(playerStats);
+  const totalDerived = calculateDerivedFields(totalBase);
+  const total = {...totalBase, ...totalDerived};
 
   // Build byPlayer aggregation (sum stats grouped by player)
   const byPlayerGroups = R.groupBy(playerStats, stat => stat.playerName);
   const byPlayer = R.pipe(
     byPlayerGroups,
     R.entries(),
-    R.map(([playerName, records]) => ({
-      playerName,
-      ...sumNumericalFields(records)
-    }))
+    R.map(([playerName, records]) => {
+      const baseFields = sumBaseNumericalFields(records);
+      const derivedFields = calculateDerivedFields(baseFields);
+      return {
+        playerName,
+        ...baseFields,
+        ...derivedFields,
+      };
+    })
   );
 
   // Build byTeam aggregation (sum stats grouped by team)
@@ -838,10 +946,15 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
   const byTeam = R.pipe(
     byTeamGroups,
     R.entries(),
-    R.map(([playerTeam, records]) => ({
-      playerTeam,
-      ...sumNumericalFields(records)
-    }))
+    R.map(([playerTeam, records]) => {
+      const baseFields = sumBaseNumericalFields(records);
+      const derivedFields = calculateDerivedFields(baseFields);
+      return {
+        playerTeam,
+        ...baseFields,
+        ...derivedFields,
+      };
+    })
   );
 
   // Build byTeamAndPlayer aggregation (sum stats grouped by team and player)
@@ -851,10 +964,13 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     R.entries(),
     R.map(([key, records]) => {
       const [playerTeam, playerName] = key.split('|');
+      const baseFields = sumBaseNumericalFields(records);
+      const derivedFields = calculateDerivedFields(baseFields);
       return {
         playerTeam,
         playerName,
-        ...sumNumericalFields(records)
+        ...baseFields,
+        ...derivedFields,
       };
     })
   );
@@ -866,11 +982,14 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     R.entries(),
     R.map(([key, records]) => {
       const [playerTeam, playerName, matchId] = key.split('|');
+      const baseFields = sumBaseNumericalFields(records);
+      const derivedFields = calculateDerivedFields(baseFields);
       return {
         playerTeam,
         playerName,
         matchId,
-        ...sumNumericalFields(records)
+        ...baseFields,
+        ...derivedFields,
       };
     })
   );
@@ -882,10 +1001,13 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     R.entries(),
     R.map(([key, records]) => {
       const [playerName, playerHero] = key.split('|');
+      const baseFields = sumBaseNumericalFields(records);
+      const derivedFields = calculateDerivedFields(baseFields);
       return {
         playerName,
         playerHero: playerHero as ScrimsightDataModel.Hero,
-        ...sumNumericalFields(records)
+        ...baseFields,
+        ...derivedFields
       };
     })
   );
@@ -895,10 +1017,15 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
   const byRole = R.pipe(
     byRoleGroups,
     R.entries(),
-    R.map(([playerRole, records]) => ({
-      playerRole: playerRole as ScrimsightDataModel.Role,
-      ...sumNumericalFields(records)
-    }))
+    R.map(([playerRole, records]) => {
+      const baseFields = sumBaseNumericalFields(records);
+      const derivedFields = calculateDerivedFields(baseFields);
+      return {
+        playerRole: playerRole as ScrimsightDataModel.Role,
+        ...baseFields,
+        ...derivedFields
+      };
+    })
   );
 
   // Build byHero aggregation (sum stats grouped by hero)
@@ -906,10 +1033,15 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
   const byHero = R.pipe(
     byHeroGroups,
     R.entries(),
-    R.map(([playerHero, records]) => ({
-      playerHero: playerHero as ScrimsightDataModel.Hero,
-      ...sumNumericalFields(records)
-    }))
+    R.map(([playerHero, records]) => {
+      const baseFields = sumBaseNumericalFields(records);
+      const derivedFields = calculateDerivedFields(baseFields);
+      return {
+        playerHero: playerHero as ScrimsightDataModel.Hero,
+        ...baseFields,
+        ...derivedFields
+      };
+    })
   );
 
   // Build byTeamAndMatch aggregation (sum stats grouped by team and match)
@@ -919,10 +1051,13 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     R.entries(),
     R.map(([key, records]) => {
       const [playerTeam, matchId] = key.split('|');
+      const baseFields = sumBaseNumericalFields(records);
+      const derivedFields = calculateDerivedFields(baseFields);
       return {
         playerTeam,
         matchId,
-        ...sumNumericalFields(records)
+        ...baseFields,
+        ...derivedFields
       };
     })
   );

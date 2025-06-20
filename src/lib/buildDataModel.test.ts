@@ -59,6 +59,43 @@ describe('buildDataModel', () => {
       expect(scrim.teams).toHaveLength(2);
       expect(scrim.matches.length).toBeGreaterThan(0);
       expect(scrim.date).toBeInstanceOf(Date);
+      
+      // New fields for match wins
+      expect(typeof scrim.team1MatchesWon).toBe('number');
+      expect(scrim.team1MatchesWon).toBeGreaterThanOrEqual(0);
+      expect(typeof scrim.team2MatchesWon).toBe('number');
+      expect(scrim.team2MatchesWon).toBeGreaterThanOrEqual(0);
+      
+      // Total matches won should equal total matches in scrim
+      expect(scrim.team1MatchesWon + scrim.team2MatchesWon).toBe(scrim.matches.length);
+    });
+  });
+
+  it('should calculate scrim match wins correctly', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    // Verify that scrim match wins are calculated correctly by cross-referencing with match data
+    dataModel.scrims.forEach(scrim => {
+      let expectedTeam1Wins = 0;
+      let expectedTeam2Wins = 0;
+      
+      scrim.matches.forEach(matchId => {
+        const match = dataModel.matches.find(m => m.match === matchId);
+        expect(match).toBeDefined();
+        
+        if (match) {
+          // Check which team won this match and increment expected count
+          if (match.winningTeam === scrim.teams[0]) {
+            expectedTeam1Wins++;
+          } else if (match.winningTeam === scrim.teams[1]) {
+            expectedTeam2Wins++;
+          }
+        }
+      });
+      
+      // Verify that computed wins match expected wins
+      expect(scrim.team1MatchesWon).toBe(expectedTeam1Wins);
+      expect(scrim.team2MatchesWon).toBe(expectedTeam2Wins);
     });
   });
 
@@ -837,6 +874,115 @@ describe('buildDataModel', () => {
         expect(stat.eliminations).toBeGreaterThanOrEqual(0);
         expect(stat.deaths).toBeGreaterThanOrEqual(0);
         expect(stat.playtime).toBeGreaterThanOrEqual(0);
+      });
+    });
+
+    it('should calculate per10 metrics correctly after aggregation', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Test that per10 calculations are statistically valid when aggregating
+      dataModel.playerStatBreakdown.byPlayer.forEach(playerStat => {
+        if (playerStat.playtime > 0) {
+          const playtimeMinutes = playerStat.playtime / 60;
+          const expectedEliminationsPer10 = (playerStat.eliminations / playtimeMinutes) * 10;
+          const expectedDeathsPer10 = (playerStat.deaths / playtimeMinutes) * 10;
+          const expectedDamagePer10 = (playerStat.allDamageDealt / playtimeMinutes) * 10;
+
+          // Allow for small floating point differences
+          expect(playerStat.eliminationsPer10Minutes).toBeCloseTo(expectedEliminationsPer10, 6);
+          expect(playerStat.deathsPer10Minutes).toBeCloseTo(expectedDeathsPer10, 6);
+          expect(playerStat.allDamageDealtPer10Minutes).toBeCloseTo(expectedDamagePer10, 6);
+        } else {
+          // If no playtime, per10 should be 0
+          expect(playerStat.eliminationsPer10Minutes).toBe(0);
+          expect(playerStat.deathsPer10Minutes).toBe(0);
+          expect(playerStat.allDamageDealtPer10Minutes).toBe(0);
+        }
+      });
+
+      // Test team-level aggregation
+      dataModel.playerStatBreakdown.byTeam.forEach(teamStat => {
+        if (teamStat.playtime > 0) {
+          const playtimeMinutes = teamStat.playtime / 60;
+          const expectedEliminationsPer10 = (teamStat.eliminations / playtimeMinutes) * 10;
+          const expectedDeathsPer10 = (teamStat.deaths / playtimeMinutes) * 10;
+
+          expect(teamStat.eliminationsPer10Minutes).toBeCloseTo(expectedEliminationsPer10, 6);
+          expect(teamStat.deathsPer10Minutes).toBeCloseTo(expectedDeathsPer10, 6);
+        }
+      });
+    });
+
+    it('should calculate percentage metrics correctly after aggregation', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.playerStatBreakdown.byPlayer.forEach(playerStat => {
+        // Weapon accuracy should be shots hit / shots fired * 100
+        if (playerStat.shotsFired > 0) {
+          const expectedAccuracy = (playerStat.shotsHit / playerStat.shotsFired) * 100;
+          expect(playerStat.weaponAccuracy).toBeCloseTo(expectedAccuracy, 6);
+        } else {
+          expect(playerStat.weaponAccuracy).toBe(0);
+        }
+
+        // Critical hit rate should be critical hits / shots hit * 100
+        if (playerStat.shotsHit > 0) {
+          const expectedCritRate = (playerStat.criticalHits / playerStat.shotsHit) * 100;
+          expect(playerStat.criticalHitRate).toBeCloseTo(expectedCritRate, 6);
+        } else {
+          expect(playerStat.criticalHitRate).toBe(0);
+        }
+
+        // Scoped weapon accuracy should be scoped shots hit / scoped shots fired * 100
+        if (playerStat.scopedShotsFired > 0) {
+          const expectedScopedAccuracy = (playerStat.scopedShotsHit / playerStat.scopedShotsFired) * 100;
+          expect(playerStat.scopedWeaponAccuracy).toBeCloseTo(expectedScopedAccuracy, 6);
+        } else {
+          expect(playerStat.scopedWeaponAccuracy).toBe(0);
+        }
+      });
+    });
+
+    it('should maintain statistical validity across all aggregation levels', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Test that all aggregation levels have valid statistical calculations
+      const aggregationLevels = [
+        dataModel.playerStatBreakdown.byPlayer,
+        dataModel.playerStatBreakdown.byTeam,
+        dataModel.playerStatBreakdown.byTeamAndPlayer,
+        dataModel.playerStatBreakdown.byPlayerAndHero,
+        dataModel.playerStatBreakdown.byRole,
+        dataModel.playerStatBreakdown.byHero,
+        dataModel.playerStatBreakdown.byTeamAndMatch,
+        [dataModel.playerStatBreakdown.total]
+      ];
+
+      aggregationLevels.forEach(level => {
+        level.forEach(stat => {
+          // Per10 calculations should be mathematically correct
+          if (stat.playtime > 0) {
+            const playtimeMinutes = stat.playtime / 60;
+            const expectedEliminationsPer10 = (stat.eliminations / playtimeMinutes) * 10;
+            expect(stat.eliminationsPer10Minutes).toBeCloseTo(expectedEliminationsPer10, 6);
+          } else {
+            expect(stat.eliminationsPer10Minutes).toBe(0);
+          }
+
+          // Percentage calculations should be mathematically correct
+          if (stat.shotsFired > 0) {
+            const expectedAccuracy = (stat.shotsHit / stat.shotsFired) * 100;
+            expect(stat.weaponAccuracy).toBeCloseTo(expectedAccuracy, 6);
+          } else {
+            expect(stat.weaponAccuracy).toBe(0);
+          }
+
+          // All calculated values should be finite
+          expect(Number.isFinite(stat.eliminationsPer10Minutes)).toBe(true);
+          expect(Number.isFinite(stat.weaponAccuracy)).toBe(true);
+          expect(Number.isFinite(stat.criticalHitRate)).toBe(true);
+          expect(Number.isFinite(stat.scopedWeaponAccuracy)).toBe(true);
+        });
       });
     });
   });

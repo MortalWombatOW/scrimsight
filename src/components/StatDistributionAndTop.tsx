@@ -27,13 +27,13 @@ const StatDistributionAndTop = ({
   precision = 1,
 }: StatDistributionAndTopProps) => {
   const chartConfig: ChartConfig = useMemo(() => {
-    const values = rows.map(row => row.value);
+    const values = rows.map((row) => row.value);
     const deciles = computeDeciles(values);
     const smoothedData = smoothDistribution(deciles, 2);
 
     return {
       type: "area",
-      data: smoothedData.map(point => ({
+      data: smoothedData.map((point) => ({
         value: point.value,
         frequency: point.frequency,
       })),
@@ -41,7 +41,7 @@ const StatDistributionAndTop = ({
         {
           dataKey: "frequency",
           name: "Distribution",
-          fill: "#ff8f00",
+          fill: "#ff8f0044",
           stroke: "#ff8f00",
           type: "monotone",
         },
@@ -80,7 +80,6 @@ const StatDistributionAndTop = ({
       <ChartWrapper config={chartConfig} className="mr-12" />
 
       <div>
-        <h4 className="text-lg font-medium text-base-content mb-4">Top 3</h4>
         <div className="space-y-3">
           {topThreeRows.map((row, index) => (
             <div
@@ -88,7 +87,7 @@ const StatDistributionAndTop = ({
               className="flex items-center justify-between bg-base-200 rounded-lg p-3"
             >
               <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-semibold">
+                <div className="w-6 h-6 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-semibold leading-none">
                   {index + 1}
                 </div>
                 <span className="font-medium text-base-content">

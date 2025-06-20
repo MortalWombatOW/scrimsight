@@ -35,23 +35,31 @@ const HomePage = () => {
     dataModel.playerStatBreakdown.total.eliminations /
     Math.max(1, dataModel.playerStatBreakdown.total.deaths);
 
-  const killDeathRows = dataModel.playerStatBreakdown.byPlayer.map(player => ({
-    category: player.playerName,
-    value: player.eliminations / Math.max(1, player.deaths)
-  }));
+  const killDeathRows = dataModel.playerStatBreakdown.byPlayer.map(
+    (player) => ({
+      category: player.playerName,
+      value: player.eliminations / Math.max(1, player.deaths),
+    })
+  );
 
-  const damagePerTenRows = dataModel.playerStatBreakdown.byPlayer.map(player => ({
-    category: player.playerName,
-    value: player.allDamageDealtPer10Minutes
-  }));
+  const damagePerTenRows = dataModel.playerStatBreakdown.byPlayer.map(
+    (player) => ({
+      category: player.playerName,
+      value: player.allDamageDealtPer10Minutes,
+    })
+  );
 
-  const healingPerTenRows = dataModel.playerStatBreakdown.byPlayer.map(player => ({
-    category: player.playerName,
-    value: player.healingDealtPer10Minutes
-  }));
+  const healingPerTenRows = dataModel.playerStatBreakdown.byPlayer.map(
+    (player) => ({
+      category: player.playerName,
+      value: player.healingDealtPer10Minutes,
+    })
+  );
 
-  const avgDamagePerTen = dataModel.playerStatBreakdown.total.allDamageDealtPer10Minutes;
-  const avgHealingPerTen = dataModel.playerStatBreakdown.total.healingDealtPer10Minutes;
+  const avgDamagePerTen =
+    dataModel.playerStatBreakdown.total.allDamageDealtPer10Minutes;
+  const avgHealingPerTen =
+    dataModel.playerStatBreakdown.total.healingDealtPer10Minutes;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -62,7 +70,7 @@ const HomePage = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 bg-base-100 p-6 rounded-lg">
         <CardStat
           label="Total Scrims"
           value={dataModel.scrims.length}
@@ -95,14 +103,21 @@ const HomePage = () => {
         />
         <CardStat
           label="Total Playtime"
-          value={formatDuration(dataModel.playerStatBreakdown.total.playtime)}
+          value={formatDuration(
+            dataModel.matches.reduce(
+              (total, match) => total + match.duration,
+              0
+            )
+          )}
           icon={<Clock className="w-6 h-6" />}
           severity="neutral"
         />
       </div>
 
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-base-content mb-6">Key Metrics</h2>
+        <h2 className="text-2xl font-bold text-base-content mb-6">
+          Key Metrics
+        </h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <StatDistributionAndTop
             statName="Kill/Death Ratio"

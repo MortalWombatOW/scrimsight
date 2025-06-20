@@ -19,6 +19,8 @@ import {
 } from "recharts";
 import { BarChart3 } from "lucide-react";
 import EmptyState from "./EmptyState";
+import * as R from "remeda";
+import { prettyFormat } from "../lib/format";
 
 // Chart type definitions
 export type ChartType = "line" | "bar" | "area" | "pie";
@@ -96,13 +98,17 @@ const CustomTooltip = ({
   payload,
   label,
 }: TooltipProps<string | number, string | number>) => {
+  const labelIsNumeric = R.isNumber(label);
+  const formattedLabel = labelIsNumeric ? prettyFormat(label) : label;
   if (active && payload && payload.length) {
     return (
       <div className="bg-base-100 p-3 rounded-lg shadow-lg border border-base-300">
-        <p className="text-base-content font-medium">{`${label}`}</p>
+        <p className="text-base-content font-medium">{formattedLabel}</p>
         {payload.map((entry, index) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
-            {`${entry.name}: ${entry.value}`}
+            {`${entry.name}: ${
+              R.isNumber(entry.value) ? prettyFormat(entry.value) : entry.value
+            }`}
           </p>
         ))}
       </div>
