@@ -65,6 +65,11 @@ export interface MatchRelationships {
   map: MapName;
   date: Date;
   rounds: RoundNumber[];
+  duration: number; // in seconds, sum of all round durations
+  team1Score: number;
+  team2Score: number;
+  winningTeam: TeamName;
+  gameMode: GameMode;
 }
 
 export interface ScrimRelationships {
@@ -95,6 +100,12 @@ export interface MatchTimeSegment {
   startTime: number; // in seconds
   endTime: number; // in seconds
   duration: number; // in seconds
+}
+
+export interface Round extends MatchTimeSegment {
+  team1Score: number;
+  team2Score: number;
+  winningTeam: TeamName;
 }
 
 export interface PlayerLife extends MatchTimeSegment {
@@ -129,19 +140,7 @@ export interface Teamfight extends MatchTimeSegment {
 };
 
 export interface ScrimsightDataModel {
-  // Relationships between entities
-  matches: MatchRelationships[];
-  scrims: ScrimRelationships[];
-  teams: TeamRelationships[];
-  players: PlayerRelationships[];
-
-  // Computed time segments
-  playerLives: PlayerLife[];
-  teamfights: Teamfight[];
-
-  // Enriched player stats
-  playerStats: PlayerStats[];
-
+ 
   // Log events parsed from the raw log files
   ability1Used: Ability1UsedLogEvent[];
   ability2Used: Ability2UsedLogEvent[];
@@ -164,5 +163,31 @@ export interface ScrimsightDataModel {
   ultimateCharged: UltimateChargedLogEvent[];
   ultimateEnd: UltimateEndLogEvent[];
   ultimateStart: UltimateStartLogEvent[];
+
+  // Relationships between entities
+   matches: MatchRelationships[];
+   scrims: ScrimRelationships[];
+   teams: TeamRelationships[];
+   players: PlayerRelationships[];
+
+   // Computed time segments
+   playerLives: PlayerLife[];
+   teamfights: Teamfight[];
+   rounds: Round[];
+ 
+   // Enriched player stats
+   playerStatBreakdown: {
+     total: {[k in PlayerStatsNumericalKeys]: number};
+     byPlayer: ({playerName: string} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by player
+     byTeam: ({playerTeam: string} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team
+     byTeamAndPlayer: ({playerTeam: string, playerName: string} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team and player
+     byTeamAndPlayerAndMatch: ({playerTeam: string, playerName: string, matchId: MatchID} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team, player and match
+     byPlayerAndHero: ({playerName: string, playerHero: Hero} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by player and hero
+     byRole: ({playerRole: Role} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by role
+     byHero: ({playerHero: Hero} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by hero
+     byTeamAndMatch: ({playerTeam: string, matchId: MatchID} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team and match
+    }
+
+
 }
   

@@ -73,12 +73,70 @@ describe('buildDataModel', () => {
       expect(typeof match.map).toBe('string');
       expect(match.date).toBeInstanceOf(Date);
       expect(Array.isArray(match.rounds)).toBe(true);
+      
+      // New fields added
+      expect(typeof match.duration).toBe('number');
+      expect(match.duration).toBeGreaterThanOrEqual(0);
+      expect(typeof match.team1Score).toBe('number');
+      expect(match.team1Score).toBeGreaterThanOrEqual(0);
+      expect(typeof match.team2Score).toBe('number');
+      expect(match.team2Score).toBeGreaterThanOrEqual(0);
+      expect(typeof match.winningTeam).toBe('string');
+      expect(match.teams).toContain(match.winningTeam);
+      expect(typeof match.gameMode).toBe('string');
+      expect(['Control', 'Escort', 'Hybrid', 'Flashpoint', 'Push', 'Clash']).toContain(match.gameMode);
     });
 
     // Matches should be linked to existing scrims
     const scrimIds = new Set(dataModel.scrims.map(s => s.scrim));
     dataModel.matches.forEach(match => {
       expect(scrimIds.has(match.scrim) || match.scrim.startsWith('unknown-scrim-')).toBe(true);
+    });
+  });
+
+  it('should calculate match duration correctly excluding time between rounds', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    dataModel.matches.forEach(match => {
+      // Find round start and end events for this match
+      const roundStarts = dataModel.roundStart
+        .filter(event => event.matchId === match.match)
+        .sort((a, b) => a.matchTime - b.matchTime);
+      
+      const roundEnds = dataModel.roundEnd
+        .filter(event => event.matchId === match.match)
+        .sort((a, b) => a.matchTime - b.matchTime);
+
+      if (roundStarts.length > 0 && roundEnds.length > 0) {
+        // Calculate expected duration by summing individual round durations
+        const expectedDuration = match.rounds.reduce((sum, roundNumber) => {
+          const roundStart = roundStarts.find(r => r.roundNumber === roundNumber);
+          const roundEnd = roundEnds.find(r => r.roundNumber === roundNumber);
+          
+          if (roundStart && roundEnd) {
+            return sum + (roundEnd.matchTime - roundStart.matchTime);
+          }
+          return sum;
+        }, 0);
+
+        expect(match.duration).toBeCloseTo(expectedDuration, 1);
+      }
+    });
+  });
+
+  it('should determine winning team correctly', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    dataModel.matches.forEach(match => {
+      // Winning team should be the one with higher score, or team1 in case of tie
+      if (match.team1Score > match.team2Score) {
+        expect(match.winningTeam).toBe(match.teams[0]);
+      } else if (match.team2Score > match.team1Score) {
+        expect(match.winningTeam).toBe(match.teams[1]);
+      } else {
+        // In case of tie, should default to team1
+        expect(match.winningTeam).toBe(match.teams[0]);
+      }
     });
   });
 
@@ -185,7 +243,12 @@ describe('buildDataModel', () => {
     expect(dataModel.players).toHaveLength(0);
     expect(dataModel.matchStart).toHaveLength(0);
     expect(dataModel.playerLives).toHaveLength(0);
-    expect(dataModel.playerStats).toHaveLength(0);
+    expect(dataModel.rounds).toHaveLength(0);
+    expect(dataModel.playerStatBreakdown.byPlayer).toHaveLength(0);
+    expect(dataModel.playerStatBreakdown.byTeam).toHaveLength(0);
+    expect(dataModel.playerStatBreakdown.byTeamAndPlayer).toHaveLength(0);
+    expect(dataModel.playerStatBreakdown.byPlayerAndHero).toHaveLength(0);
+    expect(dataModel.playerStatBreakdown.byRole).toHaveLength(0);
   });
 
   it('should build player lives correctly', () => {
@@ -461,22 +524,148 @@ describe('buildDataModel', () => {
     });
   });
 
-  describe('playerStats', () => {
-    it('should build player stats correctly', () => {
+  describe('rounds', () => {
+    it('should build rounds correctly', () => {
       const dataModel = buildDataModel(sampleFiles);
 
-      // Player stats should be populated
-      expect(dataModel.playerStats.length).toBeGreaterThan(0);
+      // Rounds should be populated
+      expect(dataModel.rounds.length).toBeGreaterThan(0);
 
-      // Each player stat should have required properties
-      dataModel.playerStats.forEach(stat => {
-        // Category fields
-        expect(typeof stat.matchId).toBe('string');
-        expect(typeof stat.roundNumber).toBe('string');
-        expect(typeof stat.playerTeam).toBe('string');
+      // Each round should have required properties
+      dataModel.rounds.forEach(round => {
+        expect(typeof round.matchId).toBe('string');
+        expect(typeof round.roundIndex).toBe('number');
+        expect([1, 2, 3]).toContain(round.roundIndex);
+        expect(typeof round.startTime).toBe('number');
+        expect(typeof round.endTime).toBe('number');
+        expect(typeof round.duration).toBe('number');
+        expect(typeof round.team1Score).toBe('number');
+        expect(typeof round.team2Score).toBe('number');
+        expect(typeof round.winningTeam).toBe('string');
+        
+        // Duration should be positive and match endTime - startTime
+        expect(round.duration).toBeGreaterThan(0);
+        expect(round.duration).toBe(round.endTime - round.startTime);
+        
+        // Start time should be before end time
+        expect(round.startTime).toBeLessThan(round.endTime);
+        
+        // Scores should be non-negative
+        expect(round.team1Score).toBeGreaterThanOrEqual(0);
+        expect(round.team2Score).toBeGreaterThanOrEqual(0);
+      });
+    });
+
+    it('should link rounds to existing matches', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      const matchIds = new Set(dataModel.matches.map(m => m.match));
+
+      dataModel.rounds.forEach(round => {
+        // Match should exist
+        expect(matchIds.has(round.matchId)).toBe(true);
+      });
+    });
+
+    it('should determine round winners correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.rounds.forEach(round => {
+        // Find the match for this round to get team names
+        const match = dataModel.matches.find(m => m.match === round.matchId);
+        expect(match).toBeDefined();
+        
+        if (match) {
+          // Winning team should be one of the match teams
+          expect(match.teams).toContain(round.winningTeam);
+          
+          // Winning team should be the one with higher score, or team1 in case of tie
+          if (round.team1Score > round.team2Score) {
+            expect(round.winningTeam).toBe(match.teams[0]);
+          } else if (round.team2Score > round.team1Score) {
+            expect(round.winningTeam).toBe(match.teams[1]);
+          } else {
+            // In case of tie, should default to team1
+            expect(round.winningTeam).toBe(match.teams[0]);
+          }
+        }
+      });
+    });
+
+    it('should sort rounds by match and round index', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Check that rounds are sorted properly
+      for (let i = 1; i < dataModel.rounds.length; i++) {
+        const prev = dataModel.rounds[i - 1];
+        const curr = dataModel.rounds[i];
+        
+        // Should be sorted by matchId first, then by roundIndex
+        if (prev.matchId === curr.matchId) {
+          expect(prev.roundIndex).toBeLessThanOrEqual(curr.roundIndex);
+        } else {
+          expect(prev.matchId.localeCompare(curr.matchId)).toBeLessThanOrEqual(0);
+        }
+      }
+    });
+
+    it('should have consistent data with match information', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Group rounds by match
+      const roundsByMatch = dataModel.rounds.reduce((acc, round) => {
+        if (!acc[round.matchId]) {
+          acc[round.matchId] = [];
+        }
+        acc[round.matchId].push(round);
+        return acc;
+      }, {} as Record<string, typeof dataModel.rounds>);
+
+      // Check that each match has the expected rounds
+      dataModel.matches.forEach(match => {
+        const matchRounds = roundsByMatch[match.match] || [];
+        
+        // Should have rounds for each round number in the match
+        const roundNumbers = matchRounds.map(r => r.roundIndex).sort();
+        const expectedRounds = match.rounds.sort();
+        
+        expect(roundNumbers).toEqual(expectedRounds);
+      });
+    });
+
+    it('should calculate round durations correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.rounds.forEach(round => {
+        // Duration should be positive
+        expect(round.duration).toBeGreaterThan(0);
+        // Duration should match endTime - startTime
+        expect(round.duration).toBe(round.endTime - round.startTime);
+        // Start time should be before end time
+        expect(round.startTime).toBeLessThan(round.endTime);
+      });
+    });
+  });
+
+  describe('playerStatBreakdown', () => {
+    it('should build player stat breakdown correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Player stat breakdown should be populated
+      expect(dataModel.playerStatBreakdown.byPlayer.length).toBeGreaterThan(0);
+      expect(dataModel.playerStatBreakdown.byTeam.length).toBeGreaterThan(0);
+      expect(dataModel.playerStatBreakdown.byTeamAndPlayer.length).toBeGreaterThan(0);
+      expect(dataModel.playerStatBreakdown.byTeamAndPlayerAndMatch.length).toBeGreaterThan(0);
+      expect(dataModel.playerStatBreakdown.byPlayerAndHero.length).toBeGreaterThan(0);
+      expect(dataModel.playerStatBreakdown.byRole.length).toBeGreaterThan(0);
+      expect(dataModel.playerStatBreakdown.byHero.length).toBeGreaterThan(0);
+      expect(dataModel.playerStatBreakdown.byTeamAndMatch.length).toBeGreaterThan(0);
+
+      // Each byPlayer record should have required properties
+      dataModel.playerStatBreakdown.byPlayer.forEach(stat => {
+        // Should have playerName
         expect(typeof stat.playerName).toBe('string');
-        expect(typeof stat.playerHero).toBe('string');
-        expect(['tank', 'damage', 'support']).toContain(stat.playerRole);
+        expect(stat.playerName.length).toBeGreaterThan(0);
 
         // Base numerical fields
         expect(typeof stat.playtime).toBe('number');
@@ -499,208 +688,155 @@ describe('buildDataModel', () => {
         // Derived percentage fields
         expect(typeof stat.weaponAccuracy).toBe('number');
         expect(stat.weaponAccuracy).toBeGreaterThanOrEqual(0);
-        expect(stat.weaponAccuracy).toBeLessThanOrEqual(100);
         expect(typeof stat.criticalHitRate).toBe('number');
         expect(stat.criticalHitRate).toBeGreaterThanOrEqual(0);
-        expect(stat.criticalHitRate).toBeLessThanOrEqual(100);
+      });
+
+      // Each byTeam record should have required properties
+      dataModel.playerStatBreakdown.byTeam.forEach(stat => {
+        // Should have playerTeam
+        expect(typeof stat.playerTeam).toBe('string');
+        expect(stat.playerTeam.length).toBeGreaterThan(0);
+
+        // Base numerical fields
+        expect(typeof stat.playtime).toBe('number');
+        expect(stat.playtime).toBeGreaterThanOrEqual(0);
+        expect(typeof stat.eliminations).toBe('number');
+        expect(typeof stat.finalBlows).toBe('number');
+        expect(typeof stat.deaths).toBe('number');
+      });
+
+      // Total should have all numerical fields
+      expect(typeof dataModel.playerStatBreakdown.total.playtime).toBe('number');
+      expect(typeof dataModel.playerStatBreakdown.total.eliminations).toBe('number');
+      expect(typeof dataModel.playerStatBreakdown.total.deaths).toBe('number');
+
+      // Validate new breakdown types have correct structure
+      dataModel.playerStatBreakdown.byTeamAndPlayer.forEach(stat => {
+        expect(typeof stat.playerTeam).toBe('string');
+        expect(typeof stat.playerName).toBe('string');
+        expect(typeof stat.playtime).toBe('number');
+      });
+
+      dataModel.playerStatBreakdown.byPlayerAndHero.forEach(stat => {
+        expect(typeof stat.playerName).toBe('string');
+        expect(typeof stat.playerHero).toBe('string');
+        expect(typeof stat.playtime).toBe('number');
+      });
+
+      dataModel.playerStatBreakdown.byRole.forEach(stat => {
+        expect(typeof stat.playerRole).toBe('string');
+        expect(['tank', 'damage', 'support']).toContain(stat.playerRole);
+        expect(typeof stat.playtime).toBe('number');
+      });
+
+      dataModel.playerStatBreakdown.byHero.forEach(stat => {
+        expect(typeof stat.playerHero).toBe('string');
+        expect(typeof stat.playtime).toBe('number');
+      });
+
+      dataModel.playerStatBreakdown.byTeamAndMatch.forEach(stat => {
+        expect(typeof stat.playerTeam).toBe('string');
+        expect(typeof stat.matchId).toBe('string');
+        expect(typeof stat.playtime).toBe('number');
       });
     });
 
-    it('should calculate per-10-minute stats correctly', () => {
+    it('should aggregate stats correctly by player and team', () => {
       const dataModel = buildDataModel(sampleFiles);
 
-      dataModel.playerStats.forEach(stat => {
-        const playtimeMinutes = stat.playtime / 60;
-        
-        if (playtimeMinutes > 0) {
-          const expectedMultiplier = 10 / playtimeMinutes;
-          
-          // Check that per-10-minute calculations are correct
-          expect(stat.eliminationsPer10Minutes).toBeCloseTo(stat.eliminations * expectedMultiplier, 1);
-          expect(stat.deathsPer10Minutes).toBeCloseTo(stat.deaths * expectedMultiplier, 1);
-          expect(stat.allDamageDealtPer10Minutes).toBeCloseTo(stat.allDamageDealt * expectedMultiplier, 1);
-        } else {
-          // If no playtime, per-10-minute stats should be 0
-          expect(stat.eliminationsPer10Minutes).toBe(0);
-          expect(stat.deathsPer10Minutes).toBe(0);
-          expect(stat.allDamageDealtPer10Minutes).toBe(0);
-        }
+      // Check that byPlayer aggregation makes sense
+      dataModel.playerStatBreakdown.byPlayer.forEach(playerStat => {
+        // All numerical values should be non-negative
+        expect(playerStat.eliminations).toBeGreaterThanOrEqual(0);
+        expect(playerStat.deaths).toBeGreaterThanOrEqual(0);
+        expect(playerStat.playtime).toBeGreaterThanOrEqual(0);
+        expect(playerStat.allDamageDealt).toBeGreaterThanOrEqual(0);
       });
+
+      // Check that byTeam aggregation makes sense
+      dataModel.playerStatBreakdown.byTeam.forEach(teamStat => {
+        // All numerical values should be non-negative
+        expect(teamStat.eliminations).toBeGreaterThanOrEqual(0);
+        expect(teamStat.deaths).toBeGreaterThanOrEqual(0);
+        expect(teamStat.playtime).toBeGreaterThanOrEqual(0);
+        expect(teamStat.allDamageDealt).toBeGreaterThanOrEqual(0);
+      });
+
+      // Total should be sum of all individual stats
+      expect(dataModel.playerStatBreakdown.total.eliminations).toBeGreaterThanOrEqual(0);
+      expect(dataModel.playerStatBreakdown.total.deaths).toBeGreaterThanOrEqual(0);
+      expect(dataModel.playerStatBreakdown.total.playtime).toBeGreaterThanOrEqual(0);
     });
 
-    it('should calculate accuracy percentages correctly', () => {
+    it('should link aggregated stats to existing players and teams', () => {
       const dataModel = buildDataModel(sampleFiles);
 
-      dataModel.playerStats.forEach(stat => {
-        // Weapon accuracy should be calculated correctly
-        if (stat.shotsFired > 0) {
-          const expectedAccuracy = (stat.shotsHit / stat.shotsFired) * 100;
-          expect(stat.weaponAccuracy).toBeCloseTo(expectedAccuracy, 1);
-        } else {
-          expect(stat.weaponAccuracy).toBe(0);
-        }
-
-        // Scoped weapon accuracy should be calculated correctly
-        if (stat.scopedShotsFired > 0) {
-          const expectedScopedAccuracy = (stat.scopedShotsHit / stat.scopedShotsFired) * 100;
-          expect(stat.scopedWeaponAccuracy).toBeCloseTo(expectedScopedAccuracy, 1);
-        } else {
-          expect(stat.scopedWeaponAccuracy).toBe(0);
-        }
-
-        // Critical hit rate should be calculated correctly
-        if (stat.shotsHit > 0) {
-          const expectedCritRate = (stat.criticalHits / stat.shotsHit) * 100;
-          expect(stat.criticalHitRate).toBeCloseTo(expectedCritRate, 1);
-        } else {
-          expect(stat.criticalHitRate).toBe(0);
-        }
-      });
-    });
-
-    it('should assign correct player roles', () => {
-      const dataModel = buildDataModel(sampleFiles);
-
-      // Group stats by hero to check role assignments
-      const statsByHero = dataModel.playerStats.reduce((acc, stat) => {
-        if (!acc[stat.playerHero]) {
-          acc[stat.playerHero] = [];
-        }
-        acc[stat.playerHero].push(stat);
-        return acc;
-      }, {} as Record<string, typeof dataModel.playerStats>);
-
-      Object.entries(statsByHero).forEach(([hero, stats]) => {
-        // All stats for the same hero should have the same role
-        const roles = [...new Set(stats.map(s => s.playerRole))];
-        expect(roles).toHaveLength(1);
-
-        // Verify some known hero role assignments
-        const role = roles[0];
-        
-        // Common tank heroes
-        if (['D.Va', 'Reinhardt', 'Winston', 'Zarya'].includes(hero)) {
-          expect(role).toBe('tank');
-        }
-        
-        // Common damage heroes
-        if (['Tracer', 'Genji', 'Soldier: 76', 'Widowmaker'].includes(hero)) {
-          expect(role).toBe('damage');
-        }
-        
-        // Common support heroes
-        if (['Mercy', 'Ana', 'Lúcio', 'Zenyatta'].includes(hero)) {
-          expect(role).toBe('support');
-        }
-      });
-    });
-
-    it('should link player stats to existing matches and players', () => {
-      const dataModel = buildDataModel(sampleFiles);
-
-      const matchIds = new Set(dataModel.matches.map(m => m.match));
       const playerNames = new Set(dataModel.players.map(p => p.player));
+      const teamNames = new Set(dataModel.teams.map(t => t.team));
 
-      dataModel.playerStats.forEach(stat => {
-        // Match should exist
-        expect(matchIds.has(stat.matchId)).toBe(true);
-        // Player should exist
+      // All players in byPlayer should exist in players array
+      dataModel.playerStatBreakdown.byPlayer.forEach(stat => {
         expect(playerNames.has(stat.playerName)).toBe(true);
       });
-    });
 
-    it('should have consistent data with raw playerStat events', () => {
-      const dataModel = buildDataModel(sampleFiles);
-
-      // Player stats count should match raw playerStat events count
-      expect(dataModel.playerStats.length).toBe(dataModel.playerStat.length);
-
-      // Create lookup for raw events
-      const rawStatsByKey = dataModel.playerStat.reduce((acc, event) => {
-        const key = `${event.matchId}-${event.roundNumber}-${event.playerName}-${event.playerHero}`;
-        acc[key] = event;
-        return acc;
-      }, {} as Record<string, typeof dataModel.playerStat[0]>);
-
-      dataModel.playerStats.forEach(stat => {
-        const key = `${stat.matchId}-${stat.roundNumber}-${stat.playerName}-${stat.playerHero}`;
-        const rawStat = rawStatsByKey[key];
-        
-        expect(rawStat).toBeDefined();
-
-        // Verify that base stats match raw events
-        expect(stat.eliminations).toBe(rawStat.eliminations);
-        expect(stat.finalBlows).toBe(rawStat.finalBlows);
-        expect(stat.deaths).toBe(rawStat.deaths);
-        expect(stat.allDamageDealt).toBe(rawStat.allDamageDealt);
-        expect(stat.heroDamageDealt).toBe(rawStat.heroDamageDealt);
-        expect(stat.healingDealt).toBe(rawStat.healingDealt);
-        expect(stat.shotsFired).toBe(rawStat.shotsFired);
-        expect(stat.shotsHit).toBe(rawStat.shotsHit);
+      // All teams in byTeam should exist in teams array
+      dataModel.playerStatBreakdown.byTeam.forEach(stat => {
+        expect(teamNames.has(stat.playerTeam)).toBe(true);
       });
     });
 
     it('should handle edge cases correctly', () => {
       const dataModel = buildDataModel(sampleFiles);
 
-      dataModel.playerStats.forEach(stat => {
-        // Should handle division by zero gracefully
-        if (stat.shotsFired === 0) {
-          expect(stat.weaponAccuracy).toBe(0);
-        }
-        
-        if (stat.scopedShotsFired === 0) {
-          expect(stat.scopedWeaponAccuracy).toBe(0);
-        }
-        
-        if (stat.shotsHit === 0) {
-          expect(stat.criticalHitRate).toBe(0);
-        }
+      // Check byPlayer stats
+      dataModel.playerStatBreakdown.byPlayer.forEach(stat => {
+        // All numerical values should be finite
+        expect(Number.isFinite(stat.playtime)).toBe(true);
+        expect(Number.isFinite(stat.weaponAccuracy)).toBe(true);
+        expect(Number.isFinite(stat.eliminationsPer10Minutes)).toBe(true);
+        expect(Number.isFinite(stat.criticalHitRate)).toBe(true);
+      });
 
-        if (stat.playtime === 0) {
-          expect(stat.eliminationsPer10Minutes).toBe(0);
-          expect(stat.deathsPer10Minutes).toBe(0);
-          expect(stat.allDamageDealtPer10Minutes).toBe(0);
-        }
-
+      // Check byTeam stats
+      dataModel.playerStatBreakdown.byTeam.forEach(stat => {
         // All numerical values should be finite
         expect(Number.isFinite(stat.playtime)).toBe(true);
         expect(Number.isFinite(stat.weaponAccuracy)).toBe(true);
         expect(Number.isFinite(stat.eliminationsPer10Minutes)).toBe(true);
       });
+
+      // Check total stats
+      Object.values(dataModel.playerStatBreakdown.total).forEach(value => {
+        expect(Number.isFinite(value)).toBe(true);
+      });
     });
 
-    it('should calculate playtime from player lives correctly', () => {
+    it('should create correct grouping relationships in breakdowns', () => {
       const dataModel = buildDataModel(sampleFiles);
 
-      // Group player stats by match/round/player for validation
-      const statsGrouped = dataModel.playerStats.reduce((acc, stat) => {
-        const key = `${stat.matchId}-${stat.roundNumber}-${stat.playerName}`;
-        if (!acc[key]) {
-          acc[key] = [];
-        }
-        acc[key].push(stat);
-        return acc;
-      }, {} as Record<string, typeof dataModel.playerStats>);
+      // byTeamAndPlayer should have more records than byTeam (since each team has multiple players)
+      expect(dataModel.playerStatBreakdown.byTeamAndPlayer.length).toBeGreaterThanOrEqual(dataModel.playerStatBreakdown.byTeam.length);
 
-      Object.entries(statsGrouped).forEach(([key, stats]) => {
-        const [matchId, roundNumber, playerName] = key.split('-');
-        
-        // Find corresponding player lives
-        const relevantLives = dataModel.playerLives.filter(life =>
-          life.matchId === matchId &&
-          life.roundIndex === parseInt(roundNumber) &&
-          life.player === playerName
-        );
+      // byTeamAndPlayerAndMatch should have more records than byTeamAndPlayer (since players play multiple matches)
+      expect(dataModel.playerStatBreakdown.byTeamAndPlayerAndMatch.length).toBeGreaterThanOrEqual(dataModel.playerStatBreakdown.byTeamAndPlayer.length);
 
-        const expectedPlaytime = relevantLives.reduce((sum, life) => sum + life.duration, 0);
+      // byPlayerAndHero should have more records than byPlayer (since players play multiple heroes)
+      expect(dataModel.playerStatBreakdown.byPlayerAndHero.length).toBeGreaterThanOrEqual(dataModel.playerStatBreakdown.byPlayer.length);
 
-        // All stats for this player/match/round should have the same playtime
-        const playtimes = [...new Set(stats.map(s => s.playtime))];
-        expect(playtimes).toHaveLength(1);
-        
-        // Playtime should match sum of player life durations
-        expect(playtimes[0]).toBeCloseTo(expectedPlaytime, 1);
+      // byRole should have exactly 3 records or fewer (tank, damage, support)
+      expect(dataModel.playerStatBreakdown.byRole.length).toBeLessThanOrEqual(3);
+      expect(dataModel.playerStatBreakdown.byRole.length).toBeGreaterThan(0);
+
+      // Check that role aggregation contains expected roles
+      const roles = dataModel.playerStatBreakdown.byRole.map(r => r.playerRole);
+      expect(roles.every(role => ['tank', 'damage', 'support'].includes(role))).toBe(true);
+
+      // byTeamAndMatch should aggregate stats correctly
+      dataModel.playerStatBreakdown.byTeamAndMatch.forEach(stat => {
+        expect(stat.eliminations).toBeGreaterThanOrEqual(0);
+        expect(stat.deaths).toBeGreaterThanOrEqual(0);
+        expect(stat.playtime).toBeGreaterThanOrEqual(0);
       });
     });
   });

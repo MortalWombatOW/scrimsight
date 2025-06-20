@@ -49,9 +49,10 @@ export const formatTime = (val: number) => {
 };
 
 export const formatDuration = (seconds: number) => {
-  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(seconds / 3600);
+  const remainingMinutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = seconds % 60;
-  return `${minutes}m ${remainingSeconds.toString().padStart(2, '0')}s`;
+  return `${hours > 0 ? hours + 'h ' : ''}${remainingMinutes}m ${remainingSeconds.toString().padStart(2, '0')}s`;
 };
 
 export const formatPercentage = (value: number | undefined, decimals = 1): string => {

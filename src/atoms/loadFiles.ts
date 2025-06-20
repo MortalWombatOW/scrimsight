@@ -16,7 +16,8 @@ export const loadFilesAtom = atom(
     // lazy-init the worker exactly once
     let worker = get(workerAtom);
     if (!worker) {
-      worker = new Worker(new URL('./buildDataModel.worker.ts', import.meta.url), { type: 'module' });
+      console.log("Creating worker");
+      worker = new Worker(new URL('../lib/buildDataModel.worker.ts', import.meta.url), { type: 'module' });
       set(workerAtom, worker);            // cache it
     }
 
@@ -30,7 +31,10 @@ export const loadFilesAtom = atom(
       }))
     );
 
+    console.log("Processing files", fileData);
+
     const model = await workerAPI.processFiles(fileData);
+    console.log("Processed files", model);
     set(dataModelAtom, model);
   }
 );

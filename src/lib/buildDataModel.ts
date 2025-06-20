@@ -12,7 +12,18 @@ const createEmptyDataModel = (): ScrimsightDataModel.ScrimsightDataModel => ({
   matches: [],
   playerLives: [],
   teamfights: [],
-  playerStats: [],
+  rounds: [],
+  playerStatBreakdown: {
+    total: {} as Record<ScrimsightDataModel.PlayerStatsNumericalKeys, number>,
+    byPlayer: [],
+    byTeam: [],
+    byTeamAndPlayer: [],
+    byTeamAndPlayerAndMatch: [],
+    byPlayerAndHero: [],
+    byRole: [],
+    byHero: [],
+    byTeamAndMatch: []
+  },
   ability1Used: [],
   ability2Used: [],
   damage: [],
@@ -73,6 +84,7 @@ const groupMatchesIntoScrims = (dataModel: ScrimsightDataModel.ScrimsightDataMod
     dataModel.matchStart,
     R.map(matchStart => {
       const parsedFile = parsedFiles.find(f => f.matchId === matchStart.matchId);
+      console.log(`date: ${parsedFile?.fileModified}`);
       const date = new Date(parsedFile!.fileModified);
       const dateString = date.toISOString().split('T')[0];
       return {
@@ -128,13 +140,62 @@ const buildMatchRelationships = (dataModel: ScrimsightDataModel.ScrimsightDataMo
         R.sortBy(x => x)
       );
 
+      // Calculate match duration by summing individual round durations (excluding time between rounds)
+      const roundStarts = R.pipe(
+        dataModel.roundStart,
+        R.filter(event => event.matchId === matchStart.matchId),
+        R.sortBy(event => event.matchTime),
+        R.indexBy(event => event.roundNumber)
+      );
+      
+      const roundEnds = R.pipe(
+        dataModel.roundEnd,
+        R.filter(event => event.matchId === matchStart.matchId),
+        R.sortBy(event => event.matchTime),
+        R.indexBy(event => event.roundNumber)
+      );
+
+      const duration = R.pipe(
+        rounds,
+        R.map(roundNumber => {
+          const roundStart = roundStarts[roundNumber];
+          const roundEnd = roundEnds[roundNumber];
+          return (roundStart && roundEnd) ? roundEnd.matchTime - roundStart.matchTime : 0;
+        }),
+        R.sum()
+      );
+
+      // Get final scores from match end event or last round end event
+      const matchEnd = dataModel.matchEnd.find(event => event.matchId === matchStart.matchId);
+      const lastRoundEnd = R.pipe(
+        dataModel.roundEnd,
+        R.filter(event => event.matchId === matchStart.matchId),
+        R.sortBy(event => event.matchTime),
+        R.last()
+      );
+
+      const team1Score = matchEnd?.team1Score ?? lastRoundEnd?.team1Score ?? 0;
+      const team2Score = matchEnd?.team2Score ?? lastRoundEnd?.team2Score ?? 0;
+
+      // Determine winning team
+      const winningTeam = team1Score > team2Score 
+        ? matchStart.team1Name 
+        : team2Score > team1Score 
+          ? matchStart.team2Name 
+          : matchStart.team1Name; // Default to team1 in case of tie
+
       return {
         match: matchStart.matchId,
         scrim: scrimInfo?.scrim.scrim || `unknown-scrim-${matchStart.matchId}`,
         teams: [matchStart.team1Name, matchStart.team2Name] as [ScrimsightDataModel.TeamName, ScrimsightDataModel.TeamName],
         map: matchStart.mapName,
         date: new Date(parsedFile?.fileModified || 0),
-        rounds
+        rounds,
+        duration,
+        team1Score,
+        team2Score,
+        winningTeam,
+        gameMode: matchStart.mapType
       };
     })
   );
@@ -576,6 +637,50 @@ const getUltimatesReadyAtTime = (dataModel: ScrimsightDataModel.ScrimsightDataMo
   return rawHeroes as ScrimsightDataModel.Hero[];
 };
 
+const buildRounds = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.Round[] => {
+  const rounds: ScrimsightDataModel.Round[] = [];
+
+  // Process each match to extract round information
+  dataModel.matches.forEach(match => {
+    match.rounds.forEach(roundNumber => {
+      // Find round start and end events for this match and round
+      const roundStart = dataModel.roundStart.find(event => 
+        event.matchId === match.match && event.roundNumber === roundNumber
+      );
+      const roundEnd = dataModel.roundEnd.find(event => 
+        event.matchId === match.match && event.roundNumber === roundNumber
+      );
+
+      if (roundStart && roundEnd) {
+        // Determine winning team for this round
+        const winningTeam = roundEnd.team1Score > roundEnd.team2Score 
+          ? match.teams[0] 
+          : roundEnd.team2Score > roundEnd.team1Score 
+            ? match.teams[1] 
+            : match.teams[0]; // Default to team1 in case of tie
+
+        rounds.push({
+          matchId: match.match,
+          roundIndex: roundNumber,
+          startTime: roundStart.matchTime,
+          endTime: roundEnd.matchTime,
+          duration: roundEnd.matchTime - roundStart.matchTime,
+          team1Score: roundEnd.team1Score,
+          team2Score: roundEnd.team2Score,
+          winningTeam
+        });
+      }
+    });
+  });
+
+  return rounds.sort((a, b) => {
+    if (a.matchId !== b.matchId) {
+      return a.matchId.localeCompare(b.matchId);
+    }
+    return a.roundIndex - b.roundIndex;
+  });
+};
+
 const getUltimatesUsedDuring = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, teamName: string, startTime: number, endTime: number): ScrimsightDataModel.Hero[] => {
   // Get team players
   const teamPlayers = R.pipe(
@@ -597,7 +702,7 @@ const getUltimatesUsedDuring = (dataModel: ScrimsightDataModel.ScrimsightDataMod
   );
 };
 
-const buildPlayerStats = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.PlayerStats[] => {
+const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.ScrimsightDataModel['playerStatBreakdown'] => {
   // Helper function to calculate playtime for a player in a match/round
   const calculatePlaytime = (matchId: string, roundNumber: string, playerName: string): number => {
     const playerLivesInRound = R.pipe(
@@ -615,8 +720,8 @@ const buildPlayerStats = (dataModel: ScrimsightDataModel.ScrimsightDataModel): S
     );
   };
 
-
-  return R.pipe(
+  // Build enriched player stats first
+  const playerStats = R.pipe(
     dataModel.playerStat,
     R.map((statEvent): ScrimsightDataModel.PlayerStats => {
       const playtime = calculatePlaytime(statEvent.matchId, statEvent.roundNumber, statEvent.playerName);
@@ -701,6 +806,138 @@ const buildPlayerStats = (dataModel: ScrimsightDataModel.ScrimsightDataModel): S
       };
     })
   );
+
+  // Get all numerical keys from the PlayerStatsNumericalKeys type
+  const numericalKeys: ScrimsightDataModel.PlayerStatsNumericalKeys[] = ScrimsightDataModel.playerStatsNumericalKeys;
+
+  // Helper function to sum numerical fields across grouped records
+  const sumNumericalFields = (records: ScrimsightDataModel.PlayerStats[]): Record<ScrimsightDataModel.PlayerStatsNumericalKeys, number> => {
+    return R.pipe(
+      numericalKeys,
+      R.map(key => [key, R.sumBy(records, record => record[key])] as const),
+      R.fromEntries()
+    ) as Record<ScrimsightDataModel.PlayerStatsNumericalKeys, number>;
+  };
+
+  // Build total aggregation (sum all numerical fields across all records)
+  const total = sumNumericalFields(playerStats);
+
+  // Build byPlayer aggregation (sum stats grouped by player)
+  const byPlayerGroups = R.groupBy(playerStats, stat => stat.playerName);
+  const byPlayer = R.pipe(
+    byPlayerGroups,
+    R.entries(),
+    R.map(([playerName, records]) => ({
+      playerName,
+      ...sumNumericalFields(records)
+    }))
+  );
+
+  // Build byTeam aggregation (sum stats grouped by team)
+  const byTeamGroups = R.groupBy(playerStats, stat => stat.playerTeam);
+  const byTeam = R.pipe(
+    byTeamGroups,
+    R.entries(),
+    R.map(([playerTeam, records]) => ({
+      playerTeam,
+      ...sumNumericalFields(records)
+    }))
+  );
+
+  // Build byTeamAndPlayer aggregation (sum stats grouped by team and player)
+  const byTeamAndPlayerGroups = R.groupBy(playerStats, stat => `${stat.playerTeam}|${stat.playerName}`);
+  const byTeamAndPlayer = R.pipe(
+    byTeamAndPlayerGroups,
+    R.entries(),
+    R.map(([key, records]) => {
+      const [playerTeam, playerName] = key.split('|');
+      return {
+        playerTeam,
+        playerName,
+        ...sumNumericalFields(records)
+      };
+    })
+  );
+
+  // Build byTeamAndPlayerAndMatch aggregation (sum stats grouped by team, player and match)
+  const byTeamAndPlayerAndMatchGroups = R.groupBy(playerStats, stat => `${stat.playerTeam}|${stat.playerName}|${stat.matchId}`);
+  const byTeamAndPlayerAndMatch = R.pipe(
+    byTeamAndPlayerAndMatchGroups,
+    R.entries(),
+    R.map(([key, records]) => {
+      const [playerTeam, playerName, matchId] = key.split('|');
+      return {
+        playerTeam,
+        playerName,
+        matchId,
+        ...sumNumericalFields(records)
+      };
+    })
+  );
+
+  // Build byPlayerAndHero aggregation (sum stats grouped by player and hero)
+  const byPlayerAndHeroGroups = R.groupBy(playerStats, stat => `${stat.playerName}|${stat.playerHero}`);
+  const byPlayerAndHero = R.pipe(
+    byPlayerAndHeroGroups,
+    R.entries(),
+    R.map(([key, records]) => {
+      const [playerName, playerHero] = key.split('|');
+      return {
+        playerName,
+        playerHero: playerHero as ScrimsightDataModel.Hero,
+        ...sumNumericalFields(records)
+      };
+    })
+  );
+
+  // Build byRole aggregation (sum stats grouped by role)
+  const byRoleGroups = R.groupBy(playerStats, stat => stat.playerRole);
+  const byRole = R.pipe(
+    byRoleGroups,
+    R.entries(),
+    R.map(([playerRole, records]) => ({
+      playerRole: playerRole as ScrimsightDataModel.Role,
+      ...sumNumericalFields(records)
+    }))
+  );
+
+  // Build byHero aggregation (sum stats grouped by hero)
+  const byHeroGroups = R.groupBy(playerStats, stat => stat.playerHero);
+  const byHero = R.pipe(
+    byHeroGroups,
+    R.entries(),
+    R.map(([playerHero, records]) => ({
+      playerHero: playerHero as ScrimsightDataModel.Hero,
+      ...sumNumericalFields(records)
+    }))
+  );
+
+  // Build byTeamAndMatch aggregation (sum stats grouped by team and match)
+  const byTeamAndMatchGroups = R.groupBy(playerStats, stat => `${stat.playerTeam}|${stat.matchId}`);
+  const byTeamAndMatch = R.pipe(
+    byTeamAndMatchGroups,
+    R.entries(),
+    R.map(([key, records]) => {
+      const [playerTeam, matchId] = key.split('|');
+      return {
+        playerTeam,
+        matchId,
+        ...sumNumericalFields(records)
+      };
+    })
+  );
+
+  return {
+    total,
+    byPlayer,
+    byTeam,
+    byTeamAndPlayer,
+    byTeamAndPlayerAndMatch,
+    byPlayerAndHero,
+    byRole,
+    byHero,
+    byTeamAndMatch
+  };
 };
 
 export const buildDataModel = (files: {fileName: string, fileModified: number, fileContent: string}[]): ScrimsightDataModel.ScrimsightDataModel => {
@@ -718,8 +955,9 @@ export const buildDataModel = (files: {fileName: string, fileModified: number, f
   
   dataModel.playerLives = buildPlayerLives(dataModel);
   dataModel.teamfights = buildTeamfights(dataModel);
+  dataModel.rounds = buildRounds(dataModel);
   
-  dataModel.playerStats = buildPlayerStats(dataModel);
+  dataModel.playerStatBreakdown = buildPlayerStatBreakdown(dataModel);
 
   return dataModel;
 };

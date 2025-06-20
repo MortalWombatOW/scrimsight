@@ -10,6 +10,7 @@ import ErrorBoundary from "@components/ErrorBoundary.tsx";
 import { AppLayout } from "@components/AppLayout.tsx";
 import { AuthGuard } from "./components/AuthGuard";
 import SampleData from "./components/SampleData";
+import HomePage from "./pages/HomePage";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -32,15 +33,7 @@ const App = () => {
   const subroutes = (
     <AppLayout>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="text-center p-8">
-              <h1 className="text-2xl font-bold">Dashboard</h1>
-              <p className="mt-4 text-base-content/70">Welcome to Scrimsight</p>
-            </div>
-          }
-        />
+        <Route path="/" element={<HomePage />} />
       </Routes>
     </AppLayout>
   );
