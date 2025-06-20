@@ -27,12 +27,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const auth = useAuth();
   const [authState] = useAtom(authAtom);
 
-  const navigationItems = [
-    { to: "/", icon: Home, label: "Dashboard" },
-    { to: "/analytics", icon: BarChart3, label: "Analytics" },
-    { to: "/matches", icon: History, label: "Match History" },
-    { to: "/team-stats", icon: Users, label: "Team Stats" },
-  ];
+  const navigationItems = [{ to: "/app", icon: Home, label: "Home" }];
 
   const handleLogin = () => {
     auth.signinRedirect();

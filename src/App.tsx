@@ -41,16 +41,28 @@ const App = () => {
               >
                 <Routes>
                   <Route path="/callback" element={<CallbackPage />} />
-                  <Route path="*" element={
-                    <AppLayout>
-                      <Routes>
-                        <Route path="/" element={<div className="text-center p-8"><h1 className="text-2xl font-bold">Dashboard</h1><p className="mt-4 text-base-content/70">Welcome to Scrimsight</p></div>} />
-                        <Route path="/analytics" element={<div className="text-center p-8"><h1 className="text-2xl font-bold">Analytics</h1><p className="mt-4 text-base-content/70">Analytics page coming soon</p></div>} />
-                        <Route path="/matches" element={<div className="text-center p-8"><h1 className="text-2xl font-bold">Match History</h1><p className="mt-4 text-base-content/70">Match history page coming soon</p></div>} />
-                        <Route path="/team-stats" element={<div className="text-center p-8"><h1 className="text-2xl font-bold">Team Stats</h1><p className="mt-4 text-base-content/70">Team stats page coming soon</p></div>} />
-                      </Routes>
-                    </AppLayout>
-                  } />
+                  <Route
+                    path="*"
+                    element={
+                      <AppLayout>
+                        <Routes>
+                          <Route
+                            path="/"
+                            element={
+                              <div className="text-center p-8">
+                                <h1 className="text-2xl font-bold">
+                                  Dashboard
+                                </h1>
+                                <p className="mt-4 text-base-content/70">
+                                  Welcome to Scrimsight
+                                </p>
+                              </div>
+                            }
+                          />
+                        </Routes>
+                      </AppLayout>
+                    }
+                  />
                 </Routes>
               </Suspense>
             </div>
