@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import UploadModal from "./UploadModal";
 
-
 export interface AppLayoutProps {
   children?: React.ReactNode;
 }
@@ -26,7 +25,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const auth = useAuth();
-  const [authState, setAuthState] = useAtom(authAtom);
+  const [authState] = useAtom(authAtom);
 
   const navigationItems = [
     { to: "/", icon: Home, label: "Dashboard" },
@@ -94,7 +93,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           onClick={closeDrawer}
         ></label>
 
-        <aside className="min-h-full w-80 bg-base-200 text-base-content flex flex-col">
+        <aside className=" w-80 bg-base-100 text-base-content flex flex-col rounded-xl m-4 shadow-lg">
           {/* Header */}
           <div className="p-6 border-b border-base-300">
             <div className="flex items-center justify-between">
@@ -173,7 +172,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
                     <p className="text-sm font-medium truncate">
                       {authState.authenticatedUser.username}
                     </p>
-                    {authState.authenticatedUser.plan === 'pro' && (
+                    {authState.authenticatedUser.plan === "pro" && (
                       <Crown className="w-4 h-4 text-yellow-500" />
                     )}
                   </div>
