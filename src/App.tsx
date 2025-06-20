@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 
 import CallbackPage from "@pages/CallbackPage.tsx";
+import LandingPage from "@pages/LandingPage.tsx";
 import ErrorBoundary from "@components/ErrorBoundary.tsx";
 import { AppLayout } from "@components/AppLayout.tsx";
 
@@ -40,9 +41,10 @@ const App = () => {
                 }
               >
                 <Routes>
+                  <Route path="/" element={<LandingPage />} />
                   <Route path="/callback" element={<CallbackPage />} />
                   <Route
-                    path="*"
+                    path="/dashboard/*"
                     element={
                       <AppLayout>
                         <Routes>
