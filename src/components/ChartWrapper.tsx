@@ -347,7 +347,7 @@ const ChartWrapper = ({
   };
 
   return (
-    <div className={`bg-base-100 rounded-lg p-6 ${className}`}>
+    <div className={`bg-base-100 rounded-lg p-2 ${className}`}>
       {/* Chart Header */}
       {(title || subtitle) && (
         <div className="mb-6">
