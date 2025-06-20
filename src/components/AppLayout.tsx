@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet, Link } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { authAtom } from "@atoms/auth";
 import {
   Menu,
@@ -16,6 +16,7 @@ import {
   Crown,
 } from "lucide-react";
 import UploadModal from "./UploadModal";
+import { sampleDataEnabledAtom } from "../atoms/sampleDataEnabled";
 
 export interface AppLayoutProps {
   children?: React.ReactNode;
@@ -26,6 +27,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const auth = useAuth();
   const [authState] = useAtom(authAtom);
+  const sampleDataEnabled = useAtomValue(sampleDataEnabledAtom);
 
   const navigationItems = [{ to: "/app", icon: Home, label: "Home" }];
 
@@ -129,69 +131,73 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
               })}
 
               {/* Load Files Button */}
-              <li className="mt-4">
-                <button
-                  onClick={() => setIsUploadModalOpen(true)}
-                  className="btn btn-primary btn-block justify-start gap-3"
-                >
-                  <Upload className="w-5 h-5" />
-                  Load Files
-                </button>
-              </li>
+              {!sampleDataEnabled && (
+                <li className="mt-4">
+                  <button
+                    onClick={() => setIsUploadModalOpen(true)}
+                    className="btn btn-primary btn-block justify-start gap-3"
+                  >
+                    <Upload className="w-5 h-5" />
+                    Load Files
+                  </button>
+                </li>
+              )}
             </ul>
           </nav>
 
           {/* User section */}
-          <div className="p-4 border-t border-base-300">
-            {auth.isLoading ? (
-              <div className="flex items-center justify-center p-4">
-                <div className="loading loading-spinner loading-md"></div>
-              </div>
-            ) : authState.authenticatedUser ? (
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-base-100">
-                <div className="avatar placeholder">
-                  <div className="bg-primary text-primary-content rounded-full w-10">
-                    {authState.authenticatedUser.avatar ? (
-                      <img
-                        src={authState.authenticatedUser.avatar}
-                        alt="User avatar"
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <User className="w-5 h-5" />
-                    )}
-                  </div>
+          {!sampleDataEnabled && (
+            <div className="p-4 border-t border-base-300">
+              {auth.isLoading ? (
+                <div className="flex items-center justify-center p-4">
+                  <div className="loading loading-spinner loading-md"></div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium truncate">
-                      {authState.authenticatedUser.username}
+              ) : authState.authenticatedUser ? (
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-base-100">
+                  <div className="avatar placeholder">
+                    <div className="bg-primary text-primary-content rounded-full w-10">
+                      {authState.authenticatedUser.avatar ? (
+                        <img
+                          src={authState.authenticatedUser.avatar}
+                          alt="User avatar"
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <User className="w-5 h-5" />
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium truncate">
+                        {authState.authenticatedUser.username}
+                      </p>
+                      {authState.authenticatedUser.plan === "pro" && (
+                        <Crown className="w-4 h-4 text-yellow-500" />
+                      )}
+                    </div>
+                    <p className="text-xs text-base-content/60 capitalize">
+                      {authState.authenticatedUser.plan} plan
                     </p>
-                    {authState.authenticatedUser.plan === "pro" && (
-                      <Crown className="w-4 h-4 text-yellow-500" />
-                    )}
+                    <button
+                      onClick={handleLogout}
+                      className="text-xs text-base-content/70 hover:text-base-content transition-colors"
+                    >
+                      Sign out
+                    </button>
                   </div>
-                  <p className="text-xs text-base-content/60 capitalize">
-                    {authState.authenticatedUser.plan} plan
-                  </p>
-                  <button
-                    onClick={handleLogout}
-                    className="text-xs text-base-content/70 hover:text-base-content transition-colors"
-                  >
-                    Sign out
-                  </button>
                 </div>
-              </div>
-            ) : (
-              <button
-                onClick={handleLogin}
-                className="btn btn-primary btn-block gap-2"
-              >
-                <LogIn className="w-4 h-4" />
-                Login
-              </button>
-            )}
-          </div>
+              ) : (
+                <button
+                  onClick={handleLogin}
+                  className="btn btn-primary btn-block gap-2"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Login
+                </button>
+              )}
+            </div>
+          )}
         </aside>
       </div>
 

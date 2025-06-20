@@ -11,8 +11,10 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("AuthGuard mounted, checking authentication status");
     if (!auth.isAuthenticated && !auth.isLoading) {
-      navigate("/login");
+      console.warn("User is not authenticated, redirecting to login");
+      navigate("/");
     }
   }, [auth.isAuthenticated, auth.isLoading, navigate]);
 

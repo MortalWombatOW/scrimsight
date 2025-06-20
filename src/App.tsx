@@ -8,6 +8,8 @@ import CallbackPage from "@pages/CallbackPage.tsx";
 import LandingPage from "@pages/LandingPage.tsx";
 import ErrorBoundary from "@components/ErrorBoundary.tsx";
 import { AppLayout } from "@components/AppLayout.tsx";
+import { AuthGuard } from "./components/AuthGuard";
+import SampleData from "./components/SampleData";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -27,6 +29,22 @@ const App = () => {
     },
   };
 
+  const subroutes = (
+    <AppLayout>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="text-center p-8">
+              <h1 className="text-2xl font-bold">Dashboard</h1>
+              <p className="mt-4 text-base-content/70">Welcome to Scrimsight</p>
+            </div>
+          }
+        />
+      </Routes>
+    </AppLayout>
+  );
+
   return (
     <ErrorBoundary>
       <AuthProvider {...oidcConfig}>
@@ -44,26 +62,12 @@ const App = () => {
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/callback" element={<CallbackPage />} />
                   <Route
-                    path="/dashboard/*"
-                    element={
-                      <AppLayout>
-                        <Routes>
-                          <Route
-                            path="/"
-                            element={
-                              <div className="text-center p-8">
-                                <h1 className="text-2xl font-bold">
-                                  Dashboard
-                                </h1>
-                                <p className="mt-4 text-base-content/70">
-                                  Welcome to Scrimsight
-                                </p>
-                              </div>
-                            }
-                          />
-                        </Routes>
-                      </AppLayout>
-                    }
+                    path="/demo/*"
+                    element={<SampleData>{subroutes}</SampleData>}
+                  />
+                  <Route
+                    path="/app/*"
+                    element={<AuthGuard>{subroutes}</AuthGuard>}
                   />
                 </Routes>
               </Suspense>

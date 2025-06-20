@@ -32,7 +32,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-base-100">
       {/* Navigation */}
-      <nav className="navbar bg-base-100 sticky top-0 z-50 backdrop-blur-sm bg-base-100/90">
+      <nav className="navbar bg-base-100 sticky top-0 z-50 backdrop-blur-sm bg-base-100/90 pl-4 pr-4">
         <div className="navbar-start">
           <span
             className="text-2xl font-black"

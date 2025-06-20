@@ -6,6 +6,7 @@ import file4 from "@library/sampledata/Log-2023-08-28-18-28-25.txt?raw";
 import file5 from "@library/sampledata/Log-2023-08-28-18-40-39.txt?raw";
 import { useSetAtom } from 'jotai';
 import { useState } from 'react';
+import { sampleDataEnabledAtom } from '../atoms/sampleDataEnabled';
 
 const sampleFiles = [
   {
@@ -37,10 +38,12 @@ const sampleFiles = [
 
 export const useLoadSampleData = (enabled: boolean) => {
   const loadData = useSetAtom(loadFilesAtom);
+  const setSampleDataEnabled = useSetAtom(sampleDataEnabledAtom);
   const [hasLoaded, setHasLoaded] = useState(false);
   if (!hasLoaded && enabled) {
     // Load sample data only once
     loadData(sampleFiles);
     setHasLoaded(true);
+    setSampleDataEnabled(true);
   }
 };
