@@ -22,7 +22,12 @@ const createEmptyDataModel = (): ScrimsightDataModel.ScrimsightDataModel => ({
     byPlayerAndHero: [],
     byRole: [],
     byHero: [],
-    byTeamAndMatch: []
+    byTeamAndMatch: [],
+    byTeamAndScrim: []
+  },
+  killCounts: {
+    byMatch: [],
+    byMatchAndRound: []
   },
   ability1Used: [],
   ability2Used: [],
@@ -733,6 +738,62 @@ const getUltimatesUsedDuring = (dataModel: ScrimsightDataModel.ScrimsightDataMod
   );
 };
 
+const buildKillCounts = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.ScrimsightDataModel['killCounts'] => {
+  // Helper function to get round number for a kill event
+  const getRoundNumber = (matchId: string, eventTime: number): ScrimsightDataModel.RoundNumber => {
+    const roundStarts = R.pipe(
+      dataModel.roundStart,
+      R.filter(r => r.matchId === matchId),
+      R.sortBy(r => r.matchTime)
+    );
+    
+    const activeRound = R.findLast(roundStarts, r => r.matchTime <= eventTime);
+    return (activeRound?.roundNumber || 1) as ScrimsightDataModel.RoundNumber;
+  };
+
+  // Build kill counts by match
+  const killCountsByMatch = R.pipe(
+    dataModel.kill,
+    R.groupBy(kill => `${kill.matchId}|${kill.attackerName}|${kill.victimName}`),
+    R.entries(),
+    R.map(([key, killEvents]) => {
+      const [matchId, attackerName, victimName] = key.split('|');
+      return {
+        matchId,
+        player: attackerName,
+        victim: victimName,
+        killCount: killEvents.length
+      };
+    })
+  );
+
+  // Build kill counts by match and round
+  const killCountsByMatchAndRound = R.pipe(
+    dataModel.kill,
+    R.map(kill => ({
+      ...kill,
+      roundNumber: getRoundNumber(kill.matchId, kill.matchTime)
+    })),
+    R.groupBy(kill => `${kill.matchId}|${kill.roundNumber}|${kill.attackerName}|${kill.victimName}`),
+    R.entries(),
+    R.map(([key, killEvents]) => {
+      const [matchId, roundNumber, attackerName, victimName] = key.split('|');
+      return {
+        matchId,
+        roundNumber: parseInt(roundNumber) as ScrimsightDataModel.RoundNumber,
+        player: attackerName,
+        victim: victimName,
+        killCount: killEvents.length
+      };
+    })
+  );
+
+  return {
+    byMatch: killCountsByMatch,
+    byMatchAndRound: killCountsByMatchAndRound
+  };
+};
+
 const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.ScrimsightDataModel['playerStatBreakdown'] => {
   // Helper function to calculate playtime for a player in a match/round
   const calculatePlaytime = (matchId: string, roundNumber: string, playerName: string): number => {
@@ -1062,6 +1123,29 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     })
   );
 
+  // Build byTeamAndScrim aggregation (sum stats grouped by team and scrim)
+  const byTeamAndScrimGroups = R.groupBy(playerStats, stat => {
+    // Find the scrim ID for this match
+    const matchRelation = dataModel.matches.find(match => match.match === stat.matchId);
+    const scrimId = matchRelation?.scrim || `unknown-scrim-${stat.matchId}`;
+    return `${stat.playerTeam}|${scrimId}`;
+  });
+  const byTeamAndScrim = R.pipe(
+    byTeamAndScrimGroups,
+    R.entries(),
+    R.map(([key, records]) => {
+      const [playerTeam, scrim] = key.split('|');
+      const baseFields = sumBaseNumericalFields(records);
+      const derivedFields = calculateDerivedFields(baseFields);
+      return {
+        playerTeam,
+        scrim,
+        ...baseFields,
+        ...derivedFields
+      };
+    })
+  );
+
   return {
     total,
     byPlayer,
@@ -1071,7 +1155,8 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     byPlayerAndHero,
     byRole,
     byHero,
-    byTeamAndMatch
+    byTeamAndMatch,
+    byTeamAndScrim
   };
 };
 
@@ -1093,6 +1178,7 @@ export const buildDataModel = (files: {fileName: string, fileModified: number, f
   dataModel.rounds = buildRounds(dataModel);
   
   dataModel.playerStatBreakdown = buildPlayerStatBreakdown(dataModel);
+  dataModel.killCounts = buildKillCounts(dataModel);
 
   return dataModel;
 };

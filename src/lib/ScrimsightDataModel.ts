@@ -141,6 +141,12 @@ export interface Teamfight extends MatchTimeSegment {
   };
 };
 
+export interface PlayerVictimKillCount {
+  player: PlayerName;
+  victim: PlayerName;
+  killCount: number;
+}
+
 export interface ScrimsightDataModel {
  
   // Log events parsed from the raw log files
@@ -188,8 +194,13 @@ export interface ScrimsightDataModel {
      byRole: ({playerRole: Role} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by role
      byHero: ({playerHero: Hero} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by hero
      byTeamAndMatch: ({playerTeam: string, matchId: MatchID} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team and match
-    }
+     byTeamAndScrim: ({playerTeam: string, scrim: ScrimID} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team and scrim
+    };
 
-
+    // Tracks the number of kills per player and victim
+    killCounts: {
+      byMatch: ({matchId: MatchID} & PlayerVictimKillCount)[]; // grouped by match
+      byMatchAndRound: ({matchId: MatchID, roundNumber: RoundNumber} & PlayerVictimKillCount)[]; // grouped by match and round
+    };
 }
   

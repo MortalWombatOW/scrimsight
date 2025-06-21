@@ -13,6 +13,7 @@ type WorkerAPI = {
 export const loadFilesAtom = atom(
   null,                                   // it has no readable value
   async (get, set, files: FileAction) => {
+
     // lazy-init the worker exactly once
     let worker = get(workerAtom);
     if (!worker) {
@@ -20,8 +21,13 @@ export const loadFilesAtom = atom(
       worker = new Worker(new URL('../lib/buildDataModel.worker.ts', import.meta.url), { type: 'module' });
       set(workerAtom, worker);            // cache it
     }
+  
 
     const workerAPI = Comlink.wrap<WorkerAPI>(worker);
+  
+    const startTime = performance.now();
+    set(statusAtom, 'loading');
+    set(timingAtom, null);
 
     const fileData = await Promise.all(
       files.map(async (file) => ({
@@ -36,7 +42,14 @@ export const loadFilesAtom = atom(
     const model = await workerAPI.processFiles(fileData);
     console.log("Processed files", model);
     set(dataModelAtom, model);
+    const endTime = performance.now();
+    set(timingAtom, endTime - startTime);
+    console.log("Timing", endTime - startTime, 'ms');
+    set(statusAtom, 'done');
   }
 );
 
 const workerAtom = atom<Worker | null>(null);
+
+export const statusAtom = atom<'initial' |'loading' | 'done'>('initial');
+export const timingAtom = atom<number | null>(null);

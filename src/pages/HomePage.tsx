@@ -12,6 +12,7 @@ import {
 
 import CardStat from "@components/CardStat";
 import EmptyState from "@components/EmptyState";
+import ScrimCard from "@components/ScrimCard";
 import StatDistributionAndTop from "@components/StatDistributionAndTop";
 import { formatDuration } from "@library/format";
 import { dataModelAtom } from "../atoms/scrimsight";
@@ -60,6 +61,11 @@ const HomePage = () => {
     dataModel.playerStatBreakdown.total.allDamageDealtPer10Minutes;
   const avgHealingPerTen =
     dataModel.playerStatBreakdown.total.healingDealtPer10Minutes;
+
+  // Get last 3 scrims sorted by date (most recent first)
+  const recentScrims = dataModel.scrims
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -112,6 +118,17 @@ const HomePage = () => {
           icon={<Clock className="w-6 h-6" />}
           severity="neutral"
         />
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-base-content mb-6">
+          Recent Scrims
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {recentScrims.map((scrim) => (
+            <ScrimCard key={scrim.scrim} scrimId={scrim.scrim} />
+          ))}
+        </div>
       </div>
 
       <div className="mb-8">

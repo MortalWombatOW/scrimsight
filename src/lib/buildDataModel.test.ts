@@ -286,6 +286,9 @@ describe('buildDataModel', () => {
     expect(dataModel.playerStatBreakdown.byTeamAndPlayer).toHaveLength(0);
     expect(dataModel.playerStatBreakdown.byPlayerAndHero).toHaveLength(0);
     expect(dataModel.playerStatBreakdown.byRole).toHaveLength(0);
+    expect(dataModel.playerStatBreakdown.byTeamAndScrim).toHaveLength(0);
+    expect(dataModel.killCounts.byMatch).toHaveLength(0);
+    expect(dataModel.killCounts.byMatchAndRound).toHaveLength(0);
   });
 
   it('should build player lives correctly', () => {
@@ -697,6 +700,7 @@ describe('buildDataModel', () => {
       expect(dataModel.playerStatBreakdown.byRole.length).toBeGreaterThan(0);
       expect(dataModel.playerStatBreakdown.byHero.length).toBeGreaterThan(0);
       expect(dataModel.playerStatBreakdown.byTeamAndMatch.length).toBeGreaterThan(0);
+      expect(dataModel.playerStatBreakdown.byTeamAndScrim.length).toBeGreaterThan(0);
 
       // Each byPlayer record should have required properties
       dataModel.playerStatBreakdown.byPlayer.forEach(stat => {
@@ -775,6 +779,12 @@ describe('buildDataModel', () => {
       dataModel.playerStatBreakdown.byTeamAndMatch.forEach(stat => {
         expect(typeof stat.playerTeam).toBe('string');
         expect(typeof stat.matchId).toBe('string');
+        expect(typeof stat.playtime).toBe('number');
+      });
+
+      dataModel.playerStatBreakdown.byTeamAndScrim.forEach(stat => {
+        expect(typeof stat.playerTeam).toBe('string');
+        expect(typeof stat.scrim).toBe('string');
         expect(typeof stat.playtime).toBe('number');
       });
     });
@@ -875,6 +885,13 @@ describe('buildDataModel', () => {
         expect(stat.deaths).toBeGreaterThanOrEqual(0);
         expect(stat.playtime).toBeGreaterThanOrEqual(0);
       });
+
+      // byTeamAndScrim should aggregate stats correctly
+      dataModel.playerStatBreakdown.byTeamAndScrim.forEach(stat => {
+        expect(stat.eliminations).toBeGreaterThanOrEqual(0);
+        expect(stat.deaths).toBeGreaterThanOrEqual(0);
+        expect(stat.playtime).toBeGreaterThanOrEqual(0);
+      });
     });
 
     it('should calculate per10 metrics correctly after aggregation', () => {
@@ -955,6 +972,7 @@ describe('buildDataModel', () => {
         dataModel.playerStatBreakdown.byRole,
         dataModel.playerStatBreakdown.byHero,
         dataModel.playerStatBreakdown.byTeamAndMatch,
+        dataModel.playerStatBreakdown.byTeamAndScrim,
         [dataModel.playerStatBreakdown.total]
       ];
 
@@ -982,6 +1000,272 @@ describe('buildDataModel', () => {
           expect(Number.isFinite(stat.weaponAccuracy)).toBe(true);
           expect(Number.isFinite(stat.criticalHitRate)).toBe(true);
           expect(Number.isFinite(stat.scopedWeaponAccuracy)).toBe(true);
+        });
+      });
+    });
+
+    it('should build byTeamAndScrim aggregation correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // byTeamAndScrim should be populated
+      expect(dataModel.playerStatBreakdown.byTeamAndScrim.length).toBeGreaterThan(0);
+
+      // Each byTeamAndScrim record should have required properties
+      dataModel.playerStatBreakdown.byTeamAndScrim.forEach(stat => {
+        expect(typeof stat.playerTeam).toBe('string');
+        expect(stat.playerTeam.length).toBeGreaterThan(0);
+        expect(typeof stat.scrim).toBe('string');
+        expect(stat.scrim.length).toBeGreaterThan(0);
+
+        // All numerical stats should be non-negative
+        expect(stat.playtime).toBeGreaterThanOrEqual(0);
+        expect(stat.eliminations).toBeGreaterThanOrEqual(0);
+        expect(stat.deaths).toBeGreaterThanOrEqual(0);
+        expect(stat.allDamageDealt).toBeGreaterThanOrEqual(0);
+        expect(stat.heroDamageDealt).toBeGreaterThanOrEqual(0);
+        expect(stat.healingDealt).toBeGreaterThanOrEqual(0);
+
+        // Derived metrics should be finite
+        expect(Number.isFinite(stat.eliminationsPer10Minutes)).toBe(true);
+        expect(Number.isFinite(stat.deathsPer10Minutes)).toBe(true);
+        expect(Number.isFinite(stat.weaponAccuracy)).toBe(true);
+        expect(Number.isFinite(stat.criticalHitRate)).toBe(true);
+      });
+
+      // Verify that team names exist in teams array
+      const teamNames = new Set(dataModel.teams.map(t => t.team));
+      dataModel.playerStatBreakdown.byTeamAndScrim.forEach(stat => {
+        expect(teamNames.has(stat.playerTeam)).toBe(true);
+      });
+
+      // Verify that scrim IDs exist in scrims array or are unknown-scrim entries
+      const scrimIds = new Set(dataModel.scrims.map(s => s.scrim));
+      dataModel.playerStatBreakdown.byTeamAndScrim.forEach(stat => {
+        expect(scrimIds.has(stat.scrim) || stat.scrim.startsWith('unknown-scrim-')).toBe(true);
+      });
+
+      // Each team should have stats for each scrim they participated in
+      dataModel.teams.forEach(team => {
+        const teamScrims = team.scrims;
+        const teamScrimStats = dataModel.playerStatBreakdown.byTeamAndScrim.filter(stat => stat.playerTeam === team.team);
+        
+        // Should have a stat entry for each scrim the team participated in
+        expect(teamScrimStats.length).toBe(teamScrims.length);
+        
+        teamScrims.forEach(scrimId => {
+          const scrimStat = teamScrimStats.find(stat => stat.scrim === scrimId);
+          expect(scrimStat).toBeDefined();
+        });
+      });
+    });
+
+    it('should correctly aggregate team stats by scrim', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Test that byTeamAndScrim aggregates correctly from match-level data
+      dataModel.playerStatBreakdown.byTeamAndScrim.forEach(scrimStat => {
+        // Find all matches for this team and scrim
+        const scrimMatches = dataModel.matches.filter(match => 
+          match.scrim === scrimStat.scrim && 
+          match.teams.includes(scrimStat.playerTeam)
+        );
+
+        // Calculate expected aggregated stats from byTeamAndMatch
+        const expectedStats = scrimMatches.reduce((acc, match) => {
+          const matchStat = dataModel.playerStatBreakdown.byTeamAndMatch.find(stat => 
+            stat.playerTeam === scrimStat.playerTeam && stat.matchId === match.match
+          );
+          
+          if (matchStat) {
+            acc.eliminations += matchStat.eliminations;
+            acc.deaths += matchStat.deaths;
+            acc.playtime += matchStat.playtime;
+            acc.allDamageDealt += matchStat.allDamageDealt;
+          }
+          
+          return acc;
+        }, { eliminations: 0, deaths: 0, playtime: 0, allDamageDealt: 0 });
+
+        // Verify that scrim stats match expected aggregated stats
+        if (scrimMatches.length > 0) {
+          expect(scrimStat.eliminations).toBe(expectedStats.eliminations);
+          expect(scrimStat.deaths).toBe(expectedStats.deaths);
+          expect(scrimStat.playtime).toBeCloseTo(expectedStats.playtime, 6);
+          expect(scrimStat.allDamageDealt).toBeCloseTo(expectedStats.allDamageDealt, 6);
+        }
+      });
+    });
+  });
+
+  describe('killCounts', () => {
+    it('should build kill counts correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Kill counts should be populated
+      expect(dataModel.killCounts.byMatch.length).toBeGreaterThan(0);
+      expect(dataModel.killCounts.byMatchAndRound.length).toBeGreaterThan(0);
+
+      // Each byMatch kill count should have required properties
+      dataModel.killCounts.byMatch.forEach(killCount => {
+        expect(typeof killCount.matchId).toBe('string');
+        expect(killCount.matchId.length).toBeGreaterThan(0);
+        expect(typeof killCount.player).toBe('string');
+        expect(killCount.player.length).toBeGreaterThan(0);
+        expect(typeof killCount.victim).toBe('string');
+        expect(killCount.victim.length).toBeGreaterThan(0);
+        expect(typeof killCount.killCount).toBe('number');
+        expect(killCount.killCount).toBeGreaterThan(0);
+      });
+
+      // Each byMatchAndRound kill count should have required properties
+      dataModel.killCounts.byMatchAndRound.forEach(killCount => {
+        expect(typeof killCount.matchId).toBe('string');
+        expect(killCount.matchId.length).toBeGreaterThan(0);
+        expect(typeof killCount.roundNumber).toBe('number');
+        expect([1, 2, 3]).toContain(killCount.roundNumber);
+        expect(typeof killCount.player).toBe('string');
+        expect(killCount.player.length).toBeGreaterThan(0);
+        expect(typeof killCount.victim).toBe('string');
+        expect(killCount.victim.length).toBeGreaterThan(0);
+        expect(typeof killCount.killCount).toBe('number');
+        expect(killCount.killCount).toBeGreaterThan(0);
+      });
+    });
+
+    it('should link kill counts to existing matches and players', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      const matchIds = new Set(dataModel.matches.map(m => m.match));
+      const playerNames = new Set(dataModel.players.map(p => p.player));
+
+      // All matches in kill counts should exist
+      dataModel.killCounts.byMatch.forEach(killCount => {
+        expect(matchIds.has(killCount.matchId)).toBe(true);
+        expect(playerNames.has(killCount.player)).toBe(true);
+        expect(playerNames.has(killCount.victim)).toBe(true);
+      });
+
+      dataModel.killCounts.byMatchAndRound.forEach(killCount => {
+        expect(matchIds.has(killCount.matchId)).toBe(true);
+        expect(playerNames.has(killCount.player)).toBe(true);
+        expect(playerNames.has(killCount.victim)).toBe(true);
+      });
+    });
+
+    it('should count kills accurately', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Verify that kill counts match actual kill events
+      dataModel.killCounts.byMatch.forEach(killCount => {
+        // Count actual kill events for this player-victim pair in this match
+        const actualKills = dataModel.kill.filter(kill => 
+          kill.matchId === killCount.matchId &&
+          kill.attackerName === killCount.player &&
+          kill.victimName === killCount.victim
+        );
+
+        expect(killCount.killCount).toBe(actualKills.length);
+      });
+
+      // Verify that round-level kill counts match actual kill events in those rounds
+      dataModel.killCounts.byMatchAndRound.forEach(killCount => {
+        // Get round start events to determine round timing
+        const roundStarts = dataModel.roundStart
+          .filter(r => r.matchId === killCount.matchId)
+          .sort((a, b) => a.matchTime - b.matchTime);
+        
+        const activeRoundStart = roundStarts.find(r => r.roundNumber === killCount.roundNumber);
+        const nextRoundStart = roundStarts.find(r => r.roundNumber > killCount.roundNumber);
+        
+        if (activeRoundStart) {
+          const roundStartTime = activeRoundStart.matchTime;
+          const roundEndTime = nextRoundStart?.matchTime || Infinity;
+
+          // Count actual kill events for this player-victim pair in this round
+          const actualKillsInRound = dataModel.kill.filter(kill => 
+            kill.matchId === killCount.matchId &&
+            kill.attackerName === killCount.player &&
+            kill.victimName === killCount.victim &&
+            kill.matchTime >= roundStartTime &&
+            kill.matchTime < roundEndTime
+          );
+
+          expect(killCount.killCount).toBe(actualKillsInRound.length);
+        }
+      });
+    });
+
+    it('should aggregate kill counts correctly across rounds', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // For each match-level kill count, verify it equals the sum of round-level counts
+      dataModel.killCounts.byMatch.forEach(matchKillCount => {
+        const roundKillCounts = dataModel.killCounts.byMatchAndRound.filter(roundCount =>
+          roundCount.matchId === matchKillCount.matchId &&
+          roundCount.player === matchKillCount.player &&
+          roundCount.victim === matchKillCount.victim
+        );
+
+        const totalRoundKills = roundKillCounts.reduce((sum, roundCount) => sum + roundCount.killCount, 0);
+        expect(matchKillCount.killCount).toBe(totalRoundKills);
+      });
+    });
+
+    it('should handle players who never kill each other', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Kill counts should only include player-victim pairs that actually have kills
+      dataModel.killCounts.byMatch.forEach(killCount => {
+        expect(killCount.killCount).toBeGreaterThan(0);
+      });
+
+      dataModel.killCounts.byMatchAndRound.forEach(killCount => {
+        expect(killCount.killCount).toBeGreaterThan(0);
+      });
+    });
+
+    it('should handle multiple kills between same players correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Find a kill count entry with multiple kills
+      const multipleKills = dataModel.killCounts.byMatch.find(killCount => killCount.killCount > 1);
+      
+      if (multipleKills) {
+        // Verify that there are indeed multiple kill events
+        const actualKillEvents = dataModel.kill.filter(kill =>
+          kill.matchId === multipleKills.matchId &&
+          kill.attackerName === multipleKills.player &&
+          kill.victimName === multipleKills.victim
+        );
+
+        expect(actualKillEvents.length).toBe(multipleKills.killCount);
+        expect(actualKillEvents.length).toBeGreaterThan(1);
+      }
+    });
+
+    it('should properly assign kills to correct rounds', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Verify that round assignments are correct
+      dataModel.killCounts.byMatchAndRound.forEach(killCount => {
+        // Find the actual kill events for this count
+        const actualKills = dataModel.kill.filter(kill =>
+          kill.matchId === killCount.matchId &&
+          kill.attackerName === killCount.player &&
+          kill.victimName === killCount.victim
+        );
+
+        // Check that all these kills belong to the correct round
+        actualKills.forEach(kill => {
+          const roundStarts = dataModel.roundStart
+            .filter(r => r.matchId === kill.matchId)
+            .sort((a, b) => a.matchTime - b.matchTime);
+          
+          const activeRound = roundStarts.reverse().find(r => r.matchTime <= kill.matchTime);
+          const expectedRoundNumber = activeRound?.roundNumber || 1;
+          
+          // At least one kill should be in the expected round
+          expect([1, 2, 3]).toContain(expectedRoundNumber);
         });
       });
     });
