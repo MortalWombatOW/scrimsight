@@ -16,6 +16,7 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
       console.warn("User is not authenticated, redirecting to login");
       navigate("/");
     }
+    console.log("AuthGuard authentication status is", auth.isAuthenticated);
   }, [auth.isAuthenticated, auth.isLoading, navigate]);
 
   if (auth.isLoading) {

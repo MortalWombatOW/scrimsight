@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 import { useAtom, useAtomValue } from "jotai";
 import { authAtom } from "@atoms/auth";
@@ -7,16 +7,19 @@ import {
   Menu,
   X,
   Home,
-  BarChart3,
-  History,
+  Swords,
+  Headset,
   Users,
   Upload,
   LogIn,
   User,
   Crown,
+  Settings,
 } from "lucide-react";
 import UploadModal from "./UploadModal";
+import LoadingSpinner from "./LoadingSpinner";
 import { sampleDataEnabledAtom } from "../atoms/sampleDataEnabled";
+import { statusAtom } from "../atoms/loadFiles";
 
 export interface AppLayoutProps {
   children?: React.ReactNode;
@@ -28,8 +31,19 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const auth = useAuth();
   const [authState] = useAtom(authAtom);
   const sampleDataEnabled = useAtomValue(sampleDataEnabledAtom);
+  const loadingStatus = useAtomValue(statusAtom);
+  const location = useLocation();
 
-  const navigationItems = [{ to: "/app", icon: Home, label: "Home" }];
+  // Determine base route (/app or /demo) from current location
+  const baseRoute = location.pathname.startsWith("/demo") ? "/demo" : "/app";
+
+  const navigationItems = [
+    { to: baseRoute, icon: Home, label: "Home" },
+    { to: baseRoute + "/scrims", icon: Swords, label: "Scrims" },
+    { to: baseRoute + "/players", icon: Headset, label: "Players" },
+    { to: baseRoute + "/teams", icon: Users, label: "Teams" },
+    { to: baseRoute + "/settings", icon: Settings, label: "Settings" },
+  ];
 
   const handleLogin = () => {
     auth.signinRedirect();
@@ -79,7 +93,27 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
         </div>
 
         {/* Main content */}
-        <main className="flex-1 p-4 lg:p-8">{children || <Outlet />}</main>
+        <main className="flex-1 p-4 lg:p-8 relative">
+          {/* Loading spinner overlay */}
+          <div
+            className={`absolute inset-0 flex items-center justify-center bg-base-200 z-10 transition-opacity duration-500 ${
+              loadingStatus === "loading"
+                ? "opacity-100"
+                : "opacity-0 pointer-events-none"
+            }`}
+          >
+            <LoadingSpinner />
+          </div>
+
+          {/* Main content */}
+          <div
+            className={`transition-opacity duration-500 bg-base-200 ${
+              loadingStatus === "done" ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {children || <Outlet />}
+          </div>
+        </main>
       </div>
 
       {/* Drawer sidebar */}
@@ -90,7 +124,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           onClick={closeDrawer}
         ></label>
 
-        <aside className=" w-80 bg-base-100 text-base-content flex flex-col rounded-xl m-4 shadow-lg">
+        <aside className=" w-80 bg-base-100 text-base-content flex flex-col rounded-xl m-4 shadow-lg mt-34">
           {/* Header */}
           <div className="p-6 border-b border-base-300">
             <div className="flex items-center justify-between">

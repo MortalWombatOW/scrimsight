@@ -9,19 +9,18 @@ import {
   Crown,
   MessageCircle,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const handleSignIn = () => {
     auth.signinRedirect();
   };
 
   const handleDemo = () => {
-    window.scrollTo({
-      top: document.getElementById("features")?.offsetTop || 0,
-      behavior: "smooth",
-    });
+    navigate("/demo");
   };
 
   const scrollToSection = (sectionId: string) => {

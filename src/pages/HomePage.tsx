@@ -16,6 +16,7 @@ import ScrimCard from "@components/ScrimCard";
 import StatDistributionAndTop from "@components/StatDistributionAndTop";
 import { formatDuration } from "@library/format";
 import { dataModelAtom } from "../atoms/scrimsight";
+import BreadCrumbs from "../components/BreadCrumbs";
 const HomePage = () => {
   const dataModel = useAtomValue(dataModelAtom);
 
@@ -70,10 +71,7 @@ const HomePage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-base-content mb-2">Dashboard</h1>
-        <p className="text-base-content/70">
-          Overview of your scrim performance and statistics
-        </p>
+        <BreadCrumbs items={[{ label: "Home", path: "/" }]} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 bg-base-100 p-6 rounded-lg">
