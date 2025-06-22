@@ -1,18 +1,21 @@
 import { useMemo } from "react";
 import ChartWrapper, { ChartConfig } from "./ChartWrapper";
 import ValueDelta from "./ValueDelta";
+import DataTable from "./DataTable";
 import { prettyFormat } from "../lib/format";
 import { computeDeciles, smoothDistribution } from "../lib/distribution";
+import * as R from "remeda";
+import { ColumnDef } from "@tanstack/react-table";
 
 interface StatDistributionRow {
-  category: string;
+  [category: string]: string | number;
   value: number;
 }
 
 interface StatDistributionAndTopProps {
   statName: string;
-  statValue: number;
   statDescription: string;
+  categoryKeys: string[];
   rows: StatDistributionRow[];
   higherIsBetter?: boolean;
   precision?: number;
@@ -20,8 +23,8 @@ interface StatDistributionAndTopProps {
 
 const StatDistributionAndTop = ({
   statName,
-  statValue,
   statDescription,
+  categoryKeys,
   rows,
   higherIsBetter = true,
   precision = 1,
@@ -29,8 +32,7 @@ const StatDistributionAndTop = ({
   const chartConfig: ChartConfig = useMemo(() => {
     const values = rows.map((row) => row.value);
     const deciles = computeDeciles(values);
-    const smoothedData = smoothDistribution(deciles, 2);
-
+    const smoothedData = smoothDistribution(deciles, 0);
     return {
       type: "area",
       data: smoothedData.map((point) => ({
@@ -64,8 +66,40 @@ const StatDistributionAndTop = ({
     return [...rows].sort((a, b) => b.value - a.value).slice(0, 3);
   }, [rows]);
 
+  const statValue = R.meanBy(rows, (row) => row.value);
+
+  const columns: ColumnDef<StatDistributionRow>[] = useMemo(() => {
+    const categoryColumns = categoryKeys.map((key) => ({
+      accessorKey: key,
+      header: key.charAt(0).toUpperCase() + key.slice(1),
+    }));
+
+    return [
+      {
+        id: "rank",
+        header: "#",
+        cell: ({ row }) => (
+          <span className="font-mono text-lg">{row.index + 1}</span>
+        ),
+      },
+      ...categoryColumns,
+      {
+        id: "delta",
+        header: "vs Average",
+        cell: ({ row }) => (
+          <ValueDelta
+            value={row.original.value}
+            baseline={statValue}
+            higherIsBetter={higherIsBetter}
+            precision={precision}
+          />
+        ),
+      },
+    ];
+  }, [categoryKeys, precision, statValue, higherIsBetter]);
+
   return (
-    <div className="bg-base-100 rounded-lg p-6">
+    <div className="bg-base-100 rounded-lg p-6 min-w-fit">
       <div className="space-y-2">
         <h3 className="text-xl font-semibold text-base-content">{statName}</h3>
         <p className="text-sm text-base-content/70">{statDescription}</p>
@@ -79,31 +113,13 @@ const StatDistributionAndTop = ({
 
       <ChartWrapper config={chartConfig} className="mr-12" />
 
-      <div>
-        <div className="space-y-3">
-          {topThreeRows.map((row, index) => (
-            <div
-              key={row.category}
-              className="flex items-center justify-between bg-base-200 rounded-lg p-3"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm font-semibold leading-none">
-                  {index + 1}
-                </div>
-                <span className="font-medium text-base-content">
-                  {row.category}
-                </span>
-              </div>
-              <ValueDelta
-                value={row.value}
-                baseline={statValue}
-                higherIsBetter={higherIsBetter}
-                precision={precision}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+      <DataTable
+        columns={columns}
+        data={topThreeRows}
+        rowKey={(row) => categoryKeys.map((key) => row[key]).join("-")}
+        disableSorting={true}
+        hideFooter={true}
+      />
     </div>
   );
 };

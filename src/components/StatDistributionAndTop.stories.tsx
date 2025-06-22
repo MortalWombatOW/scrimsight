@@ -12,11 +12,14 @@ const meta: Meta<typeof StatDistributionAndTop> = {
     statName: {
       control: 'text',
     },
-    statValue: {
-      control: 'number',
-    },
     statDescription: {
       control: 'text',
+    },
+    categoryKeys: {
+      control: 'object',
+    },
+    rows: {
+      control: 'object',
     },
     higherIsBetter: {
       control: 'boolean',
@@ -31,29 +34,29 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const sampleRows = [
-  { category: "Tank", value: 85 },
-  { category: "DPS", value: 120 },
-  { category: "Support", value: 95 },
-  { category: "Flex", value: 75 },
-  { category: "Assassin", value: 110 },
+  { playerName: "Tank", value: 85 },
+  { playerName: "DPS", value: 120 },
+  { playerName: "Support", value: 95 },
+  { playerName: "Flex", value: 75 },
+  { playerName: "Assassin", value: 110 },
 ];
 
 const largeDataset = [
-  { category: "Damage Per Match", value: 2850 },
-  { category: "Eliminations", value: 18 },
-  { category: "Deaths", value: 8 },
-  { category: "Assists", value: 12 },
-  { category: "Healing Done", value: 1250 },
-  { category: "Damage Blocked", value: 980 },
-  { category: "Objective Time", value: 45 },
-  { category: "Final Blows", value: 14 },
+  { matchId: "Damage Per Match", value: 2850 },
+  { matchId: "Eliminations", value: 18 },
+  { matchId: "Deaths", value: 8 },
+  { matchId: "Assists", value: 12 },
+  { matchId: "Healing Done", value: 1250 },
+  { matchId: "Damage Blocked", value: 980 },
+  { matchId: "Objective Time", value: 45 },
+  { matchId: "Final Blows", value: 14 },
 ];
 
 export const Default: Story = {
   args: {
     statName: "Average Hero Rating",
-    statValue: 97,
     statDescription: "Average performance rating across all hero roles in competitive matches",
+    categoryKeys: ["playerName"],
     rows: sampleRows,
   },
 };
@@ -61,13 +64,13 @@ export const Default: Story = {
 export const WinRateByRole: Story = {
   args: {
     statName: "Win Rate",
-    statValue: 68.5,
     statDescription: "Overall win percentage in ranked competitive matches",
+    categoryKeys: ["playerName"],
     rows: [
-      { category: "Tank", value: 72 },
-      { category: "DPS", value: 65 },
-      { category: "Support", value: 71 },
-      { category: "Flex", value: 69 },
+      { playerName: "Tank", value: 72 },
+      { playerName: "DPS", value: 65 },
+      { playerName: "Support", value: 71 },
+      { playerName: "Flex", value: 69 },
     ],
     higherIsBetter: true,
     precision: 1,
@@ -77,13 +80,13 @@ export const WinRateByRole: Story = {
 export const HigherIsBadStat: Story = {
   args: {
     statName: "Average Deaths",
-    statValue: 7.2,
     statDescription: "Average number of deaths per competitive match",
+    categoryKeys: ["playerName"],
     rows: [
-      { category: "Tank", value: 5.8 },
-      { category: "DPS", value: 8.1 },
-      { category: "Support", value: 6.9 },
-      { category: "Assassin", value: 9.3 },
+      { playerName: "Tank", value: 5.8 },
+      { playerName: "DPS", value: 8.1 },
+      { playerName: "Support", value: 6.9 },
+      { playerName: "Assassin", value: 9.3 },
     ],
     higherIsBetter: false,
     precision: 1,
@@ -93,8 +96,8 @@ export const HigherIsBadStat: Story = {
 export const LargeNumbers: Story = {
   args: {
     statName: "Total Damage",
-    statValue: 2850,
     statDescription: "Total damage dealt across all competitive matches this season",
+    categoryKeys: ["matchId"],
     rows: largeDataset,
     higherIsBetter: true,
     precision: 0,
@@ -104,10 +107,10 @@ export const LargeNumbers: Story = {
 export const SingleCategory: Story = {
   args: {
     statName: "Main Hero Performance",
-    statValue: 92,
     statDescription: "Performance rating on your most played hero",
+    categoryKeys: ["playerName"],
     rows: [
-      { category: "Main Hero", value: 92 },
+      { playerName: "Main Hero", value: 92 },
     ],
   },
 };
@@ -115,19 +118,19 @@ export const SingleCategory: Story = {
 export const ManyCategories: Story = {
   args: {
     statName: "Map Performance",
-    statValue: 78.5,
     statDescription: "Average win rate across different map types",
+    categoryKeys: ["mapName"],
     rows: [
-      { category: "King's Row", value: 85 },
-      { category: "Hanamura", value: 72 },
-      { category: "Dorado", value: 88 },
-      { category: "Temple of Anubis", value: 65 },
-      { category: "Gibraltar", value: 91 },
-      { category: "Volskaya", value: 69 },
-      { category: "Route 66", value: 82 },
-      { category: "Numbani", value: 77 },
-      { category: "Hollywood", value: 79 },
-      { category: "Ilios", value: 86 },
+      { mapName: "King's Row", value: 85 },
+      { mapName: "Hanamura", value: 72 },
+      { mapName: "Dorado", value: 88 },
+      { mapName: "Temple of Anubis", value: 65 },
+      { mapName: "Gibraltar", value: 91 },
+      { mapName: "Volskaya", value: 69 },
+      { mapName: "Route 66", value: 82 },
+      { mapName: "Numbani", value: 77 },
+      { mapName: "Hollywood", value: 79 },
+      { mapName: "Ilios", value: 86 },
     ],
     higherIsBetter: true,
     precision: 0,

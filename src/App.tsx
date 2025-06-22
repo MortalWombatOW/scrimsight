@@ -11,6 +11,7 @@ import { AppLayout } from "@components/AppLayout.tsx";
 import { AuthGuard } from "./components/AuthGuard";
 import SampleData from "./components/SampleData";
 import HomePage from "./pages/HomePage";
+import ScrimsPage from "./pages/ScrimsPage";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -34,6 +35,7 @@ const App = () => {
     <AppLayout>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/scrims" element={<ScrimsPage />} />
       </Routes>
     </AppLayout>
   );

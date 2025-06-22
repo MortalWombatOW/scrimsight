@@ -20,6 +20,7 @@ import UploadModal from "./UploadModal";
 import LoadingSpinner from "./LoadingSpinner";
 import { sampleDataEnabledAtom } from "../atoms/sampleDataEnabled";
 import { statusAtom } from "../atoms/loadFiles";
+import { dataModelAtom } from "../atoms/scrimsight";
 
 export interface AppLayoutProps {
   children?: React.ReactNode;
@@ -31,8 +32,12 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const auth = useAuth();
   const [authState] = useAtom(authAtom);
   const sampleDataEnabled = useAtomValue(sampleDataEnabledAtom);
-  const loadingStatus = useAtomValue(statusAtom);
   const location = useLocation();
+
+  const loadingStatus = useAtomValue(statusAtom);
+  const dataModel = useAtomValue(dataModelAtom);
+
+  const dataIsReady = loadingStatus === "done" && dataModel !== null;
 
   // Determine base route (/app or /demo) from current location
   const baseRoute = location.pathname.startsWith("/demo") ? "/demo" : "/app";
@@ -97,22 +102,22 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           {/* Loading spinner overlay */}
           <div
             className={`absolute inset-0 flex items-center justify-center bg-base-200 z-10 transition-opacity duration-500 ${
-              loadingStatus === "loading"
-                ? "opacity-100"
-                : "opacity-0 pointer-events-none"
+              !dataIsReady ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
           >
             <LoadingSpinner />
           </div>
 
           {/* Main content */}
-          <div
-            className={`transition-opacity duration-500 bg-base-200 ${
-              loadingStatus === "done" ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            {children || <Outlet />}
-          </div>
+          {dataIsReady && (
+            <div
+              className={`transition-opacity duration-500 bg-base-200 ${
+                dataIsReady ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {children || <Outlet />}
+            </div>
+          )}
         </main>
       </div>
 

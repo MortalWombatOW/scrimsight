@@ -33,35 +33,26 @@ const HomePage = () => {
     );
   }
 
-  const avgKDA =
-    dataModel.playerStatBreakdown.total.eliminations /
-    Math.max(1, dataModel.playerStatBreakdown.total.deaths);
-
   const killDeathRows = dataModel.playerStatBreakdown.byPlayer.map(
     (player) => ({
-      category: player.playerName,
+      playerName: player.playerName,
       value: player.eliminations / Math.max(1, player.deaths),
     })
   );
 
   const damagePerTenRows = dataModel.playerStatBreakdown.byPlayer.map(
     (player) => ({
-      category: player.playerName,
+      playerName: player.playerName,
       value: player.allDamageDealtPer10Minutes,
     })
   );
 
   const healingPerTenRows = dataModel.playerStatBreakdown.byPlayer.map(
     (player) => ({
-      category: player.playerName,
+      playerName: player.playerName,
       value: player.healingDealtPer10Minutes,
     })
   );
-
-  const avgDamagePerTen =
-    dataModel.playerStatBreakdown.total.allDamageDealtPer10Minutes;
-  const avgHealingPerTen =
-    dataModel.playerStatBreakdown.total.healingDealtPer10Minutes;
 
   // Get last 3 scrims sorted by date (most recent first)
   const recentScrims = dataModel.scrims
@@ -136,24 +127,24 @@ const HomePage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <StatDistributionAndTop
             statName="Kill/Death Ratio"
-            statValue={avgKDA}
             statDescription="Average eliminations per death across all players"
+            categoryKeys={["playerName"]}
             rows={killDeathRows}
             higherIsBetter={true}
             precision={2}
           />
           <StatDistributionAndTop
             statName="Damage per 10 Minutes"
-            statValue={avgDamagePerTen}
             statDescription="Average damage dealt per 10 minutes of playtime"
+            categoryKeys={["playerName"]}
             rows={damagePerTenRows}
             higherIsBetter={true}
             precision={0}
           />
           <StatDistributionAndTop
             statName="Healing per 10 Minutes"
-            statValue={avgHealingPerTen}
             statDescription="Average healing dealt per 10 minutes of playtime"
+            categoryKeys={["playerName"]}
             rows={healingPerTenRows}
             higherIsBetter={true}
             precision={0}

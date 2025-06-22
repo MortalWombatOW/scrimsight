@@ -17,6 +17,8 @@ interface DataTableProps<T> {
   defaultSort?: string;
   rowKey: (row: T) => string;
   onRowClick?: (row: T) => void;
+  disableSorting?: boolean;
+  hideFooter?: boolean;
 }
 
 const DataTable = <T,>({ 
@@ -24,7 +26,9 @@ const DataTable = <T,>({
   data, 
   defaultSort, 
   rowKey, 
-  onRowClick 
+  onRowClick,
+  disableSorting = false,
+  hideFooter = false
 }: DataTableProps<T>) => {
   const [sorting, setSorting] = useState<SortingState>(
     defaultSort ? [{ id: defaultSort, desc: false }] : []
@@ -40,6 +44,7 @@ const DataTable = <T,>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    enableSorting: !disableSorting,
     initialState: {
       pagination: {
         pageSize: 10,
@@ -108,50 +113,52 @@ const DataTable = <T,>({
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center justify-between mt-4">
-        <div className="text-sm text-base-content/70">
-          Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{' '}
-          {Math.min(
-            (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-            table.getFilteredRowModel().rows.length
-          )}{' '}
-          of {table.getFilteredRowModel().rows.length} entries
-        </div>
+      {!hideFooter && (
+        <div className="flex items-center justify-between mt-4">
+          <div className="text-sm text-base-content/70">
+            Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{' '}
+            {Math.min(
+              (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
+              table.getFilteredRowModel().rows.length
+            )}{' '}
+            of {table.getFilteredRowModel().rows.length} entries
+          </div>
 
-        <div className="join">
-          <button
-            className="join-item btn btn-sm"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            First
-          </button>
-          <button
-            className="join-item btn btn-sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </button>
-          <button className="join-item btn btn-sm btn-active">
-            {table.getState().pagination.pageIndex + 1}
-          </button>
-          <button
-            className="join-item btn btn-sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </button>
-          <button
-            className="join-item btn btn-sm"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            Last
-          </button>
+          <div className="join">
+            <button
+              className="join-item btn btn-sm"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+            >
+              First
+            </button>
+            <button
+              className="join-item btn btn-sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </button>
+            <button className="join-item btn btn-sm btn-active">
+              {table.getState().pagination.pageIndex + 1}
+            </button>
+            <button
+              className="join-item btn btn-sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </button>
+            <button
+              className="join-item btn btn-sm"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              Last
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
