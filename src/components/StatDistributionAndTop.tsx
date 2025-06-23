@@ -55,7 +55,7 @@ const StatDistributionAndTop = ({
       yAxis: {
         tickFormatter: (value) => `${(Number(value) * 100).toFixed(0)}%`,
       },
-      height: 200,
+      height: 100,
       showLegend: false,
       showGrid: false,
       margin: { top: 10, right: 10, left: 10, bottom: 20 },

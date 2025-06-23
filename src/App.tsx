@@ -12,6 +12,7 @@ import { AuthGuard } from "./components/AuthGuard";
 import SampleData from "./components/SampleData";
 import HomePage from "./pages/HomePage";
 import ScrimsPage from "./pages/ScrimsPage";
+import ScrimDetailsPage from "./pages/ScrimDetailsPage";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -36,6 +37,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/scrims" element={<ScrimsPage />} />
+        <Route path="/scrim/:scrimId" element={<ScrimDetailsPage />} />
       </Routes>
     </AppLayout>
   );

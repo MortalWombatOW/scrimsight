@@ -8,6 +8,7 @@ import ScrimCard from "@components/ScrimCard";
 import DataTable from "@components/DataTable";
 import StatDistributionAndTop from "@components/StatDistributionAndTop";
 import TeamColorDot from "@components/TeamColorDot";
+import EmptyState from "@components/EmptyState";
 import { useScrimsightData } from "@library/useScrimsightData";
 import BreadCrumbs from "@components/BreadCrumbs";
 

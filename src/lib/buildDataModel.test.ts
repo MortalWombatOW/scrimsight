@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildDataModel } from '@library/buildDataModel';
+import * as ScrimsightDataModel from '@library/ScrimsightDataModel';
 import file1 from "@library/sampledata/Log-2023-08-28-17-05-38.txt?raw";
 import file2 from "@library/sampledata/Log-2023-08-28-17-29-57.txt?raw";
 import file3 from "@library/sampledata/Log-2023-08-28-17-52-17.txt?raw";
@@ -281,6 +282,7 @@ describe('buildDataModel', () => {
     expect(dataModel.matchStart).toHaveLength(0);
     expect(dataModel.playerLives).toHaveLength(0);
     expect(dataModel.rounds).toHaveLength(0);
+    expect(dataModel.teamCompositions).toHaveLength(0);
     expect(dataModel.playerStatBreakdown.byPlayer).toHaveLength(0);
     expect(dataModel.playerStatBreakdown.byTeam).toHaveLength(0);
     expect(dataModel.playerStatBreakdown.byTeamAndPlayer).toHaveLength(0);
@@ -423,9 +425,11 @@ describe('buildDataModel', () => {
       expect(teamfight.start).toBeDefined();
       expect(teamfight.end).toBeDefined();
       
-      // Start states should have team1 and team2
+      // Start states should have team1 and team2 with teamName
       expect(teamfight.start.team1).toBeDefined();
       expect(teamfight.start.team2).toBeDefined();
+      expect(typeof teamfight.start.team1.teamName).toBe('string');
+      expect(typeof teamfight.start.team2.teamName).toBe('string');
       expect(Array.isArray(teamfight.start.team1.alivePlayers)).toBe(true);
       expect(Array.isArray(teamfight.start.team1.ultimatesReady)).toBe(true);
       expect(Array.isArray(teamfight.start.team2.alivePlayers)).toBe(true);
@@ -434,6 +438,8 @@ describe('buildDataModel', () => {
       // End states should have team1 and team2 with additional properties
       expect(teamfight.end.team1).toBeDefined();
       expect(teamfight.end.team2).toBeDefined();
+      expect(typeof teamfight.end.team1.teamName).toBe('string');
+      expect(typeof teamfight.end.team2.teamName).toBe('string');
       expect(Array.isArray(teamfight.end.team1.alivePlayers)).toBe(true);
       expect(Array.isArray(teamfight.end.team1.ultimatesReady)).toBe(true);
       expect(Array.isArray(teamfight.end.team1.ultimatesUsed)).toBe(true);
@@ -442,6 +448,13 @@ describe('buildDataModel', () => {
       expect(Array.isArray(teamfight.end.team2.ultimatesReady)).toBe(true);
       expect(Array.isArray(teamfight.end.team2.ultimatesUsed)).toBe(true);
       expect(Array.isArray(teamfight.end.team2.kills)).toBe(true);
+      
+      // Should have winner and kill efficiency metrics
+      expect(typeof teamfight.winner).toBe('string');
+      expect(typeof teamfight.team1KillsPerUlt).toBe('number');
+      expect(typeof teamfight.team2KillsPerUlt).toBe('number');
+      expect(teamfight.team1KillsPerUlt).toBeGreaterThanOrEqual(0);
+      expect(teamfight.team2KillsPerUlt).toBeGreaterThanOrEqual(0);
     });
   });
 
@@ -1095,6 +1108,112 @@ describe('buildDataModel', () => {
         }
       });
     });
+
+    it('should build byTeamAndPlayerAndScrim aggregation correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // byTeamAndPlayerAndScrim should be populated
+      expect(dataModel.playerStatBreakdown.byTeamAndPlayerAndScrim.length).toBeGreaterThan(0);
+
+      // Each byTeamAndPlayerAndScrim record should have required properties
+      dataModel.playerStatBreakdown.byTeamAndPlayerAndScrim.forEach(stat => {
+        expect(typeof stat.playerTeam).toBe('string');
+        expect(stat.playerTeam.length).toBeGreaterThan(0);
+        expect(typeof stat.playerName).toBe('string');
+        expect(stat.playerName.length).toBeGreaterThan(0);
+        expect(typeof stat.scrim).toBe('string');
+        expect(stat.scrim.length).toBeGreaterThan(0);
+
+        // All numerical stats should be non-negative
+        expect(stat.playtime).toBeGreaterThanOrEqual(0);
+        expect(stat.eliminations).toBeGreaterThanOrEqual(0);
+        expect(stat.deaths).toBeGreaterThanOrEqual(0);
+        expect(stat.allDamageDealt).toBeGreaterThanOrEqual(0);
+        expect(stat.heroDamageDealt).toBeGreaterThanOrEqual(0);
+        expect(stat.healingDealt).toBeGreaterThanOrEqual(0);
+
+        // Derived metrics should be finite
+        expect(Number.isFinite(stat.eliminationsPer10Minutes)).toBe(true);
+        expect(Number.isFinite(stat.deathsPer10Minutes)).toBe(true);
+        expect(Number.isFinite(stat.weaponAccuracy)).toBe(true);
+        expect(Number.isFinite(stat.criticalHitRate)).toBe(true);
+      });
+
+      // Verify that team names exist in teams array
+      const teamNames = new Set(dataModel.teams.map(t => t.team));
+      dataModel.playerStatBreakdown.byTeamAndPlayerAndScrim.forEach(stat => {
+        expect(teamNames.has(stat.playerTeam)).toBe(true);
+      });
+
+      // Verify that player names exist in players array
+      const playerNames = new Set(dataModel.players.map(p => p.player));
+      dataModel.playerStatBreakdown.byTeamAndPlayerAndScrim.forEach(stat => {
+        expect(playerNames.has(stat.playerName)).toBe(true);
+      });
+
+      // Verify that scrim IDs exist in scrims array or are unknown-scrim entries
+      const scrimIds = new Set(dataModel.scrims.map(s => s.scrim));
+      dataModel.playerStatBreakdown.byTeamAndPlayerAndScrim.forEach(stat => {
+        expect(scrimIds.has(stat.scrim) || stat.scrim.startsWith('unknown-scrim-')).toBe(true);
+      });
+
+      // Each player should have stats for each scrim their team participated in
+      dataModel.players.forEach(player => {
+        const playerScrims = player.scrims;
+        const playerScrimStats = dataModel.playerStatBreakdown.byTeamAndPlayerAndScrim.filter(stat => stat.playerName === player.player);
+        
+        // Should have a stat entry for each scrim the player participated in
+        expect(playerScrimStats.length).toBe(playerScrims.length);
+        
+        playerScrims.forEach(scrimId => {
+          const scrimStat = playerScrimStats.find(stat => stat.scrim === scrimId);
+          expect(scrimStat).toBeDefined();
+        });
+      });
+    });
+
+    it('should correctly aggregate player stats by team and scrim', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Test that byTeamAndPlayerAndScrim aggregates correctly from match-level data
+      dataModel.playerStatBreakdown.byTeamAndPlayerAndScrim.forEach(scrimStat => {
+        // Find all matches for this player, team and scrim
+        const scrimMatches = dataModel.matches.filter(match => 
+          match.scrim === scrimStat.scrim && 
+          match.teams.includes(scrimStat.playerTeam)
+        );
+
+        // Calculate expected aggregated stats from byTeamAndPlayerAndMatch
+        const expectedStats = scrimMatches.reduce((acc, match) => {
+          const matchStat = dataModel.playerStatBreakdown.byTeamAndPlayerAndMatch.find(stat => 
+            stat.playerTeam === scrimStat.playerTeam && 
+            stat.playerName === scrimStat.playerName &&
+            stat.matchId === match.match
+          );
+          
+          if (matchStat) {
+            acc.eliminations += matchStat.eliminations;
+            acc.deaths += matchStat.deaths;
+            acc.playtime += matchStat.playtime;
+            acc.allDamageDealt += matchStat.allDamageDealt;
+            acc.heroDamageDealt += matchStat.heroDamageDealt;
+            acc.healingDealt += matchStat.healingDealt;
+          }
+          
+          return acc;
+        }, { eliminations: 0, deaths: 0, playtime: 0, allDamageDealt: 0, heroDamageDealt: 0, healingDealt: 0 });
+
+        // Verify that scrim stats match expected aggregated stats
+        if (scrimMatches.length > 0) {
+          expect(scrimStat.eliminations).toBe(expectedStats.eliminations);
+          expect(scrimStat.deaths).toBe(expectedStats.deaths);
+          expect(scrimStat.playtime).toBeCloseTo(expectedStats.playtime, 6);
+          expect(scrimStat.allDamageDealt).toBeCloseTo(expectedStats.allDamageDealt, 6);
+          expect(scrimStat.heroDamageDealt).toBeCloseTo(expectedStats.heroDamageDealt, 6);
+          expect(scrimStat.healingDealt).toBeCloseTo(expectedStats.healingDealt, 6);
+        }
+      });
+    });
   });
 
   describe('killCounts', () => {
@@ -1267,6 +1386,287 @@ describe('buildDataModel', () => {
           // At least one kill should be in the expected round
           expect([1, 2, 3]).toContain(expectedRoundNumber);
         });
+      });
+    });
+  });
+
+  describe('teamCompositions', () => {
+    it('should build team compositions correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Team compositions should be populated
+      expect(dataModel.teamCompositions.length).toBeGreaterThan(0);
+
+      // Each team composition should have required properties
+      dataModel.teamCompositions.forEach(composition => {
+        expect(typeof composition.matchId).toBe('string');
+        expect(typeof composition.roundIndex).toBe('number');
+        expect([1, 2, 3]).toContain(composition.roundIndex);
+        expect(typeof composition.startTime).toBe('number');
+        expect(typeof composition.endTime).toBe('number');
+        expect(typeof composition.duration).toBe('number');
+        expect(typeof composition.team).toBe('string');
+        
+        // Duration should be positive and match endTime - startTime
+        expect(composition.duration).toBeGreaterThan(0);
+        expect(composition.duration).toBe(composition.endTime - composition.startTime);
+        
+        // Start time should be before end time
+        expect(composition.startTime).toBeLessThan(composition.endTime);
+
+        // Composition structure
+        expect(composition.composition).toBeDefined();
+        expect(Array.isArray(composition.composition.tank)).toBe(true);
+        expect(Array.isArray(composition.composition.damage)).toBe(true);
+        expect(Array.isArray(composition.composition.support)).toBe(true);
+
+        // Player heroes structure
+        expect(Array.isArray(composition.playerHeroes)).toBe(true);
+        composition.playerHeroes.forEach(ph => {
+          expect(typeof ph.playerName).toBe('string');
+          expect(typeof ph.playerHero).toBe('string');
+        });
+
+        // Heroes by role structure
+        expect(Array.isArray(composition.heroesByRole)).toBe(true);
+        composition.heroesByRole.forEach(hr => {
+          expect(typeof hr.role).toBe('string');
+          expect(['tank', 'damage', 'support']).toContain(hr.role);
+          expect(Array.isArray(hr.heroes)).toBe(true);
+        });
+      });
+    });
+
+    it('should link team compositions to existing matches and teams', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      const matchIds = new Set(dataModel.matches.map(m => m.match));
+      const teamNames = new Set(dataModel.teams.map(t => t.team));
+
+      dataModel.teamCompositions.forEach(composition => {
+        // Match should exist
+        expect(matchIds.has(composition.matchId)).toBe(true);
+        // Team should exist
+        expect(teamNames.has(composition.team)).toBe(true);
+      });
+    });
+
+    it('should maintain referential integrity between playerHeroes and composition', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.teamCompositions.forEach(composition => {
+        // All heroes in playerHeroes should be accounted for in composition
+        const allHeroesInPlayerHeroes = composition.playerHeroes.map(ph => ph.playerHero);
+        const allHeroesInComposition = [
+          ...composition.composition.tank,
+          ...composition.composition.damage,
+          ...composition.composition.support
+        ];
+
+        allHeroesInPlayerHeroes.forEach(hero => {
+          expect(allHeroesInComposition).toContain(hero);
+        });
+      });
+    });
+
+    it('should have consistent heroes by role grouping', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.teamCompositions.forEach(composition => {
+        // Heroes by role should match composition structure
+        const tankHeroesByRole = composition.heroesByRole.find(hr => hr.role === 'tank');
+        const damageHeroesByRole = composition.heroesByRole.find(hr => hr.role === 'damage');
+        const supportHeroesByRole = composition.heroesByRole.find(hr => hr.role === 'support');
+
+        if (tankHeroesByRole) {
+          expect(tankHeroesByRole.heroes).toEqual(composition.composition.tank);
+        } else {
+          expect(composition.composition.tank).toHaveLength(0);
+        }
+
+        if (damageHeroesByRole) {
+          expect(damageHeroesByRole.heroes).toEqual(composition.composition.damage);
+        } else {
+          expect(composition.composition.damage).toHaveLength(0);
+        }
+
+        if (supportHeroesByRole) {
+          expect(supportHeroesByRole.heroes).toEqual(composition.composition.support);
+        } else {
+          expect(composition.composition.support).toHaveLength(0);
+        }
+      });
+    });
+
+    it('should have reasonable team composition sizes', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.teamCompositions.forEach(composition => {
+        // Total number of players should be reasonable (0-6)
+        const totalPlayers = composition.playerHeroes.length;
+        expect(totalPlayers).toBeGreaterThanOrEqual(0);
+        expect(totalPlayers).toBeLessThanOrEqual(6);
+
+        // Role composition should be reasonable for Overwatch
+        expect(composition.composition.tank.length).toBeLessThanOrEqual(2);
+        expect(composition.composition.damage.length).toBeLessThanOrEqual(2);
+        expect(composition.composition.support.length).toBeLessThanOrEqual(2);
+
+        // Total heroes should match total players
+        const totalHeroes = composition.composition.tank.length + 
+                           composition.composition.damage.length + 
+                           composition.composition.support.length;
+        expect(totalHeroes).toBe(totalPlayers);
+      });
+    });
+
+    it('should sort team compositions by match, round, and start time', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Check that compositions are sorted properly
+      for (let i = 1; i < dataModel.teamCompositions.length; i++) {
+        const prev = dataModel.teamCompositions[i - 1];
+        const curr = dataModel.teamCompositions[i];
+        
+        // Should be sorted by matchId first, then roundIndex, then startTime
+        if (prev.matchId === curr.matchId) {
+          if (prev.roundIndex === curr.roundIndex) {
+            expect(prev.startTime).toBeLessThanOrEqual(curr.startTime);
+          } else {
+            expect(prev.roundIndex).toBeLessThanOrEqual(curr.roundIndex);
+          }
+        } else {
+          expect(prev.matchId.localeCompare(curr.matchId)).toBeLessThanOrEqual(0);
+        }
+      }
+    });
+
+    it('should track composition changes over time within rounds', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Group compositions by match and round
+      const compositionsByMatchRound = dataModel.teamCompositions.reduce((acc, comp) => {
+        const key = `${comp.matchId}-${comp.roundIndex}-${comp.team}`;
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(comp);
+        return acc;
+      }, {} as Record<string, typeof dataModel.teamCompositions>);
+
+      // Check that compositions within each round don't overlap
+      Object.values(compositionsByMatchRound).forEach(roundCompositions => {
+        const sortedCompositions = roundCompositions.sort((a, b) => a.startTime - b.startTime);
+        
+        for (let i = 1; i < sortedCompositions.length; i++) {
+          const prev = sortedCompositions[i - 1];
+          const curr = sortedCompositions[i];
+          
+          // Current composition should start when or after previous one ends
+          expect(curr.startTime).toBeGreaterThanOrEqual(prev.endTime);
+        }
+      });
+    });
+
+    it('should have valid hero names', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Get all valid hero names from the data model
+      const validHeroes = [
+        ...ScrimsightDataModel.TANK_HEROES,
+        ...ScrimsightDataModel.DAMAGE_HEROES,
+        ...ScrimsightDataModel.SUPPORT_HEROES
+      ];
+
+      dataModel.teamCompositions.forEach(composition => {
+        // All heroes in composition should be valid
+        [...composition.composition.tank, 
+         ...composition.composition.damage, 
+         ...composition.composition.support].forEach(hero => {
+          expect(validHeroes).toContain(hero);
+        });
+
+        // All heroes in playerHeroes should be valid
+        composition.playerHeroes.forEach(ph => {
+          expect(validHeroes).toContain(ph.playerHero);
+        });
+      });
+    });
+
+    it('should have logical timing within rounds', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.teamCompositions.forEach(composition => {
+        // Find the round boundaries for this composition
+        const roundStart = dataModel.roundStart.find(r => 
+          r.matchId === composition.matchId && r.roundNumber === composition.roundIndex
+        );
+        const roundEnd = dataModel.roundEnd.find(r => 
+          r.matchId === composition.matchId && r.roundNumber === composition.roundIndex
+        );
+
+        if (roundStart && roundEnd) {
+          // Composition should be within round boundaries
+          expect(composition.startTime).toBeGreaterThanOrEqual(roundStart.matchTime);
+          expect(composition.endTime).toBeLessThanOrEqual(roundEnd.matchTime);
+        }
+      });
+    });
+
+    it('should handle hero swaps correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // If there are hero swap events, there should be composition changes
+      if (dataModel.heroSwap.length > 0) {
+        // Group compositions by match and team
+        const compositionsByMatchTeam = dataModel.teamCompositions.reduce((acc, comp) => {
+          const key = `${comp.matchId}-${comp.team}`;
+          if (!acc[key]) {
+            acc[key] = [];
+          }
+          acc[key].push(comp);
+          return acc;
+        }, {} as Record<string, typeof dataModel.teamCompositions>);
+
+        // At least some teams should have multiple compositions (due to swaps)
+        const teamsWithMultipleCompositions = Object.values(compositionsByMatchTeam)
+          .filter(compositions => compositions.length > 1);
+        
+        if (dataModel.heroSwap.length > 0) {
+          expect(teamsWithMultipleCompositions.length).toBeGreaterThan(0);
+        }
+      }
+    });
+
+    it('should have consistent player names with other data', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      const allPlayerNames = new Set(dataModel.players.map(p => p.player));
+
+      dataModel.teamCompositions.forEach(composition => {
+        composition.playerHeroes.forEach(ph => {
+          // All player names should exist in the players array
+          expect(allPlayerNames.has(ph.playerName)).toBe(true);
+        });
+      });
+    });
+
+    it('should handle edge cases gracefully', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      dataModel.teamCompositions.forEach(composition => {
+        // All arrays should be defined (even if empty)
+        expect(Array.isArray(composition.composition.tank)).toBe(true);
+        expect(Array.isArray(composition.composition.damage)).toBe(true);
+        expect(Array.isArray(composition.composition.support)).toBe(true);
+        expect(Array.isArray(composition.playerHeroes)).toBe(true);
+        expect(Array.isArray(composition.heroesByRole)).toBe(true);
+
+        // Duration should always be positive
+        expect(composition.duration).toBeGreaterThan(0);
+
+        // Team should always be specified
+        expect(composition.team.length).toBeGreaterThan(0);
       });
     });
   });

@@ -42,19 +42,26 @@ export interface UltimateChargedLogEvent { matchId: string; type: string; matchT
 export interface UltimateEndLogEvent { matchId: string; type: string; matchTime: number; playerTeam: string; playerName: string; playerHero: Hero; heroDuplicated: string; ultimateId: number; }
 export interface UltimateStartLogEvent { matchId: string; type: string; matchTime: number; playerTeam: string; playerName: string; playerHero: Hero; heroDuplicated: string; ultimateId: number; }
 
+// Player Stats
 
-// Player Stats related types
-export type PlayerStatsCategoryKeys = 'matchId' | 'roundNumber' | 'playerTeam' | 'playerName' | 'playerHero' | 'playerRole';
-export type PlayerStatsBaseNumericalKeys = 'playtime' | 'eliminations' | 'finalBlows' | 'deaths' | 'allDamageDealt' | 'barrierDamageDealt' | 'heroDamageDealt' | 'healingDealt' | 'healingReceived' | 'selfHealing' | 'damageTaken' | 'damageBlocked' | 'defensiveAssists' | 'offensiveAssists' | 'ultimatesEarned' | 'ultimatesUsed' | 'multikills' | 'soloKills' | 'objectiveKills' | 'environmentalKills' | 'environmentalDeaths' | 'criticalHits' | 'shotsFired' | 'shotsHit' | 'shotsMissed' | 'scopedShotsFired' | 'scopedShotsHit';
+// Categories by which to group player stats
+export const playerStatsCategoryKeys = ['matchId', 'roundNumber', 'playerTeam', 'playerName', 'playerHero', 'playerRole'];
+export type PlayerStatsCategoryKeys = typeof playerStatsCategoryKeys[number];
+
+// Base player stats are loaded directly from the PlayerStatLogEvent
+export const playerStatsBaseNumericalKeys = [ 'playtime', 'eliminations', 'finalBlows', 'deaths', 'allDamageDealt', 'barrierDamageDealt', 'heroDamageDealt', 'healingDealt', 'healingReceived', 'selfHealing', 'damageTaken', 'damageBlocked', 'defensiveAssists', 'offensiveAssists', 'ultimatesEarned', 'ultimatesUsed', 'multikills', 'soloKills', 'objectiveKills', 'environmentalKills', 'environmentalDeaths', 'criticalHits', 'shotsFired', 'shotsHit', 'shotsMissed', 'scopedShotsFired', 'scopedShotsHit', ];
+export type PlayerStatsBaseNumericalKeys = typeof playerStatsBaseNumericalKeys[number];
 export type PlayerStatsBase = {[k in PlayerStatsCategoryKeys]: string} & {[k in PlayerStatsBaseNumericalKeys]: number};
-export type PlayerStatsDerivedNumericalKeys = 'eliminationsPer10Minutes' | 'finalBlowsPer10Minutes' | 'deathsPer10Minutes' | 'allDamageDealtPer10Minutes' | 'barrierDamageDealtPer10Minutes' | 'heroDamageDealtPer10Minutes' | 'healingDealtPer10Minutes' | 'healingReceivedPer10Minutes' | 'selfHealingPer10Minutes' | 'damageTakenPer10Minutes' | 'damageBlockedPer10Minutes' | 'defensiveAssistsPer10Minutes' | 'offensiveAssistsPer10Minutes' | 'ultimatesEarnedPer10Minutes' | 'ultimatesUsedPer10Minutes' | 'multikillsPer10Minutes' | 'soloKillsPer10Minutes' | 'objectiveKillsPer10Minutes' | 'environmentalKillsPer10Minutes' | 'environmentalDeathsPer10Minutes' | 'criticalHitsPer10Minutes' | 'shotsFiredPer10Minutes' | 'shotsHitPer10Minutes' | 'shotsMissedPer10Minutes' | 'scopedShotsFiredPer10Minutes' | 'scopedShotsHitPer10Minutes' | 'weaponAccuracy' | 'scopedWeaponAccuracy' | 'criticalHitRate';
+
+// Derived player stats are computed from the base stats, for example ratios or normalizing by time played
+export const playerStatsDerivedNumericalKeys = [ 'eliminationsPer10Minutes', 'finalBlowsPer10Minutes', 'deathsPer10Minutes', 'allDamageDealtPer10Minutes', 'barrierDamageDealtPer10Minutes', 'heroDamageDealtPer10Minutes', 'healingDealtPer10Minutes', 'healingReceivedPer10Minutes', 'selfHealingPer10Minutes', 'damageTakenPer10Minutes', 'damageBlockedPer10Minutes', 'defensiveAssistsPer10Minutes', 'offensiveAssistsPer10Minutes', 'ultimatesEarnedPer10Minutes', 'ultimatesUsedPer10Minutes', 'multikillsPer10Minutes', 'soloKillsPer10Minutes', 'objectiveKillsPer10Minutes', 'environmentalKillsPer10Minutes', 'environmentalDeathsPer10Minutes', 'criticalHitsPer10Minutes', 'shotsFiredPer10Minutes', 'shotsHitPer10Minutes', 'shotsMissedPer10Minutes', 'scopedShotsFiredPer10Minutes', 'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'criticalHitRate' ];
+export type PlayerStatsDerivedNumericalKeys = typeof playerStatsDerivedNumericalKeys[number];
+
+// Interfaces combining all levels of player stats
 export type PlayerStats = PlayerStatsBase & {[k in PlayerStatsDerivedNumericalKeys]: number};
 export type PlayerStatsNumericalKeys = PlayerStatsBaseNumericalKeys | PlayerStatsDerivedNumericalKeys;
-
-export const playerStatsBaseNumericalKeys: PlayerStatsBaseNumericalKeys[] = [ 'playtime', 'eliminations', 'finalBlows', 'deaths', 'allDamageDealt', 'barrierDamageDealt', 'heroDamageDealt', 'healingDealt', 'healingReceived', 'selfHealing', 'damageTaken', 'damageBlocked', 'defensiveAssists', 'offensiveAssists', 'ultimatesEarned', 'ultimatesUsed', 'multikills', 'soloKills', 'objectiveKills', 'environmentalKills', 'environmentalDeaths', 'criticalHits', 'shotsFired', 'shotsHit', 'shotsMissed', 'scopedShotsFired', 'scopedShotsHit', ];
-export const playerStatsDerivedNumericalKeys: PlayerStatsDerivedNumericalKeys[] = [ 'eliminationsPer10Minutes', 'finalBlowsPer10Minutes', 'deathsPer10Minutes', 'allDamageDealtPer10Minutes', 'barrierDamageDealtPer10Minutes', 'heroDamageDealtPer10Minutes', 'healingDealtPer10Minutes', 'healingReceivedPer10Minutes', 'selfHealingPer10Minutes', 'damageTakenPer10Minutes', 'damageBlockedPer10Minutes', 'defensiveAssistsPer10Minutes', 'offensiveAssistsPer10Minutes', 'ultimatesEarnedPer10Minutes', 'ultimatesUsedPer10Minutes', 'multikillsPer10Minutes', 'soloKillsPer10Minutes', 'objectiveKillsPer10Minutes', 'environmentalKillsPer10Minutes', 'environmentalDeathsPer10Minutes', 'criticalHitsPer10Minutes', 'shotsFiredPer10Minutes', 'shotsHitPer10Minutes', 'shotsMissedPer10Minutes', 'scopedShotsFiredPer10Minutes', 'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'criticalHitRate' ];
 export const playerStatsNumericalKeys = [...playerStatsBaseNumericalKeys, ...playerStatsDerivedNumericalKeys] as PlayerStatsNumericalKeys[];
-export const playerStatsCategoryKeys: PlayerStatsCategoryKeys[] = ['matchId', 'roundNumber', 'playerTeam', 'playerName', 'playerHero', 'playerRole'];
+
 
 // Relationships between entities in the data model, used for joining entities
 
@@ -121,6 +128,7 @@ export interface PlayerLife extends MatchTimeSegment {
 }
 
 interface TeamfightTeamStartState {
+  teamName: TeamName;
   alivePlayers: PlayerName[];
   ultimatesReady: Hero[];
 }
@@ -139,7 +147,46 @@ export interface Teamfight extends MatchTimeSegment {
     team1: TeamfightTeamEndState;
     team2: TeamfightTeamEndState;
   };
+  // Team with most players alive at the end of the fight
+  winner: TeamName;
+  team1KillsPerUlt: number;
+  team2KillsPerUlt: number;
 };
+
+export interface TeamComposition {
+  tank: Hero[];
+  damage: Hero[];
+  support: Hero[];
+}
+
+// Tracks the composition of each team during a match
+export interface TeamCompositionSegment extends MatchTimeSegment {
+  team: TeamName;
+  composition: TeamComposition;
+  // Who was playing what heroes
+  playerHeroes: {
+    playerName: PlayerName;
+    playerHero: Hero;
+  }[];
+  // Broken down by tank, damage, and support roles
+  heroesByRole: {
+    role: Role;
+    heroes: Hero[];
+  }[];
+};
+
+export interface TeamCompositionTotals {
+  team: TeamName;
+  composition: TeamComposition;
+  totalDuration: number;
+  totalEliminations: number;
+  totalDeaths: number;
+  kdr: number; // = totalEliminations / totalDeaths
+  totalTeamfightsParticipated: number;
+  totalTeamfightsWon: number;
+  teamfightWinRate: number; // = totalTeamfightsWon / totalTeamfightsParticipated
+};
+  
 
 export interface PlayerVictimKillCount {
   player: PlayerName;
@@ -182,6 +229,7 @@ export interface ScrimsightDataModel {
    playerLives: PlayerLife[];
    teamfights: Teamfight[];
    rounds: Round[];
+   teamCompositions: TeamCompositionSegment[];
  
    // Enriched player stats
    playerStatBreakdown: {
@@ -190,6 +238,7 @@ export interface ScrimsightDataModel {
      byTeam: ({playerTeam: string} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team
      byTeamAndPlayer: ({playerTeam: string, playerName: string} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team and player
      byTeamAndPlayerAndMatch: ({playerTeam: string, playerName: string, matchId: MatchID} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team, player and match
+     byTeamAndPlayerAndScrim: ({playerTeam: string, playerName: string, scrim: ScrimID} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by team, player and scrim
      byPlayerAndHero: ({playerName: string, playerHero: Hero} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by player and hero
      byRole: ({playerRole: Role} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by role
      byHero: ({playerHero: Hero} & {[k in PlayerStatsNumericalKeys]: number})[]; // grouped by hero
@@ -204,3 +253,7 @@ export interface ScrimsightDataModel {
     };
 }
   
+export interface ScrimsightMetricFramework {
+  metricCategories: {
+
+  }[];
