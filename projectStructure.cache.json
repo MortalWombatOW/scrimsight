@@ -1,5 +1,13 @@
 [
   {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScatterChart.tsx",
+    "errorMessage": "🔥 File 'ScatterChart.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScatterChart.stories.tsx\nError location = ./src/components/ScatterChart.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/SampleData.tsx",
+    "errorMessage": "🔥 File 'SampleData.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/SampleData.stories.tsx\nError location = ./src/components/SampleData.tsx\n\n"
+  },
+  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/components/AuthGuard.tsx",
     "errorMessage": "🔥 File 'AuthGuard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/AuthGuard.stories.tsx\nError location = ./src/components/AuthGuard.tsx\n\n"
   },

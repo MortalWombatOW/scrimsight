@@ -814,15 +814,18 @@ const buildTeamCompositions = (dataModel: ScrimsightDataModel.ScrimsightDataMode
         // Create composition segment for initial state
         if (activeComposition.size > 0) {
           const endTime = compositionChanges.length > 0 ? compositionChanges[0].matchTime : roundEnd.matchTime;
-          const compositionSegment = createCompositionSegment(
-            matchId, 
-            roundNumber, 
-            teamName, 
-            currentTime, 
-            endTime, 
-            Array.from(activeComposition.entries())
-          );
-          compositions.push(compositionSegment);
+          // Only create segment if there's actual duration (avoid zero-duration segments)
+          if (endTime > currentTime) {
+            const compositionSegment = createCompositionSegment(
+              matchId, 
+              roundNumber, 
+              teamName, 
+              currentTime, 
+              endTime, 
+              Array.from(activeComposition.entries())
+            );
+            compositions.push(compositionSegment);
+          }
           currentTime = endTime;
         }
 
@@ -835,15 +838,18 @@ const buildTeamCompositions = (dataModel: ScrimsightDataModel.ScrimsightDataMode
           const nextSwap = compositionChanges[index + 1];
           const endTime = nextSwap ? nextSwap.matchTime : roundEnd.matchTime;
           
-          const compositionSegment = createCompositionSegment(
-            matchId, 
-            roundNumber, 
-            teamName, 
-            currentTime, 
-            endTime, 
-            Array.from(activeComposition.entries())
-          );
-          compositions.push(compositionSegment);
+          // Only create segment if there's actual duration (avoid zero-duration segments)
+          if (endTime > swapEvent.matchTime) {
+            const compositionSegment = createCompositionSegment(
+              matchId, 
+              roundNumber, 
+              teamName, 
+              swapEvent.matchTime, 
+              endTime, 
+              Array.from(activeComposition.entries())
+            );
+            compositions.push(compositionSegment);
+          }
           currentTime = endTime;
         });
       });
@@ -957,7 +963,13 @@ const buildKillCounts = (dataModel: ScrimsightDataModel.ScrimsightDataModel): Sc
   };
 };
 
+// Three-Stage Player Stats Computation for Statistical Soundness
+// Stage 1: Collect base stats (only summable values)
+// Stage 2: Aggregate base stats by grouping criteria
+// Stage 3: Compute derived stats from aggregated base stats
+
 const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.ScrimsightDataModel['playerStatBreakdown'] => {
+  
   // Helper function to calculate playtime for a player in a match/round
   const calculatePlaytime = (matchId: string, roundNumber: string, playerName: string): number => {
     const playerLivesInRound = R.pipe(
@@ -975,21 +987,15 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     );
   };
 
-  // Build enriched player stats first
-  const playerStats = R.pipe(
+  // STAGE 1: Base Stats Collection
+  // Collect only raw, summable values with categorization information
+  const basePlayerStats: ScrimsightDataModel.PlayerStatsBase[] = R.pipe(
     dataModel.playerStat,
-    R.map((statEvent): ScrimsightDataModel.PlayerStats => {
+    R.map((statEvent): ScrimsightDataModel.PlayerStatsBase => {
       const playtime = calculatePlaytime(statEvent.matchId, statEvent.roundNumber, statEvent.playerName);
-      const playtimeMinutes = playtime / 60;
-      const per10Minutes = playtimeMinutes > 0 ? (10 / playtimeMinutes) : 0;
-
-      // Calculate derived metrics
-      const weaponAccuracy = statEvent.shotsFired > 0 ? (statEvent.shotsHit / statEvent.shotsFired) * 100 : 0;
-      const scopedWeaponAccuracy = statEvent.scopedShotsFired > 0 ? (statEvent.scopedShotsHit / statEvent.scopedShotsFired) * 100 : 0;
-      const criticalHitRate = statEvent.shotsHit > 0 ? (statEvent.criticalHits / statEvent.shotsHit) * 100 : 0;
-
+      
       return {
-        // Category fields
+        // Categorization fields for grouping
         matchId: statEvent.matchId,
         roundNumber: statEvent.roundNumber,
         playerTeam: statEvent.playerTeam,
@@ -997,7 +1003,7 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
         playerHero: statEvent.playerHero,
         playerRole: getRoleFromHero(statEvent.playerHero),
 
-        // Base numerical fields (including calculated playtime)
+        // Base numerical fields (summable values only)
         playtime,
         eliminations: statEvent.eliminations,
         finalBlows: statEvent.finalBlows,
@@ -1024,92 +1030,402 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
         shotsHit: statEvent.shotsHit,
         shotsMissed: statEvent.shotsMissed,
         scopedShotsFired: statEvent.scopedShotsFired,
-        scopedShotsHit: statEvent.scopedShotsHit,
-
-        // Derived per-10-minute metrics
-        eliminationsPer10Minutes: statEvent.eliminations * per10Minutes,
-        finalBlowsPer10Minutes: statEvent.finalBlows * per10Minutes,
-        deathsPer10Minutes: statEvent.deaths * per10Minutes,
-        allDamageDealtPer10Minutes: statEvent.allDamageDealt * per10Minutes,
-        barrierDamageDealtPer10Minutes: statEvent.barrierDamageDealt * per10Minutes,
-        heroDamageDealtPer10Minutes: statEvent.heroDamageDealt * per10Minutes,
-        healingDealtPer10Minutes: statEvent.healingDealt * per10Minutes,
-        healingReceivedPer10Minutes: statEvent.healingReceived * per10Minutes,
-        selfHealingPer10Minutes: statEvent.selfHealing * per10Minutes,
-        damageTakenPer10Minutes: statEvent.damageTaken * per10Minutes,
-        damageBlockedPer10Minutes: statEvent.damageBlocked * per10Minutes,
-        defensiveAssistsPer10Minutes: statEvent.defensiveAssists * per10Minutes,
-        offensiveAssistsPer10Minutes: statEvent.offensiveAssists * per10Minutes,
-        ultimatesEarnedPer10Minutes: statEvent.ultimatesEarned * per10Minutes,
-        ultimatesUsedPer10Minutes: statEvent.ultimatesUsed * per10Minutes,
-        multikillsPer10Minutes: statEvent.multikills * per10Minutes,
-        soloKillsPer10Minutes: statEvent.soloKills * per10Minutes,
-        objectiveKillsPer10Minutes: statEvent.objectiveKills * per10Minutes,
-        environmentalKillsPer10Minutes: statEvent.environmentalKills * per10Minutes,
-        environmentalDeathsPer10Minutes: statEvent.environmentalDeaths * per10Minutes,
-        criticalHitsPer10Minutes: statEvent.criticalHits * per10Minutes,
-        shotsFiredPer10Minutes: statEvent.shotsFired * per10Minutes,
-        shotsHitPer10Minutes: statEvent.shotsHit * per10Minutes,
-        shotsMissedPer10Minutes: statEvent.shotsMissed * per10Minutes,
-        scopedShotsFiredPer10Minutes: statEvent.scopedShotsFired * per10Minutes,
-        scopedShotsHitPer10Minutes: statEvent.scopedShotsHit * per10Minutes,
-
-        // Derived percentage metrics
-        weaponAccuracy,
-        scopedWeaponAccuracy,
-        criticalHitRate
+        scopedShotsHit: statEvent.scopedShotsHit
       };
     })
   );
 
-  // Helper function to sum only base numerical fields across grouped records
-  const sumBaseNumericalFields = (records: ScrimsightDataModel.PlayerStats[]): Record<ScrimsightDataModel.PlayerStatsBaseNumericalKeys, number> => {
+  // STAGE 2: Base Stats Aggregation
+  // Sum only the base numerical fields across grouped records
+  const aggregateBaseStats = (records: ScrimsightDataModel.PlayerStatsBase[]): ScrimsightDataModel.PlayerStatsAggregatedBase => {
     return R.pipe(
       ScrimsightDataModel.playerStatsBaseNumericalKeys,
-      R.map(key => [key, R.sumBy(records, record => record[key])] as const),
+      R.map(key => [key, R.sumBy(records, record => record[key as keyof ScrimsightDataModel.PlayerStatsBase] as number)] as const),
       R.fromEntries()
-    ) as Record<ScrimsightDataModel.PlayerStatsBaseNumericalKeys, number>;
+    ) as ScrimsightDataModel.PlayerStatsAggregatedBase;
   };
 
-  // Helper function to calculate derived fields from summed base fields
-  const calculateDerivedFields = (summedData: Record<ScrimsightDataModel.PlayerStatsBaseNumericalKeys, number>): Record<ScrimsightDataModel.PlayerStatsDerivedNumericalKeys, number> => {
-    const playtimeMinutes = summedData.playtime / 60;
-    const per10Minutes = playtimeMinutes > 0 ? (10 * 60) / summedData.playtime : 0;
+  // STAGE 3: Derived Stats Computation  
+  // Calculate derived metrics from aggregated base stats for statistical correctness
+  const computeDerivedStats = (
+    aggregatedBase: ScrimsightDataModel.PlayerStatsAggregatedBase, 
+    dataModel: ScrimsightDataModel.ScrimsightDataModel,
+    filterContext: { playerName?: string; playerTeam?: string; matchId?: string; playerHero?: ScrimsightDataModel.Hero; playerRole?: ScrimsightDataModel.Role; scrim?: string; }
+  ): ScrimsightDataModel.PlayerStatsNumerical => {
+    const playtimeMinutes = aggregatedBase.playtime / 60;
+    const per10MinuteMultiplier = playtimeMinutes > 0 ? (10 * 60) / aggregatedBase.playtime : 0;
 
-    // Calculate per-10-minute metrics
-    const eliminationsPer10Minutes = summedData.eliminations * per10Minutes;
-    const finalBlowsPer10Minutes = summedData.finalBlows * per10Minutes;
-    const deathsPer10Minutes = summedData.deaths * per10Minutes;
-    const allDamageDealtPer10Minutes = summedData.allDamageDealt * per10Minutes;
-    const barrierDamageDealtPer10Minutes = summedData.barrierDamageDealt * per10Minutes;
-    const heroDamageDealtPer10Minutes = summedData.heroDamageDealt * per10Minutes;
-    const healingDealtPer10Minutes = summedData.healingDealt * per10Minutes;
-    const healingReceivedPer10Minutes = summedData.healingReceived * per10Minutes;
-    const selfHealingPer10Minutes = summedData.selfHealing * per10Minutes;
-    const damageTakenPer10Minutes = summedData.damageTaken * per10Minutes;
-    const damageBlockedPer10Minutes = summedData.damageBlocked * per10Minutes;
-    const defensiveAssistsPer10Minutes = summedData.defensiveAssists * per10Minutes;
-    const offensiveAssistsPer10Minutes = summedData.offensiveAssists * per10Minutes;
-    const ultimatesEarnedPer10Minutes = summedData.ultimatesEarned * per10Minutes;
-    const ultimatesUsedPer10Minutes = summedData.ultimatesUsed * per10Minutes;
-    const multikillsPer10Minutes = summedData.multikills * per10Minutes;
-    const soloKillsPer10Minutes = summedData.soloKills * per10Minutes;
-    const objectiveKillsPer10Minutes = summedData.objectiveKills * per10Minutes;
-    const environmentalKillsPer10Minutes = summedData.environmentalKills * per10Minutes;
-    const environmentalDeathsPer10Minutes = summedData.environmentalDeaths * per10Minutes;
-    const criticalHitsPer10Minutes = summedData.criticalHits * per10Minutes;
-    const shotsFiredPer10Minutes = summedData.shotsFired * per10Minutes;
-    const shotsHitPer10Minutes = summedData.shotsHit * per10Minutes;
-    const shotsMissedPer10Minutes = summedData.shotsMissed * per10Minutes;
-    const scopedShotsFiredPer10Minutes = summedData.scopedShotsFired * per10Minutes;
-    const scopedShotsHitPer10Minutes = summedData.scopedShotsHit * per10Minutes;
+    // Per-10-minute metrics (rate calculations)
+    const eliminationsPer10Minutes = aggregatedBase.eliminations * per10MinuteMultiplier;
+    const finalBlowsPer10Minutes = aggregatedBase.finalBlows * per10MinuteMultiplier;
+    const deathsPer10Minutes = aggregatedBase.deaths * per10MinuteMultiplier;
+    const allDamageDealtPer10Minutes = aggregatedBase.allDamageDealt * per10MinuteMultiplier;
+    const barrierDamageDealtPer10Minutes = aggregatedBase.barrierDamageDealt * per10MinuteMultiplier;
+    const heroDamageDealtPer10Minutes = aggregatedBase.heroDamageDealt * per10MinuteMultiplier;
+    const healingDealtPer10Minutes = aggregatedBase.healingDealt * per10MinuteMultiplier;
+    const healingReceivedPer10Minutes = aggregatedBase.healingReceived * per10MinuteMultiplier;
+    const selfHealingPer10Minutes = aggregatedBase.selfHealing * per10MinuteMultiplier;
+    const damageTakenPer10Minutes = aggregatedBase.damageTaken * per10MinuteMultiplier;
+    const damageBlockedPer10Minutes = aggregatedBase.damageBlocked * per10MinuteMultiplier;
+    const defensiveAssistsPer10Minutes = aggregatedBase.defensiveAssists * per10MinuteMultiplier;
+    const offensiveAssistsPer10Minutes = aggregatedBase.offensiveAssists * per10MinuteMultiplier;
+    const ultimatesEarnedPer10Minutes = aggregatedBase.ultimatesEarned * per10MinuteMultiplier;
+    const ultimatesUsedPer10Minutes = aggregatedBase.ultimatesUsed * per10MinuteMultiplier;
+    const multikillsPer10Minutes = aggregatedBase.multikills * per10MinuteMultiplier;
+    const soloKillsPer10Minutes = aggregatedBase.soloKills * per10MinuteMultiplier;
+    const objectiveKillsPer10Minutes = aggregatedBase.objectiveKills * per10MinuteMultiplier;
+    const environmentalKillsPer10Minutes = aggregatedBase.environmentalKills * per10MinuteMultiplier;
+    const environmentalDeathsPer10Minutes = aggregatedBase.environmentalDeaths * per10MinuteMultiplier;
+    const criticalHitsPer10Minutes = aggregatedBase.criticalHits * per10MinuteMultiplier;
+    const shotsFiredPer10Minutes = aggregatedBase.shotsFired * per10MinuteMultiplier;
+    const shotsHitPer10Minutes = aggregatedBase.shotsHit * per10MinuteMultiplier;
+    const shotsMissedPer10Minutes = aggregatedBase.shotsMissed * per10MinuteMultiplier;
+    const scopedShotsFiredPer10Minutes = aggregatedBase.scopedShotsFired * per10MinuteMultiplier;
+    const scopedShotsHitPer10Minutes = aggregatedBase.scopedShotsHit * per10MinuteMultiplier;
 
-    // Calculate percentage metrics
-    const weaponAccuracy = summedData.shotsFired > 0 ? (summedData.shotsHit / summedData.shotsFired) * 100 : 0;
-    const scopedWeaponAccuracy = summedData.scopedShotsFired > 0 ? (summedData.scopedShotsHit / summedData.scopedShotsFired) * 100 : 0;
-    const criticalHitRate = summedData.shotsHit > 0 ? (summedData.criticalHits / summedData.shotsHit) * 100 : 0;
+    // Percentage/ratio metrics (accuracy calculations)
+    const weaponAccuracy = aggregatedBase.shotsFired > 0 ? (aggregatedBase.shotsHit / aggregatedBase.shotsFired) * 100 : 0;
+    const scopedWeaponAccuracy = aggregatedBase.scopedShotsFired > 0 ? (aggregatedBase.scopedShotsHit / aggregatedBase.scopedShotsFired) * 100 : 0;
+    const criticalHitRate = aggregatedBase.shotsHit > 0 ? (aggregatedBase.criticalHits / aggregatedBase.shotsHit) * 100 : 0;
+
+    // Additional derived metrics
+    const killsPerUltimate = aggregatedBase.ultimatesUsed > 0 ? aggregatedBase.eliminations / aggregatedBase.ultimatesUsed : 0;
+
+    // Helper function to filter events based on context
+    const filterByContext = <T extends { matchId?: string; playerName?: string; playerTeam?: string; playerHero?: ScrimsightDataModel.Hero; }>(
+      events: T[]
+    ): T[] => {
+      return R.filter(events, event => {
+        if (filterContext.matchId && event.matchId !== filterContext.matchId) return false;
+        if (filterContext.playerName && event.playerName !== filterContext.playerName) return false;
+        if (filterContext.playerTeam && event.playerTeam !== filterContext.playerTeam) return false;
+        if (filterContext.playerHero && event.playerHero !== filterContext.playerHero) return false;
+        return true;
+      });
+    };
+
+    // Ultimate-related derived stats
+    const ultsUsed = aggregatedBase.ultimatesUsed; // Same as ultimatesUsed
+
+    // Calculate ultKills - kills made while ultimate was active
+    const ultimateActiveEvents = filterByContext(dataModel.ultimateStart);
+    const ultimateEndEvents = filterByContext(dataModel.ultimateEnd);
+    const killEvents = filterByContext(dataModel.kill.map(k => ({ ...k, playerName: k.attackerName, playerTeam: k.attackerTeam, playerHero: k.attackerHero })));
+    
+    let ultKills = 0;
+    ultimateActiveEvents.forEach(ultStart => {
+      const ultEnd = ultimateEndEvents.find(end => 
+        end.ultimateId === ultStart.ultimateId && 
+        end.playerName === ultStart.playerName &&
+        end.matchTime >= ultStart.matchTime
+      );
+      
+      const endTime = ultEnd?.matchTime || Infinity;
+      const killsDuringUlt = killEvents.filter(kill => 
+        kill.matchTime >= ultStart.matchTime && 
+        kill.matchTime <= endTime &&
+        kill.playerName === ultStart.playerName
+      );
+      ultKills += killsDuringUlt.length;
+    });
+
+    // Calculate ultimate timing stats
+    const ultimateChargedEvents = filterByContext(dataModel.ultimateCharged);
+    const ultimateStartEvents = filterByContext(dataModel.ultimateStart);
+    
+    let totalChargeTime = 0;
+    let totalHoldTime = 0;
+    let totalUseTime = 0;
+    let chargeTimeCount = 0;
+    let holdTimeCount = 0;
+    let useTimeCount = 0;
+
+    ultimateChargedEvents.forEach(charged => {
+      // Find corresponding ultimate start
+      const ultStart = ultimateStartEvents.find(start => 
+        start.ultimateId === charged.ultimateId &&
+        start.playerName === charged.playerName &&
+        start.matchTime >= charged.matchTime
+      );
+      
+      if (ultStart) {
+        // Calculate hold time (charged to used)
+        totalHoldTime += (ultStart.matchTime - charged.matchTime);
+        holdTimeCount++;
+        
+        // Find corresponding ultimate end for use time
+        const ultEnd = ultimateEndEvents.find(end => 
+          end.ultimateId === ultStart.ultimateId &&
+          end.playerName === ultStart.playerName &&
+          end.matchTime >= ultStart.matchTime
+        );
+        
+        if (ultEnd) {
+          totalUseTime += (ultEnd.matchTime - ultStart.matchTime);
+          useTimeCount++;
+        }
+      }
+    });
+
+    // Calculate charge time by looking at time between ultimate uses
+    const sortedUltStarts = R.sortBy(ultimateStartEvents, e => e.matchTime);
+    for (let i = 1; i < sortedUltStarts.length; i++) {
+      const prevUlt = sortedUltStarts[i - 1];
+      const currentUlt = sortedUltStarts[i];
+      if (prevUlt.playerName === currentUlt.playerName) {
+        totalChargeTime += (currentUlt.matchTime - prevUlt.matchTime);
+        chargeTimeCount++;
+      }
+    }
+
+    const ultimateChargeTime = chargeTimeCount > 0 ? totalChargeTime / chargeTimeCount : 0;
+    const ultimateHoldTime = holdTimeCount > 0 ? totalHoldTime / holdTimeCount : 0;
+    const ultimateUseTime = useTimeCount > 0 ? totalUseTime / useTimeCount : 0;
+
+    // Deaths with ultimate available
+    const deathEvents = filterByContext(dataModel.kill.map(k => ({ ...k, playerName: k.victimName, playerTeam: k.victimTeam, playerHero: k.victimHero })));
+    let deathsWithUltAvailable = 0;
+    
+    deathEvents.forEach(death => {
+      // Check if player had ultimate available at time of death
+      const availableUlts = ultimateChargedEvents.filter(charged => 
+        charged.playerName === death.playerName &&
+        charged.matchTime <= death.matchTime
+      );
+      
+      const usedUlts = ultimateStartEvents.filter(used => 
+        used.playerName === death.playerName &&
+        used.matchTime <= death.matchTime
+      );
+      
+      // If more ultimates charged than used, player had ultimate available
+      if (availableUlts.length > usedUlts.length) {
+        deathsWithUltAvailable++;
+      }
+    });
+
+    // Teamfight participation stats
+    const relevantTeamfights = R.filter(dataModel.teamfights, fight => {
+      if (filterContext.matchId && fight.matchId !== filterContext.matchId) return false;
+      
+      // Check if player participated in this teamfight
+      if (filterContext.playerName) {
+        const team1Players = [...fight.start.team1.alivePlayers, ...fight.end.team1.kills];
+        const team2Players = [...fight.start.team2.alivePlayers, ...fight.end.team2.kills];
+        const allParticipants = [...team1Players, ...team2Players];
+        
+        if (!allParticipants.includes(filterContext.playerName)) return false;
+      }
+      
+      if (filterContext.playerTeam) {
+        if (fight.start.team1.teamName !== filterContext.playerTeam && 
+            fight.start.team2.teamName !== filterContext.playerTeam) return false;
+      }
+      
+      return true;
+    });
+
+    const teamfightsParticipated = relevantTeamfights.length;
+    
+    const teamfightsWon = R.filter(relevantTeamfights, fight => {
+      if (filterContext.playerTeam) {
+        return fight.winner === filterContext.playerTeam;
+      }
+      // If no specific team context, count based on player name
+      if (filterContext.playerName) {
+        const winningTeamPlayers = fight.winner === fight.start.team1.teamName ? 
+          [...fight.start.team1.alivePlayers, ...fight.end.team1.kills] :
+          [...fight.start.team2.alivePlayers, ...fight.end.team2.kills];
+        return winningTeamPlayers.includes(filterContext.playerName);
+      }
+      return false;
+    }).length;
+
+    // Teamfights won with/without ultimate
+    let teamfightsWonWithUlt = 0;
+    const wonTeamfights = R.filter(relevantTeamfights, fight => {
+      if (filterContext.playerTeam) {
+        return fight.winner === filterContext.playerTeam;
+      }
+      if (filterContext.playerName) {
+        const winningTeamPlayers = fight.winner === fight.start.team1.teamName ? 
+          [...fight.start.team1.alivePlayers, ...fight.end.team1.kills] :
+          [...fight.start.team2.alivePlayers, ...fight.end.team2.kills];
+        return winningTeamPlayers.includes(filterContext.playerName);
+      }
+      return false;
+    });
+
+    wonTeamfights.forEach(fight => {
+      const playerTeam = filterContext.playerTeam || 
+        (fight.start.team1.alivePlayers.includes(filterContext.playerName || '') ? fight.start.team1.teamName : fight.start.team2.teamName);
+      
+      const teamUltsUsed = playerTeam === fight.start.team1.teamName ? 
+        fight.end.team1.ultimatesUsed : 
+        fight.end.team2.ultimatesUsed;
+      
+      // Check if player used ultimate during this fight
+      if (filterContext.playerName && filterContext.playerHero) {
+        if (teamUltsUsed.includes(filterContext.playerHero)) {
+          teamfightsWonWithUlt++;
+        }
+      } else if (teamUltsUsed.length > 0) {
+        // If no specific player context, count if any ultimates were used
+        teamfightsWonWithUlt++;
+      }
+    });
+
+    const teamfightsWonWithoutUlt = teamfightsWon - teamfightsWonWithUlt;
+
+    // Win rates
+    const teamfightWinRate = teamfightsParticipated > 0 ? teamfightsWon / teamfightsParticipated : 0;
+    const teamfightWinRateWithUlt = teamfightsParticipated > 0 ? teamfightsWonWithUlt / teamfightsParticipated : 0;
+    const teamfightWinRateWithoutUlt = teamfightsParticipated > 0 ? teamfightsWonWithoutUlt / teamfightsParticipated : 0;
+
+    // First kill/death teamfight stats  
+    let teamfightsWithFirstKill = 0;
+    let teamfightsWithFirstDeath = 0;
+    let teamfightsWonWithFirstKill = 0;
+    let teamfightsWonWithFirstDeath = 0;
+
+    relevantTeamfights.forEach(fight => {
+      const fightKills = R.filter(dataModel.kill, kill => 
+        kill.matchTime >= fight.startTime && 
+        kill.matchTime <= fight.endTime &&
+        kill.matchId === fight.matchId
+      );
+      
+      const sortedKills = R.sortBy(fightKills, kill => kill.matchTime);
+      
+      if (sortedKills.length > 0) {
+        const firstKill = sortedKills[0];
+        const firstDeath = sortedKills[0]; // Same event, different perspective
+        
+        // Check if player made first kill
+        if (filterContext.playerName && firstKill.attackerName === filterContext.playerName) {
+          teamfightsWithFirstKill++;
+        }
+        
+        // Check if player/team had first death
+        if (filterContext.playerName && firstDeath.victimName === filterContext.playerName) {
+          teamfightsWithFirstDeath++;
+        } else if (filterContext.playerTeam && firstDeath.victimTeam === filterContext.playerTeam) {
+          teamfightsWithFirstDeath++;
+        }
+      }
+    });
+
+    // Now calculate won teamfights with first kill/death
+    wonTeamfights.forEach(fight => {
+      const fightKills = R.filter(dataModel.kill, kill => 
+        kill.matchTime >= fight.startTime && 
+        kill.matchTime <= fight.endTime &&
+        kill.matchId === fight.matchId
+      );
+      
+      const sortedKills = R.sortBy(fightKills, kill => kill.matchTime);
+      
+      if (sortedKills.length > 0) {
+        const firstKill = sortedKills[0];
+        const firstDeath = sortedKills[0]; // Same event, different perspective
+        
+        // Check if player made first kill
+        if (filterContext.playerName && firstKill.attackerName === filterContext.playerName) {
+          teamfightsWonWithFirstKill++;
+        }
+        
+        // Check if player/team had first death
+        if (filterContext.playerName && firstDeath.victimName === filterContext.playerName) {
+          teamfightsWonWithFirstDeath++;
+        } else if (filterContext.playerTeam && firstDeath.victimTeam === filterContext.playerTeam) {
+          teamfightsWonWithFirstDeath++;
+        }
+      }
+    });
+
+    const firstKillRate = teamfightsParticipated > 0 ? teamfightsWithFirstKill / teamfightsParticipated : 0;
+    const firstDeathRate = teamfightsParticipated > 0 ? teamfightsWithFirstDeath / teamfightsParticipated : 0;
+    const teamfightWinRateWithFirstKill = teamfightsParticipated > 0 ? teamfightsWonWithFirstKill / teamfightsParticipated : 0;
+    const teamfightWinRateWithFirstDeath = teamfightsParticipated > 0 ? teamfightsWonWithFirstDeath / teamfightsParticipated : 0;
+
+    // Kill-by-role stats
+    const playerKills = filterByContext(dataModel.kill.map(k => ({ ...k, playerName: k.attackerName, playerTeam: k.attackerTeam, playerHero: k.attackerHero })));
+    
+    let tankKills = 0;
+    let damageKills = 0; 
+    let supportKills = 0;
+
+    playerKills.forEach(kill => {
+      const victimRole = getRoleFromHero(kill.victimHero);
+      switch (victimRole) {
+        case 'tank':
+          tankKills++;
+          break;
+        case 'damage':
+          damageKills++;
+          break;
+        case 'support':
+          supportKills++;
+          break;
+      }
+    });
+
+    // Focus rates
+    const totalEliminations = aggregatedBase.eliminations;
+    const tankFocusRate = totalEliminations > 0 ? tankKills / totalEliminations : 0;
+    const damageFocusRate = totalEliminations > 0 ? damageKills / totalEliminations : 0;
+    const supportFocusRate = totalEliminations > 0 ? supportKills / totalEliminations : 0;
+
+    // Average life duration
+    const relevantPlayerLives = R.filter(dataModel.playerLives, life => {
+      if (filterContext.matchId && life.matchId !== filterContext.matchId) return false;
+      if (filterContext.playerName && life.player !== filterContext.playerName) return false;
+      if (filterContext.playerHero && life.hero !== filterContext.playerHero) return false;
+      return true;
+    });
+    const averageLifeDuration = relevantPlayerLives.length > 0 ? 
+      R.pipe(relevantPlayerLives, R.sumBy(life => life.duration)) / relevantPlayerLives.length : 0;
+
+    // Total assists (offensive + defensive)
+    const totalAssists = aggregatedBase.offensiveAssists + aggregatedBase.defensiveAssists;
+    const totalAssistsPer10Minutes = totalAssists * per10MinuteMultiplier;
+
+    // Damage per kill
+    const damagePerKill = aggregatedBase.eliminations > 0 ? aggregatedBase.allDamageDealt / aggregatedBase.eliminations : 0;
+
+    // Damage done per healing received
+    const damageDonePerHealingReceived = aggregatedBase.healingReceived > 0 ? aggregatedBase.allDamageDealt / aggregatedBase.healingReceived : 0;
 
     return {
+      // Base stats
+      playtime: aggregatedBase.playtime,
+      eliminations: aggregatedBase.eliminations,
+      finalBlows: aggregatedBase.finalBlows,
+      deaths: aggregatedBase.deaths,
+      allDamageDealt: aggregatedBase.allDamageDealt,
+      barrierDamageDealt: aggregatedBase.barrierDamageDealt,
+      heroDamageDealt: aggregatedBase.heroDamageDealt,
+      healingDealt: aggregatedBase.healingDealt,
+      healingReceived: aggregatedBase.healingReceived,
+      selfHealing: aggregatedBase.selfHealing,
+      damageTaken: aggregatedBase.damageTaken,
+      damageBlocked: aggregatedBase.damageBlocked,
+      defensiveAssists: aggregatedBase.defensiveAssists,
+      offensiveAssists: aggregatedBase.offensiveAssists,
+      ultimatesEarned: aggregatedBase.ultimatesEarned,
+      ultimatesUsed: aggregatedBase.ultimatesUsed,
+      multikills: aggregatedBase.multikills,
+      soloKills: aggregatedBase.soloKills,
+      objectiveKills: aggregatedBase.objectiveKills,
+      environmentalKills: aggregatedBase.environmentalKills,
+      environmentalDeaths: aggregatedBase.environmentalDeaths,
+      criticalHits: aggregatedBase.criticalHits,
+      shotsFired: aggregatedBase.shotsFired,
+      shotsHit: aggregatedBase.shotsHit,
+      shotsMissed: aggregatedBase.shotsMissed,
+      scopedShotsFired: aggregatedBase.scopedShotsFired,
+      scopedShotsHit: aggregatedBase.scopedShotsHit,
+      // Derived stats
       eliminationsPer10Minutes,
       finalBlowsPer10Minutes,
       deathsPer10Minutes,
@@ -1138,89 +1454,101 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
       scopedShotsHitPer10Minutes,
       weaponAccuracy,
       scopedWeaponAccuracy,
-      criticalHitRate
+      criticalHitRate,
+      ultsUsed,
+      ultKills,
+      killsPerUltimate,
+      teamfightsParticipated,
+      teamfightsWon,
+      teamfightsWonWithUlt,
+      teamfightsWonWithoutUlt,
+      teamfightWinRate,
+      teamfightWinRateWithUlt,
+      teamfightWinRateWithoutUlt,
+      teamfightsWithFirstKill,
+      teamfightsWithFirstDeath,
+      firstKillRate,
+      firstDeathRate,
+      teamfightsWonWithFirstKill,
+      teamfightsWonWithFirstDeath,
+      teamfightWinRateWithFirstKill,
+      teamfightWinRateWithFirstDeath,
+      ultimateChargeTime,
+      ultimateHoldTime,
+      ultimateUseTime,
+      deathsWithUltAvailable,
+      tankKills,
+      damageKills,
+      supportKills,
+      tankFocusRate,
+      damageFocusRate,
+      supportFocusRate,
+      averageLifeDuration,
+      totalAssists,
+      totalAssistsPer10Minutes,
+      damagePerKill,
+      damageDonePerHealingReceived
     };
   };
 
+  // Apply three-stage computation to all groupings
 
+  // Total aggregation
+  const totalBase = aggregateBaseStats(basePlayerStats);
+  const total = computeDerivedStats(totalBase, dataModel, {});
 
-  // Build total aggregation (sum base fields, then calculate derived fields)
-  const totalBase = sumBaseNumericalFields(playerStats);
-  const totalDerived = calculateDerivedFields(totalBase);
-  const total = {...totalBase, ...totalDerived};
-
-  // Build byPlayer aggregation (sum stats grouped by player)
-  const byPlayerGroups = R.groupBy(playerStats, stat => stat.playerName);
+  // By Player aggregation
+  const byPlayerGroups = R.groupBy(basePlayerStats, stat => stat.playerName);
   const byPlayer = R.pipe(
     byPlayerGroups,
     R.entries(),
     R.map(([playerName, records]) => {
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerName,
-        ...baseFields,
-        ...derivedFields,
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerName });
+      return { playerName, ...finalStats };
     })
   );
 
-  // Build byTeam aggregation (sum stats grouped by team)
-  const byTeamGroups = R.groupBy(playerStats, stat => stat.playerTeam);
+  // By Team aggregation
+  const byTeamGroups = R.groupBy(basePlayerStats, stat => stat.playerTeam);
   const byTeam = R.pipe(
     byTeamGroups,
     R.entries(),
     R.map(([playerTeam, records]) => {
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerTeam,
-        ...baseFields,
-        ...derivedFields,
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerTeam });
+      return { playerTeam, ...finalStats };
     })
   );
 
-  // Build byTeamAndPlayer aggregation (sum stats grouped by team and player)
-  const byTeamAndPlayerGroups = R.groupBy(playerStats, stat => `${stat.playerTeam}|${stat.playerName}`);
+  // By Team and Player aggregation
+  const byTeamAndPlayerGroups = R.groupBy(basePlayerStats, stat => `${stat.playerTeam}|${stat.playerName}`);
   const byTeamAndPlayer = R.pipe(
     byTeamAndPlayerGroups,
     R.entries(),
     R.map(([key, records]) => {
       const [playerTeam, playerName] = key.split('|');
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerTeam,
-        playerName,
-        ...baseFields,
-        ...derivedFields,
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerTeam, playerName });
+      return { playerTeam, playerName, ...finalStats };
     })
   );
 
-  // Build byTeamAndPlayerAndMatch aggregation (sum stats grouped by team, player and match)
-  const byTeamAndPlayerAndMatchGroups = R.groupBy(playerStats, stat => `${stat.playerTeam}|${stat.playerName}|${stat.matchId}`);
+  // By Team, Player and Match aggregation
+  const byTeamAndPlayerAndMatchGroups = R.groupBy(basePlayerStats, stat => `${stat.playerTeam}|${stat.playerName}|${stat.matchId}`);
   const byTeamAndPlayerAndMatch = R.pipe(
     byTeamAndPlayerAndMatchGroups,
     R.entries(),
     R.map(([key, records]) => {
       const [playerTeam, playerName, matchId] = key.split('|');
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerTeam,
-        playerName,
-        matchId,
-        ...baseFields,
-        ...derivedFields,
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerTeam, playerName, matchId });
+      return { playerTeam, playerName, matchId, ...finalStats };
     })
   );
 
-  // Build byTeamAndPlayerAndScrim aggregation (sum stats grouped by team, player and scrim)
-  const byTeamAndPlayerAndScrimGroups = R.groupBy(playerStats, stat => {
-    // Find the scrim ID for this match
+  // By Team, Player and Scrim aggregation
+  const byTeamAndPlayerAndScrimGroups = R.groupBy(basePlayerStats, stat => {
     const matchRelation = dataModel.matches.find(match => match.match === stat.matchId);
     const scrimId = matchRelation?.scrim || `unknown-scrim-${stat.matchId}`;
     return `${stat.playerTeam}|${stat.playerName}|${scrimId}`;
@@ -1230,89 +1558,64 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     R.entries(),
     R.map(([key, records]) => {
       const [playerTeam, playerName, scrim] = key.split('|');
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerTeam,
-        playerName,
-        scrim,
-        ...baseFields,
-        ...derivedFields,
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerTeam, playerName, scrim });
+      return { playerTeam, playerName, scrim, ...finalStats };
     })
   );
 
-  // Build byPlayerAndHero aggregation (sum stats grouped by player and hero)
-  const byPlayerAndHeroGroups = R.groupBy(playerStats, stat => `${stat.playerName}|${stat.playerHero}`);
+  // By Player and Hero aggregation
+  const byPlayerAndHeroGroups = R.groupBy(basePlayerStats, stat => `${stat.playerName}|${stat.playerHero}`);
   const byPlayerAndHero = R.pipe(
     byPlayerAndHeroGroups,
     R.entries(),
     R.map(([key, records]) => {
       const [playerName, playerHero] = key.split('|');
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerName,
-        playerHero: playerHero as ScrimsightDataModel.Hero,
-        ...baseFields,
-        ...derivedFields
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerName, playerHero: playerHero as ScrimsightDataModel.Hero });
+      return { playerName, playerHero: playerHero as ScrimsightDataModel.Hero, ...finalStats };
     })
   );
 
-  // Build byRole aggregation (sum stats grouped by role)
-  const byRoleGroups = R.groupBy(playerStats, stat => stat.playerRole);
+  // By Role aggregation
+  const byRoleGroups = R.groupBy(basePlayerStats, stat => stat.playerRole);
   const byRole = R.pipe(
     byRoleGroups,
     R.entries(),
     R.map(([playerRole, records]) => {
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerRole: playerRole as ScrimsightDataModel.Role,
-        ...baseFields,
-        ...derivedFields
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerRole: playerRole as ScrimsightDataModel.Role });
+      return { playerRole: playerRole as ScrimsightDataModel.Role, ...finalStats };
     })
   );
 
-  // Build byHero aggregation (sum stats grouped by hero)
-  const byHeroGroups = R.groupBy(playerStats, stat => stat.playerHero);
+  // By Hero aggregation
+  const byHeroGroups = R.groupBy(basePlayerStats, stat => stat.playerHero);
   const byHero = R.pipe(
     byHeroGroups,
     R.entries(),
     R.map(([playerHero, records]) => {
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerHero: playerHero as ScrimsightDataModel.Hero,
-        ...baseFields,
-        ...derivedFields
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerHero: playerHero as ScrimsightDataModel.Hero });
+      return { playerHero: playerHero as ScrimsightDataModel.Hero, ...finalStats };
     })
   );
 
-  // Build byTeamAndMatch aggregation (sum stats grouped by team and match)
-  const byTeamAndMatchGroups = R.groupBy(playerStats, stat => `${stat.playerTeam}|${stat.matchId}`);
+  // By Team and Match aggregation
+  const byTeamAndMatchGroups = R.groupBy(basePlayerStats, stat => `${stat.playerTeam}|${stat.matchId}`);
   const byTeamAndMatch = R.pipe(
     byTeamAndMatchGroups,
     R.entries(),
     R.map(([key, records]) => {
       const [playerTeam, matchId] = key.split('|');
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerTeam,
-        matchId,
-        ...baseFields,
-        ...derivedFields
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerTeam, matchId });
+      return { playerTeam, matchId, ...finalStats };
     })
   );
 
-  // Build byTeamAndScrim aggregation (sum stats grouped by team and scrim)
-  const byTeamAndScrimGroups = R.groupBy(playerStats, stat => {
-    // Find the scrim ID for this match
+  // By Team and Scrim aggregation
+  const byTeamAndScrimGroups = R.groupBy(basePlayerStats, stat => {
     const matchRelation = dataModel.matches.find(match => match.match === stat.matchId);
     const scrimId = matchRelation?.scrim || `unknown-scrim-${stat.matchId}`;
     return `${stat.playerTeam}|${scrimId}`;
@@ -1322,14 +1625,9 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     R.entries(),
     R.map(([key, records]) => {
       const [playerTeam, scrim] = key.split('|');
-      const baseFields = sumBaseNumericalFields(records);
-      const derivedFields = calculateDerivedFields(baseFields);
-      return {
-        playerTeam,
-        scrim,
-        ...baseFields,
-        ...derivedFields
-      };
+      const aggregatedBase = aggregateBaseStats(records);
+      const finalStats = computeDerivedStats(aggregatedBase, dataModel, { playerTeam, scrim });
+      return { playerTeam, scrim, ...finalStats };
     })
   );
 

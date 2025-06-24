@@ -13,6 +13,13 @@ import SampleData from "./components/SampleData";
 import HomePage from "./pages/HomePage";
 import ScrimsPage from "./pages/ScrimsPage";
 import ScrimDetailsPage from "./pages/ScrimDetailsPage";
+import MatchDetailsPage from "./pages/MatchDetailsPage";
+import MatchesPage from "./pages/MatchesPage";
+import PlayersPage from "./pages/PlayersPage";
+import PlayerDetailsPage from "./pages/PlayerDetailsPage";
+import TeamsPage from "./pages/TeamsPage";
+import TeamDetailsPage from "./pages/TeamDetailsPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -38,6 +45,13 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/scrims" element={<ScrimsPage />} />
         <Route path="/scrim/:scrimId" element={<ScrimDetailsPage />} />
+        <Route path="/matches" element={<MatchesPage />} />
+        <Route path="/match/:matchId" element={<MatchDetailsPage />} />
+        <Route path="/players" element={<PlayersPage />} />
+        <Route path="/player/:playerName" element={<PlayerDetailsPage />} />
+        <Route path="/teams" element={<TeamsPage />} />
+        <Route path="/team/:teamName" element={<TeamDetailsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </AppLayout>
   );
