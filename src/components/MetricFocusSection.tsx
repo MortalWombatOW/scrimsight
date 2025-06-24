@@ -1,18 +1,23 @@
 import { ReactNode } from "react";
 import { ScrimsightMetricFocus, PlayerStatsNumerical, PlayerStatsNumericalKeys } from "../lib/ScrimsightDataModel";
 import CardStat from "./CardStat";
-import { prettyFormat } from "../lib/format";
 import { Target, TrendingUp, Activity, Zap } from "lucide-react";
 
 interface MetricFocusSectionProps {
   metricFocus: ScrimsightMetricFocus;
   playerStats: PlayerStatsNumerical;
+  playerStatRanks?: PlayerStatsNumerical;
+  playerAverageStats?: PlayerStatsNumerical;
+  totalCount?: number;
   className?: string;
 }
 
 const MetricFocusSection = ({
   metricFocus,
   playerStats,
+  playerStatRanks,
+  playerAverageStats,
+  totalCount,
   className = "",
 }: MetricFocusSectionProps) => {
   const getFocusIcon = (focus: string): ReactNode => {
@@ -30,36 +35,6 @@ const MetricFocusSection = ({
     }
   };
 
-  const getMetricSeverity = (
-    metricKey: PlayerStatsNumericalKeys,
-    value: number
-  ): "neutral" | "good" | "bad" => {
-    const lowerIsBetterMetrics = [
-      "deathsPer10Minutes",
-      "firstDeathRate",
-      "deathsWithUltAvailable",
-      "damageTakenPer10Minutes",
-    ];
-
-    if (lowerIsBetterMetrics.includes(metricKey)) {
-      return value < 5 ? "good" : value > 10 ? "bad" : "neutral";
-    }
-
-    return value > 10 ? "good" : value < 5 ? "bad" : "neutral";
-  };
-
-  const formatMetricValue = (
-    metricKey: PlayerStatsNumericalKeys,
-    value: number
-  ): string => {
-    if (metricKey.includes("Rate") || metricKey.includes("Accuracy")) {
-      return `${(value * 100).toFixed(1)}%`;
-    }
-    if (metricKey.includes("Per10Minutes")) {
-      return prettyFormat(value, 1);
-    }
-    return prettyFormat(value, 2);
-  };
 
   const getMetricLabel = (metricKey: PlayerStatsNumericalKeys): string => {
     const labels: Record<string, string> = {
@@ -122,12 +97,18 @@ const MetricFocusSection = ({
               const value = playerStats[metricKey];
               if (value === undefined) return null;
               
+              const rank = playerStatRanks?.[metricKey];
+              const averageValue = playerAverageStats?.[metricKey];
+              
               return (
                 <CardStat
                   key={metricKey}
                   label={getMetricLabel(metricKey)}
-                  value={formatMetricValue(metricKey, value)}
-                  severity={getMetricSeverity(metricKey, value)}
+                  numericValue={value}
+                  averageValue={averageValue}
+                  metricKey={metricKey}
+                  rank={rank}
+                  totalCount={totalCount}
                 />
               );
             })}
@@ -143,12 +124,18 @@ const MetricFocusSection = ({
               const value = playerStats[metricKey];
               if (value === undefined) return null;
               
+              const rank = playerStatRanks?.[metricKey];
+              const averageValue = playerAverageStats?.[metricKey];
+              
               return (
                 <CardStat
                   key={metricKey}
                   label={getMetricLabel(metricKey)}
-                  value={formatMetricValue(metricKey, value)}
-                  severity={getMetricSeverity(metricKey, value)}
+                  numericValue={value}
+                  averageValue={averageValue}
+                  metricKey={metricKey}
+                  rank={rank}
+                  totalCount={totalCount}
                 />
               );
             })}

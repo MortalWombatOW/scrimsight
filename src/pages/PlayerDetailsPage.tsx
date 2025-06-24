@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, User } from "lucide-react";
 
 import { useScrimsightData } from "../lib/useScrimsightData";
-import { METRIC_FOCUS, PlayerStatsNumerical } from "../lib/ScrimsightDataModel";
+import { METRIC_FOCUS, PlayerStatsNumerical, PlayerStatsNumericalKeys } from "../lib/ScrimsightDataModel";
+import * as R from "remeda";
 import MetricFocusSection from "../components/MetricFocusSection";
 import EmptyState from "../components/EmptyState";
 import BreadCrumbs from "../components/BreadCrumbs";
@@ -13,7 +14,7 @@ const PlayerDetailsPage = () => {
   const navigate = useNavigate();
   const dataModel = useScrimsightData();
 
-  const { playerStatBreakdown, players } = dataModel;
+  const { playerStatBreakdown, playerStatBreakdownRanks, players } = dataModel;
 
   // Check if player exists
   const playerExists = useMemo(() => {
@@ -29,6 +30,41 @@ const PlayerDetailsPage = () => {
     );
     return stats || null;
   }, [playerStatBreakdown.byPlayer, playerName]);
+
+  // Get player stat ranks
+  const playerStatRanks = useMemo(() => {
+    if (!playerName) return null;
+    
+    const ranks = playerStatBreakdownRanks.byPlayer.find(
+      (player) => player.playerName === playerName
+    );
+    return ranks || null;
+  }, [playerStatBreakdownRanks.byPlayer, playerName]);
+
+  // Get total count of players for ranking context
+  const totalPlayerCount = useMemo(() => {
+    return playerStatBreakdownRanks.byPlayer.length;
+  }, [playerStatBreakdownRanks.byPlayer]);
+
+  // Compute global averages for all player stats
+  const playerAverageStats = useMemo(() => {
+    const allPlayers = playerStatBreakdown.byPlayer;
+    if (allPlayers.length === 0) return null;
+
+    // Get all numeric keys from PlayerStatsNumerical
+    const numericKeys = Object.keys(allPlayers[0]).filter(
+      key => key !== 'playerName' && typeof allPlayers[0][key as keyof typeof allPlayers[0]] === 'number'
+    ) as PlayerStatsNumericalKeys[];
+
+    // Compute average for each metric
+    const averages = R.pipe(
+      numericKeys,
+      R.map(key => [key, R.meanBy(allPlayers, player => player[key])] as const),
+      R.fromEntries()
+    ) as PlayerStatsNumerical;
+
+    return averages;
+  }, [playerStatBreakdown.byPlayer]);
 
   if (!playerName) {
     return (
@@ -101,6 +137,9 @@ const PlayerDetailsPage = () => {
             key={metricFocus.focus}
             metricFocus={metricFocus}
             playerStats={playerStats as PlayerStatsNumerical}
+            playerStatRanks={playerStatRanks as PlayerStatsNumerical}
+            playerAverageStats={playerAverageStats as PlayerStatsNumerical}
+            totalCount={totalPlayerCount}
             className="shadow-lg"
           />
         ))}

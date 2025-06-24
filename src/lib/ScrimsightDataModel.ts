@@ -133,6 +133,113 @@ export type PlayerStats = PlayerStatsBase & Record<PlayerStatsDerivedNumericalKe
 export type PlayerStatsNumericalKeys = PlayerStatsBaseNumericalKeys | PlayerStatsDerivedNumericalKeys;
 export const playerStatsNumericalKeys = [...playerStatsBaseNumericalKeys, ...playerStatsDerivedNumericalKeys] as PlayerStatsNumericalKeys[];
 
+// Ranking direction for each player stat metric
+// 'higher' means rank 1 = highest value, 'lower' means rank 1 = lowest value
+export const PLAYER_STAT_RANKING_DIRECTIONS: Record<PlayerStatsNumericalKeys, 'higher' | 'lower'> = {
+  // Base stats - generally higher is better except for deaths
+  playtime: 'higher',
+  eliminations: 'higher',
+  finalBlows: 'higher',
+  deaths: 'lower', // Lower deaths = better
+  allDamageDealt: 'higher',
+  barrierDamageDealt: 'higher',
+  heroDamageDealt: 'higher',
+  healingDealt: 'higher',
+  healingReceived: 'higher',
+  selfHealing: 'higher',
+  damageTaken: 'higher', // Context-dependent, but generally tanking damage for team is positive
+  damageBlocked: 'higher',
+  defensiveAssists: 'higher',
+  offensiveAssists: 'higher',
+  ultimatesEarned: 'higher',
+  ultimatesUsed: 'higher',
+  multikills: 'higher',
+  soloKills: 'higher',
+  objectiveKills: 'higher',
+  environmentalKills: 'higher',
+  environmentalDeaths: 'lower', // Lower environmental deaths = better
+  criticalHits: 'higher',
+  shotsFired: 'higher',
+  shotsHit: 'higher',
+  shotsMissed: 'lower', // Lower missed shots = better
+  scopedShotsFired: 'higher',
+  scopedShotsHit: 'higher',
+  
+  // Per-10-minute derived stats (same direction as base stats)
+  eliminationsPer10Minutes: 'higher',
+  finalBlowsPer10Minutes: 'higher',
+  deathsPer10Minutes: 'lower', // Lower deaths per 10 minutes = better
+  allDamageDealtPer10Minutes: 'higher',
+  barrierDamageDealtPer10Minutes: 'higher',
+  heroDamageDealtPer10Minutes: 'higher',
+  healingDealtPer10Minutes: 'higher',
+  healingReceivedPer10Minutes: 'higher',
+  selfHealingPer10Minutes: 'higher',
+  damageTakenPer10Minutes: 'higher',
+  damageBlockedPer10Minutes: 'higher',
+  defensiveAssistsPer10Minutes: 'higher',
+  offensiveAssistsPer10Minutes: 'higher',
+  ultimatesEarnedPer10Minutes: 'higher',
+  ultimatesUsedPer10Minutes: 'higher',
+  multikillsPer10Minutes: 'higher',
+  soloKillsPer10Minutes: 'higher',
+  objectiveKillsPer10Minutes: 'higher',
+  environmentalKillsPer10Minutes: 'higher',
+  environmentalDeathsPer10Minutes: 'lower', // Lower environmental deaths per 10 minutes = better
+  criticalHitsPer10Minutes: 'higher',
+  shotsFiredPer10Minutes: 'higher',
+  shotsHitPer10Minutes: 'higher',
+  shotsMissedPer10Minutes: 'lower', // Lower missed shots per 10 minutes = better
+  scopedShotsFiredPer10Minutes: 'higher',
+  scopedShotsHitPer10Minutes: 'higher',
+  
+  // Percentage/ratio derived stats - higher is better
+  weaponAccuracy: 'higher',
+  scopedWeaponAccuracy: 'higher',
+  criticalHitRate: 'higher',
+  
+  // Ultimate-related derived stats
+  ultsUsed: 'higher',
+  ultKills: 'higher',
+  killsPerUltimate: 'higher',
+  ultimateChargeTime: 'lower', // Faster charge time = better
+  ultimateHoldTime: 'lower', // Faster hold time = better
+  ultimateUseTime: 'higher', // Longer ultimate duration = better
+  deathsWithUltAvailable: 'lower', // Lower deaths with ult available = better
+  
+  // Teamfight participation stats
+  teamfightsParticipated: 'higher',
+  teamfightsWithFirstKill: 'higher',
+  teamfightsWithFirstDeath: 'lower', // Lower first deaths = better
+  firstKillRate: 'higher',
+  firstDeathRate: 'lower', // Lower first death rate = better
+  teamfightsWon: 'higher',
+  teamfightsWonWithUlt: 'higher',
+  teamfightsWonWithoutUlt: 'higher',
+  teamfightWinRate: 'higher',
+  teamfightWinRateWithUlt: 'higher',
+  teamfightWinRateWithoutUlt: 'higher',
+  teamfightsWonWithFirstKill: 'higher',
+  teamfightsWonWithFirstDeath: 'higher', // Still positive if team wins despite first death
+  teamfightWinRateWithFirstKill: 'higher',
+  teamfightWinRateWithFirstDeath: 'higher', // Still positive if team wins despite first death
+  
+  // Kill-by-role stats
+  tankKills: 'higher',
+  damageKills: 'higher',
+  supportKills: 'higher',
+  tankFocusRate: 'higher', // Context-dependent, but generally good to prioritize tanks
+  damageFocusRate: 'higher',
+  supportFocusRate: 'higher', // High support focus is generally good
+  
+  // Additional derived stats
+  averageLifeDuration: 'higher', // Longer life duration = better
+  totalAssists: 'higher',
+  totalAssistsPer10Minutes: 'higher',
+  damagePerKill: 'higher', // More damage per kill = more efficient
+  damageDonePerHealingReceived: 'higher' // More damage output per healing received = efficient
+} as const;
+
 
 // Relationships between entities in the data model, used for joining entities
 
@@ -265,6 +372,20 @@ export interface PlayerVictimKillCount {
   killCount: number;
 }
 
+export interface PlayerStatBreakdown {
+  total: PlayerStatsNumerical;
+  byPlayer: ({playerName: PlayerName} & PlayerStatsNumerical)[];
+  byTeam: ({playerTeam: TeamName} & PlayerStatsNumerical)[];
+  byTeamAndPlayer: ({playerTeam: TeamName, playerName: PlayerName} & PlayerStatsNumerical)[];
+  byTeamAndPlayerAndMatch: ({playerTeam: TeamName, playerName: PlayerName, matchId: MatchID} & PlayerStatsNumerical)[];
+  byTeamAndPlayerAndScrim: ({playerTeam: TeamName, playerName: PlayerName, scrim: ScrimID} & PlayerStatsNumerical)[];
+  byPlayerAndHero: ({playerName: PlayerName, playerHero: Hero} & PlayerStatsNumerical)[];
+  byRole: ({playerRole: Role} & PlayerStatsNumerical)[];
+  byHero: ({playerHero: Hero} & PlayerStatsNumerical)[];
+  byTeamAndMatch: ({playerTeam: TeamName, matchId: MatchID} & PlayerStatsNumerical)[];
+  byTeamAndScrim: ({playerTeam: TeamName, scrim: ScrimID} & PlayerStatsNumerical)[];
+ };
+
 export interface ScrimsightDataModel {
  
   // Log events parsed from the raw log files
@@ -303,19 +424,10 @@ export interface ScrimsightDataModel {
    teamCompositions: TeamCompositionSegment[];
  
    // Player stats with three-stage computation (base aggregation + derived calculations)
-   playerStatBreakdown: {
-     total: PlayerStatsNumerical;
-     byPlayer: ({playerName: PlayerName} & PlayerStatsNumerical)[];
-     byTeam: ({playerTeam: TeamName} & PlayerStatsNumerical)[];
-     byTeamAndPlayer: ({playerTeam: TeamName, playerName: PlayerName} & PlayerStatsNumerical)[];
-     byTeamAndPlayerAndMatch: ({playerTeam: TeamName, playerName: PlayerName, matchId: MatchID} & PlayerStatsNumerical)[];
-     byTeamAndPlayerAndScrim: ({playerTeam: TeamName, playerName: PlayerName, scrim: ScrimID} & PlayerStatsNumerical)[];
-     byPlayerAndHero: ({playerName: PlayerName, playerHero: Hero} & PlayerStatsNumerical)[];
-     byRole: ({playerRole: Role} & PlayerStatsNumerical)[];
-     byHero: ({playerHero: Hero} & PlayerStatsNumerical)[];
-     byTeamAndMatch: ({playerTeam: TeamName, matchId: MatchID} & PlayerStatsNumerical)[];
-     byTeamAndScrim: ({playerTeam: TeamName, scrim: ScrimID} & PlayerStatsNumerical)[];
-    };
+   // PlayerStatBreakdown holds the values of the statistics
+   playerStatBreakdown: PlayerStatBreakdown;
+   // PlayerStatBreakdownRanks holds the ranks of the statistics
+   playerStatBreakdownRanks: PlayerStatBreakdown;
 
     // Tracks the number of kills per player and victim
     killCounts: {

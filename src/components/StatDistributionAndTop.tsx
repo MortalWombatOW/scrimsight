@@ -92,11 +92,13 @@ const StatDistributionAndTop = ({
             baseline={statValue}
             higherIsBetter={higherIsBetter}
             precision={precision}
+            rank={row.index + 1}
+            totalCount={rows.length}
           />
         ),
       },
     ];
-  }, [categoryKeys, precision, statValue, higherIsBetter]);
+  }, [categoryKeys, precision, statValue, higherIsBetter, rows.length]);
 
   return (
     <div className="bg-base-100 rounded-lg p-6 min-w-fit">

@@ -1511,6 +1511,184 @@ describe('buildDataModel', () => {
     });
   });
 
+  describe('playerStatBreakdownRanks', () => {
+    it('should build player stat breakdown ranks correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Player stat breakdown ranks should be populated with same structure as values
+      expect(dataModel.playerStatBreakdownRanks.byPlayer.length).toBe(dataModel.playerStatBreakdown.byPlayer.length);
+      expect(dataModel.playerStatBreakdownRanks.byTeam.length).toBe(dataModel.playerStatBreakdown.byTeam.length);
+      expect(dataModel.playerStatBreakdownRanks.byTeamAndPlayer.length).toBe(dataModel.playerStatBreakdown.byTeamAndPlayer.length);
+      expect(dataModel.playerStatBreakdownRanks.byTeamAndPlayerAndMatch.length).toBe(dataModel.playerStatBreakdown.byTeamAndPlayerAndMatch.length);
+      expect(dataModel.playerStatBreakdownRanks.byPlayerAndHero.length).toBe(dataModel.playerStatBreakdown.byPlayerAndHero.length);
+      expect(dataModel.playerStatBreakdownRanks.byRole.length).toBe(dataModel.playerStatBreakdown.byRole.length);
+      expect(dataModel.playerStatBreakdownRanks.byHero.length).toBe(dataModel.playerStatBreakdown.byHero.length);
+      expect(dataModel.playerStatBreakdownRanks.byTeamAndMatch.length).toBe(dataModel.playerStatBreakdown.byTeamAndMatch.length);
+      expect(dataModel.playerStatBreakdownRanks.byTeamAndScrim.length).toBe(dataModel.playerStatBreakdown.byTeamAndScrim.length);
+
+      // Each byPlayer rank should have same structure but with ranks instead of values
+      dataModel.playerStatBreakdownRanks.byPlayer.forEach((rankStat, index) => {
+        const valueStat = dataModel.playerStatBreakdown.byPlayer[index];
+        
+        // Should have same playerName
+        expect(rankStat.playerName).toBe(valueStat.playerName);
+
+        // All rank values should be positive integers (rank 1 is best)
+        expect(typeof rankStat.playtime).toBe('number');
+        expect(rankStat.playtime).toBeGreaterThan(0);
+        expect(Number.isInteger(rankStat.playtime)).toBe(true);
+        expect(typeof rankStat.eliminations).toBe('number');
+        expect(rankStat.eliminations).toBeGreaterThan(0);
+        expect(Number.isInteger(rankStat.eliminations)).toBe(true);
+        expect(typeof rankStat.deaths).toBe('number');
+        expect(rankStat.deaths).toBeGreaterThan(0);
+        expect(Number.isInteger(rankStat.deaths)).toBe(true);
+        expect(typeof rankStat.allDamageDealt).toBe('number');
+        expect(rankStat.allDamageDealt).toBeGreaterThan(0);
+        expect(Number.isInteger(rankStat.allDamageDealt)).toBe(true);
+
+        // All ranks should be within valid range (1 to number of players)
+        const numPlayers = dataModel.playerStatBreakdown.byPlayer.length;
+        expect(rankStat.playtime).toBeLessThanOrEqual(numPlayers);
+        expect(rankStat.eliminations).toBeLessThanOrEqual(numPlayers);
+        expect(rankStat.deaths).toBeLessThanOrEqual(numPlayers);
+        expect(rankStat.allDamageDealt).toBeLessThanOrEqual(numPlayers);
+      });
+    });
+
+    it('should rank metrics according to PLAYER_STAT_RANKING_DIRECTIONS', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Test that rankings follow the direction specified in PLAYER_STAT_RANKING_DIRECTIONS
+      if (dataModel.playerStatBreakdown.byPlayer.length >= 2) {
+        // Find players with highest and lowest eliminations
+        const eliminationValues = dataModel.playerStatBreakdown.byPlayer.map(p => p.eliminations);
+        const maxEliminations = Math.max(...eliminationValues);
+        const minEliminations = Math.min(...eliminationValues);
+
+        if (maxEliminations > minEliminations) {
+          const highestEliminationsPlayer = dataModel.playerStatBreakdown.byPlayer.find(p => p.eliminations === maxEliminations);
+          const lowestEliminationsPlayer = dataModel.playerStatBreakdown.byPlayer.find(p => p.eliminations === minEliminations);
+          
+          if (highestEliminationsPlayer && lowestEliminationsPlayer) {
+            const highestEliminationsRank = dataModel.playerStatBreakdownRanks.byPlayer.find(p => p.playerName === highestEliminationsPlayer.playerName);
+            const lowestEliminationsRank = dataModel.playerStatBreakdownRanks.byPlayer.find(p => p.playerName === lowestEliminationsPlayer.playerName);
+            
+            expect(highestEliminationsRank).toBeDefined();
+            expect(lowestEliminationsRank).toBeDefined();
+            
+            if (highestEliminationsRank && lowestEliminationsRank) {
+              // Higher eliminations should have better (lower) rank since 'eliminations' direction is 'higher'
+              expect(highestEliminationsRank.eliminations).toBeLessThanOrEqual(lowestEliminationsRank.eliminations);
+            }
+          }
+        }
+
+        // Test deaths ranking (lower is better)
+        const deathValues = dataModel.playerStatBreakdown.byPlayer.map(p => p.deaths);
+        const maxDeaths = Math.max(...deathValues);
+        const minDeaths = Math.min(...deathValues);
+
+        if (maxDeaths > minDeaths) {
+          const highestDeathsPlayer = dataModel.playerStatBreakdown.byPlayer.find(p => p.deaths === maxDeaths);
+          const lowestDeathsPlayer = dataModel.playerStatBreakdown.byPlayer.find(p => p.deaths === minDeaths);
+          
+          if (highestDeathsPlayer && lowestDeathsPlayer) {
+            const highestDeathsRank = dataModel.playerStatBreakdownRanks.byPlayer.find(p => p.playerName === highestDeathsPlayer.playerName);
+            const lowestDeathsRank = dataModel.playerStatBreakdownRanks.byPlayer.find(p => p.playerName === lowestDeathsPlayer.playerName);
+            
+            expect(highestDeathsRank).toBeDefined();
+            expect(lowestDeathsRank).toBeDefined();
+            
+            if (highestDeathsRank && lowestDeathsRank) {
+              // Lower deaths should have better (lower) rank since 'deaths' direction is 'lower'
+              expect(lowestDeathsRank.deaths).toBeLessThanOrEqual(highestDeathsRank.deaths);
+            }
+          }
+        }
+      }
+    });
+
+    it('should rank all aggregation levels consistently', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Test that all aggregation levels have valid rankings
+      const aggregationLevels = [
+        { values: dataModel.playerStatBreakdown.byPlayer, ranks: dataModel.playerStatBreakdownRanks.byPlayer },
+        { values: dataModel.playerStatBreakdown.byTeam, ranks: dataModel.playerStatBreakdownRanks.byTeam },
+        { values: dataModel.playerStatBreakdown.byTeamAndPlayer, ranks: dataModel.playerStatBreakdownRanks.byTeamAndPlayer },
+        { values: dataModel.playerStatBreakdown.byPlayerAndHero, ranks: dataModel.playerStatBreakdownRanks.byPlayerAndHero },
+        { values: dataModel.playerStatBreakdown.byRole, ranks: dataModel.playerStatBreakdownRanks.byRole },
+        { values: dataModel.playerStatBreakdown.byHero, ranks: dataModel.playerStatBreakdownRanks.byHero },
+        { values: dataModel.playerStatBreakdown.byTeamAndMatch, ranks: dataModel.playerStatBreakdownRanks.byTeamAndMatch },
+        { values: dataModel.playerStatBreakdown.byTeamAndScrim, ranks: dataModel.playerStatBreakdownRanks.byTeamAndScrim }
+      ];
+
+      aggregationLevels.forEach(({ values, ranks }) => {
+        expect(ranks.length).toBe(values.length);
+        
+        ranks.forEach((rankRecord, index) => {
+          const valueRecord = values[index];
+          
+          // All rank values should be positive integers
+          ScrimsightDataModel.playerStatsNumericalKeys.forEach(key => {
+            expect(typeof rankRecord[key]).toBe('number');
+            expect(rankRecord[key]).toBeGreaterThan(0);
+            expect(Number.isInteger(rankRecord[key])).toBe(true);
+            expect(rankRecord[key]).toBeLessThanOrEqual(values.length);
+          });
+        });
+      });
+    });
+
+    it('should handle ties in rankings correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // If there are any ties in the data, they should have the same rank
+      // and the next rank should be appropriately skipped
+      const playerRanks = dataModel.playerStatBreakdownRanks.byPlayer;
+      const playerValues = dataModel.playerStatBreakdown.byPlayer;
+
+      if (playerValues.length >= 2) {
+        // Check for ties in eliminations
+        const eliminationGroups = new Map<number, string[]>();
+        playerValues.forEach(player => {
+          const value = player.eliminations;
+          if (!eliminationGroups.has(value)) {
+            eliminationGroups.set(value, []);
+          }
+          eliminationGroups.get(value)!.push(player.playerName);
+        });
+
+        // For each group with the same value, they should have the same rank
+        eliminationGroups.forEach((playerNames, value) => {
+          if (playerNames.length > 1) {
+            const ranks = playerNames.map(name => {
+              const rankRecord = playerRanks.find(r => r.playerName === name);
+              return rankRecord?.eliminations || 0;
+            });
+            
+            // All players with the same value should have the same rank
+            const firstRank = ranks[0];
+            ranks.forEach(rank => {
+              expect(rank).toBe(firstRank);
+            });
+          }
+        });
+      }
+    });
+
+    it('should have valid total rankings', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Total rankings should be valid (all ranks should be 1 since there's only one total)
+      ScrimsightDataModel.playerStatsNumericalKeys.forEach(key => {
+        expect(typeof dataModel.playerStatBreakdownRanks.total[key]).toBe('number');
+        expect(dataModel.playerStatBreakdownRanks.total[key]).toBe(1);
+      });
+    });
+  });
+
   describe('killCounts', () => {
     it('should build kill counts correctly', () => {
       const dataModel = buildDataModel(sampleFiles);

@@ -27,6 +27,19 @@ const createEmptyDataModel = (): ScrimsightDataModel.ScrimsightDataModel => ({
     byTeamAndMatch: [],
     byTeamAndScrim: []
   },
+  playerStatBreakdownRanks: {
+    total: {} as Record<ScrimsightDataModel.PlayerStatsNumericalKeys, number>,
+    byPlayer: [],
+    byTeam: [],
+    byTeamAndPlayer: [],
+    byTeamAndPlayerAndMatch: [],
+    byTeamAndPlayerAndScrim: [],
+    byPlayerAndHero: [],
+    byRole: [],
+    byHero: [],
+    byTeamAndMatch: [],
+    byTeamAndScrim: []
+  },
   killCounts: {
     byMatch: [],
     byMatchAndRound: []
@@ -1646,6 +1659,65 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
   };
 };
 
+// Ranking system for player stats
+const rankValues = <T extends Record<string, any>>(
+  records: T[], 
+  metrics: ScrimsightDataModel.PlayerStatsNumericalKeys[]
+): T[] => {
+  if (records.length === 0) return [];
+  
+  // Rank each metric and build new records
+  const rankedRecords = records.map(record => {
+    // Create a new object with rankings for each metric
+    const rankedRecord: any = { ...record };
+    
+    metrics.forEach(metric => {
+      // Extract values for this metric
+      const values = records.map(r => r[metric]);
+      const direction = ScrimsightDataModel.PLAYER_STAT_RANKING_DIRECTIONS[metric];
+      
+      // Sort values based on direction (higher is better vs lower is better)
+      const sortedValues = [...new Set(values)].sort((a, b) => {
+        return direction === 'higher' ? b - a : a - b; // descending for 'higher', ascending for 'lower'
+      });
+      
+      // Create rank mapping
+      const rankMap = new Map<number, number>();
+      sortedValues.forEach((value, index) => {
+        rankMap.set(value, index + 1); // rank starts at 1
+      });
+      
+      // Assign rank to this record
+      rankedRecord[metric] = rankMap.get(record[metric]) || 1;
+    });
+    
+    return rankedRecord as T;
+  });
+  
+  return rankedRecords;
+};
+
+const buildPlayerStatBreakdownRanks = (playerStatBreakdown: ScrimsightDataModel.PlayerStatBreakdown): ScrimsightDataModel.PlayerStatBreakdown => {
+  const metrics = ScrimsightDataModel.playerStatsNumericalKeys;
+  
+  return {
+    // Total ranking (all metrics get rank 1 since there's only one total)
+    total: Object.fromEntries(metrics.map(metric => [metric, 1])) as Record<ScrimsightDataModel.PlayerStatsNumericalKeys, number>,
+    
+    // Rank each breakdown type
+    byPlayer: rankValues(playerStatBreakdown.byPlayer, metrics),
+    byTeam: rankValues(playerStatBreakdown.byTeam, metrics),
+    byTeamAndPlayer: rankValues(playerStatBreakdown.byTeamAndPlayer, metrics),
+    byTeamAndPlayerAndMatch: rankValues(playerStatBreakdown.byTeamAndPlayerAndMatch, metrics),
+    byTeamAndPlayerAndScrim: rankValues(playerStatBreakdown.byTeamAndPlayerAndScrim, metrics),
+    byPlayerAndHero: rankValues(playerStatBreakdown.byPlayerAndHero, metrics),
+    byRole: rankValues(playerStatBreakdown.byRole, metrics),
+    byHero: rankValues(playerStatBreakdown.byHero, metrics),
+    byTeamAndMatch: rankValues(playerStatBreakdown.byTeamAndMatch, metrics),
+    byTeamAndScrim: rankValues(playerStatBreakdown.byTeamAndScrim, metrics)
+  };
+};
+
 export const buildDataModel = (files: {fileName: string, fileModified: number, fileContent: string}[]): ScrimsightDataModel.ScrimsightDataModel => {
   const dataModel = createEmptyDataModel();
   
@@ -1665,6 +1737,7 @@ export const buildDataModel = (files: {fileName: string, fileModified: number, f
   dataModel.teamCompositions = buildTeamCompositions(dataModel);
   
   dataModel.playerStatBreakdown = buildPlayerStatBreakdown(dataModel);
+  dataModel.playerStatBreakdownRanks = buildPlayerStatBreakdownRanks(dataModel.playerStatBreakdown);
   dataModel.killCounts = buildKillCounts(dataModel);
 
   return dataModel;

@@ -22,6 +22,21 @@ const meta: Meta<typeof CardStat> = {
     tooltip: {
       control: 'text',
     },
+    rank: {
+      control: 'number',
+    },
+    totalCount: {
+      control: 'number',
+    },
+    numericValue: {
+      control: 'number',
+    },
+    averageValue: {
+      control: 'number',
+    },
+    metricKey: {
+      control: 'text',
+    },
   },
 };
 
@@ -91,6 +106,41 @@ export const LargeNumber: Story = {
   },
 };
 
+export const WithRank: Story = {
+  args: {
+    label: 'Eliminations',
+    value: '32',
+    severity: 'good',
+    rank: 1,
+    totalCount: 8,
+  },
+};
+
+export const RankLower: Story = {
+  args: {
+    label: 'Deaths',
+    value: '8',
+    severity: 'good',
+    rank: 3,
+    totalCount: 8,
+  },
+};
+
+export const RankWithIcon: Story = {
+  args: {
+    label: 'Weapon Accuracy',
+    value: '71.2%',
+    severity: 'good',
+    rank: 2,
+    totalCount: 8,
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+};
+
 export const GridLayout: Story = {
   render: () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -100,6 +150,163 @@ export const GridLayout: Story = {
       <CardStat label="Active Sessions" value="456" severity="good" />
       <CardStat label="Revenue" value="$12,345" severity="good" />
       <CardStat label="Pending Tasks" value="23" severity="neutral" />
+    </div>
+  ),
+};
+
+export const RankComparisonGrid: Story = {
+  render: () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <CardStat label="Eliminations" value="32" severity="good" rank={1} totalCount={8} />
+      <CardStat label="Final Blows" value="28" severity="good" rank={2} totalCount={8} />
+      <CardStat label="Hero Damage" value="8,945" severity="neutral" rank={4} totalCount={8} />
+      <CardStat label="Deaths" value="6" severity="good" rank={1} totalCount={8} />
+      <CardStat label="Weapon Accuracy" value="71.2%" severity="good" rank={3} totalCount={8} />
+      <CardStat label="First Kill Rate" value="42.8%" severity="neutral" rank={5} totalCount={8} />
+    </div>
+  ),
+};
+
+export const RankOnlyVsTotalCount: Story = {
+  render: () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardStat label="Eliminations (rank only)" value="32" severity="good" rank={1} />
+      <CardStat label="Eliminations (with total)" value="32" severity="good" rank={1} totalCount={8} />
+    </div>
+  ),
+};
+
+export const WithValueDelta: Story = {
+  args: {
+    label: 'Eliminations',
+    numericValue: 32,
+    averageValue: 24,
+    metricKey: 'eliminations',
+    rank: 1,
+    totalCount: 8,
+  },
+};
+
+export const ValueDeltaBelowAverage: Story = {
+  args: {
+    label: 'Deaths',
+    numericValue: 8,
+    averageValue: 5,
+    metricKey: 'deaths',
+    rank: 6,
+    totalCount: 8,
+  },
+};
+
+export const ValueDeltaWithAccuracy: Story = {
+  args: {
+    label: 'Weapon Accuracy',
+    numericValue: 0.712,
+    averageValue: 0.685,
+    metricKey: 'weaponAccuracy',
+    rank: 3,
+    totalCount: 8,
+  },
+};
+
+export const ValueDeltaComparison: Story = {
+  render: () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <CardStat 
+        label="Eliminations (Above Avg)" 
+        numericValue={32} 
+        averageValue={24} 
+        metricKey="eliminations"
+        rank={1} 
+        totalCount={8} 
+      />
+      <CardStat 
+        label="Deaths (Above Avg - Bad)" 
+        numericValue={12} 
+        averageValue={8} 
+        metricKey="deaths"
+        rank={7} 
+        totalCount={8} 
+      />
+      <CardStat 
+        label="Weapon Accuracy (Below Avg)" 
+        numericValue={0.625} 
+        averageValue={0.685} 
+        metricKey="weaponAccuracy"
+        rank={6} 
+        totalCount={8} 
+      />
+      <CardStat 
+        label="Hero Damage (On Average)" 
+        numericValue={8945} 
+        averageValue={8945} 
+        metricKey="heroDamageDealt"
+        rank={4} 
+        totalCount={8} 
+      />
+      <CardStat 
+        label="First Kill Rate (Above Avg)" 
+        numericValue={0.428} 
+        averageValue={0.315} 
+        metricKey="firstKillRate"
+        rank={2} 
+        totalCount={8} 
+      />
+      <CardStat 
+        label="Ultimate Charge Time (Below Avg)" 
+        numericValue={35.2} 
+        averageValue={45.8} 
+        metricKey="ultimateChargeTime"
+        rank={2} 
+        totalCount={8} 
+      />
+    </div>
+  ),
+};
+
+export const RankDisplayComparison: Story = {
+  render: () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold mb-3">Legacy Value Display (Separate Rank)</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardStat 
+            label="Eliminations (Text Value)" 
+            value="32" 
+            severity="good" 
+            rank={1} 
+            totalCount={8} 
+          />
+          <CardStat 
+            label="Deaths (Text Value)" 
+            value="8" 
+            severity="good" 
+            rank={3} 
+            totalCount={8} 
+          />
+        </div>
+      </div>
+      <div>
+        <h3 className="text-lg font-semibold mb-3">ValueDelta Display (Integrated Rank)</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardStat 
+            label="Eliminations (vs Average)" 
+            numericValue={32} 
+            averageValue={24} 
+            metricKey="eliminations"
+            rank={1} 
+            totalCount={8} 
+          />
+          <CardStat 
+            label="Deaths (vs Average)" 
+            numericValue={8} 
+            averageValue={10} 
+            metricKey="deaths"
+            rank={3} 
+            totalCount={8} 
+          />
+        </div>
+      </div>
     </div>
   ),
 };

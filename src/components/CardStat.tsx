@@ -1,20 +1,36 @@
 import { ReactNode } from "react";
+import ValueDelta from "./ValueDelta";
+import { PLAYER_STAT_RANKING_DIRECTIONS, PlayerStatsNumericalKeys } from "../lib/ScrimsightDataModel";
 
 interface CardStatProps {
   label: string;
-  value: ReactNode;
+  value?: ReactNode;
+  numericValue?: number;
+  averageValue?: number;
+  metricKey?: PlayerStatsNumericalKeys;
   icon?: ReactNode;
   tooltip?: string;
   severity?: "neutral" | "good" | "bad";
+  rank?: number;
+  totalCount?: number;
 }
 
 const CardStat = ({
   label,
   value,
+  numericValue,
+  averageValue,
+  metricKey,
   icon,
   tooltip,
   severity = "neutral",
+  rank,
+  totalCount,
 }: CardStatProps) => {
+  const getHigherIsBetter = (metricKey: PlayerStatsNumericalKeys): boolean => {
+    return PLAYER_STAT_RANKING_DIRECTIONS[metricKey] === 'higher';
+  };
+
   const getSeverityBorderClass = (severity: "neutral" | "good" | "bad") => {
     switch (severity) {
       case "good":
@@ -37,8 +53,24 @@ const CardStat = ({
         <div className="flex-1">
           <p className="text-sm text-base-content/70 mb-1">{label}</p>
           <div className="text-2xl font-semibold text-base-content">
-            {value}
+            {numericValue !== undefined && averageValue !== undefined && metricKey && rank && totalCount ? (
+              <ValueDelta
+                value={numericValue}
+                baseline={averageValue}
+                higherIsBetter={getHigherIsBetter(metricKey)}
+                precision={2}
+                rank={rank}
+                totalCount={totalCount}
+              />
+            ) : (
+              value
+            )}
           </div>
+          {rank && !(numericValue !== undefined && averageValue !== undefined && metricKey && rank && totalCount) && (
+            <div className="text-xs text-base-content/60 mt-1">
+              {totalCount ? `Rank ${rank} of ${totalCount}` : `#${rank}`}
+            </div>
+          )}
         </div>
         {icon && <div className="ml-3 text-base-content/50">{icon}</div>}
       </div>

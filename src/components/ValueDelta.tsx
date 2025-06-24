@@ -6,6 +6,8 @@ interface ValueDeltaProps {
   baseline: number;
   higherIsBetter: boolean;
   precision?: number;
+  rank: number;
+  totalCount: number;
 }
 
 const ValueDelta = ({
@@ -13,6 +15,8 @@ const ValueDelta = ({
   baseline,
   higherIsBetter,
   precision = 1,
+  rank,
+  totalCount,
 }: ValueDeltaProps) => {
   const delta = value - baseline;
   const deltaPercentage = baseline !== 0 ? delta / baseline : 0;
@@ -36,7 +40,14 @@ const ValueDelta = ({
 
   const displayValue = prettyFormat(value, precision);
   const displayBaseline = prettyFormat(baseline, precision);
-  const displayDeltaFormatted = `${isPositive ? '+' : '-'}${prettyFormat(Math.abs(delta), precision)}`;
+  const displayDeltaFormatted = `${isPositive ? "+" : "-"}${prettyFormat(
+    Math.abs(delta),
+    precision
+  )}`;
+
+  const getRankDisplay = () => {
+    return ` • ${rank} of ${totalCount}`;
+  };
 
   return (
     <div className="flex flex-col">
@@ -57,6 +68,7 @@ const ValueDelta = ({
       </div>
       <div className="text-xs text-base-content/60">
         vs {displayBaseline}
+        {getRankDisplay()}
       </div>
     </div>
   );

@@ -25,6 +25,14 @@ const meta: Meta<typeof ValueDelta> = {
       control: 'number',
       description: 'Number of decimal places to show',
     },
+    rank: {
+      control: 'number',
+      description: 'Player rank (1-based)',
+    },
+    totalCount: {
+      control: 'number',
+      description: 'Total number of players for ranking context',
+    },
   },
 };
 
@@ -36,6 +44,8 @@ export const PositiveHigherIsBetter: Story = {
     value: 85.7,
     baseline: 72.3,
     higherIsBetter: true,
+    rank: 2,
+    totalCount: 8,
   },
 };
 
@@ -44,6 +54,8 @@ export const NegativeHigherIsBetter: Story = {
     value: 65.2,
     baseline: 78.9,
     higherIsBetter: true,
+    rank: 6,
+    totalCount: 8,
   },
 };
 
@@ -52,6 +64,8 @@ export const PositiveLowerIsBetter: Story = {
     value: 2.8,
     baseline: 4.1,
     higherIsBetter: false,
+    rank: 1,
+    totalCount: 8,
   },
 };
 
@@ -60,6 +74,8 @@ export const NegativeLowerIsBetter: Story = {
     value: 5.7,
     baseline: 3.2,
     higherIsBetter: false,
+    rank: 7,
+    totalCount: 8,
   },
 };
 
@@ -68,6 +84,8 @@ export const NoChange: Story = {
     value: 50.0,
     baseline: 50.0,
     higherIsBetter: true,
+    rank: 4,
+    totalCount: 8,
   },
 };
 
@@ -77,6 +95,8 @@ export const KillDeathRatio: Story = {
     baseline: 1.8,
     higherIsBetter: true,
     precision: 2,
+    rank: 2,
+    totalCount: 8,
   },
 };
 
@@ -86,6 +106,8 @@ export const DamagePerMinute: Story = {
     baseline: 425,
     higherIsBetter: true,
     precision: 0,
+    rank: 3,
+    totalCount: 8,
   },
 };
 
@@ -95,6 +117,8 @@ export const DeathsPerMatch: Story = {
     baseline: 4.8,
     higherIsBetter: false,
     precision: 1,
+    rank: 2,
+    totalCount: 8,
   },
 };
 
@@ -104,6 +128,8 @@ export const LargeValues: Story = {
     baseline: 980,
     higherIsBetter: true,
     precision: 0,
+    rank: 1,
+    totalCount: 8,
   },
 };
 
@@ -113,6 +139,8 @@ export const PercentageValues: Story = {
     baseline: 59.2,
     higherIsBetter: true,
     precision: 1,
+    rank: 3,
+    totalCount: 8,
   },
 };
 
@@ -122,6 +150,8 @@ export const LargeNumbers: Story = {
     baseline: 12850,
     higherIsBetter: true,
     precision: 0,
+    rank: 2,
+    totalCount: 8,
   },
 };
 
@@ -131,6 +161,8 @@ export const SmallDecimals: Story = {
     baseline: 0.0289,
     higherIsBetter: false,
     precision: 4,
+    rank: 6,
+    totalCount: 8,
   },
 };
 
@@ -139,7 +171,71 @@ export const ZeroBaseline: Story = {
     value: 25,
     baseline: 0,
     higherIsBetter: true,
+    rank: 1,
+    totalCount: 8,
   },
+};
+
+export const WithRankAndTotal: Story = {
+  args: {
+    value: 32,
+    baseline: 24,
+    higherIsBetter: true,
+    precision: 0,
+    rank: 1,
+    totalCount: 8,
+  },
+};
+
+export const WithRankOnly: Story = {
+  args: {
+    value: 8,
+    baseline: 10,
+    higherIsBetter: false,
+    precision: 1,
+    rank: 3,
+    totalCount: 8,
+  },
+};
+
+export const RankComparison: Story = {
+  render: () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex flex-col space-y-2">
+        <span className="text-sm font-medium">1st Place (Above Average)</span>
+        <ValueDelta 
+          value={32} 
+          baseline={24} 
+          higherIsBetter={true} 
+          precision={0}
+          rank={1}
+          totalCount={8}
+        />
+      </div>
+      <div className="flex flex-col space-y-2">
+        <span className="text-sm font-medium">3rd Place (Average)</span>
+        <ValueDelta 
+          value={24} 
+          baseline={24} 
+          higherIsBetter={true} 
+          precision={0}
+          rank={3}
+          totalCount={8}
+        />
+      </div>
+      <div className="flex flex-col space-y-2">
+        <span className="text-sm font-medium">6th Place (Below Average)</span>
+        <ValueDelta 
+          value={18} 
+          baseline={24} 
+          higherIsBetter={true} 
+          precision={0}
+          rank={6}
+          totalCount={8}
+        />
+      </div>
+    </div>
+  ),
 };
 
 export const StatsComparison: Story = {
@@ -150,7 +246,7 @@ export const StatsComparison: Story = {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="flex flex-col">
             <span className="text-sm text-base-content/70 mb-1">K/D Ratio</span>
-            <ValueDelta value={2.45} baseline={1.8} higherIsBetter={true} precision={2} />
+            <ValueDelta value={2.45} baseline={1.8} higherIsBetter={true} precision={2} rank={2} totalCount={8} />
           </div>
           <div className="flex flex-col">
             <span className="text-sm text-base-content/70 mb-1">Damage/Min</span>
@@ -159,11 +255,13 @@ export const StatsComparison: Story = {
               baseline={425} 
               higherIsBetter={true} 
               precision={0}
+              rank={1}
+              totalCount={8}
             />
           </div>
           <div className="flex flex-col">
             <span className="text-sm text-base-content/70 mb-1">Deaths/Match</span>
-            <ValueDelta value={3.2} baseline={4.8} higherIsBetter={false} precision={1} />
+            <ValueDelta value={3.2} baseline={4.8} higherIsBetter={false} precision={1} rank={2} totalCount={8} />
           </div>
           <div className="flex flex-col">
             <span className="text-sm text-base-content/70 mb-1">Accuracy</span>
@@ -172,6 +270,8 @@ export const StatsComparison: Story = {
               baseline={65.2} 
               higherIsBetter={true} 
               precision={1}
+              rank={1}
+              totalCount={8}
             />
           </div>
           <div className="flex flex-col">
@@ -181,6 +281,8 @@ export const StatsComparison: Story = {
               baseline={980} 
               higherIsBetter={true} 
               precision={0}
+              rank={3}
+              totalCount={8}
             />
           </div>
           <div className="flex flex-col">
@@ -190,6 +292,8 @@ export const StatsComparison: Story = {
               baseline={48.7} 
               higherIsBetter={false} 
               precision={1}
+              rank={2}
+              totalCount={8}
             />
           </div>
         </div>
@@ -209,7 +313,7 @@ export const TeamComparison: Story = {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-sm">Team Kills/Match</span>
-                <ValueDelta value={28.4} baseline={24.7} higherIsBetter={true} precision={1} />
+                <ValueDelta value={28.4} baseline={24.7} higherIsBetter={true} precision={1} rank={2} totalCount={12} />
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Damage/Match</span>
@@ -218,6 +322,8 @@ export const TeamComparison: Story = {
                   baseline={38920} 
                   higherIsBetter={true} 
                   precision={0}
+                  rank={1}
+                  totalCount={12}
                 />
               </div>
               <div className="flex justify-between items-center">
@@ -227,6 +333,8 @@ export const TeamComparison: Story = {
                   baseline={52.1} 
                   higherIsBetter={true} 
                   precision={1}
+                  rank={3}
+                  totalCount={12}
                 />
               </div>
             </div>
@@ -236,7 +344,7 @@ export const TeamComparison: Story = {
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-sm">Deaths/Match</span>
-                <ValueDelta value={19.3} baseline={24.7} higherIsBetter={false} precision={1} />
+                <ValueDelta value={19.3} baseline={24.7} higherIsBetter={false} precision={1} rank={4} totalCount={12} />
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Damage Blocked</span>
@@ -245,11 +353,13 @@ export const TeamComparison: Story = {
                   baseline={8920} 
                   higherIsBetter={true} 
                   precision={0}
+                  rank={2}
+                  totalCount={12}
                 />
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Ults Interrupted</span>
-                <ValueDelta value={3.8} baseline={2.1} higherIsBetter={true} precision={1} />
+                <ValueDelta value={3.8} baseline={2.1} higherIsBetter={true} precision={1} rank={1} totalCount={12} />
               </div>
             </div>
           </div>
