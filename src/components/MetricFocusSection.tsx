@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { ScrimsightMetricFocus, PlayerStatsNumerical, PlayerStatsNumericalKeys } from "../lib/ScrimsightDataModel";
+import { ScrimsightMetricFocus, PlayerStatsNumerical, PlayerStatsNumericalKeys, METRIC_DISPLAY_NAME, PLAYER_STAT_RANKING_DIRECTIONS } from "../lib/ScrimsightDataModel";
 import CardStat from "./CardStat";
 import { Target, TrendingUp, Activity, Zap } from "lucide-react";
 
@@ -36,41 +36,14 @@ const MetricFocusSection = ({
   };
 
 
-  const getMetricLabel = (metricKey: PlayerStatsNumericalKeys): string => {
-    const labels: Record<string, string> = {
-      finalBlowsPer10Minutes: "Final Blows/10min",
-      heroDamageDealtPer10Minutes: "Hero Damage/10min",
-      firstKillRate: "First Kill Rate",
-      eliminationsPer10Minutes: "Eliminations/10min",
-      allDamageDealtPer10Minutes: "All Damage/10min",
-      tankFocusRate: "Tank Focus Rate",
-      damageFocusRate: "Damage Focus Rate",
-      supportFocusRate: "Support Focus Rate",
-      deathsPer10Minutes: "Deaths/10min",
-      firstDeathRate: "First Death Rate",
-      teamfightWinRateWithFirstDeath: "Win Rate w/ First Death",
-      damageTakenPer10Minutes: "Damage Taken/10min",
-      averageLifeDuration: "Avg Life Duration",
-      deathsWithUltAvailable: "Deaths w/ Ult Available",
-      selfHealingPer10Minutes: "Self Healing/10min",
-      healingDealtPer10Minutes: "Healing/10min",
-      totalAssistsPer10Minutes: "Assists/10min",
-      damageBlockedPer10Minutes: "Damage Blocked/10min",
-      offensiveAssistsPer10Minutes: "Offensive Assists/10min",
-      defensiveAssistsPer10Minutes: "Defensive Assists/10min",
-      ultimatesUsedPer10Minutes: "Ultimates Used/10min",
-      teamfightWinRate: "Teamfight Win Rate",
-      weaponAccuracy: "Weapon Accuracy",
-      killsPerUltimate: "Kills/Ultimate",
-      damageDonePerHealingReceived: "Damage/Healing Received",
-      damagePerKill: "Damage/Kill",
-      criticalHitRate: "Critical Hit Rate",
-      scopedWeaponAccuracy: "Scoped Accuracy",
-      criticalHitsPer10Minutes: "Critical Hits/10min",
-      barrierDamageDealtPer10Minutes: "Barrier Damage/10min",
-      teamfightWinRateWithUlt: "Win Rate w/ Ult",
-    };
-    return labels[metricKey] || metricKey;
+  const calculateSeverity = (value: number, averageValue: number, metricKey: PlayerStatsNumericalKeys): "neutral" | "good" | "bad" => {
+    const higherIsBetter = PLAYER_STAT_RANKING_DIRECTIONS[metricKey] === 'higher';
+    
+    if (higherIsBetter) {
+      return value > averageValue ? "good" : "bad";
+    } else {
+      return value < averageValue ? "good" : "bad";
+    }
   };
 
   return (
@@ -99,16 +72,18 @@ const MetricFocusSection = ({
               
               const rank = playerStatRanks?.[metricKey];
               const averageValue = playerAverageStats?.[metricKey];
+              const severity = averageValue !== undefined ? calculateSeverity(value, averageValue, metricKey) : "neutral";
               
               return (
                 <CardStat
                   key={metricKey}
-                  label={getMetricLabel(metricKey)}
+                  label={METRIC_DISPLAY_NAME[metricKey]}
                   numericValue={value}
                   averageValue={averageValue}
                   metricKey={metricKey}
                   rank={rank}
                   totalCount={totalCount}
+                  severity={severity}
                 />
               );
             })}
@@ -126,16 +101,18 @@ const MetricFocusSection = ({
               
               const rank = playerStatRanks?.[metricKey];
               const averageValue = playerAverageStats?.[metricKey];
+              const severity = averageValue !== undefined ? calculateSeverity(value, averageValue, metricKey) : "neutral";
               
               return (
                 <CardStat
                   key={metricKey}
-                  label={getMetricLabel(metricKey)}
+                  label={METRIC_DISPLAY_NAME[metricKey]}
                   numericValue={value}
                   averageValue={averageValue}
                   metricKey={metricKey}
                   rank={rank}
                   totalCount={totalCount}
+                  severity={severity}
                 />
               );
             })}

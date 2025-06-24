@@ -240,6 +240,112 @@ export const PLAYER_STAT_RANKING_DIRECTIONS: Record<PlayerStatsNumericalKeys, 'h
   damageDonePerHealingReceived: 'higher' // More damage output per healing received = efficient
 } as const;
 
+// Display names for all player stat metrics
+export const METRIC_DISPLAY_NAME: Record<PlayerStatsNumericalKeys, string> = {
+  // Base stats
+  playtime: "Playtime",
+  eliminations: "Eliminations",
+  finalBlows: "Final Blows",
+  deaths: "Deaths",
+  allDamageDealt: "All Damage Dealt",
+  barrierDamageDealt: "Barrier Damage Dealt",
+  heroDamageDealt: "Hero Damage Dealt",
+  healingDealt: "Healing Dealt",
+  healingReceived: "Healing Received",
+  selfHealing: "Self Healing",
+  damageTaken: "Damage Taken",
+  damageBlocked: "Damage Blocked",
+  defensiveAssists: "Defensive Assists",
+  offensiveAssists: "Offensive Assists",
+  ultimatesEarned: "Ultimates Earned",
+  ultimatesUsed: "Ultimates Used",
+  multikills: "Multikills",
+  soloKills: "Solo Kills",
+  objectiveKills: "Objective Kills",
+  environmentalKills: "Environmental Kills",
+  environmentalDeaths: "Environmental Deaths",
+  criticalHits: "Critical Hits",
+  shotsFired: "Shots Fired",
+  shotsHit: "Shots Hit",
+  shotsMissed: "Shots Missed",
+  scopedShotsFired: "Scoped Shots Fired",
+  scopedShotsHit: "Scoped Shots Hit",
+
+  // Per-10-minute derived stats
+  eliminationsPer10Minutes: "Eliminations/10min",
+  finalBlowsPer10Minutes: "Final Blows/10min",
+  deathsPer10Minutes: "Deaths/10min",
+  allDamageDealtPer10Minutes: "All Damage/10min",
+  barrierDamageDealtPer10Minutes: "Barrier Damage/10min",
+  heroDamageDealtPer10Minutes: "Hero Damage/10min",
+  healingDealtPer10Minutes: "Healing/10min",
+  healingReceivedPer10Minutes: "Healing Received/10min",
+  selfHealingPer10Minutes: "Self Healing/10min",
+  damageTakenPer10Minutes: "Damage Taken/10min",
+  damageBlockedPer10Minutes: "Damage Blocked/10min",
+  defensiveAssistsPer10Minutes: "Defensive Assists/10min",
+  offensiveAssistsPer10Minutes: "Offensive Assists/10min",
+  ultimatesEarnedPer10Minutes: "Ultimates Earned/10min",
+  ultimatesUsedPer10Minutes: "Ultimates Used/10min",
+  multikillsPer10Minutes: "Multikills/10min",
+  soloKillsPer10Minutes: "Solo Kills/10min",
+  objectiveKillsPer10Minutes: "Objective Kills/10min",
+  environmentalKillsPer10Minutes: "Environmental Kills/10min",
+  environmentalDeathsPer10Minutes: "Environmental Deaths/10min",
+  criticalHitsPer10Minutes: "Critical Hits/10min",
+  shotsFiredPer10Minutes: "Shots Fired/10min",
+  shotsHitPer10Minutes: "Shots Hit/10min",
+  shotsMissedPer10Minutes: "Shots Missed/10min",
+  scopedShotsFiredPer10Minutes: "Scoped Shots Fired/10min",
+  scopedShotsHitPer10Minutes: "Scoped Shots Hit/10min",
+
+  // Percentage/ratio derived stats
+  weaponAccuracy: "Weapon Accuracy",
+  scopedWeaponAccuracy: "Scoped Accuracy",
+  criticalHitRate: "Critical Hit Rate",
+
+  // Ultimate-related derived stats
+  ultsUsed: "Ultimates Used",
+  ultKills: "Ultimate Kills",
+  killsPerUltimate: "Kills/Ultimate",
+  ultimateChargeTime: "Ultimate Charge Time",
+  ultimateHoldTime: "Ultimate Hold Time",
+  ultimateUseTime: "Ultimate Use Time",
+  deathsWithUltAvailable: "Deaths w/ Ult Available",
+
+  // Teamfight participation stats
+  teamfightsParticipated: "Teamfights Participated",
+  teamfightsWithFirstKill: "Teamfights w/ First Kill",
+  teamfightsWithFirstDeath: "Teamfights w/ First Death",
+  firstKillRate: "First Kill Rate",
+  firstDeathRate: "First Death Rate",
+  teamfightsWon: "Teamfights Won",
+  teamfightsWonWithUlt: "Teamfights Won w/ Ult",
+  teamfightsWonWithoutUlt: "Teamfights Won w/o Ult",
+  teamfightWinRate: "Teamfight Win Rate",
+  teamfightWinRateWithUlt: "Win Rate w/ Ult",
+  teamfightWinRateWithoutUlt: "Win Rate w/o Ult",
+  teamfightsWonWithFirstKill: "Teamfights Won w/ First Kill",
+  teamfightsWonWithFirstDeath: "Teamfights Won w/ First Death",
+  teamfightWinRateWithFirstKill: "Win Rate w/ First Kill",
+  teamfightWinRateWithFirstDeath: "Win Rate w/ First Death",
+
+  // Kill-by-role stats
+  tankKills: "Tank Kills",
+  damageKills: "Damage Kills",
+  supportKills: "Support Kills",
+  tankFocusRate: "Tank Focus Rate",
+  damageFocusRate: "Damage Focus Rate",
+  supportFocusRate: "Support Focus Rate",
+
+  // Additional derived stats
+  averageLifeDuration: "Avg Life Duration",
+  totalAssists: "Total Assists",
+  totalAssistsPer10Minutes: "Assists/10min",
+  damagePerKill: "Damage/Kill",
+  damageDonePerHealingReceived: "Damage/Healing Received",
+} as const;
+
 
 // Relationships between entities in the data model, used for joining entities
 
