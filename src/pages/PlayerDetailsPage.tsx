@@ -3,7 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, User } from "lucide-react";
 
 import { useScrimsightData } from "../lib/useScrimsightData";
-import { METRIC_FOCUS, PlayerStatsNumerical, PlayerStatsNumericalKeys } from "../lib/ScrimsightDataModel";
+import {
+  METRIC_FOCUS,
+  PlayerStatsNumerical,
+  PlayerStatsNumericalKeys,
+} from "../lib/ScrimsightDataModel";
 import * as R from "remeda";
 import MetricFocusSection from "../components/MetricFocusSection";
 import EmptyState from "../components/EmptyState";
@@ -18,13 +22,13 @@ const PlayerDetailsPage = () => {
 
   // Check if player exists
   const playerExists = useMemo(() => {
-    return players.some(player => player.player === playerName);
+    return players.some((player) => player.player === playerName);
   }, [players, playerName]);
 
   // Get player statistics
   const playerStats = useMemo(() => {
     if (!playerName) return null;
-    
+
     const stats = playerStatBreakdown.byPlayer.find(
       (player) => player.playerName === playerName
     );
@@ -34,7 +38,7 @@ const PlayerDetailsPage = () => {
   // Get player stat ranks
   const playerStatRanks = useMemo(() => {
     if (!playerName) return null;
-    
+
     const ranks = playerStatBreakdownRanks.byPlayer.find(
       (player) => player.playerName === playerName
     );
@@ -53,13 +57,17 @@ const PlayerDetailsPage = () => {
 
     // Get all numeric keys from PlayerStatsNumerical
     const numericKeys = Object.keys(allPlayers[0]).filter(
-      key => key !== 'playerName' && typeof allPlayers[0][key as keyof typeof allPlayers[0]] === 'number'
+      (key) =>
+        key !== "playerName" &&
+        typeof allPlayers[0][key as keyof typeof allPlayers[0]] === "number"
     ) as PlayerStatsNumericalKeys[];
 
     // Compute average for each metric
     const averages = R.pipe(
       numericKeys,
-      R.map(key => [key, R.meanBy(allPlayers, player => player[key])] as const),
+      R.map(
+        (key) => [key, R.meanBy(allPlayers, (player) => player[key])] as const
+      ),
       R.fromEntries()
     ) as PlayerStatsNumerical;
 
@@ -95,6 +103,34 @@ const PlayerDetailsPage = () => {
       />
     );
   }
+
+  // I need you to evolve the MetricFocusSection component, and its usage on the PlayerDetailsPage,
+  //  and the METRIC_FOCUS list in @src/lib/ScrimsightDataModel.ts, to enable composition instead of prop drilling. Instead of the
+  //  structure being determined by the ScrimsightMetricFocus objects and MetricFocusSection, I want to be able to configure the page directly,
+  // allowing greater flexibility This will allow me to lay out the page in semantic units, like this sample:
+  // (in player details page)
+  // PageHeader
+  //   PageHeader.Icon
+  //   PageHeader.Title
+  // PageSection
+  //   PageSection.Title
+  //   PageSection.Description
+  //   PageSection.Content
+  //     CardStat
+  //     CardStat
+  // PageSection
+  //   PageSection.Title
+  //   PageSection.Description
+  //   PageSection.Content
+  //    StatDistributionAndTop
+  //    ChartWrapper
+  //
+  //  Please ultrathink and plan very carefully, using subagents for subtasks, and
+  // confirm the design with me before proceeding with the implementation. You may not make any file changes until I give you
+  // explicit approval.
+  //
+  // Relevant files: @src/components/MetricFocusSection.tsx @src/components/CardStat.tsx
+  //   @src/lib/ScrimsightDataModel.ts @src/pages/PlayerDetailsPage.tsx
 
   const breadcrumbItems = [
     { label: "Players", href: "/players" },
