@@ -47,7 +47,7 @@ const MetricFocusSection = ({
   };
 
   return (
-    <div className={`bg-base-100 rounded-lg p-6 ${className}`}>
+    <div className={`bg-base-100 rounded-lg p-6 w-fit ${className}`}>
       <div className="flex items-center gap-3 mb-4">
         <div className="text-primary">{getFocusIcon(metricFocus.focus)}</div>
         <div>
@@ -65,7 +65,7 @@ const MetricFocusSection = ({
           <h3 className="text-lg font-semibold text-base-content mb-3">
             Primary Metrics
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="flex flex-wrap gap-4">
             {metricFocus.primaryMetrics.map((metricKey) => {
               const value = playerStats[metricKey];
               if (value === undefined) return null;
@@ -84,6 +84,7 @@ const MetricFocusSection = ({
                   rank={rank}
                   totalCount={totalCount}
                   severity={severity}
+                  size="large"
                 />
               );
             })}
@@ -94,7 +95,7 @@ const MetricFocusSection = ({
           <h3 className="text-lg font-semibold text-base-content mb-3">
             Secondary Metrics
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="flex flex-wrap gap-3">
             {metricFocus.secondaryMetrics.map((metricKey) => {
               const value = playerStats[metricKey];
               if (value === undefined) return null;
@@ -113,6 +114,7 @@ const MetricFocusSection = ({
                   rank={rank}
                   totalCount={totalCount}
                   severity={severity}
+                  size="small"
                 />
               );
             })}

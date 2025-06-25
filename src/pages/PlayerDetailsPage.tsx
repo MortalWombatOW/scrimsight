@@ -131,7 +131,7 @@ const PlayerDetailsPage = () => {
       </div>
 
       {/* Metric Focus Sections */}
-      <div className="space-y-6">
+      <div className="flex flex-wrap gap-6">
         {METRIC_FOCUS.map((metricFocus) => (
           <MetricFocusSection
             key={metricFocus.focus}

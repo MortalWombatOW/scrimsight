@@ -8,6 +8,7 @@ interface ValueDeltaProps {
   precision?: number;
   rank: number;
   totalCount: number;
+  size?: "large" | "small";
 }
 
 const ValueDelta = ({
@@ -17,6 +18,7 @@ const ValueDelta = ({
   precision = 1,
   rank,
   totalCount,
+  size = "large",
 }: ValueDeltaProps) => {
   const delta = value - baseline;
   const deltaPercentage = baseline !== 0 ? delta / baseline : 0;
@@ -35,7 +37,29 @@ const ValueDelta = ({
 
   const getDeltaIcon = () => {
     if (isNeutral) return null;
-    return isPositive ? <ChevronUp size={14} /> : <ChevronDown size={14} />;
+    const iconSize = size === "large" ? 14 : 12;
+    return isPositive ? (
+      <ChevronUp size={iconSize} />
+    ) : (
+      <ChevronDown size={iconSize} />
+    );
+  };
+
+  const getSizeClasses = () => {
+    if (size === "small") {
+      return {
+        mainValue: "text-sm font-medium",
+        deltaText: "text-xs font-medium",
+        percentage: "text-xs opacity-75",
+        comparison: "text-xs",
+      };
+    }
+    return {
+      mainValue: "font-medium",
+      deltaText: "text-sm font-medium",
+      percentage: "text-xs opacity-75",
+      comparison: "text-xs",
+    };
   };
 
   const displayValue = prettyFormat(value, precision);
@@ -49,16 +73,22 @@ const ValueDelta = ({
     return ` • ${rank} of ${totalCount}`;
   };
 
+  const sizeClasses = getSizeClasses();
+
   return (
     <div className="flex flex-col">
       <div className="flex items-center gap-1">
-        <span className="font-medium text-base-content">{displayValue}</span>
+        <span className={`${sizeClasses.mainValue} text-base-content`}>
+          {displayValue}
+        </span>
         {!isNeutral && (
           <div className={`flex items-center gap-0.5 ${getColorClass()}`}>
             {getDeltaIcon()}
-            <span className="text-sm font-medium">{displayDeltaFormatted}</span>
+            <span className={sizeClasses.deltaText}>
+              {displayDeltaFormatted}
+            </span>
             {baseline !== 0 && (
-              <span className="text-xs opacity-75">
+              <span className={sizeClasses.percentage}>
                 ({deltaPercentage >= 0 ? "+" : ""}
                 {formatPercentage(deltaPercentage, precision)})
               </span>
@@ -66,7 +96,7 @@ const ValueDelta = ({
           </div>
         )}
       </div>
-      <div className="text-xs text-base-content/60">
+      <div className={`${sizeClasses.comparison} text-base-content/60`}>
         vs {displayBaseline}
         {getRankDisplay()}
       </div>

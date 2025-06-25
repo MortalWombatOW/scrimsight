@@ -37,6 +37,10 @@ const meta: Meta<typeof CardStat> = {
     metricKey: {
       control: 'text',
     },
+    size: {
+      control: 'select',
+      options: ['large', 'small'],
+    },
   },
 };
 
@@ -304,6 +308,171 @@ export const RankDisplayComparison: Story = {
             metricKey="deaths"
             rank={3} 
             totalCount={8} 
+          />
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+// New size-related stories
+export const SmallSize: Story = {
+  args: {
+    label: 'Eliminations',
+    value: '32',
+    severity: 'good',
+    size: 'small',
+  },
+};
+
+export const SmallWithValueDelta: Story = {
+  args: {
+    label: 'Hero Damage',
+    numericValue: 8945,
+    averageValue: 7200,
+    metricKey: 'heroDamageDealt',
+    rank: 2,
+    totalCount: 8,
+    size: 'small',
+  },
+};
+
+export const SizeComparison: Story = {
+  render: () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold mb-3">Large Size (Default)</h3>
+        <div className="flex flex-wrap gap-4">
+          <CardStat 
+            label="Eliminations" 
+            value="32" 
+            severity="good" 
+            size="large"
+          />
+          <CardStat 
+            label="Hero Damage" 
+            numericValue={8945} 
+            averageValue={7200} 
+            metricKey="heroDamageDealt"
+            rank={2} 
+            totalCount={8} 
+            size="large"
+          />
+          <CardStat 
+            label="Weapon Accuracy" 
+            value="71.2%" 
+            severity="good" 
+            rank={3} 
+            totalCount={8} 
+            size="large"
+          />
+        </div>
+      </div>
+      <div>
+        <h3 className="text-lg font-semibold mb-3">Small Size</h3>
+        <div className="flex flex-wrap gap-4">
+          <CardStat 
+            label="Eliminations" 
+            value="32" 
+            severity="good" 
+            size="small"
+          />
+          <CardStat 
+            label="Hero Damage" 
+            numericValue={8945} 
+            averageValue={7200} 
+            metricKey="heroDamageDealt"
+            rank={2} 
+            totalCount={8} 
+            size="small"
+          />
+          <CardStat 
+            label="Weapon Accuracy" 
+            value="71.2%" 
+            severity="good" 
+            rank={3} 
+            totalCount={8} 
+            size="small"
+          />
+        </div>
+      </div>
+    </div>
+  ),
+};
+
+export const DensityComparison: Story = {
+  render: () => (
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-lg font-semibold mb-3">Primary Metrics Layout (Large Cards)</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <CardStat 
+            label="Final Blows/10min" 
+            numericValue={15.2} 
+            averageValue={12.8} 
+            metricKey="finalBlowsPer10Minutes"
+            rank={1} 
+            totalCount={8} 
+            size="large"
+          />
+          <CardStat 
+            label="Hero Damage/10min" 
+            numericValue={8945} 
+            averageValue={7200} 
+            metricKey="heroDamageDealtPer10Minutes"
+            rank={2} 
+            totalCount={8} 
+            size="large"
+          />
+          <CardStat 
+            label="First Kill Rate" 
+            numericValue={0.428} 
+            averageValue={0.315} 
+            metricKey="firstKillRate"
+            rank={1} 
+            totalCount={8} 
+            size="large"
+          />
+        </div>
+      </div>
+      <div>
+        <h3 className="text-lg font-semibold mb-3">Secondary Metrics Layout (Small Cards)</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <CardStat 
+            label="Eliminations/10min" 
+            numericValue={18.5} 
+            averageValue={16.2} 
+            metricKey="eliminationsPer10Minutes"
+            rank={2} 
+            totalCount={8} 
+            size="small"
+          />
+          <CardStat 
+            label="All Damage/10min" 
+            numericValue={9245} 
+            averageValue={8100} 
+            metricKey="allDamageDealtPer10Minutes"
+            rank={3} 
+            totalCount={8} 
+            size="small"
+          />
+          <CardStat 
+            label="Tank Focus Rate" 
+            numericValue={0.35} 
+            averageValue={0.28} 
+            metricKey="tankFocusRate"
+            rank={1} 
+            totalCount={8} 
+            size="small"
+          />
+          <CardStat 
+            label="Support Focus Rate" 
+            numericValue={0.42} 
+            averageValue={0.38} 
+            metricKey="supportFocusRate"
+            rank={2} 
+            totalCount={8} 
+            size="small"
           />
         </div>
       </div>

@@ -574,5 +574,11 @@ export const METRIC_FOCUS: ScrimsightMetricFocus[] = [
     description: 'Being able to take advantage of opportunities and make the most of your resources is crucial.',
     primaryMetrics: ['weaponAccuracy', 'killsPerUltimate', 'damageDonePerHealingReceived', 'damagePerKill'],
     secondaryMetrics: ['criticalHitRate', 'scopedWeaponAccuracy', 'criticalHitsPer10Minutes', 'barrierDamageDealtPer10Minutes', 'teamfightWinRateWithUlt']
-  }
+  },
+  {
+    focus: 'Tank',
+    description: 'Tanks excel by creating space and staying alive. High damage blocked and objective kills reflect space held and getting the team to the objective. Avoiding dying, especially early, is crucial to tank success.',
+    primaryMetrics: ['damageBlockedPer10Minutes', 'objectiveKillsPer10Minutes', 'firstDeathRate'],
+    secondaryMetrics: ['killsPerUltimate', 'deathsPer10Minutes', 'damageTakenPer10Minutes', 'damageDonePerHealingReceived']
+  },
 ];
