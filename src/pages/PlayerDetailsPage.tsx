@@ -7,6 +7,8 @@ import {
   Activity,
   TrendingUp,
   Zap,
+  Users,
+  Play,
 } from "lucide-react";
 
 import { useScrimsightData } from "../lib/useScrimsightData";
@@ -22,6 +24,10 @@ import PageSection from "../components/PageSection";
 import CardStat from "../components/CardStat";
 import EmptyState from "../components/EmptyState";
 import BreadCrumbs from "../components/BreadCrumbs";
+import ScrimsightPage from "../components/ScrimsightPage";
+import HeroIcon from "../icons/HeroIcon";
+import RoleIcon from "../icons/RoleIcon";
+import { formatDuration } from "../lib/format";
 
 const PlayerDetailsPage = () => {
   const { playerName } = useParams<{ playerName: string }>();
@@ -76,6 +82,14 @@ const PlayerDetailsPage = () => {
     return playerStatBreakdownRanks.byPlayer.length;
   }, [playerStatBreakdownRanks.byPlayer]);
 
+  // Get player relationship data (heroes and roles with playtime)
+  const playerRelationship = useMemo(() => {
+    if (!playerName) return null;
+
+    const player = players.find((p) => p.player === playerName);
+    return player || null;
+  }, [players, playerName]);
+
   // Compute global averages for all player stats
   const playerAverageStats = useMemo(() => {
     const allPlayers = playerStatBreakdown.byPlayer;
@@ -100,32 +114,12 @@ const PlayerDetailsPage = () => {
     return averages;
   }, [playerStatBreakdown.byPlayer]);
 
-  if (!playerName) {
+  if (!playerName || !playerRelationship || !playerStats) {
     return (
       <EmptyState
         icon={User}
         title="No Player Selected"
         description="Please select a player to view their details."
-      />
-    );
-  }
-
-  if (!playerExists) {
-    return (
-      <EmptyState
-        icon={User}
-        title="Player Not Found"
-        description={`Player "${playerName}" was not found in the data.`}
-      />
-    );
-  }
-
-  if (!playerStats) {
-    return (
-      <EmptyState
-        icon={User}
-        title="No Statistics Available"
-        description={`No statistics available for player "${playerName}".`}
       />
     );
   }
@@ -136,7 +130,7 @@ const PlayerDetailsPage = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <ScrimsightPage>
       <PageHeader>
         <div>
           <BreadCrumbs items={breadcrumbItems} />
@@ -154,12 +148,62 @@ const PlayerDetailsPage = () => {
         </div>
       </PageHeader>
 
-      <PageSection variant="card">
-        <PageSection.Title>Context</PageSection.Title>
-        <PageSection.Description className="mt-1">
-          The context of this page is the performance of {playerName}
-        </PageSection.Description>
-      </PageSection>
+      <div className="flex flex-wrap gap-6">
+        <PageSection variant="card" className="w-fit">
+          <PageSection.Title>Roles</PageSection.Title>
+
+          <PageSection.Content layout="flex" className="gap-4">
+            {playerRelationship.roles.map((roleEntry) => (
+              <div
+                key={roleEntry.role}
+                className="flex flex-col items-center p-4 bg-base-200 rounded-lg min-w-[120px]"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-10 h-10 flex items-center justify-center bg-base-300 rounded-full">
+                    <RoleIcon
+                      role={roleEntry.role}
+                      color="primary"
+                      className="text-xl"
+                    />
+                  </div>
+                </div>
+                <h4 className="font-medium text-base-content text-center capitalize">
+                  {roleEntry.role}
+                </h4>
+                <p className="text-sm text-base-content/70 mt-1">
+                  {formatDuration(roleEntry.playtime)}
+                </p>
+              </div>
+            ))}
+          </PageSection.Content>
+        </PageSection>
+
+        <PageSection variant="card" className="w-fit">
+          <PageSection.Title>Top Heroes</PageSection.Title>
+
+          <PageSection.Content layout="flex" className="gap-4">
+            {playerRelationship.heroes.slice(0, 5).map((heroEntry, index) => (
+              <div
+                key={heroEntry.hero}
+                className="flex flex-col items-center p-4 bg-base-200 rounded-lg min-w-[120px]"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-sm font-medium text-base-content/60">
+                    #{index + 1}
+                  </span>
+                  <HeroIcon hero={heroEntry.hero} size={40} showTooltip />
+                </div>
+                <h4 className="font-medium text-base-content text-center">
+                  {heroEntry.hero}
+                </h4>
+                <p className="text-sm text-base-content/70 mt-1">
+                  {formatDuration(heroEntry.playtime)}
+                </p>
+              </div>
+            ))}
+          </PageSection.Content>
+        </PageSection>
+      </div>
 
       <PageSection variant="card" className="w-fit">
         <PageSection.Title>Offensive Impact</PageSection.Title>
@@ -645,7 +689,7 @@ const PlayerDetailsPage = () => {
           </div>
         </div>
       </PageSection>
-    </div>
+    </ScrimsightPage>
   );
 };
 

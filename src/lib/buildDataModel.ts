@@ -315,11 +315,43 @@ const buildPlayerRelationships = (dataModel: ScrimsightDataModel.ScrimsightDataM
       R.map(match => match.match)
     );
 
+    // Calculate heroes with playtime directly from playerLives
+    const playerLivesForPlayer = R.filter(dataModel.playerLives, life => life.player === playerName);
+    
+    const heroesWithPlaytime = R.pipe(
+      playerLivesForPlayer,
+      R.groupBy(life => life.hero),
+      R.entries(),
+      R.map(([hero, lives]) => ({
+        hero: hero as ScrimsightDataModel.Hero,
+        playtime: R.sumBy(lives, life => life.duration)
+      })),
+      R.sortBy(item => -item.playtime) // Sort by playtime descending
+    );
+
+    // Calculate roles with playtime from the hero playtime data
+    const rolesWithPlaytime = R.pipe(
+      heroesWithPlaytime,
+      R.map(heroEntry => ({
+        role: getRoleFromHero(heroEntry.hero),
+        playtime: heroEntry.playtime
+      })),
+      R.groupBy(item => item.role),
+      R.entries(),
+      R.map(([role, items]) => ({
+        role: role as ScrimsightDataModel.Role,
+        playtime: R.sumBy(items, item => item.playtime)
+      })),
+      R.sortBy(item => -item.playtime) // Sort by playtime descending
+    );
+
     return {
       player: playerName,
       teams: playerTeams,
       scrims: playerScrims,
-      matches: playerMatches
+      matches: playerMatches,
+      heroes: heroesWithPlaytime,
+      roles: rolesWithPlaytime
     };
   });
 };
@@ -1729,9 +1761,11 @@ export const buildDataModel = (files: {fileName: string, fileModified: number, f
   
   dataModel.matches = buildMatchRelationships(dataModel, parsedFiles);
   dataModel.teams = buildTeamRelationships(dataModel);
+  
+  // Build playerLives first so we can calculate playtime in playerRelationships
+  dataModel.playerLives = buildPlayerLives(dataModel);
   dataModel.players = buildPlayerRelationships(dataModel);
   
-  dataModel.playerLives = buildPlayerLives(dataModel);
   dataModel.teamfights = buildTeamfights(dataModel);
   dataModel.rounds = buildRounds(dataModel);
   dataModel.teamCompositions = buildTeamCompositions(dataModel);

@@ -206,6 +206,8 @@ describe('buildDataModel', () => {
       expect(Array.isArray(player.teams)).toBe(true);
       expect(Array.isArray(player.scrims)).toBe(true);
       expect(Array.isArray(player.matches)).toBe(true);
+      expect(Array.isArray(player.heroes)).toBe(true);
+      expect(Array.isArray(player.roles)).toBe(true);
     });
 
     // Players should be linked to existing teams, scrims, and matches
@@ -223,6 +225,61 @@ describe('buildDataModel', () => {
       player.matches.forEach(matchId => {
         expect(matchIds.has(matchId)).toBe(true);
       });
+    });
+  });
+
+  it('should populate player heroes and roles with playtime correctly', () => {
+    const dataModel = buildDataModel(sampleFiles);
+
+    dataModel.players.forEach(player => {
+      // Each player should have at least some heroes and roles if they have player lives
+      const playerLives = dataModel.playerLives.filter(life => life.player === player.player);
+      if (playerLives.length > 0) {
+        expect(player.heroes.length).toBeGreaterThan(0);
+        expect(player.roles.length).toBeGreaterThan(0);
+      }
+
+      // Heroes array should contain valid hero objects
+      player.heroes.forEach(heroEntry => {
+        expect(typeof heroEntry.hero).toBe('string');
+        expect(typeof heroEntry.playtime).toBe('number');
+        expect(heroEntry.playtime).toBeGreaterThan(0); // Playtime should be positive, not just >= 0
+        
+        // Hero should be a valid hero name from the constants
+        const allHeroes = [...ScrimsightDataModel.TANK_HEROES, ...ScrimsightDataModel.DAMAGE_HEROES, ...ScrimsightDataModel.SUPPORT_HEROES];
+        expect(allHeroes).toContain(heroEntry.hero);
+      });
+
+      // Roles array should contain valid role objects
+      player.roles.forEach(roleEntry => {
+        expect(typeof roleEntry.role).toBe('string');
+        expect(typeof roleEntry.playtime).toBe('number');
+        expect(roleEntry.playtime).toBeGreaterThan(0); // Playtime should be positive, not just >= 0
+        
+        // Role should be one of the valid roles
+        expect(['tank', 'damage', 'support']).toContain(roleEntry.role);
+      });
+
+      // Heroes should be sorted by playtime (descending)
+      for (let i = 1; i < player.heroes.length; i++) {
+        expect(player.heroes[i-1].playtime).toBeGreaterThanOrEqual(player.heroes[i].playtime);
+      }
+
+      // Roles should be sorted by playtime (descending) 
+      for (let i = 1; i < player.roles.length; i++) {
+        expect(player.roles[i-1].playtime).toBeGreaterThanOrEqual(player.roles[i].playtime);
+      }
+
+      // Total playtime across all heroes should equal total playtime across all roles
+      const totalHeroPlaytime = player.heroes.reduce((sum, h) => sum + h.playtime, 0);
+      const totalRolePlaytime = player.roles.reduce((sum, r) => sum + r.playtime, 0);
+      expect(totalHeroPlaytime).toBeCloseTo(totalRolePlaytime, 5); // Allow small floating point differences
+
+      // Verify playtime matches what we expect from playerLives
+      if (playerLives.length > 0) {
+        const expectedTotalPlaytime = playerLives.reduce((sum, life) => sum + life.duration, 0);
+        expect(totalHeroPlaytime).toBeCloseTo(expectedTotalPlaytime, 5);
+      }
     });
   });
 

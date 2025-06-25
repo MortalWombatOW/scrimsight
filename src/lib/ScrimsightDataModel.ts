@@ -383,6 +383,14 @@ export interface PlayerRelationships {
   teams: TeamName[];
   scrims: ScrimID[];
   matches: MatchID[];
+  heroes: {
+    hero: Hero;
+    playtime: number;
+  }[];
+  roles: {
+    role: Role;
+    playtime: number;
+  }[];
 }
 
 
