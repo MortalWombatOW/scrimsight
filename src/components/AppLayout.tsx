@@ -129,9 +129,9 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           onClick={closeDrawer}
         ></label>
 
-        <aside className=" w-80 bg-base-100 text-base-content flex flex-col rounded-xl m-4 shadow-lg mt-34">
+        <aside className="w-80 text-base-content flex flex-col rounded-xl m-4 shadow-lg">
           {/* Header */}
-          <div className="p-6 border-b border-base-300">
+          <div className="p-6">
             <div className="flex items-center justify-between">
               <span
                 className="text-2xl font-black"
