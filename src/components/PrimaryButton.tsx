@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 interface PrimaryButtonProps {
   children: ReactNode;
@@ -9,7 +9,7 @@ interface PrimaryButtonProps {
 const PrimaryButton = ({ children, onClick, disabled }: PrimaryButtonProps) => {
   return (
     <button
-      className="btn btn-primary w-full sm:w-auto"
+      className="btn btn-primary w-fit"
       onClick={onClick}
       disabled={disabled}
     >
