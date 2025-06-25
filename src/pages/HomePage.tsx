@@ -5,7 +5,6 @@ import {
   Trophy,
   Clock,
   Target,
-  Heart,
   Zap,
   Shield,
 } from "lucide-react";

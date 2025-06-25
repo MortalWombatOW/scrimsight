@@ -1,15 +1,6 @@
 import { useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  User,
-  Target,
-  Activity,
-  TrendingUp,
-  Zap,
-  Users,
-  Play,
-} from "lucide-react";
+import { useParams } from "react-router-dom";
+import { User, Target, Activity, TrendingUp, Zap } from "lucide-react";
 
 import { useScrimsightData } from "../lib/useScrimsightData";
 import {
@@ -25,13 +16,15 @@ import CardStat from "../components/CardStat";
 import EmptyState from "../components/EmptyState";
 import BreadCrumbs from "../components/BreadCrumbs";
 import ScrimsightPage from "../components/ScrimsightPage";
+import TeamColorDot from "../components/TeamColorDot";
+import ScrimCard from "../components/ScrimCard";
 import HeroIcon from "../icons/HeroIcon";
 import RoleIcon from "../icons/RoleIcon";
 import { formatDuration } from "../lib/format";
 
 const PlayerDetailsPage = () => {
   const { playerName } = useParams<{ playerName: string }>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dataModel = useScrimsightData();
 
   // Helper function to calculate severity
@@ -50,12 +43,12 @@ const PlayerDetailsPage = () => {
     }
   };
 
-  const { playerStatBreakdown, playerStatBreakdownRanks, players } = dataModel;
-
-  // Check if player exists
-  const playerExists = useMemo(() => {
-    return players.some((player) => player.player === playerName);
-  }, [players, playerName]);
+  const {
+    playerStatBreakdown,
+    playerStatBreakdownRanks,
+    players,
+    scrims,
+  } = dataModel;
 
   // Get player statistics
   const playerStats = useMemo(() => {
@@ -114,7 +107,29 @@ const PlayerDetailsPage = () => {
     return averages;
   }, [playerStatBreakdown.byPlayer]);
 
-  if (!playerName || !playerRelationship || !playerStats) {
+  // Get player's teams
+  const playerTeams = useMemo(() => {
+    if (!playerName || !playerRelationship) return [];
+    return playerRelationship.teams;
+  }, [playerRelationship, playerName]);
+
+  // Get player's recent scrims (last 5)
+  const playerRecentScrims = useMemo(() => {
+    if (!playerName || !playerRelationship) return [];
+
+    return scrims
+      .filter((scrim) => playerRelationship.scrims.includes(scrim.scrim))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
+  }, [playerRelationship, playerName, scrims]);
+
+  if (
+    !playerName ||
+    !playerRelationship ||
+    !playerStats ||
+    !playerTeams.length ||
+    !playerRecentScrims.length
+  ) {
     return (
       <EmptyState
         icon={User}
@@ -203,6 +218,37 @@ const PlayerDetailsPage = () => {
             ))}
           </PageSection.Content>
         </PageSection>
+
+        <PageSection variant="card" className="w-fit mb-6">
+          <PageSection.Title>Teams</PageSection.Title>
+
+          <PageSection.Content layout="flex" className="gap-4">
+            {playerTeams.map((teamName) => (
+              <div
+                key={teamName}
+                className="flex flex-col items-center p-4 bg-base-200 rounded-lg min-w-[120px]"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <TeamColorDot teamName={teamName} size={24} />
+                </div>
+                <h4 className="font-medium text-base-content text-center">
+                  {teamName}
+                </h4>
+              </div>
+            ))}
+          </PageSection.Content>
+        </PageSection>
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-base-content mb-6">
+          Recent Scrims
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {playerRecentScrims.map((scrim) => (
+            <ScrimCard key={scrim.scrim} scrimId={scrim.scrim} />
+          ))}
+        </div>
       </div>
 
       <PageSection variant="card" className="w-fit">

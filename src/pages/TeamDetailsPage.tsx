@@ -1,7 +1,7 @@
-import { useScrimsightData } from "../lib/useScrimsightData";
+// import { useScrimsightData } from "../lib/useScrimsightData";
 
 const TeamDetailsPage = () => {
-  const scrimsightData = useScrimsightData();
+  // const scrimsightData = useScrimsightData();
 
   return (
     <div>
