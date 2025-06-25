@@ -1,6 +1,6 @@
 import * as Comlink from 'comlink';
-import { buildDataModel } from '@library/buildDataModel';
-import type { ScrimsightDataModel } from '@library/ScrimsightDataModel';
+import { buildDataModel } from './buildDataModel';
+import type { ScrimsightDataModel } from './ScrimsightDataModel';
 
 
 export class ScrimsightDataModelWorker {

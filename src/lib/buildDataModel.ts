@@ -1,7 +1,7 @@
-import { parseFile, type DataAndSpecName } from "@library/scrimtime";
-import * as ScrimsightDataModel from "@library/ScrimsightDataModel";
-import { extractEventsFromFiles } from "@library/eventExtractionUtils";
-import { getRoleFromHero } from "@library/hero";
+import { parseFile, type DataAndSpecName } from "./scrimtime";
+import * as ScrimsightDataModel from "./ScrimsightDataModel";
+import { extractEventsFromFiles } from "./eventExtractionUtils";
+import { getRoleFromHero } from "./hero";
 import * as R from "remeda";
 
 

@@ -1,5 +1,5 @@
 
-import * as ScrimsightDataModel from "@library/ScrimsightDataModel";
+import * as ScrimsightDataModel from "./ScrimsightDataModel";
 
 export const getHeroImage = (heroName: ScrimsightDataModel.Hero, rounded = true): string => `/assets/heroes/${rounded ? 'rounded/' : ''}${heroNameToNormalized(heroName)}.png`;
 
