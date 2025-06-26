@@ -48,7 +48,7 @@ export const CallbackPage = () => {
       navigate("/");
     };
     parseAuthResponse();
-  }, [auth.isAuthenticated, navigate, auth.user]);
+  }, [auth.isAuthenticated, navigate, auth.user, setAuthAtom]);
 
   if (auth.error) {
     return (

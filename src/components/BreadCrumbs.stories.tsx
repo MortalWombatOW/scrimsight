@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Home, Settings, User, FileText } from 'lucide-react';
 import BreadCrumbs from './BreadCrumbs';
 

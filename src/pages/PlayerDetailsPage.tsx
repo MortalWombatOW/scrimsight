@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { User, Target, Activity, TrendingUp, Zap } from "lucide-react";
 
-import { useScrimsightData } from "../lib/useScrimsightData";
+import { useScrimsightData } from "../hooks/useScrimsightData";
 import {
   PlayerStatsNumerical,
   PlayerStatsNumericalKeys,

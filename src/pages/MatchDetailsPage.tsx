@@ -3,11 +3,15 @@ import { useParams } from "react-router-dom";
 import { Trophy, Users, Zap } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { useScrimsightData } from "../lib/useScrimsightData";
+import { useScrimsightData } from "../hooks/useScrimsightData";
 import {
   PlayerStatsNumerical,
   PlayerStatsNumericalKeys,
   PLAYER_STAT_RANKING_DIRECTIONS,
+  Hero,
+  PlayerName,
+  TeamName,
+  MatchID,
 } from "../lib/ScrimsightDataModel";
 import * as R from "remeda";
 import ScrimsightPage from "../components/ScrimsightPage";
@@ -73,7 +77,7 @@ const MatchDetailsPage = () => {
         key,
         R.pipe(
           allPlayers,
-          R.map((player: any) => player[key] as number),
+          R.map((player) => player[key] as number),
           R.mean()
         ),
       ])
@@ -88,13 +92,57 @@ const MatchDetailsPage = () => {
     return matches.find((match) => match.match === matchId) || null;
   }, [matches, matchId]);
 
-  // Get player stats for this match
+  // Get player stats for this match with hero information
   const matchPlayerStats = useMemo(() => {
     if (!matchId) return [];
-    return playerStatBreakdown.byTeamAndPlayerAndMatch.filter(
-      (stat: any) => stat.matchId === matchId
+    
+    // Get aggregated stats
+    const aggregatedStats = playerStatBreakdown.byTeamAndPlayerAndMatch.filter(
+      (stat) => stat.matchId === matchId
     );
-  }, [playerStatBreakdown.byTeamAndPlayerAndMatch, matchId]);
+    
+    // Get hero information from raw playerStat events
+    const playerStatEvents = dataModel.playerStat.filter(
+      (event) => event.matchId === matchId
+    );
+    
+    // Create map of player -> primary hero (most played)
+    const playerHeroMap = new Map<string, Hero>();
+    const playerPlaytimeMap = new Map<string, Map<Hero, number>>();
+    
+    playerStatEvents.forEach(event => {
+      const key = `${event.playerName}-${event.playerTeam}`;
+      if (!playerPlaytimeMap.has(key)) {
+        playerPlaytimeMap.set(key, new Map());
+      }
+      const heroMap = playerPlaytimeMap.get(key)!;
+      const currentTime = heroMap.get(event.playerHero) || 0;
+      heroMap.set(event.playerHero, currentTime + (event.eliminations + event.deaths + 1)); // Use activity as proxy for playtime
+    });
+    
+    // Find primary hero for each player
+    playerPlaytimeMap.forEach((heroMap, playerKey) => {
+      let maxTime = 0;
+      let primaryHero: Hero = 'Soldier: 76'; // Default fallback
+      heroMap.forEach((time, hero) => {
+        if (time > maxTime) {
+          maxTime = time;
+          primaryHero = hero;
+        }
+      });
+      playerHeroMap.set(playerKey, primaryHero);
+    });
+    
+    // Enrich aggregated stats with hero information
+    return aggregatedStats.map(stat => {
+      const key = `${stat.playerName}-${stat.playerTeam}`;
+      const primaryHero = playerHeroMap.get(key) || 'Soldier: 76';
+      return {
+        ...stat,
+        playerHero: primaryHero
+      };
+    });
+  }, [playerStatBreakdown.byTeamAndPlayerAndMatch, matchId, dataModel.playerStat]);
 
   // Get teamfights for this match
   const matchTeamfights = useMemo(() => {
@@ -103,7 +151,9 @@ const MatchDetailsPage = () => {
   }, [teamfights, matchId]);
 
   // Player scoreboard columns
-  const scoreboardColumns: ColumnDef<any>[] = [
+  type PlayerStatEntry = { playerName: PlayerName; playerTeam: TeamName; matchId: MatchID; playerHero: Hero } & PlayerStatsNumerical;
+
+  const scoreboardColumns: ColumnDef<PlayerStatEntry>[] = [
     {
       accessorKey: "playerName",
       header: "Player",
@@ -112,17 +162,6 @@ const MatchDetailsPage = () => {
         <div className="flex items-center gap-2">
           <RoleIcon role={getRoleFromHero(row.original.playerHero)} />
           <span className="font-medium">{getValue() as string}</span>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "playerHero",
-      header: "Hero",
-      enableSorting: true,
-      cell: ({ getValue }) => (
-        <div className="flex items-center gap-2">
-          <HeroIcon hero={getValue() as any} size={24} showTooltip />
-          <span>{getValue() as string}</span>
         </div>
       ),
     },
@@ -201,6 +240,17 @@ const MatchDetailsPage = () => {
       enableSorting: true,
       cell: ({ getValue }) => getValue() as number,
     },
+    {
+      accessorKey: "playerHero",
+      header: "Hero",
+      enableSorting: true,
+      cell: ({ getValue }) => (
+        <div className="flex items-center gap-2">
+          <HeroIcon hero={getValue() as Hero} size={24} showTooltip />
+          <span>{getValue() as string}</span>
+        </div>
+      ),
+    },
   ];
 
   // Team composition analysis
@@ -208,13 +258,13 @@ const MatchDetailsPage = () => {
     if (!matchPlayerStats.length || !matchDetails) return null;
 
     const team1Players = matchPlayerStats.filter(
-      (stat: any) => stat.playerTeam === matchDetails.teams[0]
+      (stat) => stat.playerTeam === matchDetails.teams[0]
     );
     const team2Players = matchPlayerStats.filter(
-      (stat: any) => stat.playerTeam === matchDetails.teams[1]
+      (stat) => stat.playerTeam === matchDetails.teams[1]
     );
 
-    const getTeamComp = (players: any[]) => {
+    const getTeamComp = (players: PlayerStatEntry[]) => {
       const roleCount = players.reduce((acc, player) => {
         const role = getRoleFromHero(player.playerHero);
         acc[role] = (acc[role] || 0) + 1;
@@ -234,16 +284,16 @@ const MatchDetailsPage = () => {
       team1: {
         name: matchDetails.teams[0],
         composition: getTeamComp(team1Players),
-        totalDamage: team1Players.reduce((sum: number, p: any) => sum + p.heroDamageDealt, 0),
-        totalHealing: team1Players.reduce((sum: number, p: any) => sum + p.healingDealt, 0),
-        totalElims: team1Players.reduce((sum: number, p: any) => sum + p.eliminations, 0),
+        totalDamage: team1Players.reduce((sum, p) => sum + p.heroDamageDealt, 0),
+        totalHealing: team1Players.reduce((sum, p) => sum + p.healingDealt, 0),
+        totalElims: team1Players.reduce((sum, p) => sum + p.eliminations, 0),
       },
       team2: {
         name: matchDetails.teams[1],
         composition: getTeamComp(team2Players),
-        totalDamage: team2Players.reduce((sum: number, p: any) => sum + p.heroDamageDealt, 0),
-        totalHealing: team2Players.reduce((sum: number, p: any) => sum + p.healingDealt, 0),
-        totalElims: team2Players.reduce((sum: number, p: any) => sum + p.eliminations, 0),
+        totalDamage: team2Players.reduce((sum, p) => sum + p.heroDamageDealt, 0),
+        totalHealing: team2Players.reduce((sum, p) => sum + p.healingDealt, 0),
+        totalElims: team2Players.reduce((sum, p) => sum + p.eliminations, 0),
       }
     };
   }, [matchPlayerStats, matchDetails]);
@@ -307,10 +357,10 @@ const MatchDetailsPage = () => {
 
   // Sort players by team for scoreboard
   const team1Players = matchPlayerStats.filter(
-    (stat: any) => stat.playerTeam === matchDetails.teams[0]
+    (stat) => stat.playerTeam === matchDetails.teams[0]
   );
   const team2Players = matchPlayerStats.filter(
-    (stat: any) => stat.playerTeam === matchDetails.teams[1]
+    (stat) => stat.playerTeam === matchDetails.teams[1]
   );
 
   return (

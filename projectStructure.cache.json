@@ -1,33 +1,5 @@
 [
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScrimsightPage.tsx",
-    "errorMessage": "🔥 File 'ScrimsightPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScrimsightPage.stories.tsx\nError location = ./src/components/ScrimsightPage.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PageSection.tsx",
-    "errorMessage": "🔥 File 'PageSection.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PageSection.stories.tsx\nError location = ./src/components/PageSection.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PageHeader.tsx",
-    "errorMessage": "🔥 File 'PageHeader.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PageHeader.stories.tsx\nError location = ./src/components/PageHeader.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/AppLayout.tsx",
-    "errorMessage": "🔥 File 'AppLayout.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/AppLayout.stories.tsx\nError location = ./src/components/AppLayout.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScatterChart.tsx",
-    "errorMessage": "🔥 File 'ScatterChart.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScatterChart.stories.tsx\nError location = ./src/components/ScatterChart.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/SampleData.tsx",
-    "errorMessage": "🔥 File 'SampleData.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/SampleData.stories.tsx\nError location = ./src/components/SampleData.tsx\n\n"
-  },
-  {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/AuthGuard.tsx",
-    "errorMessage": "🔥 File 'AuthGuard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/AuthGuard.stories.tsx\nError location = ./src/components/AuthGuard.tsx\n\n"
-  },
-  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/lib/sampledata/Log-2023-08-28-17-29-57.txt",
     "errorMessage": "🔥 Folder 'sampledata' is invalid. 🔥\n\nAccording to the structure, the 'lib' folder can only contain files.\nError location = ./src/lib/sampledata\n\n"
   }

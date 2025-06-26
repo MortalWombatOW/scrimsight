@@ -1,4 +1,5 @@
 {
   "usageStatisticsEnabled": false,
-  "contextFileName": "CLAUDE.md"
+  "contextFileName": "CLAUDE.md",
+  "autoAccept": true
 }

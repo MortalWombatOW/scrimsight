@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Provider } from 'jotai';
 import { dataModelAtom } from '../atoms/scrimsight';
 import ScrimCard from './ScrimCard';
-import { ScrimsightDataModel } from '../lib/ScrimsightDataModel';
+import { ScrimsightDataModel, PlayerStatsNumerical } from '../lib/ScrimsightDataModel';
 
 const mockDataModel: ScrimsightDataModel = {
   scrims: [
@@ -31,38 +31,67 @@ const mockDataModel: ScrimsightDataModel = {
       team2MatchesWon: 1,
     },
   ],
-  matches: [],
-  teams: [],
-  players: [],
-  matchStart: [],
-  matchEnd: [],
-  roundStart: [],
-  roundEnd: [],
+  // Log events
+  ability1Used: [],
+  ability2Used: [],
+  damage: [],
+  defensiveAssist: [],
+  dvaDemech: [],
+  dvaRemech: [],
+  healing: [],
   heroSpawn: [],
   heroSwap: [],
   kill: [],
-  damage: [],
-  healing: [],
-  ultimateCharged: [],
-  ultimateStart: [],
-  ultimateEnd: [],
-  defensiveAssist: [],
+  matchEnd: [],
+  matchStart: [],
+  mercyRez: [],
   offensiveAssist: [],
-  echo: [],
-  mercy: [],
   playerStat: [],
+  roundEnd: [],
+  roundStart: [],
+  setupComplete: [],
+  ultimateCharged: [],
+  ultimateEnd: [],
+  ultimateStart: [],
+  // Relationships
+  matches: [],
+  teams: [],
+  players: [],
+  // Computed segments
   playerLives: [],
   teamfights: [],
   rounds: [],
+  teamCompositions: [],
+  // Player stats
   playerStatBreakdown: {
-    total: {} as any,
-    byPlayer: {},
-    byTeam: {},
-    byTeamAndPlayer: {},
-    byPlayerAndHero: {},
-    byRole: {},
-    byHero: {},
-    byTeamAndMatch: {},
+    total: {} as PlayerStatsNumerical,
+    byPlayer: [],
+    byTeam: [],
+    byTeamAndPlayer: [],
+    byTeamAndPlayerAndMatch: [],
+    byTeamAndPlayerAndScrim: [],
+    byPlayerAndHero: [],
+    byRole: [],
+    byHero: [],
+    byTeamAndMatch: [],
+    byTeamAndScrim: [],
+  },
+  playerStatBreakdownRanks: {
+    total: {} as PlayerStatsNumerical,
+    byPlayer: [],
+    byTeam: [],
+    byTeamAndPlayer: [],
+    byTeamAndPlayerAndMatch: [],
+    byTeamAndPlayerAndScrim: [],
+    byPlayerAndHero: [],
+    byRole: [],
+    byHero: [],
+    byTeamAndMatch: [],
+    byTeamAndScrim: [],
+  },
+  killCounts: {
+    byMatch: [],
+    byMatchAndRound: [],
   },
 };
 
@@ -75,11 +104,8 @@ const meta: Meta<typeof ScrimCard> = {
   tags: ['autodocs'],
   decorators: [
     (Story, { args }) => {
-      const hydratedAtom = dataModelAtom;
-      hydratedAtom.init = mockDataModel;
-      
       return (
-        <Provider>
+        <Provider initialValues={[[dataModelAtom, mockDataModel]]}>
           <div className="w-80">
             <Story {...args} />
           </div>

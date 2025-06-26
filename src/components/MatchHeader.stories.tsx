@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import MatchHeader from './MatchHeader';
 
 const meta: Meta<typeof MatchHeader> = {

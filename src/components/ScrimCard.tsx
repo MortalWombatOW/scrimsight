@@ -39,14 +39,14 @@ const ScrimCard = ({ scrimId }: ScrimCardProps) => {
     outcome === "team1"
       ? outcomeColors.win
       : outcome === "team2"
-      ? outcomeColors.loss
-      : outcomeColors.draw;
+        ? outcomeColors.loss
+        : outcomeColors.draw;
   const team2Color =
     outcome === "team2"
       ? outcomeColors.win
       : outcome === "team1"
-      ? outcomeColors.loss
-      : outcomeColors.draw;
+        ? outcomeColors.loss
+        : outcomeColors.draw;
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-US", {
       month: "short",

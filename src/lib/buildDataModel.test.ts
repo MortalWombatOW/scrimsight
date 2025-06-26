@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { buildDataModel } from '@library/buildDataModel';
-import * as ScrimsightDataModel from '@library/ScrimsightDataModel';
-import file1 from "@library/sampledata/Log-2023-08-28-17-05-38.txt?raw";
-import file2 from "@library/sampledata/Log-2023-08-28-17-29-57.txt?raw";
-import file3 from "@library/sampledata/Log-2023-08-28-17-52-17.txt?raw";
-import file4 from "@library/sampledata/Log-2023-08-28-18-28-25.txt?raw";
-import file5 from "@library/sampledata/Log-2023-08-28-18-40-39.txt?raw";
+import { buildDataModel } from './buildDataModel';
+import * as ScrimsightDataModel from './ScrimsightDataModel';
+import file1 from "./sampledata/Log-2023-08-28-17-05-38.txt?raw";
+import file2 from "./sampledata/Log-2023-08-28-17-29-57.txt?raw";
+import file3 from "./sampledata/Log-2023-08-28-17-52-17.txt?raw";
+import file4 from "./sampledata/Log-2023-08-28-18-28-25.txt?raw";
+import file5 from "./sampledata/Log-2023-08-28-18-40-39.txt?raw";
 
 describe('buildDataModel', () => {
   const sampleFiles = [
@@ -1685,7 +1685,7 @@ describe('buildDataModel', () => {
         expect(ranks.length).toBe(values.length);
         
         ranks.forEach((rankRecord, index) => {
-          const valueRecord = values[index];
+          const _valueRecord = values[index];
           
           // All rank values should be positive integers
           ScrimsightDataModel.playerStatsNumericalKeys.forEach(key => {
@@ -1718,7 +1718,7 @@ describe('buildDataModel', () => {
         });
 
         // For each group with the same value, they should have the same rank
-        eliminationGroups.forEach((playerNames, value) => {
+        eliminationGroups.forEach((playerNames, _value) => {
           if (playerNames.length > 1) {
             const ranks = playerNames.map(name => {
               const rankRecord = playerRanks.find(r => r.playerName === name);

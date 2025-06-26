@@ -23,7 +23,8 @@ createIndependentModules({
       name: "app",
       pattern: "src/App.tsx", 
       allowImportsFrom: [
-        "src/pages/*.tsx",   
+        "src/pages/*.tsx", 
+        "src/components/*.tsx",
       ],
       allowExternalImports: true,
     },
@@ -34,6 +35,7 @@ createIndependentModules({
       allowImportsFrom: [
         "src/components/*.tsx",    // component (for testing specific component) 
         "src/lib/*.ts",        // library (for testing specific library)
+        "src/atoms/*.ts",       // atoms (for realistic testing scenarios)
       ],
       allowExternalImports: true,
     },
@@ -72,6 +74,7 @@ createIndependentModules({
       allowImportsFrom: [
         "src/atoms/*.ts", 
         "src/lib/*.ts",
+        "src/hooks/*.ts",         // hooks (for React hooks)
         "src/components/*.tsx", 
         "src/icons/*.tsx", 
       ],
@@ -83,6 +86,7 @@ createIndependentModules({
       pattern: [["src/icons/*.tsx"]], 
       allowImportsFrom: [
         "src/icons/*.svg",        // SVG files
+        "src/lib/*.ts",          // library types (for proper typing)
       ],
     },
     // Page: src/pages/*.tsx (excluding index and stories files)
@@ -92,8 +96,11 @@ createIndependentModules({
       allowImportsFrom: [
         "src/components/*.tsx",
         "src/icons/*.tsx",
-        "src/lib/*.ts",      
+        "src/lib/*.ts",
+        "src/hooks/*.ts",        // hooks (for React hooks)
+        "src/atoms/*.ts",        // atoms (for state management)
       ],
+      allowExternalImports: true,
     },
     // Library: src/lib/*.ts (excluding index and test files)
     {
@@ -102,6 +109,18 @@ createIndependentModules({
       allowImportsFrom: [
         "src/lib/**/*.ts",
       ],
+    },
+    // Hook: src/hooks/*.ts - React hooks that can use atoms and lib files
+    {
+      name: "hook",
+      pattern: [["src/hooks/*.ts"]], 
+      allowImportsFrom: [
+        "src/atoms/*.ts",          // atoms (for state management)
+        "src/lib/*.ts",           // library (for utilities)
+        "src/lib/**/*.ts",        // library subdirectories (for sampledata)
+        "src/lib/sampledata/*",   // sampledata files (including raw text imports)
+      ],
+      allowExternalImports: true,  // Allow React, jotai, etc.
     },
   ],
 });

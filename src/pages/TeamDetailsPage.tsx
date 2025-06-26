@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { Users, Trophy, Target, TrendingUp } from "lucide-react";
 
-import { useScrimsightData } from "../lib/useScrimsightData";
+import { useScrimsightData } from "../hooks/useScrimsightData";
+import { PlayerStatsNumerical, PlayerName, TeamName } from "../lib/ScrimsightDataModel";
 
 
 import PageHeader from "../components/PageHeader";
@@ -141,8 +142,10 @@ const TeamDetailsPage = () => {
       .slice(0, 10);
   }, [matches, teamName]);
 
+  type PlayerStatEntry = { playerName: PlayerName; playerTeam: TeamName } & PlayerStatsNumerical;
+
   // Player table columns
-  const playerColumns: ColumnDef<any>[] = [
+  const playerColumns: ColumnDef<PlayerStatEntry>[] = [
     {
       accessorKey: "playerName",
       header: "Player",

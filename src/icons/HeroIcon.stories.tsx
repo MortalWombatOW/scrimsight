@@ -1,13 +1,24 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import HeroIcon from "@icons/HeroIcon";
-import { 
-  TANK_HEROES, 
-  DAMAGE_HEROES, 
-  SUPPORT_HEROES,
-  type Hero 
-} from "@library/ScrimsightDataModel";
+import HeroIcon from "../icons/HeroIcon";
 
-const allHeroes: Hero[] = [
+// Define heroes locally to avoid cross-module dependencies
+const TANK_HEROES = [
+  "D.Va", "Doomfist", "Junker Queen", "Orisa", "Ramattra", "Reinhardt", 
+  "Roadhog", "Sigma", "Winston", "Wrecking Ball", "Zarya"
+] as const;
+
+const DAMAGE_HEROES = [
+  "Ashe", "Bastion", "Cassidy", "Echo", "Genji", "Hanzo", "Junkrat", 
+  "Mei", "Pharah", "Reaper", "Soldier: 76", "Sombra", "Symmetra", 
+  "Torbjörn", "Tracer", "Widowmaker"
+] as const;
+
+const SUPPORT_HEROES = [
+  "Ana", "Baptiste", "Brigitte", "Kiriko", "Lifeweaver", "Lúcio", 
+  "Mercy", "Moira", "Zenyatta"
+] as const;
+
+const allHeroes = [
   ...TANK_HEROES,
   ...DAMAGE_HEROES, 
   ...SUPPORT_HEROES

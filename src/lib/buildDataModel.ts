@@ -1692,7 +1692,7 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
 };
 
 // Ranking system for player stats
-const rankValues = <T extends Record<string, any>>(
+const rankValues = <T extends Record<string, number | string>>(
   records: T[], 
   metrics: ScrimsightDataModel.PlayerStatsNumericalKeys[]
 ): T[] => {
@@ -1701,11 +1701,11 @@ const rankValues = <T extends Record<string, any>>(
   // Rank each metric and build new records
   const rankedRecords = records.map(record => {
     // Create a new object with rankings for each metric
-    const rankedRecord: any = { ...record };
+    const rankedRecord: T & Record<ScrimsightDataModel.PlayerStatsNumericalKeys, number> = { ...record } as T & Record<ScrimsightDataModel.PlayerStatsNumericalKeys, number>;
     
     metrics.forEach(metric => {
       // Extract values for this metric
-      const values = records.map(r => r[metric]);
+      const values = records.map(r => r[metric] as number);
       const direction = ScrimsightDataModel.PLAYER_STAT_RANKING_DIRECTIONS[metric];
       
       // Sort values based on direction (higher is better vs lower is better)
@@ -1720,7 +1720,7 @@ const rankValues = <T extends Record<string, any>>(
       });
       
       // Assign rank to this record
-      rankedRecord[metric] = rankMap.get(record[metric]) || 1;
+      rankedRecord[metric] = rankMap.get(record[metric] as number) || 1;
     });
     
     return rankedRecord as T;

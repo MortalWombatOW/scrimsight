@@ -9,7 +9,7 @@ import DataTable from "../components/DataTable";
 import StatDistributionAndTop from "../components/StatDistributionAndTop";
 import TeamColorDot from "../components/TeamColorDot";
 import EmptyState from "../components/EmptyState";
-import { useScrimsightData } from "../lib/useScrimsightData";
+import { useScrimsightData } from "../hooks/useScrimsightData";
 import BreadCrumbs from "../components/BreadCrumbs";
 
 interface ScrimTableRow {
@@ -68,8 +68,8 @@ const ScrimsPage = () => {
           scrim.team1MatchesWon > scrim.team2MatchesWon
             ? "team1"
             : scrim.team2MatchesWon > scrim.team1MatchesWon
-            ? "team2"
-            : "draw";
+              ? "team2"
+              : "draw";
 
         return {
           scrimId: scrim.scrim,

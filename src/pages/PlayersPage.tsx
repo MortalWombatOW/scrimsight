@@ -1,5 +1,5 @@
 import { User } from "lucide-react";
-import { useScrimsightData } from "../lib/useScrimsightData";
+import { useScrimsightData } from "../hooks/useScrimsightData";
 import ScrimsightPage from "../components/ScrimsightPage";
 import PageHeader from "../components/PageHeader";
 import PageSection from "../components/PageSection";

@@ -18,7 +18,7 @@ export interface ScatterDataPoint {
   y: number;
   playerName: string;
   playerTeam: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface ScatterChartConfig {
@@ -35,10 +35,18 @@ export interface ScatterChartConfig {
   error?: string | null;
 }
 
+interface TooltipPayload {
+  payload: ScatterDataPoint;
+  dataKey: string;
+  color: string;
+  name: string;
+  value: number;
+}
+
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: any[];
-  label?: any;
+  payload?: TooltipPayload[];
+  label?: string | number;
 }
 
 const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {

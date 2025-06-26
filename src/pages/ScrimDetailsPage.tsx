@@ -12,8 +12,15 @@ import ScrimsightPage from "../components/ScrimsightPage";
 import PageHeader from "../components/PageHeader";
 import PageSection from "../components/PageSection";
 import ScrimHeader from "../components/ScrimHeader";
-import { useScrimsightData } from "../lib/useScrimsightData";
-import { MatchRelationships, ScrimRelationships } from "../lib/ScrimsightDataModel";
+import { useScrimsightData } from "../hooks/useScrimsightData";
+import { 
+  MatchRelationships, 
+  ScrimRelationships, 
+  PlayerStatsNumerical, 
+  PlayerName, 
+  TeamName, 
+  ScrimID 
+} from "../lib/ScrimsightDataModel";
 import { prettyFormat, formatDuration } from "../lib/format";
 
 const ScrimDetailsPage = () => {
@@ -103,8 +110,14 @@ const ScrimDetailsPage = () => {
     );
   }, [playerStatBreakdown.byTeamAndPlayerAndScrim, currentScrim, scrimId]);
 
+  type TeamComparisonRow = {
+    metric: string;
+    team1: number;
+    team2: number;
+  };
+
   // Team comparison table columns
-  const teamComparisonColumns: ColumnDef<any>[] = [
+  const teamComparisonColumns: ColumnDef<TeamComparisonRow>[] = [
     {
       accessorKey: "metric",
       header: "Metric",
@@ -137,8 +150,10 @@ const ScrimDetailsPage = () => {
     },
   ];
 
+  type PlayerStatEntry = { playerName: PlayerName; playerTeam: TeamName; scrim: ScrimID } & PlayerStatsNumerical;
+
   // Player stats table columns
-  const playerStatsColumns: ColumnDef<any>[] = [
+  const playerStatsColumns: ColumnDef<PlayerStatEntry>[] = [
     {
       accessorKey: "playerName",
       header: "Player",

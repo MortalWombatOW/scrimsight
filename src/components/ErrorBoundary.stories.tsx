@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Component } from 'react';
 import ErrorBoundary from './ErrorBoundary';
 import PrimaryButton from './PrimaryButton';

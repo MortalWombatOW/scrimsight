@@ -1,4 +1,4 @@
-import { useLoadSampleData } from "../lib/useLoadSampleData";
+import { useLoadSampleData } from "../hooks/useLoadSampleData";
 
 const SampleData = ({ children }: { children: React.ReactNode }) => {
   console.log("SampleData component mounted");

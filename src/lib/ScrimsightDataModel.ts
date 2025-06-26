@@ -498,7 +498,7 @@ export interface PlayerStatBreakdown {
   byHero: ({playerHero: Hero} & PlayerStatsNumerical)[];
   byTeamAndMatch: ({playerTeam: TeamName, matchId: MatchID} & PlayerStatsNumerical)[];
   byTeamAndScrim: ({playerTeam: TeamName, scrim: ScrimID} & PlayerStatsNumerical)[];
- };
+};
 
 export interface ScrimsightDataModel {
  
@@ -526,27 +526,27 @@ export interface ScrimsightDataModel {
   ultimateStart: UltimateStartLogEvent[];
 
   // Relationships between entities
-   matches: MatchRelationships[];
-   scrims: ScrimRelationships[];
-   teams: TeamRelationships[];
-   players: PlayerRelationships[];
+  matches: MatchRelationships[];
+  scrims: ScrimRelationships[];
+  teams: TeamRelationships[];
+  players: PlayerRelationships[];
 
-   // Computed time segments
-   playerLives: PlayerLife[];
-   teamfights: Teamfight[];
-   rounds: Round[];
-   teamCompositions: TeamCompositionSegment[];
+  // Computed time segments
+  playerLives: PlayerLife[];
+  teamfights: Teamfight[];
+  rounds: Round[];
+  teamCompositions: TeamCompositionSegment[];
  
-   // Player stats with three-stage computation (base aggregation + derived calculations)
-   // PlayerStatBreakdown holds the values of the statistics
-   playerStatBreakdown: PlayerStatBreakdown;
-   // PlayerStatBreakdownRanks holds the ranks of the statistics
-   playerStatBreakdownRanks: PlayerStatBreakdown;
+  // Player stats with three-stage computation (base aggregation + derived calculations)
+  // PlayerStatBreakdown holds the values of the statistics
+  playerStatBreakdown: PlayerStatBreakdown;
+  // PlayerStatBreakdownRanks holds the ranks of the statistics
+  playerStatBreakdownRanks: PlayerStatBreakdown;
 
-    // Tracks the number of kills per player and victim
-    killCounts: {
-      byMatch: ({matchId: MatchID} & PlayerVictimKillCount)[]; // grouped by match
-      byMatchAndRound: ({matchId: MatchID, roundNumber: RoundNumber} & PlayerVictimKillCount)[]; // grouped by match and round
-    };
+  // Tracks the number of kills per player and victim
+  killCounts: {
+    byMatch: ({matchId: MatchID} & PlayerVictimKillCount)[]; // grouped by match
+    byMatchAndRound: ({matchId: MatchID, roundNumber: RoundNumber} & PlayerVictimKillCount)[]; // grouped by match and round
+  };
 }
 

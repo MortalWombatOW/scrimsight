@@ -85,18 +85,18 @@ const CardStat = ({
             metricKey &&
             rank &&
             totalCount ? (
-              <ValueDelta
-                value={numericValue}
-                baseline={averageValue}
-                higherIsBetter={getHigherIsBetter(metricKey)}
-                precision={2}
-                rank={rank}
-                totalCount={totalCount}
-                size={size}
-              />
-            ) : (
-              value
-            )}
+                <ValueDelta
+                  value={numericValue}
+                  baseline={averageValue}
+                  higherIsBetter={getHigherIsBetter(metricKey)}
+                  precision={2}
+                  rank={rank}
+                  totalCount={totalCount}
+                  size={size}
+                />
+              ) : (
+                value
+              )}
           </div>
           {rank &&
             !(
@@ -106,10 +106,10 @@ const CardStat = ({
               rank &&
               totalCount
             ) && (
-              <div className={`${sizeClasses.rank} text-base-content/60 mt-1`}>
-                {totalCount ? `Rank ${rank} of ${totalCount}` : `#${rank}`}
-              </div>
-            )}
+            <div className={`${sizeClasses.rank} text-base-content/60 mt-1`}>
+              {totalCount ? `Rank ${rank} of ${totalCount}` : `#${rank}`}
+            </div>
+          )}
         </div>
         {icon && <div className="ml-3 text-base-content/50">{icon}</div>}
       </div>
