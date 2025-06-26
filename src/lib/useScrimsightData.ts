@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { dataModelAtom } from "@atoms/scrimsight";
+import { dataModelAtom } from "../atoms/scrimsight";
 
 export const useScrimsightData = () => {
   const dataModel = useAtomValue(dataModelAtom);

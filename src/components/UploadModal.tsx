@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useSetAtom } from 'jotai';
 import { X, Upload, FileText, AlertCircle, Trash2 } from 'lucide-react';
-import { loadFilesAtom } from '@atoms/loadFiles';
+import { loadFilesAtom } from '../atoms/loadFiles';
 
 interface UploadModalProps {
   open: boolean;

@@ -1,8 +1,8 @@
 // atoms/loadFilesAtom.ts
 import { atom } from 'jotai';
 import * as Comlink from 'comlink';
-import { dataModelAtom } from '@atoms/scrimsight.ts';
-import { ScrimsightDataModel } from '@library/ScrimsightDataModel';
+import { dataModelAtom } from './scrimsight';
+import { ScrimsightDataModel } from '../lib/ScrimsightDataModel';
 
 type FileAction = File[];
 

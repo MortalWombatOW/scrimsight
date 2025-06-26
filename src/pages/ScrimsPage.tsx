@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { Trophy, Calendar, Search, Users, Target } from "lucide-react";
 
-import CardStat from "@components/CardStat";
-import ScrimCard from "@components/ScrimCard";
-import DataTable from "@components/DataTable";
-import StatDistributionAndTop from "@components/StatDistributionAndTop";
-import TeamColorDot from "@components/TeamColorDot";
-import EmptyState from "@components/EmptyState";
-import { useScrimsightData } from "@library/useScrimsightData";
-import BreadCrumbs from "@components/BreadCrumbs";
+import CardStat from "../components/CardStat";
+import ScrimCard from "../components/ScrimCard";
+import DataTable from "../components/DataTable";
+import StatDistributionAndTop from "../components/StatDistributionAndTop";
+import TeamColorDot from "../components/TeamColorDot";
+import EmptyState from "../components/EmptyState";
+import { useScrimsightData } from "../lib/useScrimsightData";
+import BreadCrumbs from "../components/BreadCrumbs";
 
 interface ScrimTableRow {
   scrimId: string;

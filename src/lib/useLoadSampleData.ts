@@ -1,9 +1,9 @@
-import { loadFilesAtom } from '@atoms/loadFiles.ts';
-import file1 from "@library/sampledata/Log-2023-08-28-17-05-38.txt?raw";
-import file2 from "@library/sampledata/Log-2023-08-28-17-29-57.txt?raw";
-import file3 from "@library/sampledata/Log-2023-08-28-17-52-17.txt?raw";
-import file4 from "@library/sampledata/Log-2023-08-28-18-28-25.txt?raw";
-import file5 from "@library/sampledata/Log-2023-08-28-18-40-39.txt?raw";
+import { loadFilesAtom } from '../atoms/loadFiles.ts';
+import file1 from "./sampledata/Log-2023-08-28-17-05-38.txt?raw";
+import file2 from "./sampledata/Log-2023-08-28-17-29-57.txt?raw";
+import file3 from "./sampledata/Log-2023-08-28-17-52-17.txt?raw";
+import file4 from "./sampledata/Log-2023-08-28-18-28-25.txt?raw";
+import file5 from "./sampledata/Log-2023-08-28-18-40-39.txt?raw";
 import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { sampleDataEnabledAtom } from '../atoms/sampleDataEnabled';

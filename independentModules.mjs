@@ -33,6 +33,7 @@ createIndependentModules({
       pattern: "src/components/*.stories.tsx", 
       allowImportsFrom: [
         "src/components/*.tsx",    // component (for testing specific component) 
+        "src/lib/*.ts",        // library (for testing specific library)
       ],
       allowExternalImports: true,
     },
@@ -89,7 +90,8 @@ createIndependentModules({
       name: "page",
       pattern: [["src/pages/*.tsx", "!src/pages/index.tsx"]], 
       allowImportsFrom: [
-        "src/components/*.ts",
+        "src/components/*.tsx",
+        "src/icons/*.tsx",
         "src/lib/*.ts",      
       ],
     },

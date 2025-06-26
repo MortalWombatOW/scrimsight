@@ -1,5 +1,21 @@
 [
   {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScrimsightPage.tsx",
+    "errorMessage": "🔥 File 'ScrimsightPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScrimsightPage.stories.tsx\nError location = ./src/components/ScrimsightPage.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PageSection.tsx",
+    "errorMessage": "🔥 File 'PageSection.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PageSection.stories.tsx\nError location = ./src/components/PageSection.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PageHeader.tsx",
+    "errorMessage": "🔥 File 'PageHeader.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PageHeader.stories.tsx\nError location = ./src/components/PageHeader.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/AppLayout.tsx",
+    "errorMessage": "🔥 File 'AppLayout.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/AppLayout.stories.tsx\nError location = ./src/components/AppLayout.tsx\n\n"
+  },
+  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScatterChart.tsx",
     "errorMessage": "🔥 File 'ScatterChart.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScatterChart.stories.tsx\nError location = ./src/components/ScatterChart.tsx\n\n"
   },

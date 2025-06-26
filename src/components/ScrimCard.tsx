@@ -3,6 +3,7 @@ import { dataModelAtom } from "../atoms/scrimsight";
 import TeamColorDot from "./TeamColorDot";
 import PrimaryButton from "./PrimaryButton";
 import { useNavigate } from "react-router-dom";
+import { getRoute } from "../lib/route";
 
 interface ScrimCardProps {
   scrimId: string;
@@ -63,7 +64,7 @@ const ScrimCard = ({ scrimId }: ScrimCardProps) => {
   };
 
   const handleViewScrim = () => {
-    navigate(`scrim/${scrimId}`);
+    navigate(getRoute(`/scrims/${scrimId}`));
   };
 
   return (

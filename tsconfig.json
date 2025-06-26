@@ -20,23 +20,6 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
-    "paths": {
-      "@atoms/*": [
-        "src/atoms/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@pages/*": [
-        "src/pages/*"
-      ],
-      "@library/*": [
-        "src/lib/*"
-      ],
-      "@icons/*": [
-        "src/icons/*"
-      ],
-    },
     "types": [
       "vite/client",
       "node",

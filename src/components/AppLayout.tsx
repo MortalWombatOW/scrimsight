@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 import { useAtom, useAtomValue } from "jotai";
-import { authAtom } from "@atoms/auth";
+import { authAtom } from "../atoms/auth";
 import {
   Menu,
   X,
@@ -22,6 +22,8 @@ import { sampleDataEnabledAtom } from "../atoms/sampleDataEnabled";
 import { statusAtom } from "../atoms/loadFiles";
 import { dataModelAtom } from "../atoms/scrimsight";
 
+import { getRoute } from "../lib/route";
+
 export interface AppLayoutProps {
   children?: React.ReactNode;
 }
@@ -32,22 +34,18 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const auth = useAuth();
   const [authState] = useAtom(authAtom);
   const sampleDataEnabled = useAtomValue(sampleDataEnabledAtom);
-  const location = useLocation();
 
   const loadingStatus = useAtomValue(statusAtom);
   const dataModel = useAtomValue(dataModelAtom);
 
   const dataIsReady = loadingStatus === "done" && dataModel !== null;
 
-  // Determine base route (/app or /demo) from current location
-  const baseRoute = location.pathname.startsWith("/demo") ? "/demo" : "/app";
-
   const navigationItems = [
-    { to: baseRoute, icon: Home, label: "Home" },
-    { to: baseRoute + "/scrims", icon: Swords, label: "Scrims" },
-    { to: baseRoute + "/players", icon: Headset, label: "Players" },
-    { to: baseRoute + "/teams", icon: Users, label: "Teams" },
-    { to: baseRoute + "/settings", icon: Settings, label: "Settings" },
+    { to: getRoute("/"), icon: Home, label: "Home" },
+    { to: getRoute("/scrims"), icon: Swords, label: "Scrims" },
+    { to: getRoute("/players"), icon: Headset, label: "Players" },
+    { to: getRoute("/teams"), icon: Users, label: "Teams" },
+    { to: getRoute("/settings"), icon: Settings, label: "Settings" },
   ];
 
   const handleLogin = () => {

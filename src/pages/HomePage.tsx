@@ -9,13 +9,14 @@ import {
   Shield,
 } from "lucide-react";
 
-import CardStat from "@components/CardStat";
-import EmptyState from "@components/EmptyState";
-import ScrimCard from "@components/ScrimCard";
-import StatDistributionAndTop from "@components/StatDistributionAndTop";
-import { formatDuration } from "@library/format";
+import CardStat from "../components/CardStat";
+import EmptyState from "../components/EmptyState";
+import ScrimCard from "../components/ScrimCard";
+import StatDistributionAndTop from "../components/StatDistributionAndTop";
+import { formatDuration } from "../lib/format";
 import { dataModelAtom } from "../atoms/scrimsight";
 import BreadCrumbs from "../components/BreadCrumbs";
+import { getRoute } from "../lib/route";
 const HomePage = () => {
   const dataModel = useAtomValue(dataModelAtom);
 
@@ -61,7 +62,7 @@ const HomePage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <BreadCrumbs items={[{ label: "Home", path: "/" }]} />
+        <BreadCrumbs items={[{ label: "Home", path: getRoute("/") }]} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 bg-base-100 p-6 rounded-lg">

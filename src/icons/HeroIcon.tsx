@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
-import { getHeroImage } from "@library/hero";
-import type { Hero } from "@library/ScrimsightDataModel";
+import { getHeroImage } from "../lib/hero";
+import type { Hero } from "../lib/ScrimsightDataModel";
 
 interface HeroIconProps {
   hero: Hero;

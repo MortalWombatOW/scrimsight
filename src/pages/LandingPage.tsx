@@ -1,5 +1,5 @@
 import { useAuth } from "react-oidc-context";
-import PrimaryButton from "@components/PrimaryButton";
+import PrimaryButton from "../components/PrimaryButton";
 import {
   Play,
   BarChart3,

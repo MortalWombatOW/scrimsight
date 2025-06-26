@@ -22,6 +22,8 @@ import HeroIcon from "../icons/HeroIcon";
 import RoleIcon from "../icons/RoleIcon";
 import { formatDuration } from "../lib/format";
 
+import { getRoute } from "../lib/route";
+
 const PlayerDetailsPage = () => {
   const { playerName } = useParams<{ playerName: string }>();
   // const navigate = useNavigate();
@@ -140,8 +142,8 @@ const PlayerDetailsPage = () => {
   }
 
   const breadcrumbItems = [
-    { label: "Players", href: "/players" },
-    { label: playerName, href: `/player/${playerName}` },
+    { label: "Players", href: getRoute("/players") },
+    { label: playerName, href: getRoute(`/player/${playerName}`) },
   ];
 
   return (

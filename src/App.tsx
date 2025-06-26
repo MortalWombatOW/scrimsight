@@ -4,10 +4,10 @@ import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { Suspense } from "react";
 import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 
-import CallbackPage from "@pages/CallbackPage.tsx";
-import LandingPage from "@pages/LandingPage.tsx";
-import ErrorBoundary from "@components/ErrorBoundary.tsx";
-import { AppLayout } from "@components/AppLayout.tsx";
+import CallbackPage from "./pages/CallbackPage";
+import LandingPage from "./pages/LandingPage";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { AppLayout } from "./components/AppLayout";
 import { AuthGuard } from "./components/AuthGuard";
 import SampleData from "./components/SampleData";
 import HomePage from "./pages/HomePage";
