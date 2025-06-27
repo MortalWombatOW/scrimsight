@@ -1,50 +1,93 @@
-// Removed useState, useStats, RoleIcon, prettyFormat, Link, PlayerStatsNumericalKeys imports as they are no longer needed here
-import { PlayerCard } from "@components"; // Import PlayerCard
-import { PlayerListSummary } from "@atoms"; // Import the summary type
-import { prettyFormat } from "@library"; // Keep prettyFormat for KDA
+import { Link } from "react-router-dom";
+import { getRoute } from "../lib/route";
+import { PlayerRelationships } from "../lib/ScrimsightDataModel";
+import HeroIcon from "../icons/HeroIcon";
+import RoleIcon from "../icons/RoleIcon";
+import { formatDuration, listToNaturalLanguage } from "../lib/format";
+import EmptyState from "./EmptyState";
+import { User } from "lucide-react";
 
 interface PlayerListProps {
-  players: PlayerListSummary[]; // Accept players summary as prop
+  players: PlayerRelationships[];
+  className?: string;
 }
 
-export const PlayerList = ({ players }: PlayerListProps) => {
-  // Removed useStats hook and sorting logic as it's handled in parent
+const PlayerList = ({ players, className = "" }: PlayerListProps) => {
+  if (players.length === 0) {
+    return (
+      <EmptyState
+        icon={User}
+        title="No players found"
+        description="There are no players to display"
+        size="md"
+      />
+    );
+  }
 
   return (
-    // Use flex layout for cards instead of table
-    <div className="flex flex-col md:flex-row flex-wrap gap-6">
+    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${className}`}>
       {players.map((player) => {
-        // Calculate KDA string (handle potential division by zero if deaths is 0)
-        const kda =
-          player.deaths === 0
-            ? prettyFormat(player.eliminations + player.assists) // If no deaths, just show K+A
-            : prettyFormat(
-              (player.eliminations + player.assists) / player.deaths
-            );
+        const topHeroes = player.heroes
+          .sort((a, b) => b.playtime - a.playtime)
+          .slice(0, 3);
+        
+        const topRole = player.roles
+          .sort((a, b) => b.playtime - a.playtime)[0];
+
+        const totalPlaytime = player.heroes.reduce((sum, hero) => sum + hero.playtime, 0);
+        const teamsList = listToNaturalLanguage(player.teams);
 
         return (
-          <PlayerCard
-            key={player.playerName}
-            playerName={player.playerName}
-            teamNames={[player.teamName]} // Pass team name as single-item array
-            heroes={[player.topHero]} // Pass top hero as single-item array
-            primaryStats={[
-              { value: kda, label: "KDA" },
-              // Add other primary stats if desired, e.g., elims
-              { value: prettyFormat(player.eliminations), label: "Elims" },
-            ]}
-            secondaryStats={[
-              { value: player.role, label: "Role" },
-              // Add other secondary stats if desired, e.g., deaths, assists
-              { value: prettyFormat(player.deaths), label: "Deaths" },
-              { value: prettyFormat(player.assists), label: "Assists" },
-            ]}
-            // PlayerCard doesn't have linkUrl/linkText props by default,
-            // but we could add them or wrap the card in a Link component in the parent if needed.
-            // For now, relying on parent to handle navigation if required.
-          />
+          <Link
+            key={player.player}
+            to={getRoute(`/player/${encodeURIComponent(player.player)}`)}
+            className="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+          >
+            <div className="card-body">
+              <div className="flex items-center gap-3 mb-3">
+                {topRole && <RoleIcon role={topRole.role} />}
+                <h3 className="card-title text-lg">{player.player}</h3>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm font-semibold text-base-content/70 mb-2">Top Heroes</p>
+                  <div className="flex gap-2">
+                    {topHeroes.map((heroData) => (
+                      <div key={heroData.hero} className="flex flex-col items-center">
+                        <HeroIcon 
+                          hero={heroData.hero} 
+                          size={32} 
+                          showTooltip
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="stats stats-vertical text-xs">
+                  <div className="stat py-2">
+                    <div className="stat-title text-xs">Playtime</div>
+                    <div className="stat-value text-sm">{formatDuration(totalPlaytime)}</div>
+                  </div>
+                  <div className="stat py-2">
+                    <div className="stat-title text-xs">Teams</div>
+                    <div className="stat-value text-sm truncate" title={teamsList}>
+                      {teamsList}
+                    </div>
+                  </div>
+                  <div className="stat py-2">
+                    <div className="stat-title text-xs">Scrims</div>
+                    <div className="stat-value text-sm">{player.scrims.length}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Link>
         );
       })}
     </div>
   );
 };
+
+export default PlayerList;

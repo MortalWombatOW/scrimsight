@@ -1,53 +1,41 @@
-import { Outlet } from "react-router-dom";
-import { useStats } from "@library";
-import { ErrorMessage, SubPageNavigation } from "@components";
-import { Container } from "@components"; // Added import
+import { User } from "lucide-react";
+import { useScrimsightData } from "../hooks/useScrimsightData";
+import ScrimsightPage from "../components/ScrimsightPage";
+import PageHeader from "../components/PageHeader";
+import PageSection from "../components/PageSection";
+import PlayerList from "../components/PlayerList";
+import BreadCrumbs from "../components/BreadCrumbs";
+import { getRoute } from "../lib/route";
 
-export const PlayersPage = () => {
-  const playerStats = useStats(["playerName"]);
+const PlayersPage = () => {
+  const dataModel = useScrimsightData();
+  const { players } = dataModel;
 
-  if (!playerStats) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
-
-  if (playerStats.rows.length === 0) {
-    return <ErrorMessage message="No data available for players" />;
-  }
-
-  const playerNavItems = [
-    { path: "/players", label: "Overview", end: true },
-    { path: "/players/performance", label: "Performance" },
-    { path: "/players/heroes", label: "Heroes" },
+  const breadcrumbs = [
+    { label: "Home", path: getRoute("/") },
+    { label: "Players" }
   ];
 
   return (
-    <Container>
-      {" "}
-      {/* Added Container */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <header className="mb-8 bg-base-200 p-6 rounded-box">
-          <h1 className="text-3xl font-bold text-base-content">
-            Player Statistics
-          </h1>
-          <p className="mt-2 text-base-content/70">
-            Comprehensive analysis of player performance across all matches
-          </p>
-        </header>
+    <ScrimsightPage>
+      <PageHeader>
+        <BreadCrumbs items={breadcrumbs} />
+        <PageHeader.Icon>
+          <User size={32} />
+        </PageHeader.Icon>
+        <PageHeader.Title>Players</PageHeader.Title>
+      </PageHeader>
 
-        {/* Navigation */}
-        <SubPageNavigation navItems={playerNavItems} />
-
-        {/* Content */}
-        <div className="mt-8">
-          <Outlet />
-        </div>
-      </div>
-    </Container> // Added closing Container
+      <PageSection>
+        <PageSection.Title>All Players</PageSection.Title>
+        <PageSection.Description>
+          Browse all players in the dataset and view their individual statistics and performance metrics.
+        </PageSection.Description>
+        <PageSection.Content>
+          <PlayerList players={players} />
+        </PageSection.Content>
+      </PageSection>
+    </ScrimsightPage>
   );
 };
 

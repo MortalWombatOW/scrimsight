@@ -3,37 +3,23 @@ import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { Suspense } from "react";
 import { AuthProvider, AuthProviderProps } from "react-oidc-context";
-import {
-  HomePage,
-  AddFilesPage,
-  ScrimsPage,
-  PlayersPage,
-  TeamsPage,
-  PlayerPage,
-  TeamPage,
-  MatchPage,
-  CallbackPage,
-  TimelinePage,
-  MatchOverviewPage,
-  MatchPlayersPage,
-  MatchStatComparisonPage,
-  ScrimPage,
-  MetricsExplorerPage,
-  SchemaVisualizerPage,
-} from "@pages";
-import {
-  Layout,
-  PlayersOverview,
-  PlayersPerformance,
-  PlayersHeroes,
-  PlayerOverview as SinglePlayerOverview,
-  PlayerHeroes as SinglePlayerHeroes,
-  PlayerMatches as SinglePlayerMatches,
-  TeamOverview,
-  TeamPlayers,
-  TeamMatches,
-  TeamCompositions,
-} from "@components";
+
+import CallbackPage from "./pages/CallbackPage";
+import LandingPage from "./pages/LandingPage";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { AppLayout } from "./components/AppLayout";
+import { AuthGuard } from "./components/AuthGuard";
+import SampleData from "./components/SampleData";
+import HomePage from "./pages/HomePage";
+import ScrimsPage from "./pages/ScrimsPage";
+import ScrimDetailsPage from "./pages/ScrimDetailsPage";
+import MatchDetailsPage from "./pages/MatchDetailsPage";
+import MatchesPage from "./pages/MatchesPage";
+import PlayersPage from "./pages/PlayersPage";
+import PlayerDetailsPage from "./pages/PlayerDetailsPage";
+import TeamsPage from "./pages/TeamsPage";
+import TeamDetailsPage from "./pages/TeamDetailsPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const App = () => {
   const oidcConfig: AuthProviderProps = {
@@ -53,12 +39,29 @@ const App = () => {
     },
   };
 
+  const subroutes = (
+    <AppLayout>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/scrims" element={<ScrimsPage />} />
+        <Route path="/scrim/:scrimId" element={<ScrimDetailsPage />} />
+        <Route path="/matches" element={<MatchesPage />} />
+        <Route path="/match/:matchId" element={<MatchDetailsPage />} />
+        <Route path="/players" element={<PlayersPage />} />
+        <Route path="/player/:playerName" element={<PlayerDetailsPage />} />
+        <Route path="/teams" element={<TeamsPage />} />
+        <Route path="/team/:teamName" element={<TeamDetailsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+      </Routes>
+    </AppLayout>
+  );
+
   return (
-    <AuthProvider {...oidcConfig}>
-      <Router>
-        <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <div className="font-poppins min-h-screen bg-base-200 dark:bg-base-900 text-base-900 dark:text-white">
-            <Layout>
+    <ErrorBoundary>
+      <AuthProvider {...oidcConfig}>
+        <Router>
+          <QueryParamProvider adapter={ReactRouter6Adapter}>
+            <div className="font-poppins min-h-screen bg-base-200 dark:bg-base-900 text-base-900 dark:text-white">
               <Suspense
                 fallback={
                   <div className="flex justify-center items-center h-full">
@@ -67,51 +70,23 @@ const App = () => {
                 }
               >
                 <Routes>
-                  <Route path="/" index element={<HomePage />} />
+                  <Route path="/" element={<LandingPage />} />
                   <Route path="/callback" element={<CallbackPage />} />
-                  <Route path="/scrims" element={<ScrimsPage />} />
-                  <Route path="/scrims/:scrimId" element={<ScrimPage />} />
-                  <Route path="/matches/:matchId" element={<MatchPage />}>
-                    <Route index element={<MatchOverviewPage />} />
-                    <Route path="timeline" element={<TimelinePage />} />
-                    <Route
-                      path="compare"
-                      element={<MatchStatComparisonPage />}
-                    />
-                    <Route path="players" element={<MatchPlayersPage />} />{" "}
-                    {/* Add the new players route */}
-                  </Route>
-                  <Route path="/players" element={<PlayersPage />}>
-                    <Route index element={<PlayersOverview />} />
-                    <Route
-                      path="performance"
-                      element={<PlayersPerformance />}
-                    />
-                    <Route path="heroes" element={<PlayersHeroes />} />
-                  </Route>
-                  {/* Updated Player Route with nested routes */}
-                  <Route path="/player/:playerName" element={<PlayerPage />}>
-                    <Route index element={<SinglePlayerOverview />} />
-                    <Route path="heroes" element={<SinglePlayerHeroes />} />
-                    <Route path="matches" element={<SinglePlayerMatches />} />
-                  </Route>
-                  <Route path="/teams" element={<TeamsPage />} />
-                  <Route path="/teams/:teamId" element={<TeamPage />}>
-                    <Route index element={<TeamOverview />} />
-                    <Route path="players" element={<TeamPlayers />} />
-                    <Route path="matches" element={<TeamMatches />} />
-                    <Route path="compositions" element={<TeamCompositions />} />
-                  </Route>
-                  <Route path="/files" element={<AddFilesPage />} />
-                  <Route path="/metrics" element={<MetricsExplorerPage />} />
-                  <Route path="/schema" element={<SchemaVisualizerPage />} />
+                  <Route
+                    path="/demo/*"
+                    element={<SampleData>{subroutes}</SampleData>}
+                  />
+                  <Route
+                    path="/app/*"
+                    element={<AuthGuard>{subroutes}</AuthGuard>}
+                  />
                 </Routes>
               </Suspense>
-            </Layout>
-          </div>
-        </QueryParamProvider>
-      </Router>
-    </AuthProvider>
+            </div>
+          </QueryParamProvider>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 };
 

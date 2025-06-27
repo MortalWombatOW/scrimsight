@@ -1,14 +1,11 @@
 import type { Preview } from "@storybook/react-vite";
 
-import { withThemeFromJSXProvider } from "@storybook/addon-themes";
-
-import React, { Suspense, ErrorBoundary } from "react";
+import React, { Suspense } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Provider as JotaiProvider, createStore } from "jotai";
 import { ReactFlowProvider } from "reactflow";
-import { TimelineProvider } from "../src/components/TimelineContext";
 import "../src/index.css";
-
+import { themes } from "storybook/theming";
 // Mock AuthProvider for Storybook
 import { AuthContext } from "react-oidc-context";
 
@@ -46,9 +43,7 @@ const mockAuth = {
 
 const MockAuthProvider = ({ children }: { children: React.ReactNode }) => {
   return (
-    <AuthContext.Provider value={mockAuth}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={mockAuth}>{children}</AuthContext.Provider>
   );
 };
 
@@ -64,15 +59,15 @@ class AsyncAtomErrorBoundary extends React.Component<
 
   static getDerivedStateFromError(error: Error) {
     // Check if this is the async/await React error
-    if (error.message.includes('async/await is not yet supported')) {
+    if (error.message.includes("async/await is not yet supported")) {
       return { hasError: true };
     }
     return null;
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    if (error.message.includes('async/await is not yet supported')) {
-      console.warn('Async atom error caught in Storybook:', error.message);
+    if (error.message.includes("async/await is not yet supported")) {
+      console.warn("Async atom error caught in Storybook:", error.message);
     }
   }
 
@@ -88,14 +83,13 @@ class AsyncAtomErrorBoundary extends React.Component<
 // Create a Jotai store for Storybook
 const storybookStore = createStore();
 
-// Initialize sample data in Storybook
-import { sampleDataEnabledAtom } from "../src/atoms";
-storybookStore.set(sampleDataEnabledAtom, true);
-
 const preview: Preview = {
   tags: ["autodocs"],
 
   parameters: {
+    docs: {
+      theme: themes.dark, // Use dark theme for Storybook
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -110,15 +104,13 @@ const preview: Preview = {
         <MockAuthProvider>
           <BrowserRouter>
             <ReactFlowProvider>
-              <TimelineProvider>
-                <AsyncAtomErrorBoundary>
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <div style={{ padding: '16px' }}>
-                      <Story />
-                    </div>
-                  </Suspense>
-                </AsyncAtomErrorBoundary>
-              </TimelineProvider>
+              <AsyncAtomErrorBoundary>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <div style={{ padding: "16px" }}>
+                    <Story />
+                  </div>
+                </Suspense>
+              </AsyncAtomErrorBoundary>
             </ReactFlowProvider>
           </BrowserRouter>
         </MockAuthProvider>

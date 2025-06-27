@@ -1,167 +1,157 @@
-import React, { Suspense } from "react";
-import { Link } from "react-router-dom";
-import { matchData, scrimListSummaryAtom, teamListSummaryAtom, playerListSummaryAtom } from "@library";
 import { useAtomValue } from "jotai";
-import { ZeroState } from "@components";
-import { ScrimCard, TeamCard, PlayerCard, Container } from "@components"; // Added import
-import { formatTime, formatPercentage, prettyFormat } from "@library"; // Import formatters
+import {
+  FileText,
+  Users,
+  Trophy,
+  Clock,
+  Target,
+  Zap,
+  Shield,
+} from "lucide-react";
 
-const NUM_ITEMS_TO_SHOW = 3; // Number of cards to show per section
+import CardStat from "../components/CardStat";
+import EmptyState from "../components/EmptyState";
+import ScrimCard from "../components/ScrimCard";
+import StatDistributionAndTop from "../components/StatDistributionAndTop";
+import { formatDuration } from "../lib/format";
+import { dataModelAtom } from "../atoms/scrimsight";
+import BreadCrumbs from "../components/BreadCrumbs";
+import { getRoute } from "../lib/route";
+const HomePage = () => {
+  const dataModel = useAtomValue(dataModelAtom);
 
-// Section for Recent Scrims
-const RecentScrimsSection = () => {
-  const scrimSummaries = useAtomValue(scrimListSummaryAtom);
-  // Already sorted by date in the atom definition, take the first few
-  const recentScrims = scrimSummaries.slice(0, NUM_ITEMS_TO_SHOW);
-
-  if (recentScrims.length === 0) {
-    return null; // Don't show section if no data
+  if (!dataModel) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <EmptyState
+          icon={FileText}
+          title="No Data Available"
+          description="Upload scrim data to see statistics and insights"
+          size="lg"
+        />
+      </div>
+    );
   }
 
+  const killDeathRows = dataModel.playerStatBreakdown.byPlayer.map(
+    (player) => ({
+      playerName: player.playerName,
+      value: player.eliminations / Math.max(1, player.deaths),
+    })
+  );
+
+  const damagePerTenRows = dataModel.playerStatBreakdown.byPlayer.map(
+    (player) => ({
+      playerName: player.playerName,
+      value: player.allDamageDealtPer10Minutes,
+    })
+  );
+
+  const healingPerTenRows = dataModel.playerStatBreakdown.byPlayer.map(
+    (player) => ({
+      playerName: player.playerName,
+      value: player.healingDealtPer10Minutes,
+    })
+  );
+
+  // Get last 3 scrims sorted by date (most recent first)
+  const recentScrims = dataModel.scrims
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
+
   return (
-    <div className="mb-12">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">Recent Scrims</h2>
-        <Link to="/scrims" className="link link-primary text-sm">
-          View All
-        </Link>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <BreadCrumbs items={[{ label: "Home", path: getRoute("/") }]} />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {recentScrims.map((scrim) => (
-          <ScrimCard
-            key={scrim.scrimId}
-            title={`${scrim.teamNames[0]} vs ${scrim.teamNames[1]}`}
-            teamNames={scrim.teamNames}
-            date={scrim.dateString}
-            mapsPlayed={[`${scrim.mapCount} Maps`]}
-            primaryStats={[{ value: scrim.score, label: "Score (W-L-D)" }]}
-            secondaryStats={[
-              { value: formatTime(scrim.duration), label: "Duration" },
-              { value: scrim.mapCount.toString(), label: "Maps" },
-            ]}
-            linkUrl={`/scrims/${scrim.scrimId}`}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 bg-base-100 p-6 rounded-lg">
+        <CardStat
+          label="Total Scrims"
+          value={dataModel.scrims.length}
+          icon={<Trophy className="w-6 h-6" />}
+          severity="neutral"
+        />
+        <CardStat
+          label="Total Matches"
+          value={dataModel.matches.length}
+          icon={<Target className="w-6 h-6" />}
+          severity="neutral"
+        />
+        <CardStat
+          label="Active Players"
+          value={dataModel.players.length}
+          icon={<Users className="w-6 h-6" />}
+          severity="neutral"
+        />
+        <CardStat
+          label="Teams"
+          value={dataModel.teams.length}
+          icon={<Shield className="w-6 h-6" />}
+          severity="neutral"
+        />
+        <CardStat
+          label="Teamfights"
+          value={dataModel.teamfights.length}
+          icon={<Zap className="w-6 h-6" />}
+          severity="neutral"
+        />
+        <CardStat
+          label="Total Playtime"
+          value={formatDuration(
+            dataModel.matches.reduce(
+              (total, match) => total + match.duration,
+              0
+            )
+          )}
+          icon={<Clock className="w-6 h-6" />}
+          severity="neutral"
+        />
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-base-content mb-6">
+          Recent Scrims
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {recentScrims.map((scrim) => (
+            <ScrimCard key={scrim.scrim} scrimId={scrim.scrim} />
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-base-content mb-6">
+          Key Metrics
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <StatDistributionAndTop
+            statName="Kill/Death Ratio"
+            statDescription="Average eliminations per death across all players"
+            categoryKeys={["playerName"]}
+            rows={killDeathRows}
+            higherIsBetter={true}
+            precision={2}
           />
-        ))}
+          <StatDistributionAndTop
+            statName="Damage per 10 Minutes"
+            statDescription="Average damage dealt per 10 minutes of playtime"
+            categoryKeys={["playerName"]}
+            rows={damagePerTenRows}
+            higherIsBetter={true}
+            precision={0}
+          />
+          <StatDistributionAndTop
+            statName="Healing per 10 Minutes"
+            statDescription="Average healing dealt per 10 minutes of playtime"
+            categoryKeys={["playerName"]}
+            rows={healingPerTenRows}
+            higherIsBetter={true}
+            precision={0}
+          />
+        </div>
       </div>
     </div>
-  );
-};
-
-// Section for Top Teams
-const TopTeamsSection = () => {
-  const teamSummaries = useAtomValue(teamListSummaryAtom);
-  // Sort by win rate descending, take top N
-  const topTeams = [...teamSummaries]
-    .sort((a, b) => b.winRate - a.winRate)
-    .slice(0, NUM_ITEMS_TO_SHOW);
-
-  if (topTeams.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="mb-12">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">Top Teams</h2>
-        <Link to="/teams" className="link link-primary text-sm">
-          View All
-        </Link>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {topTeams.map((team) => (
-          <TeamCard
-            key={team.teamName}
-            teamName={team.teamName}
-            playerNames={[`${team.playerCount} Players`]}
-            primaryStats={[
-              { value: formatPercentage(team.winRate), label: "Win Rate" },
-            ]}
-            secondaryStats={[
-              { value: team.gamesPlayed.toString(), label: "Games Played" },
-            ]}
-            linkUrl={`/teams/${team.teamName}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// Section for Top Players
-const TopPlayersSection = () => {
-  const playerSummaries = useAtomValue(playerListSummaryAtom);
-
-  // Calculate KDA for sorting
-  const playersWithKda = playerSummaries.map((p) => ({
-    ...p,
-    kda:
-      p.deaths === 0
-        ? p.eliminations + p.assists
-        : (p.eliminations + p.assists) / p.deaths,
-  }));
-
-  // Sort by KDA descending, take top N
-  const topPlayers = playersWithKda
-    .sort((a, b) => b.kda - a.kda)
-    .slice(0, NUM_ITEMS_TO_SHOW);
-
-  if (topPlayers.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="mb-12">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">Top Players</h2>
-        <Link to="/players" className="link link-primary text-sm">
-          View All
-        </Link>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {topPlayers.map((player) => (
-          <PlayerCard
-            key={player.playerName}
-            playerName={player.playerName}
-            teamNames={[player.teamName]}
-            heroes={[player.topHero]}
-            primaryStats={[{ value: prettyFormat(player.kda), label: "KDA" }]}
-            secondaryStats={[
-              { value: player.role, label: "Role" },
-              { value: player.teamName, label: "Team" },
-            ]}
-            // No link prop on PlayerCard, link handled by parent if needed
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export const HomePage = (): React.ReactNode => {
-  const matchDataValue = useAtomValue(matchData.atom);
-  const hasData = matchDataValue.length > 0;
-
-  // If no data, show ZeroState immediately
-  if (!hasData) {
-    return <ZeroState />;
-  }
-
-  // If data exists, show the main page content
-  return (
-    <Container>
-      {" "}
-      {/* Replaced div with Container */}
-      {/* Sections for Scrims, Teams, Players */}
-      <Suspense
-        fallback={
-          <div className="text-center p-4">Loading dashboard sections...</div>
-        }
-      >
-        <RecentScrimsSection />
-        <TopTeamsSection />
-        <TopPlayersSection />
-      </Suspense>
-    </Container> // Closing Container tag
   );
 };
 

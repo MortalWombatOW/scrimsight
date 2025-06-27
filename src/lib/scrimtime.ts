@@ -1,4 +1,4 @@
-import { stringHash } from "@library";
+import { stringHash } from "./string";
 
 
 // describes an individual field in data spec
@@ -25,6 +25,7 @@ type LogSpec = Record<string, DataSpec>;
 
 // Export the LOG_SPEC as public
 export { LOG_SPEC };
+export type { DataAndSpecName };
 
 // File Utilities
 export const readFileAsync = (file: File): Promise<string> => {

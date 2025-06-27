@@ -1,4 +1,3 @@
-import { atom } from "jotai";
-import { SampleDataEnabledType } from "@atoms";
+import {atom} from 'jotai';
 
-export default atom<SampleDataEnabledType>(true);
+export const sampleDataEnabledAtom = atom(false);

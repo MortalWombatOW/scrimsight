@@ -1,74 +1,149 @@
-import { ScrimCard } from "./ScrimCard";
-import type { Meta, StoryObj } from "@storybook/react-vite";
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Provider } from 'jotai';
+import { dataModelAtom } from '../atoms/scrimsight';
+import ScrimCard from './ScrimCard';
+import { ScrimsightDataModel, PlayerStatsNumerical } from '../lib/ScrimsightDataModel';
+
+const mockDataModel: ScrimsightDataModel = {
+  scrims: [
+    {
+      scrim: 'scrim-1',
+      teams: ['Team Alpha', 'Team Beta'],
+      matches: ['match-1', 'match-2', 'match-3'],
+      date: new Date('2024-01-15T19:30:00'),
+      team1MatchesWon: 2,
+      team2MatchesWon: 1,
+    },
+    {
+      scrim: 'scrim-2',
+      teams: ['Phoenix Gaming', 'Thunder Squad'],
+      matches: ['match-4', 'match-5'],
+      date: new Date('2024-01-16T20:15:00'),
+      team1MatchesWon: 1,
+      team2MatchesWon: 2,
+    },
+    {
+      scrim: 'scrim-3',
+      teams: ['Red Hawks', 'Blue Storm'],
+      matches: ['match-6', 'match-7', 'match-8'],
+      date: new Date('2024-01-17T18:45:00'),
+      team1MatchesWon: 1,
+      team2MatchesWon: 1,
+    },
+  ],
+  // Log events
+  ability1Used: [],
+  ability2Used: [],
+  damage: [],
+  defensiveAssist: [],
+  dvaDemech: [],
+  dvaRemech: [],
+  healing: [],
+  heroSpawn: [],
+  heroSwap: [],
+  kill: [],
+  matchEnd: [],
+  matchStart: [],
+  mercyRez: [],
+  offensiveAssist: [],
+  playerStat: [],
+  roundEnd: [],
+  roundStart: [],
+  setupComplete: [],
+  ultimateCharged: [],
+  ultimateEnd: [],
+  ultimateStart: [],
+  // Relationships
+  matches: [],
+  teams: [],
+  players: [],
+  // Computed segments
+  playerLives: [],
+  teamfights: [],
+  rounds: [],
+  teamCompositions: [],
+  // Player stats
+  playerStatBreakdown: {
+    total: {} as PlayerStatsNumerical,
+    byPlayer: [],
+    byTeam: [],
+    byTeamAndPlayer: [],
+    byTeamAndPlayerAndMatch: [],
+    byTeamAndPlayerAndScrim: [],
+    byPlayerAndHero: [],
+    byRole: [],
+    byHero: [],
+    byTeamAndMatch: [],
+    byTeamAndScrim: [],
+  },
+  playerStatBreakdownRanks: {
+    total: {} as PlayerStatsNumerical,
+    byPlayer: [],
+    byTeam: [],
+    byTeamAndPlayer: [],
+    byTeamAndPlayerAndMatch: [],
+    byTeamAndPlayerAndScrim: [],
+    byPlayerAndHero: [],
+    byRole: [],
+    byHero: [],
+    byTeamAndMatch: [],
+    byTeamAndScrim: [],
+  },
+  killCounts: {
+    byMatch: [],
+    byMatchAndRound: [],
+  },
+};
 
 const meta: Meta<typeof ScrimCard> = {
+  title: 'Components/ScrimCard',
   component: ScrimCard,
   parameters: {
-    docs: {
-      description: {
-        component: "ScrimCard displays key information about a scrim session, including teams, maps, and results.",
-      },
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  decorators: [
+    (Story, { args }) => {
+      return (
+        <Provider initialValues={[[dataModelAtom, mockDataModel]]}>
+          <div className="w-80">
+            <Story {...args} />
+          </div>
+        </Provider>
+      );
+    },
+  ],
+  argTypes: {
+    scrimId: {
+      control: 'text',
+      description: 'The ID of the scrim to display',
     },
   },
 };
 
 export default meta;
+type Story = StoryObj<typeof meta>;
 
-type Story = StoryObj<typeof ScrimCard>;
-
-export const Default: Story = {
+export const TeamAlphaWins: Story = {
   args: {
-    title: "Weekend Scrim Session",
-    teamNames: ["Team Alpha", "Team Beta"],
-    date: "2024-01-20",
-    mapsPlayed: ["King's Row", "Hanamura", "Gibraltar"],
-    primaryStats: [
-      { value: "2-1", label: "Final Score" },
-      { value: "3", label: "Maps Played" },
-    ],
-    secondaryStats: [
-      { value: "45 min", label: "Duration" },
-      { value: "Mixed", label: "Mode" },
-    ],
-    linkUrl: "/scrim/sample-scrim-1",
+    scrimId: 'scrim-1',
   },
 };
 
-export const LongScrim: Story = {
+export const ThunderSquadWins: Story = {
   args: {
-    title: "Championship Practice",
-    teamNames: ["Dragons", "Phoenix", "Storm"],
-    date: "2024-01-21", 
-    mapsPlayed: ["King's Row", "Hanamura", "Gibraltar", "Dorado", "Temple of Anubis"],
-    primaryStats: [
-      { value: "3-2", label: "Final Score" },
-      { value: "5", label: "Maps Played" },
-    ],
-    secondaryStats: [
-      { value: "90 min", label: "Duration" },
-      { value: "Competitive", label: "Format" },
-    ],
-    linkUrl: "/scrim/sample-scrim-2",
+    scrimId: 'scrim-2',
   },
 };
 
-export const QuickScrim: Story = {
+export const TiedScrim: Story = {
   args: {
-    title: "Quick Practice",
-    teamNames: ["Team Gamma", "Team Delta"],
-    date: "2024-01-22",
-    mapsPlayed: ["King's Row"],
-    primaryStats: [
-      { value: "1-0", label: "Final Score" },
-      { value: "1", label: "Maps Played" },
-    ],
-    secondaryStats: [
-      { value: "15 min", label: "Duration" },
-      { value: "Practice", label: "Format" },
-    ],
+    scrimId: 'scrim-3',
   },
 };
 
-// Note: This component requires atom data to function properly
-// In a real application, you would need to provide mock data or configure
-// the atom providers for Storybook to display meaningful content
+export const ScrimNotFound: Story = {
+  args: {
+    scrimId: 'nonexistent-scrim',
+  },
+};

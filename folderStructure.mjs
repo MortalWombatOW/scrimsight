@@ -25,17 +25,8 @@ export const folderStructureConfig = createFolderStructure({
           children: [
             { name: "CLAUDE.md" }, // Claude memory file
             { name: "index.ts" }, // Atom index file
-            { name: "atomTemplate.ts.txt" }, // Atom template file
-            // Atom test files
-            {
-              name: "{camelCase}.test.ts",
-              enforceExistence: ["{nodeName}.ts"]
-            }, 
-            // Atom implementation files
             {
               name: "{camelCase}.ts",
-              // Any atom implementation file must have a corresponding test file
-              enforceExistence: ["{nodeName}.test.ts"]
             }, 
           ],
         },
@@ -43,19 +34,22 @@ export const folderStructureConfig = createFolderStructure({
         {
           name: "lib",
           children: [
-            { name: "index.ts" }, // Library index file
             // Library: src/lib/{camelCase}.ts
             { name: "{camelCase}.ts" },
             // Library: src/lib/{camelCase}.test.ts
             { name: "{camelCase}.test.ts" },
+            // Library: src/lib/{PascalCase}.ts
+            { name: "{PascalCase}.ts" },
+            // Library: src/lib/{PascalCase}.test.ts
+            { name: "{PascalCase}.test.ts" },
+            // Library: src/lib/{camelCase}.worker.ts
+            { name: "{camelCase}.worker.ts" },
           ],
         },
         // Components: src/components folder
         {
           name: "components",
           children: [
-            { name: "index.ts" }, // Component index file
-            // Component implementation files
             {
               name: "{PascalCase}.tsx",
               enforceExistence: ["{NodeName}.stories.tsx"]
@@ -68,8 +62,6 @@ export const folderStructureConfig = createFolderStructure({
         {
           name: "icons",
           children: [
-            { name: "index.ts" }, // Icon index file
-            // Icon implementation files
             {
               name: "{PascalCase}Icon.tsx",
               enforceExistence: ["{NodeName}.stories.tsx"]
@@ -84,9 +76,16 @@ export const folderStructureConfig = createFolderStructure({
         {
           name: "pages",
           children: [
-            { name: "index.tsx" }, // Page index file
             // Page implementation files
             { name: "{PascalCase}Page.tsx" },
+          ],
+        },
+        // Hooks: src/hooks folder
+        {
+          name: "hooks",
+          children: [
+            // Hook implementation files
+            { name: "use{PascalCase}.ts" },
           ],
         },
       ]},
