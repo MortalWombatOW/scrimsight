@@ -104,7 +104,6 @@ const groupMatchesIntoScrims = (dataModel: ScrimsightDataModel.ScrimsightDataMod
     dataModel.matchStart,
     R.map(matchStart => {
       const parsedFile = parsedFiles.find(f => f.matchId === matchStart.matchId);
-      console.log(`date: ${parsedFile?.fileModified}`);
       const date = new Date(parsedFile!.fileModified);
       const dateString = date.toISOString().split('T')[0];
       return {
