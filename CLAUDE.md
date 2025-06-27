@@ -35,7 +35,7 @@ When suggesting or making changes:
 
 - **Start with a failing test** - always. No exceptions.
 - After making tests pass, always assess refactoring opportunities (but only refactor if it adds value)
-- After refactoring, verify all tests and static analysis pass, then commit
+- After refactoring, verify all tests and static analysis pass
 - Respect the existing patterns and conventions
 - Maintain test coverage for all behavior changes
 - Keep changes small and incremental
@@ -313,7 +313,7 @@ const processOrder = (order: Order): ProcessedOrder => {
 
 ### Refactoring - The Critical Third Step
 
-Evaluating refactoring opportunities is not optional - it's the third step in the TDD cycle. After achieving a green state and committing your work, you MUST assess whether the code can be improved. However, only refactor if there's clear value - if the code is already clean and expresses intent well, move on to the next test.
+Evaluating refactoring opportunities is not optional - it's the third step in the TDD cycle. After achieving a green state, you MUST assess whether the code can be improved. However, only refactor if there's clear value - if the code is already clean and expresses intent well, move on to the next test.
 
 #### What is Refactoring?
 
@@ -327,7 +327,7 @@ Refactoring means changing the internal structure of code without changing its e
 - **When structure could be simpler**: Complex conditional logic, deeply nested code, or long functions
 - **When patterns emerge**: After implementing several similar features, useful abstractions may become apparent
 
-**Remember**: Not all code needs refactoring. If the code is already clean, expressive, and well-structured, commit and move on. Refactoring should improve the code - don't change things just for the sake of change.
+**Remember**: Not all code needs refactoring. If the code is already clean, expressive, and well-structured, move on. Refactoring should improve the code - don't change things just for the sake of change.
 
 #### Refactoring Guidelines
 
@@ -529,7 +529,7 @@ const validatePaymentAmount = (amount: number): void => {
 // Tests continue to pass without modification because external API unchanged
 ```
 
-##### 4. Verify and Commit After Refactoring
+##### 4. Verify After Refactoring
 
 **CRITICAL**: After every refactoring:
 
@@ -554,7 +554,6 @@ Before considering refactoring complete, verify:
 - [ ] Code is more readable than before
 - [ ] Any duplication removed was duplication of knowledge, not just code
 - [ ] No speculative abstractions were created
-- [ ] The refactoring is committed separately from feature changes
 
 #### Example Refactoring Session
 
