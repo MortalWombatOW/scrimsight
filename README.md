@@ -60,104 +60,110 @@ The data needs to be presented in a way that is easy to understand and interpret
 
 ## Page structure
 
-* Landing Page - the scope of the landing page is to introduce the user to the app, demonstrate it's value, and guide them through the onboarding process.
-  * High-level introduction
-    * What is Scrimsight and what value does it provide?
-    * How can it help my team and I improve at Overwatch?
-  * Getting Started
-    * What do I need to use the app?
-    * How do I get my scrim logs into the app?
-  * Data and Privacy
-    * Is my data secure?
-    * Where is my data stored?
-* HomePage - the home dashboard provides a general overview of the data, and guides the user through the app by asking them to upload their logs and giving them a hint of the content of each page.
-  * Initial Setup & Welcome
-    * How do I upload my first set of scrim logs?
-    * What can I expect to see once my data is loaded?
-  * High-Level Overview (once data is loaded)
-    * What is my team's overall win-rate and recent performance trend?
-    * Who are the standout performers from our recent games?
-  * Navigational Guidance
-    * Where can I see a summary of all our scrims?
-    * How do I dive into a specific match analysis?
-    * Where can I compare player or team performances?
-* Scrims Page - the scope of the scrims page is to provide a summary of the scrims, and to help the user understand the context of each scrim and compare them to each other.
-  * Overall Scrim Performance
-    * How has our performance trended across all scrims?
-    * Are we improving, stagnating, or declining over time?
-  * Strategic Evolution
-    * Are we adapting our strategies and compositions effectively between scrims?
-    * Are we developing successful counters when facing the same opponents repeatedly?
-  * Comparative Analysis
-    * How do different scrims compare in terms of performance and stats?
-    * Which scrims were most successful and why?
-* Scrim Details Page - the scope of the scrim page is to provide a detailed view of a single scrim and the matches that were played in it.
-  * Scrim Summary
-    * What was the final score and outcome of this scrim?
-    * Which maps were played and what were the results for each?
-  * Performance Analysis
-    * Did our performance improve or decline over the course of this scrim?
-    * Who were the key players and standout performers in this series?
-  * Tactical Review
-    * What team compositions did we run and how effective were they?
-    * What were the key takeaways and lessons learned from this scrim?
-* Matches Page - the scope of the matches page is all of the individual matches that the user has uploaded
-  * Match History & Filtering
-    * Can I see a list of all matches we've played?
-    * How can I filter matches by team, player, map, or outcome?
-  * Identifying Key Moments
-    * Which matches were particularly one-sided or closely contested?
-    * Where can I find specific matches to review a certain strategy or performance?
-* Match Details Page - the scope of the match page is to provide a detailed view of a single match
-  * Match Outcome
-    * Who won the match and what was the final score?
-    * What were the pivotal moments or key teamfights that decided the outcome?
-  * Team Performance
-    * Did our strategy and team composition work as expected?
-    * Were our teamfights coordinated and were ultimates used effectively?
-  * Individual Performance
-    * Which players had the biggest impact on the match?
-    * Did everyone on the team perform their role effectively?
-* Players Page - the scope of the players page is help to the user understand the players in the dataset and compare them.
-  * Player Rankings & Comparison
-    * Who are our top-performing players across key metrics (K/D, damage, healing)?
-    * How do players stack up against each other within the same role?
-  * Identifying Strengths & Weaknesses
-    * Who are the most consistent players on the roster?
-    * Which players might be underperforming and require development?
-* Player Details Page - the scope of the player page is to provide a detailed view of a single player
-  * Overall Performance Summary
-    * What are this player's key performance indicators (KPIs) and stats?
-    * How does this player's performance trend over time?
-  * Role-Specific Analysis
-    * Is this player fulfilling the responsibilities of their role effectively? (e.g., creating space as a tank, securing elims as DPS, sustaining the team as support)
-    * How effective is their ultimate usage and positioning?
-  * Hero Pool & Versatility
-    * Which heroes does this player perform best on?
-    * How does their performance vary across different heroes and compositions?
-* Teams Page - the scope of the teams page is show all of the teams in the dataset and compare them.
-  * Team Comparison
-    * How do different teams' win-rates and key stats compare?
-    * What are the most common and successful strategies for each team?
-  * Competitive Analysis
-    * What are the strengths and weaknesses of competitor teams?
-    * How can I identify and exploit a rival team's strategic tendencies?
-* Team Details Page - the scope of the team page is to provide a detailed view of a single team
-  * Team Performance Analysis
-    * Is this team's performance improving over time?
-    * What are the team's biggest strengths and most common weaknesses?
-  * Strategic Profile
-    * What are this team's preferred hero compositions and strategies?
-    * How well-coordinated are their teamfights and ultimate usage?
-  * Roster Analysis
-    * Who are the star players on this team?
-    * Which players are the most consistent or potentially exploitable?
-* Settings Page - the scope of the settings page is to provide a way for the user to configure the app.
-  * Application Configuration
-    * How can I customize the app's appearance or behavior?
-    * Are there different themes or data display options?
-  * Data Management
-    * How do I manage my uploaded data?
-    * Can I clear my data and start fresh?
+Each page should be a cohesive data story, which lays out the context at the top (e.g. what is important about what we're answering questions about), and then presents the data in a way that is easy to understand and interpret. 
+
+*   Landing Page - the scope of the landing page is to introduce the user to the app, demonstrate it's value, and guide them through the onboarding process.
+    *   High-level introduction
+        *   What is Scrimsight and what value does it provide? This should be presented as clear, concise marketing copy with strong visuals.
+        *   How can it help my team and I improve at Overwatch? Use bullet points with icons to highlight key benefits.
+    *   Getting Started
+        *   What do I need to use the app? A simple checklist of prerequisites.
+        *   How do I get my scrim logs into the app? A step-by-step guide with screenshots or a short animation.
+    *   Data and Privacy
+        *   Is my data secure? Clear, reassuring statements about data privacy and security.
+        *   Where is my data stored? An explicit statement that data is stored locally on the user's device.
+*   HomePage - the home dashboard provides a general overview of the data, and guides the user through the app by asking them to upload their logs and giving them a hint of the content of each page.
+    *   Initial Setup & Welcome
+        *   How do I upload my first set of scrim logs? A prominent call-to-action button that opens an upload modal.
+        *   What can I expect to see once my data is loaded? A series of preview cards that hint at the insights available on other pages.
+    *   High-Level Overview (once data is loaded)
+        *   What is my team's overall win-rate and recent performance trend? Present the win-rate as a large KPI, with a compact sparkline chart to show the recent trend.
+        *   Who are the standout performers from our recent games? Use "Player Spotlight" cards to feature top players with their portrait and a key stat.
+    *   Navigational Guidance
+        *   Where can I see a summary of all our scrims? A card with a summary stat that links to the Scrims Page.
+        *   How do I dive into a specific match analysis? A card showing the most recent match result that links to the Match Details Page.
+        *   Where can I compare player or team performances? A card teasing a player ranking that links to the Players Page.
+*   Scrims Page - the scope of the scrims page is to provide a summary of the scrims, and to help the user understand the context of each scrim and compare them to each other.
+    *   Overall Scrim Performance
+        *   How has our performance trended across all scrims? A line chart is ideal for showing the win-rate or another key metric evolving over time.
+        *   Are we improving, stagnating, or declining over time? The slope of the trendline on the line chart will answer this, supplemented by a summary statistic.
+    *   Strategic Evolution
+        *   Are we adapting our strategies and compositions effectively between scrims? A stacked bar chart showing hero composition usage across scrims provides a clear view of strategic shifts.
+        *   Are we developing successful counters when facing the same opponents repeatedly? A data table comparing performance metrics against specific opponents across different scrims.
+    *   Comparative Analysis
+        *   How do different scrims compare in terms of performance and stats? A sortable data table where each row represents a scrim allows for easy comparison.
+        *   Which scrims were most successful and why? Highlight the top scrims in the table and allow users to click to expand and see more details.
+*   Scrim Details Page - the scope of the scrim page is to provide a detailed view of a single scrim and the matches that were played in it.
+    *   Scrim Summary
+        *   What was the final score and outcome of this scrim? Display this prominently at the top of the page with large, clear text.
+        *   Which maps were played and what were the results for each? A series of match cards, one for each map, showing the map name, score, and outcome.
+    *   Performance Analysis
+        *   Did our performance improve or decline over the course of this scrim? A simple line chart tracking a key team metric across the matches within the scrim.
+        *   Who were the key players and standout performers in this series? A ranked list or a set of cards highlighting the top 3 players and their key contributions.
+    *   Tactical Review
+        *   What team compositions did we run and how effective were they? A table or visual grid showing compositions used on each map, paired with their effectiveness.
+        *   What were the key takeaways and lessons learned from this scrim? A text summary, potentially with auto-generated insights highlighting statistical anomalies.
+*   Matches Page - the scope of the matches page is all of the individual matches that the user has uploaded
+    *   Match History & Filtering
+        *   Can I see a list of all matches we've played? A comprehensive data table listing all matches.
+        *   How can I filter matches by team, player, map, or outcome? The data table should have robust, easy-to-use filtering controls.
+    *   Identifying Key Moments
+        *   Which matches were particularly one-sided or closely contested? The table can feature a "Closeness" score or a visual bar to indicate the score difference.
+        *   Where can I find specific matches to review a certain strategy or performance? The filtering controls on the match table are key to enabling this.
+*   Match Details Page - the scope of the match page is to provide a detailed view of a single match
+    *   Match Outcome
+        *   Who won the match and what was the final score? This should be displayed in a prominent header.
+        *   What were the pivotal moments or key teamfights that decided the outcome? A timeline visualization is perfect for showing key events, teamfight outcomes, and ultimate usage.
+    *   Team Performance
+        *   Did our strategy and team composition work as expected? A side-by-side comparison of team compositions with associated performance stats.
+        *   Were our teamfights coordinated and were ultimates used effectively? A detailed teamfight breakdown in a tabular format, showing ultimate usage and outcomes.
+    *   Individual Performance
+        *   Which players had the biggest impact on the match? A leaderboard-style table ranking players by an "impact score" derived from multiple stats.
+        *   Did everyone on the team perform their role effectively? A detailed scoreboard view with role-specific stats is essential.
+*   Players Page - the scope of the players page is help to the user understand the players in the dataset and compare them.
+    *   Player Rankings & Comparison
+        *   Who are our top-performing players across key metrics (K/D, damage, healing)? A sortable data table is the standard and most effective way to display this.
+        *   How do players stack up against each other within the same role? Use a radar chart to compare multiple players within the same role across a set of key metrics.
+    *   Identifying Strengths & Weaknesses
+        *   Who are the most consistent players on the roster? A box plot for each player's key metrics can visualize their performance consistency and range.
+        *   Which players might be underperforming and require development? The data table can be sorted to identify underperforming players, who could be visually highlighted.
+*   Player Details Page - the scope of the player page is to provide a detailed view of a single player
+    *   Overall Performance Summary
+        *   What are this player's key performance indicators (KPIs) and stats? A series of prominent stat cards to highlight their most important metrics.
+        *   How does this player's performance trend over time? A line chart showing the trend of their key stats across all matches.
+    *   Role-Specific Analysis
+        *   Is this player fulfilling the responsibilities of their role effectively? (e.g., creating space as a tank, securing elims as DPS, sustaining the team as support) A radar chart comparing the player's stats against the average for their role.
+        *   How effective is their ultimate usage and positioning? A data table detailing ultimate usage statistics (e.g., elims per ultimate).
+    *   Hero Pool & Versatility
+        *   Which heroes does this player perform best on? A bar chart showing their win rate or performance score by hero.
+        *   How does their performance vary across different heroes and compositions? A filterable data table showing their performance on each hero played.
+*   Teams Page - the scope of the teams page is show all of the teams in the dataset and compare them.
+    *   Team Comparison
+        *   How do different teams' win-rates and key stats compare? A data table that allows for easy comparison of team-level statistics.
+        *   What are the most common and successful strategies for each team? A set of cards for each team, visually displaying their most-played compositions and associated win rates.
+    *   Competitive Analysis
+        *   What are the strengths and weaknesses of competitor teams? A heatmap comparing teams across a wide range of statistical categories.
+        *   How can I identify and exploit a rival team's strategic tendencies? This is derived from analyzing the composition and strategy data presented.
+*   Team Details Page - the scope of the team page is to provide a detailed view of a single team
+    *   Team Performance Analysis
+        *   Is this team's performance improving over time? A line chart showing the team's win rate trend across scrims.
+        *   What are the team's biggest strengths and most common weaknesses? A bar chart showing the team's performance percentiles for key metrics against the average.
+    *   Strategic Profile
+        *   What are this team's preferred hero compositions and strategies? A visual grid of hero icons representing their most-used compositions, with stats for each.
+        *   How well-coordinated are their teamfights and ultimate usage? A summary card highlighting key coordination stats like teamfight win rate.
+    *   Roster Analysis
+        *   Who are the star players on this team? A list of the team's top players with their portraits and key stats.
+        *   Which players are the most consistent or potentially exploitable? A table of the team's players with their performance consistency metrics.
+*   Settings Page - the scope of the settings page is to provide a way for the user to configure the app.
+    *   Application Configuration
+        *   How can I customize the app's appearance or behavior? Use standard form elements like toggles and dropdowns for settings.
+        *   Are there different themes or data display options? Provide theme selection through radio buttons with visual previews.
+    *   Data Management
+        *   How do I manage my uploaded data? Buttons for actions like "Export Data" or "Clear All Data".
+        *   Can I clear my data and start fresh? A confirmation modal should be used for destructive actions like this.
 
 
+# Page Structure
+
+Each page should get data from the data model and render the UI using the components in `src/components`.
+The page should be composed of semantically meaningful components, and should not be too complex.

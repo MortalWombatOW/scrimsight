@@ -1,13 +1,18 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { User, Target, Activity, TrendingUp, Zap } from "lucide-react";
+import { User, Target, Activity, TrendingUp, Zap, Clock, Award } from "lucide-react";
 
 import { useScrimsightData } from "../hooks/useScrimsightData";
 import {
   PlayerStatsNumerical,
   PlayerStatsNumericalKeys,
-  METRIC_DISPLAY_NAME,
   PLAYER_STAT_RANKING_DIRECTIONS,
+  Role,
+  Hero,
+  PlayerName,
+  TeamName,
+  PlayerRelationships,
+  ScrimRelationships,
 } from "../lib/ScrimsightDataModel";
 import * as R from "remeda";
 import PageHeader from "../components/PageHeader";
@@ -20,6 +25,8 @@ import TeamColorDot from "../components/TeamColorDot";
 import ScrimCard from "../components/ScrimCard";
 import HeroIcon from "../icons/HeroIcon";
 import RoleIcon from "../icons/RoleIcon";
+import ChartWrapper from "../components/ChartWrapper";
+import DataTable from "../components/DataTable";
 import { formatDuration } from "../lib/format";
 
 import { getRoute } from "../lib/route";
@@ -146,597 +153,382 @@ const PlayerDetailsPage = () => {
     { label: playerName, href: getRoute(`/player/${playerName}`) },
   ];
 
-  return (
-    <ScrimsightPage>
-      <PageHeader>
-        <div>
-          <BreadCrumbs items={breadcrumbItems} />
-          <div className="flex items-center gap-3 mt-2">
-            <PageHeader.Icon>
-              <User className="w-8 h-8" />
-            </PageHeader.Icon>
-            <div>
-              <PageHeader.Title>{playerName}</PageHeader.Title>
-              <p className="text-sm text-base-content/70">
-                Player Performance Dashboard
-              </p>
-            </div>
-          </div>
-        </div>
-      </PageHeader>
+  const PlayerPageHeader = ({ playerName }: { playerName: PlayerName }) => {
+    return (
+      <>
+        <BreadCrumbs items={breadcrumbItems} />
+        <PageHeader>
+          <PageHeader.Icon>
+            <User className="w-8 h-8" />
+          </PageHeader.Icon>
+          <PageHeader.Title>{playerName}</PageHeader.Title>
+        </PageHeader>
+      </>
+    );
+  };
 
-      <div className="flex flex-wrap gap-6">
-        <PageSection variant="card" className="w-fit">
-          <PageSection.Title>Roles</PageSection.Title>
+  const PlayerOverview = ({ playerData }: { playerData: PlayerRelationships }) => {
+    const topHeroes = playerData.heroes
+      .sort((a, b) => b.playtime - a.playtime)
+      .slice(0, 3);
 
-          <PageSection.Content layout="flex" className="gap-4">
-            {playerRelationship.roles.map((roleEntry) => (
-              <div
-                key={roleEntry.role}
-                className="flex flex-col items-center p-4 bg-base-200 rounded-lg min-w-[120px]"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-10 h-10 flex items-center justify-center bg-base-300 rounded-full">
-                    <RoleIcon
-                      role={roleEntry.role}
-                      color="primary"
-                      className="text-xl"
-                    />
+    const topRoles = playerData.roles
+      .sort((a, b) => b.playtime - a.playtime)
+      .filter((role) => role.playtime > 0);
+
+    return (
+      <PageSection variant="card">
+        <PageSection.Title as="h2">Overview</PageSection.Title>
+        <PageSection.Content layout="grid">
+          <CardStat
+            label="Teams"
+            value={
+              <div className="flex flex-wrap gap-2">
+                {playerData.teams.map((team: TeamName) => (
+                  <div key={team} className="flex items-center gap-1">
+                    <TeamColorDot teamName={team} />
+                    <span className="text-sm">{team}</span>
                   </div>
-                </div>
-                <h4 className="font-medium text-base-content text-center capitalize">
-                  {roleEntry.role}
-                </h4>
-                <p className="text-sm text-base-content/70 mt-1">
-                  {formatDuration(roleEntry.playtime)}
-                </p>
+                ))}
               </div>
-            ))}
-          </PageSection.Content>
-        </PageSection>
-
-        <PageSection variant="card" className="w-fit">
-          <PageSection.Title>Top Heroes</PageSection.Title>
-
-          <PageSection.Content layout="flex" className="gap-4">
-            {playerRelationship.heroes.slice(0, 5).map((heroEntry, index) => (
-              <div
-                key={heroEntry.hero}
-                className="flex flex-col items-center p-4 bg-base-200 rounded-lg min-w-[120px]"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-sm font-medium text-base-content/60">
-                    #{index + 1}
-                  </span>
-                  <HeroIcon hero={heroEntry.hero} size={40} showTooltip />
-                </div>
-                <h4 className="font-medium text-base-content text-center">
-                  {heroEntry.hero}
-                </h4>
-                <p className="text-sm text-base-content/70 mt-1">
-                  {formatDuration(heroEntry.playtime)}
-                </p>
+            }
+            icon={<Target />}
+          />
+          <CardStat
+            label="Top Heroes"
+            value={
+              <div className="flex flex-wrap gap-2">
+                {topHeroes.map((hero) => (
+                  <div key={hero.hero} className="flex items-center gap-1">
+                    <HeroIcon hero={hero.hero} size={16} />
+                    <span className="text-sm">{hero.hero}</span>
+                    <span className="text-xs text-gray-500">({formatDuration(hero.playtime)})</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </PageSection.Content>
-        </PageSection>
-
-        <PageSection variant="card" className="w-fit mb-6">
-          <PageSection.Title>Teams</PageSection.Title>
-
-          <PageSection.Content layout="flex" className="gap-4">
-            {playerTeams.map((teamName) => (
-              <div
-                key={teamName}
-                className="flex flex-col items-center p-4 bg-base-200 rounded-lg min-w-[120px]"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <TeamColorDot teamName={teamName} size={24} />
-                </div>
-                <h4 className="font-medium text-base-content text-center">
-                  {teamName}
-                </h4>
+            }
+            icon={<Award />}
+          />
+          <CardStat
+            label="Primary Roles"
+            value={
+              <div className="flex flex-wrap gap-2">
+                {topRoles.map((role) => (
+                  <div key={role.role} className="flex items-center gap-1">
+                    <RoleIcon role={role.role} className="w-4 h-4" />
+                    <span className="text-sm capitalize">{role.role}</span>
+                    <span className="text-xs text-gray-500">({formatDuration(role.playtime)})</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </PageSection.Content>
-        </PageSection>
-      </div>
+            }
+            icon={<Activity />}
+          />
+        </PageSection.Content>
+      </PageSection>
+    );
+  };
 
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-base-content mb-6">
-          Recent Scrims
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {playerRecentScrims.map((scrim) => (
-            <ScrimCard key={scrim.scrim} scrimId={scrim.scrim} />
-          ))}
-        </div>
-      </div>
+  const PerformanceSummary = ({ 
+    stats, 
+    averageStats, 
+    ranks, 
+    totalCount 
+  }: { 
+    stats: PlayerStatsNumerical;
+    averageStats: PlayerStatsNumerical;
+    ranks: PlayerStatsNumerical;
+    totalCount: number;
+  }) => {
+    const kdrRatio = stats.eliminations / Math.max(stats.deaths, 1);
+    const avgKdrRatio = averageStats.eliminations / Math.max(averageStats.deaths, 1);
 
-      <PageSection variant="card" className="w-fit">
-        <PageSection.Title>Offensive Impact</PageSection.Title>
-        <PageSection.Description className="mt-1">
-          The ability to secure kills and deal damage to your opponents is
-          critical for securing wins.
-        </PageSection.Description>
+    return (
+      <PageSection variant="card">
+        <PageSection.Title as="h2">Performance Summary</PageSection.Title>
+        <PageSection.Description>Key performance indicators and overall statistics</PageSection.Description>
+        <PageSection.Content layout="grid">
+          <CardStat
+            label="K/D Ratio"
+            numericValue={kdrRatio}
+            averageValue={avgKdrRatio}
+            severity={calculateSeverity(kdrRatio, avgKdrRatio, "eliminations")}
+            icon={<Target />}
+          />
+          <CardStat
+            label="Eliminations/10min"
+            numericValue={stats.eliminationsPer10Minutes}
+            averageValue={averageStats.eliminationsPer10Minutes}
+            metricKey="eliminationsPer10Minutes"
+            rank={ranks.eliminationsPer10Minutes}
+            totalCount={totalCount}
+            severity={calculateSeverity(stats.eliminationsPer10Minutes, averageStats.eliminationsPer10Minutes, "eliminationsPer10Minutes")}
+            icon={<Zap />}
+          />
+          <CardStat
+            label="Hero Damage/10min"
+            numericValue={stats.heroDamageDealtPer10Minutes}
+            averageValue={averageStats.heroDamageDealtPer10Minutes}
+            metricKey="heroDamageDealtPer10Minutes"
+            rank={ranks.heroDamageDealtPer10Minutes}
+            totalCount={totalCount}
+            severity={calculateSeverity(stats.heroDamageDealtPer10Minutes, averageStats.heroDamageDealtPer10Minutes, "heroDamageDealtPer10Minutes")}
+            icon={<TrendingUp />}
+          />
+          <CardStat
+            label="Deaths/10min"
+            numericValue={stats.deathsPer10Minutes}
+            averageValue={averageStats.deathsPer10Minutes}
+            metricKey="deathsPer10Minutes"
+            rank={ranks.deathsPer10Minutes}
+            totalCount={totalCount}
+            severity={calculateSeverity(stats.deathsPer10Minutes, averageStats.deathsPer10Minutes, "deathsPer10Minutes")}
+            icon={<Activity />}
+          />
+          <CardStat
+            label="Ultimate Charge Time"
+            numericValue={stats.ultimateChargeTime}
+            averageValue={averageStats.ultimateChargeTime}
+            metricKey="ultimateChargeTime"
+            rank={ranks.ultimateChargeTime}
+            totalCount={totalCount}
+            severity={calculateSeverity(stats.ultimateChargeTime, averageStats.ultimateChargeTime, "ultimateChargeTime")}
+            icon={<Clock />}
+          />
+          <CardStat
+            label="Teamfight Win Rate"
+            numericValue={stats.teamfightWinRate * 100}
+            averageValue={averageStats.teamfightWinRate * 100}
+            metricKey="teamfightWinRate"
+            rank={ranks.teamfightWinRate}
+            totalCount={totalCount}
+            severity={calculateSeverity(stats.teamfightWinRate, averageStats.teamfightWinRate, "teamfightWinRate")}
+            icon={<Award />}
+          />
+        </PageSection.Content>
+      </PageSection>
+    );
+  };
 
-        <PageSection.Content layout="flex">
-          {[
-            "finalBlowsPer10Minutes",
-            "heroDamageDealtPer10Minutes",
-            "firstKillRate",
-          ].map((metricKey) => {
-            const key = metricKey as PlayerStatsNumericalKeys;
-            const value = (playerStats as PlayerStatsNumerical)[key];
-            if (value === undefined) return null;
+  const RoleAnalysis = ({ 
+    stats, 
+    averageStats, 
+    playerRoles 
+  }: { 
+    stats: PlayerStatsNumerical;
+    averageStats: PlayerStatsNumerical;
+    playerRoles: { role: Role; playtime: number }[];
+  }) => {
+    const activeRoles = playerRoles
+      .filter(role => role.playtime > 0)
+      .sort((a, b) => b.playtime - a.playtime);
 
-            const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-            const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-              key
-            ];
-            const severity =
-              averageValue !== undefined
-                ? calculateSeverity(value, averageValue, key)
-                : "neutral";
+    if (activeRoles.length === 0) return null;
 
-            return (
-              <CardStat
-                key={key}
-                label={METRIC_DISPLAY_NAME[key]}
-                numericValue={value}
-                averageValue={averageValue}
-                metricKey={key}
-                rank={rank}
-                totalCount={totalPlayerCount}
-                severity={severity}
-                size="large"
-              />
-            );
+    const TankAnalysis = () => (
+      <PageSection variant="bordered">
+        <PageSection.Title as="h3">Tank Performance</PageSection.Title>
+        <PageSection.Content layout="grid">
+          <CardStat
+            label="Damage Blocked/10min"
+            numericValue={stats.damageBlockedPer10Minutes}
+            averageValue={averageStats.damageBlockedPer10Minutes}
+            metricKey="damageBlockedPer10Minutes"
+            severity={calculateSeverity(stats.damageBlockedPer10Minutes, averageStats.damageBlockedPer10Minutes, "damageBlockedPer10Minutes")}
+          />
+          <CardStat
+            label="Damage Taken/10min"
+            numericValue={stats.damageTakenPer10Minutes}
+            averageValue={averageStats.damageTakenPer10Minutes}
+            metricKey="damageTakenPer10Minutes"
+            severity={calculateSeverity(stats.damageTakenPer10Minutes, averageStats.damageTakenPer10Minutes, "damageTakenPer10Minutes")}
+          />
+        </PageSection.Content>
+      </PageSection>
+    );
+
+    const DamageAnalysis = () => (
+      <PageSection variant="bordered">
+        <PageSection.Title as="h3">Damage Performance</PageSection.Title>
+        <PageSection.Content layout="grid">
+          <CardStat
+            label="Final Blows/10min"
+            numericValue={stats.finalBlowsPer10Minutes}
+            averageValue={averageStats.finalBlowsPer10Minutes}
+            metricKey="finalBlowsPer10Minutes"
+            severity={calculateSeverity(stats.finalBlowsPer10Minutes, averageStats.finalBlowsPer10Minutes, "finalBlowsPer10Minutes")}
+          />
+          <CardStat
+            label="Solo Kills/10min"
+            numericValue={stats.soloKillsPer10Minutes}
+            averageValue={averageStats.soloKillsPer10Minutes}
+            metricKey="soloKillsPer10Minutes"
+            severity={calculateSeverity(stats.soloKillsPer10Minutes, averageStats.soloKillsPer10Minutes, "soloKillsPer10Minutes")}
+          />
+          <CardStat
+            label="Weapon Accuracy"
+            numericValue={stats.weaponAccuracy * 100}
+            averageValue={averageStats.weaponAccuracy * 100}
+            metricKey="weaponAccuracy"
+            severity={calculateSeverity(stats.weaponAccuracy, averageStats.weaponAccuracy, "weaponAccuracy")}
+          />
+        </PageSection.Content>
+      </PageSection>
+    );
+
+    const SupportAnalysis = () => (
+      <PageSection variant="bordered">
+        <PageSection.Title as="h3">Support Performance</PageSection.Title>
+        <PageSection.Content layout="grid">
+          <CardStat
+            label="Healing/10min"
+            numericValue={stats.healingDealtPer10Minutes}
+            averageValue={averageStats.healingDealtPer10Minutes}
+            metricKey="healingDealtPer10Minutes"
+            severity={calculateSeverity(stats.healingDealtPer10Minutes, averageStats.healingDealtPer10Minutes, "healingDealtPer10Minutes")}
+          />
+          <CardStat
+            label="Defensive Assists/10min"
+            numericValue={stats.defensiveAssistsPer10Minutes}
+            averageValue={averageStats.defensiveAssistsPer10Minutes}
+            metricKey="defensiveAssistsPer10Minutes"
+            severity={calculateSeverity(stats.defensiveAssistsPer10Minutes, averageStats.defensiveAssistsPer10Minutes, "defensiveAssistsPer10Minutes")}
+          />
+        </PageSection.Content>
+      </PageSection>
+    );
+
+    return (
+      <PageSection variant="card">
+        <PageSection.Title as="h2">Role Analysis</PageSection.Title>
+        <PageSection.Description>Performance breakdown by role</PageSection.Description>
+        <PageSection.Content layout="stack">
+          {activeRoles.map(role => {
+            switch (role.role) {
+              case 'tank':
+                return <TankAnalysis key="tank" />;
+              case 'damage':
+                return <DamageAnalysis key="damage" />;
+              case 'support':
+                return <SupportAnalysis key="support" />;
+              default:
+                return null;
+            }
           })}
         </PageSection.Content>
-
-        <div>
-          <h3 className="text-lg font-semibold text-base-content mb-3">
-            Secondary Metrics
-          </h3>
-          <PageSection.Content layout="flex" className="gap-3">
-            {[
-              "eliminationsPer10Minutes",
-              "allDamageDealtPer10Minutes",
-              "tankFocusRate",
-              "damageFocusRate",
-              "supportFocusRate",
-            ].map((metricKey) => {
-              const key = metricKey as PlayerStatsNumericalKeys;
-              const value = (playerStats as PlayerStatsNumerical)[key];
-              if (value === undefined) return null;
-
-              const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-              const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-                key
-              ];
-              const severity =
-                averageValue !== undefined
-                  ? calculateSeverity(value, averageValue, key)
-                  : "neutral";
-
-              return (
-                <CardStat
-                  key={key}
-                  label={METRIC_DISPLAY_NAME[key]}
-                  numericValue={value}
-                  averageValue={averageValue}
-                  metricKey={key}
-                  rank={rank}
-                  totalCount={totalPlayerCount}
-                  severity={severity}
-                  size="small"
-                />
-              );
-            })}
-          </PageSection.Content>
-        </div>
       </PageSection>
+    );
+  };
 
-      {/* Survivability Section */}
-      <PageSection variant="card" className="w-fit">
-        <PageSection.Title>
-          <div className="text-primary">
-            <Activity className="w-6 h-6" />
+  const HeroBreakdown = ({ heroStats }: { heroStats: (PlayerStatsNumerical & { playerName: PlayerName; playerHero: Hero })[] }) => {
+    const heroPerformanceData = heroStats
+      .filter(hero => hero.playtime > 0)
+      .sort((a, b) => b.playtime - a.playtime)
+      .slice(0, 10)
+      .map(hero => ({
+        hero: hero.playerHero,
+        winRate: hero.teamfightWinRate * 100,
+        playtime: hero.playtime,
+        kdr: hero.eliminations / Math.max(hero.deaths, 1)
+      }));
+
+    const chartConfig = {
+      type: "bar" as const,
+      data: heroPerformanceData.map(hero => ({
+        name: hero.hero,
+        value: hero.winRate
+      })),
+      series: [{ dataKey: "value", name: "Win Rate %" }],
+      xAxis: { dataKey: "name" },
+      height: 300
+    };
+
+    const columns = [
+      {
+        accessorKey: 'playerHero',
+        header: 'Hero',
+        cell: ({ row }: { row: { original: { playerHero: Hero } } }) => (
+          <div className="flex items-center gap-2">
+            <HeroIcon hero={row.original.playerHero} size={24} />
+            <span>{row.original.playerHero}</span>
           </div>
-          <div>
-            Survivability
-            <PageSection.Description className="mt-1">
-              The ability to survive and withstand enemy attacks is essential,
-              as losing a player early can be costly.
-            </PageSection.Description>
-          </div>
-        </PageSection.Title>
+        )
+      },
+      {
+        accessorKey: 'playtime',
+        header: 'Playtime',
+        cell: ({ row }: { row: { original: { playtime: number } } }) => formatDuration(row.original.playtime)
+      },
+      {
+        accessorKey: 'eliminations',
+        header: 'Eliminations'
+      },
+      {
+        accessorKey: 'deaths',
+        header: 'Deaths'
+      },
+      {
+        accessorKey: 'teamfightWinRate',
+        header: 'Win Rate',
+        cell: ({ row }: { row: { original: { teamfightWinRate: number } } }) => `${(row.original.teamfightWinRate * 100).toFixed(1)}%`
+      }
+    ];
 
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold text-base-content mb-3">
-              Primary Metrics
-            </h3>
-            <PageSection.Content layout="flex">
-              {[
-                "deathsPer10Minutes",
-                "firstDeathRate",
-                "teamfightWinRateWithFirstDeath",
-              ].map((metricKey) => {
-                const key = metricKey as PlayerStatsNumericalKeys;
-                const value = (playerStats as PlayerStatsNumerical)[key];
-                if (value === undefined) return null;
-
-                const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-                const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-                  key
-                ];
-                const severity =
-                  averageValue !== undefined
-                    ? calculateSeverity(value, averageValue, key)
-                    : "neutral";
-
-                return (
-                  <CardStat
-                    key={key}
-                    label={METRIC_DISPLAY_NAME[key]}
-                    numericValue={value}
-                    averageValue={averageValue}
-                    metricKey={key}
-                    rank={rank}
-                    totalCount={totalPlayerCount}
-                    severity={severity}
-                    size="large"
-                  />
-                );
-              })}
-            </PageSection.Content>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-base-content mb-3">
-              Secondary Metrics
-            </h3>
-            <PageSection.Content layout="flex" className="gap-3">
-              {[
-                "damageTakenPer10Minutes",
-                "averageLifeDuration",
-                "deathsWithUltAvailable",
-                "selfHealingPer10Minutes",
-              ].map((metricKey) => {
-                const key = metricKey as PlayerStatsNumericalKeys;
-                const value = (playerStats as PlayerStatsNumerical)[key];
-                if (value === undefined) return null;
-
-                const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-                const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-                  key
-                ];
-                const severity =
-                  averageValue !== undefined
-                    ? calculateSeverity(value, averageValue, key)
-                    : "neutral";
-
-                return (
-                  <CardStat
-                    key={key}
-                    label={METRIC_DISPLAY_NAME[key]}
-                    numericValue={value}
-                    averageValue={averageValue}
-                    metricKey={key}
-                    rank={rank}
-                    totalCount={totalPlayerCount}
-                    severity={severity}
-                    size="small"
-                  />
-                );
-              })}
-            </PageSection.Content>
-          </div>
-        </div>
+    return (
+      <PageSection variant="card">
+        <PageSection.Title as="h2">Hero Performance</PageSection.Title>
+        <PageSection.Description>Performance breakdown by hero</PageSection.Description>
+        <PageSection.Content layout="stack">
+          <ChartWrapper
+            title="Hero Win Rates"
+            config={chartConfig}
+          />
+          <DataTable
+            columns={columns}
+            data={heroStats.filter(hero => hero.playtime > 0)}
+            rowKey={(row) => `${row.playerHero}-${row.playerName}`}
+            defaultSort="playtime"
+          />
+        </PageSection.Content>
       </PageSection>
+    );
+  };
 
-      {/* Utility Section */}
-      <PageSection variant="card" className="w-fit">
-        <PageSection.Title>
-          <div className="text-primary">
-            <TrendingUp className="w-6 h-6" />
-          </div>
-          <div>
-            Utility
-            <PageSection.Description className="mt-1">
-              Support and space creation are essential to enabling a team to
-              win.
-            </PageSection.Description>
-          </div>
-        </PageSection.Title>
-
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold text-base-content mb-3">
-              Primary Metrics
-            </h3>
-            <PageSection.Content layout="flex">
-              {[
-                "healingDealtPer10Minutes",
-                "totalAssistsPer10Minutes",
-                "damageBlockedPer10Minutes",
-              ].map((metricKey) => {
-                const key = metricKey as PlayerStatsNumericalKeys;
-                const value = (playerStats as PlayerStatsNumerical)[key];
-                if (value === undefined) return null;
-
-                const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-                const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-                  key
-                ];
-                const severity =
-                  averageValue !== undefined
-                    ? calculateSeverity(value, averageValue, key)
-                    : "neutral";
-
-                return (
-                  <CardStat
-                    key={key}
-                    label={METRIC_DISPLAY_NAME[key]}
-                    numericValue={value}
-                    averageValue={averageValue}
-                    metricKey={key}
-                    rank={rank}
-                    totalCount={totalPlayerCount}
-                    severity={severity}
-                    size="large"
-                  />
-                );
-              })}
-            </PageSection.Content>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-base-content mb-3">
-              Secondary Metrics
-            </h3>
-            <PageSection.Content layout="flex" className="gap-3">
-              {[
-                "offensiveAssistsPer10Minutes",
-                "defensiveAssistsPer10Minutes",
-                "ultimatesUsedPer10Minutes",
-                "teamfightWinRate",
-              ].map((metricKey) => {
-                const key = metricKey as PlayerStatsNumericalKeys;
-                const value = (playerStats as PlayerStatsNumerical)[key];
-                if (value === undefined) return null;
-
-                const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-                const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-                  key
-                ];
-                const severity =
-                  averageValue !== undefined
-                    ? calculateSeverity(value, averageValue, key)
-                    : "neutral";
-
-                return (
-                  <CardStat
-                    key={key}
-                    label={METRIC_DISPLAY_NAME[key]}
-                    numericValue={value}
-                    averageValue={averageValue}
-                    metricKey={key}
-                    rank={rank}
-                    totalCount={totalPlayerCount}
-                    severity={severity}
-                    size="small"
-                  />
-                );
-              })}
-            </PageSection.Content>
-          </div>
-        </div>
+  const RecentActivity = ({ scrims }: { scrims: ScrimRelationships[] }) => {
+    return (
+      <PageSection variant="card">
+        <PageSection.Title as="h2">Recent Activity</PageSection.Title>
+        <PageSection.Description>Latest scrims participated in</PageSection.Description>
+        <PageSection.Content layout="stack">
+          {scrims.map((scrim) => (
+            <ScrimCard key={scrim.scrim} scrimId={scrim.scrim} />
+          ))}
+        </PageSection.Content>
       </PageSection>
+    );
+  };
 
-      {/* Efficiency Section */}
-      <PageSection variant="card" className="w-fit">
-        <PageSection.Title>
-          <div className="text-primary">
-            <Zap className="w-6 h-6" />
-          </div>
-          <div>
-            Efficiency
-            <PageSection.Description className="mt-1">
-              Being able to take advantage of opportunities and make the most of
-              your resources is crucial.
-            </PageSection.Description>
-          </div>
-        </PageSection.Title>
-
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold text-base-content mb-3">
-              Primary Metrics
-            </h3>
-            <PageSection.Content layout="flex">
-              {[
-                "weaponAccuracy",
-                "killsPerUltimate",
-                "damageDonePerHealingReceived",
-                "damagePerKill",
-              ].map((metricKey) => {
-                const key = metricKey as PlayerStatsNumericalKeys;
-                const value = (playerStats as PlayerStatsNumerical)[key];
-                if (value === undefined) return null;
-
-                const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-                const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-                  key
-                ];
-                const severity =
-                  averageValue !== undefined
-                    ? calculateSeverity(value, averageValue, key)
-                    : "neutral";
-
-                return (
-                  <CardStat
-                    key={key}
-                    label={METRIC_DISPLAY_NAME[key]}
-                    numericValue={value}
-                    averageValue={averageValue}
-                    metricKey={key}
-                    rank={rank}
-                    totalCount={totalPlayerCount}
-                    severity={severity}
-                    size="large"
-                  />
-                );
-              })}
-            </PageSection.Content>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-base-content mb-3">
-              Secondary Metrics
-            </h3>
-            <PageSection.Content layout="flex" className="gap-3">
-              {[
-                "criticalHitRate",
-                "scopedWeaponAccuracy",
-                "criticalHitsPer10Minutes",
-                "barrierDamageDealtPer10Minutes",
-                "teamfightWinRateWithUlt",
-              ].map((metricKey) => {
-                const key = metricKey as PlayerStatsNumericalKeys;
-                const value = (playerStats as PlayerStatsNumerical)[key];
-                if (value === undefined) return null;
-
-                const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-                const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-                  key
-                ];
-                const severity =
-                  averageValue !== undefined
-                    ? calculateSeverity(value, averageValue, key)
-                    : "neutral";
-
-                return (
-                  <CardStat
-                    key={key}
-                    label={METRIC_DISPLAY_NAME[key]}
-                    numericValue={value}
-                    averageValue={averageValue}
-                    metricKey={key}
-                    rank={rank}
-                    totalCount={totalPlayerCount}
-                    severity={severity}
-                    size="small"
-                  />
-                );
-              })}
-            </PageSection.Content>
-          </div>
-        </div>
-      </PageSection>
-
-      {/* Tank Section */}
-      <PageSection variant="card" className="w-fit">
-        <PageSection.Title>
-          <div className="text-primary">
-            <Target className="w-6 h-6" />
-          </div>
-          <div>
-            Tank
-            <PageSection.Description className="mt-1">
-              Tanks excel by creating space and staying alive. High damage
-              blocked and objective kills reflect space held and getting the
-              team to the objective. Avoiding dying, especially early, is
-              crucial to tank success.
-            </PageSection.Description>
-          </div>
-        </PageSection.Title>
-
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold text-base-content mb-3">
-              Primary Metrics
-            </h3>
-            <PageSection.Content layout="flex">
-              {[
-                "damageBlockedPer10Minutes",
-                "objectiveKillsPer10Minutes",
-                "firstDeathRate",
-              ].map((metricKey) => {
-                const key = metricKey as PlayerStatsNumericalKeys;
-                const value = (playerStats as PlayerStatsNumerical)[key];
-                if (value === undefined) return null;
-
-                const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-                const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-                  key
-                ];
-                const severity =
-                  averageValue !== undefined
-                    ? calculateSeverity(value, averageValue, key)
-                    : "neutral";
-
-                return (
-                  <CardStat
-                    key={key}
-                    label={METRIC_DISPLAY_NAME[key]}
-                    numericValue={value}
-                    averageValue={averageValue}
-                    metricKey={key}
-                    rank={rank}
-                    totalCount={totalPlayerCount}
-                    severity={severity}
-                    size="large"
-                  />
-                );
-              })}
-            </PageSection.Content>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-base-content mb-3">
-              Secondary Metrics
-            </h3>
-            <PageSection.Content layout="flex" className="gap-3">
-              {[
-                "killsPerUltimate",
-                "deathsPer10Minutes",
-                "damageTakenPer10Minutes",
-                "damageDonePerHealingReceived",
-              ].map((metricKey) => {
-                const key = metricKey as PlayerStatsNumericalKeys;
-                const value = (playerStats as PlayerStatsNumerical)[key];
-                if (value === undefined) return null;
-
-                const rank = (playerStatRanks as PlayerStatsNumerical)?.[key];
-                const averageValue = (playerAverageStats as PlayerStatsNumerical)?.[
-                  key
-                ];
-                const severity =
-                  averageValue !== undefined
-                    ? calculateSeverity(value, averageValue, key)
-                    : "neutral";
-
-                return (
-                  <CardStat
-                    key={key}
-                    label={METRIC_DISPLAY_NAME[key]}
-                    numericValue={value}
-                    averageValue={averageValue}
-                    metricKey={key}
-                    rank={rank}
-                    totalCount={totalPlayerCount}
-                    severity={severity}
-                    size="small"
-                  />
-                );
-              })}
-            </PageSection.Content>
-          </div>
-        </div>
-      </PageSection>
+  return (
+    <ScrimsightPage>
+      <PlayerPageHeader playerName={playerName} />
+      <PlayerOverview playerData={playerRelationship} />
+      {playerStats && playerAverageStats && playerStatRanks && (
+        <PerformanceSummary 
+          stats={playerStats} 
+          averageStats={playerAverageStats} 
+          ranks={playerStatRanks}
+          totalCount={totalPlayerCount}
+        />
+      )}
+      {playerStats && playerAverageStats && (
+        <RoleAnalysis 
+          stats={playerStats} 
+          averageStats={playerAverageStats}
+          playerRoles={playerRelationship.roles}
+        />
+      )}
+      <HeroBreakdown heroStats={playerStatBreakdown.byPlayerAndHero.filter(h => h.playerName === playerName)} />
+      <RecentActivity scrims={playerRecentScrims} />
     </ScrimsightPage>
   );
 };

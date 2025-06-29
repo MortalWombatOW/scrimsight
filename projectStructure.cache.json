@@ -1,5 +1,77 @@
 [
   {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ValueDelta.tsx",
+    "errorMessage": "🔥 File 'ValueDelta.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ValueDelta.test.tsx\nError location = ./src/components/ValueDelta.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/UploadModal.tsx",
+    "errorMessage": "🔥 File 'UploadModal.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/UploadModal.test.tsx\nError location = ./src/components/UploadModal.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TimelineBar.tsx",
+    "errorMessage": "🔥 File 'TimelineBar.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TimelineBar.test.tsx\nError location = ./src/components/TimelineBar.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamfightCard.tsx",
+    "errorMessage": "🔥 File 'TeamfightCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamfightCard.test.tsx\nError location = ./src/components/TeamfightCard.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamHeader.tsx",
+    "errorMessage": "🔥 File 'TeamHeader.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamHeader.test.tsx\nError location = ./src/components/TeamHeader.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamColorDot.tsx",
+    "errorMessage": "🔥 File 'TeamColorDot.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamColorDot.test.tsx\nError location = ./src/components/TeamColorDot.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/StatDistributionAndTop.tsx",
+    "errorMessage": "🔥 File 'StatDistributionAndTop.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/StatDistributionAndTop.test.tsx\nError location = ./src/components/StatDistributionAndTop.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScrimsightPage.tsx",
+    "errorMessage": "🔥 File 'ScrimsightPage.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScrimsightPage.test.tsx\nError location = ./src/components/ScrimsightPage.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScrimHeader.tsx",
+    "errorMessage": "🔥 File 'ScrimHeader.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScrimHeader.test.tsx\nError location = ./src/components/ScrimHeader.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScrimCard.tsx",
+    "errorMessage": "🔥 File 'ScrimCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScrimCard.test.tsx\nError location = ./src/components/ScrimCard.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ScatterChart.tsx",
+    "errorMessage": "🔥 File 'ScatterChart.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/ScatterChart.test.tsx\nError location = ./src/components/ScatterChart.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/SampleData.tsx",
+    "errorMessage": "🔥 File 'SampleData.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/SampleData.test.tsx\nError location = ./src/components/SampleData.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PrimaryButton.tsx",
+    "errorMessage": "🔥 File 'PrimaryButton.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PrimaryButton.test.tsx\nError location = ./src/components/PrimaryButton.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PlayerList.tsx",
+    "errorMessage": "🔥 File 'PlayerList.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PlayerList.test.tsx\nError location = ./src/components/PlayerList.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PageSection.tsx",
+    "errorMessage": "🔥 File 'PageSection.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PageSection.test.tsx\nError location = ./src/components/PageSection.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/PageHeader.tsx",
+    "errorMessage": "🔥 File 'PageHeader.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/PageHeader.test.tsx\nError location = ./src/components/PageHeader.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MetricPicker.tsx",
+    "errorMessage": "🔥 File 'MetricPicker.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MetricPicker.test.tsx\nError location = ./src/components/MetricPicker.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/MatchList.tsx",
+    "errorMessage": "🔥 File 'MatchList.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/MatchList.test.tsx\nError location = ./src/components/MatchList.tsx\n\n"
+  },
+  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/lib/sampledata/Log-2023-08-28-17-29-57.txt",
     "errorMessage": "🔥 Folder 'sampledata' is invalid. 🔥\n\nAccording to the structure, the 'lib' folder can only contain files.\nError location = ./src/lib/sampledata\n\n"
   }

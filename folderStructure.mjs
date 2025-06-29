@@ -52,10 +52,11 @@ export const folderStructureConfig = createFolderStructure({
           children: [
             {
               name: "{PascalCase}.tsx",
-              enforceExistence: ["{NodeName}.stories.tsx"]
+              enforceExistence: ["{NodeName}.stories.tsx", "{NodeName}.test.tsx"],
             },
             // Component test files
             { name: "{PascalCase}.stories.tsx", enforceExistence: ["{NodeName}.tsx"] },
+            { name: "{PascalCase}.test.tsx", enforceExistence: ["{NodeName}.tsx"] },
           ],
         },
         // Icons: src/icons folder
@@ -78,6 +79,7 @@ export const folderStructureConfig = createFolderStructure({
           children: [
             // Page implementation files
             { name: "{PascalCase}Page.tsx" },
+            { name: "{PascalCase}Page.test.tsx" },
           ],
         },
         // Hooks: src/hooks folder
