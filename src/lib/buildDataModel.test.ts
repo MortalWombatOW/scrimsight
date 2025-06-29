@@ -1092,6 +1092,140 @@ describe('buildDataModel', () => {
       });
     });
 
+    it('should calculate KDR (finalBlows/deaths) correctly', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Test KDR calculation for all breakdown types
+      dataModel.playerStatBreakdown.byPlayer.forEach(playerStat => {
+        if (playerStat.deaths > 0) {
+          const expectedKDR = playerStat.finalBlows / playerStat.deaths;
+          expect(playerStat.kdr).toBeCloseTo(expectedKDR, 5);
+        } else {
+          // When deaths = 0, KDR should be finalBlows (or Infinity/very large number)
+          expect(playerStat.kdr).toBeGreaterThanOrEqual(playerStat.finalBlows);
+        }
+        expect(Number.isFinite(playerStat.kdr)).toBe(true);
+      });
+
+      dataModel.playerStatBreakdown.byTeam.forEach(teamStat => {
+        if (teamStat.deaths > 0) {
+          const expectedKDR = teamStat.finalBlows / teamStat.deaths;
+          expect(teamStat.kdr).toBeCloseTo(expectedKDR, 5);
+        } else {
+          expect(teamStat.kdr).toBeGreaterThanOrEqual(teamStat.finalBlows);
+        }
+        expect(Number.isFinite(teamStat.kdr)).toBe(true);
+      });
+
+      // Total KDR should also be calculated correctly
+      if (dataModel.playerStatBreakdown.total.deaths > 0) {
+        const expectedKDR = dataModel.playerStatBreakdown.total.finalBlows / dataModel.playerStatBreakdown.total.deaths;
+        expect(dataModel.playerStatBreakdown.total.kdr).toBeCloseTo(expectedKDR, 5);
+      } else {
+        expect(dataModel.playerStatBreakdown.total.kdr).toBeGreaterThanOrEqual(dataModel.playerStatBreakdown.total.finalBlows);
+      }
+    });
+
+    it('should correctly calculate damage blocked and damage taken stats', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Test damage blocked and damage taken for all breakdown types
+      dataModel.playerStatBreakdown.byPlayer.forEach(playerStat => {
+        // Verify base stats exist and are valid
+        expect(typeof playerStat.damageBlocked).toBe('number');
+        expect(playerStat.damageBlocked).toBeGreaterThanOrEqual(0);
+        expect(typeof playerStat.damageTaken).toBe('number');
+        expect(playerStat.damageTaken).toBeGreaterThanOrEqual(0);
+        
+        // Verify per-10-minute stats exist and are valid
+        expect(typeof playerStat.damageBlockedPer10Minutes).toBe('number');
+        expect(playerStat.damageBlockedPer10Minutes).toBeGreaterThanOrEqual(0);
+        expect(typeof playerStat.damageTakenPer10Minutes).toBe('number');
+        expect(playerStat.damageTakenPer10Minutes).toBeGreaterThanOrEqual(0);
+        
+        // Verify they are not null or undefined
+        expect(playerStat.damageBlocked).not.toBe(null);
+        expect(playerStat.damageBlocked).not.toBe(undefined);
+        expect(playerStat.damageTaken).not.toBe(null);
+        expect(playerStat.damageTaken).not.toBe(undefined);
+        expect(playerStat.damageBlockedPer10Minutes).not.toBe(null);
+        expect(playerStat.damageBlockedPer10Minutes).not.toBe(undefined);
+        expect(playerStat.damageTakenPer10Minutes).not.toBe(null);
+        expect(playerStat.damageTakenPer10Minutes).not.toBe(undefined);
+        
+        // Verify they are finite numbers (not NaN or Infinity)
+        expect(Number.isFinite(playerStat.damageBlocked)).toBe(true);
+        expect(Number.isFinite(playerStat.damageTaken)).toBe(true);
+        expect(Number.isFinite(playerStat.damageBlockedPer10Minutes)).toBe(true);
+        expect(Number.isFinite(playerStat.damageTakenPer10Minutes)).toBe(true);
+        
+        // If playtime > 0, verify per-10-minute calculations are reasonable
+        if (playerStat.playtime > 0) {
+          const playtimeMinutes = playerStat.playtime / 60;
+          const expectedDamageBlockedPer10 = (playerStat.damageBlocked / playtimeMinutes) * 10;
+          const expectedDamageTakenPer10 = (playerStat.damageTaken / playtimeMinutes) * 10;
+          
+          expect(playerStat.damageBlockedPer10Minutes).toBeCloseTo(expectedDamageBlockedPer10, 1);
+          expect(playerStat.damageTakenPer10Minutes).toBeCloseTo(expectedDamageTakenPer10, 1);
+        }
+      });
+
+      // Test total stats
+      expect(typeof dataModel.playerStatBreakdown.total.damageBlocked).toBe('number');
+      expect(dataModel.playerStatBreakdown.total.damageBlocked).toBeGreaterThanOrEqual(0);
+      expect(typeof dataModel.playerStatBreakdown.total.damageTaken).toBe('number');
+      expect(dataModel.playerStatBreakdown.total.damageTaken).toBeGreaterThanOrEqual(0);
+      expect(Number.isFinite(dataModel.playerStatBreakdown.total.damageBlockedPer10Minutes)).toBe(true);
+      expect(Number.isFinite(dataModel.playerStatBreakdown.total.damageTakenPer10Minutes)).toBe(true);
+    });
+
+    it('should ensure damage stats are UI-safe for all players', () => {
+      const dataModel = buildDataModel(sampleFiles);
+
+      // Verify all players have properly initialized damage stats
+      dataModel.playerStatBreakdown.byPlayer.forEach(player => {
+        // These should never be null or undefined for any player
+        expect(player.damageBlocked).not.toBeNull();
+        expect(player.damageBlocked).not.toBeUndefined();
+        expect(player.damageTaken).not.toBeNull(); 
+        expect(player.damageTaken).not.toBeUndefined();
+        expect(player.damageBlockedPer10Minutes).not.toBeNull();
+        expect(player.damageBlockedPer10Minutes).not.toBeUndefined();
+        expect(player.damageTakenPer10Minutes).not.toBeNull();
+        expect(player.damageTakenPer10Minutes).not.toBeUndefined();
+
+        // They should be valid numbers (not NaN or Infinity)
+        expect(Number.isFinite(player.damageBlocked)).toBe(true);
+        expect(Number.isFinite(player.damageTaken)).toBe(true);
+        expect(Number.isFinite(player.damageBlockedPer10Minutes)).toBe(true);
+        expect(Number.isFinite(player.damageTakenPer10Minutes)).toBe(true);
+
+        // They should be non-negative (makes sense for these stats)
+        expect(player.damageBlocked).toBeGreaterThanOrEqual(0);
+        expect(player.damageTaken).toBeGreaterThanOrEqual(0);
+        expect(player.damageBlockedPer10Minutes).toBeGreaterThanOrEqual(0);
+        expect(player.damageTakenPer10Minutes).toBeGreaterThanOrEqual(0);
+      });
+
+      // Verify the total aggregation also has valid damage stats
+      expect(Number.isFinite(dataModel.playerStatBreakdown.total.damageBlocked)).toBe(true);
+      expect(Number.isFinite(dataModel.playerStatBreakdown.total.damageTaken)).toBe(true);
+      expect(Number.isFinite(dataModel.playerStatBreakdown.total.damageBlockedPer10Minutes)).toBe(true);
+      expect(Number.isFinite(dataModel.playerStatBreakdown.total.damageTakenPer10Minutes)).toBe(true);
+
+      // Test that rankings exist for these stats
+      dataModel.playerStatBreakdownRanks.byPlayer.forEach(playerRank => {
+        expect(typeof playerRank.damageBlocked).toBe('number');
+        expect(typeof playerRank.damageTaken).toBe('number');
+        expect(typeof playerRank.damageBlockedPer10Minutes).toBe('number');
+        expect(typeof playerRank.damageTakenPer10Minutes).toBe('number');
+        expect(playerRank.damageBlocked).toBeGreaterThan(0); // Rankings start at 1
+        expect(playerRank.damageTaken).toBeGreaterThan(0);
+        expect(playerRank.damageBlockedPer10Minutes).toBeGreaterThan(0);
+        expect(playerRank.damageTakenPer10Minutes).toBeGreaterThan(0);
+      });
+    });
+
     it('should calculate per10 metrics correctly after aggregation', () => {
       const dataModel = buildDataModel(sampleFiles);
 
@@ -2198,6 +2332,230 @@ describe('buildDataModel', () => {
         // Team should always be specified
         expect(composition.team.length).toBeGreaterThan(0);
       });
+    });
+  });
+
+  describe('Derived Stats Categorization', () => {
+    it('should have playerStatsDerivedMeasuresKeys containing summable derived stats', () => {
+      // This test will fail until we implement the new categorization
+      const expectedMeasures = [
+        'ultsUsed',
+        'ultKills', 
+        'teamfightsParticipated',
+        'teamfightsWithFirstKill',
+        'teamfightsWithFirstDeath',
+        'teamfightsWon',
+        'teamfightsWonWithUlt',
+        'teamfightsWonWithoutUlt',
+        'teamfightsWonWithFirstKill',
+        'teamfightsWonWithFirstDeath',
+        'deathsWithUltAvailable',
+        'tankKills',
+        'damageKills',
+        'supportKills',
+        'totalAssists',
+      ];
+
+      expect(ScrimsightDataModel.playerStatsDerivedMeasuresKeys).toBeDefined();
+      expect(ScrimsightDataModel.playerStatsDerivedMeasuresKeys).toEqual(expectedMeasures);
+    });
+
+    it('should have playerStatsDerivedRatiosKeys containing non-summable derived stats', () => {
+      // This test will fail until we implement the new categorization
+      const expectedRatios = [
+        'eliminationsPer10Minutes',
+        'finalBlowsPer10Minutes',
+        'deathsPer10Minutes',
+        'allDamageDealtPer10Minutes',
+        'barrierDamageDealtPer10Minutes',
+        'heroDamageDealtPer10Minutes',
+        'healingDealtPer10Minutes',
+        'healingReceivedPer10Minutes',
+        'selfHealingPer10Minutes',
+        'damageTakenPer10Minutes',
+        'damageBlockedPer10Minutes',
+        'defensiveAssistsPer10Minutes',
+        'offensiveAssistsPer10Minutes',
+        'ultimatesEarnedPer10Minutes',
+        'ultimatesUsedPer10Minutes',
+        'multikillsPer10Minutes',
+        'soloKillsPer10Minutes',
+        'objectiveKillsPer10Minutes',
+        'environmentalKillsPer10Minutes',
+        'environmentalDeathsPer10Minutes',
+        'criticalHitsPer10Minutes',
+        'shotsFiredPer10Minutes',
+        'shotsHitPer10Minutes',
+        'shotsMissedPer10Minutes',
+        'scopedShotsFiredPer10Minutes',
+        'scopedShotsHitPer10Minutes',
+        'weaponAccuracy',
+        'scopedWeaponAccuracy',
+        'criticalHitRate',
+        'killsPerUltimate',
+        'firstKillRate',
+        'firstDeathRate',
+        'teamfightWinRate',
+        'teamfightWinRateWithUlt',
+        'teamfightWinRateWithoutUlt',
+        'teamfightWinRateWithFirstKill',
+        'teamfightWinRateWithFirstDeath',
+        'ultimateChargeTime',
+        'ultimateHoldTime',
+        'ultimateUseTime',
+        'tankFocusRate',
+        'damageFocusRate',
+        'supportFocusRate',
+        'averageLifeDuration',
+        'totalAssistsPer10Minutes',
+        'damagePerKill',
+        'damageDonePerHealingReceived',
+        'kdr',
+      ];
+
+      expect(ScrimsightDataModel.playerStatsDerivedRatiosKeys).toBeDefined();
+      expect(ScrimsightDataModel.playerStatsDerivedRatiosKeys).toEqual(expectedRatios);
+    });
+
+    it('should have measures and ratios combined equal to current derived numerical keys', () => {
+      // This test ensures we don't lose any existing stats during categorization
+      const combinedKeys = [
+        ...ScrimsightDataModel.playerStatsDerivedMeasuresKeys,
+        ...ScrimsightDataModel.playerStatsDerivedRatiosKeys,
+      ];
+
+      expect(combinedKeys.sort()).toEqual(
+        ScrimsightDataModel.playerStatsDerivedNumericalKeys.slice().sort()
+      );
+    });
+
+    it('should have corresponding TypeScript types for new categorizations', () => {
+      // Test that the new types are properly defined
+      const measureKey: ScrimsightDataModel.PlayerStatsDerivedMeasuresKeys = 'ultsUsed';
+      const ratioKey: ScrimsightDataModel.PlayerStatsDerivedRatiosKeys = 'eliminationsPer10Minutes';
+      
+      expect(typeof measureKey).toBe('string');
+      expect(typeof ratioKey).toBe('string');
+    });
+
+    it('should have updated PlayerStatsBase type to include derived measures', () => {
+      // This test will fail until we update PlayerStatsBase
+      const mockBaseStats: ScrimsightDataModel.PlayerStatsBase = {
+        // Categorization fields
+        matchId: 'match1',
+        roundNumber: '1',
+        playerTeam: 'Team1',
+        playerName: 'Player1',
+        playerHero: 'Ana',
+        playerRole: 'support',
+        
+        // Base numerical stats
+        playtime: 600,
+        eliminations: 10,
+        finalBlows: 8,
+        deaths: 3,
+        allDamageDealt: 5000,
+        barrierDamageDealt: 1000,
+        heroDamageDealt: 4000,
+        healingDealt: 8000,
+        healingReceived: 2000,
+        selfHealing: 500,
+        damageTaken: 3000,
+        damageBlocked: 0,
+        defensiveAssists: 5,
+        offensiveAssists: 7,
+        ultimatesEarned: 3,
+        ultimatesUsed: 2,
+        multikills: 1,
+        soloKills: 2,
+        objectiveKills: 4,
+        environmentalKills: 0,
+        environmentalDeaths: 0,
+        criticalHits: 20,
+        shotsFired: 100,
+        shotsHit: 75,
+        shotsMissed: 25,
+        scopedShotsFired: 50,
+        scopedShotsHit: 40,
+        
+        // Derived measures (should be included in PlayerStatsBase)
+        ultsUsed: 2,
+        ultKills: 3,
+        teamfightsParticipated: 8,
+        teamfightsWithFirstKill: 2,
+        teamfightsWithFirstDeath: 1,
+        teamfightsWon: 5,
+        teamfightsWonWithUlt: 2,
+        teamfightsWonWithoutUlt: 3,
+        teamfightsWonWithFirstKill: 2,
+        teamfightsWonWithFirstDeath: 1,
+        deathsWithUltAvailable: 1,
+        tankKills: 2,
+        damageKills: 5,
+        supportKills: 3,
+        totalAssists: 12,
+      };
+
+      // This should compile without errors once PlayerStatsBase is updated
+      expect(typeof mockBaseStats.ultsUsed).toBe('number');
+      expect(typeof mockBaseStats.teamfightsWon).toBe('number');
+      expect(typeof mockBaseStats.totalAssists).toBe('number');
+    });
+
+    it('should have updated PlayerStatsAggregatedBase type to include derived measures', () => {
+      // This test will fail until we update PlayerStatsAggregatedBase
+      const mockAggregatedStats: ScrimsightDataModel.PlayerStatsAggregatedBase = {
+        // Base numerical stats
+        playtime: 1200,
+        eliminations: 20,
+        finalBlows: 16,
+        deaths: 6,
+        allDamageDealt: 10000,
+        barrierDamageDealt: 2000,
+        heroDamageDealt: 8000,
+        healingDealt: 16000,
+        healingReceived: 4000,
+        selfHealing: 1000,
+        damageTaken: 6000,
+        damageBlocked: 0,
+        defensiveAssists: 10,
+        offensiveAssists: 14,
+        ultimatesEarned: 6,
+        ultimatesUsed: 4,
+        multikills: 2,
+        soloKills: 4,
+        objectiveKills: 8,
+        environmentalKills: 0,
+        environmentalDeaths: 0,
+        criticalHits: 40,
+        shotsFired: 200,
+        shotsHit: 150,
+        shotsMissed: 50,
+        scopedShotsFired: 100,
+        scopedShotsHit: 80,
+        
+        // Derived measures (should be included in PlayerStatsAggregatedBase)
+        ultsUsed: 4,
+        ultKills: 6,
+        teamfightsParticipated: 16,
+        teamfightsWithFirstKill: 4,
+        teamfightsWithFirstDeath: 2,
+        teamfightsWon: 10,
+        teamfightsWonWithUlt: 4,
+        teamfightsWonWithoutUlt: 6,
+        teamfightsWonWithFirstKill: 4,
+        teamfightsWonWithFirstDeath: 2,
+        deathsWithUltAvailable: 2,
+        tankKills: 4,
+        damageKills: 10,
+        supportKills: 6,
+        totalAssists: 24,
+      };
+
+      // This should compile without errors once PlayerStatsAggregatedBase is updated
+      expect(typeof mockAggregatedStats.ultsUsed).toBe('number');
+      expect(typeof mockAggregatedStats.teamfightsWon).toBe('number');
+      expect(typeof mockAggregatedStats.totalAssists).toBe('number');
     });
   });
 });

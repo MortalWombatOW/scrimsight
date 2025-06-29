@@ -1440,6 +1440,9 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
     // Damage done per healing received
     const damageDonePerHealingReceived = aggregatedBase.healingReceived > 0 ? aggregatedBase.allDamageDealt / aggregatedBase.healingReceived : 0;
 
+    // Kill/Death Ratio (KDR) = finalBlows / deaths
+    const kdr = aggregatedBase.deaths > 0 ? aggregatedBase.finalBlows / aggregatedBase.deaths : aggregatedBase.finalBlows;
+
     return {
       // Base stats
       playtime: aggregatedBase.playtime,
@@ -1531,7 +1534,8 @@ const buildPlayerStatBreakdown = (dataModel: ScrimsightDataModel.ScrimsightDataM
       totalAssists,
       totalAssistsPer10Minutes,
       damagePerKill,
-      damageDonePerHealingReceived
+      damageDonePerHealingReceived,
+      kdr
     };
   };
 

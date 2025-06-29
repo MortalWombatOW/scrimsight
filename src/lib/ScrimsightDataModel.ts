@@ -61,8 +61,28 @@ export const playerStatsBaseNumericalKeys = [
 ] as const;
 export type PlayerStatsBaseNumericalKeys = typeof playerStatsBaseNumericalKeys[number];
 
-// Derived stats computed from aggregated base stats (NOT summable)
-export const playerStatsDerivedNumericalKeys = [ 
+// Derived measures (summable derived stats computed at granular level)
+export const playerStatsDerivedMeasuresKeys = [
+  'ultsUsed', // The number of ultimates used by this player
+  'ultKills', // The number of kills by this player while their ultimate was active (between ult used/start and ult end)
+  'teamfightsParticipated', // The number of teamfights this player participated in
+  'teamfightsWithFirstKill', // The number of teamfights this player participated in and the player made the first kill during the fight
+  'teamfightsWithFirstDeath', // The number of teamfights this player participated in and the player/team had the first death during the fight
+  'teamfightsWon', // The number of teamfights this player participated in and their team won
+  'teamfightsWonWithUlt', // The number of teamfights this player participated in and their team won and the player used their ultimate during the fight
+  'teamfightsWonWithoutUlt', // = teamfightsWon - teamfightsWonWithUlt
+  'teamfightsWonWithFirstKill', // The number of teamfights this player/team participated in and their team won and the player made the first kill during the fight
+  'teamfightsWonWithFirstDeath', // The number of teamfights this player/team participated in and their team won and the player/team had the first death during the fight
+  'deathsWithUltAvailable', // The number of deaths while the player had their ultimate available
+  'tankKills', // The number of tank kills this player made
+  'damageKills', // The number of damage kills this player made
+  'supportKills', // The number of support kills this player made
+  'totalAssists', // The total number of assists this player made, both offensive and defensive
+] as const;
+export type PlayerStatsDerivedMeasuresKeys = typeof playerStatsDerivedMeasuresKeys[number];
+
+// Derived ratios (non-summable derived stats computed from aggregated data)
+export const playerStatsDerivedRatiosKeys = [
   'eliminationsPer10Minutes', 'finalBlowsPer10Minutes', 'deathsPer10Minutes', 'allDamageDealtPer10Minutes', 
   'barrierDamageDealtPer10Minutes', 'heroDamageDealtPer10Minutes', 'healingDealtPer10Minutes', 
   'healingReceivedPer10Minutes', 'selfHealingPer10Minutes', 'damageTakenPer10Minutes', 
@@ -72,43 +92,36 @@ export const playerStatsDerivedNumericalKeys = [
   'environmentalDeathsPer10Minutes', 'criticalHitsPer10Minutes', 'shotsFiredPer10Minutes', 
   'shotsHitPer10Minutes', 'shotsMissedPer10Minutes', 'scopedShotsFiredPer10Minutes', 
   'scopedShotsHitPer10Minutes', 'weaponAccuracy', 'scopedWeaponAccuracy', 'criticalHitRate',
-  'ultsUsed', // The number of ultimates used by this player
-  'ultKills', // The number of kills by this player while their ultimate was active (between ult used/start and ult end)
   'killsPerUltimate', // = ultKills / ultsUsed
-  'teamfightsParticipated', // The number of teamfights this player participated in
-  'teamfightsWithFirstKill', // The number of teamfights this player participated in and the player made the first kill during the fight
-  'teamfightsWithFirstDeath', // The number of teamfights this player participated in and the player/team had the first death during the fight
   'firstKillRate', // = teamfightsWithFirstKill / teamfightsParticipated
   'firstDeathRate', // = teamfightsWithFirstDeath / teamfightsParticipated
-  'teamfightsWon', // The number of teamfights this player participated in and their team won
-  'teamfightsWonWithUlt', // The number of teamfights this player participated in and their team won and the player used their ultimate during the fight
-  'teamfightsWonWithoutUlt', // = teamfightsWon - teamfightsWonWithUlt
   'teamfightWinRate', // = teamfightsWon / teamfightsParticipated
   'teamfightWinRateWithUlt', // = teamfightsWonWithUlt / teamfightsParticipated
   'teamfightWinRateWithoutUlt', // = teamfightsWonWithoutUlt / teamfightsParticipated
-  'teamfightsWonWithFirstKill', // The number of teamfights this player/team participated in and their team won and the player made the first kill during the fight
-  'teamfightsWonWithFirstDeath', // The number of teamfights this player/team participated in and their team won and the player/team had the first death during the fight
   'teamfightWinRateWithFirstKill', // = teamfightsWonWithFirstKill / teamfightsParticipated
   'teamfightWinRateWithFirstDeath', // = teamfightsWonWithFirstDeath / teamfightsParticipated
   'ultimateChargeTime', // The time in seconds it took for this player to charge their ultimate
   'ultimateHoldTime', // The time in seconds it took for this player to use their ultimate after it was charged
   'ultimateUseTime', // The time in seconds it this player had their ultimate active
-  'deathsWithUltAvailable', // The number of deaths while the player had their ultimate available
-  'tankKills', // The number of tank kills this player made
-  'damageKills', // The number of damage kills this player made
-  'supportKills', // The number of support kills this player made
   'tankFocusRate', // = tankKills / eliminations
   'damageFocusRate', // = damageKills / eliminations
   'supportFocusRate', // = supportKills / eliminations
   'averageLifeDuration', // The average life duration of this player
-  'totalAssists', // The total number of assists this player made, both offensive and defensive
   'totalAssistsPer10Minutes', // The total number of assists this player made, both offensive and defensive, per 10 minutes
   'damagePerKill', // The average damage per kill this player made
   'damageDonePerHealingReceived', // The average damage done per healing received this player received
+  'kdr', // Kill/Death Ratio = finalBlows / deaths
+] as const;
+export type PlayerStatsDerivedRatiosKeys = typeof playerStatsDerivedRatiosKeys[number];
+
+// Combined derived stats (measures + ratios)
+export const playerStatsDerivedNumericalKeys = [
+  ...playerStatsDerivedMeasuresKeys,
+  ...playerStatsDerivedRatiosKeys,
 ] as const;
 export type PlayerStatsDerivedNumericalKeys = typeof playerStatsDerivedNumericalKeys[number];
 
-// Stage 1: Raw base stats with categorization info
+// Stage 1: Raw base stats with categorization info + derived measures
 export type PlayerStatsBase = {
   // Categorization fields, declared inline because of specific types
   matchId: MatchID;
@@ -117,13 +130,13 @@ export type PlayerStatsBase = {
   playerName: PlayerName;
   playerHero: Hero;
   playerRole: Role;
-} & Record<PlayerStatsBaseNumericalKeys, number>;
+} & Record<PlayerStatsBaseNumericalKeys | PlayerStatsDerivedMeasuresKeys, number>;
 
-// Stage 2: Aggregated base stats (base numerical fields only)
-export type PlayerStatsAggregatedBase = Record<PlayerStatsBaseNumericalKeys, number>;
+// Stage 2: Aggregated base stats + derived measures
+export type PlayerStatsAggregatedBase = Record<PlayerStatsBaseNumericalKeys | PlayerStatsDerivedMeasuresKeys, number>;
 
-// Stage 3: Final stats with derived calculations
-export type PlayerStatsFinal = PlayerStatsAggregatedBase & Record<PlayerStatsDerivedNumericalKeys, number>;
+// Stage 3: Final stats with derived ratios
+export type PlayerStatsFinal = PlayerStatsAggregatedBase & Record<PlayerStatsDerivedRatiosKeys, number>;
 
 // Helper interface for numerical stats only (used in intersection types)
 export type PlayerStatsNumerical = Record<PlayerStatsBaseNumericalKeys | PlayerStatsDerivedNumericalKeys, number>;
@@ -237,7 +250,8 @@ export const PLAYER_STAT_RANKING_DIRECTIONS: Record<PlayerStatsNumericalKeys, 'h
   totalAssists: 'higher',
   totalAssistsPer10Minutes: 'higher',
   damagePerKill: 'higher', // More damage per kill = more efficient
-  damageDonePerHealingReceived: 'higher' // More damage output per healing received = efficient
+  damageDonePerHealingReceived: 'higher', // More damage output per healing received = efficient
+  kdr: 'higher' // Higher KDR = better
 } as const;
 
 // Display names for all player stat metrics
@@ -344,6 +358,7 @@ export const METRIC_DISPLAY_NAME: Record<PlayerStatsNumericalKeys, string> = {
   totalAssistsPer10Minutes: "Assists/10min",
   damagePerKill: "Damage/Kill",
   damageDonePerHealingReceived: "Damage/Healing Received",
+  kdr: "KDR",
 } as const;
 
 
