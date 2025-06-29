@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
-import { Trophy, Calendar, Search, Users, Target } from "lucide-react";
+import { Trophy, Calendar, Search, Users, Target, Swords } from "lucide-react";
 
 import CardStat from "../components/CardStat";
 import ScrimCard from "../components/ScrimCard";
@@ -11,6 +11,8 @@ import TeamColorDot from "../components/TeamColorDot";
 import EmptyState from "../components/EmptyState";
 import { useScrimsightData } from "../hooks/useScrimsightData";
 import BreadCrumbs from "../components/BreadCrumbs";
+import PageHeader from "../components/PageHeader";
+import ScrimsightPage from "../components/ScrimsightPage";
 
 interface ScrimTableRow {
   scrimId: string;
@@ -218,134 +220,140 @@ const ScrimsPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
+    <ScrimsightPage>
+      <PageHeader>
         <BreadCrumbs items={[{ label: "Scrims", path: "/scrims" }]} />
-      </div>
+        <PageHeader.Icon>
+          <Swords size={32} />
+        </PageHeader.Icon>
+        <PageHeader.Title>Scrims</PageHeader.Title>
+      </PageHeader>
+      <div className="container mx-auto px-4 py-8">
 
-      {/* Statistics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 bg-base-100 p-6 rounded-lg">
-        <CardStat
-          label="Total Scrims"
-          value={scrimStats.totalScrims}
-          icon={<Trophy className="w-6 h-6" />}
-          severity="neutral"
-        />
-        <CardStat
-          label="Total Matches"
-          value={scrimStats.totalMatches}
-          icon={<Target className="w-6 h-6" />}
-          severity="neutral"
-        />
-        <CardStat
-          label="Teams Involved"
-          value={scrimStats.totalTeams}
-          icon={<Users className="w-6 h-6" />}
-          severity="neutral"
-        />
-        <CardStat
-          label="Avg Matches/Scrim"
-          value={scrimStats.avgMatchesPerScrim}
-          icon={<Calendar className="w-6 h-6" />}
-          severity="neutral"
-        />
-      </div>
-
-      {/* Recent Scrims Section */}
-      {scrimStats.recentScrims.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-base-content mb-6">
-            Recent Scrims
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {scrimStats.recentScrims.map((scrim) => (
-              <ScrimCard key={scrim.scrim} scrimId={scrim.scrim} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Team Performance Statistics */}
-      {teamStats.eliminationsRows.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-base-content mb-6">
-            Team Performance Across Scrims
-          </h2>
-          <div className="flex flex-row gap-6 flex-wrap">
-            <StatDistributionAndTop
-              statName="Avg Eliminations per Scrim"
-              statDescription="Average eliminations per team per scrim"
-              categoryKeys={["playerTeam", "scrimId"]}
-              rows={teamStats.eliminationsRows}
-              higherIsBetter={true}
-              precision={1}
-            />
-            <StatDistributionAndTop
-              statName="Avg Hero Damage per Scrim"
-              statDescription="Average hero damage dealt per team per scrim"
-              categoryKeys={["playerTeam", "scrimId"]}
-              rows={teamStats.damageRows}
-              higherIsBetter={true}
-              precision={0}
-            />
-            <StatDistributionAndTop
-              statName="Avg Healing per Scrim"
-              statDescription="Average healing dealt per team per scrim"
-              categoryKeys={["playerTeam", "scrimId"]}
-              rows={teamStats.healingRows}
-              higherIsBetter={true}
-              precision={0}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* All Scrims Section */}
-      <div className="mb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h2 className="text-2xl font-bold text-base-content">
-            All Scrims ({scrimTableData.length})
-          </h2>
-
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/50 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Search teams or scrim ID..."
-              className="input input-bordered w-full sm:w-64 pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        {/* Statistics Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 bg-base-100 p-6 rounded-lg">
+          <CardStat
+            label="Total Scrims"
+            value={scrimStats.totalScrims}
+            icon={<Trophy className="w-6 h-6" />}
+            severity="neutral"
+          />
+          <CardStat
+            label="Total Matches"
+            value={scrimStats.totalMatches}
+            icon={<Target className="w-6 h-6" />}
+            severity="neutral"
+          />
+          <CardStat
+            label="Teams Involved"
+            value={scrimStats.totalTeams}
+            icon={<Users className="w-6 h-6" />}
+            severity="neutral"
+          />
+          <CardStat
+            label="Avg Matches/Scrim"
+            value={scrimStats.avgMatchesPerScrim}
+            icon={<Calendar className="w-6 h-6" />}
+            severity="neutral"
+          />
         </div>
 
-        {/* Scrims DataTable */}
-        {scrimTableData.length > 0 ? (
-          <div className="bg-base-100 rounded-lg overflow-hidden">
-            <DataTable
-              columns={scrimColumns}
-              data={scrimTableData}
-              rowKey={(row) => row.scrimId}
-              defaultSort="date"
-              onRowClick={handleRowClick}
-            />
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <EmptyState
-              icon={Search}
-              title="No Scrims Found"
-              description={
-                searchTerm
-                  ? `No scrims match your search "${searchTerm}"`
-                  : "No scrims available"
-              }
-              size="md"
-            />
+        {/* Recent Scrims Section */}
+        {scrimStats.recentScrims.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-base-content mb-6">
+              Recent Scrims
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              {scrimStats.recentScrims.map((scrim) => (
+                <ScrimCard key={scrim.scrim} scrimId={scrim.scrim} />
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Team Performance Statistics */}
+        {teamStats.eliminationsRows.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-base-content mb-6">
+              Team Performance Across Scrims
+            </h2>
+            <div className="flex flex-row gap-6 flex-wrap">
+              <StatDistributionAndTop
+                statName="Avg Eliminations per Scrim"
+                statDescription="Average eliminations per team per scrim"
+                categoryKeys={["playerTeam", "scrimId"]}
+                rows={teamStats.eliminationsRows}
+                higherIsBetter={true}
+                precision={1}
+              />
+              <StatDistributionAndTop
+                statName="Avg Hero Damage per Scrim"
+                statDescription="Average hero damage dealt per team per scrim"
+                categoryKeys={["playerTeam", "scrimId"]}
+                rows={teamStats.damageRows}
+                higherIsBetter={true}
+                precision={0}
+              />
+              <StatDistributionAndTop
+                statName="Avg Healing per Scrim"
+                statDescription="Average healing dealt per team per scrim"
+                categoryKeys={["playerTeam", "scrimId"]}
+                rows={teamStats.healingRows}
+                higherIsBetter={true}
+                precision={0}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* All Scrims Section */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h2 className="text-2xl font-bold text-base-content">
+              All Scrims ({scrimTableData.length})
+            </h2>
+
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/50 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search teams or scrim ID..."
+                className="input input-bordered w-full sm:w-64 pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Scrims DataTable */}
+          {scrimTableData.length > 0 ? (
+            <div className="bg-base-100 rounded-lg overflow-hidden">
+              <DataTable
+                columns={scrimColumns}
+                data={scrimTableData}
+                rowKey={(row) => row.scrimId}
+                defaultSort="date"
+                onRowClick={handleRowClick}
+              />
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <EmptyState
+                icon={Search}
+                title="No Scrims Found"
+                description={
+                  searchTerm
+                    ? `No scrims match your search "${searchTerm}"`
+                    : "No scrims available"
+                }
+                size="md"
+              />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </ScrimsightPage>
   );
 };
 

@@ -4,6 +4,7 @@ import ScrimsightPage from "../components/ScrimsightPage";
 import PageHeader from "../components/PageHeader";
 import PageSection from "../components/PageSection";
 import TeamList from "../components/TeamList";
+import EmptyState from "../components/EmptyState";
 import BreadCrumbs from "../components/BreadCrumbs";
 
 import { getRoute } from "../lib/route";
@@ -27,15 +28,24 @@ const TeamsPage = () => {
         <PageHeader.Title>Teams</PageHeader.Title>
       </PageHeader>
 
-      <PageSection>
-        <PageSection.Title>All Teams</PageSection.Title>
-        <PageSection.Description>
-          Browse all teams in the dataset and view their roster compositions and match history.
-        </PageSection.Description>
-        <PageSection.Content>
-          <TeamList teams={teams} />
-        </PageSection.Content>
-      </PageSection>
+      {teams.length > 0 ? (
+        <PageSection>
+          <PageSection.Title>All Teams</PageSection.Title>
+          <PageSection.Description>
+            Browse all teams in the dataset and view their roster compositions and match history.
+          </PageSection.Description>
+          <PageSection.Content>
+            <TeamList teams={teams} />
+          </PageSection.Content>
+        </PageSection>
+      ) : (
+        <EmptyState
+          icon={Users}
+          title="No teams found"
+          description="There are no teams available in the current dataset."
+          size="lg"
+        />
+      )}
     </ScrimsightPage>
   );
 };

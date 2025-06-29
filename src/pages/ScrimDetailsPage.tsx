@@ -31,7 +31,8 @@ const ScrimDetailsPage = () => {
 
   // Find the current scrim
   const currentScrim = useMemo(() => {
-    return scrims.find((scrim: ScrimRelationships) => scrim.scrim === scrimId);
+    const foundScrim = scrims.find((scrim: ScrimRelationships) => scrim.scrim === scrimId);
+    return foundScrim;
   }, [scrims, scrimId]);
 
   // Get matches for this scrim
