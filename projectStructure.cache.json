@@ -1,5 +1,17 @@
 [
   {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamCard.tsx",
+    "errorMessage": "🔥 File 'TeamCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/TeamCard.stories.tsx\nError location = ./src/components/TeamCard.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/RoleCard.tsx",
+    "errorMessage": "🔥 File 'RoleCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/RoleCard.stories.tsx\nError location = ./src/components/RoleCard.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/DataCard.tsx",
+    "errorMessage": "🔥 File 'DataCard.tsx' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/components/DataCard.stories.tsx\nError location = ./src/components/DataCard.tsx\n\n"
+  },
+  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/lib/sampledata/Log-2023-08-28-17-29-57.txt",
     "errorMessage": "🔥 Folder 'sampledata' is invalid. 🔥\n\nAccording to the structure, the 'lib' folder can only contain files.\nError location = ./src/lib/sampledata\n\n"
   }

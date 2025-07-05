@@ -1,5 +1,5 @@
 import * as Comlink from 'comlink';
-import { buildDataModel } from './buildDataModel';
+import { buildDataModel } from './dataModel';
 import type { ScrimsightDataModel } from './ScrimsightDataModel';
 
 

@@ -110,6 +110,46 @@ createIndependentModules({
         "src/lib/**/*.ts",
       ],
     },
+    // Data Model Index: src/lib/dataModel/index.ts
+    {
+      name: "datamodel-index",
+      pattern: "src/lib/dataModel/index.ts",
+      allowImportsFrom: [
+        "src/lib/dataModel/*.ts",
+        "src/lib/*.ts",
+      ],
+      allowExternalImports: true,
+    },
+    // Data Model Builders: Individual builder modules
+    {
+      name: "datamodel-builder",
+      pattern: [["src/lib/dataModel/*.ts", "!src/lib/dataModel/index.ts", "!src/lib/dataModel/*.test.ts"]],
+      allowImportsFrom: [
+        "src/lib/*.ts",
+        "src/lib/dataModel/*.ts",
+      ],
+      allowExternalImports: true,
+    },
+    // Player Stat Breakdown Index: src/lib/dataModel/playerStatBreakdown/index.ts
+    {
+      name: "playerstat-index",
+      pattern: "src/lib/dataModel/playerStatBreakdown/index.ts",
+      allowImportsFrom: [
+        "src/lib/dataModel/playerStatBreakdown/*.ts",
+        "src/lib/*.ts",
+      ],
+      allowExternalImports: true,
+    },
+    // Player Stat Breakdown Modules: Individual stat computation modules
+    {
+      name: "playerstat-module",
+      pattern: [["src/lib/dataModel/playerStatBreakdown/*.ts", "!src/lib/dataModel/playerStatBreakdown/index.ts", "!src/lib/dataModel/playerStatBreakdown/*.test.ts"]],
+      allowImportsFrom: [
+        "src/lib/*.ts",
+        "src/lib/dataModel/playerStatBreakdown/*.ts",
+      ],
+      allowExternalImports: true,
+    },
     // Hook: src/hooks/*.ts - React hooks that can use atoms and lib files
     {
       name: "hook",

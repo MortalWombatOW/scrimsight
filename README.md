@@ -83,6 +83,9 @@ Each page should be a cohesive data story, which lays out the context at the top
         *   Where can I see a summary of all our scrims? A card with a summary stat that links to the Scrims Page.
         *   How do I dive into a specific match analysis? A card showing the most recent match result that links to the Match Details Page.
         *   Where can I compare player or team performances? A card teasing a player ranking that links to the Players Page.
+    *   Visualizations
+        *   **Win-rate and recent performance trend:** A `Line Chart` is appropriate for showing change over time. The x-axis would be time (scrims) and the y-axis would be the win-rate. This is supported by the "Change over Time" section of the visual vocabulary.
+        *   **Standout performers:** A `Bar Chart` could be used to rank players by a key metric. This is supported by the "Ranking" section of the visual vocabulary.
 *   Scrims Page - the scope of the scrims page is to provide a summary of the scrims, and to help the user understand the context of each scrim and compare them to each other.
     *   Overall Scrim Performance
         *   How has our performance trended across all scrims? A line chart is ideal for showing the win-rate or another key metric evolving over time.
@@ -93,6 +96,10 @@ Each page should be a cohesive data story, which lays out the context at the top
     *   Comparative Analysis
         *   How do different scrims compare in terms of performance and stats? A sortable data table where each row represents a scrim allows for easy comparison.
         *   Which scrims were most successful and why? Highlight the top scrims in the table and allow users to click to expand and see more details.
+    *   Visualizations
+        *   **Performance trend:** A `Line Chart` is ideal for showing change over time. The x-axis would be time (scrims) and the y-axis would be the win-rate or another key metric. This is supported by the "Change over Time" section of the visual vocabulary.
+        *   **Strategic evolution:** A `Stacked Bar Chart` showing hero composition usage across scrims provides a clear view of strategic shifts. This is a form of "Part-to-whole" visualization.
+        *   **Comparative analysis:** A `Table` is a good way to show a large amount of data in a structured way, and allows for sorting and filtering. This is a form of "Magnitude" visualization.
 *   Scrim Details Page - the scope of the scrim page is to provide a detailed view of a single scrim and the matches that were played in it.
     *   Scrim Summary
         *   What was the final score and outcome of this scrim? Display this prominently at the top of the page with large, clear text.
@@ -103,6 +110,10 @@ Each page should be a cohesive data story, which lays out the context at the top
     *   Tactical Review
         *   What team compositions did we run and how effective were they? A table or visual grid showing compositions used on each map, paired with their effectiveness.
         *   What were the key takeaways and lessons learned from this scrim? A text summary, potentially with auto-generated insights highlighting statistical anomalies.
+    *   Visualizations
+        *   **Performance improvement/decline:** A `Line Chart` is ideal for showing change over time. The x-axis would be the matches within the scrim, and the y-axis would be a key team metric. This is supported by the "Change over Time" section of the visual vocabulary.
+        *   **Key players:** An `Ordered Bar Chart` can be used to rank players by a key metric. This is supported by the "Ranking" section of the visual vocabulary.
+        *   **Team compositions:** A `Stacked Bar Chart` can show the time played on each hero for each team, which is a "Part-to-whole" relationship.
 *   Matches Page - the scope of the matches page is all of the individual matches that the user has uploaded
     *   Match History & Filtering
         *   Can I see a list of all matches we've played? A comprehensive data table listing all matches.
@@ -110,6 +121,8 @@ Each page should be a cohesive data story, which lays out the context at the top
     *   Identifying Key Moments
         *   Which matches were particularly one-sided or closely contested? The table can feature a "Closeness" score or a visual bar to indicate the score difference.
         *   Where can I find specific matches to review a certain strategy or performance? The filtering controls on the match table are key to enabling this.
+    *   Visualizations
+        *   **Match history:** A `Table` is a good way to show a large amount of data in a structured way, and allows for sorting and filtering. This is a form of "Magnitude" visualization.
 *   Match Details Page - the scope of the match page is to provide a detailed view of a single match
     *   Match Outcome
         *   Who won the match and what was the final score? This should be displayed in a prominent header.
@@ -120,6 +133,10 @@ Each page should be a cohesive data story, which lays out the context at the top
     *   Individual Performance
         *   Which players had the biggest impact on the match? A leaderboard-style table ranking players by an "impact score" derived from multiple stats.
         *   Did everyone on the team perform their role effectively? A detailed scoreboard view with role-specific stats is essential.
+    *   Visualizations
+        *   **Pivotal moments:** A `Vertical Timeline` is perfect for showing key events, teamfight outcomes, and ultimate usage. This is a form of "Change over Time" visualization.
+        *   **Team performance:** A `Diverging Bar Chart` can be used to compare the two teams across a range of metrics. This is a form of "Deviation" visualization.
+        *   **Individual performance:** An `Ordered Bar Chart` can be used to rank players by an "impact score" or other metrics. This is supported by the "Ranking" section of the visual vocabulary.
 *   Players Page - the scope of the players page is help to the user understand the players in the dataset and compare them.
     *   Player Rankings & Comparison
         *   Who are our top-performing players across key metrics (K/D, damage, healing)? A sortable data table is the standard and most effective way to display this.
@@ -127,6 +144,10 @@ Each page should be a cohesive data story, which lays out the context at the top
     *   Identifying Strengths & Weaknesses
         *   Who are the most consistent players on the roster? A box plot for each player's key metrics can visualize their performance consistency and range.
         *   Which players might be underperforming and require development? The data table can be sorted to identify underperforming players, who could be visually highlighted.
+    *   Visualizations
+        *   **Player rankings:** An `Ordered Bar Chart` is the standard and most effective way to display rankings. This is supported by the "Ranking" section of the visual vocabulary.
+        *   **Player comparison:** A `Radar Chart` is a space-efficient way of showing the value of multiple variables for a single player, and allows for comparison between players. This is a form of "Magnitude" visualization.
+        *   **Consistency:** A `Box Plot` is effective for showing the distribution of a player's performance across multiple matches, and can be used to show consistency. This is a form of "Distribution" visualization.
 *   Player Details Page - the scope of the player page is to provide a detailed view of a single player
     *   Overall Performance Summary
         *   What are this player's key performance indicators (KPIs) and stats? A series of prominent stat cards to highlight their most important metrics.
@@ -137,6 +158,10 @@ Each page should be a cohesive data story, which lays out the context at the top
     *   Hero Pool & Versatility
         *   Which heroes does this player perform best on? A bar chart showing their win rate or performance score by hero.
         *   How does their performance vary across different heroes and compositions? A filterable data table showing their performance on each hero played.
+    *   Visualizations
+        *   **Performance trend:** A `Line Chart` is ideal for showing change over time. The x-axis would be time (matches) and the y-axis would be the player's key stats. This is supported by the "Change over Time" section of the visual vocabulary.
+        *   **Role-specific analysis:** A `Radar Chart` is a space-efficient way of showing the value of multiple variables for a single player, and allows for comparison against the average for their role. This is a form of "Magnitude" visualization.
+        *   **Hero pool:** An `Ordered Bar Chart` showing win rate or performance score by hero is a good way to show ranking. This is supported by the "Ranking" section of the visual vocabulary.
 *   Teams Page - the scope of the teams page is show all of the teams in the dataset and compare them.
     *   Team Comparison
         *   How do different teams' win-rates and key stats compare? A data table that allows for easy comparison of team-level statistics.
@@ -144,6 +169,9 @@ Each page should be a cohesive data story, which lays out the context at the top
     *   Competitive Analysis
         *   What are the strengths and weaknesses of competitor teams? A heatmap comparing teams across a wide range of statistical categories.
         *   How can I identify and exploit a rival team's strategic tendencies? This is derived from analyzing the composition and strategy data presented.
+    *   Visualizations
+        *   **Team comparison:** A `Table` is a good way to show a large amount of data in a structured way, and allows for sorting and filtering. This is a form of "Magnitude" visualization.
+        *   **Strengths and weaknesses:** A `Heatmap` is a good way of showing the patterns between 2 categories of data, in this case, teams and statistical categories. This is a form of "Correlation" visualization.
 *   Team Details Page - the scope of the team page is to provide a detailed view of a single team
     *   Team Performance Analysis
         *   Is this team's performance improving over time? A line chart showing the team's win rate trend across scrims.
@@ -154,6 +182,10 @@ Each page should be a cohesive data story, which lays out the context at the top
     *   Roster Analysis
         *   Who are the star players on this team? A list of the team's top players with their portraits and key stats.
         *   Which players are the most consistent or potentially exploitable? A table of the team's players with their performance consistency metrics.
+    *   Visualizations
+        *   **Performance improvement:** A `Line Chart` is ideal for showing change over time. The x-axis would be time (scrims) and the y-axis would be the team's win rate. This is supported by the "Change over Time" section of the visual vocabulary.
+        *   **Strengths and weaknesses:** A `Bar Chart` showing the team's performance percentiles for key metrics against the average is a good way to show ranking. This is supported by the "Ranking" section of the visual vocabulary.
+        *   **Preferred hero compositions:** A `Treemap` could be used to show the most-used compositions, where the size of the rectangle represents the time played. This is a "Part-to-whole" visualization.
 *   Settings Page - the scope of the settings page is to provide a way for the user to configure the app.
     *   Application Configuration
         *   How can I customize the app's appearance or behavior? Use standard form elements like toggles and dropdowns for settings.

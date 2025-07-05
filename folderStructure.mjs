@@ -44,6 +44,28 @@ export const folderStructureConfig = createFolderStructure({
             { name: "{PascalCase}.test.ts" },
             // Library: src/lib/{camelCase}.worker.ts
             { name: "{camelCase}.worker.ts" },
+            // Data Model: src/lib/dataModel folder
+            {
+              name: "dataModel",
+              children: [
+                // Data Model index
+                { name: "index.ts" },
+                // Data Model builders
+                { name: "{camelCase}.ts" },
+                { name: "{camelCase}.test.ts" },
+                // Player Stat Breakdown: src/lib/dataModel/playerStatBreakdown folder
+                {
+                  name: "playerStatBreakdown",
+                  children: [
+                    // Player stat breakdown index
+                    { name: "index.ts" },
+                    // Player stat breakdown modules
+                    { name: "{camelCase}.ts" },
+                    { name: "{camelCase}.test.ts" },
+                  ],
+                },
+              ],
+            },
           ],
         },
         // Components: src/components folder

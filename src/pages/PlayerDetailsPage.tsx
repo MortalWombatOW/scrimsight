@@ -29,10 +29,11 @@ import CardStat from "../components/CardStat";
 import EmptyState from "../components/EmptyState";
 import BreadCrumbs from "../components/BreadCrumbs";
 import ScrimsightPage from "../components/ScrimsightPage";
-import TeamColorDot from "../components/TeamColorDot";
 import ScrimCard from "../components/ScrimCard";
+import HeroCard from "../components/HeroCard";
+import RoleCard from "../components/RoleCard";
+import TeamCard from "../components/TeamCard";
 import HeroIcon from "../icons/HeroIcon";
-import RoleIcon from "../icons/RoleIcon";
 import ChartWrapper from "../components/ChartWrapper";
 import DataTable from "../components/DataTable";
 import { formatDuration } from "../lib/format";
@@ -182,7 +183,7 @@ const PlayerDetailsPage = () => {
   }) => {
     const topHeroes = playerData.heroes
       .sort((a, b) => b.playtime - a.playtime)
-      .slice(0, 3);
+      .slice(0, 5);
 
     const topRoles = playerData.roles
       .sort((a, b) => b.playtime - a.playtime)
@@ -197,10 +198,7 @@ const PlayerDetailsPage = () => {
             value={
               <div className="flex flex-wrap gap-2">
                 {playerData.teams.map((team: TeamName) => (
-                  <div key={team} className="flex items-center gap-1">
-                    <TeamColorDot teamName={team} />
-                    <span className="text-sm">{team}</span>
-                  </div>
+                  <TeamCard key={team} teamName={team} />
                 ))}
               </div>
             }
@@ -211,13 +209,11 @@ const PlayerDetailsPage = () => {
             value={
               <div className="flex flex-wrap gap-2">
                 {topHeroes.map((hero) => (
-                  <div key={hero.hero} className="flex items-center gap-1">
-                    <HeroIcon hero={hero.hero} size={16} />
-                    <span className="text-sm">{hero.hero}</span>
-                    <span className="text-xs text-gray-500">
-                      ({formatDuration(hero.playtime)})
-                    </span>
-                  </div>
+                  <HeroCard
+                    key={hero.hero}
+                    hero={hero.hero}
+                    playtime={hero.playtime}
+                  />
                 ))}
               </div>
             }
@@ -228,13 +224,7 @@ const PlayerDetailsPage = () => {
             value={
               <div className="flex flex-wrap gap-2">
                 {topRoles.map((role) => (
-                  <div key={role.role} className="flex items-center gap-1">
-                    <RoleIcon role={role.role} className="w-4 h-4" />
-                    <span className="text-sm capitalize">{role.role}</span>
-                    <span className="text-xs text-gray-500">
-                      ({formatDuration(role.playtime)})
-                    </span>
-                  </div>
+                  <RoleCard key={role.role} role={role.role} playtime={role.playtime} />
                 ))}
               </div>
             }

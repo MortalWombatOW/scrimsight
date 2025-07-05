@@ -21,3 +21,31 @@ export const getColorgorical = (str: string | null | undefined): string => {
     ) % colorgorical.length;
   return colorgorical[index];
 };
+
+export const getColorgoricalWithAlt = (str: string | null | undefined): [string, string] => {
+  if (!str) {
+    return ['white', 'black'];
+  }
+
+  let mainColorIndex: number;
+
+  if (str === 'Team 1') {
+    mainColorIndex = 0;
+  } else if (str === 'Team 2') {
+    mainColorIndex = 1;
+  } else if (str === 'Draw') {
+    return ['gray', 'white'];
+  } else {
+    mainColorIndex = Math.abs(
+      str.split('').reduce((acc, char) => {
+        return acc + char.charCodeAt(0);
+      }, 0),
+    ) % colorgorical.length;
+  }
+
+  const mainColor = colorgorical[mainColorIndex];
+  const altColorIndex = (mainColorIndex + 1) % colorgorical.length;
+  const altColor = colorgorical[altColorIndex];
+
+  return [mainColor, altColor];
+};

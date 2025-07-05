@@ -1,9 +1,8 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import ScrimsPage from "./ScrimsPage";
 import { useScrimsightData } from "../hooks/useScrimsightData";
-import ScrimsightPage from "../components/ScrimsightPage";
 
 // Mock external modules
 vi.mock("../hooks/useScrimsightData", () => ({
