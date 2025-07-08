@@ -11,8 +11,8 @@ import { buildTeamfights } from "./teamfightBuilder";
 import { buildRounds } from "./roundBuilder";
 import { buildTeamCompositions } from "./teamCompositionBuilder";
 import { buildKillCounts } from "./killCountBuilder";
-import { buildPlayerStatBreakdown } from "./playerStatBreakdown";
-import { buildPlayerStatBreakdownRanks } from "./statRanking";
+import { buildPlayerStatBreakdown } from "./playerStatBreakdown/index";
+import { buildPlayerStatBreakdownRanks } from "./playerStatBreakdown/statRanking";
 import * as R from "remeda";
 
 const createEmptyDataModel = (): ScrimsightDataModel.ScrimsightDataModel => ({

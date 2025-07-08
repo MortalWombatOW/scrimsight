@@ -1,4 +1,4 @@
-import * as ScrimsightDataModel from "../ScrimsightDataModel";
+import * as ScrimsightDataModel from "../../ScrimsightDataModel";
 
 const rankValues = <T extends Record<string, number | string>>(
   records: T[], 

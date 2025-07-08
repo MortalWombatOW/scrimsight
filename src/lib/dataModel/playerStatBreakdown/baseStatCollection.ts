@@ -1,5 +1,5 @@
-import * as ScrimsightDataModel from "../ScrimsightDataModel";
-import { getRoleFromHero } from "../hero";
+import * as ScrimsightDataModel from "../../ScrimsightDataModel";
+import { getRoleFromHero } from "../../hero";
 import * as R from "remeda";
 
 export const calculatePlaytime = (dataModel: ScrimsightDataModel.ScrimsightDataModel, matchId: string, roundNumber: string, playerName: string): number => {

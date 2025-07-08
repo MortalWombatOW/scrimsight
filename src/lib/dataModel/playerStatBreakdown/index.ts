@@ -1,5 +1,5 @@
-import * as ScrimsightDataModel from "../ScrimsightDataModel";
-import { getRoleFromHero } from "../hero";
+import * as ScrimsightDataModel from "../../ScrimsightDataModel";
+import { getRoleFromHero } from "../../hero";
 import * as R from "remeda";
 import { calculatePlaytime, calculateUltsUsed, calculateTotalAssists, calculateRoleBasedKills, calculateUltKills, calculateTeamfightsParticipated, calculateTeamfightsWon, calculateTeamfightsWonWithUlt, calculateTeamfightsWithFirstKill, calculateTeamfightsWithFirstDeath, calculateTeamfightsWonWithFirstKill, calculateTeamfightsWonWithFirstDeath, calculateDeathsWithUltAvailable } from "./baseStatCollection";
 import { aggregateBaseStats } from "./statAggregation";

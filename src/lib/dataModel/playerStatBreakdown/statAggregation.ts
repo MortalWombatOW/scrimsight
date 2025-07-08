@@ -1,4 +1,4 @@
-import * as ScrimsightDataModel from "../ScrimsightDataModel";
+import * as ScrimsightDataModel from "../../ScrimsightDataModel";
 import * as R from "remeda";
 
 export const aggregateBaseStats = (records: ScrimsightDataModel.PlayerStatsBase[]): ScrimsightDataModel.PlayerStatsAggregatedBase => {
