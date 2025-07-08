@@ -51,9 +51,45 @@ export const buildPlayerLives = (dataModel: ScrimsightDataModel.ScrimsightDataMo
   ], R.sortBy(event => event.time));
 
   for (const event of allEvents) {
+    if (event.type === 'roundStart') {
+      // For players active in the previous round, end their current life and start a new one
+      // if their life started before this roundStart and hasn't ended yet.
+      // This handles players carrying over between rounds.
+      // We need to iterate over a copy of the map to avoid issues with modification during iteration
+      const activePlayersInMatch = Array.from(activeLifeByPlayer.values()).filter(life => life.matchId === event.matchId);
+
+      activePlayersInMatch.forEach(life => {
+        // Only process if the life started before this roundStart and is still active
+        if (life.startTime < event.time && life.endTime === Infinity) {
+          // End current life at the start of the new round (end of previous round)
+          life.endTime = event.time;
+          life.duration = event.time - life.startTime;
+          life.causeOfEnd = 'round_end';
+          lives.push(life);
+          activeLifeByPlayer.delete(getPlayerKey(life.matchId, life.player));
+
+          // Start a new life for the player in the new round
+          activeLifeByPlayer.set(getPlayerKey(life.matchId, life.player), {
+            matchId: life.matchId,
+            roundIndex: event.roundNumber as ScrimsightDataModel.RoundNumber,
+            startTime: event.time,
+            endTime: Infinity,
+            duration: 0,
+            player: life.player,
+            hero: life.hero, // Player keeps the same hero
+            causeOfStart: 'spawn',
+            causeOfEnd: 'round_end',
+            eliminations: 0,
+            assists: 0,
+            ultimatesUsed: 0
+          });
+        }
+      });
+      continue;
+    }
+
     const playerKey = getPlayerKey(event.matchId, event.playerName);
     const currentActiveLife = activeLifeByPlayer.get(playerKey);
-
 
     switch (event.type) {
       case 'heroSpawn':
@@ -62,7 +98,7 @@ export const buildPlayerLives = (dataModel: ScrimsightDataModel.ScrimsightDataMo
         if (currentActiveLife) {
           currentActiveLife.endTime = event.time;
           currentActiveLife.duration = event.time - currentActiveLife.startTime;
-          currentActiveLife.causeOfEnd = event.type === 'heroSpawn' ? 'spawn' : 'swap'; // More specific cause
+          currentActiveLife.causeOfEnd = 'swap';
           lives.push(currentActiveLife);
           activeLifeByPlayer.delete(playerKey);
         }
@@ -76,7 +112,7 @@ export const buildPlayerLives = (dataModel: ScrimsightDataModel.ScrimsightDataMo
           player: event.playerName,
           hero: event.playerHero,
           causeOfStart: event.type === 'heroSpawn' ? 'spawn' : 'swap',
-          causeOfEnd: undefined, // Will be set later if life ends
+          causeOfEnd: 'swap', // Will be set later if life ends
           eliminations: 0,
           assists: 0,
           ultimatesUsed: 0
@@ -92,42 +128,6 @@ export const buildPlayerLives = (dataModel: ScrimsightDataModel.ScrimsightDataMo
           lives.push(currentActiveLife);
           activeLifeByPlayer.delete(playerKey);
         }
-        break;
-
-      case 'roundStart':
-        // For players active in the previous round, end their current life and start a new one
-        // if their life started before this roundStart and hasn't ended yet.
-        // This handles players carrying over between rounds.
-        // We need to iterate over a copy of the map to avoid issues with modification during iteration
-        const activePlayersInMatch = Array.from(activeLifeByPlayer.values()).filter(life => life.matchId === event.matchId);
-
-        activePlayersInMatch.forEach(life => {
-          // Only process if the life started before this roundStart and is still active
-          if (life.startTime < event.time && life.endTime === Infinity) {
-            // End current life at the start of the new round (end of previous round)
-            life.endTime = event.time;
-            life.duration = event.time - life.startTime;
-            life.causeOfEnd = 'round_end';
-            lives.push(life);
-            activeLifeByPlayer.delete(getPlayerKey(life.matchId, life.player));
-
-            // Start a new life for the player in the new round
-            activeLifeByPlayer.set(getPlayerKey(life.matchId, life.player), {
-              matchId: life.matchId,
-              roundIndex: event.roundNumber, // Use the roundNumber from the roundStart event
-              startTime: event.time,
-              endTime: Infinity,
-              duration: 0,
-              player: life.player,
-              hero: life.hero, // Player keeps the same hero
-              causeOfStart: 'round_start',
-              causeOfEnd: undefined,
-              eliminations: 0,
-              assists: 0,
-              ultimatesUsed: 0
-            });
-          }
-        });
         break;
     }
   }

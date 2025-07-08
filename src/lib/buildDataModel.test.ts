@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildDataModel } from './dataModel';
+import { buildDataModel } from './buildDataModel';
 import * as ScrimsightDataModel from './ScrimsightDataModel';
 import file1 from "./sampledata/Log-2023-08-28-17-05-38.txt?raw";
 import file2 from "./sampledata/Log-2023-08-28-17-29-57.txt?raw";

@@ -1,5 +1,5 @@
 
-import { type DataAndSpecName } from "../scrimtime";
+import { type DataAndSpecName } from "./fileParsing";
 import * as ScrimsightDataModel from "../ScrimsightDataModel";
 import { extractEventsFromFiles } from "../eventExtractionUtils";
 

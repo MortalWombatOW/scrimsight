@@ -1,5 +1,4 @@
-import { stringHash } from "./string";
-
+import { stringHash } from "../string";
 
 // describes an individual field in data spec
 interface FieldSpec {
@@ -26,16 +25,6 @@ type LogSpec = Record<string, DataSpec>;
 // Export the LOG_SPEC as public
 export { LOG_SPEC };
 export type { DataAndSpecName };
-
-// File Utilities
-export const readFileAsync = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsText(file);
-  });
-};
 
 // Parsing Utilities
 const parseFieldValue = (value: string, dataType: string) => {

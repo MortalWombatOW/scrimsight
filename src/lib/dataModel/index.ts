@@ -1,6 +1,6 @@
 
-import { parseFile } from "../scrimtime";
 import * as ScrimsightDataModel from "../ScrimsightDataModel";
+import { parseFile } from "./fileParsing";
 import { extractAllEvents } from "./eventExtraction";
 import { groupMatchesIntoScrims } from "./scrimRelationships";
 import { buildMatchRelationships } from "./matchRelationships";
@@ -12,7 +12,7 @@ import { buildRounds } from "./roundBuilder";
 import { buildTeamCompositions } from "./teamCompositionBuilder";
 import { buildKillCounts } from "./killCountBuilder";
 import { buildPlayerStatBreakdown } from "./playerStatBreakdown";
-import { buildPlayerStatBreakdownRanks } from "./playerStatBreakdown/statRanking";
+import { buildPlayerStatBreakdownRanks } from "./statRanking";
 import * as R from "remeda";
 
 const createEmptyDataModel = (): ScrimsightDataModel.ScrimsightDataModel => ({
@@ -78,11 +78,19 @@ const createEmptyDataModel = (): ScrimsightDataModel.ScrimsightDataModel => ({
 });
 
 const parseFiles = (files: {fileName: string, fileModified: number, fileContent: string}[]) => {
-  return R.map(files, (file) => ({
-    ...parseFile(file.fileContent),
-    fileName: file.fileName,
-    fileModified: file.fileModified,
-  }));
+  return R.map(files, (file) => {
+    const parsed = parseFile(file.fileContent);
+    const matchStartLog = parsed.logs.find(log => log.specName === 'match_start');
+    const matchStartEvent = matchStartLog?.data[0] as ScrimsightDataModel.MatchStartLogEvent | undefined;
+    
+    return {
+      ...parsed,
+      fileName: file.fileName,
+      fileModified: file.fileModified,
+      team1Name: matchStartEvent?.team1Name ?? 'Unknown',
+      team2Name: matchStartEvent?.team2Name ?? 'Unknown',
+    };
+  });
 };
 
 export const buildDataModel = (files: {fileName: string, fileModified: number, fileContent: string}[]): ScrimsightDataModel.ScrimsightDataModel => {
