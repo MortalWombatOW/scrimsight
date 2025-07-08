@@ -213,8 +213,9 @@ const getUltimatesUsedDuring = (dataModel: ScrimsightDataModel.ScrimsightDataMod
   );
 };
 
+export const TEAMFIGHT_BUFFER_TIME = 10; // seconds
+
 export const buildTeamfights = (dataModel: ScrimsightDataModel.ScrimsightDataModel): ScrimsightDataModel.Teamfight[] => {
-  const TEAMFIGHT_BUFFER_TIME = 10; // seconds
   const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths to better capture full teamfight
 
   // Group kill events by match

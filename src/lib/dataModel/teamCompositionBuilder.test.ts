@@ -75,9 +75,11 @@ describe('buildTeamCompositions', () => {
       heroSpawn: [
         { matchId: 'match1', playerName: 'Player1', playerTeam: 'TeamA', playerHero: 'Ana', matchTime: 100, type: 'hero_spawn', previousHero: 'Ana', heroTimePlayed: 0 },
         { matchId: 'match2', playerName: 'Player3', playerTeam: 'TeamC', playerHero: 'Mercy', matchTime: 50, type: 'hero_spawn', previousHero: 'Mercy', heroTimePlayed: 0 },
-        { matchId: 'match1', playerName: 'Player1', playerTeam: 'TeamA', playerHero: 'Mercy', matchTime: 300, type: 'hero_swap', previousHero: 'Ana', heroTimePlayed: 0 },
+        { matchId: 'match1', playerName: 'Player1', playerTeam: 'TeamA', playerHero: 'Tracer', matchTime: 260, type: 'hero_spawn', previousHero: 'Tracer', heroTimePlayed: 0 },
       ],
-      heroSwap: [],
+      heroSwap: [
+        { matchId: 'match1', playerName: 'Player1', playerTeam: 'TeamA', playerHero: 'Mercy', matchTime: 200, type: 'hero_swap', previousHero: 'Ana', heroTimePlayed: 0 },
+      ],
       roundStart: [
         { matchId: 'match1', roundNumber: 1, matchTime: 0, team1Score: 0, team2Score: 0, capturingTeam: '', objectiveIndex: 0 },
         { matchId: 'match2', roundNumber: 1, matchTime: 0, team1Score: 0, team2Score: 0, capturingTeam: '', objectiveIndex: 0 },
@@ -98,7 +100,7 @@ describe('buildTeamCompositions', () => {
 
     expect(teamCompositions[1].matchId).toBe('match1');
     expect(teamCompositions[1].roundIndex).toBe(1);
-    expect(teamCompositions[1].startTime).toBe(100);
+    expect(teamCompositions[1].startTime).toBe(200);
 
     expect(teamCompositions[2].matchId).toBe('match1');
     expect(teamCompositions[2].roundIndex).toBe(2);
@@ -106,6 +108,6 @@ describe('buildTeamCompositions', () => {
 
     expect(teamCompositions[3].matchId).toBe('match2');
     expect(teamCompositions[3].roundIndex).toBe(1);
-    expect(teamCompositions[3].startTime).toBe(50);
+    expect(teamCompositions[3].startTime).toBe(0);
   });
 });

@@ -1,16 +1,23 @@
 
 import { describe, it, expect } from 'vitest';
-import { buildTeamfights } from './teamfightBuilder';
+import { buildTeamfights, TEAMFIGHT_BUFFER_TIME } from './teamfightBuilder';
 import * as ScrimsightDataModel from '../ScrimsightDataModel';
 
 describe('buildTeamfights', () => {
   it('should build teamfights correctly based on kill events', () => {
+    const baseTime = 100;
+    const kill1Time = baseTime;
+    // This kill is *inside* the buffer, so it should be in the same fight
+    const kill2Time = kill1Time + TEAMFIGHT_BUFFER_TIME - 1;
+    // This kill is *outside* the buffer, starting a new fight
+    const kill3Time = kill2Time + TEAMFIGHT_BUFFER_TIME + 1;
+    
     const dataModel = {
       kill: [
-        { matchId: 'match1', matchTime: 100, attackerName: 'PlayerA', attackerTeam: 'TeamA', attackerHero: 'Ana', victimName: 'PlayerX', victimTeam: 'TeamX', victimHero: 'Mercy', eventAbility: '', eventDamage: 0, isCriticalHit: false, isEnvironmental: false },
-        { matchId: 'match1', matchTime: 105, attackerName: 'PlayerB', attackerTeam: 'TeamA', attackerHero: 'Reinhardt', victimName: 'PlayerY', victimTeam: 'TeamX', victimHero: 'Soldier: 76', eventAbility: '', eventDamage: 0, isCriticalHit: false, isEnvironmental: false },
-        { matchId: 'match1', matchTime: 120, attackerName: 'PlayerX', attackerTeam: 'TeamX', attackerHero: 'Mercy', victimName: 'PlayerA', victimTeam: 'TeamA', victimHero: 'Ana', eventAbility: '', eventDamage: 0, isCriticalHit: false, isEnvironmental: false },
-        { matchId: 'match1', matchTime: 300, attackerName: 'PlayerC', attackerTeam: 'TeamA', attackerHero: 'Soldier: 76', victimName: 'PlayerZ', victimTeam: 'TeamX', victimHero: 'Zenyatta', eventAbility: '', eventDamage: 0, isCriticalHit: false, isEnvironmental: false },
+        { matchId: 'match1', matchTime: kill1Time, attackerName: 'PlayerA', attackerTeam: 'TeamA', attackerHero: 'Ana', victimName: 'PlayerX', victimTeam: 'TeamX', victimHero: 'Mercy', eventAbility: '', eventDamage: 0, isCriticalHit: false, isEnvironmental: false },
+        { matchId: 'match1', matchTime: kill1Time + 5, attackerName: 'PlayerB', attackerTeam: 'TeamA', attackerHero: 'Reinhardt', victimName: 'PlayerY', victimTeam: 'TeamX', victimHero: 'Soldier: 76', eventAbility: '', eventDamage: 0, isCriticalHit: false, isEnvironmental: false },
+        { matchId: 'match1', matchTime: kill2Time, attackerName: 'PlayerX', attackerTeam: 'TeamX', attackerHero: 'Mercy', victimName: 'PlayerA', victimTeam: 'TeamA', victimHero: 'Ana', eventAbility: '', eventDamage: 0, isCriticalHit: false, isEnvironmental: false },
+        { matchId: 'match1', matchTime: kill3Time, attackerName: 'PlayerC', attackerTeam: 'TeamA', attackerHero: 'Soldier: 76', victimName: 'PlayerZ', victimTeam: 'TeamX', victimHero: 'Zenyatta', eventAbility: '', eventDamage: 0, isCriticalHit: false, isEnvironmental: false },
       ],
       matchStart: [
         { matchId: 'match1', team1Name: 'TeamA', team2Name: 'TeamX', mapName: 'Lijiang Tower', mapType: 'Control', matchTime: 0 },
@@ -38,16 +45,16 @@ describe('buildTeamfights', () => {
         { matchId: 'match1', playerName: 'PlayerZ', playerTeam: 'TeamX', playerHero: 'Zenyatta', matchTime: 0, roundNumber: '1', eliminations: 0, finalBlows: 0, deaths: 0, allDamageDealt: 0, barrierDamageDealt: 0, heroDamageDealt: 0, healingDealt: 0, healingReceived: 0, selfHealing: 0, damageTaken: 0, damageBlocked: 0, defensiveAssists: 0, offensiveAssists: 0, ultimatesEarned: 0, ultimatesUsed: 0, multikillBest: 0, multikills: 0, soloKills: 0, objectiveKills: 0, environmentalKills: 0, environmentalDeaths: 0, criticalHits: 0, criticalHitAccuracy: 0, scopedAccuracy: 0, scopedCriticalHitAccuracy: 0, scopedCriticalHitKills: 0, shotsFired: 0, shotsHit: 0, shotsMissed: 0, scopedShotsFired: 0, scopedShotsHit: 0, weaponAccuracy: 0 },
       ],
       ultimateCharged: [
-        { matchId: 'match1', playerName: 'PlayerA', playerHero: 'Ana', matchTime: 90, ultimateId: 1, type: 'ultimate_charged' },
-        { matchId: 'match1', playerName: 'PlayerX', playerHero: 'Mercy', matchTime: 110, ultimateId: 2, type: 'ultimate_charged' },
+        { matchId: 'match1', playerName: 'PlayerA', playerHero: 'Ana', matchTime: kill1Time - 10, ultimateId: 1, type: 'ultimate_charged' },
+        { matchId: 'match1', playerName: 'PlayerX', playerHero: 'Mercy', matchTime: kill1Time + 10, ultimateId: 2, type: 'ultimate_charged' },
       ],
       ultimateStart: [
-        { matchId: 'match1', playerName: 'PlayerA', playerHero: 'Ana', matchTime: 100, ultimateId: 1, type: 'ultimate_start' },
-        { matchId: 'match1', playerName: 'PlayerX', playerHero: 'Mercy', matchTime: 120, ultimateId: 2, type: 'ultimate_start' },
+        { matchId: 'match1', playerName: 'PlayerA', playerHero: 'Ana', matchTime: kill1Time, ultimateId: 1, type: 'ultimate_start' },
+        { matchId: 'match1', playerName: 'PlayerX', playerHero: 'Mercy', matchTime: kill2Time, ultimateId: 2, type: 'ultimate_start' },
       ],
       ultimateEnd: [
-        { matchId: 'match1', playerName: 'PlayerA', playerHero: 'Ana', matchTime: 110, ultimateId: 1, type: 'ultimate_end' },
-        { matchId: 'match1', playerName: 'PlayerX', playerHero: 'Mercy', matchTime: 130, ultimateId: 2, type: 'ultimate_end' },
+        { matchId: 'match1', playerName: 'PlayerA', playerHero: 'Ana', matchTime: kill1Time + 10, ultimateId: 1, type: 'ultimate_end' },
+        { matchId: 'match1', playerName: 'PlayerX', playerHero: 'Mercy', matchTime: kill2Time + 10, ultimateId: 2, type: 'ultimate_end' },
       ],
     } as unknown as ScrimsightDataModel.ScrimsightDataModel;
 
@@ -57,19 +64,19 @@ describe('buildTeamfights', () => {
 
     // First teamfight
     expect(teamfights[0].matchId).toBe('match1');
-    expect(teamfights[0].startTime).toBe(98); // 100 - 2 (padding)
-    expect(teamfights[0].endTime).toBe(122); // 120 + 2 (padding)
-    expect(teamfights[0].duration).toBe(24);
-    expect(teamfights[0].end.team1.kills).toEqual(['PlayerX']);
-    expect(teamfights[0].end.team2.kills).toEqual(['PlayerY', 'PlayerZ']);
-    expect(teamfights[0].winner).toBe('TeamX'); // PlayerX (Mercy) killed PlayerA (Ana)
-    expect(teamfights[0].team1KillsPerUlt).toBe(1); // 1 kill / 1 ult
+    expect(teamfights[0].startTime).toBe(kill1Time - 2); // kill1Time - 2 (padding)
+    expect(teamfights[0].endTime).toBe(kill2Time + 2); // kill2Time + 2 (padding)
+    expect(teamfights[0].duration).toBe((kill2Time + 2) - (kill1Time - 2));
+    expect(teamfights[0].end.team1.kills).toEqual(['PlayerX', 'PlayerY']);
+    expect(teamfights[0].end.team2.kills).toEqual(['PlayerA']);
+    expect(teamfights[0].winner).toBe('TeamA'); // TeamA got 2 kills vs TeamX's 1 kill
+    expect(teamfights[0].team1KillsPerUlt).toBe(2); // 2 kills / 1 ult
     expect(teamfights[0].team2KillsPerUlt).toBe(1); // 1 kill / 1 ult
 
     // Second teamfight
     expect(teamfights[1].matchId).toBe('match1');
-    expect(teamfights[1].startTime).toBe(298); // 300 - 2 (padding)
-    expect(teamfights[1].endTime).toBe(302); // 300 + 2 (padding)
+    expect(teamfights[1].startTime).toBe(kill3Time - 2); // kill3Time - 2 (padding)
+    expect(teamfights[1].endTime).toBe(kill3Time + 2); // kill3Time + 2 (padding)
     expect(teamfights[1].duration).toBe(4);
     expect(teamfights[1].end.team1.kills).toEqual(['PlayerZ']);
     expect(teamfights[1].end.team2.kills).toEqual([]);

@@ -14,8 +14,33 @@ export const buildPlayerLives = (dataModel: ScrimsightDataModel.ScrimsightDataMo
       R.sortBy(r => r.matchTime)
     );
     
-    const activeRound = R.findLast(roundStarts, r => r.matchTime <= eventTime);
-    return (activeRound?.roundNumber || 1) as ScrimsightDataModel.RoundNumber;
+    const roundEnds = R.pipe(
+      dataModel.roundEnd,
+      R.filter(r => r.matchId === matchId),
+      R.sortBy(r => r.matchTime)
+    );
+    
+    // Find the last round start that happened before or at the event time
+    const lastRoundStart = R.findLast(roundStarts, r => r.matchTime <= eventTime);
+    
+    if (!lastRoundStart) {
+      return 1 as ScrimsightDataModel.RoundNumber;
+    }
+    
+    // Check if there's a round end for this round that happened before the event time
+    const correspondingRoundEnd = roundEnds.find(re => 
+      re.roundNumber === lastRoundStart.roundNumber && 
+      re.matchTime < eventTime
+    );
+    
+    // If the round ended before this event, the event belongs to the next round
+    if (correspondingRoundEnd) {
+      // Find the next round start after the event time
+      const nextRoundStart = roundStarts.find(rs => rs.matchTime > eventTime);
+      return (nextRoundStart?.roundNumber || (lastRoundStart.roundNumber + 1)) as ScrimsightDataModel.RoundNumber;
+    }
+    
+    return lastRoundStart.roundNumber as ScrimsightDataModel.RoundNumber;
   };
 
   // Combine all relevant events and sort them chronologically
@@ -61,28 +86,36 @@ export const buildPlayerLives = (dataModel: ScrimsightDataModel.ScrimsightDataMo
       activePlayersInMatch.forEach(life => {
         // Only process if the life started before this roundStart and is still active
         if (life.startTime < event.time && life.endTime === Infinity) {
-          // End current life at the start of the new round (end of previous round)
-          life.endTime = event.time;
-          life.duration = event.time - life.startTime;
-          life.causeOfEnd = 'round_end';
-          lives.push(life);
-          activeLifeByPlayer.delete(getPlayerKey(life.matchId, life.player));
+          // Find the roundEnd event for the life's round
+          // The life's roundIndex is the round it started in, we need the roundEnd for that round
+          const previousRoundEnd = dataModel.roundEnd.find(
+            (re) => re.matchId === life.matchId && re.roundNumber === life.roundIndex
+          );
 
-          // Start a new life for the player in the new round
-          activeLifeByPlayer.set(getPlayerKey(life.matchId, life.player), {
-            matchId: life.matchId,
-            roundIndex: event.roundNumber as ScrimsightDataModel.RoundNumber,
-            startTime: event.time,
-            endTime: Infinity,
-            duration: 0,
-            player: life.player,
-            hero: life.hero, // Player keeps the same hero
-            causeOfStart: 'spawn',
-            causeOfEnd: 'round_end',
-            eliminations: 0,
-            assists: 0,
-            ultimatesUsed: 0
-          });
+
+          if (previousRoundEnd) {
+            life.endTime = previousRoundEnd.matchTime;
+            life.duration = previousRoundEnd.matchTime - life.startTime;
+            life.causeOfEnd = 'round_end';
+            lives.push(life);
+            activeLifeByPlayer.delete(getPlayerKey(life.matchId, life.player));
+
+            // Start a new life for the player in the new round
+            activeLifeByPlayer.set(getPlayerKey(life.matchId, life.player), {
+              matchId: life.matchId,
+              roundIndex: event.roundNumber as ScrimsightDataModel.RoundNumber,
+              startTime: event.time,
+              endTime: Infinity,
+              duration: 0,
+              player: life.player,
+              hero: life.hero, // Player keeps the same hero
+              causeOfStart: 'spawn',
+              causeOfEnd: 'round_end',
+              eliminations: 0,
+              assists: 0,
+              ultimatesUsed: 0
+            });
+          }
         }
       });
       continue;

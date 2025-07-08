@@ -60,12 +60,6 @@ export const buildPlayerRelationships = (dataModel: ScrimsightDataModel.Scrimsig
         role: getRoleFromHero(heroEntry.hero),
         playtime: heroEntry.playtime
       })),
-      R.groupBy(item => item.role),
-      R.entries(),
-      R.map(([role, items]) => ({
-        role: role as ScrimsightDataModel.Role,
-        playtime: R.sumBy(items, item => item.playtime)
-      })),
       R.sortBy(item => -item.playtime) // Sort by playtime descending
     );
 
