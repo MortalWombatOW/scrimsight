@@ -9,16 +9,14 @@ import { ScrimsightDataModel, PlayerStatsNumerical } from "../lib/ScrimsightData
 
 const mockNavigate = vi.fn();
 
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual("react-router-dom");
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
+vi.mock("../hooks/useScrimsightNavigation", () => ({
+  useScrimsightNavigation: () => ({
+    navigate: mockNavigate,
+  }),
+}));
 
 vi.mock("../lib/route", () => ({
-  getRoute: vi.fn((path: string) => path),
+  getRoute: vi.fn((path: string) => `/app${path}`),
 }));
 
 vi.mock("./TeamColorDot", () => ({
@@ -202,7 +200,7 @@ describe("ScrimCard", () => {
     const viewButton = screen.getByRole("button", { name: "View" });
     fireEvent.click(viewButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith("/scrims/test-scrim-1");
+    expect(mockNavigate).toHaveBeenCalledWith("/scrim/:scrimId", { scrimId: "test-scrim-1" });
   });
 
   it("applies win styling to winning team", () => {

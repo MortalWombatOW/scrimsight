@@ -9,13 +9,16 @@ import { ScrimsightDataModel } from '../lib/ScrimsightDataModel';
 
 // Mock navigation
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
+vi.mock('../hooks/useScrimsightNavigation', () => ({
+  useScrimsightNavigation: () => ({
+    navigate: mockNavigate,
+  }),
+}));
+
+// Mock getRoute to simulate app prefix
+vi.mock('../lib/route', () => ({
+  getRoute: vi.fn((path: string) => `/app${path}`),
+}));
 
 // Mock TeamColorDot component
 vi.mock('./TeamColorDot', () => ({
@@ -348,7 +351,7 @@ describe('MatchCard', () => {
         const viewButton = screen.getByTestId('primary-button');
         fireEvent.click(viewButton);
         
-        expect(mockNavigate).toHaveBeenCalledWith('/match/match-1');
+        expect(mockNavigate).toHaveBeenCalledWith('/match/:matchId', { matchId: 'match-1' });
       });
 
       it('should navigate with correct match ID for different matches', () => {
@@ -357,7 +360,7 @@ describe('MatchCard', () => {
         const viewButton = screen.getByTestId('primary-button');
         fireEvent.click(viewButton);
         
-        expect(mockNavigate).toHaveBeenCalledWith('/match/match-2');
+        expect(mockNavigate).toHaveBeenCalledWith('/match/:matchId', { matchId: 'match-2' });
       });
     });
 
@@ -495,7 +498,7 @@ describe('MatchCard', () => {
       fireEvent.click(screen.getByTestId('primary-button'));
       
       expect(mockNavigate).toHaveBeenCalledTimes(1);
-      expect(mockNavigate).toHaveBeenCalledWith('/match/match-1');
+      expect(mockNavigate).toHaveBeenCalledWith('/match/:matchId', { matchId: 'match-1' });
     });
   });
 

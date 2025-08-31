@@ -17,16 +17,14 @@ vi.mock('react-oidc-context', () => ({
   useAuth: () => mockAuth,
 }));
 
-// Mock useNavigate from react-router-dom
+// Mock useScrimsightNavigation 
 const mockNavigate = vi.fn();
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
+vi.mock('../hooks/useScrimsightNavigation', () => ({
+  useScrimsightNavigation: () => ({
+    navigate: mockNavigate,
+  }),
+}));
 
 // Mock console methods to capture logs during tests
 let consoleSpy: {

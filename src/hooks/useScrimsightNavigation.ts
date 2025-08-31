@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useCallback } from 'react';
 import { getRoute } from '../lib/route';
 
 type AbsoluteRoute = '/' | '/callback' | '/demo' | '/app';
@@ -101,7 +102,7 @@ const validateParameters = (route: string, params?: Record<string, unknown>): vo
 export const useScrimsightNavigation = () => {
   const navigate = useNavigate();
 
-  const scrimsightNavigate: NavigationFunction = (route: ScrimsightRoute, params?: unknown) => {
+  const scrimsightNavigate: NavigationFunction = useCallback((route: ScrimsightRoute, params?: unknown) => {
     // Validate route
     if (!isValidRoute(route)) {
       throw new Error(`Invalid route: ${route}`);
@@ -131,7 +132,7 @@ export const useScrimsightNavigation = () => {
     }
 
     navigate(finalPath);
-  };
+  }, [navigate]);
 
   return { navigate: scrimsightNavigate };
 };
