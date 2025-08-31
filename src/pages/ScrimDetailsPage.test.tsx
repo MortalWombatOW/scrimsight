@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route, useParams } from "react-router-dom";
 import ScrimDetailsPage from "./ScrimDetailsPage";
 import { useScrimsightData } from "../hooks/useScrimsightData";
@@ -9,7 +9,7 @@ vi.mock("../hooks/useScrimsightData", () => ({
   useScrimsightData: vi.fn(),
 }));
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as Record<string, unknown>;
   return {
     ...actual,
     useParams: vi.fn(), // Ensure useParams is a mock function
@@ -156,7 +156,7 @@ describe("ScrimDetailsPage", () => {
   });
 
   it("renders EmptyState when scrimId is missing", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue({
+    (useScrimsightData as Mock).mockReturnValue({
       scrims: [],
       matches: [],
       playerStatBreakdown: {
@@ -164,7 +164,7 @@ describe("ScrimDetailsPage", () => {
         byTeamAndPlayerAndScrim: [],
       },
     });
-    useParams.mockReturnValue({});
+    (useParams as Mock).mockReturnValue({});
 
     render(
       <MemoryRouter initialEntries={["/scrims"]}>
@@ -180,7 +180,7 @@ describe("ScrimDetailsPage", () => {
   });
 
   it("renders EmptyState when scrimDetails are not found", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue({
+    (useScrimsightData as Mock).mockReturnValue({
       scrims: [],
       matches: [],
       playerStatBreakdown: {
@@ -188,7 +188,7 @@ describe("ScrimDetailsPage", () => {
         byTeamAndPlayerAndScrim: [],
       },
     });
-    useParams.mockReturnValue({ scrimId: "nonexistent-scrim" });
+    (useParams as Mock).mockReturnValue({ scrimId: "nonexistent-scrim" });
 
     render(
       <MemoryRouter initialEntries={["/scrims/nonexistent-scrim"]}>
@@ -203,8 +203,8 @@ describe("ScrimDetailsPage", () => {
   });
 
   it("renders correctly with scrim data", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue(mockDataModel);
-    useParams.mockReturnValue({ scrimId: "scrim1" });
+    (useScrimsightData as Mock).mockReturnValue(mockDataModel);
+    (useParams as Mock).mockReturnValue({ scrimId: "scrim1" });
 
     render(
       <MemoryRouter initialEntries={["/scrims/scrim1"]}>

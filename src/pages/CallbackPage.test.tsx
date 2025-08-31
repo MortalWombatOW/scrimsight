@@ -1,5 +1,5 @@
 import { render, screen, waitFor, act } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import CallbackPage from "./CallbackPage";
 import { useAuth } from "react-oidc-context";
@@ -10,7 +10,7 @@ vi.mock("react-oidc-context", () => ({
   useAuth: vi.fn(),
 }));
 vi.mock("jotai", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as Record<string, unknown>;
   return {
     ...actual,
     useSetAtom: vi.fn(),
@@ -20,7 +20,7 @@ vi.mock("jotai", async (importOriginal) => {
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as Record<string, unknown>;
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -32,12 +32,12 @@ describe("CallbackPage", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useSetAtom as vi.Mock).mockReturnValue(mockSetAuthAtom);
+    (useSetAtom as Mock).mockReturnValue(mockSetAuthAtom);
   });
 
   it("should navigate to /app and set auth atom on successful authentication", async () => {
     // Mock a successful authentication and user info fetch
-    (useAuth as vi.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       isAuthenticated: true,
       user: {
         token_type: "Bearer",
@@ -81,7 +81,7 @@ describe("CallbackPage", () => {
   });
 
   it("should display error message on authentication error", async () => {
-    (useAuth as vi.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       error: new Error("Authentication failed"),
     });
 
@@ -100,7 +100,7 @@ describe("CallbackPage", () => {
   });
 
   it("should navigate to / on no user in auth response", async () => {
-    (useAuth as vi.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       isAuthenticated: true,
       user: null,
     });
@@ -119,7 +119,7 @@ describe("CallbackPage", () => {
   });
 
   it("should navigate to / on unauthenticated user", async () => {
-    (useAuth as vi.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       isAuthenticated: false,
       user: null,
     });
@@ -138,7 +138,7 @@ describe("CallbackPage", () => {
   });
 
   it("should navigate to / on failed user info fetch", async () => {
-    (useAuth as vi.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       isAuthenticated: true,
       user: {
         token_type: "Bearer",
@@ -165,7 +165,7 @@ describe("CallbackPage", () => {
   });
 
   it("should navigate to / on fetch error", async () => {
-    (useAuth as vi.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       isAuthenticated: true,
       user: {
         token_type: "Bearer",

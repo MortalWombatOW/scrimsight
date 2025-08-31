@@ -330,7 +330,7 @@ describe('TimelineBar', () => {
     });
 
     it('should handle zero total duration', () => {
-      const { container } = render(
+      render(
         <TimelineBar segments={[]} total={0} />
       );
 
@@ -374,7 +374,7 @@ describe('TimelineBar', () => {
 
     it('should handle very large total values', () => {
       const largeTotal = 999999;
-      const { container } = render(
+      render(
         <TimelineBar segments={mockSegments} total={largeTotal} />
       );
 

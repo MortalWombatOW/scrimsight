@@ -92,7 +92,7 @@ describe('AppLayout', () => {
     const mockUseAtomValue = vi.mocked(useAtomValue);
 
     // Default state: authenticated user is null, sample data disabled, data ready
-    mockUseAtom.mockReturnValue([{ authenticatedUser: null }, vi.fn()]);
+    (mockUseAtom as any).mockReturnValue([{ authenticatedUser: null }, vi.fn()]);
     mockUseAtomValue.mockImplementation((atom) => {
       const atomStr = atom.toString();
       if (atomStr.includes('sampleDataEnabled')) return false;
@@ -445,7 +445,7 @@ describe('AppLayout', () => {
       // Set up authenticated user
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
-      mockUseAtom.mockReturnValue([{ authenticatedUser: mockUser }, vi.fn()]);
+      (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUser }, vi.fn()]);
 
       render(
         <TestWrapper>
@@ -467,7 +467,7 @@ describe('AppLayout', () => {
       // Set up authenticated pro user
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
-      mockUseAtom.mockReturnValue([{ authenticatedUser: mockProUser }, vi.fn()]);
+      (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockProUser }, vi.fn()]);
 
       render(
         <TestWrapper>
@@ -494,7 +494,7 @@ describe('AppLayout', () => {
       // Set up authenticated user with avatar
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
-      mockUseAtom.mockReturnValue([{ authenticatedUser: mockUserWithAvatar }, vi.fn()]);
+      (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUserWithAvatar }, vi.fn()]);
 
       render(
         <TestWrapper>
@@ -516,7 +516,7 @@ describe('AppLayout', () => {
       // Set up authenticated user
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
-      mockUseAtom.mockReturnValue([{ authenticatedUser: mockUser }, vi.fn()]);
+      (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUser }, vi.fn()]);
 
       render(
         <TestWrapper>
@@ -541,7 +541,7 @@ describe('AppLayout', () => {
       const mockUseAtom = vi.mocked(useAtom);
       const mockUseAtomValue = vi.mocked(useAtomValue);
       
-      mockUseAtom.mockReturnValue([{ authenticatedUser: mockUser }, vi.fn()]);
+      (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUser }, vi.fn()]);
       mockUseAtomValue.mockImplementation((atom) => {
         const atomStr = atom.toString();
         if (atomStr.includes('sampleDataEnabled')) return true; // Enable sample data
@@ -666,7 +666,7 @@ describe('AppLayout', () => {
       // Set up authenticated user with long name
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
-      mockUseAtom.mockReturnValue([{ authenticatedUser: mockUserWithLongName }, vi.fn()]);
+      (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUserWithLongName }, vi.fn()]);
 
       render(
         <TestWrapper>

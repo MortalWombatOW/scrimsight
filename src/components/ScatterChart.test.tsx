@@ -30,7 +30,7 @@ vi.mock('recharts', () => ({
       data-key={dataKey} 
       data-name={name}
       data-label={label.value}
-      data-tick-formatter={tickFormatter ? 'present' : 'absent'}
+      data-tick-formatter={typeof tickFormatter === 'function' ? 'present' : 'absent'}
     />
   ),
   YAxis: ({ type, dataKey, name, label, tickFormatter }: { type: string; dataKey: string; name: string; label: { value: string; angle: number; position: string }; tickFormatter: (value: number) => string }) => (
@@ -40,7 +40,7 @@ vi.mock('recharts', () => ({
       data-key={dataKey} 
       data-name={name}
       data-label={label.value}
-      data-tick-formatter={tickFormatter ? 'present' : 'absent'}
+      data-tick-formatter={typeof tickFormatter === 'function' ? 'present' : 'absent'}
     />
   ),
   CartesianGrid: ({ strokeDasharray }: { strokeDasharray: string }) => (

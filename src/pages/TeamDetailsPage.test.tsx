@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route, useParams } from "react-router-dom";
 import TeamDetailsPage from "./TeamDetailsPage";
 import { useScrimsightData } from "../hooks/useScrimsightData";
@@ -18,7 +18,7 @@ vi.mock("../hooks/useScrimsightData", () => ({
   })),
 }));
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as Record<string, unknown>;
   return {
     ...actual,
     useParams: vi.fn(), // Ensure useParams is a mock function
@@ -127,7 +127,7 @@ describe("TeamDetailsPage", () => {
   });
 
   it("renders EmptyState when teamName is missing", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue({
+    (useScrimsightData as Mock).mockReturnValue({
       teams: [],
       playerStatBreakdown: {
         byTeam: [],
@@ -135,7 +135,7 @@ describe("TeamDetailsPage", () => {
         byTeamAndPlayerAndTeam: [],
       },
     });
-    useParams.mockReturnValue({});
+    (useParams as Mock).mockReturnValue({});
 
     render(
       <MemoryRouter initialEntries={["/teams"]}>
@@ -151,7 +151,7 @@ describe("TeamDetailsPage", () => {
   });
 
   it("renders EmptyState when teamDetails are not found", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue({
+    (useScrimsightData as Mock).mockReturnValue({
       teams: [],
       matches: [],
       playerStatBreakdown: {
@@ -160,7 +160,7 @@ describe("TeamDetailsPage", () => {
         byTeamAndPlayerAndTeam: [],
       },
     });
-    useParams.mockReturnValue({ teamName: "nonexistent-team" });
+    (useParams as Mock).mockReturnValue({ teamName: "nonexistent-team" });
 
     render(
       <MemoryRouter initialEntries={["/teams/nonexistent-team"]}>
@@ -175,8 +175,8 @@ describe("TeamDetailsPage", () => {
   });
 
   it("renders correctly with team data", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue(mockDataModel);
-    useParams.mockReturnValue({ teamName: "TeamA" });
+    (useScrimsightData as Mock).mockReturnValue(mockDataModel);
+    (useParams as Mock).mockReturnValue({ teamName: "TeamA" });
 
     render(
       <MemoryRouter initialEntries={["/teams/TeamA"]}>

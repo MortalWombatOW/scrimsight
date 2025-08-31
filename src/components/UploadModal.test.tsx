@@ -35,12 +35,13 @@ describe('UploadModal', () => {
     isDragActive: false,
     isDragAccept: false,
     isDragReject: false,
-  };
+    open: vi.fn(),
+  } as any;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseSetAtom.mockReturnValue(mockLoadFiles);
-    mockUseDropzone.mockReturnValue(defaultDropzoneProps);
+    mockUseDropzone.mockReturnValue(defaultDropzoneProps as any);
   });
 
   afterEach(() => {
@@ -127,7 +128,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         getRootProps: mockGetRootProps,
-      });
+      } as any);
 
       const { container } = render(<UploadModal open={true} onClose={mockOnClose} />);
       
@@ -140,7 +141,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         getInputProps: mockGetInputProps,
-      });
+      } as any);
 
       render(<UploadModal open={true} onClose={mockOnClose} />);
       
@@ -154,7 +155,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         isDragActive: true,
-      });
+      } as any);
 
       render(<UploadModal open={true} onClose={mockOnClose} />);
       
@@ -165,7 +166,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         isDragAccept: true,
-      });
+      } as any);
 
       const { container } = render(<UploadModal open={true} onClose={mockOnClose} />);
       
@@ -177,7 +178,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         isDragReject: true,
-      });
+      } as any);
 
       const { container } = render(<UploadModal open={true} onClose={mockOnClose} />);
       
@@ -202,7 +203,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         onDrop: mockOnDrop,
-      });
+      } as any);
     });
 
     it('should not show selected files section when no files selected', () => {

@@ -55,7 +55,7 @@ const TeamDetailsPage = () => {
   const teamRelationship = useMemo(() => {
     if (!teamName) return null;
 
-    const team = teams.find((t) => t.teamName === teamName);
+    const team = teams.find((t) => t.team === teamName);
     return team || null;
   }, [teams, teamName]);
 

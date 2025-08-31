@@ -105,7 +105,7 @@ vi.mock('recharts', () => ({
 
 // Mock EmptyState component
 vi.mock('./EmptyState', () => ({
-  default: ({ icon, title, description, size }: { icon: unknown; title: string; description: string; size: string }) => (
+  default: ({ title, description, size }: { title: string; description: string; size: string }) => (
     <div data-testid="empty-state" data-title={title} data-description={description} data-size={size} />
   ),
 }));

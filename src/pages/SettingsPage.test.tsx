@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import SettingsPage from "./SettingsPage";
 import { useAtom } from "jotai";
@@ -17,7 +17,7 @@ vi.mock("../hooks/useScrimsightData", () => ({
   })),
 }));
 vi.mock("jotai", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as Record<string, unknown>;
   return {
     ...actual,
     useAtom: vi.fn(),
@@ -60,7 +60,7 @@ describe("SettingsPage", () => {
   });
 
   it("renders correctly", () => {
-    (useAtom as vi.Mock).mockReturnValue([true, vi.fn()]);
+    (useAtom as Mock).mockReturnValue([true, vi.fn()]);
 
     render(
       <MemoryRouter initialEntries={["/settings"]}>

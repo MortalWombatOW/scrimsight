@@ -16,8 +16,6 @@ vi.mock("./ValueDelta", () => ({
   default: ({ 
     value, 
     baseline, 
-    higherIsBetter, 
-    precision, 
     rank, 
     totalCount 
   }: { 

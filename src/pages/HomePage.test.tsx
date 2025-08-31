@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import HomePage from "./HomePage";
 import { useAtomValue } from "jotai";
@@ -7,7 +7,7 @@ import { formatDuration } from "../lib/format";
 
 // Mock Jotai's useAtomValue hook
 vi.mock("jotai", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as Record<string, unknown>;
   return {
     ...actual,
     useAtomValue: vi.fn(),
@@ -101,7 +101,7 @@ const mockDataModel = {
 
 describe("HomePage", () => {
   it("renders EmptyState when dataModel is null", () => {
-    (useAtomValue as vi.Mock).mockReturnValue(null);
+    (useAtomValue as Mock).mockReturnValue(null);
 
     render(
       <MemoryRouter>
@@ -115,7 +115,7 @@ describe("HomePage", () => {
 
   describe("when dataModel is available", () => {
     beforeEach(() => {
-      (useAtomValue as vi.Mock).mockReturnValue(mockDataModel);
+      (useAtomValue as Mock).mockReturnValue(mockDataModel);
     });
 
     it("renders CardStats with correct values", () => {

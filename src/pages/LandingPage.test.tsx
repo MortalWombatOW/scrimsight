@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import LandingPage from "./LandingPage";
 import { useAuth } from "react-oidc-context";
@@ -11,7 +11,7 @@ vi.mock("react-oidc-context", () => ({
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as Record<string, unknown>;
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -21,7 +21,7 @@ vi.mock("react-router-dom", async (importOriginal) => {
 describe("LandingPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as vi.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       signinRedirect: vi.fn(),
     });
 
@@ -47,7 +47,7 @@ describe("LandingPage", () => {
 
   it("calls signinRedirect when Login button is clicked", () => {
     const mockSigninRedirect = vi.fn();
-    (useAuth as vi.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       signinRedirect: mockSigninRedirect,
     });
 
@@ -63,7 +63,7 @@ describe("LandingPage", () => {
 
   it("calls signinRedirect when Get Started with Discord button is clicked", () => {
     const mockSigninRedirect = vi.fn();
-    (useAuth as vi.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       signinRedirect: mockSigninRedirect,
     });
 

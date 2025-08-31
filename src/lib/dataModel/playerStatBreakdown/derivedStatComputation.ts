@@ -68,7 +68,7 @@ const calculateUltimateChargeTime = (
     chargeTimes.push(chargeTime);
   }
 
-  return chargeTimes.length > 0 ? R.mean(chargeTimes) : 0;
+  return chargeTimes.length > 0 ? R.mean(chargeTimes) as number : 0;
 };
 
 const calculateUltimateHoldTime = (
@@ -110,7 +110,7 @@ const calculateUltimateHoldTime = (
     }
   }
 
-  return holdTimes.length > 0 ? R.mean(holdTimes) : 0;
+  return holdTimes.length > 0 ? R.mean(holdTimes) as number : 0;
 };
 
 const calculateUltimateUseTime = (
@@ -152,7 +152,7 @@ const calculateUltimateUseTime = (
     }
   }
 
-  return useTimes.length > 0 ? R.mean(useTimes) : 0;
+  return useTimes.length > 0 ? R.mean(useTimes) as number : 0;
 };
 
 const calculateAverageLifeDuration = (

@@ -1,5 +1,5 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route, useParams } from "react-router-dom";
 import MatchDetailsPage from "./MatchDetailsPage";
 import { useScrimsightData } from "../hooks/useScrimsightData";
@@ -9,7 +9,7 @@ vi.mock("../hooks/useScrimsightData", () => ({
   useScrimsightData: vi.fn(),
 }));
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as Record<string, unknown>;
   return {
     ...actual,
     useParams: vi.fn(), // Ensure useParams is a mock function
@@ -23,7 +23,7 @@ vi.mock("../components/MatchHeader", () => ({
   ),
 }));
 vi.mock("../components/DataTable", () => ({
-  default: ({ columns, data }: { columns: any[]; data: any[] }) => (
+  default: ({ data }: { data: any[] }) => (
     <div data-testid="data-table">DataTable: {data.length} rows</div>
   ),
 }));
@@ -200,13 +200,13 @@ describe("MatchDetailsPage", () => {
   });
 
   it("renders EmptyState when matchId is missing", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue({
+    (useScrimsightData as Mock).mockReturnValue({
       matches: [],
       playerStatBreakdown: { byTeamAndPlayerAndMatch: [] },
       teamfights: [],
       playerStat: [],
     });
-    useParams.mockReturnValue({});
+    (useParams as Mock).mockReturnValue({});
 
     render(
       <MemoryRouter initialEntries={["/matches"]}>
@@ -222,13 +222,13 @@ describe("MatchDetailsPage", () => {
   });
 
   it("renders EmptyState when matchDetails are not found", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue({
+    (useScrimsightData as Mock).mockReturnValue({
       matches: [],
       playerStatBreakdown: { byTeamAndPlayerAndMatch: [] },
       teamfights: [],
       playerStat: [],
     });
-    useParams.mockReturnValue({ matchId: "nonexistent-match" });
+    (useParams as Mock).mockReturnValue({ matchId: "nonexistent-match" });
 
     render(
       <MemoryRouter initialEntries={["/matches/nonexistent-match"]}>
@@ -244,8 +244,8 @@ describe("MatchDetailsPage", () => {
 
   describe("when match data is available", () => {
     beforeEach(() => {
-      (useScrimsightData as vi.Mock).mockReturnValue(mockDataModel);
-      useParams.mockReturnValue({ matchId: "match1" });
+      (useScrimsightData as Mock).mockReturnValue(mockDataModel);
+      (useParams as Mock).mockReturnValue({ matchId: "match1" });
     });
 
     it("renders MatchHeader with correct props", () => {
@@ -317,13 +317,13 @@ describe("MatchDetailsPage", () => {
       const teamASection = screen.getByRole("heading", { name: /TeamA/i, level: 3 }).closest('.card');
       const teamBSection = screen.getByRole("heading", { name: /TeamB/i, level: 3 }).closest('.card');
 
-      expect(within(teamASection!).getByText(/Tank: \d+/)).toBeInTheDocument();
-      expect(within(teamASection!).getByText(/Damage: \d+/)).toBeInTheDocument();
-      expect(within(teamASection!).getByText(/Support: \d+/)).toBeInTheDocument();
+      expect(within(teamASection! as HTMLElement).getByText(/Tank: \d+/)).toBeInTheDocument();
+      expect(within(teamASection! as HTMLElement).getByText(/Damage: \d+/)).toBeInTheDocument();
+      expect(within(teamASection! as HTMLElement).getByText(/Support: \d+/)).toBeInTheDocument();
 
-      expect(within(teamBSection!).getByText(/Tank: \d+/)).toBeInTheDocument();
-      expect(within(teamBSection!).getByText(/Damage: \d+/)).toBeInTheDocument();
-      expect(within(teamBSection!).getByText(/Support: \d+/)).toBeInTheDocument();
+      expect(within(teamBSection! as HTMLElement).getByText(/Tank: \d+/)).toBeInTheDocument();
+      expect(within(teamBSection! as HTMLElement).getByText(/Damage: \d+/)).toBeInTheDocument();
+      expect(within(teamBSection! as HTMLElement).getByText(/Support: \d+/)).toBeInTheDocument();
       const heroIcons = screen.getAllByTestId("hero-icon");
       screen.debug(heroIcons);
       expect(heroIcons.some(icon => icon.textContent === "Reinhardt")).toBe(true);

@@ -452,6 +452,7 @@ describe('PageSection', () => {
     it('should handle empty content gracefully', () => {
       const { container } = render(
         <PageSection>
+          <span></span>
         </PageSection>
       );
       

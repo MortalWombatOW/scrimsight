@@ -288,14 +288,14 @@ describe('MatchList', () => {
         match: 'MATCH_SPECIAL/CHARS&MORE',
         scrim: 'SCRIM_001',
         teams: ['Team A', 'Team B'],
-        map: 'Test Map',
+        map: 'King\'s Row',
         date: new Date('2024-01-20T19:00:00'),
         rounds: [1],
         duration: 600,
         team1Score: 1,
         team2Score: 0,
         winningTeam: 'Team A',
-        gameMode: 'Test',
+        gameMode: 'Hybrid',
       }];
 
       renderWithRouter(<MatchList matches={specialMatch} />);
@@ -309,14 +309,14 @@ describe('MatchList', () => {
         match: 'MATCH_LONG',
         scrim: 'SCRIM_001',
         teams: ['Very Long Team Name That Should Not Break Layout', 'Another Very Long Team Name'],
-        map: 'Test Map',
+        map: 'King\'s Row',
         date: new Date('2024-01-20T19:00:00'),
         rounds: [1],
         duration: 600,
         team1Score: 1,
         team2Score: 0,
         winningTeam: 'Very Long Team Name That Should Not Break Layout',
-        gameMode: 'Test',
+        gameMode: 'Hybrid',
       }];
 
       renderWithRouter(<MatchList matches={longNameMatch} />);
@@ -330,14 +330,14 @@ describe('MatchList', () => {
         match: 'MATCH_ZERO',
         scrim: 'SCRIM_001',
         teams: ['Team A', 'Team B'],
-        map: 'Test Map',
+        map: 'King\'s Row',
         date: new Date('2024-01-20T19:00:00'),
         rounds: [1],
         duration: 0,
         team1Score: 1,
         team2Score: 0,
         winningTeam: 'Team A',
-        gameMode: 'Test',
+        gameMode: 'Hybrid',
       }];
 
       renderWithRouter(<MatchList matches={zeroDurationMatch} />);

@@ -5,8 +5,7 @@ import ErrorBoundary from './ErrorBoundary';
 
 // Mock EmptyState component since we're testing ErrorBoundary behavior
 vi.mock('./EmptyState', () => ({
-  default: ({ icon, title, description, size }: {
-    icon: unknown;
+  default: ({ title, description, size }: {
     title: string; 
     description: string;
     size: string;

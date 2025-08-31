@@ -286,9 +286,6 @@ describe('LoadingSpinner', () => {
     it('should not cause unnecessary re-renders', () => {
       const { rerender } = render(<LoadingSpinner />);
       
-      const spinner = document.querySelector('.loading');
-      const originalSpinner = spinner;
-      
       // Rerender the same component
       rerender(<LoadingSpinner />);
       

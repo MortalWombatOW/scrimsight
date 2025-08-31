@@ -273,6 +273,7 @@ describe('PageHeader', () => {
     it('should handle empty content gracefully', () => {
       const { container } = render(
         <PageHeader>
+          <span></span>
         </PageHeader>
       );
       

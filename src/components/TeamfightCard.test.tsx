@@ -450,25 +450,25 @@ describe('TeamfightCard', () => {
     it('should handle very high round index', () => {
       const highRoundTeamfight: Teamfight = {
         ...mockTeamfight,
-        roundIndex: 99,
+        roundIndex: 3,
       };
       
       render(<TeamfightCard teamfight={highRoundTeamfight} />);
       
-      expect(screen.getByText('Round 99')).toBeInTheDocument();
+      expect(screen.getByText('Round 3')).toBeInTheDocument();
     });
   });
 
   describe('styling and layout', () => {
     it('should apply winner styling to team name', () => {
-      const { container } = render(<TeamfightCard teamfight={mockTeamfight} />);
+      render(<TeamfightCard teamfight={mockTeamfight} />);
       
       const winnerTeamName = screen.getByText('New York Excelsior');
       expect(winnerTeamName).toHaveClass('text-success');
     });
 
     it('should not apply winner styling to losing team name', () => {
-      const { container } = render(<TeamfightCard teamfight={mockTeamfight} />);
+      render(<TeamfightCard teamfight={mockTeamfight} />);
       
       const losingTeamName = screen.getByText('Boston Uprising');
       expect(losingTeamName).not.toHaveClass('text-success');

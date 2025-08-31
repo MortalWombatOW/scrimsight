@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import MatchesPage from "./MatchesPage";
 import { useScrimsightData } from "../hooks/useScrimsightData";
@@ -66,7 +66,7 @@ describe("MatchesPage", () => {
   });
 
   it("renders correctly with matches data", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue(mockDataModel);
+    (useScrimsightData as Mock).mockReturnValue(mockDataModel);
 
     render(
       <MemoryRouter initialEntries={["/matches"]}>
@@ -85,7 +85,7 @@ describe("MatchesPage", () => {
   });
 
   it("renders EmptyState when no matches are available", () => {
-    (useScrimsightData as vi.Mock).mockReturnValue({
+    (useScrimsightData as Mock).mockReturnValue({
       matches: [],
     });
 

@@ -345,7 +345,7 @@ describe('MetricPicker', () => {
       const { container } = render(
         <MetricPicker
           metrics={mockMetrics}
-          selected="nonExistentMetric" as PlayerStatsNumericalKeys
+          selected="nonExistentMetric"
           onChange={mockOnChange}
         />
       );
