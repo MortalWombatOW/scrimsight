@@ -28,6 +28,7 @@ yarn-error.log*
 devenv.local.nix
 package-lock.json
 
+.claude/state
 
 codebase.txt
 *storybook.log
