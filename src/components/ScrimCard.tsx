@@ -2,8 +2,7 @@ import { useAtomValue } from "jotai";
 import { dataModelAtom } from "../atoms/scrimsight";
 import TeamColorDot from "./TeamColorDot";
 import PrimaryButton from "./PrimaryButton";
-import { useNavigate } from "react-router-dom";
-import { getRoute } from "../lib/route";
+import { useScrimsightNavigation } from "../hooks/useScrimsightNavigation";
 
 interface ScrimCardProps {
   scrimId: string;
@@ -11,7 +10,7 @@ interface ScrimCardProps {
 
 const ScrimCard = ({ scrimId }: ScrimCardProps) => {
   const dataModel = useAtomValue(dataModelAtom);
-  const navigate = useNavigate();
+  const { navigate } = useScrimsightNavigation();
 
   const scrim = dataModel?.scrims.find((s) => s.scrim === scrimId);
 
@@ -64,7 +63,7 @@ const ScrimCard = ({ scrimId }: ScrimCardProps) => {
   };
 
   const handleViewScrim = () => {
-    navigate(getRoute(`/scrims/${scrimId}`));
+    navigate('/scrim/:scrimId', { scrimId });
   };
 
   return (

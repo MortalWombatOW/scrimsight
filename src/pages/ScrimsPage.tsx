@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useScrimsightNavigation } from "../hooks/useScrimsightNavigation";
 import { ColumnDef } from "@tanstack/react-table";
 import { Trophy, Calendar, Search, Users, Target, Swords } from "lucide-react";
 
@@ -27,7 +27,7 @@ interface ScrimTableRow {
 
 const ScrimsPage = () => {
   const dataModel = useScrimsightData();
-  const navigate = useNavigate();
+  const { navigate } = useScrimsightNavigation();
   const [searchTerm, setSearchTerm] = useState("");
 
   const { scrims, matches, teams, playerStatBreakdown } = dataModel;
@@ -216,7 +216,7 @@ const ScrimsPage = () => {
   }, [playerStatBreakdown]);
 
   const handleRowClick = (row: ScrimTableRow) => {
-    navigate(`scrim/${row.scrimId}`);
+    navigate('/scrim/:scrimId', { scrimId: row.scrimId });
   };
 
   return (

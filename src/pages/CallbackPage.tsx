@@ -1,12 +1,12 @@
 import { useAuth } from "react-oidc-context";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useScrimsightNavigation } from "../hooks/useScrimsightNavigation";
 import { authAtom, ScrimsightUser } from "../atoms/auth";
 import { useSetAtom } from "jotai";
 
 export const CallbackPage = () => {
   const auth = useAuth();
-  const navigate = useNavigate();
+  const { navigate } = useScrimsightNavigation();
   const setAuthAtom = useSetAtom(authAtom);
 
   useEffect(() => {

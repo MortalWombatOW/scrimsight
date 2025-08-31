@@ -1,6 +1,6 @@
 import { useAuth } from "react-oidc-context";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useScrimsightNavigation } from "../hooks/useScrimsightNavigation";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -8,7 +8,7 @@ interface AuthGuardProps {
 
 export const AuthGuard = ({ children }: AuthGuardProps) => {
   const auth = useAuth();
-  const navigate = useNavigate();
+  const { navigate } = useScrimsightNavigation();
 
   useEffect(() => {
     console.log("AuthGuard mounted, checking authentication status");

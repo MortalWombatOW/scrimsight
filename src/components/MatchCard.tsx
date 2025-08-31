@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { useNavigate } from "react-router-dom";
+import { useScrimsightNavigation } from "../hooks/useScrimsightNavigation";
 import { dataModelAtom } from "../atoms/scrimsight";
 import PrimaryButton from "./PrimaryButton";
 import TeamColorDot from "./TeamColorDot";
@@ -11,7 +11,7 @@ interface MatchCardProps {
 
 export const MatchCard = ({ matchId }: MatchCardProps) => {
   const dataModel = useAtomValue(dataModelAtom);
-  const navigate = useNavigate();
+  const { navigate } = useScrimsightNavigation();
 
   const match = dataModel?.matches.find((m) => m.match === matchId);
 
@@ -42,7 +42,7 @@ export const MatchCard = ({ matchId }: MatchCardProps) => {
   };
 
   const handleViewMatch = () => {
-    navigate(`/match/${matchId}`);
+    navigate('/match/:matchId', { matchId });
   };
 
   const mapImagePath = mapNameToFileName(match.map, false);

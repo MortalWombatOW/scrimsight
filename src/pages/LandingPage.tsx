@@ -9,11 +9,11 @@ import {
   Crown,
   MessageCircle,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useScrimsightNavigation } from "../hooks/useScrimsightNavigation";
 
 const LandingPage = () => {
   const auth = useAuth();
-  const navigate = useNavigate();
+  const { navigate } = useScrimsightNavigation();
 
   const handleSignIn = () => {
     auth.signinRedirect();
