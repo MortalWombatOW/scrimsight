@@ -680,3 +680,7 @@ const applyDiscount = (price: number, discountRate: number): number => {
 - **React Testing Library** for React components
 - All test code must follow the same TypeScript strict mode rules as production code
 - Only run tests covering the files affected unless directly asked.
+
+## Sessions System Behaviors
+
+@CLAUDE.sessions.md
