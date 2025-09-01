@@ -36,11 +36,13 @@ describe('UploadModal', () => {
     isDragAccept: false,
     isDragReject: false,
     open: vi.fn(),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseSetAtom.mockReturnValue(mockLoadFiles);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockUseDropzone.mockReturnValue(defaultDropzoneProps as any);
   });
 
@@ -128,6 +130,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         getRootProps: mockGetRootProps,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
       const { container } = render(<UploadModal open={true} onClose={mockOnClose} />);
@@ -141,6 +144,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         getInputProps: mockGetInputProps,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
       render(<UploadModal open={true} onClose={mockOnClose} />);
@@ -155,6 +159,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         isDragActive: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
       render(<UploadModal open={true} onClose={mockOnClose} />);
@@ -166,6 +171,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         isDragAccept: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
       const { container } = render(<UploadModal open={true} onClose={mockOnClose} />);
@@ -178,6 +184,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         isDragReject: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
 
       const { container } = render(<UploadModal open={true} onClose={mockOnClose} />);
@@ -203,6 +210,7 @@ describe('UploadModal', () => {
       mockUseDropzone.mockReturnValue({
         ...defaultDropzoneProps,
         onDrop: mockOnDrop,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
     });
 

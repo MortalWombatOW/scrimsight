@@ -11,7 +11,9 @@ import { buildTeamfights } from "./teamfightBuilder";
 import { buildRounds } from "./roundBuilder";
 import { buildTeamCompositions } from "./teamCompositionBuilder";
 import { buildKillCounts } from "./killCountBuilder";
+// eslint-disable-next-line project-structure/independent-modules
 import { buildPlayerStatBreakdown } from "./playerStatBreakdown/index";
+// eslint-disable-next-line project-structure/independent-modules
 import { buildPlayerStatBreakdownRanks } from "./playerStatBreakdown/statRanking";
 import * as R from "remeda";
 

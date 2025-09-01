@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
+// eslint-disable-next-line project-structure/independent-modules
 import SettingsPage from "./SettingsPage";
 import { useAtom } from "jotai";
 

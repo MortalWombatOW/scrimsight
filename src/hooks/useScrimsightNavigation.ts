@@ -18,10 +18,10 @@ type ScrimsightRoute = AbsoluteRoute | AppSubRoute;
 
 type RouteParameters<T extends ScrimsightRoute> = 
   T extends '/scrim/:scrimId' ? { scrimId: string } :
-  T extends '/match/:matchId' ? { matchId: string } :
-  T extends '/player/:playerName' ? { playerName: string } :
-  T extends '/team/:teamName' ? { teamName: string } :
-  undefined;
+    T extends '/match/:matchId' ? { matchId: string } :
+      T extends '/player/:playerName' ? { playerName: string } :
+        T extends '/team/:teamName' ? { teamName: string } :
+          undefined;
 
 type NavigationFunction = {
   <TRoute extends ScrimsightRoute>(

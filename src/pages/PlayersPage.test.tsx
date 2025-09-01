@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
+// eslint-disable-next-line project-structure/independent-modules
 import PlayersPage from "./PlayersPage";
 import { useScrimsightData } from "../hooks/useScrimsightData";
 
@@ -31,6 +32,7 @@ vi.mock("../components/BreadCrumbs", () => ({
   default: () => <div data-testid="breadcrumbs">Breadcrumbs</div>,
 }));
 vi.mock("../components/PlayerList", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ players }: { players: any[] }) => (
     <div data-testid="player-list">Player List: {players.length} players</div>
   ),

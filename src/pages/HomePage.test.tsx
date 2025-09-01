@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter } from "react-router-dom";
+// eslint-disable-next-line project-structure/independent-modules
 import HomePage from "./HomePage";
 import { useAtomValue } from "jotai";
 import { formatDuration } from "../lib/format";
@@ -22,6 +23,7 @@ vi.mock("../lib/route", () => ({
 
 // Mock CardStat component
 vi.mock("../components/CardStat", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ label, value }: { label: string; value: any }) => (
     <div data-testid="card-stat">
       <span>{label}</span>

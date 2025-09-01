@@ -92,6 +92,7 @@ describe('AppLayout', () => {
     const mockUseAtomValue = vi.mocked(useAtomValue);
 
     // Default state: authenticated user is null, sample data disabled, data ready
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (mockUseAtom as any).mockReturnValue([{ authenticatedUser: null }, vi.fn()]);
     mockUseAtomValue.mockImplementation((atom) => {
       const atomStr = atom.toString();
@@ -445,6 +446,7 @@ describe('AppLayout', () => {
       // Set up authenticated user
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUser }, vi.fn()]);
 
       render(
@@ -467,6 +469,7 @@ describe('AppLayout', () => {
       // Set up authenticated pro user
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockProUser }, vi.fn()]);
 
       render(
@@ -494,6 +497,7 @@ describe('AppLayout', () => {
       // Set up authenticated user with avatar
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUserWithAvatar }, vi.fn()]);
 
       render(
@@ -516,6 +520,7 @@ describe('AppLayout', () => {
       // Set up authenticated user
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUser }, vi.fn()]);
 
       render(
@@ -541,6 +546,7 @@ describe('AppLayout', () => {
       const mockUseAtom = vi.mocked(useAtom);
       const mockUseAtomValue = vi.mocked(useAtomValue);
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUser }, vi.fn()]);
       mockUseAtomValue.mockImplementation((atom) => {
         const atomStr = atom.toString();
@@ -642,6 +648,7 @@ describe('AppLayout', () => {
       mockUseAtomValue.mockImplementation((atom) => {
         const atomStr = atom.toString();
         if (atomStr.includes('sampleDataEnabled')) return false;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (atomStr.includes('status')) return 'unknown' as any;
         if (atomStr.includes('dataModel')) return { teams: [] };
         return null;
@@ -666,6 +673,7 @@ describe('AppLayout', () => {
       // Set up authenticated user with long name
       const { useAtom } = await import('jotai');
       const mockUseAtom = vi.mocked(useAtom);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (mockUseAtom as any).mockReturnValue([{ authenticatedUser: mockUserWithLongName }, vi.fn()]);
 
       render(

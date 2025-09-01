@@ -18,6 +18,7 @@ describe('extractAllEvents', () => {
   it('should call extractEventsFromFiles for every event type and populate the data model', () => {
     // Create a mock data model with empty arrays for all event types
     const dataModel: Partial<ScrimsightDataModel.ScrimsightDataModel> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const parsedFiles: any[] = [{ matchId: 'test-match', logs: [], fileName: 'test.txt', fileModified: 0 }];
 
     const eventTypes = {
@@ -45,7 +46,7 @@ describe('extractAllEvents', () => {
     };
 
     // Set up the mock to return specific data for each event type
-    for (const [key, value] of Object.entries(eventTypes)) {
+    for (const [_key, value] of Object.entries(eventTypes)) {
       (extractEventsFromFiles as vi.Mock).mockImplementation((eventName: string) => {
         if (eventName === value) {
           return [{ type: eventName, mock: true }];
@@ -58,7 +59,7 @@ describe('extractAllEvents', () => {
 
     // Verify that extractEventsFromFiles was called for each event type
     // and that the data model was populated correctly
-    for (const [key, value] of Object.entries(eventTypes)) {
+    for (const [_key, value] of Object.entries(eventTypes)) {
       (extractEventsFromFiles as vi.Mock).mockImplementation((eventName: string) => {
         if (eventName === value) {
           return [{ type: eventName, mock: true }];
@@ -73,6 +74,7 @@ describe('extractAllEvents', () => {
 
   it('should handle empty parsedFiles array', () => {
     const dataModel: Partial<ScrimsightDataModel.ScrimsightDataModel> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const parsedFiles: any[] = [];
 
     (extractEventsFromFiles as vi.Mock).mockReturnValue([]);

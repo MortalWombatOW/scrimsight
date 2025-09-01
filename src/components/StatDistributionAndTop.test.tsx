@@ -5,6 +5,7 @@ import StatDistributionAndTop from "./StatDistributionAndTop";
 
 // Mock the chart and data table dependencies
 vi.mock("./ChartWrapper", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ config, className }: { config: any; className?: string }) => (
     <div data-testid="chart-wrapper" data-config={JSON.stringify(config)} className={className}>
       Chart: {config.type}
@@ -40,8 +41,11 @@ vi.mock("./DataTable", () => ({
     disableSorting, 
     hideFooter 
   }: { 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     columns: any[]; 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any[]; 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rowKey: (row: any) => string; 
     disableSorting: boolean; 
     hideFooter: boolean; 
@@ -73,11 +77,13 @@ vi.mock("../lib/distribution", () => ({
   computeDeciles: vi.fn((values: number[]) => 
     values.map((value, index) => ({ value, frequency: (index + 1) / values.length }))
   ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   smoothDistribution: vi.fn((deciles: any[], _smoothing: number) => deciles),
 }));
 
 // Mock remeda
 vi.mock("remeda", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meanBy: vi.fn((array: any[], fn: (item: any) => number) => {
     const values = array.map(fn);
     return values.reduce((sum, value) => sum + value, 0) / values.length;

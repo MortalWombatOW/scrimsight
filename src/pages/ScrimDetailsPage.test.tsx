@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route, useParams } from "react-router-dom";
+// eslint-disable-next-line project-structure/independent-modules
 import ScrimDetailsPage from "./ScrimDetailsPage";
 import { useScrimsightData } from "../hooks/useScrimsightData";
 
@@ -43,6 +44,7 @@ vi.mock("../components/ScrimHeader", () => ({
   ),
 }));
 vi.mock("../components/MatchList", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ matches }: { matches: any[] }) => (
     <div data-testid="match-list">Match List: {matches.length} matches</div>
   ),

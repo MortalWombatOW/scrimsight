@@ -97,6 +97,7 @@ const mockDataModel: ScrimsightDataModel = {
   rounds: [],
   teamCompositions: [],
   playerStatBreakdown: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     total: {} as any,
     byPlayer: [],
     byTeam: [],
@@ -110,6 +111,7 @@ const mockDataModel: ScrimsightDataModel = {
     byTeamAndScrim: [],
   },
   playerStatBreakdownRanks: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     total: {} as any,
     byPlayer: [],
     byTeam: [],

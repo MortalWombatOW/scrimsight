@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter } from "react-router-dom";
+// eslint-disable-next-line project-structure/independent-modules
 import LandingPage from "./LandingPage";
 import { useAuth } from "react-oidc-context";
 

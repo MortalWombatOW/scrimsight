@@ -1,6 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { MemoryRouter, Routes, Route, useParams } from "react-router-dom";
+// eslint-disable-next-line project-structure/independent-modules
 import MatchDetailsPage from "./MatchDetailsPage";
 import { useScrimsightData } from "../hooks/useScrimsightData";
 
@@ -23,11 +24,13 @@ vi.mock("../components/MatchHeader", () => ({
   ),
 }));
 vi.mock("../components/DataTable", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ data }: { data: any[] }) => (
     <div data-testid="data-table">DataTable: {data.length} rows</div>
   ),
 }));
 vi.mock("../components/TeamfightCard", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ teamfight }: { teamfight: any }) => (
     <div data-testid="teamfight-card">Teamfight: {teamfight.id}</div>
   ),
@@ -38,6 +41,7 @@ vi.mock("../components/EmptyState", () => ({
   ),
 }));
 vi.mock("../components/TimelineBar", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: ({ segments }: { segments: any[] }) => (
     <div data-testid="timeline-bar">Timeline: {segments.length} segments</div>
   ),
