@@ -68,7 +68,7 @@ describe('extractAllEvents', () => {
       });
       extractAllEvents(dataModel as ScrimsightDataModel.ScrimsightDataModel, parsedFiles);
       expect(extractEventsFromFiles).toHaveBeenCalledWith(value, parsedFiles);
-      expect(dataModel[key as keyof ScrimsightDataModel.ScrimsightDataModel]).toEqual([{ type: value, mock: true }]);
+      expect(dataModel[_key as keyof ScrimsightDataModel.ScrimsightDataModel]).toEqual([{ type: value, mock: true }]);
     }
   });
 

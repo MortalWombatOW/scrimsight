@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { ColumnDef } from '@tanstack/react-table';
@@ -675,17 +675,21 @@ describe('DataTable', () => {
       }];
 
       // Rerender should maintain existing sort state
-      rerender(
-        <DataTable
-          columns={testColumns}
-          data={updatedData}
-          rowKey={getRowKey}
-        />
-      );
+      act(() => {
+        rerender(
+          <DataTable
+            columns={testColumns}
+            data={updatedData}
+            rowKey={getRowKey}
+          />
+        );
+      });
 
       // Should maintain sort and include new data
-      rows = screen.getAllByRole('row');
-      expect(rows[1]).toHaveTextContent('Aaron First'); // Should be first alphabetically
+      await waitFor(() => {
+        rows = screen.getAllByRole('row');
+        expect(rows[1]).toHaveTextContent('Aaron First'); // Should be first alphabetically
+      });
     });
   });
 

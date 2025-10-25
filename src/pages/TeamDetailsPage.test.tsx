@@ -70,7 +70,7 @@ vi.mock("lucide-react", () => ({
 const mockDataModel = {
   teams: [
     {
-      teamName: "TeamA",
+      team: "TeamA",
       players: ["Player1", "Player2"],
       scrims: ["scrim1"],
     },

@@ -179,7 +179,7 @@ describe('PrimaryButton', () => {
 
   describe('edge cases', () => {
     it('should handle empty children', () => {
-      render(<PrimaryButton><span></span></PrimaryButton>);
+      render(<PrimaryButton>{null}</PrimaryButton>);
       
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();

@@ -34,6 +34,7 @@ describe("CallbackPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useSetAtom as Mock).mockReturnValue(mockSetAuthAtom);
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   it("should navigate to /app and set auth atom on successful authentication", async () => {
