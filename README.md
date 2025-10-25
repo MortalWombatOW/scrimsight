@@ -12,21 +12,14 @@ match level insights.
 ```bash
 npm install            # install dependencies
 npm run dev            # launch Vite on http://localhost:5173
-npm run storybook      # optional: component sandbox on http://localhost:6006
 ```
 
-Quality checks can be run locally:
+Storybook and every quality gate (`lint`, `type-check`, `test`, `build`, etc.) are
+exposed as `npm run` scripts. Run `npm run` to view the canonical list sourced from
+[`package.json`](package.json) rather than relying on duplicated tables.
 
-```bash
-npm run lint           # ESLint with project-structure rules
-npm run type-check     # tsc --noEmit
-npm run test           # Vitest test suite (single run)
-npm run test:watch     # Vitest watch mode
-npm run build          # type-checks + optimized production build
-```
-
-`./check-lint-build-errors.sh <path>` is available for targeted lint/type/test runs when
-working on a specific folder (for example `./check-lint-build-errors.sh src/atoms`).
+`./check-lint-build-errors.sh <path>` wraps the same scripts for targeted lint/type/test
+runs (for example `./check-lint-build-errors.sh src/atoms`).
 
 See [docs/README.md](docs/README.md) for deeper workflow guidance.
 

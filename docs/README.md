@@ -23,32 +23,10 @@ dive deeper as you work on a feature.
 
 ## 🚀 Getting started
 
-1. **Clone and install**
-   ```bash
-   git clone <repo-url>
-   cd scrimsight
-   npm install
-   ```
-2. **Run the dev server**
-   ```bash
-   npm run dev
-   ```
-3. **Run the component sandbox**
-   ```bash
-   npm run storybook
-   ```
-4. **Check quality gates**
-   ```bash
-   npm run lint
-   npm run type-check
-   npm run test
-   ```
-5. **Targeted checks while iterating**
-   ```bash
-   ./check-lint-build-errors.sh src/atoms
-   ```
-   The script accepts a space-separated list of files or folders and runs ESLint,
-   TypeScript, and Vitest against just those targets.
+Follow the [root README](/README.md#quick-start) for install and dev-server commands.
+The authoritative list of scripts (Storybook, linting, tests, build, etc.) lives in
+[`package.json`](/package.json); run `npm run` to explore them instead of maintaining
+command tables in multiple docs.
 
 ---
 
@@ -68,17 +46,17 @@ open PR → reviewers run npm run build → merge
 
 ---
 
-## 🛠️ Tool versions & configuration
+## 🛠️ Tooling source of truth
 
-| Tool | Notes |
-| ---- | ----- |
-| Node ≥ 18 | Vite requires a modern runtime |
-| Vite 6 | `vite.config.ts` manages aliases and plugins |
-| ESLint 9 | Configured via `eslint.config.mjs` using flat config syntax |
-| Vitest 3 | Global setup defined in `vitest.workspace.ts` |
-| Storybook 9 | Entry point in `.storybook/main.ts` |
+Versions and configuration live beside the code that uses them:
 
-Run `npm run build` before merging to ensure Vite, TypeScript, and ESLint agree.
+* Dependencies and scripts → [`package.json`](/package.json)
+* Vite aliases and plugins → [`vite.config.ts`](/vite.config.ts)
+* ESLint layout rules → [`eslint.config.mjs`](/eslint.config.mjs) plus the `*.mjs` helpers
+* Vitest setup → [`vitest.workspace.ts`](/vitest.workspace.ts)
+* Storybook entry → [`.storybook/main.ts`](/.storybook/main.ts)
+
+Run `npm run build` before merging to confirm those configurations still agree.
 
 ---
 

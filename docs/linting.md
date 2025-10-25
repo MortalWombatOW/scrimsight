@@ -31,15 +31,10 @@ The main configuration file is `eslint.config.mjs`.
 
 ## 3. Running the lints
 
-```bash
-npm run lint                # run ESLint over src/**/*.{ts,tsx}
-npm run type-check          # tsc --noEmit for the whole project
-./check-lint-build-errors.sh src/atoms src/lib  # targeted lint/type/test
-```
-
-The helper script accepts a list of files or folders and, for each, runs ESLint,
-TypeScript, and Vitest. It exits with a non-zero status if any of the tools report
-issues for the provided targets.
+Use the `lint` and `type-check` npm scripts defined in [`package.json`](../package.json)
+so changes stay tied to their actual implementations. For focused passes, run
+`./check-lint-build-errors.sh <paths>`—it reuses those same scripts for each provided
+file or directory and fails fast if any tool reports an issue.
 
 ---
 

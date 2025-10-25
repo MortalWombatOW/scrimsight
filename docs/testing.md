@@ -12,11 +12,9 @@ work the same way as in the dev server.
 
 ### Commands
 
-```bash
-npm run test        # single run in Node
-npm run test:watch  # watch mode while developing
-npm run test -- --coverage  # generate coverage reports in coverage/
-```
+All commands are wired up as npm scripts—run `npm run` to list them straight from
+`package.json`. The defaults are `npm run test` for a single run and `npm run test:watch`
+while iterating; pass `-- --coverage` to the `test` script to emit `coverage/` reports.
 
 Vitest is configured via `vitest.workspace.ts`; globals such as `describe`, `it`, and
 `expect` are automatically available.
@@ -39,11 +37,8 @@ assert on visible behaviour, not implementation details.
 ## 2. Storybook
 
 Storybook runs alongside the application code and is used for manual visual checks and
-spot regression testing.
-
-```bash
-npm run storybook
-```
+spot regression testing. Launch it through the `storybook` npm script (see
+[`package.json`](../package.json) or `npm run`).
 
 * Each component should have a matching `*.stories.tsx` file next to it.
 * Use controls and args in stories to cover the important UI states.
