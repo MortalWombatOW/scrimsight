@@ -1,110 +1,70 @@
 # Testing Playbook
 
-Scrimsight relies exclusively on **Vitest** for unit & integration coverage and **Storybook 8** for visual regression.
-
-## 1 Vitest setup
-
-Vitest is a Vite-native runner, so it reuses the same plugins & aliases as the dev server, keeping test startup <200 ms on cold runs.
-
-### Basic usage
-
-```bash
-npm test              # watch mode
-npm run test:ci       # vitest run --coverage
-````
-
-Vitest includes globals by default in our config, so you can use `describe`, `it`, `expect` directly without imports.
-
-## 2 Atom tests
-
-* Import `{atomName}Fn` directly.
-* Mock atom dependencies with `vi.fn()` or pass pre-computed values.
-* One root-level `describe` per file (ESLint enforced).
-
-## 3 Component & page stories
-
-Story files (`*.stories.tsx`) double as interaction/visual tests.
-
-```ts
-export const Primary = playStory.bind({});
-Primary.play = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-  await expect(canvas.getByText(/Submit/i)).toBeVisible();
-};
-```
-
-Run locally via the Storybook Visual Tests addon or automatically on PRs via Chromatic.
-
-### 3.1 Playwright MCP testing for Storybook
-
-Use Playwright MCP tools to test Storybook stories during development. The MCP server provides built-in Playwright functions that don't require separate installation or setup.
-
-**Essential error checking workflow:**
-1. **Navigate to story**: Use `mcp__playwright__playwright_navigate` with the story URL
-2. **Check console errors**: Always use `mcp__playwright__playwright_console_logs` with `type: "error"` to catch runtime errors
-3. **Visual verification**: Use `mcp__playwright__playwright_screenshot` to verify rendering
-4. **Context validation**: For components using React Router, ensure proper context providers are set up
-
-**Example MCP workflow:**
-```typescript
-// Navigate to a specific story
-mcp__playwright__playwright_navigate({
-  url: "http://localhost:6006/?path=/story/components-cardbase--with-link",
-  headless: true
-})
-
-// Check for errors immediately after navigation
-mcp__playwright__playwright_console_logs({
-  type: "error"
-})
-
-// Take screenshot for visual verification
-mcp__playwright__playwright_screenshot({
-  name: "story-test",
-  fullPage: true
-})
-```
-
-**Common error patterns to check for:**
-- React Router context errors (e.g., "Cannot destructure property 'basename'")
-- Missing Jotai providers for atom-dependent components  
-- TypeScript errors in component props
-- CSS/styling issues causing layout breaks
-
-**Context provider requirements:**
-- Components using React Router `Link` require Router context in stories
-- Components using Jotai atoms need Provider setup in `.storybook/preview.ts`
-- Always check console for context-related errors before committing
-
-**Story URL format:**
-```
-http://localhost:6006/?path=/story/[folder]-[component]--[variant]
-```
-Example: `components-cardbase--with-link` for CardBase component's "With Link" story.
-
-**Important**: Always start Storybook (`npm run storybook`) before using Playwright MCP tools. Use the MCP functions rather than console commands for automated testing.
-
-## 4 Coverage targets
-
-| Layer        | Target                   |
-| ------------ | ------------------------ |
-| Atoms & libs | **100 %** lines/branches |
-| Components   | 80 % lines               |
-| Pages        | snapshot diff only       |
-
-Vitest generates Istanbul reports in `coverage/`; CI fails if totals drop.
-
-## 5 CI matrix
-
-| Job          | Script                         |
-| ------------ | ------------------------------ |
-| Lint & types | `./check-lint-build-errors.sh` |
-| Unit tests   | `vitest run --coverage`        |
-| Visual tests | Chromatic via GitHub action    |
+Scrimsight relies on Vitest for unit and integration tests and Storybook for manual UI
+checks. The commands below match the scripts in `package.json`.
 
 ---
 
-**See also:**
-- [atom-patterns.md](atom-patterns.md) — Atom testing patterns and examples
-- [ui-guidelines.md](ui-guidelines.md) — Component and styling guidelines
-- [troubleshooting.md](troubleshooting.md) — Common testing and Storybook issues
+## 1. Vitest
+
+Vitest shares Vite’s configuration so JSX transforms, path aliases, and CSS handling
+work the same way as in the dev server.
+
+### Commands
+
+```bash
+npm run test        # single run in Node
+npm run test:watch  # watch mode while developing
+npm run test -- --coverage  # generate coverage reports in coverage/
+```
+
+Vitest is configured via `vitest.workspace.ts`; globals such as `describe`, `it`, and
+`expect` are automatically available.
+
+### Atom tests
+
+* Import the `{name}Fn` helper exported from each atom file rather than the default
+  atom. This keeps tests deterministic and avoids needing to mock providers.
+* Keep one top-level `describe` block per test file—this is enforced by ESLint.
+* Reach into other atoms via the `@atoms` alias so imports stay consistent.
+
+### Component tests
+
+Components are primarily exercised through their Storybook stories. When you do need a
+Vitest component test, use `@testing-library/react` helpers (already installed) and
+assert on visible behaviour, not implementation details.
+
+---
+
+## 2. Storybook
+
+Storybook runs alongside the application code and is used for manual visual checks and
+spot regression testing.
+
+```bash
+npm run storybook
+```
+
+* Each component should have a matching `*.stories.tsx` file next to it.
+* Use controls and args in stories to cover the important UI states.
+* Capture screenshots manually when making noticeable visual changes; there is no
+  Chromatic integration in this repo.
+
+---
+
+## 3. Coverage targets
+
+Coverage is not enforced in CI, but keeping atom logic near 100 % and component stories
+covering the primary states helps catch regressions early. Coverage reports from
+`npm run test -- --coverage` are written to `coverage/`.
+
+---
+
+## 4. Troubleshooting
+
+* If tests cannot resolve imports, run `npm run type-check` to surface TypeScript
+  errors and ensure path aliases match `tsconfig.json`.
+* For flaky time-based assertions, prefer the utilities in `src/lib/time.ts` and
+  inject the current time as a parameter that tests can control.
+* When components fail in Storybook, check the browser console for missing providers
+  (Router, Jotai) and update `.storybook/preview.tsx` accordingly.

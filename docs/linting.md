@@ -1,53 +1,61 @@
-
 # Linting & Static Analysis
 
-Scrimsight’s codebase will not compile—or commit—unless three ESLint rule-sets pass.
-
-## 1 Stack overview
-
-| Layer | Plugin / tool | Purpose |
-|-------|---------------|---------|
-| **core** | `@eslint/js` + TypeScript ESLint | generic JS/TS quality |
-| **project structure** | `eslint-plugin-project-structure` | folder, file, module guards :contentReference[oaicite:8]{index=8} |
-| **style** | `eslint-plugin-unused-imports`, `eslint-plugin-import` | dead code & path sanity |
-
-The config file is `eslint.config.mjs` (flat-config syntax).
-
-## 2 fileComposition.mjs
-
-Defines **selector limits** per atom pattern (see docs/atom-patterns.md).  
-If you hit an error like “too many `arrowFunction` in file root” revise exports to match the table.
-
-## 3 folderStructure.mjs
-
-Ensures names and required siblings (e.g. `<atom>.ts` ↔ `<atom>.test.ts`).  
-Tip: `eslint --fix` can *move* files to satisfy patterns.
-
-## 4 independentModules.mjs
-
-Prevents dependency spaghetti.  Violations read like:
-
-````
-
-🔥 Atoms (src/atoms/foo.ts) can only import from the atom index (@atoms) or the library index (@library). 🔥
-
-```
-
-Fix by routing imports through the appropriate index barrel.
-
-## 5 Running lints
-
-* Whole repo: `./check-lint-build-errors.sh`  
-* Single folder: `./check-lint-build-errors.sh src/pages/`  
-* Auto-fix safe rules: `eslint . --fix`
-
-## 6 Long path warnings
-
-`folderStructure` warns at 240-character paths by default; override in the rule config if your filesystem supports longer paths.
+Scrimsight uses ESLint’s flat configuration together with
+`eslint-plugin-project-structure` to enforce naming, dependency, and file-shape rules.
+This document explains the layers and how to run them locally.
 
 ---
 
-**See also:**
-- [file-structure.md](file-structure.md) — Folder structure rules and architecture
-- [atom-patterns.md](atom-patterns.md) — File composition patterns
-- [troubleshooting.md](troubleshooting.md) — Common ESLint error solutions
+## 1. Stack overview
+
+| Layer | Plugin / tool | Purpose |
+| ----- | ------------- | ------- |
+| Core | `@typescript-eslint` + `eslint-plugin-react` | General TypeScript and React quality rules |
+| Structure | `eslint-plugin-project-structure` | Directory layout, required siblings, and dependency boundaries |
+| Style hygiene | `eslint-plugin-unused-imports`, `eslint-plugin-import`, `@stylistic/eslint-plugin` | Keep imports tidy and formatting consistent |
+
+The main configuration file is `eslint.config.mjs`.
+
+---
+
+## 2. Project structure helpers
+
+* `folderStructure.mjs` – defines which files are allowed in each directory and which
+  siblings are required (for example components must have a matching story).
+* `fileComposition.mjs` – enforces the allowed exports within a file. Atom files, for
+  instance, must expose exactly one `{name}Fn` helper and a default atom export.
+* `independentModules.mjs` – restricts which folders can import from each other so that
+  atoms, components, pages, and libraries stay decoupled.
+
+---
+
+## 3. Running the lints
+
+```bash
+npm run lint                # run ESLint over src/**/*.{ts,tsx}
+npm run type-check          # tsc --noEmit for the whole project
+./check-lint-build-errors.sh src/atoms src/lib  # targeted lint/type/test
+```
+
+The helper script accepts a list of files or folders and, for each, runs ESLint,
+TypeScript, and Vitest. It exits with a non-zero status if any of the tools report
+issues for the provided targets.
+
+---
+
+## 4. Tips
+
+* Keep helper functions inside the `{name}Fn` implementations when working on atoms so
+  the `file-composition` rule does not flag extra top-level exports.
+* When reorganising folders, update the matching `index.ts` barrel and run
+  `npm run lint` immediately to surface missing stories or tests.
+* Set your editor to use the repository `.editorconfig` values (two-space indentation)
+  to avoid stylistic noise in diffs.
+
+---
+
+## 5. Related docs
+
+* [file-structure.md](file-structure.md) – directory rules and examples
+* [atom-patterns.md](atom-patterns.md) – required exports for atom files
+* [troubleshooting.md](troubleshooting.md) – common lint and type-check fixes

@@ -1,22 +1,27 @@
 # Tech Stack
 
 ## Frontend
-- **React:** JavaScript library for building user interfaces.
-- **Jotai:** Primitive and flexible state management library for React, used for defining atoms.
-- **DaisyUI & Tailwind CSS:** CSS framework and utility-first CSS framework for styling components.
-- **Vite:** Next-generation frontend tooling for fast development.
+- **React:** UI framework (React 19) for the dashboard.
+- **Jotai:** Atom-based state management used across the data model.
+- **Tailwind CSS & daisyUI:** Utility-first styling plus themed components.
+- **Vite:** Development server and build tool with fast HMR.
 
 ## Testing
-- **Vitest/Jest:** JavaScript testing frameworks for unit and integration tests.
-- **Storybook:** UI development environment for components.
-- **Chromatic:** Cloud-based tool for visual testing of Storybook components.
+- **Vitest:** Unit and integration tests with Testing Library helpers.
+- **Storybook:** Component playground used for manual visual checks.
 
 ## Data Flow & Architecture
-- **Jotai Atoms:** Centralized state management units, following a strict pattern for consistency and testability.
-- **Event Extractors:** Atoms responsible for parsing raw log data into structured events.
-- **Derived Atoms:** Atoms that compute derived state from other atoms, encapsulating business logic.
-- **Utility Libraries (`src/lib/`):** Provide reusable functionality. `src/lib/playerMetricsUtils.ts` now contains functions for filtering, adding derived metrics, and determining dominant roles for player stats. `src/lib/eventExtractionUtils.ts` contains general event extraction helpers.
+- **Jotai Atoms:** State units that transform raw scrim data into derived metrics.
+- **Event Extractors:** Atoms and helpers that turn log entries into structured events
+  via utilities such as `src/lib/eventExtractionUtils.ts`.
+- **Derived Atoms:** Aggregations (for example `playerStatsBaseAtom`) that compute player
+  and team level stats.
+- **Utility Libraries (`src/lib/`):** Shared helpers used by atoms, components, and
+  pages. `src/lib/playerMetricsUtils.ts` contains metric calculations, while
+  `src/lib/eventExtractionUtils.ts` handles log parsing.
 
 ## Project Conventions
-- **File Structure:** Organized into `atoms`, `components`, `pages`, and `lib` directories with strict conventions.
-- **Atom Pattern:** Each atom has a dedicated file, with core logic in a named `Fn` export and the atom instance as the default export. Types are centralized in `src/atoms/index.ts`.
+- **File Structure:** `atoms`, `components`, `pages`, `lib`, and `icons` folders with
+  lint-enforced naming and companion-file rules.
+- **Atom Pattern:** Each atom exposes a `{name}Fn` helper for tests and a default atom
+  export. Types that need sharing are collected in `src/atoms/index.ts`.
