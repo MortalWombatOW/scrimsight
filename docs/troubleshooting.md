@@ -1,56 +1,55 @@
 # Troubleshooting
 
-Quick fixes for common development issues, organized by area.
+Quick fixes for common development issues.
 
-## ESLint & Linting Issues
+---
 
-### "Selector limit exceeded" error
+## ESLint & linting issues
 
-**Symptom:**
+### “Selector limit exceeded”
+
 ```
 [project-structure/file-composition] Too many arrowFunction in root of file
 ```
 
-**Fix:**  
-Ensure only the exports listed in [atom-patterns.md](atom-patterns.md) are present.  
-Often an extra helper sneaks to file root—nest it inside the main `Fn`.
+* Ensure the atom file matches one of the patterns in
+  [atom-patterns.md](atom-patterns.md).
+* Move helper functions inside `{name}Fn` so only the allowed top-level exports remain.
 
-## Testing Issues
+### Missing story or test warnings
 
-### Vitest "Cannot find module 'react'"
+* The folder structure rule expects component ↔ story and atom ↔ test pairs.
+* Create the missing companion file or update `folderStructure.mjs` if the rule needs to
+  be adjusted for a refactor.
 
-**Cause:** Vitest reuses Vite aliases; configuration or dependency issue.
+---
 
-**Fix:**
-1. Verify `vite.config.ts` has `react` plugin
-2. Delete `node_modules` and run `npm install`
-3. Ensure test file ends with `.test.ts` (needed for glob)
+## Testing issues
 
-## Storybook Issues
+### “Cannot find module …” during `npm run test`
 
-### React Router context errors
+* Run `npm run type-check` to surface TypeScript errors that may block Vitest.
+* Confirm the import path uses one of the aliases configured in `tsconfig.json`.
+* Delete `node_modules` and reinstall dependencies if the issue persists.
 
-**Symptom:**
-```
-Cannot destructure property 'basename' of 'React10.useContext(...)' as it is null.
-```
+### Failing Storybook stories
 
-**Cause:** Component uses React Router `Link` but Storybook stories lack Router context.
+* Make sure `.storybook/preview.tsx` provides the same providers used in the app
+  (Router, Jotai, Auth, etc.).
+* Reload the Storybook iframe after editing providers; hot reload occasionally needs a
+  manual refresh to pick up context changes.
 
-**Fix:**
-1. Use Playwright MCP to detect: `mcp__playwright__playwright_console_logs({ type: "error" })`
-2. Add Router provider to `.storybook/preview.ts` or mock the component prop
-3. Test fix with `mcp__playwright__playwright_navigate` to story URL
+---
 
-### Jotai atom errors
+## Build issues
 
-**Symptom:** Component renders blank or throws atom-related errors in console.
+### `npm run build` fails on type errors only seen in CI
 
-**Fix:**
-1. Check console with `mcp__playwright__playwright_console_logs({ type: "error" })`
-2. Add Jotai Provider to `.storybook/preview.ts`
-3. Initialize required atoms in story decorators
+* Run `npm run type-check` locally with the same Node version as CI (Node 18+).
+* Ensure any environment-based logic is guarded so it does not run during static
+  evaluation.
 
-### General Storybook debugging
+---
 
-For comprehensive Storybook testing and debugging guidance, see [testing.md](testing.md#31-playwright-mcp-testing-for-storybook).
+Still stuck? Raise the problem in the `#scrimsight-dev` Slack channel with the command
+you ran and the full error output.

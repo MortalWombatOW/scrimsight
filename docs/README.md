@@ -1,120 +1,75 @@
-````markdown
 # Scrimsight Documentation Hub
 
-Welcome to the Scrimsight knowledge-base.  
-Everything you need—architecture diagrams, lint rules, testing guides—lives here.  
-If you’re new, start with **“Getting started”** below, then skim the topic guides as you dive deeper.
+Welcome to the Scrimsight knowledge base. Everything you need—architecture notes,
+lint rules, testing guides—lives in this folder. Start with the sections below and
+dive deeper as you work on a feature.
 
 ---
 
 ## 📑 Document index
 
 | Area | File | What you’ll learn |
-|------|------|-------------------|
-| **Project overview** | [README (root)](/README.md) | Elevator pitch, quick-start commands, high-level structure |
-| **File & folder rules** | [file-structure.md](file-structure.md) | Allowed paths, naming patterns, folderStructure eslint config |
-| **Atoms & state** | [atom-patterns.md](atom-patterns.md) | Standard/Input/Family blueprints, selector limits, examples |
-| **Testing** | [testing.md](testing.md) | Vitest setup, Storybook visual tests, comprehensive Playwright MCP testing guide |
-| **Linting details** | [linting.md](linting.md) | ESLint configuration, custom rule-sets, project structure enforcement |
-| **TypeScript style** | [typescript-guidelines.md](typescript-guidelines.md) | Central type registry, import alias rules, strict-mode tips |
-| **UI conventions** | [ui-guidelines.md](ui-guidelines.md) | Tailwind & daisyUI styling guidelines, component rules |
-| **Taskmaster CLI** | [taskmaster-cli.md](taskmaster-cli.md) | Complete project management CLI reference |
-| **Troubleshooting** | [troubleshooting.md](troubleshooting.md) | Categorized solutions for ESLint, testing, and Storybook issues |
-
-*(Links are relative—click within GitHub or VS Code to jump.)*
+| ---- | ---- | ----------------- |
+| Project overview | [README (root)](/README.md) | Elevator pitch, quick-start commands, and project layout |
+| Folder rules | [file-structure.md](file-structure.md) | Directory constraints enforced by `eslint-plugin-project-structure` |
+| Atom patterns | [atom-patterns.md](atom-patterns.md) | Required exports, test helpers, and ESLint limits for atoms |
+| Testing | [testing.md](testing.md) | Vitest workflow, Storybook usage, and coverage hints |
+| Linting | [linting.md](linting.md) | ESLint setup, custom rule sets, and suggested commands |
+| TypeScript style | [typescript-guidelines.md](typescript-guidelines.md) | Type organisation, import aliases, and strict-mode tips |
+| UI conventions | [ui-guidelines.md](ui-guidelines.md) | Tailwind/daisyUI guidelines and Storybook expectations |
+| Troubleshooting | [troubleshooting.md](troubleshooting.md) | Quick fixes for lint, test, and Storybook issues |
 
 ---
 
 ## 🚀 Getting started
 
-1. **Clone and install**
-
-   ```bash
-   git clone https://github.com/your-org/scrimsight.git
-   cd scrimsight
-   npm install
-````
-
-2. **Run dev server**
-
-   ```bash
-   npm run dev             # Vite HMR at http://localhost:5173
-   ```
-
-3. **Verify quality gates**
-
-   ```bash
-   ./check-lint-build-errors.sh   # ESLint + TS + Vitest headless
-   ```
-
-4. **Open Taskmaster**
-
-   ```bash
-   npx task-master list --with-subtasks
-   ```
-
-5. **First test edit**
-
-   *Pick an open “good-first-issue” atom, follow* **atom-patterns.md**, *run* `npm test`*, and open a PR.*
+Follow the [root README](/README.md#quick-start) for install and dev-server commands.
+The authoritative list of scripts (Storybook, linting, tests, build, etc.) lives in
+[`package.json`](/package.json); run `npm run` to explore them instead of maintaining
+command tables in multiple docs.
 
 ---
 
-## 🏗️ Development workflow (snapshot)
+## 🏗️ Development workflow snapshot
 
-```text
-task-master next → create branch → code w/ VS Code & Storybook
-   └─ ./check-lint-build-errors.sh  ✅
-   └─ npm test (Vitest)            ✅
-open PR → Chromatic runs visuals → review → squash & merge
+```
+create branch → implement change → npm run lint && npm run test
+   └─ optional: ./check-lint-build-errors.sh src/path/to/folder
+open PR → reviewers run npm run build → merge
 ```
 
-**Key conventions**
+**Conventions**
 
-* Commit titles: `feat(atom): add teamStatsAtom`
-* Branch name: `<task-id>-short-slug`, e.g. `42-team-stats`
-* All new atoms must achieve --100 % unit coverage.
+* Commit message prefix examples: `feat`, `fix`, `refactor`, `docs`.
+* Use the Storybook story that sits beside each component while iterating.
+* Atom tests should exercise the exported `{name}Fn` helper rather than the default atom.
 
 ---
 
-## 🛠️  Tech stack & tool versions
+## 🛠️ Tooling source of truth
 
-### Core Technology Stack
+Versions and configuration live beside the code that uses them:
 
-| Layer              | Choice                                       | Why                                                                    |
-| ------------------ | -------------------------------------------- | ---------------------------------------------------------------------- |
-| Build / dev-server | **Vite**                                     | sub-100 ms HMR and Rollup-powered prod builds                         |
-| UI                 | **React 18**, **Tailwind CSS** + **daisyUI** | high-level design system on top of utility classes                    |
-| State              | **Jotai** atoms                              | atomic, type-safe, minimal re-renders                                 |
-| Tests              | **Vitest**                                   | Vite-native runner; zero Jest shims needed                            |
-| Visual tests       | **Storybook 8** + Chromatic                  | snapshot & diff every story automatically                              |
-| Lint / structure   | **ESLint** + *project-structure* plugin      | enforces file-composition, folder-structure, and independent-modules rules |
+* Dependencies and scripts → [`package.json`](/package.json)
+* Vite aliases and plugins → [`vite.config.ts`](/vite.config.ts)
+* ESLint layout rules → [`eslint.config.mjs`](/eslint.config.mjs) plus the `*.mjs` helpers
+* Vitest setup → [`vitest.workspace.ts`](/vitest.workspace.ts)
+* Storybook entry → [`.storybook/main.ts`](/.storybook/main.ts)
 
-### Tool Versions & Configuration
-
-| Tool           | Version (min)       | Config file              |
-| -------------- | ------------------- | ------------------------ |
-| Node           | ≥ 18 LTS            | `.nvmrc`                 |
-| npm            | ≥ 10                | —                        |
-| ESLint         | 9 (new flat config) | `eslint.config.mjs`      |
-| Vitest         | 1.x                 | `vitest.config.ts`       |
-| Storybook      | 8.x                 | `.storybook/`            |
-| Taskmaster CLI | 0.9                 | auto-installed via `npx` |
-
-Run `npx envinfo --system --binaries` before filing bug reports.
+Run `npm run build` before merging to confirm those configurations still agree.
 
 ---
 
 ## ✍️ Editing these docs
 
-* Use Markdown; limit headings to ≤ H3.
-* Keep one fact in one place—link elsewhere instead of copying text.
-* After edits, run `npx markdownlint-cli2 '**/*.md'` (configured in repo).
-* For large doc changes, open a PR with label **docs**.
+* Use Markdown; prefer headings up to H3.
+* Keep a single source of truth—link to other docs instead of duplicating.
+* Run `npx markdownlint-cli2 '**/*.md'` if you make large documentation edits.
 
 ---
 
 ## ❔ Need help?
 
-* Check **troubleshooting.md** first.
-* Ask in *#scrimsight-dev* Slack channel; tag the maintainer group.
-* For architectural questions, open a *Discussion* in GitHub.
+* Start with [troubleshooting.md](troubleshooting.md).
+* Drop a message in the `#scrimsight-dev` Slack channel for quick questions.
+* For architectural discussions, open a GitHub discussion so answers are searchable.

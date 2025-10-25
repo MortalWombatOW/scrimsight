@@ -1,26 +1,37 @@
-
 # UI & Styling Guidelines
 
-## 1 Tailwind + DaisyUI stack
+---
 
-* Tailwind provides low-level utility classes → rapid iteration. {index=11}  
-* DaisyUI layers component class shortcuts & themes on top.
+## 1. Tailwind + daisyUI
 
-### Theme tokens
+* Tailwind provides low-level utility classes for layout; daisyUI supplies higher-level
+  component styles and themes.
+* Theme tokens are defined in `src/index.css`. Update them there rather than scattering
+  hard-coded colours.
+* Stick to Tailwind’s default responsive breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`).
 
-The theme is defined in in `src/index.css > daisyui/theme`.
+---
 
-## 2 Component rules
+## 2. Component expectations
 
-* Props **first**, visual state **second** – avoid passing entire atoms; instead pass primitives.  
-* Responsive breakpoints must use Tailwind’s default scale (`sm`, `md`, `lg`, `xl`, `2xl`).  
-* Accessibility: every interactive element needs an aria-label or visible text.
+* Components should receive the minimum data they need—derive heavy objects inside atoms
+  or utility helpers first.
+* Prefer composition over deeply nested conditionals; extract subcomponents if a block
+  grows beyond ~100 lines.
+* Every component must have a matching `*.stories.tsx` file that demonstrates its key
+  states. Use args/controls to surface interactive variants.
+* Ensure interactive elements have accessible labels (visible text or `aria-*`).
 
-## 3 Storybook workflow
+---
 
-Run `npm storybook` to open the browser; each story doubles as a test file.  
-Use the Visual Tests addon for pixel diffs before committing.
+## 3. Storybook workflow
 
-### 3.1 Testing stories with Playwright MCP
+```bash
+npm run storybook
+```
 
-For comprehensive Playwright MCP testing guidance, including error checking workflows, context provider requirements, and story URL formats, see [testing.md](testing.md#31-playwright-mcp-testing-for-storybook).
+* Keep stories colocated with components to match the lint rules.
+* Use decorators in `.storybook/preview.tsx` to provide Router, Jotai, or theme context
+  when necessary.
+* Manually verify new visual states by interacting with the story; automated visual
+  regression tooling is not configured in this repo.

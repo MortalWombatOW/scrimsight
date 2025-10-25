@@ -1,76 +1,78 @@
-
 # Atom & Atom Family Patterns
 
-The Jotai layer is the beating heart of Scrimsight.  
-Every file must follow **one** of the three patterns below or ESLint will block the commit.
-
-## 1 Standard single atom
-
-```
-
-myFeatureAtom.ts
-├─ export const myFeatureAtomFn = (…) => { … }
-└─ export default atom((get) => myFeatureAtomFn(get(depAtom)))
-
-```
-
-*Exactly one* named `arrowFunction` (`{fileName}Fn`) and *exactly one* unnamed `default` export.  
-Ideal for read-only or derived atoms.
-
-## 2 Input atom (writable)
-
-```
-
-playerNameInputAtom.ts
-├─ export const playerNameInputAtomFn = (prev, next) => …
-├─ const \_playerNameAtom = atom('')
-├─ const playerNameAtom = atom(
-│     get => get(*playerNameAtom),
-│     (*, set, v) => set(\_playerNameAtom, playerNameInputAtomFn(v))
-│   )
-└─ export default playerNameAtom
-
-```
-
-Used when the atom owns local state and exposes both read & write.
-
-## 3 Atom family
-
-```
-
-teamStatsAtomFamily.ts
-├─ export const teamStatsAtomFamilyFn = (teamId) => …
-└─ export default atomFamily((id) =>
-atom((get) => teamStatsAtomFamilyFn(id, get(playersAtom))))
-
-```
-
-Like Standard atoms but parameterised.  Requires a named `Fn` for testability.
-
-## 4 Selector limits (file-composition)
-
-| Pattern | Root `arrowFunction` | Root `variable` | Notes |
-|---------|---------------------|-----------------|-------|
-| Standard | 1 | 1 | order: Fn then default |
-| Input    | 1 | 3 (`_state`, `stateAtom`, default) | order: Fn → private → public → default |
-| Family   | 1 | 1 | order: Fn then default |
-
-These limits are enforced by ESLint rule **project-structure/file-composition**. :contentReference[oaicite:1]{index=1}
-
-## 5 Testing rule
-
-* Import the **Fn**, not the atom: `import { myAtomFn } from '@atoms/myAtom';`  
-* Use **Vitest** assertions: `expect(result).toEqual(…)`. :contentReference[oaicite:2]{index=2}  
-* Test file **must** sit next to the impl file (`myAtom.test.ts`) and contain a single root-level `describe`.
-
-## 6 Performance tips
-
-* Compose atoms; avoid giant selector chains that recalculate needlessly.  
-* Use `selectAtom` from Jotai utils when a component needs only part of a large object.
+The Jotai layer powers Scrimsight’s data model. Every atom file must follow one of the
+patterns below; ESLint checks the structure via `fileComposition.mjs`.
 
 ---
 
-**See also:**
-- [file-structure.md](file-structure.md) — Architecture overview and import patterns
-- [testing.md](testing.md) — Atom testing strategies
-- [troubleshooting.md](troubleshooting.md) — Common ESLint issues with atoms
+## 1. Standard single atom
+
+```
+myFeatureAtom.ts
+├─ export const myFeatureAtomFn = (…) => { … }
+└─ export default atom((get) => myFeatureAtomFn(get(depAtom)))
+```
+
+Use for read-only or derived atoms. The default export is the atom instance; tests
+import `myFeatureAtomFn`.
+
+---
+
+## 2. Input atom (writable)
+
+```
+playerNameInputAtom.ts
+├─ export const playerNameInputAtomFn = (prev, next) => …
+├─ const _playerNameAtom = atom('')
+├─ const playerNameAtom = atom(
+│     (get) => get(_playerNameAtom),
+│     (_get, set, value) => set(_playerNameAtom, playerNameInputAtomFn(value))
+│   )
+└─ export default playerNameAtom
+```
+
+Owns its own state and exposes a writable default export.
+
+---
+
+## 3. Atom family
+
+```
+teamStatsAtomFamily.ts
+├─ export const teamStatsAtomFamilyFn = (teamId) => …
+└─ export default atomFamily((id) =>
+     atom((get) => teamStatsAtomFamilyFn(id, get(playersAtom))))
+```
+
+Use when the computation depends on an identifier. Keep helpers pure so tests can call
+them with mocked inputs.
+
+---
+
+## 4. Selector limits enforced by ESLint
+
+| Pattern | Allowed root arrow functions | Allowed root variables | Notes |
+| ------- | --------------------------- | ---------------------- | ----- |
+| Standard | 1 (`{name}Fn`) | 1 (default export) | Define helpers inside the function |
+| Input | 1 (`{name}Fn`) | 3 (`_state`, public alias, default export) | Keep order Fn → private → public → default |
+| Family | 1 (`{name}Fn`) | 1 (default export) | Wrap `atomFamily` in the default export |
+
+Breaking these limits triggers the `project-structure/file-composition` rule.
+
+---
+
+## 5. Testing checklist
+
+* Import `{name}Fn` from the atom file and pass in mock dependencies.
+* Store reusable fixtures in `src/lib/sampledata/` and read them via utility helpers.
+* Keep snapshots out of atom tests—assert on returned objects instead.
+
+---
+
+## 6. Performance tips
+
+* Compose smaller atoms rather than building one giant selector.
+* Prefer `selectAtom` from `jotai/utils` when components only need a slice of a larger
+  object.
+* Normalise data in `src/lib` helpers so atoms remain thin wrappers around business
+  logic.
