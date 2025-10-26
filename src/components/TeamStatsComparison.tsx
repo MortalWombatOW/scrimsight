@@ -1,6 +1,6 @@
 import React from "react";
 import { useAtomValue } from "jotai";
-import { matchData } from "@atoms";
+import { matchData, type MatchData } from "@atoms";
 import { useStats } from "@library";
 import { camelCaseToWords, prettyFormat } from "@library";
 import { ProgressBar } from "@components";
@@ -8,6 +8,81 @@ import { ProgressBar } from "@components";
 interface TeamStatsComparisonProps {
   matchId: string;
 }
+
+type TeamStatsRow = {
+  playerTeam?: string | null;
+} & Record<string, unknown>;
+
+const STAT_KEYS = [
+  "finalBlows",
+  "allDamageDealt",
+  "healingDealt",
+  "ultimatesUsed",
+] as const;
+
+type StatKey = (typeof STAT_KEYS)[number];
+
+const parseStatValue = (value: unknown): number | null => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return null;
+    }
+
+    const parsed = Number(trimmed);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+};
+
+export const buildTeamComparisonData = (
+  match: Pick<MatchData, "team1Name" | "team2Name">,
+  rows: TeamStatsRow[] | undefined,
+  stats: readonly string[]
+) => {
+  const teams = [match.team1Name, match.team2Name];
+  const result: Record<string, Record<string, number>> = {};
+
+  for (const team of teams) {
+    result[team] = {};
+    for (const stat of stats) {
+      result[team][stat] = 0;
+    }
+  }
+
+  if (!rows?.length) {
+    return result;
+  }
+
+  for (const row of rows) {
+    if (!row) {
+      continue;
+    }
+
+    const teamName = row.playerTeam ?? undefined;
+
+    if (!teamName || !(teamName in result)) {
+      continue;
+    }
+
+    const target = result[teamName];
+
+    for (const stat of stats) {
+      const statValue = parseStatValue((row as Record<string, unknown>)[stat]);
+
+      if (statValue !== null) {
+        target[stat] = statValue;
+      }
+    }
+  }
+
+  return result;
+};
 
 export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   const matchDataValue = useAtomValue(matchData.atom);
@@ -20,34 +95,14 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
 
   const teamStats = useStats(["playerTeam"]);
 
-  const statsToShow = [
-    "finalBlows",
-    "allDamageDealt",
-    "healingDealt",
-    "ultimatesUsed",
-  ];
-
-  // Get the team data in a structured format
-  const getTeamData = () => {
-    const result = {
-      [matchDataItem.team1Name]: {} as Record<string, number>,
-      [matchDataItem.team2Name]: {} as Record<string, number>,
-    };
-
-    for (const stat of statsToShow) {
-      for (const teamStat of teamStats.rows) {
-        const teamName = teamStat.playerTeam;
-        result[teamName][stat] = (teamStat as any)[stat] || 0;
-      }
-    }
-
-    return result;
-  };
-
-  const teamData = getTeamData();
+  const teamData = buildTeamComparisonData(
+    matchDataItem,
+    (teamStats?.rows as TeamStatsRow[] | undefined) ?? [],
+    STAT_KEYS
+  );
 
   // Calculate which team has the higher value for each stat
-  const getWinnerTeam = (stat: string) => {
+  const getWinnerTeam = (stat: StatKey) => {
     const team1Value = teamData[matchDataItem.team1Name][stat] || 0;
     const team2Value = teamData[matchDataItem.team2Name][stat] || 0;
 
@@ -71,7 +126,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
         </span>
       </div>
       {/* Stat rows */}
-      {statsToShow.map((stat) => {
+      {STAT_KEYS.map((stat) => {
         const team1Value = teamData[matchDataItem.team1Name][stat] || 0;
         const team2Value = teamData[matchDataItem.team2Name][stat] || 0;
         const winner = getWinnerTeam(stat);
