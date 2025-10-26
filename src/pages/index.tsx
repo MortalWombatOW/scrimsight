@@ -7,6 +7,7 @@ export { default as MatchPage } from "./MatchPage";
 export { default as MatchPlayersPage } from "./MatchPlayersPage";
 export { default as MatchStatComparisonPage } from "./MatchStatComparisonPage";
 export { default as TimelinePage } from "./TimelinePage";
+export { default as AnalysisPage } from "./AnalysisPage";
 export { default as MetricsExplorerPage } from "./MetricsExplorerPage";
 export { default as PlayerPage } from "./PlayerPage";
 export { default as PlayersPage } from "./PlayersPage";

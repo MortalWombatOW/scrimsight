@@ -18,6 +18,7 @@ import {
   MatchPlayersPage,
   MatchStatComparisonPage,
   ScrimPage,
+  AnalysisPage,
   MetricsExplorerPage,
   SchemaVisualizerPage,
 } from "@pages";
@@ -103,6 +104,7 @@ const App = () => {
                     <Route path="compositions" element={<TeamCompositions />} />
                   </Route>
                   <Route path="/files" element={<AddFilesPage />} />
+                  <Route path="/analysis" element={<AnalysisPage />} />
                   <Route path="/metrics" element={<MetricsExplorerPage />} />
                   <Route path="/schema" element={<SchemaVisualizerPage />} />
                 </Routes>

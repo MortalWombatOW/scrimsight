@@ -8,6 +8,7 @@ import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";
 import { IoStatsChartOutline } from "react-icons/io5"; // Import chart icon
+import { MdOutlineAnalytics } from "react-icons/md";
 import { BsDatabaseFillGear } from "react-icons/bs"; // Import database icon for V2 data flow
 import { BsShare } from "react-icons/bs"; // Import schema icon
 import { useEffect } from "react";
@@ -196,6 +197,11 @@ export const Navigation = ({
             title: name,
             link: `/teams/${name}`,
           })),
+        })}
+        {renderMenuItem({
+          title: "Analysis",
+          link: "/analysis",
+          icon: <MdOutlineAnalytics />,
         })}
         {renderMenuItem({
           // Add Metrics Explorer item
