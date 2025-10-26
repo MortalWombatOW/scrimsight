@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 import {
   HomePage,
+  DemoPage,
   AddFilesPage,
   ScrimsPage,
   PlayersPage,
@@ -69,6 +70,7 @@ const App = () => {
                 <Routes>
                   <Route path="/" index element={<HomePage />} />
                   <Route path="/callback" element={<CallbackPage />} />
+                  <Route path="/demo" element={<DemoPage />} />
                   <Route path="/scrims" element={<ScrimsPage />} />
                   <Route path="/scrims/:scrimId" element={<ScrimPage />} />
                   <Route path="/matches/:matchId" element={<MatchPage />}>

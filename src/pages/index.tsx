@@ -1,6 +1,7 @@
 // Pages barrel export file
 export { default as AddFilesPage } from "./AddFilesPage";
 export { default as CallbackPage } from "./CallbackPage";
+export { default as DemoPage } from "./DemoPage";
 export { default as HomePage } from "./HomePage";
 export { default as MatchOverviewPage } from "./MatchOverviewPage";
 export { default as MatchPage } from "./MatchPage";
