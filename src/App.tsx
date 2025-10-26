@@ -20,6 +20,7 @@ import {
   ScrimPage,
   MetricsExplorerPage,
   SchemaVisualizerPage,
+  AnalysisPage,
 } from "@pages";
 import {
   Layout,
@@ -104,6 +105,7 @@ const App = () => {
                   </Route>
                   <Route path="/files" element={<AddFilesPage />} />
                   <Route path="/metrics" element={<MetricsExplorerPage />} />
+                  <Route path="/analysis" element={<AnalysisPage />} />
                   <Route path="/schema" element={<SchemaVisualizerPage />} />
                 </Routes>
               </Suspense>

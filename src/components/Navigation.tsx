@@ -7,7 +7,7 @@ import { MdOutlinePersonOutline } from "react-icons/md";
 import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";
-import { IoStatsChartOutline } from "react-icons/io5"; // Import chart icon
+import { IoStatsChartOutline, IoAnalyticsSharp } from "react-icons/io5"; // Import chart icon
 import { BsDatabaseFillGear } from "react-icons/bs"; // Import database icon for V2 data flow
 import { BsShare } from "react-icons/bs"; // Import schema icon
 import { useEffect } from "react";
@@ -44,6 +44,10 @@ const getTitle = (pathname: string) => {
 
   if (pathname.startsWith("/files")) {
     return "Files";
+  }
+
+  if (pathname.startsWith("/analysis")) {
+    return "Analysis";
   }
 
   return "Scrimsight";
@@ -202,6 +206,11 @@ export const Navigation = ({
           title: "Metrics Explorer",
           link: "/metrics",
           icon: <IoStatsChartOutline />,
+        })}
+        {renderMenuItem({
+          title: "Analysis",
+          link: "/analysis",
+          icon: <IoAnalyticsSharp />,
         })}
         {renderMenuItem({
           title: "V2 Architecture",
