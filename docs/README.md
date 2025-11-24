@@ -30,14 +30,6 @@ command tables in multiple docs.
 
 ---
 
-## 🏗️ Development workflow snapshot
-
-```
-create branch → implement change → npm run lint && npm run test
-   └─ optional: ./check-lint-build-errors.sh src/path/to/folder
-open PR → reviewers run npm run build → merge
-```
-
 **Conventions**
 
 * Commit message prefix examples: `feat`, `fix`, `refactor`, `docs`.
@@ -71,5 +63,3 @@ Run `npm run build` before merging to confirm those configurations still agree.
 ## ❔ Need help?
 
 * Start with [troubleshooting.md](troubleshooting.md).
-* Drop a message in the `#scrimsight-dev` Slack channel for quick questions.
-* For architectural discussions, open a GitHub discussion so answers are searchable.

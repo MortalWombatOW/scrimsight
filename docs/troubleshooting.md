@@ -48,8 +48,3 @@ Quick fixes for common development issues.
 * Run `npm run type-check` locally with the same Node version as CI (Node 18+).
 * Ensure any environment-based logic is guarded so it does not run during static
   evaluation.
-
----
-
-Still stuck? Raise the problem in the `#scrimsight-dev` Slack channel with the command
-you ran and the full error output.

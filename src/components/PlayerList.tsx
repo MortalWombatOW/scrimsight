@@ -39,9 +39,9 @@ export const PlayerList = ({ players }: PlayerListProps) => {
               { value: prettyFormat(player.deaths), label: "Deaths" },
               { value: prettyFormat(player.assists), label: "Assists" },
             ]}
-            // PlayerCard doesn't have linkUrl/linkText props by default,
-            // but we could add them or wrap the card in a Link component in the parent if needed.
-            // For now, relying on parent to handle navigation if required.
+            // Add link to player details page
+            linkUrl={`/player/${player.playerName}`}
+            linkText="View Details"
           />
         );
       })}
