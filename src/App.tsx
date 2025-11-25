@@ -13,7 +13,6 @@ import {
   MatchPage,
   ScrimPage,
   MetricsExplorerPage,
-  SchemaVisualizerPage,
   MatchOverviewPage,
   MatchPlayersPage,
   MatchStatComparisonPage,
@@ -83,7 +82,6 @@ const App = () => {
                 </Route>
                 <Route path="/files" element={<AddFilesPage />} />
                 <Route path="/metrics" element={<MetricsExplorerPage />} />
-                <Route path="/schema" element={<SchemaVisualizerPage />} />
               </Routes>
             </Suspense>
           </Layout>
