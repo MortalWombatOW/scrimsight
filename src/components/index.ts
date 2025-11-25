@@ -62,6 +62,7 @@ export { TeamsList } from './TeamsList';
 export { TeamsSummaryStats } from './TeamsSummaryStats';
 export { TeamsVisualization } from './TeamsVisualization';
 export { TopPlayersList } from './TopPlayersList';
+export { VisualCard } from './VisualCard';
 export { default as ZeroState } from './ZeroState';
 
 // Note: RoleIcon is available from @icons if needed

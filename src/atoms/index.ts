@@ -322,6 +322,7 @@ export interface ScrimListSummary {
   mapCount: number;
   score: string; // e.g., "3-2-1" (W-L-D for team1)
   duration: number; // Total duration in seconds
+  maps: string[]; // List of map names played
 }
 
 export interface TeamListSummary {

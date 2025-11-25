@@ -1,21 +1,16 @@
-import React, { useState } from "react"; // Removed useMemo
+import React, { useState, useMemo } from "react";
 import { useAtomValue } from "jotai";
-// Removed unused imports: @tanstack/react-table, recharts, react-select
-import { Container } from "@components";
+import { Container, VisualCard } from "@components";
 import { useStats } from "@library";
 import {
   uniqueCategoryValues,
-  PlayerStatsCategoryKeys, // Keep this type
-  PlayerStatsNumericalKeys, // Keep this type
-  // Removed playerStatsCategoryKeys array import
-  // Removed playerStatsNumericalKeys array import
+  PlayerStatsCategoryKeys,
+  PlayerStatsNumericalKeys,
 } from "@library";
-// Removed customSelectStyles import
-import { useMetricsTableColumns } from "@library";
-import { MetricsDataTable, MetricsChart, MetricsControls } from "@components"; // Import the new controls component
+import { useMetricsTableColumns, prettyFormat } from "@library";
+import { MetricsDataTable, MetricsChart, MetricsControls } from "@components";
 
 export const MetricsExplorerPage: React.FC = () => {
-  // State for user selections (will be expanded)
   const [groupBy, setGroupBy] = useState<PlayerStatsCategoryKeys[]>([
     "playerName",
   ]);
@@ -27,7 +22,6 @@ export const MetricsExplorerPage: React.FC = () => {
   const [filters, setFilters] = useState<
     Record<PlayerStatsCategoryKeys, string[]> | undefined
   >(undefined);
-  // Update sortBy state type to allow category keys as well
   const [sortBy, setSortBy] = useState<
     PlayerStatsCategoryKeys | PlayerStatsNumericalKeys | undefined
   >(undefined);
@@ -35,23 +29,14 @@ export const MetricsExplorerPage: React.FC = () => {
     "asc" | "desc" | undefined
   >(undefined);
 
-  // Fetch data using the hook
   const statsData = useStats(groupBy, filters, sortBy, sortDirection);
-
-  // Fetch unique values for potential filters
   const uniqueValues = useAtomValue(uniqueCategoryValues.atom);
-
-  // Define table columns using the imported hook
   const tableColumns = useMetricsTableColumns(groupBy, metrics);
 
-  // State to track expanded filters
   const [expandedFilters, setExpandedFilters] = useState<
     Set<PlayerStatsCategoryKeys>
   >(new Set());
 
-  // Removed unused groupByOptions and metricsOptions
-
-  // Handler for updating filters
   const handleFilterChange = (
     key: PlayerStatsCategoryKeys,
     selectedOptions: readonly { value: string; label: string }[] | null
@@ -60,29 +45,24 @@ export const MetricsExplorerPage: React.FC = () => {
       const currentFilters = prevFilters ?? {};
       let updatedFilters: Partial<Record<PlayerStatsCategoryKeys, string[]>> = {
         ...currentFilters,
-      }; // Start with a partial copy
+      };
 
       if (selectedOptions && selectedOptions.length > 0) {
-        // Add or update the filter
         updatedFilters[key] = selectedOptions.map((option) => option.value);
       } else {
-        // Remove the filter key if it exists
         if (key in updatedFilters) {
           delete updatedFilters[key];
         }
       }
 
-      // Check if the resulting object is empty
       if (Object.keys(updatedFilters).length === 0) {
-        return undefined; // Return undefined if empty
+        return undefined;
       } else {
-        // Cast back to the full Record type if not empty
         return updatedFilters as Record<PlayerStatsCategoryKeys, string[]>;
       }
     });
   };
 
-  // Toggle filter expansion
   const toggleFilterExpansion = (key: PlayerStatsCategoryKeys) => {
     setExpandedFilters((prev) => {
       const newSet = new Set(prev);
@@ -95,40 +75,95 @@ export const MetricsExplorerPage: React.FC = () => {
     });
   };
 
-  // TODO: Implement Controls UI for Sorting, Chart Type
+  // Calculate summary stats
+  const summaryStats = useMemo(() => {
+    if (!statsData.rows || statsData.rows.length === 0) return null;
+
+    const totals = metrics.map((metric) => {
+      const values = statsData.rows.map((row) => (row as any)[metric] || 0);
+      const total = values.reduce((sum, val) => sum + val, 0);
+      const avg = total / values.length;
+      const max = Math.max(...values);
+      
+      return { metric, total, avg, max };
+    });
+
+    return totals;
+  }, [statsData.rows, metrics]);
 
   return (
     <Container>
-      <h1 className="text-2xl font-bold mb-4">Metrics Explorer</h1>
-      <div className="flex flex-col gap-4">
-        {/* Use the extracted Controls Component */}
-        <MetricsControls
-          groupBy={groupBy}
-          setGroupBy={setGroupBy}
-          metrics={metrics}
-          setMetrics={setMetrics}
-          filters={filters}
-          handleFilterChange={handleFilterChange}
-          expandedFilters={expandedFilters}
-          toggleFilterExpansion={toggleFilterExpansion}
-          uniqueValues={uniqueValues}
-          // Removed customSelectStyles prop
-          // Pass sorting state and setters
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          sortDirection={sortDirection}
-          setSortDirection={setSortDirection}
-        />
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gradient">Metrics Explorer</h1>
+            <p className="text-base-content/70 mt-1">
+              Analyze and compare player performance across all metrics
+            </p>
+          </div>
+        </div>
 
-        {/* Data Display Section */}
-        <div className="flex flex-row gap-4">
+        {/* Summary Cards */}
+        {summaryStats && summaryStats.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {summaryStats.map(({ metric, total, avg, max }) => (
+              <VisualCard
+                key={metric}
+                title={metric.replace(/([A-Z])/g, " $1").trim()}
+                className="min-h-[120px]"
+              >
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div>
+                    <div className="text-xs text-base-content/60 mb-1">Total</div>
+                    <div className="text-lg font-bold text-white">
+                      {prettyFormat(total)}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-base-content/60 mb-1">Avg</div>
+                    <div className="text-lg font-bold text-primary">
+                      {prettyFormat(avg)}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-base-content/60 mb-1">Max</div>
+                    <div className="text-lg font-bold text-secondary">
+                      {prettyFormat(max)}
+                    </div>
+                  </div>
+                </div>
+              </VisualCard>
+            ))}
+          </div>
+        )}
+
+        {/* Controls */}
+        <div className="glass-panel rounded-xl p-6">
+          <h2 className="text-xl font-bold text-white mb-4">Filters & Options</h2>
+          <MetricsControls
+            groupBy={groupBy}
+            setGroupBy={setGroupBy}
+            metrics={metrics}
+            setMetrics={setMetrics}
+            filters={filters}
+            handleFilterChange={handleFilterChange}
+            expandedFilters={expandedFilters}
+            toggleFilterExpansion={toggleFilterExpansion}
+            uniqueValues={uniqueValues}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            sortDirection={sortDirection}
+            setSortDirection={setSortDirection}
+          />
+        </div>
+
+        {/* Data Visualization */}
+        <div className="grid lg:grid-cols-2 gap-6">
           {/* Table View */}
-          <div className="flex-1 p-4 border border-gray-700 rounded bg-base-100">
-            <h2 className="text-lg font-semibold mb-2">Table View</h2>
+          <div className="glass-panel rounded-xl p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Data Table</h2>
             <div className="overflow-auto max-h-[600px]">
-              {" "}
-              {/* Added scroll */}
-              {/* Use the imported MetricsDataTable component */}
               <MetricsDataTable
                 data={statsData.rows ?? []}
                 columns={tableColumns}
@@ -137,14 +172,15 @@ export const MetricsExplorerPage: React.FC = () => {
           </div>
 
           {/* Chart View */}
-          <div className="flex-1 p-4 border border-gray-700 rounded bg-base-100 h-[400px]">
-            <h2 className="text-lg font-semibold mb-2">Chart View</h2>
-            {/* Use the imported MetricsChart component */}
-            <MetricsChart
-              data={statsData.rows ?? []}
-              groupBy={groupBy}
-              metrics={metrics}
-            />
+          <div className="glass-panel rounded-xl p-6">
+            <h2 className="text-xl font-bold text-white mb-4">Visual Comparison</h2>
+            <div className="h-[500px]">
+              <MetricsChart
+                data={statsData.rows ?? []}
+                groupBy={groupBy}
+                metrics={metrics}
+              />
+            </div>
           </div>
         </div>
       </div>

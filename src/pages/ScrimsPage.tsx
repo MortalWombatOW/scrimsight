@@ -44,7 +44,7 @@ export const ScrimsPage = () => {
             teamNames={scrim.teamNames}
             date={scrim.dateString}
             // Display map count instead of list
-            mapsPlayed={[`${scrim.mapCount} Maps`]} // Pass count as single-item array
+            mapsPlayed={scrim.maps}
             primaryStats={[{ value: scrim.score, label: "Score (W-L-D)" }]}
             secondaryStats={[
               { value: formatTime(scrim.duration), label: "Total Duration" },
