@@ -33,7 +33,7 @@ const RecentScrimsSection = () => {
             title={`${scrim.teamNames[0]} vs ${scrim.teamNames[1]}`}
             teamNames={scrim.teamNames}
             date={scrim.dateString}
-            mapsPlayed={[`${scrim.mapCount} Maps`]}
+            mapsPlayed={scrim.maps}
             primaryStats={[{ value: scrim.score, label: "Score (W-L-D)" }]}
             secondaryStats={[
               { value: formatTime(scrim.duration), label: "Duration" },
