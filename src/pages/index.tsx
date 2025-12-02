@@ -10,7 +10,6 @@ export { default as TimelinePage } from "./TimelinePage";
 export { default as MetricsExplorerPage } from "./MetricsExplorerPage";
 export { default as PlayerPage } from "./PlayerPage";
 export { default as PlayersPage } from "./PlayersPage";
-export { default as SchemaVisualizerPage } from "./SchemaVisualizerPage";
 export { default as ScrimPage } from "./ScrimPage";
 export { default as ScrimsPage } from "./ScrimsPage";
 export { default as TeamPage } from "./TeamPage";

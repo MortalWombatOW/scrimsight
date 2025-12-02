@@ -14,6 +14,8 @@ import {
   firstKillImpact,
   Scrim,
   TeamStats,
+  matchData,
+  MatchData,
   PlayerListSummary,
   ScrimListSummary,
   TeamListSummary,
@@ -93,15 +95,25 @@ export const listSummaryAtomsFn = () => {
   // Helper function for scrim list summary
   const scrimListSummaryFn = async (get: Getter): Promise<ScrimListSummary[]> => {
     const allScrims = await get(scrims.atom);
+    const allMatches: MatchData[] = await get(matchData.atom);
 
-    return allScrims.map((scrim: Scrim) => ({
-      scrimId: `${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}`,
-      teamNames: [scrim.team1Name, scrim.team2Name],
-      dateString: scrim.dateString,
-      mapCount: scrim.matchIds.length,
-      score: `${scrim.team1Wins}-${scrim.team2Wins}-${scrim.draws}`,
-      duration: scrim.duration,
-    }));
+    return allScrims.map((scrim: Scrim) => {
+      const scrimMatches = allMatches.filter((m) =>
+        scrim.matchIds.includes(m.matchId)
+      );
+      // Get unique maps, preserving order of appearance
+      const maps = Array.from(new Set(scrimMatches.map((m) => m.map)));
+
+      return {
+        scrimId: `${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}`,
+        teamNames: [scrim.team1Name, scrim.team2Name],
+        dateString: scrim.dateString,
+        mapCount: scrim.matchIds.length,
+        score: `${scrim.team1Wins}-${scrim.team2Wins}-${scrim.draws}`,
+        duration: scrim.duration,
+        maps: maps,
+      };
+    });
   };
 
   // Helper function for team list summary

@@ -213,7 +213,8 @@ describe('listSummaryAtomsFn', () => {
           dateString: '2023-08-25',
           mapCount: 5,
           score: '3-2-0',
-          duration: 3000
+          duration: 3000,
+          maps: []
         },
         {
           scrimId: '2023-08-28-Team C-vs-Team D',
@@ -221,7 +222,8 @@ describe('listSummaryAtomsFn', () => {
           dateString: '2023-08-28',
           mapCount: 4,
           score: '2-2-0',
-          duration: 2800
+          duration: 2800,
+          maps: []
         },
         {
           scrimId: '2023-08-27-Team E-vs-Team F',
@@ -229,7 +231,8 @@ describe('listSummaryAtomsFn', () => {
           dateString: '2023-08-27',
           mapCount: 3,
           score: '1-2-0',
-          duration: 2200
+          duration: 2200,
+          maps: []
         }
       ];
 
@@ -257,7 +260,8 @@ describe('listSummaryAtomsFn', () => {
           dateString: 'invalid-date-1',
           mapCount: 3,
           score: '2-1-0',
-          duration: 2000
+          duration: 2000,
+          maps: []
         },
         {
           scrimId: 'scrim2',
@@ -265,7 +269,8 @@ describe('listSummaryAtomsFn', () => {
           dateString: 'invalid-date-2',
           mapCount: 4,
           score: '3-1-0',
-          duration: 2500
+          duration: 2500,
+          maps: []
         }
       ];
 
@@ -294,7 +299,8 @@ describe('listSummaryAtomsFn', () => {
           dateString: '2023-08-28',
           mapCount: 1,
           score: '1-0-0',
-          duration: 600
+          duration: 600,
+          maps: []
         }
       ];
 

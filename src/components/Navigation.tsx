@@ -8,8 +8,6 @@ import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";
 import { IoStatsChartOutline } from "react-icons/io5"; // Import chart icon
-import { BsDatabaseFillGear } from "react-icons/bs"; // Import database icon for V2 data flow
-import { BsShare } from "react-icons/bs"; // Import schema icon
 import { useEffect } from "react";
 import { RoleIcon } from "@icons";
 import { CiMap } from "react-icons/ci";
@@ -150,7 +148,7 @@ export const Navigation = ({
   return (
     // Added padding, use theme background, remove explicit border
     <nav className="h-full w-full overflow-y-auto p-2">
-      <ul className="menu menu-md bg-base-200 border border-gray-700 rounded-box w-full gap-2">
+      <ul className="menu menu-md glass-card rounded-box w-full gap-2">
         {renderMenuItem({
           title: "Home",
           link: "/",
@@ -202,16 +200,6 @@ export const Navigation = ({
           title: "Metrics Explorer",
           link: "/metrics",
           icon: <IoStatsChartOutline />,
-        })}
-        {renderMenuItem({
-          title: "V2 Architecture",
-          link: "/v2",
-          icon: <BsDatabaseFillGear />,
-        })}
-        {renderMenuItem({
-          title: "Schema Visualizer",
-          link: "/schema",
-          icon: <BsShare />,
         })}
         {renderMenuItem({
           title: "Files",

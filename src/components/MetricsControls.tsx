@@ -111,6 +111,8 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
           }}
           styles={groupBySelectStyles} // Apply specific style
           classNamePrefix="react-select"
+          menuPortalTarget={document.body}
+          menuPosition="fixed"
         />
       </div>
       {/* Metrics Select */}
@@ -133,6 +135,8 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
           }}
           styles={metricsSelectStyles} // Apply specific style
           classNamePrefix="react-select"
+          menuPortalTarget={document.body}
+          menuPosition="fixed"
         />
       </div>
       {/* Sort By Select */}
@@ -158,6 +162,8 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
           styles={sortBySelectStyles} // Apply specific style
           classNamePrefix="react-select"
           isClearable
+          menuPortalTarget={document.body}
+          menuPosition="fixed"
         />
       </div>
       {/* Sort Direction Select */}
@@ -189,6 +195,8 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
           classNamePrefix="react-select"
           isDisabled={!sortBy}
           isClearable
+          menuPortalTarget={document.body}
+          menuPosition="fixed"
         />
       </div>
       {/* Filters Section - Now with Expand/Collapse */}
@@ -239,6 +247,8 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
                 placeholder={`Select ${key}...`}
                 isLoading={!uniqueValues}
                 isDisabled={!uniqueValues}
+                menuPortalTarget={document.body}
+                menuPosition="fixed"
               />
             </>
           )}

@@ -12,56 +12,75 @@ type SortByOptionType = { value: PlayerStatsCategoryKeys | PlayerStatsNumericalK
 type SortDirectionOptionType = { value: "asc" | "desc"; label: string };
 
 
-// Base styles (common parts) using DaisyUI theme variables
+// Base styles - using hardcoded colors that react-select can properly render
+// Colors derived from the scrimsight theme in index.css
 const baseControlStyles = (provided: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
   ...provided,
-  backgroundColor: "hsl(var(--b2))", // Use base-200
-  borderColor: state.isFocused ? "hsl(var(--p))" : "hsl(var(--b3))", // Use primary on focus, base-300 otherwise
-  boxShadow: state.isFocused ? "0 0 0 1px hsl(var(--p))" : provided.boxShadow, // Use primary shadow on focus
+  backgroundColor: "#1f1f23", // base-200: oklch(14% 0.004 49.25)
+  borderColor: state.isFocused ? "#c2e078" : "#000000", // primary / base-300
+  boxShadow: state.isFocused ? "0 0 0 1px #c2e078" : provided.boxShadow,
   "&:hover": {
-    borderColor: "hsl(var(--bc) / 0.5)", // Use base-content with opacity on hover
+    borderColor: "rgba(216, 216, 216, 0.5)",
   },
-  color: "hsl(var(--bc))", // Use base-content color
-  borderRadius: 'var(--radius-field, 0.25rem)', // Use theme radius
+  color: "#d8d8d8", // base-content
+  borderRadius: '0.25rem',
+  minHeight: "38px",
 });
 
 const baseMenuStyles = (provided: CSSObjectWithLabel) => ({
   ...provided,
-  backgroundColor: "hsl(var(--b1))", // Use base-100
-  zIndex: 20,
-  borderRadius: 'var(--radius-box, 0.5rem)', // Use theme radius
+  backgroundColor: "#2a2a2f", // base-100: oklch(21% 0.006 56.043)
+  zIndex: 9999,
+  borderRadius: '0.5rem',
+  border: "1px solid #000000", // base-300
+  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
 });
 
 const baseOptionStyles = (provided: CSSObjectWithLabel, state: { isSelected: boolean; isFocused: boolean }) => ({
   ...provided,
   backgroundColor: state.isSelected
-    ? "hsl(var(--p))" // Use primary for selected
+    ? "#c2e078" // primary
     : state.isFocused
-      ? "hsl(var(--b3))" // Use base-300 for focused
-      : provided.backgroundColor, // Default background
-  color: state.isSelected ? "hsl(var(--pc))" : "hsl(var(--bc))", // Use primary-content or base-content
+      ? "#000000" // base-300
+      : "transparent",
+  color: state.isSelected ? "#1f2419" : "#d8d8d8", // primary-content / base-content
   "&:active": {
-    backgroundColor: "hsl(var(--p) / 0.8)", // Slightly darker primary on active
+    backgroundColor: "rgba(194, 224, 120, 0.8)",
   },
-  borderRadius: 'var(--radius-field, 0.25rem)', // Use theme radius
+  borderRadius: '0.25rem',
 });
 
-const baseInputStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
-const baseSingleValueStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
+const baseInputStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "#d8d8d8" });
+const baseSingleValueStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "#d8d8d8" });
 const baseMultiValueStyles = (provided: CSSObjectWithLabel) => ({
   ...provided,
-  backgroundColor: "hsl(var(--b3))", // Use base-300
-  borderRadius: 'var(--radius-badge, 1.9rem)', // Use badge radius for pill shape
+  backgroundColor: "#000000", // base-300
+  borderRadius: '1.9rem',
+  display: 'flex',
+  alignItems: 'center',
+  padding: '1px',
 });
-const baseMultiValueLabelStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "hsl(var(--bc))" }); // Use base-content
+const baseMultiValueLabelStyles = (provided: CSSObjectWithLabel) => ({ 
+  ...provided, 
+  color: "#d8d8d8",
+  padding: '2px 6px',
+  paddingLeft: '8px',
+});
 const baseMultiValueRemoveStyles = (provided: CSSObjectWithLabel) => ({
   ...provided,
-  color: "hsl(var(--bc) / 0.7)", // Use base-content with opacity
-  ":hover": { backgroundColor: "hsl(var(--er) / 0.3)", color: "hsl(var(--er))" }, // Use error color on hover
-  borderTopRightRadius: 'var(--radius-badge, 1.9rem)', // Match pill shape
-  borderBottomRightRadius: 'var(--radius-badge, 1.9rem)', // Match pill shape
+  color: "rgba(216, 216, 216, 0.7)",
+  ":hover": { backgroundColor: "rgba(234, 142, 98, 0.3)", color: "#ea8e62" }, // error color
+  borderTopRightRadius: '1.9rem',
+  borderBottomRightRadius: '1.9rem',
+  borderRadius: '1.9rem',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '0 4px',
+  marginLeft: '2px',
 });
-const basePlaceholderStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "hsl(var(--bc) / 0.5)" }); // Use base-content with opacity
+const basePlaceholderStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "rgba(216, 216, 216, 0.5)" });
+const baseMenuPortalStyles = (provided: CSSObjectWithLabel) => ({ ...provided, zIndex: 9999 }); // Ensure portal has high z-index
 
 
 // Specific Styles Configurations
@@ -74,6 +93,7 @@ export const groupBySelectStyles: StylesConfig<GroupByOptionType, true> = {
   multiValueLabel: baseMultiValueLabelStyles,
   multiValueRemove: baseMultiValueRemoveStyles,
   placeholder: basePlaceholderStyles,
+  menuPortal: baseMenuPortalStyles,
 };
 
 export const metricsSelectStyles: StylesConfig<MetricsOptionType, true> = {
@@ -85,6 +105,7 @@ export const metricsSelectStyles: StylesConfig<MetricsOptionType, true> = {
   multiValueLabel: baseMultiValueLabelStyles,
   multiValueRemove: baseMultiValueRemoveStyles,
   placeholder: basePlaceholderStyles,
+  menuPortal: baseMenuPortalStyles,
 };
 
 export const sortBySelectStyles: StylesConfig<SortByOptionType, false> = {
@@ -94,6 +115,7 @@ export const sortBySelectStyles: StylesConfig<SortByOptionType, false> = {
   input: baseInputStyles,
   singleValue: baseSingleValueStyles,
   placeholder: basePlaceholderStyles,
+  menuPortal: baseMenuPortalStyles,
 };
 
 export const sortDirectionSelectStyles: StylesConfig<SortDirectionOptionType, false> = {
@@ -103,6 +125,7 @@ export const sortDirectionSelectStyles: StylesConfig<SortDirectionOptionType, fa
   input: baseInputStyles,
   singleValue: baseSingleValueStyles,
   placeholder: basePlaceholderStyles,
+  menuPortal: baseMenuPortalStyles,
 };
 
 export const filterSelectStyles: StylesConfig<OptionType, true> = {
@@ -114,21 +137,22 @@ export const filterSelectStyles: StylesConfig<OptionType, true> = {
   multiValueLabel: baseMultiValueLabelStyles,
   multiValueRemove: baseMultiValueRemoveStyles,
   placeholder: basePlaceholderStyles,
+  menuPortal: baseMenuPortalStyles,
 };
 
 
 // Helper function to get distinct colors for chart bars/points using theme colors
-// Using HSL values directly from src/index.css for better theme consistency
+// Using the actual CSS custom properties defined in index.css
 const THEME_COLORS = [
-  "oklch(var(--p))", // Primary
-  "oklch(var(--a))", // Accent
-  "oklch(var(--s))", // Secondary
-  "oklch(var(--in))", // Info
-  "oklch(var(--su))", // Success
-  "oklch(var(--wa))", // Warning
-  "oklch(var(--er))", // Error
+  "var(--color-primary)", // Primary
+  "var(--color-accent)", // Accent
+  "var(--color-secondary)", // Secondary
+  "var(--color-info)", // Info
+  "var(--color-success)", // Success
+  "var(--color-warning)", // Warning
+  "var(--color-error)", // Error
   // Add more variations if needed, e.g., slightly desaturated versions or base colors
-  "oklch(var(--b3))", // Base-300 (darker)
-  "oklch(var(--n))", // Neutral
+  "var(--color-base-300)", // Base-300 (darker)
+  "var(--color-neutral)", // Neutral
 ];
 export const getColor = (index: number) => THEME_COLORS[index % THEME_COLORS.length];

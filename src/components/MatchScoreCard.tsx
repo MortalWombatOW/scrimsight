@@ -15,8 +15,6 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
     // Apply consistent card styling to the main container
     <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg p-6 w-fit">
       {" "}
-      {/* Updated classes, added padding */}
-      {/* Removed card-body */}
       <div className="flex flex-row flex-wrap gap-6 justify-center">
         {/* Round Results Section */}
         <div className="flex flex-col gap-2 min-w-[300px]">
@@ -39,11 +37,7 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
               <div className="col-span-8">
                 {/* Use slightly darker background for inner card, consistent rounding */}
                 <div className="bg-base-300 p-2 rounded-md">
-                  {" "}
-                  {/* Updated classes */}
                   <span className="text-center text-sm text-base-content">
-                    {" "}
-                    {/* Ensure text color */}
                     {winner === "team1"
                       ? matchData.team1Name
                       : winner === "team2"
@@ -59,13 +53,9 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
         {/* Final Result Section */}
         <div className="min-w-[300px] flex items-start">
           {/* Use slightly darker background for inner card, consistent rounding */}
-          <div className="bg-base-300 rounded-lg w-full p-4">
-            {" "}
-            {/* Updated classes, added padding */}
-            {/* Removed card-body */}
-            <div className="flex items-center gap-2 justify-center mb-4">
-              <GoTrophy className="text-base-content/70" size={18} />{" "}
-              {/* Adjusted icon color */}
+            <div className="bg-base-300 rounded-lg w-full p-4">
+              <div className="flex items-center gap-2 justify-center mb-4">
+                <GoTrophy className="text-base-content/70" size={18} />
               <span className="text-lg font-bold">
                 {matchData.team1Score > matchData.team2Score
                   ? matchData.team1Name
@@ -76,13 +66,10 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
             </div>
             {/* Ensure stats component uses theme colors and rounding */}
             <div className="stats stats-vertical lg:stats-horizontal shadow bg-base-100 text-base-content rounded-lg">
-              {" "}
-              {/* Added bg/text/radius */}
               <div className="stat">
                 <div className="stat-title text-base-content/70">
                   {matchData.team1Name}
-                </div>{" "}
-                {/* Adjusted text opacity */}
+                </div>
                 <div className="stat-value text-2xl">
                   {matchData.team1Score}
                 </div>
@@ -90,8 +77,7 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
               <div className="stat">
                 <div className="stat-title text-base-content/70">
                   {matchData.team2Name}
-                </div>{" "}
-                {/* Adjusted text opacity */}
+                </div>
                 <div className="stat-value text-2xl">
                   {matchData.team2Score}
                 </div>

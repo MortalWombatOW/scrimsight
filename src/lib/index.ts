@@ -31,10 +31,7 @@ export {
 export * from './playerMetricsUtils';
 export * from './playerComparison';
 export * from './killMatrixUtils';
-export * from './useAtomData';
 export * from './useMetricsTableColumns';
-export * from './atomDataService';
-export * from './schemaVisualizer';
 export * from './metricExplorerStyles';
 export * from './dagre';
 
@@ -52,7 +49,8 @@ export {
   teamStats,
   uniqueCategoryValues,
   playerStatsBase,
-  playerStatsNumericalKeys
+  playerStatsNumericalKeys,
+  playerRankingsAtom
 } from '@atoms';
 
 export type { 

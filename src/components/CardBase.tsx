@@ -63,8 +63,8 @@ const CardBaseContent = ({
   primaryStats,
   secondaryStats,
   info,
-  linkText, // Destructure new props
-  linkUrl, // Destructure new props
+  linkText,
+  linkUrl,
 }: {
   title: string;
   icon?: ReactNode;
@@ -76,7 +76,7 @@ const CardBaseContent = ({
 }) => (
   // Apply theme background, border, shadow, rounded corners
   <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg w-fit">
-    {/* Keep card-body for padding/structure, but removed parent 'card' class */}
+    {/* Keep card-body for padding/structure */}
     <div className="card-body flex flex-row p-6">
       {/* Info Section */}
       <div className="flex flex-col gap-6">
@@ -97,8 +97,6 @@ const CardBaseContent = ({
         </div>
         {secondaryStats && secondaryStats.length > 0 && (
           <div className="flex flex-wrap flex-col md:flex-row gap-x-6 gap-y-2 mt-3 items-center">
-            {" "}
-            {/* Added items-center */}
             {secondaryStats.map((stat) =>
               // Conditionally render Role as a badge
               stat.label === "Role" ? (

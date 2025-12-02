@@ -2,7 +2,7 @@ import { Suspense } from "react"; // Removed React import as it's not needed exp
 import { useParams, Outlet } from "react-router-dom"; // Added Outlet
 import { useStats, getRoleFromHero } from "@library";
 import { SubPageNavigation } from "@components"; // Added SubPageNavigation
-import { RoleIcon } from "@components";
+import { RoleIcon } from "@icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Container } from "@components"; // Added import
 // Removed direct imports of child components as they are handled by Outlet
@@ -26,12 +26,6 @@ const ErrorFallback = ({ error }: { error: Error }) => (
 
 export const PlayerPage = () => {
   const { playerName } = useParams<{ playerName: string }>();
-  // Removed activeTab state:
-  // const [activeTab, setActiveTab] = React.useState<
-  //   "overview" | "heroes" | "matches"
-  // >("overview");
-
-  // Move useStats call before any conditional returns to fix React hooks rule
   const stats = useStats(["playerName", "playerHero"], {
     playerName: playerName ? [playerName] : [],
   });

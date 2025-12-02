@@ -1,10 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import { matchData, contextualStatAtoms } from "@library";
-import { MatchCard, TeamCard, TeamStatsComparison, KillsTable } from "@components";
-// Removed unused PlayerCard
-import { formatTime, prettyFormat } from "@library"; // Import formatters
-// Removed PlayerStatsComparison import
+import { TeamCard, TeamStatsComparison, KillsTable } from "@components";
+import { formatTime, prettyFormat, mapNameToFileName } from "@library";
 
 export const MatchOverviewPage = () => {
   const { matchId } = useParams<{ matchId: string }>();
@@ -20,13 +18,12 @@ export const MatchOverviewPage = () => {
     return <div className="text-center p-4">Match not found.</div>;
   }
 
-  // Fetch contextual stats using the atoms (components to handle loading/undefined states)
   const TeamStatsDisplay = ({ teamName }: { teamName: string }) => {
     const teamStats = useAtomValue(
       contextualStatAtoms.teamStatsForMatchAtom({ matchId, teamName })
     );
-    if (!teamStats) return null; // Or loading indicator
-    // TODO: Define relevant stats for TeamCard based on teamStats structure
+    if (!teamStats) return null;
+    
     return (
       <TeamCard
         teamName={teamName}
@@ -35,119 +32,103 @@ export const MatchOverviewPage = () => {
         }
         primaryStats={[
           { value: prettyFormat(teamStats.eliminations), label: "Elims" },
-        ]} // Example stat
+        ]}
         secondaryStats={[
           { value: prettyFormat(teamStats.deaths), label: "Deaths" },
-        ]} // Example stat
+        ]}
         linkUrl={`/teams/${teamName}`}
       />
     );
   };
 
-  // Removed unused PlayerStatsDisplay function
-  /*
-  const PlayerStatsDisplay = ({ playerId }: { playerId: string }) => {
-    const playerStatsRows = useAtomValue(
-      playerStatsForMatchAtom({ matchId, playerId })
-    );
-    if (!playerStatsRows || playerStatsRows.length === 0) return null; // Or loading
-
-    // Aggregate stats across heroes if needed, or display per hero
-    // For simplicity, aggregate here (summing stats)
-    const aggregatedStats = playerStatsRows.reduce((acc, row) => {
-      Object.keys(row).forEach((key) => {
-        if (typeof row[key as keyof typeof row] === "number") {
-          acc[key as keyof typeof acc] =
-            (acc[key as keyof typeof acc] || 0) +
-            (row[key as keyof typeof row] as number);
-        } else {
-          // Keep first value for non-numerical keys like playerName
-          if (!acc[key as keyof typeof acc]) {
-            acc[key as keyof typeof acc] = row[key as keyof typeof row];
-          }
-        }
-      });
-      return acc;
-    }, {} as any); // Use 'any' for simplicity in aggregation, refine if needed
-
-    const kda =
-      aggregatedStats.deaths === 0
-        ? prettyFormat(
-            aggregatedStats.eliminations +
-              (aggregatedStats.offensiveAssists +
-                aggregatedStats.defensiveAssists)
-          )
-        : prettyFormat(
-            (aggregatedStats.eliminations +
-              (aggregatedStats.offensiveAssists +
-                aggregatedStats.defensiveAssists)) /
-              aggregatedStats.deaths
-          );
-
-    return (
-      <PlayerCard
-        playerName={playerId}
-        teamNames={[
-          match.team1Players.includes(playerId)
-            ? match.team1Name
-            : match.team2Name,
-        ]}
-        heroes={playerStatsRows.map((r) => r.playerHero)} // List heroes played
-        primaryStats={[{ value: kda, label: "KDA" }]} // Example stat
-        secondaryStats={[
-          {
-            value: prettyFormat(aggregatedStats.heroDamageDealt),
-            label: "Hero Dmg",
-          },
-        ]} // Example stat
-        // Add linkUrl if PlayerCard supports it or wrap in Link
-      />
-    );
-  };
-  */
-
-  // Removed unused allPlayerIds variable
-  // const allPlayerIds = [...match.team1Players, ...match.team2Players];
-
   return (
-    <div className="flex flex-col gap-6">
-      {/* Overall Match Card */}
-      <div className="flex flex-col md:flex-row gap-6 mb-6">
-        <MatchCard
-          title={`${match.map} (${match.mode})`}
-          teamNames={[match.team1Name, match.team2Name]}
-          date={match.dateString} // Assuming dateString is suitable for display
-          mapName={match.map}
-          primaryStats={[
-            {
-              value: `${match.team1Score} - ${match.team2Score}`,
-              label: "Score",
-            },
-            { value: formatTime(match.duration), label: "Duration" },
-          ]}
-          // No link needed if already on the page
-        />
+    <div className="space-y-6">
+      {/* Hero Section - Match Summary */}
+      <div className="glass-panel rounded-2xl p-8 relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={mapNameToFileName(match.map, false)}
+            alt={match.map}
+            className="w-full h-full object-cover opacity-20"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 z-0" />
+        <div className="relative z-10">
+          {/* Match Title */}
+          <div className="text-center mb-6">
+            <h1 className="text-4xl font-bold text-gradient mb-2">
+              {match.map}
+            </h1>
+            <p className="text-base-content/70 text-lg">{match.mode}</p>
+          </div>
 
-        <TeamStatsComparison matchId={matchId} />
-        <KillsTable matchId={matchId} />
+          {/* Live Match Card - Teams & Score */}
+          <div className="flex items-center justify-center gap-8 mb-6">
+            {/* Team 1 */}
+            <div className="flex-1 text-right">
+              <h2 className="text-2xl font-bold text-white mb-2">
+                {match.team1Name}
+              </h2>
+              <div className="text-sm text-base-content/70">
+                {match.team1Players.length} Players
+              </div>
+            </div>
+
+            {/* Score */}
+            <div className="glass-card px-8 py-6 rounded-xl">
+              <div className="text-5xl font-bold text-center">
+                <span className={match.team1Score > match.team2Score ? "text-primary" : "text-white"}>
+                  {match.team1Score}
+                </span>
+                <span className="text-base-content/50 mx-3">:</span>
+                <span className={match.team2Score > match.team1Score ? "text-primary" : "text-white"}>
+                  {match.team2Score}
+                </span>
+              </div>
+            </div>
+
+            {/* Team 2 */}
+            <div className="flex-1 text-left">
+              <h2 className="text-2xl font-bold text-white mb-2">
+                {match.team2Name}
+              </h2>
+              <div className="text-sm text-base-content/70">
+                {match.team2Players.length} Players
+              </div>
+            </div>
+          </div>
+
+          {/* Match Details */}
+          <div className="flex justify-center gap-8 text-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-base-content/70">Duration:</span>
+              <span className="font-semibold text-white">{formatTime(match.duration)}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-base-content/70">Date:</span>
+              <span className="font-semibold text-white">{match.dateString}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Team Cards */}
-      <div className="flex flex-col md:flex-row flex-wrap gap-4">
+      {/* Team Statistics Section */}
+      <div className="grid md:grid-cols-2 gap-6">
         <TeamStatsDisplay teamName={match.team1Name} />
         <TeamStatsDisplay teamName={match.team2Name} />
       </div>
 
-      {/* Player Cards */}
-      {/* <h2 className="text-2xl font-semibold mt-4">Player Stats</h2>
-      <div className="flex flex-col md:flex-row flex-wrap gap-4">
-        {allPlayerIds.map((playerId) => (
-          <PlayerStatsDisplay key={playerId} playerId={playerId} />
-        ))}
-      </div> */}
+      {/* Team Stats Comparison */}
+      <div className="glass-panel rounded-xl p-6">
+        <h2 className="text-xl font-bold mb-4 text-white">Team Comparison</h2>
+        <TeamStatsComparison matchId={matchId} />
+      </div>
 
-      <div className="flex flex-col lg:flex-row gap-4"></div>
-      {/* Removed PlayerStatsComparison component */}
+      {/* Kills Matrix */}
+      <div className="glass-panel rounded-xl p-6">
+        <h2 className="text-xl font-bold mb-4 text-white">Kill Matrix</h2>
+        <KillsTable matchId={matchId} />
+      </div>
     </div>
   );
 };
