@@ -91,6 +91,14 @@ export const MetricsExplorerPage: React.FC = () => {
     return totals;
   }, [statsData.rows, metrics]);
 
+  // State for row hover interaction
+  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
+
+  // Helper to generate a unique ID for a row based on grouping keys
+  const getRowId = (row: any, groupKeys: PlayerStatsCategoryKeys[]) => {
+    return groupKeys.map((key) => row[key]).join("-");
+  };
+
   return (
     <Container>
       <div className="space-y-6">
@@ -167,6 +175,9 @@ export const MetricsExplorerPage: React.FC = () => {
               <MetricsDataTable
                 data={statsData.rows ?? []}
                 columns={tableColumns}
+                onRowHover={setHoveredRowId}
+                getRowId={(row) => getRowId(row, groupBy)}
+                hoveredRowId={hoveredRowId}
               />
             </div>
           </div>
@@ -179,6 +190,9 @@ export const MetricsExplorerPage: React.FC = () => {
                 data={statsData.rows ?? []}
                 groupBy={groupBy}
                 metrics={metrics}
+                hoveredRowId={hoveredRowId}
+                getRowId={(row) => getRowId(row, groupBy)}
+                onPointHover={setHoveredRowId}
               />
             </div>
           </div>
