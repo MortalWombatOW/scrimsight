@@ -6,6 +6,7 @@ import { parseFile, stringHash } from '@library';
 vi.mock('@library', () => ({
   parseFile: vi.fn(),
   stringHash: vi.fn(),
+  groupByAtom: vi.fn(),
 }));
 
 describe('logFileParserAtomFn', () => {

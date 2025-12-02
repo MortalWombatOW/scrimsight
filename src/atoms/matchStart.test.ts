@@ -5,6 +5,7 @@ import { extractEventsFromFiles } from '@library';
 
 vi.mock('@library', () => ({
   extractEventsFromFiles: vi.fn(),
+  groupByAtom: vi.fn(),
 }));
 
 describe('matchStartFn', () => {

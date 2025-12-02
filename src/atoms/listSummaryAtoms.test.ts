@@ -57,7 +57,8 @@ describe('listSummaryAtomsFn', () => {
         dateString: '2023-08-28',
         mapCount: 6,
         score: '3-2-1',
-        duration: 3600
+        duration: 3600,
+        maps: []
       });
 
       expect(result[1]).toEqual({
@@ -66,7 +67,8 @@ describe('listSummaryAtomsFn', () => {
         dateString: '2023-08-27',
         mapCount: 4,
         score: '1-3-0',
-        duration: 2400
+        duration: 2400,
+        maps: []
       });
     });
 
@@ -248,7 +250,8 @@ describe('listSummaryAtomsFn', () => {
         dateString: '2023-08-28',
         mapCount: 4,
         score: '2-2-0',
-        duration: 2800
+        duration: 2800,
+        maps: []
       });
     });
 
