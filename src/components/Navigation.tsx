@@ -148,7 +148,7 @@ export const Navigation = ({
   return (
     // Added padding, use theme background, remove explicit border
     <nav className="h-full w-full overflow-y-auto p-2">
-      <ul className="menu menu-md bg-base-200 border border-gray-700 rounded-box w-full gap-2">
+      <ul className="menu menu-md glass-card rounded-box w-full gap-2">
         {renderMenuItem({
           title: "Home",
           link: "/",
