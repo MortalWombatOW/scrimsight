@@ -26,12 +26,6 @@ const ErrorFallback = ({ error }: { error: Error }) => (
 
 export const PlayerPage = () => {
   const { playerName } = useParams<{ playerName: string }>();
-  // Removed activeTab state:
-  // const [activeTab, setActiveTab] = React.useState<
-  //   "overview" | "heroes" | "matches"
-  // >("overview");
-
-  // Move useStats call before any conditional returns to fix React hooks rule
   const stats = useStats(["playerName", "playerHero"], {
     playerName: playerName ? [playerName] : [],
   });

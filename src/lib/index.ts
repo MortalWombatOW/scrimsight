@@ -49,7 +49,8 @@ export {
   teamStats,
   uniqueCategoryValues,
   playerStatsBase,
-  playerStatsNumericalKeys
+  playerStatsNumericalKeys,
+  playerRankingsAtom
 } from '@atoms';
 
 export type { 

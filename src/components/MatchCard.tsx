@@ -1,4 +1,5 @@
-import { VisualCard } from "@components";
+import { DataCard } from "@components";
+import { GoTrophy } from "react-icons/go";
 
 interface MatchCardProps {
   title: string;
@@ -25,65 +26,65 @@ export const MatchCard = ({
   const mapImage = `/assets/bg.png`;
 
   return (
-    <VisualCard
+    <DataCard
       title={title}
+      subtitle={date}
       backgroundImage={mapImage}
       linkUrl={linkUrl}
+      linkText={linkText}
       className="min-w-[320px]"
+      icon={<GoTrophy size={20} />}
     >
       <div className="space-y-4">
         {/* Teams */}
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-base-content/70">Teams</div>
-          <div className="text-sm font-semibold text-white">
-            {teamNames.join(" vs ")}
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {teamNames.map((team, idx) => (
+            <span
+              key={idx}
+              className="badge badge-lg badge-primary badge-outline bg-base-100/50 backdrop-blur-sm border-primary/50 text-white font-semibold"
+            >
+              {team}
+            </span>
+          ))}
         </div>
 
-        {/* Date & Map */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <div className="text-xs text-base-content/60 mb-1">Date</div>
-            <div className="text-sm text-white">{date}</div>
-          </div>
-          <div>
-            <div className="text-xs text-base-content/60 mb-1">Map</div>
-            <div className="text-sm text-white">{mapName}</div>
-          </div>
+        {/* Map */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-base-content/60 uppercase tracking-wider">
+            Map:
+          </span>
+          <span className="text-sm font-medium text-white">{mapName}</span>
         </div>
 
         {/* Primary Stats */}
-        <div className="flex gap-6 pt-3 border-t border-white/10">
+        <div className="grid grid-cols-2 gap-3">
           {primaryStats.map((stat) => (
-            <div key={stat.label} className="flex-1">
-              <div className="text-2xl font-bold text-gradient">
-                {stat.value}
-              </div>
-              <div className="text-xs text-base-content/60 mt-1">
+            <div
+              key={stat.label}
+              className="bg-base-300/60 backdrop-blur-md rounded-lg p-3 border border-white/5"
+            >
+              <div className="text-xs text-base-content/70 uppercase tracking-wider font-medium mb-1">
                 {stat.label}
               </div>
+              <div className="text-xl font-bold text-white">{stat.value}</div>
             </div>
           ))}
         </div>
 
         {/* Secondary Stats */}
         {secondaryStats && secondaryStats.length > 0 && (
-          <div className="flex flex-wrap gap-3 text-xs">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 pt-2 border-t border-white/10">
             {secondaryStats.map((stat) => (
-              <div key={stat.label} className="text-base-content/70">
-                <span className="font-semibold text-white">{stat.value}</span>{" "}
-                {stat.label}
+              <div key={stat.label} className="flex items-center gap-2">
+                <span className="text-xs text-base-content/60">{stat.label}:</span>
+                <span className="text-sm font-medium text-base-content/90">
+                  {stat.value}
+                </span>
               </div>
             ))}
           </div>
         )}
       </div>
-
-      {linkUrl && (
-        <div className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors">
-          {linkText} →
-        </div>
-      )}
-    </VisualCard>
+    </DataCard>
   );
 };

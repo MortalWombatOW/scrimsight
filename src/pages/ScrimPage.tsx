@@ -1,11 +1,15 @@
 import { useAtomValue } from "jotai";
-import { scrims, contextualStatAtoms, MatchData } from "@library";
-import { formatTime, prettyFormat } from "@library";
+import { scrims } from "@library";
+import { formatTime } from "@library";
 import { IoTimeOutline } from "react-icons/io5";
 import { TbTournament } from "react-icons/tb";
-import { useParams } from "react-router-dom"; // Removed unused Link
-import { TeamCard, PlayerCard, MatchCard } from "@components"; // Import MatchCard
-import { Container } from "@components"; // Added import
+import { useParams } from "react-router-dom";
+import {
+  Container,
+  ScrimTeamStats,
+  ScrimPlayerStats,
+  ScrimMatchList,
+} from "@components";
 
 export const ScrimPage = () => {
   const { scrimId } = useParams<{ scrimId: string }>(); // Use the constructed scrimId
@@ -31,107 +35,9 @@ export const ScrimPage = () => {
   } = scrim;
   const allPlayerIds = [...team1Players, ...team2Players];
 
-  // Display components for contextual data
-  const TeamStatsDisplay = ({ teamName }: { teamName: string }) => {
-    const teamStats = useAtomValue(
-      contextualStatAtoms.teamStatsForScrimAtom({ scrimId, teamName })
-    );
-    if (!teamStats)
-      return (
-        <div className="card bg-base-200 shadow">
-          <div className="card-body p-4">Loading {teamName} stats...</div>
-        </div>
-      ); // Loading/Error state
-
-    return (
-      <TeamCard
-        teamName={teamName}
-        playerNames={teamName === team1Name ? team1Players : team2Players}
-        primaryStats={[
-          { value: prettyFormat(teamStats.eliminations), label: "Total Elims" },
-        ]} // Example stat
-        secondaryStats={[
-          { value: prettyFormat(teamStats.deaths), label: "Total Deaths" },
-        ]} // Example stat
-        linkUrl={`/teams/${teamName}`}
-      />
-    );
-  };
-
-  const PlayerStatsDisplay = ({ playerId }: { playerId: string }) => {
-    const playerStats = useAtomValue(
-      contextualStatAtoms.playerStatsForScrimAtom({ scrimId, playerId })
-    );
-    if (!playerStats) return null; // Loading handled elsewhere or skip card
-
-    const kda =
-      playerStats.deaths === 0
-        ? prettyFormat(
-          playerStats.eliminations +
-              (playerStats.offensiveAssists + playerStats.defensiveAssists)
-        )
-        : prettyFormat(
-          (playerStats.eliminations +
-              (playerStats.offensiveAssists + playerStats.defensiveAssists)) /
-              playerStats.deaths
-        );
-
-    return (
-      <PlayerCard
-        playerName={playerId}
-        teamNames={[team1Players.includes(playerId) ? team1Name : team2Name]}
-        heroes={["Overall"]} // Scrim-level stats don't have per-hero breakdown easily here
-        primaryStats={[{ value: kda, label: "Scrim KDA" }]} // Example stat
-        secondaryStats={[
-          {
-            value: prettyFormat(playerStats.heroDamageDealt),
-            label: "Total Hero Dmg",
-          },
-        ]} // Example stat
-        // Add linkUrl if PlayerCard supports it or wrap in Link
-      />
-    );
-  };
-
-  const MatchListDisplay = () => {
-    const matches = useAtomValue(contextualStatAtoms.matchStatsForScrimAtom({ scrimId }));
-    if (!matches || matches.length === 0)
-      return <p>No match data found for this scrim.</p>;
-
-    return (
-      <div className="flex flex-col md:flex-row flex-wrap gap-4">
-        {matches.map((match: MatchData) => (
-          <MatchCard
-            key={match.matchId}
-            title={`${match.map} (${match.mode})`}
-            teamNames={[match.team1Name, match.team2Name]}
-            date={match.dateString} // Or format differently if needed
-            mapName={match.map}
-            primaryStats={[
-              {
-                value: `${match.team1Score} - ${match.team2Score}`,
-                label: "Score",
-              },
-            ]}
-            secondaryStats={[
-              { value: formatTime(match.duration), label: "Duration" },
-            ]}
-            linkUrl={`/matches/${match.matchId}`}
-          />
-        ))}
-      </div>
-    );
-  };
-
   return (
     <Container>
-      {" "}
-      {/* Added Container */}
-      {/* Header Section - Apply consistent card styling */}
       <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg mb-6 p-6">
-        {" "}
-        {/* Changed div classes */}
-        {/* Removed card-body, padding applied directly */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
@@ -140,15 +46,11 @@ export const ScrimPage = () => {
             </h1>
             <p className="text-base-content/70 mt-1">{dateString}</p>
           </div>
-          {/* Ensure stats component uses theme background/text */}
           <div className="stats shadow bg-base-100 text-base-content rounded-lg">
-            {" "}
-            {/* Added bg/text/radius */}
             <div className="stat place-items-center">
               <div className="stat-title text-base-content/70">
                 Total Duration
-              </div>{" "}
-              {/* Adjusted text opacity */}
+              </div>
               <div className="stat-value text-xl flex items-center gap-2">
                 <IoTimeOutline />
                 {formatTime(duration)}
@@ -157,35 +59,46 @@ export const ScrimPage = () => {
             <div className="stat place-items-center">
               <div className="stat-title text-base-content/70">
                 Overall Score
-              </div>{" "}
-              {/* Adjusted text opacity */}
+              </div>
               <div className="stat-value text-xl">
-                {scrim.team1Wins} - {scrim.team2Wins}{" "}
-                {/* Ensure team1Wins/team2Wins exist on scrim object */}
+                {scrim.team1Wins} - {scrim.team2Wins}
               </div>
             </div>
           </div>
         </div>
-        {/* Removed extra closing div here */}
       </div>
       {/* Team Cards with Scrim Stats */}
       <h2 className="text-2xl font-semibold mb-4">Team Performance</h2>
       <div className="flex flex-col md:flex-row justify-between gap-6 mb-6">
-        <TeamStatsDisplay teamName={team1Name} />
-        <TeamStatsDisplay teamName={team2Name} />
+        <ScrimTeamStats
+          scrimId={scrimId}
+          teamName={team1Name}
+          players={team1Players}
+        />
+        <ScrimTeamStats
+          scrimId={scrimId}
+          teamName={team2Name}
+          players={team2Players}
+        />
       </div>
       {/* Player Cards with Scrim Stats */}
       <h2 className="text-2xl font-semibold mb-4">Player Performance</h2>
       <div className="flex flex-col md:flex-row flex-wrap gap-4 mb-6">
         {allPlayerIds.map((playerId) => (
-          <PlayerStatsDisplay key={playerId} playerId={playerId} />
+          <ScrimPlayerStats
+            key={playerId}
+            scrimId={scrimId}
+            playerId={playerId}
+            teamName={
+              team1Players.includes(playerId) ? team1Name : team2Name
+            }
+          />
         ))}
       </div>
       {/* Match Cards */}
       <h2 className="text-2xl font-semibold mb-4">Matches</h2>
-      <MatchListDisplay />
-      {/* Removed Overall Stats Card and Matches Timeline */}
-    </Container> // Added closing Container
+      <ScrimMatchList scrimId={scrimId} />
+    </Container>
   );
 };
 

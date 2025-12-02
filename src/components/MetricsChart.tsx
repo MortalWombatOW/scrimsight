@@ -21,7 +21,7 @@ import {
 } from "@atoms";
 import { getColor, prettyFormat } from "@library"; // Import color function and prettyFormat
 
-const CustomTooltip = ({ active, payload, label, groupBy }: any) => {
+const CustomTooltip = ({ active, payload, groupBy }: any) => {
   if (active && payload && payload.length) {
     // For ScatterChart, payload[0].payload contains the full data object
     const data = payload[0].payload;

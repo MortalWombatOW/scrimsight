@@ -59,6 +59,7 @@ import playerLivesAtom from './playerLivesAtom';
 import groupedEventsAtom from './groupedEventsAtom';
 import listSummaryAtoms from './listSummaryAtoms';
 
+
 // All atoms are of this type
 export type ScrimsightAtom<Value> = {
   name: string;
@@ -584,3 +585,4 @@ initializeListSummaryAtoms();
 export { default as detailedTeamCompositionsAtom } from './detailedTeamCompositionsAtom';
 export { default as teamMapTypeStatsAtom } from './teamMapTypeStatsAtom';
 export { default as contextualStatAtoms } from './contextualStatAtoms';
+export { playerRankingsAtom } from './playerRankingAtom';
