@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from "react";
-import { useTimelineContext } from "@components";
+import { useTimelineContext } from "./TimelineContext";
 import { formatDuration } from "@library";
 
 export const TimelineTable = (): ReactNode => {

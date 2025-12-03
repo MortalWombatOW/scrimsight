@@ -1,6 +1,7 @@
 import { type ReactNode, useMemo } from "react";
 import { useAtomValue } from "jotai"; // Import useAtomValue
-import { useTimelineContext, TimelineButton } from "@components"; // Import new component
+import { useTimelineContext } from "./TimelineContext";
+import { TimelineButton } from "./TimelineButton";
 import {
   timelineSegmentsAtomFamily,
 } from "@atoms";

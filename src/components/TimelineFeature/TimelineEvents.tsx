@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useTimelineContext, type TimelineEvent } from "@components";
+import { useTimelineContext, type TimelineEvent } from "./TimelineContext";
 import { getHeroImage } from "@library";
 import { type MatchData } from "@atoms";
 

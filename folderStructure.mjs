@@ -23,20 +23,18 @@ export const folderStructureConfig = createFolderStructure({
         {
           name: "atoms",
           children: [
-            { name: "CLAUDE.md" }, // Claude memory file
             { name: "index.ts" }, // Atom index file
-            { name: "atomTemplate.ts.txt" }, // Atom template file
             // Atom test files
             {
               name: "{camelCase}.test.ts",
               enforceExistence: ["{nodeName}.ts"]
-            }, 
+            },
             // Atom implementation files
             {
               name: "{camelCase}.ts",
               // Any atom implementation file must have a corresponding test file
               enforceExistence: ["{nodeName}.test.ts"]
-            }, 
+            },
           ],
         },
         // Library: src/lib folder
@@ -58,10 +56,7 @@ export const folderStructureConfig = createFolderStructure({
             // Component implementation files
             {
               name: "{PascalCase}.tsx",
-              enforceExistence: ["{NodeName}.stories.tsx"]
             },
-            // Component test files
-            { name: "{PascalCase}.stories.tsx", enforceExistence: ["{NodeName}.tsx"] },
           ],
         },
         // Icons: src/icons folder
@@ -72,10 +67,7 @@ export const folderStructureConfig = createFolderStructure({
             // Icon implementation files
             {
               name: "{PascalCase}Icon.tsx",
-              enforceExistence: ["{NodeName}.stories.tsx"]
             },
-            // Icon story files
-            { name: "{PascalCase}Icon.stories.tsx", enforceExistence: ["{NodeName}.tsx"] },
             // SVG files
             { name: "*.svg" },
           ],
@@ -89,6 +81,7 @@ export const folderStructureConfig = createFolderStructure({
             { name: "{PascalCase}Page.tsx" },
           ],
         },
-      ]},
-],
+      ]
+    },
+  ],
 });

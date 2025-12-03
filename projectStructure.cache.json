@@ -1,5 +1,29 @@
 [
   {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/VisualCard.test.tsx",
+    "errorMessage": "🔥 File 'VisualCard.test.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}.tsx\nError location = ./src/components/VisualCard.test.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamStatsComparison.test.tsx",
+    "errorMessage": "🔥 File 'TeamStatsComparison.test.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}.tsx\nError location = ./src/components/TeamStatsComparison.test.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/VisualCard.test.tsx",
+    "errorMessage": "🔥 File 'VisualCard.test.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}.tsx, {PascalCase}.stories.tsx\nError location = ./src/components/VisualCard.test.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TimelineFeature/Timeline.tsx",
+    "errorMessage": "🔥 Folder 'TimelineFeature' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/TimelineFeature\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamStatsComparison.test.tsx",
+    "errorMessage": "🔥 File 'TeamStatsComparison.test.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}.tsx, {PascalCase}.stories.tsx\nError location = ./src/components/TeamStatsComparison.test.tsx\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerRankingAtom.ts",
+    "errorMessage": "🔥 File 'playerRankingAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerRankingAtom.test.ts\nError location = ./src/atoms/playerRankingAtom.ts\n\n"
+  },
+  {
     "filename": "/home/andrewgleeson/code/scrimsight/src/lib/sampledata/Log-2023-08-28-17-29-57.txt",
     "errorMessage": "🔥 Folder 'sampledata' is invalid. 🔥\n\nAccording to the structure, the 'lib' folder can only contain files.\nError location = ./src/lib/sampledata\n\n"
   }

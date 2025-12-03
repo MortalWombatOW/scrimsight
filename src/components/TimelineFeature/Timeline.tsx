@@ -1,5 +1,8 @@
 import { type ReactNode } from "react";
-import { TimelineProvider, TimelineTable, TimelineEvents, TimelineControls } from "@components";
+import { TimelineProvider } from "./TimelineContext";
+import { TimelineTable } from "./TimelineTable";
+import { TimelineEvents } from "./TimelineEvents";
+import { TimelineControls } from "./TimelineControls";
 
 export const Timeline = ({ matchId }: { matchId: string }): ReactNode => {
   return (
