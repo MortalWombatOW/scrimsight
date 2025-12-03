@@ -1,10 +1,10 @@
 import { type ReactNode } from "react";
-import { useStats } from "@library";
 import {
   OverwatchRole,
   getRoleFromHero,
   getHeroImage,
 } from "@library";
+import { useStatsWithDerived } from "../hooks/useStats";
 import { RoleIcon } from "@icons";
 import {
   BarChart,
@@ -108,21 +108,20 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   return null;
 };
 
-export const PlayerHeroes = (): ReactNode => { // Remove props
-  const { playerName } = useParams<{ playerName: string }>(); // Get playerName from URL params
-  
+export const PlayerHeroes = (): ReactNode => {
+  const { playerName } = useParams<{ playerName: string }>();
+
   // Always call hooks before any conditional logic
-  const heroStats = useStats(["playerName", "playerHero"], {
-    playerName: playerName ? [playerName] : [],
+  const heroStats = useStatsWithDerived({
+    playerName: playerName || undefined,
   });
-  
+
   if (!playerName) {
-    // Handle case where playerName is not in URL
     return <div>Player name not found in URL.</div>;
   }
 
   // Prepare hero statistics
-  const heroData = heroStats.rows
+  const heroData = heroStats
     .map((row) => ({
       hero: row.playerHero,
       role: getRoleFromHero(row.playerHero),

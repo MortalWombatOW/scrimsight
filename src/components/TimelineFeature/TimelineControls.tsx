@@ -1,21 +1,26 @@
 import { type ReactNode, useMemo } from "react";
-import { useAtomValue } from "jotai"; // Import useAtomValue
 import { useTimelineContext } from "./TimelineContext";
 import { TimelineButton } from "./TimelineButton";
-import {
-  timelineSegmentsAtomFamily,
-} from "@atoms";
+import { generateTimelineSegments } from "../../domain/timeline";
 
 export const TimelineControls = (): ReactNode => {
   const { setCurrentTimeRange, loadedData, currentTimeRange } =
     useTimelineContext();
 
-  // Use the derived atom to get timeline segments
-  const timelineSegmentsAtom = useMemo(
-    () => timelineSegmentsAtomFamily({ matchId: loadedData?.matchData?.matchId || "" }),
-    [loadedData?.matchData?.matchId]
+  // Use the domain function to get timeline segments
+  const flatSegments = useMemo(
+    () => {
+      if (!loadedData) return [];
+      return generateTimelineSegments(
+        loadedData.matchData,
+        loadedData.mapTime,
+        loadedData.roundTimes,
+        loadedData.teamfights,
+        loadedData.roundEndEvents
+      );
+    },
+    [loadedData]
   );
-  const flatSegments = useAtomValue(timelineSegmentsAtom);
 
   if (!loadedData) {
     return <div>Loading...</div>;

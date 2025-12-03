@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import { useStats } from "@library";
 import { ErrorMessage, SubPageNavigation } from "@components";
-import { Container } from "@components"; // Added import
+import { Container } from "@components";
+import { useStats } from "../hooks/useStats";
 
 export const PlayersPage = () => {
-  const playerStats = useStats(["playerName"]);
+  const playerStats = useStats();
 
   if (!playerStats) {
     return (
@@ -14,7 +14,7 @@ export const PlayersPage = () => {
     );
   }
 
-  if (playerStats.rows.length === 0) {
+  if (playerStats.length === 0) {
     return <ErrorMessage message="No data available for players" />;
   }
 

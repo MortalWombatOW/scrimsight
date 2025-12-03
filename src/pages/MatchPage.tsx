@@ -1,28 +1,22 @@
-import { useParams, Outlet } from "react-router-dom"; // Removed Link, useLocation
-import { useAtomValue } from "jotai";
-import { matchData } from "@library";
+import { useParams, Outlet } from "react-router-dom";
 import { formatTime, mapNameToFileName } from "@library";
 import { IoMdCalendar } from "react-icons/io";
 import { MdAccessTime } from "react-icons/md";
 import { TbClockHour1 } from "react-icons/tb";
 import { FiMapPin } from "react-icons/fi";
-import { SubPageNavigation, Container, MatchScoreCard } from "@components"; // Added import
+import { SubPageNavigation, Container, MatchScoreCard } from "@components";
+import { useMatch } from "../hooks/useMatch";
 
 const MatchPage = () => {
   const { matchId } = useParams<{ matchId: string }>();
-  // Removed unused location variable:
-  // const location = useLocation();
 
-  const matchDataList = useAtomValue(matchData.atom);
-  if (!matchDataList || !matchId) {
+  const match = useMatch(matchId || "");
+
+  if (!match || !matchId) {
     return null;
   }
-  const matchDataItem = matchDataList.find(
-    (match) => match.matchId === matchId
-  );
-  if (!matchDataItem) {
-    return null;
-  }
+
+  const matchDataItem = match.metadata;
 
   // Define Nav Items for SubPageNavigation
   const matchNavItems = [

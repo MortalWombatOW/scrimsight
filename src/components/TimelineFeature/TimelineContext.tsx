@@ -1,23 +1,34 @@
-import { useAtomValue } from "jotai";
+import { createContext, useContext, useState, ReactNode, useMemo } from "react";
+import { formatDuration, getRoleFromHero } from "@library";
+import { useMatch } from "../../hooks/useMatch";
 import {
   MapTimes,
-  mapTimes,
-  MatchData,
-  matchData,
-  PlayerEventWithType,
-  playerEvents,
-  PlayerInteractionEvent,
-  playerInteractionEvents,
+  MatchMetadata,
   RoundTimes,
-  roundTimes,
   Teamfight,
-  teamfights,
   UltimateEvent,
-  ultimateEvents,
-} from "@atoms";
-import { createContext, useContext, useState, ReactNode, useMemo } from "react";
-import { playerLives as playerLivesAtom } from "@atoms";
-import { formatDuration, getRoleFromHero } from "@library";
+} from "../../data/types";
+
+interface PlayerEventWithType {
+  matchId: string;
+  playerName: string;
+  playerTeam: string;
+  playerHero: string;
+  matchTime: number;
+  eventType: string;
+}
+
+interface PlayerInteractionEvent {
+  id: string;
+  matchId: string;
+  playerName: string;
+  playerTeam: string;
+  playerHero: string;
+  otherPlayerName: string;
+  playerInteractionEventTime: number;
+  playerInteractionEventType: string;
+  direction: 'incoming' | 'outgoing';
+}
 
 interface TimeRange {
   start: number;
@@ -54,12 +65,13 @@ interface TimelineContextType {
   selectedEventId: string | null;
   setSelectedEventId: (eventId: string | null) => void;
   loadedData?: {
-    matchData: MatchData;
+    matchData: MatchMetadata;
     mapTime: MapTimes;
     roundTimes: RoundTimes[];
     teamfights: Teamfight[];
     events: TimelineEvent[];
     groupedEvents: GroupedTimelineEvents[];
+    roundEndEvents: import("../../data/types").RoundEndLogEvent[];
   };
 }
 
@@ -82,69 +94,118 @@ export const TimelineProvider = ({
   });
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
-  const allMatchData = useAtomValue(matchData.atom);
-  const currentMatchData = useMemo(
-    () => allMatchData.find((m) => m.matchId === matchId),
-    [allMatchData, matchId]
-  );
+  const match = useMatch(matchId);
 
-  const allMapTimes = useAtomValue(mapTimes.atom);
-  const currentMapTime = useMemo(
-    () => allMapTimes.find((mt) => mt.matchId === matchId),
-    [allMapTimes, matchId]
-  );
+  const currentMatchData = match?.metadata;
+  const currentMapTime = match?.mapTimes;
+  const currentRoundTimes = match?.roundTimes || [];
+  const currentTeamfights = match?.teamfights || [];
+  const currentRoundEndEvents = match?.events.roundEnd || [];
 
-  const allRoundTimes = useAtomValue(roundTimes.atom);
-  const currentRoundTimes = useMemo(
-    () => allRoundTimes.filter((rt) => rt.matchId === matchId),
-    [allRoundTimes, matchId]
-  );
+  // Calculate player lives from hero spawn and kill events (for future use)
+  // Commented out as it's not currently used but may be needed for timeline features
+  // const playerLives = useMemo(() => { ... }, [match, matchId, currentMapTime]);
 
-  const allTeamfights = useAtomValue(teamfights.atom);
-  const currentTeamfights = useMemo(
-    () => allTeamfights.filter((tf) => tf.matchId === matchId),
-    [allTeamfights, matchId]
-  );
+  // Convert events to PlayerEventWithType format
+  const allPlayerEvents = useMemo(() => {
+    if (!match) return [];
+    const events: PlayerEventWithType[] = [];
 
-  const allPlayerLives = useAtomValue(playerLivesAtom.atom);
-  const playerLives = useMemo(
-    () => allPlayerLives.filter((pl) => pl.matchId === matchId),
-    [allPlayerLives, matchId]
-  );
-  console.log(playerLives);
+    for (const spawn of match.events.heroSpawn) {
+      events.push({
+        matchId: spawn.matchId,
+        playerName: spawn.playerName,
+        playerTeam: spawn.playerTeam,
+        playerHero: spawn.playerHero,
+        matchTime: spawn.matchTime,
+        eventType: 'heroSpawn',
+      });
+    }
 
-  // Filter to only the events within our current time range:
-  const allPlayerEvents = useAtomValue(playerEvents.atom);
+    for (const swap of match.events.heroSwap) {
+      events.push({
+        matchId: swap.matchId,
+        playerName: swap.playerName,
+        playerTeam: swap.playerTeam,
+        playerHero: swap.playerHero,
+        matchTime: swap.matchTime,
+        eventType: 'heroSwap',
+      });
+    }
+
+    for (const assist of match.events.defensiveAssist) {
+      events.push({
+        matchId: assist.matchId,
+        playerName: assist.playerName,
+        playerTeam: assist.playerTeam,
+        playerHero: assist.playerHero,
+        matchTime: assist.matchTime,
+        eventType: 'defensiveAssist',
+      });
+    }
+
+    for (const assist of match.events.offensiveAssist) {
+      events.push({
+        matchId: assist.matchId,
+        playerName: assist.playerName,
+        playerTeam: assist.playerTeam,
+        playerHero: assist.playerHero,
+        matchTime: assist.matchTime,
+        eventType: 'offensiveAssist',
+      });
+    }
+
+    return events.sort((a, b) => a.matchTime - b.matchTime);
+  }, [match]);
+
   const currentPlayerEvents = useMemo(
     () =>
       allPlayerEvents.filter(
         (pe) =>
-          pe.matchId === matchId &&
           pe.matchTime >= currentTimeRange.start &&
           pe.matchTime <= currentTimeRange.end
       ),
-    [allPlayerEvents, matchId, currentTimeRange]
+    [allPlayerEvents, currentTimeRange]
   );
 
-  const allPlayerInteractionEvents = useAtomValue(playerInteractionEvents.atom);
+  // Convert kills to PlayerInteractionEvent format
+  const allPlayerInteractionEvents = useMemo(() => {
+    if (!match) return [];
+    const events: PlayerInteractionEvent[] = [];
+
+    for (const kill of match.events.kills) {
+      events.push({
+        id: `${kill.matchId}-${kill.matchTime}-${kill.attackerName}-kill`,
+        matchId: kill.matchId,
+        playerName: kill.attackerName,
+        playerTeam: kill.attackerTeam,
+        playerHero: kill.attackerHero,
+        otherPlayerName: kill.victimName,
+        playerInteractionEventTime: kill.matchTime,
+        playerInteractionEventType: 'Killed player',
+        direction: 'outgoing',
+      });
+    }
+
+    return events.sort((a, b) => a.playerInteractionEventTime - b.playerInteractionEventTime);
+  }, [match]);
+
   const currentPlayerInteractionEvents = useMemo(
     () =>
       allPlayerInteractionEvents.filter(
         (pie) =>
-          pie.matchId === matchId &&
           pie.playerInteractionEventTime >= currentTimeRange.start &&
           pie.playerInteractionEventTime <= currentTimeRange.end &&
           pie.direction === "outgoing"
       ),
-    [allPlayerInteractionEvents, matchId, currentTimeRange]
+    [allPlayerInteractionEvents, currentTimeRange]
   );
 
-  const allUltimateEvents = useAtomValue(ultimateEvents.atom);
+  const allUltimateEvents = match?.ultimateEvents || [];
   const currentUltimateEvents = useMemo(
     () =>
       allUltimateEvents.filter(
         (ue) =>
-          ue.matchId === matchId &&
           ue.ultimateStartTime >= currentTimeRange.start &&
           ue.ultimateStartTime <= currentTimeRange.end
       ),
@@ -263,6 +324,7 @@ export const TimelineProvider = ({
       teamfights: currentTeamfights,
       events,
       groupedEvents,
+      roundEndEvents: currentRoundEndEvents,
     }
     : undefined;
 

@@ -1,22 +1,30 @@
-import { useAtomValue } from "jotai";
-import { contextualStatAtoms, MatchData, formatTime } from "@library";
+import { useMemo } from "react";
+import { formatTime } from "@library";
 import { MatchCard } from "@components";
+import { useScrim } from "../hooks/useScrims";
+import { useMatches } from "../hooks/useRepository";
 
 interface ScrimMatchListProps {
   scrimId: string;
 }
 
 export const ScrimMatchList = ({ scrimId }: ScrimMatchListProps) => {
-  const matches = useAtomValue(
-    contextualStatAtoms.matchStatsForScrimAtom({ scrimId })
-  );
+  const scrim = useScrim(scrimId);
+  const allMatches = useMatches();
+
+  const matches = useMemo(() => {
+    if (!scrim) return [];
+    return allMatches
+      .filter((m) => scrim.matchIds.includes(m.metadata.matchId))
+      .map((m) => m.metadata);
+  }, [scrim, allMatches]);
 
   if (!matches || matches.length === 0)
     return <p>No match data found for this scrim.</p>;
 
   return (
     <div className="flex flex-col md:flex-row flex-wrap gap-4">
-      {matches.map((match: MatchData) => (
+      {matches.map((match) => (
         <MatchCard
           key={match.matchId}
           title={`${match.map} (${match.mode})`}

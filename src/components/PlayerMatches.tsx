@@ -1,14 +1,17 @@
-import { type ReactNode } from "react";
-// Removed useStats import
-import { useAtomValue } from "jotai";
-import { matchData } from "@atoms";
-import { useParams } from "react-router-dom"; // Removed unused Link
+import { type ReactNode, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import { MatchCard } from "@components";
 import { formatTime } from "@library";
+import { useMatches } from "../hooks/useRepository";
 
 export const PlayerMatches = (): ReactNode => {
   const { playerName } = useParams<{ playerName: string }>();
-  const allMatches = useAtomValue(matchData.atom);
+  const matches = useMatches();
+
+  const allMatches = useMemo(
+    () => matches.map(m => m.metadata),
+    [matches]
+  );
 
   if (!playerName) {
     return <div>Player name not found in URL.</div>;

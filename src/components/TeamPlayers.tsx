@@ -1,31 +1,49 @@
 import { useParams, Link } from "react-router-dom";
-import { useAtomValue } from "jotai";
-import { contextualStatAtoms, teamPlayers } from "@atoms";
+import { useMemo } from "react";
 import { PlayerCard, ErrorMessage } from "@components";
 import { formatStat } from "@library";
+import { useMatches } from "../hooks/useRepository";
 
-const { playerStatsForTeamAtom } = contextualStatAtoms;
-
-// Component to render a single player card using the atom family
+// Component to render a single player card
 const PlayerCardLoader = ({
   teamName,
   playerId,
+  matches,
 }: {
   teamName: string;
   playerId: string;
+  matches: ReturnType<typeof useMatches>;
 }) => {
-  const playerStats = useAtomValue(
-    playerStatsForTeamAtom({ teamName, playerId })
-  );
+  const playerStats = useMemo(() => {
+    let eliminations = 0;
+    let deaths = 0;
+    let offensiveAssists = 0;
+    let defensiveAssists = 0;
+    let totalPlaytime = 0;
 
-  if (!playerStats) {
-    // Optional: Add a loading state specific to the card
-    return (
-      <div className="card bg-base-200 shadow-md">
-        <div className="card-body p-4">Loading {playerId}...</div>
-      </div>
-    );
-  }
+    for (const match of matches) {
+      for (const stat of match.playerStats.rows) {
+        if (stat.playerName === playerId && stat.playerTeam === teamName) {
+          eliminations += stat.eliminations;
+          deaths += stat.deaths;
+          offensiveAssists += stat.offensiveAssists;
+          defensiveAssists += stat.defensiveAssists;
+          totalPlaytime += stat.playtime;
+        }
+      }
+    }
+
+    const playtimeMinutes = totalPlaytime / 60;
+    const eliminationsPer10 = playtimeMinutes > 0 ? (eliminations / playtimeMinutes) * 10 : 0;
+
+    return {
+      eliminations,
+      deaths,
+      offensiveAssists,
+      defensiveAssists,
+      eliminationsPer10Minutes: eliminationsPer10,
+    };
+  }, [playerId, teamName, matches]);
 
   const kda =
     playerStats.deaths === 0
@@ -40,42 +58,50 @@ const PlayerCardLoader = ({
       );
 
   return (
-    <Link to={`/players/${playerId}`} className="block">
-      {" "}
-      {/* Wrap card in Link */}
+    <Link to={`/player/${playerId}`} className="block">
       <PlayerCard
         playerName={playerId}
-        teamNames={[teamName]} // Team context is known
-        heroes={["Overall"]} // Team-level stats don't have per-hero easily
-        primaryStats={[{ value: kda, label: "Team KDA" }]} // Example stat for team performance
+        teamNames={[teamName]}
+        heroes={["Overall"]}
+        primaryStats={[{ value: kda, label: "Team KDA" }]}
         secondaryStats={[
           {
             value: formatStat('eliminationsPer10Minutes', playerStats.eliminationsPer10Minutes),
             label: "Elims/10",
           },
-        ]} // Example stat
+        ]}
       />
     </Link>
   );
 };
 
 export const TeamPlayers = () => {
-  const { teamId } = useParams<{ teamId: string }>(); // teamId is the teamName
-  const allTeamPlayers = useAtomValue(teamPlayers.atom);
+  const { teamId } = useParams<{ teamId: string }>();
+  const matches = useMatches();
+
+  const playerIds = useMemo(() => {
+    const playersSet = new Set<string>();
+
+    for (const match of matches) {
+      for (const stat of match.playerStats.rows) {
+        if (stat.playerTeam === teamId) {
+          playersSet.add(stat.playerName);
+        }
+      }
+    }
+
+    return Array.from(playersSet).sort();
+  }, [teamId, matches]);
 
   if (!teamId) {
     return <ErrorMessage message="Team ID not found in URL." />;
   }
 
-  const teamData = allTeamPlayers.find((t) => t.teamName === teamId);
-
-  if (!teamData) {
+  if (playerIds.length === 0) {
     return (
-      <ErrorMessage message={`Player data not found for team ${teamId}.`} />
+      <ErrorMessage message={`No players found for team ${teamId}.`} />
     );
   }
-
-  const playerIds = teamData.players;
 
   return (
     <div className="space-y-4">
@@ -89,6 +115,7 @@ export const TeamPlayers = () => {
             key={playerId}
             teamName={teamId}
             playerId={playerId}
+            matches={matches}
           />
         ))}
       </div>

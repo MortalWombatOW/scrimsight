@@ -1,7 +1,5 @@
-import { type ReactNode } from "react";
-import { useParams } from "react-router-dom"; // Import useParams
-import { useAtomValue } from "jotai";
-import { detailedTeamCompositionsAtom } from "@atoms";
+import { type ReactNode, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import {
   getHeroImage,
   getRoleFromHero,
@@ -9,22 +7,91 @@ import {
 } from "@library";
 import { formatDuration } from "@library";
 import { RoleIcon } from "@icons";
-import { ErrorMessage } from "@components"; // Import ErrorMessage
+import { ErrorMessage } from "@components";
+import { useMatches } from "../hooks/useRepository";
+
+interface TeamComposition {
+  composition: string[];
+  playtimeSeconds: number;
+  winRate: number;
+  frequency: number;
+}
 
 export const TeamCompositions = (): ReactNode => {
-  const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL
+  const { teamId } = useParams<{ teamId: string }>();
+  const matches = useMatches();
 
-  // Fetch data from the atom family, passing teamId (use empty string if no teamId)
-  const detailedCompositionsData = useAtomValue(
-    detailedTeamCompositionsAtom(teamId || "")
-  );
+  const detailedCompositionsData = useMemo(() => {
+    if (!teamId) return [];
+
+    // Group stats by matchId + roundNumber to get compositions
+    const compositionMap = new Map<string, {
+      playtime: number;
+      wins: number;
+      total: number;
+    }>();
+
+    for (const match of matches) {
+      // Find which team we're looking at
+      const isTeam1 = match.metadata.team1Name === teamId;
+      const isTeam2 = match.metadata.team2Name === teamId;
+      if (!isTeam1 && !isTeam2) continue;
+
+      // Get win status
+      const didWin = match.metadata.winner === teamId;
+
+      // Group by round to get compositions
+      const roundCompositions = new Map<string, Set<string>>();
+      for (const stat of match.playerStats.rows) {
+        if (stat.playerTeam !== teamId) continue;
+
+        const roundKey = String(stat.roundNumber);
+        if (!roundCompositions.has(roundKey)) {
+          roundCompositions.set(roundKey, new Set());
+        }
+        roundCompositions.get(roundKey)!.add(stat.playerHero);
+      }
+
+      // Process each round's composition
+      for (const [roundNum, heroes] of roundCompositions) {
+        const compKey = Array.from(heroes).sort().join(',');
+
+        if (!compositionMap.has(compKey)) {
+          compositionMap.set(compKey, { playtime: 0, wins: 0, total: 0 });
+        }
+
+        const compData = compositionMap.get(compKey)!;
+
+        // Calculate playtime for this composition in this round
+        const roundStats = match.playerStats.rows.filter(
+          s => s.playerTeam === teamId && String(s.roundNumber) === roundNum
+        );
+        const roundPlaytime = roundStats.reduce((sum, s) => sum + s.playtime, 0) / roundStats.length;
+
+        compData.playtime += roundPlaytime;
+        compData.total += 1;
+        if (didWin) compData.wins += 1;
+      }
+    }
+
+    // Convert to array format
+    const compositions: TeamComposition[] = [];
+    for (const [compKey, data] of compositionMap) {
+      compositions.push({
+        composition: compKey.split(','),
+        playtimeSeconds: data.playtime,
+        winRate: (data.wins / data.total) * 100,
+        frequency: data.total,
+      });
+    }
+
+    return compositions;
+  }, [teamId, matches]);
 
   if (!teamId) {
-    // Handle case where teamId is not available
     return <ErrorMessage message="Team ID not found in URL." />;
   }
 
-  // Sort compositions by playtime descending
   const sortedCompositions = [...detailedCompositionsData].sort(
     (a, b) => b.playtimeSeconds - a.playtimeSeconds
   );

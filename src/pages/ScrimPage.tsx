@@ -1,5 +1,3 @@
-import { useAtomValue } from "jotai";
-import { scrims } from "@library";
 import { formatTime } from "@library";
 import { IoTimeOutline } from "react-icons/io5";
 import { TbTournament } from "react-icons/tb";
@@ -10,10 +8,11 @@ import {
   ScrimPlayerStats,
   ScrimMatchList,
 } from "@components";
+import { useScrims } from "../hooks/useScrims";
 
 export const ScrimPage = () => {
-  const { scrimId } = useParams<{ scrimId: string }>(); // Use the constructed scrimId
-  const scrimData = useAtomValue(scrims.atom);
+  const { scrimId } = useParams<{ scrimId: string }>();
+  const scrimData = useScrims();
 
   if (!scrimId)
     return <div className="text-center p-4">No Scrim ID provided.</div>;

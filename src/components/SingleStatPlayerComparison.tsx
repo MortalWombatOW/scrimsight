@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { useAtomValue } from "jotai";
 import {
   BarChart,
   Bar,
@@ -14,7 +13,8 @@ import {
   getStatLabel,
   formatStat,
 } from "@library";
-import { useStats } from "@library";
+import { useMatch } from "../hooks/useMatch";
+import { useStatsWithDerived } from "../hooks/useStats";
 
 interface SingleStatPlayerComparisonProps {
   matchId: string;
@@ -32,11 +32,9 @@ const chartStyle = {
 export const SingleStatPlayerComparison = ({
   matchId,
 }: SingleStatPlayerComparisonProps) => {
-  const matchDataValue = useAtomValue(matchData.atom);
-  const matchDataItem = matchDataValue.find(
-    (match) => match.matchId === matchId
-  );
-  const playerStats = useStats(["playerName", "playerTeam"]);
+  const match = useMatch(matchId);
+  const matchDataItem = match?.metadata;
+  const playerStats = useStatsWithDerived({ matchId });
   const [stat, setStat] = useState<PlayerStatKey>("finalBlows");
   const [sortBy, setSortBy] = useState<string>(stat);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -46,7 +44,7 @@ export const SingleStatPlayerComparison = ({
     if (!matchDataItem) {
       return { team1Data: [], team2Data: [], allPlayerData: [] };
     }
-    const team1 = playerStats.rows
+    const team1 = playerStats
       .filter((stats) => stats.playerTeam === matchDataItem.team1Name)
       .map((player) => ({
         ...player,
@@ -54,7 +52,7 @@ export const SingleStatPlayerComparison = ({
         value: player[stat] || 0, // Unified key for charts
       }));
 
-    const team2 = playerStats.rows
+    const team2 = playerStats
       .filter((stats) => stats.playerTeam === matchDataItem.team2Name)
       .map((player) => ({
         ...player,
@@ -70,7 +68,7 @@ export const SingleStatPlayerComparison = ({
       team2Data: team2,
       allPlayerData: all,
     };
-  }, [playerStats.rows, matchDataItem, stat]);
+  }, [playerStats, matchDataItem, stat]);
 
   // Sort data for the table - moved before conditional return
   const sortedData = useMemo(() => {

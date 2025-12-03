@@ -1,10 +1,11 @@
-import { Suspense } from "react"; // Removed React import as it's not needed explicitly
-import { useParams, Outlet } from "react-router-dom"; // Added Outlet
-import { useStats, getRoleFromHero } from "@library";
-import { SubPageNavigation } from "@components"; // Added SubPageNavigation
+import { Suspense } from "react";
+import { useParams, Outlet } from "react-router-dom";
+import { getRoleFromHero } from "@library";
+import { SubPageNavigation } from "@components";
 import { RoleIcon } from "@icons";
 import { ErrorBoundary } from "react-error-boundary";
-import { Container } from "@components"; // Added import
+import { Container } from "@components";
+import { useStats } from "../hooks/useStats";
 // Removed direct imports of child components as they are handled by Outlet
 // import { PlayerOverview } from "./components/PlayerOverview";
 // import { PlayerHeroes } from "./components/PlayerHeroes";
@@ -26,8 +27,8 @@ const ErrorFallback = ({ error }: { error: Error }) => (
 
 export const PlayerPage = () => {
   const { playerName } = useParams<{ playerName: string }>();
-  const stats = useStats(["playerName", "playerHero"], {
-    playerName: playerName ? [playerName] : [],
+  const stats = useStats({
+    playerName: playerName || undefined,
   });
 
   if (!playerName) {
@@ -39,7 +40,7 @@ export const PlayerPage = () => {
       </div>
     );
   }
-  const playerExists = stats.rows.length > 0;
+  const playerExists = stats.length > 0;
 
   if (!playerExists) {
     return (
@@ -51,7 +52,7 @@ export const PlayerPage = () => {
     );
   }
 
-  const playerData = stats.rows[0];
+  const playerData = stats[0];
   const mostPlayedRole = playerData.playerHero
     ? getRoleFromHero(playerData.playerHero)
     : "tank";

@@ -1,24 +1,20 @@
-import React from "react";
-import { useAtomValue } from "jotai";
-import { matchData } from "@atoms";
-import { useStats } from "@library";
+import React, { useMemo } from "react";
 import { PlayerStatKey, getStatLabel, formatStat } from "@library";
 import { ProgressBar } from "@components";
+import { useMatch } from "../hooks/useMatch";
 
 interface TeamStatsComparisonProps {
   matchId: string;
 }
 
 export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
-  const matchDataValue = useAtomValue(matchData.atom);
-  const matchDataItem = matchDataValue.find(
-    (match) => match.matchId === matchId
-  );
-  if (!matchDataItem) {
-    throw new Error("No match data");
+  const match = useMatch(matchId);
+
+  if (!match) {
+    return <div className="text-center p-4">Match not found.</div>;
   }
 
-  const teamStats = useStats(["playerTeam"]);
+  const matchDataItem = match.metadata;
 
   const statsToShow: PlayerStatKey[] = [
     "finalBlows",
@@ -27,26 +23,31 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
     "ultimatesUsed",
   ];
 
-  // Get the team data in a structured format
-  const getTeamData = () => {
+  // Compute team data from match player stats
+  const teamData = useMemo(() => {
     const result = {
       [matchDataItem.team1Name]: {} as Record<string, number>,
       [matchDataItem.team2Name]: {} as Record<string, number>,
     };
 
+    // Initialize all stats to 0
     for (const stat of statsToShow) {
-      for (const teamStat of teamStats.rows) {
-        const teamName = teamStat.playerTeam;
-        if (result[teamName]) {
-          result[teamName][stat] = (teamStat as any)[stat] || 0;
+      result[matchDataItem.team1Name][stat] = 0;
+      result[matchDataItem.team2Name][stat] = 0;
+    }
+
+    // Aggregate stats from player stats
+    for (const playerStat of match.playerStats.rows) {
+      const teamName = playerStat.playerTeam;
+      if (result[teamName]) {
+        for (const stat of statsToShow) {
+          result[teamName][stat] += (playerStat as any)[stat] || 0;
         }
       }
     }
 
     return result;
-  };
-
-  const teamData = getTeamData();
+  }, [match, matchDataItem, statsToShow]);
 
   // Calculate which team has the higher value for each stat
   const getWinnerTeam = (stat: PlayerStatKey) => {

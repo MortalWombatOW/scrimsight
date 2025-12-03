@@ -1,34 +1,38 @@
 import { useState, useMemo, type ReactNode } from "react";
-import { useParams } from "react-router-dom"; // Removed unused Link
-import { useAtomValue } from "jotai";
-import { matchData, MatchData } from "@atoms";
-// Removed unused: import { formatDate } from "../../../lib/date";
+import { useParams } from "react-router-dom";
 import { formatTime } from "@library";
 import { ErrorMessage } from "@components";
-import { MatchCard } from "@components"; // Import MatchCard
+import { MatchCard } from "@components";
+import { useMatches } from "../hooks/useRepository";
+import type { MatchMetadata } from "../data/types";
 
-// Define a type for keys of MatchData that hold string values
+// Define a type for keys of MatchMetadata that hold string values
 type StringMatchDataKeys = {
-  [K in keyof MatchData]: MatchData[K] extends string ? K : never;
-}[keyof MatchData];
+  [K in keyof MatchMetadata]: MatchMetadata[K] extends string ? K : never;
+}[keyof MatchMetadata];
 
 // Refined helper to get unique string values for filters
 const getUniqueValues = (
-  matches: MatchData[],
+  matches: MatchMetadata[],
   key: StringMatchDataKeys
 ): string[] => [
-  ...new Set(matches.map((m) => m[key])), // Now guaranteed to be string
+  ...new Set(matches.map((m) => m[key])),
 ];
 
-const getUniqueOpponents = (matches: MatchData[], teamId: string) => [
+const getUniqueOpponents = (matches: MatchMetadata[], teamId: string) => [
   ...new Set(
     matches.map((m) => (m.team1Name === teamId ? m.team2Name : m.team1Name))
   ),
 ];
 
 export const TeamMatches = (): ReactNode => {
-  const { teamId } = useParams<{ teamId: string }>(); // Get teamId from URL
-  const allMatches = useAtomValue(matchData.atom); // Get all matches
+  const { teamId } = useParams<{ teamId: string }>();
+  const matches = useMatches();
+
+  const allMatches = useMemo(
+    () => matches.map(m => m.metadata),
+    [matches]
+  );
 
   const [opponentFilter, setOpponentFilter] = useState<string>("");
   const [mapFilter, setMapFilter] = useState<string>("");

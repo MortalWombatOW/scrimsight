@@ -1,9 +1,6 @@
-import { type ReactNode } from "react";
-// Removed useStats import for overall stats, keep for hero stats for now
-import { useStats } from "@library";
-import { useAtomValue } from "jotai"; // Import useAtomValue
-import { playerListSummaryAtom } from "@atoms"; // Import summary atom
-import { PlayerCard } from "@components"; // Import PlayerCard
+import { type ReactNode, useMemo } from "react";
+import { useStatsWithDerived } from "../hooks/useStats";
+import { PlayerCard } from "@components";
 import { StatCard } from "@components";
 import {
   ResponsiveContainer,
@@ -16,12 +13,11 @@ import {
   Line,
   Cell,
 } from "recharts";
-// Removed duplicate import: import { useAtomValue } from "jotai";
-import { matchData } from "@atoms";
 import { format } from "date-fns";
 import { getRoleFromHero } from "@library";
 import { useParams } from "react-router-dom";
-import { formatStat } from "@library"; // Import formatStat
+import { formatStat } from "@library";
+import { useMatches } from "../hooks/useRepository";
 
 // interface PlayerOverviewProps { // Remove prop interface
 //   playerName: string;
@@ -34,22 +30,84 @@ type PerformanceTrend = {
   avgElims: number;
 };
 
-export const PlayerOverview = (): ReactNode => { // Remove props
-  const { playerName } = useParams<{ playerName: string }>(); // Get playerName from URL params
+export const PlayerOverview = (): ReactNode => {
+  const { playerName } = useParams<{ playerName: string }>();
 
-  // Fetch player summaries and find the current player
-  const playerSummaries = useAtomValue(playerListSummaryAtom);
-  const playerSummary = playerSummaries.find(p => p.playerName === playerName);
+  const processedMatches = useMatches();
 
-  // Keep hero stats for hero chart for now
-  const heroStats = useStats(["playerName", "playerHero"], {
-    playerName: playerName ? [playerName] : [], // Pass playerName if available
+  // Compute player summary from matches
+  const playerSummary = useMemo(() => {
+    if (!playerName) return null;
+
+    const playerMap = new Map<string, {
+      eliminations: number;
+      deaths: number;
+      assists: number;
+      teamName: string;
+      topHero: string;
+      heroPlaytime: Map<string, number>;
+      role: string;
+    }>();
+
+    for (const match of processedMatches) {
+      for (const stat of match.playerStats.rows) {
+        if (stat.playerName !== playerName) continue;
+
+        if (!playerMap.has(stat.playerName)) {
+          playerMap.set(stat.playerName, {
+            eliminations: 0,
+            deaths: 0,
+            assists: 0,
+            teamName: stat.playerTeam,
+            topHero: stat.playerHero,
+            heroPlaytime: new Map(),
+            role: stat.playerRole,
+          });
+        }
+
+        const playerData = playerMap.get(stat.playerName)!;
+        playerData.eliminations += stat.eliminations;
+        playerData.deaths += stat.deaths;
+        playerData.assists += stat.defensiveAssists + stat.offensiveAssists;
+
+        const currentPlaytime = playerData.heroPlaytime.get(stat.playerHero) || 0;
+        playerData.heroPlaytime.set(stat.playerHero, currentPlaytime + stat.playtime);
+      }
+    }
+
+    const data = playerMap.get(playerName);
+    if (!data) return null;
+
+    let topHero = '';
+    let maxPlaytime = 0;
+    data.heroPlaytime.forEach((playtime, hero) => {
+      if (playtime > maxPlaytime) {
+        maxPlaytime = playtime;
+        topHero = hero;
+      }
+    });
+
+    return {
+      playerName,
+      teamName: data.teamName,
+      topHero: topHero || data.topHero,
+      eliminations: data.eliminations,
+      deaths: data.deaths,
+      assists: data.assists,
+      role: data.role,
+    };
+  }, [playerName, processedMatches]);
+
+  const heroStats = useStatsWithDerived({
+    playerName: playerName || undefined,
   });
-  // Keep matches for performance trend chart for now
-  const matches = useAtomValue(matchData.atom);
-  
-  // Move this hook to top to avoid conditional hook call
-  const detailedOverallStats = useStats(["playerName"], { playerName: playerName ? [playerName] : [] });
+
+  const matches = useMemo(
+    () => processedMatches.map(m => m.metadata),
+    [processedMatches]
+  );
+
+  const detailedOverallStats = useStatsWithDerived({ playerName: playerName || undefined });
 
   if (!playerName) {
     return <div>Player name not found in URL.</div>;
@@ -133,7 +191,7 @@ export const PlayerOverview = (): ReactNode => { // Remove props
   };
 
   // Prepare hero usage data for chart (keep as is)
-  const heroUsageData = heroStats.rows
+  const heroUsageData = heroStats
     .sort((a, b) => b.playtime - a.playtime)
     .slice(0, 10)
     .map((row) => ({
@@ -144,7 +202,7 @@ export const PlayerOverview = (): ReactNode => { // Remove props
 
   // --- Detailed Stats Calculation (Keep for StatCards below) ---
   // Use the stats we already fetched at the top to avoid conditional hook call
-  const detailedStats = detailedOverallStats.rows[0];
+  const detailedStats = detailedOverallStats[0];
 
   const avgDamage = detailedStats?.heroDamageDealtPer10Minutes?.toFixed(0) ?? 'N/A';
   const avgHealing = detailedStats?.healingDealtPer10Minutes?.toFixed(0) ?? 'N/A';

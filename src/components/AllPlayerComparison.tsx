@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { useAtomValue } from "jotai";
 import {
   ScatterChart,
   Scatter,
@@ -8,11 +7,9 @@ import {
   ResponsiveContainer,
   Label,
 } from "recharts";
-import {
-  matchData,
-} from "@atoms";
-import { useStats } from "@library";
 import { PlayerStatKey, STAT_CONFIG, getStatLabel, formatStat } from "@library";
+import { useMatch } from "../hooks/useMatch";
+import { useStats } from "../hooks/useStats";
 
 interface AllPlayerComparisonProps {
   matchId: string;
@@ -35,50 +32,39 @@ const chartStyle = {
 
 export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
   // All hooks must be called before any conditional returns
-  const matchDataValue = useAtomValue(matchData.atom);
-  const playerStats = useStats(["playerName", "playerTeam"]);
+  const match = useMatch(matchId);
+  const playerStats = useStats({ matchId });
   const [xStat, setXStat] = useState<PlayerStatKey>("finalBlows");
   const [yStat, setYStat] = useState<PlayerStatKey>("deaths");
   const [sortBy, setSortBy] = useState<string>("playerName");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  // Find match data after all hooks
-  const matchDataItem = matchDataValue.find(
-    (match) => match.matchId === matchId
-  );
-
   // Prepare data for both teams (conditional logic moved inside useMemo)
   const allPlayerData = useMemo(() => {
-    if (!matchDataItem) return [];
+    if (!match) return [];
     
-    // Filter player stats for this specific match first
-    const matchPlayerStats = playerStats.rows.filter((stats) => 
-      // Assuming playerStats has a matchId field, or we need to filter by the teams in this match
-      stats.playerTeam === matchDataItem.team1Name || stats.playerTeam === matchDataItem.team2Name
-    );
-    
-    const team1Data: PlayerDataPoint[] = matchPlayerStats
-      .filter((stats) => stats.playerTeam === matchDataItem.team1Name)
+    const team1Data: PlayerDataPoint[] = playerStats
+      .filter((stats) => stats.playerTeam === match.metadata.team1Name)
       .map((player) => ({
         ...player,
-        x: player[xStat] || 0,
-        y: player[yStat] || 0,
+        x: (player as any)[xStat] || 0,
+        y: (player as any)[yStat] || 0,
         z: 10,
-        team: matchDataItem.team1Name,
+        team: match.metadata.team1Name,
       }));
 
-    const team2Data: PlayerDataPoint[] = matchPlayerStats
-      .filter((stats) => stats.playerTeam === matchDataItem.team2Name)
+    const team2Data: PlayerDataPoint[] = playerStats
+      .filter((stats) => stats.playerTeam === match.metadata.team2Name)
       .map((player) => ({
         ...player,
-        x: player[xStat] || 0,
-        y: player[yStat] || 0,
+        x: (player as any)[xStat] || 0,
+        y: (player as any)[yStat] || 0,
         z: 10,
-        team: matchDataItem.team2Name,
+        team: match.metadata.team2Name,
       }));
 
     return [...team1Data, ...team2Data];
-  }, [playerStats.rows, matchDataItem, xStat, yStat]);
+  }, [playerStats, match, xStat, yStat]);
 
   // Sort data for the table
   const sortedData = useMemo(() => {
@@ -96,7 +82,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
     });
   }, [allPlayerData, sortBy, sortDirection]);
   
-  if (!matchDataItem) {
+  if (!match) {
     return null;
   }
 
@@ -299,11 +285,11 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
               {/* Tooltip removed as we now have permanent annotations */}
 
               <Scatter
-                name={matchDataItem.team1Name}
+                name={match.metadata.team1Name}
                 data={allPlayerData.map((item) => ({
                   ...item,
-                  team1Name: matchDataItem.team1Name,
-                  team2Name: matchDataItem.team2Name,
+                  team1Name: match.metadata.team1Name,
+                  team2Name: match.metadata.team2Name,
                 }))}
                 style={chartStyle.scatter}
                 shape={renderShape}

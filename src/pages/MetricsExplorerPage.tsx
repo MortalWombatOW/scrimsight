@@ -1,15 +1,16 @@
 import React, { useState, useMemo } from "react";
-import { useAtomValue } from "jotai";
 import { Container, VisualCard } from "@components";
-import { useStats } from "@library";
+// TODO: This page uses advanced grouping features not yet supported by new hooks
+// Temporarily keeping old useStats import until grouping functionality is migrated
+import { useStats as useLibraryStats } from "@library";
 import {
-  uniqueCategoryValues,
   PlayerStatsCategoryKeys,
   PlayerStatKey,
   getStatLabel,
 } from "@library";
 import { useMetricsTableColumns, formatStat } from "@library";
 import { MetricsDataTable, MetricsChart, MetricsControls } from "@components";
+import { useMatches } from "../hooks/useRepository";
 
 export const MetricsExplorerPage: React.FC = () => {
   const [groupBy, setGroupBy] = useState<PlayerStatsCategoryKeys[]>([
@@ -30,8 +31,40 @@ export const MetricsExplorerPage: React.FC = () => {
     "asc" | "desc" | undefined
   >(undefined);
 
-  const statsData = useStats(groupBy, filters, sortBy, sortDirection);
-  const uniqueValues = useAtomValue(uniqueCategoryValues.atom);
+  // TODO: Migrate to new hooks once grouping functionality is implemented
+  const statsData = useLibraryStats(groupBy, filters, sortBy, sortDirection);
+
+  const matches = useMatches();
+  const uniqueValues = useMemo(() => {
+    const values: Record<PlayerStatsCategoryKeys, Set<string>> = {
+      matchId: new Set(),
+      roundNumber: new Set(),
+      playerTeam: new Set(),
+      playerName: new Set(),
+      playerHero: new Set(),
+      playerRole: new Set(),
+    };
+
+    for (const match of matches) {
+      for (const stat of match.playerStats.rows) {
+        values.matchId.add(stat.matchId);
+        values.roundNumber.add(stat.roundNumber);
+        values.playerTeam.add(stat.playerTeam);
+        values.playerName.add(stat.playerName);
+        values.playerHero.add(stat.playerHero);
+        values.playerRole.add(stat.playerRole);
+      }
+    }
+
+    return {
+      matchId: Array.from(values.matchId),
+      roundNumber: Array.from(values.roundNumber),
+      playerTeam: Array.from(values.playerTeam),
+      playerName: Array.from(values.playerName),
+      playerHero: Array.from(values.playerHero),
+      playerRole: Array.from(values.playerRole),
+    };
+  }, [matches]);
   const tableColumns = useMetricsTableColumns(groupBy, metrics);
 
   const [expandedFilters, setExpandedFilters] = useState<

@@ -1,20 +1,73 @@
-import { type ReactNode, useState } from "react";
-// Removed useStats import
-import { useAtomValue } from "jotai";
-// Removed duplicate imports below
-import { playerListSummaryAtom } from "@atoms";
+import { type ReactNode, useState, useMemo } from "react";
 import { RoleIcon } from "@icons";
 import { getRoleFromHero, OverwatchRole } from "@library";
-// Removed unused: import { TopPlayersList } from "./TopPlayersList";
 import { PlayerList } from "@components";
-// TODO: Create or import a PlayersFilter component similar to TeamsFilter
-// import { PlayersFilter, PlayerSortOption } from "./PlayersFilter";
+import { useMatches } from "../hooks/useRepository";
 
 // Define sort options for players
-type PlayerSortOption = "name" | "kda" | "elims" | "role"; // Example sort options
+type PlayerSortOption = "name" | "kda" | "elims" | "role";
 
 export const PlayersOverview = (): ReactNode => {
-  const playerSummaries = useAtomValue(playerListSummaryAtom);
+  const matches = useMatches();
+
+  const playerSummaries = useMemo(() => {
+    const playerMap = new Map<string, {
+      eliminations: number;
+      deaths: number;
+      assists: number;
+      teamName: string;
+      topHero: string;
+      heroPlaytime: Map<string, number>;
+      role: OverwatchRole;
+    }>();
+
+    for (const match of matches) {
+      for (const stat of match.playerStats.rows) {
+        if (!playerMap.has(stat.playerName)) {
+          playerMap.set(stat.playerName, {
+            eliminations: 0,
+            deaths: 0,
+            assists: 0,
+            teamName: stat.playerTeam,
+            topHero: stat.playerHero,
+            heroPlaytime: new Map(),
+            role: stat.playerRole as OverwatchRole,
+          });
+        }
+
+        const playerData = playerMap.get(stat.playerName)!;
+        playerData.eliminations += stat.eliminations;
+        playerData.deaths += stat.deaths;
+        playerData.assists += stat.defensiveAssists + stat.offensiveAssists;
+        playerData.role = stat.playerRole as OverwatchRole;
+
+        const currentPlaytime = playerData.heroPlaytime.get(stat.playerHero) || 0;
+        playerData.heroPlaytime.set(stat.playerHero, currentPlaytime + stat.playtime);
+      }
+    }
+
+    return Array.from(playerMap.entries()).map(([playerName, data]) => {
+      let topHero = '';
+      let maxPlaytime = 0;
+      data.heroPlaytime.forEach((playtime, hero) => {
+        if (playtime > maxPlaytime) {
+          maxPlaytime = playtime;
+          topHero = hero;
+        }
+      });
+
+      return {
+        playerName,
+        teamName: data.teamName,
+        topHero: topHero || data.topHero,
+        eliminations: data.eliminations,
+        deaths: data.deaths,
+        assists: data.assists,
+        role: data.role,
+        firstKillRate: 0, // TODO: Calculate from teamfight data
+      };
+    });
+  }, [matches]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<PlayerSortOption>("name"); // Default sort
 

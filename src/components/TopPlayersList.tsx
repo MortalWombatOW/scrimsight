@@ -1,17 +1,43 @@
-import { useStats } from "@library";
+import { useMemo } from "react";
 import { RoleIcon } from "@icons";
 import { formatStat } from "@library";
 import { Link } from "react-router-dom";
+import { useStatsWithDerived } from "../hooks/useStats";
+import { PlayerStats } from "../data/types";
 
 export const TopPlayersList = () => {
-  const stats = useStats(
-    ["playerName", "playerRole"],
-    {},
-    "eliminationsPer10Minutes",
-    "desc"
-  );
+  const allStats = useStatsWithDerived();
 
-  const topPlayers = stats.rows.slice(0, 5);
+  // Aggregate stats by player and sort by eliminations per 10 minutes
+  const topPlayers = useMemo(() => {
+    const playerMap = new Map<string, PlayerStats>();
+
+    // Aggregate stats by player
+    for (const stat of allStats) {
+      const existing = playerMap.get(stat.playerName);
+      if (!existing) {
+        playerMap.set(stat.playerName, { ...stat });
+      } else {
+        // Sum numerical values
+        existing.playtime += stat.playtime;
+        existing.eliminations += stat.eliminations;
+        existing.deaths += stat.deaths;
+      }
+    }
+
+    // Recalculate per-10-minute stats for aggregated data
+    const aggregated = Array.from(playerMap.values()).map(player => ({
+      ...player,
+      eliminationsPer10Minutes: player.playtime > 0
+        ? (player.eliminations / player.playtime) * 600
+        : 0
+    }));
+
+    // Sort by eliminations per 10 minutes and take top 5
+    return aggregated
+      .sort((a, b) => b.eliminationsPer10Minutes - a.eliminationsPer10Minutes)
+      .slice(0, 5);
+  }, [allStats]);
 
   return (
     <div className="bg-base-200 p-6 rounded-box">

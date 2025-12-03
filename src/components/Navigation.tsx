@@ -1,16 +1,16 @@
 import { useLocation, Link } from "react-router-dom";
-import { scrims, teamNames, matchData } from "@atoms";
-import { useStats } from "@library";
-import { useAtomValue } from "jotai";
 import { RiTeamLine } from "react-icons/ri";
 import { MdOutlinePersonOutline } from "react-icons/md";
 import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";
-import { IoStatsChartOutline } from "react-icons/io5"; // Import chart icon
-import { useEffect } from "react";
+import { IoStatsChartOutline } from "react-icons/io5";
+import { useEffect, useMemo } from "react";
 import { RoleIcon } from "@icons";
 import { CiMap } from "react-icons/ci";
+import { useMatches } from "../hooks/useRepository";
+import { useScrims } from "../hooks/useScrims";
+import { useStats } from "../hooks/useStats";
 
 const getTitle = (pathname: string) => {
   if (pathname === "/") {
@@ -62,12 +62,45 @@ export const Navigation = ({
 }) => {
   const location = useLocation();
 
-  const scrimsData = useAtomValue(scrims.atom);
-  const teamNamesData = useAtomValue(teamNames.atom);
-  const matchDataValue = useAtomValue(matchData.atom);
+  const scrimsData = useScrims();
+  const matches = useMatches();
+  const allPlayerStats = useStats();
 
-  const playerAtom = useStats(["playerName", "playerRole"]);
-  const playerTeamAtom = useStats(["playerName", "playerTeam"]);
+  const matchDataValue = useMemo(
+    () => matches.map(m => m.metadata),
+    [matches]
+  );
+
+  const teamNamesData = useMemo(() => {
+    const teamSet = new Set<string>();
+    for (const match of matches) {
+      teamSet.add(match.metadata.team1Name);
+      teamSet.add(match.metadata.team2Name);
+    }
+    return Array.from(teamSet).sort();
+  }, [matches]);
+
+  // Compute unique players with their roles and teams
+  const playersData = useMemo(() => {
+    const playerMap = new Map<string, { role: string; teams: Set<string> }>();
+    
+    for (const stat of allPlayerStats) {
+      if (!playerMap.has(stat.playerName)) {
+        playerMap.set(stat.playerName, {
+          role: stat.playerRole,
+          teams: new Set([stat.playerTeam])
+        });
+      } else {
+        playerMap.get(stat.playerName)!.teams.add(stat.playerTeam);
+      }
+    }
+
+    return Array.from(playerMap.entries()).map(([name, data]) => ({
+      playerName: name,
+      playerRole: data.role,
+      playerTeam: Array.from(data.teams).join(", ")
+    }));
+  }, [allPlayerStats]);
 
   useEffect(() => {
     document.title = getTitle(location.pathname);
@@ -176,14 +209,11 @@ export const Navigation = ({
           title: "Players",
           link: "/players",
           icon: <MdOutlinePersonOutline />,
-          children: playerAtom.rows.map((player) => ({
+          children: playersData.map((player) => ({
             title: `${player.playerName}`,
             icon: <RoleIcon role={player.playerRole} />,
             link: `/player/${player.playerName}`,
-            subtitle: playerTeamAtom.rows
-              .filter((row) => row.playerName === player.playerName)
-              .map((row) => row.playerTeam)
-              .join(", "),
+            subtitle: player.playerTeam,
           })),
         })}
         {renderMenuItem({

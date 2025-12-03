@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useStats } from "@library";
+import { useState, useMemo } from "react";
 import { OverwatchRole, PlayerStatKey, formatStat } from "@library";
 import { RoleIcon } from "@icons";
+import { useStatsWithDerived } from "../hooks/useStats";
 
 type StatCategory = "damage" | "healing" | "utility";
 
@@ -13,10 +13,51 @@ export const PlayersPerformance = () => {
     "damage"
   );
 
-  const stats = useStats(
-    ["playerName", "playerRole"],
-    selectedRole !== "all" ? { playerRole: [selectedRole] } : undefined
+  const allStats = useStatsWithDerived(
+    selectedRole !== "all" ? { role: selectedRole } : undefined
   );
+
+  // Aggregate stats by player
+  const playerStats = useMemo(() => {
+    const playerMap = new Map();
+
+    for (const stat of allStats) {
+      const existing = playerMap.get(stat.playerName);
+      if (!existing) {
+        playerMap.set(stat.playerName, { ...stat });
+      } else {
+        // Sum numerical values
+        existing.playtime += stat.playtime;
+        existing.eliminations += stat.eliminations;
+        existing.finalBlows += stat.finalBlows;
+        existing.deaths += stat.deaths;
+        existing.heroDamageDealt += stat.heroDamageDealt;
+        existing.healingDealt += stat.healingDealt;
+        existing.healingReceived += stat.healingReceived;
+        existing.defensiveAssists += stat.defensiveAssists;
+        existing.offensiveAssists += stat.offensiveAssists;
+        existing.damageBlocked += stat.damageBlocked;
+        existing.ultimatesEarned += stat.ultimatesEarned;
+        existing.ultimatesUsed += stat.ultimatesUsed;
+      }
+    }
+
+    // Recalculate per-10-minute stats
+    return Array.from(playerMap.values()).map(player => ({
+      ...player,
+      eliminationsPer10Minutes: player.playtime > 0 ? (player.eliminations / player.playtime) * 600 : 0,
+      finalBlowsPer10Minutes: player.playtime > 0 ? (player.finalBlows / player.playtime) * 600 : 0,
+      deathsPer10Minutes: player.playtime > 0 ? (player.deaths / player.playtime) * 600 : 0,
+      heroDamageDealtPer10Minutes: player.playtime > 0 ? (player.heroDamageDealt / player.playtime) * 600 : 0,
+      healingDealtPer10Minutes: player.playtime > 0 ? (player.healingDealt / player.playtime) * 600 : 0,
+      healingReceivedPer10Minutes: player.playtime > 0 ? (player.healingReceived / player.playtime) * 600 : 0,
+      defensiveAssistsPer10Minutes: player.playtime > 0 ? (player.defensiveAssists / player.playtime) * 600 : 0,
+      offensiveAssistsPer10Minutes: player.playtime > 0 ? (player.offensiveAssists / player.playtime) * 600 : 0,
+      damageBlockedPer10Minutes: player.playtime > 0 ? (player.damageBlocked / player.playtime) * 600 : 0,
+      ultimatesEarnedPer10Minutes: player.playtime > 0 ? (player.ultimatesEarned / player.playtime) * 600 : 0,
+      ultimatesUsedPer10Minutes: player.playtime > 0 ? (player.ultimatesUsed / player.playtime) * 600 : 0,
+    }));
+  }, [allStats]);
 
   const getMetricsByCategory = (category: StatCategory): { key: PlayerStatKey; label: string }[] => {
     switch (category) {
@@ -112,7 +153,7 @@ export const PlayersPerformance = () => {
             </tr>
           </thead>
           <tbody>
-            {stats.rows.map((player) => (
+            {playerStats.map((player) => (
               <tr key={player.playerName}>
                 <td>{player.playerName}</td>
                 <td>

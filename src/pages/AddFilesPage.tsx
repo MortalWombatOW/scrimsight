@@ -17,15 +17,17 @@ declare global {
   }
 }
 
-import { useAtom, useAtomValue } from "jotai";
-import { logFileInputAtom, sampleDataEnabledAtom } from "@library";
-import { ChangeEvent } from "react";
+import { useAtom } from "jotai";
+import { sampleDataEnabledAtom } from "@library";
+import { ChangeEvent, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { Container } from "@components";
+import { useLoadFiles, useIsProcessing } from "../hooks/useRepository";
 
 export const AddFilesPage = () => {
-  const [, setFiles] = useAtom(logFileInputAtom);
-  const logFileInput = useAtomValue(logFileInputAtom);
+  const [files, setFiles] = useState<File[]>([]);
+  const loadFiles = useLoadFiles();
+  const isProcessing = useIsProcessing();
   const [sampleDataEnabled, setSampleDataEnabled] = useAtom(
     sampleDataEnabledAtom
   );
@@ -54,6 +56,7 @@ export const AddFilesPage = () => {
       }
 
       setFiles(files);
+      loadFiles(files);
     } catch (error) {
       console.error("Error adding directory:", error);
     }
@@ -68,11 +71,12 @@ export const AddFilesPage = () => {
           file.name.endsWith(".txt")
       );
       setFiles(filteredFiles);
+      loadFiles(filteredFiles);
     }
   };
 
   const handleRemoveFile = (index: number) => {
-    const updatedFiles = logFileInput.files.filter((_, i) => i !== index);
+    const updatedFiles = files.filter((_, i) => i !== index);
     setFiles(updatedFiles);
   };
 
@@ -98,9 +102,6 @@ export const AddFilesPage = () => {
       </div>
 
       <div className="mb-6 p-4 border border-gray-700 border-gray-700 rounded-lg">
-        {" "}
-        {/* Use theme border border-gray-700 and radius */}
-        {/* Use DaisyUI button classes */}
         <button
           className={`btn rounded-lg mb-4 ${
             window.showDirectoryPicker ? "btn-primary" : "btn-disabled"
@@ -118,10 +119,7 @@ export const AddFilesPage = () => {
       </div>
 
       <div className="mb-6 p-4 border border-gray-700 border-gray-700 rounded-lg">
-        {" "}
-        {/* Use theme border border-gray-700 and radius */}
         <h2 className="text-lg font-semibold mb-2">Upload Files</h2>
-        {/* Style label like an outline button */}
         <label className="btn btn-outline rounded-lg cursor-pointer">
           Browse Files
           <input
@@ -138,17 +136,22 @@ export const AddFilesPage = () => {
         <h2 className="text-lg font-semibold mb-4 text-base-900 dark:text-white">
           Files Added
         </h2>
+        {isProcessing && (
+          <div className="mb-4 p-3 bg-primary-100 dark:bg-primary-900/20 rounded-lg">
+            <p className="text-primary-700 dark:text-primary-300">Processing files...</p>
+          </div>
+        )}
         <ul className="divide-y divide-base-200 dark:divide-base-700">
-          {logFileInput.files.map((file, index) => (
+          {files.map((file, index) => (
             <li key={index} className="py-3 flex justify-between items-center">
               <span className="text-base-800 dark:text-base-200">
                 {file.name}
               </span>
-              {/* Use DaisyUI ghost button for delete */}
               <button
                 className="btn btn-ghost btn-circle btn-sm text-base-content/70 hover:bg-error/20 hover:text-error"
                 onClick={() => handleRemoveFile(index)}
                 aria-label="delete"
+                disabled={isProcessing}
               >
                 <MdDelete size={20} />
               </button>

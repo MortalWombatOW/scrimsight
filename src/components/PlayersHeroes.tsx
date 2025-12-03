@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useStats } from "@library";
 import { OverwatchRole, getHeroImage } from "@library";
+import { useStatsWithDerived } from "../hooks/useStats";
 import { RoleIcon } from "@icons";
 import { prettyFormat } from "@library";
 
@@ -9,13 +9,12 @@ export const PlayersHeroes = () => {
     "all"
   );
 
-  const heroStats = useStats(
-    ["playerHero", "playerRole"],
-    selectedRole !== "all" ? { playerRole: [selectedRole] } : undefined
+  const heroStats = useStatsWithDerived(
+    selectedRole !== "all" ? { role: selectedRole } : undefined
   );
 
   // Group heroes by role and calculate aggregate stats
-  const heroData = heroStats.rows
+  const heroData = heroStats
     .map((row) => ({
       hero: row.playerHero,
       role: row.playerRole as OverwatchRole,

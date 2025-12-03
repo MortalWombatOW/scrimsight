@@ -1,13 +1,14 @@
 import { GoLinkExternal } from "react-icons/go";
 import { useAtom } from "jotai";
-import { sampleDataEnabledAtom, logFileInputAtom } from "@library";
+import { sampleDataEnabledAtom } from "@library";
 import { MdOutlineFileOpen } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { useState, useCallback } from "react";
+import { useLoadFiles } from "../hooks/useRepository";
 
 const ZeroState = () => {
   const [_, setSampleDataEnabled] = useAtom(sampleDataEnabledAtom);
-  const [__, setFiles] = useAtom(logFileInputAtom);
+  const loadFiles = useLoadFiles();
   const [isDragActive, setIsDragActive] = useState(false);
   const [isDragAccept, setIsDragAccept] = useState(false);
   const [isDragReject, setIsDragReject] = useState(false);
@@ -27,14 +28,14 @@ const ZeroState = () => {
         );
 
         if (filteredFiles.length > 0) {
-          setFiles(filteredFiles);
+          loadFiles(filteredFiles);
         } else {
           setIsDragReject(true);
           setTimeout(() => setIsDragReject(false), 1000);
         }
       }
     },
-    [setFiles]
+    [loadFiles]
   );
 
   const handleDragIn = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -73,10 +74,10 @@ const ZeroState = () => {
             (file.type && file.type.startsWith("text")) ||
             file.name.endsWith(".txt")
         );
-        setFiles(filteredFiles);
+        loadFiles(filteredFiles);
       }
     },
-    [setFiles]
+    [loadFiles]
   );
 
   return (

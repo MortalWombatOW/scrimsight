@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useAtomValue } from "jotai";
+import { useMemo } from "react";
 import {
   ResponsiveContainer,
   BarChart,
@@ -8,28 +8,88 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-// Removed useStats import
-import { teamListSummaryAtom } from "@atoms"; // Import summary atom
 import { TeamCard } from "@components";
-// Removed unused: import { StatCard } from "../../../components/StatCard";
-import { teamMapTypeStatsAtom } from "@atoms";
-import { formatPercentage } from "@library"; // Removed unused prettyFormat
+import { formatPercentage } from "@library";
 import { ErrorMessage } from "@components";
+import { useMatches } from "../hooks/useRepository";
 
 export const TeamOverview = () => {
   const { teamId } = useParams<{ teamId: string }>();
+  const matches = useMatches();
 
-  // Fetch all team summaries
-  const teamSummaries = useAtomValue(teamListSummaryAtom);
-  // Get map type stats by passing teamId to the atomFamily
-  const mapTypeStats = useAtomValue(teamMapTypeStatsAtom(teamId || ""));
+  // Compute team summary from matches
+  const teamSummary = useMemo(() => {
+    if (!teamId) return null;
+
+    const teamMap = new Map<string, { wins: number; losses: number; draws: number; playerCount: number }>();
+
+    for (const match of matches) {
+      const { team1Name, team2Name, winner, team1Players, team2Players } = match.metadata;
+
+      if (!teamMap.has(team1Name)) {
+        teamMap.set(team1Name, { wins: 0, losses: 0, draws: 0, playerCount: team1Players.length });
+      }
+      if (!teamMap.has(team2Name)) {
+        teamMap.set(team2Name, { wins: 0, losses: 0, draws: 0, playerCount: team2Players.length });
+      }
+
+      const team1Data = teamMap.get(team1Name)!;
+      const team2Data = teamMap.get(team2Name)!;
+
+      if (winner === team1Name) {
+        team1Data.wins++;
+        team2Data.losses++;
+      } else if (winner === team2Name) {
+        team2Data.wins++;
+        team1Data.losses++;
+      } else {
+        team1Data.draws++;
+        team2Data.draws++;
+      }
+    }
+
+    const data = teamMap.get(teamId);
+    if (!data) return null;
+
+    return {
+      teamName: teamId,
+      playerCount: data.playerCount,
+      winRate: data.wins / (data.wins + data.losses + data.draws),
+      gamesPlayed: data.wins + data.losses + data.draws,
+    };
+  }, [teamId, matches]);
+
+  // Compute map type stats
+  const mapTypeStats = useMemo(() => {
+    if (!teamId) return {};
+
+    const mapStats: Record<string, { wins: number; total: number }> = {};
+
+    for (const match of matches) {
+      const { team1Name, team2Name, winner, mode } = match.metadata;
+
+      if (team1Name === teamId || team2Name === teamId) {
+        if (!mapStats[mode]) {
+          mapStats[mode] = { wins: 0, total: 0 };
+        }
+        mapStats[mode].total++;
+        if (winner === teamId) {
+          mapStats[mode].wins++;
+        }
+      }
+    }
+
+    return Object.fromEntries(
+      Object.entries(mapStats).map(([mode, stats]) => [
+        mode,
+        { winRate: stats.wins / stats.total, gamesPlayed: stats.total },
+      ])
+    );
+  }, [teamId, matches]);
 
   if (!teamId) {
     return <ErrorMessage message="Team ID not found in URL." />;
   }
-
-  // Find the specific team's summary
-  const teamSummary = teamSummaries.find((t) => t.teamName === teamId);
 
   if (!teamSummary) {
     return <ErrorMessage message={`Team data not found for ${teamId}.`} />;

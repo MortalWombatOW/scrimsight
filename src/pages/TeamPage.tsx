@@ -1,31 +1,60 @@
 import { useParams, Outlet } from "react-router-dom";
-import { useAtom, useAtomValue } from "jotai";
-import { teamNames, teamStats } from "@library";
-// Removed unused imports: allPlayersForTeamAtom, matchDataAtom
-// Removed unused component imports: TeamOverview, TeamPlayers, TeamMatches, TeamCompositions
+import { useMemo } from "react";
 import { StatCard, ErrorMessage, SubPageNavigation } from "@components";
-import { Container } from "@components"; // Added import
+import { Container } from "@components";
+import { useMatches } from "../hooks/useRepository";
 
 export const TeamPage = () => {
   const { teamId } = useParams<{ teamId: string }>();
-  const [teamNamesValue] = useAtom(teamNames.atom);
-  const teamStatsValue = useAtomValue(teamStats.atom);
+  const matches = useMatches();
+
+  const teamRecord = useMemo(() => {
+    if (!teamId) return null;
+
+    const stats = {
+      teamName: teamId,
+      wins: 0,
+      losses: 0,
+      draws: 0,
+      gamesPlayed: 0,
+    };
+
+    for (const match of matches) {
+      const { team1Name, team2Name, winner } = match.metadata;
+
+      if (team1Name === teamId) {
+        stats.gamesPlayed++;
+        if (winner === teamId) {
+          stats.wins++;
+        } else if (winner === team2Name) {
+          stats.losses++;
+        } else {
+          stats.draws++;
+        }
+      } else if (team2Name === teamId) {
+        stats.gamesPlayed++;
+        if (winner === teamId) {
+          stats.wins++;
+        } else if (winner === team1Name) {
+          stats.losses++;
+        } else {
+          stats.draws++;
+        }
+      }
+    }
+
+    return stats.gamesPlayed > 0 ? stats : null;
+  }, [teamId, matches]);
 
   if (!teamId) {
     return <ErrorMessage message="Team ID not provided" />;
   }
 
-  const teamRecord = teamStatsValue.find((stat) => stat.teamName === teamId);
-
-  // Basic check if team exists based on stats
   if (!teamRecord) {
     return <ErrorMessage message="Team not found" />;
   }
 
-  const teamNameDisplay = String(
-    teamNamesValue[teamId as keyof typeof teamNamesValue] || teamId
-  );
-
+  const teamNameDisplay = teamId;
   const winRate = (teamRecord.wins / teamRecord.gamesPlayed) * 100 || 0;
 
   const teamNavItems = [

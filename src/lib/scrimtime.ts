@@ -64,6 +64,11 @@ interface DataAndSpecName {
   data: Record<string, unknown>[];
 }
 
+export interface ParsedLogFile {
+  matchId: string;
+  logs: DataAndSpecName[];
+}
+
 const parseLine = (line: string, matchId: string): DataAndSpecName => {
   const values = line.trim().split(',');
   const timestampStr = values[0];
@@ -97,7 +102,7 @@ const parseLine = (line: string, matchId: string): DataAndSpecName => {
   };
 };
 
-export const parseFile = (fileContent: string) => {
+export const parseFile = (fileContent: string): ParsedLogFile => {
   const matchId = stringHash(fileContent).toString();
   const lines = fileContent.split('\n').filter((l) => l.length > 0);
   const parsedData: DataAndSpecName[] = lines.map((line) => parseLine(line, matchId));

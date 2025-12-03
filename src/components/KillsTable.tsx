@@ -1,20 +1,41 @@
-import { type ReactNode, Suspense } from "react"; // Added Suspense
-import { useAtom } from "jotai";
-import { killMatrixAtomFamily } from "@atoms"; // Import the new atom
+import { type ReactNode, useMemo } from "react";
 import { HeatmapGrid } from "@components";
+import { useMatch } from "../hooks/useMatch";
 
 interface KillsTableProps {
   matchId: string;
 }
 
-// Removed local helper functions: transformPlayerInteractions, createKillMatrix, calculatePlayerTotals
-
 const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
-  // Use the new derived atom family
-  // useAtom handles Suspense automatically for async atoms
-  const [killMatrixData] = useAtom(killMatrixAtomFamily(matchId));
+  const match = useMatch(matchId);
 
-  // Handle case where atom returns null (e.g., match not found)
+  // Compute kill matrix data locally
+  const killMatrixData = useMemo(() => {
+    if (!match) return null;
+
+    const { metadata, events } = match;
+    const killMatrix: Record<string, Record<string, number>> = {};
+
+    // Build kill matrix from kill events
+    for (const kill of events.kills) {
+      if (!killMatrix[kill.attackerName]) {
+        killMatrix[kill.attackerName] = {};
+      }
+      if (!killMatrix[kill.attackerName][kill.victimName]) {
+        killMatrix[kill.attackerName][kill.victimName] = 0;
+      }
+      killMatrix[kill.attackerName][kill.victimName]++;
+    }
+
+    return {
+      killMatrix,
+      team1Name: metadata.team1Name,
+      team2Name: metadata.team2Name,
+      team1Players: metadata.team1Players,
+      team2Players: metadata.team2Players,
+    };
+  }, [match]);
+
   if (!killMatrixData) {
     return <div className="text-center p-4">Kill data not available for this match.</div>;
   }
@@ -149,13 +170,8 @@ const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
   );
 };
 
-// Wrap the main component with Suspense for loading state
 const KillsTable = ({ matchId }: KillsTableProps): ReactNode => {
-  return (
-    <Suspense fallback={<div className="h-40 w-full flex justify-center items-center">Loading...</div>}> {/* Adjust height/width as needed */}
-      <KillsTableContent matchId={matchId} />
-    </Suspense>
-  );
+  return <KillsTableContent matchId={matchId} />;
 };
 
-export default KillsTable; // Added default export
+export default KillsTable;

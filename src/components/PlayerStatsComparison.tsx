@@ -1,7 +1,6 @@
-import { useAtomValue } from "jotai";
-import { matchData } from "@atoms";
-import { useStats } from "@library";
 import { PlayerStatsCard } from "@components";
+import { useMatch } from "../hooks/useMatch";
+import { useStats } from "../hooks/useStats";
 
 interface PlayerStatsComparisonProps {
   matchId: string;
@@ -10,15 +9,14 @@ interface PlayerStatsComparisonProps {
 export const PlayerStatsComparison = ({
   matchId,
 }: PlayerStatsComparisonProps) => {
-  const matchDataValue = useAtomValue(matchData.atom);
-  const matchDataItem = matchDataValue.find(
-    (match) => match.matchId === matchId
-  );
-  const playerStats = useStats(["playerName", "playerTeam", "playerRole"]);
+  const match = useMatch(matchId);
+  const playerStats = useStats({ matchId });
 
-  if (!matchDataItem) {
+  if (!match) {
     return null;
   }
+
+  const matchDataItem = match.metadata;
 
   return (
     <>
@@ -29,7 +27,7 @@ export const PlayerStatsComparison = ({
       </div>
 
       <div className="flex flex-wrap gap-4 mb-4">
-        {playerStats.rows
+        {playerStats
           .filter((stats) => stats.playerTeam === matchDataItem.team1Name)
           .map((player) => (
             <div
@@ -50,7 +48,7 @@ export const PlayerStatsComparison = ({
       </div>
 
       <div className="flex flex-wrap gap-4">
-        {playerStats.rows
+        {playerStats
           .filter((stats) => stats.playerTeam === matchDataItem.team2Name)
           .map((player) => (
             <div

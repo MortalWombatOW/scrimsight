@@ -1,18 +1,27 @@
-import { useAtomValue } from "jotai";
-// Removed unused import: import { matchDataAtom } from "../../atoms";
-// Import the new summary atom and type
-import {
-  scrimListSummaryAtom,
-  ScrimListSummary,
-} from "@library";
-// Removed unused: import { useNavigate } from "react-router-dom";
-import { formatTime } from "@library"; // Removed unused mapNameToFileName
-import { ScrimCard, Container } from "@components"; // Combined imports
+import { useMemo } from "react";
+import { formatTime } from "@library";
+import { ScrimCard, Container } from "@components";
+import { useScrims } from "../hooks/useScrims";
+import { useMatches } from "../hooks/useRepository";
 
 export const ScrimsPage = () => {
-  // Removed unused navigate
-  // Use the new summary atom
-  const scrimSummaries = useAtomValue(scrimListSummaryAtom);
+  const scrims = useScrims();
+  const matches = useMatches();
+
+  const scrimSummaries = useMemo(() => {
+    return scrims.map((scrim) => {
+      const scrimMatches = matches.filter((m) => scrim.matchIds.includes(m.metadata.matchId));
+      return {
+        scrimId: `${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}`,
+        teamNames: [scrim.team1Name, scrim.team2Name],
+        dateString: scrim.dateString,
+        maps: scrimMatches.map((m) => m.metadata.map),
+        score: `${scrim.team1Wins}-${scrim.team2Wins}-${scrim.draws}`,
+        duration: scrim.duration,
+        mapCount: scrim.matchIds.length,
+      };
+    }).sort((a, b) => new Date(b.dateString).getTime() - new Date(a.dateString).getTime());
+  }, [scrims, matches]);
 
   // Optional: Add loading state handling if atom is async
   // if (scrimSummaries === undefined) {
@@ -37,7 +46,7 @@ export const ScrimsPage = () => {
       <h1 className="text-3xl font-bold mb-6">Scrims</h1>
       {/* Use flex layout for cards */}
       <div className="flex flex-col md:flex-row flex-wrap gap-6">
-        {scrimSummaries.map((scrim: ScrimListSummary) => (
+        {scrimSummaries.map((scrim) => (
           <ScrimCard
             key={scrim.scrimId}
             title={`${scrim.teamNames[0]} vs ${scrim.teamNames[1]}`}

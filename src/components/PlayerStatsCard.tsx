@@ -1,21 +1,20 @@
 import { useState } from "react";
-import { useAtomValue } from "jotai";
 import {
   getHeroImage,
   camelCaseToAbbreviation,
-  playerRankingsAtom,
   PlayerStatKey,
   formatStat,
   getStatLabel,
 } from "@library";
 import { VisualCard } from "@components";
+import { usePlayerRankings } from "../hooks/useStats";
 
 interface PlayerStatsCardProps {
   playerName: string;
 }
 
 export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
-  const { getRanking, getPlayerStats } = useAtomValue(playerRankingsAtom);
+  const { getRanking, getPlayerStats } = usePlayerRankings();
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
   const playerStats = getPlayerStats(playerName);

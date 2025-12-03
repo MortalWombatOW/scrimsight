@@ -1,19 +1,48 @@
-import { useState } from "react";
-// Removed duplicate import: import { useState } from "react";
-import { useAtomValue } from "jotai"; // Use useAtomValue for read-only atoms
-// Import the new summary atom and type
-// Removed unused import: import { teamStatsAtom } from "../../atoms/teamStatsAtom";
-import {
-  teamListSummaryAtom,
-  // Removed unused: TeamListSummary,
-} from "@library";
-import { TeamsSummaryStats, TeamsFilter, TeamsList, Container } from "@components"; // Combined imports
+import { useState, useMemo } from "react";
+import { TeamsSummaryStats, TeamsFilter, TeamsList, Container } from "@components";
+import { useMatches } from "../hooks/useRepository";
 
 type SortOption = "name" | "wins" | "players";
 
 export const TeamsPage = () => {
-  // Use the new summary atom
-  const teamSummaries = useAtomValue(teamListSummaryAtom);
+  const matches = useMatches();
+
+  const teamSummaries = useMemo(() => {
+    const teamMap = new Map<string, { wins: number; losses: number; draws: number; playerCount: number }>();
+
+    for (const match of matches) {
+      const { team1Name, team2Name, winner, team1Players, team2Players } = match.metadata;
+
+      if (!teamMap.has(team1Name)) {
+        teamMap.set(team1Name, { wins: 0, losses: 0, draws: 0, playerCount: team1Players.length });
+      }
+      if (!teamMap.has(team2Name)) {
+        teamMap.set(team2Name, { wins: 0, losses: 0, draws: 0, playerCount: team2Players.length });
+      }
+
+      const team1Data = teamMap.get(team1Name)!;
+      const team2Data = teamMap.get(team2Name)!;
+
+      if (winner === team1Name) {
+        team1Data.wins++;
+        team2Data.losses++;
+      } else if (winner === team2Name) {
+        team2Data.wins++;
+        team1Data.losses++;
+      } else {
+        team1Data.draws++;
+        team2Data.draws++;
+      }
+    }
+
+    return Array.from(teamMap.entries()).map(([teamName, data]) => ({
+      teamName,
+      playerCount: data.playerCount,
+      winRate: data.wins / (data.wins + data.losses + data.draws),
+      gamesPlayed: data.wins + data.losses + data.draws,
+      firstKillWinRate: 0, // TODO: Calculate from teamfight data
+    }));
+  }, [matches]);
   const [searchQuery, setSearchQuery] = useState("");
   // Update default sort if 'recent' was default, or adjust SortOption type
   const [sortBy, setSortBy] = useState<SortOption>("name");

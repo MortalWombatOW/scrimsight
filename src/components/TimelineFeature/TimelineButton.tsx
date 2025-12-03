@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { GiBattleAxe, GiPodiumWinner, GiCheckeredFlag } from "react-icons/gi"; // Example icons
-import { type TimelineSegmentButtonData } from "@atoms";
+import { type TimelineSegmentButtonData } from "../../domain/timeline";
 
 interface TimelineButtonProps {
   segment: TimelineSegmentButtonData;
