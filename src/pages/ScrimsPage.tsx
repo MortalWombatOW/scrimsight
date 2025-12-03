@@ -51,7 +51,7 @@ export const ScrimsPage = () => {
               { value: scrim.mapCount.toString(), label: "Maps Played" },
             ]}
             // Construct link URL using the scrimId from summary
-            linkUrl={`/scrims/${scrim.scrimId}`}
+            linkUrl={`/scrims/${encodeURIComponent(scrim.scrimId)}`}
             // linkText uses default "View Details"
           />
         ))}

@@ -161,7 +161,7 @@ export const Navigation = ({
           children: scrimsData.map((scrim) => ({
             title: `${scrim.team1Name} vs ${scrim.team2Name}`,
             subtitle: scrim.dateString,
-            link: `/scrims/${scrim.team1Name}--${scrim.team2Name}--${scrim.dateString}`,
+            link: `/scrims/${encodeURIComponent(`${scrim.dateString}-${scrim.team1Name}-vs-${scrim.team2Name}`)}`,
             children: scrim.matchIds.map((matchId) => {
               const match = matchDataValue.find((m) => m.matchId === matchId);
               return {

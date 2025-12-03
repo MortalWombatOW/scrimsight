@@ -39,7 +39,7 @@ const RecentScrimsSection = () => {
               { value: formatTime(scrim.duration), label: "Duration" },
               { value: scrim.mapCount.toString(), label: "Maps" },
             ]}
-            linkUrl={`/scrims/${scrim.scrimId}`}
+            linkUrl={`/scrims/${encodeURIComponent(scrim.scrimId)}`}
           />
         ))}
       </div>
