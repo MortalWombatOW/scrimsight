@@ -5,16 +5,17 @@ import { useStats } from "@library";
 import {
   uniqueCategoryValues,
   PlayerStatsCategoryKeys,
-  PlayerStatsNumericalKeys,
+  PlayerStatKey,
+  getStatLabel,
 } from "@library";
-import { useMetricsTableColumns, prettyFormat } from "@library";
+import { useMetricsTableColumns, formatStat } from "@library";
 import { MetricsDataTable, MetricsChart, MetricsControls } from "@components";
 
 export const MetricsExplorerPage: React.FC = () => {
   const [groupBy, setGroupBy] = useState<PlayerStatsCategoryKeys[]>([
     "playerName",
   ]);
-  const [metrics, setMetrics] = useState<PlayerStatsNumericalKeys[]>([
+  const [metrics, setMetrics] = useState<PlayerStatKey[]>([
     "eliminations",
     "deaths",
     "heroDamageDealt",
@@ -23,7 +24,7 @@ export const MetricsExplorerPage: React.FC = () => {
     Record<PlayerStatsCategoryKeys, string[]> | undefined
   >(undefined);
   const [sortBy, setSortBy] = useState<
-    PlayerStatsCategoryKeys | PlayerStatsNumericalKeys | undefined
+    PlayerStatsCategoryKeys | PlayerStatKey | undefined
   >(undefined);
   const [sortDirection, setSortDirection] = useState<
     "asc" | "desc" | undefined
@@ -118,26 +119,26 @@ export const MetricsExplorerPage: React.FC = () => {
             {summaryStats.map(({ metric, total, avg, max }) => (
               <VisualCard
                 key={metric}
-                title={metric.replace(/([A-Z])/g, " $1").trim()}
+                title={getStatLabel(metric)}
                 className="min-h-[120px]"
               >
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div>
                     <div className="text-xs text-base-content/60 mb-1">Total</div>
                     <div className="text-lg font-bold text-white">
-                      {prettyFormat(total)}
+                      {formatStat(metric, total)}
                     </div>
                   </div>
                   <div>
                     <div className="text-xs text-base-content/60 mb-1">Avg</div>
                     <div className="text-lg font-bold text-primary">
-                      {prettyFormat(avg)}
+                      {formatStat(metric, avg)}
                     </div>
                   </div>
                   <div>
                     <div className="text-xs text-base-content/60 mb-1">Max</div>
                     <div className="text-lg font-bold text-secondary">
-                      {prettyFormat(max)}
+                      {formatStat(metric, max)}
                     </div>
                   </div>
                 </div>

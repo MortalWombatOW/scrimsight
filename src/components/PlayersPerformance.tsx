@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useStats } from "@library";
-import { OverwatchRole } from "@library";
+import { OverwatchRole, PlayerStatKey, formatStat } from "@library";
 import { RoleIcon } from "@icons";
-import { prettyFormat } from "@library";
 
 type StatCategory = "damage" | "healing" | "utility";
 
@@ -19,7 +18,7 @@ export const PlayersPerformance = () => {
     selectedRole !== "all" ? { playerRole: [selectedRole] } : undefined
   );
 
-  const getMetricsByCategory = (category: StatCategory) => {
+  const getMetricsByCategory = (category: StatCategory): { key: PlayerStatKey; label: string }[] => {
     switch (category) {
       case "damage":
         return [
@@ -121,7 +120,7 @@ export const PlayersPerformance = () => {
                 </td>
                 {currentMetrics.map((metric) => (
                   <td key={metric.key}>
-                    {prettyFormat(player[metric.key as keyof typeof player])}
+                    {formatStat(metric.key, player[metric.key as keyof typeof player] as number)}
                   </td>
                 ))}
               </tr>

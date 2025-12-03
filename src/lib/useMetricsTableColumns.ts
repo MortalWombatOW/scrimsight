@@ -2,14 +2,16 @@ import { useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   PlayerStatsCategoryKeys,
-  PlayerStatsNumericalKeys,
   PlayerStats,
+  PlayerStatKey,
+  getStatLabel,
+  formatStat,
 } from "@library";
 
 // Define table columns dynamically based on state
 export const useMetricsTableColumns = ( // Renamed to useMetricsTableColumns for clarity
   groupBy: PlayerStatsCategoryKeys[],
-  metrics: PlayerStatsNumericalKeys[]
+  metrics: PlayerStatKey[]
 ): ColumnDef<PlayerStats>[] => {
   return useMemo(() => {
     const groupCols: ColumnDef<PlayerStats>[] = groupBy.map((key) => ({
@@ -20,11 +22,10 @@ export const useMetricsTableColumns = ( // Renamed to useMetricsTableColumns for
 
     const metricCols: ColumnDef<PlayerStats>[] = metrics.map((key) => ({
       accessorKey: key,
-      header: key, // Use string directly for header
+      header: getStatLabel(key), // Use string directly for header
       cell: (info) => {
-        const value = info.getValue();
-        // Format numbers nicely (e.g., 2 decimal places)
-        return typeof value === "number" ? value.toFixed(2) : value;
+        const value = info.getValue() as number;
+        return formatStat(key, value);
       },
     }));
 

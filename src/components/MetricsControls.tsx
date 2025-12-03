@@ -2,10 +2,9 @@ import React from "react";
 import Select, { MultiValue } from "react-select"; // Removed StylesConfig
 import {
   PlayerStatsCategoryKeys,
-  PlayerStatsNumericalKeys,
   playerStatsCategoryKeys,
-  playerStatsNumericalKeys,
 } from "@atoms";
+import { PlayerStatKey, STAT_CONFIG, getStatLabel } from "@library";
 // Import specific style objects
 import {
   groupBySelectStyles,
@@ -20,9 +19,9 @@ type OptionType = { value: string; label: string };
 
 // Define specific option types for clarity
 type GroupByOptionType = { value: PlayerStatsCategoryKeys; label: string };
-type MetricsOptionType = { value: PlayerStatsNumericalKeys; label: string };
+type MetricsOptionType = { value: PlayerStatKey; label: string };
 type SortByOptionType = {
-  value: PlayerStatsCategoryKeys | PlayerStatsNumericalKeys;
+  value: PlayerStatsCategoryKeys | PlayerStatKey;
   label: string;
 };
 type SortDirectionOptionType = { value: "asc" | "desc"; label: string };
@@ -30,8 +29,8 @@ type SortDirectionOptionType = { value: "asc" | "desc"; label: string };
 interface MetricsControlsProps {
   groupBy: PlayerStatsCategoryKeys[];
   setGroupBy: (value: PlayerStatsCategoryKeys[]) => void;
-  metrics: PlayerStatsNumericalKeys[];
-  setMetrics: (value: PlayerStatsNumericalKeys[]) => void;
+  metrics: PlayerStatKey[];
+  setMetrics: (value: PlayerStatKey[]) => void;
   filters: Record<PlayerStatsCategoryKeys, string[]> | undefined;
   handleFilterChange: (
     key: PlayerStatsCategoryKeys,
@@ -41,9 +40,9 @@ interface MetricsControlsProps {
   toggleFilterExpansion: (key: PlayerStatsCategoryKeys) => void;
   uniqueValues: Record<PlayerStatsCategoryKeys, string[]> | undefined;
   // Removed customSelectStyles prop
-  sortBy: PlayerStatsNumericalKeys | PlayerStatsCategoryKeys | undefined;
+  sortBy: PlayerStatKey | PlayerStatsCategoryKeys | undefined;
   setSortBy: (
-    value: PlayerStatsNumericalKeys | PlayerStatsCategoryKeys | undefined
+    value: PlayerStatKey | PlayerStatsCategoryKeys | undefined
   ) => void;
   sortDirection: "asc" | "desc" | undefined;
   setSortDirection: (value: "asc" | "desc" | undefined) => void;
@@ -72,21 +71,21 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
       label: key,
     })
   );
-  const metricsOptions: MetricsOptionType[] = playerStatsNumericalKeys.map(
+  const metricsOptions: MetricsOptionType[] = (Object.keys(STAT_CONFIG) as PlayerStatKey[]).map(
     (key) => ({
       value: key,
-      label: key,
+      label: getStatLabel(key),
     })
   );
 
   // Combine group and metric keys for sorting options
   const sortableColumns: (
     | PlayerStatsCategoryKeys
-    | PlayerStatsNumericalKeys
-  )[] = [...playerStatsCategoryKeys, ...playerStatsNumericalKeys];
+    | PlayerStatKey
+  )[] = [...playerStatsCategoryKeys, ...(Object.keys(STAT_CONFIG) as PlayerStatKey[])];
   const sortByOptions: SortByOptionType[] = sortableColumns.map((key) => ({
     value: key,
-    label: key,
+    label: key in STAT_CONFIG ? getStatLabel(key as PlayerStatKey) : key,
   }));
 
   return (

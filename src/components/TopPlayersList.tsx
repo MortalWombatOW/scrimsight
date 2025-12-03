@@ -1,6 +1,6 @@
 import { useStats } from "@library";
 import { RoleIcon } from "@icons";
-import { prettyFormat } from "@library";
+import { formatStat } from "@library";
 import { Link } from "react-router-dom";
 
 export const TopPlayersList = () => {
@@ -34,13 +34,13 @@ export const TopPlayersList = () => {
             <div className="flex items-center gap-4">
               <div className="text-sm">
                 <span className="font-medium">
-                  {prettyFormat(player.eliminationsPer10Minutes)}
+                  {formatStat('eliminationsPer10Minutes', player.eliminationsPer10Minutes)}
                 </span>
                 <span className="text-base-content/70 ml-1">elims/10min</span>
               </div>
               <div className="text-sm">
                 <span className="font-medium">
-                  {prettyFormat(((player as any).winRate || 0) * 100)}%
+                  {formatStat('eliminations', ((player as any).winRate || 0) * 100)}%
                 </span>
                 <span className="text-base-content/70 ml-1">win rate</span>
               </div>

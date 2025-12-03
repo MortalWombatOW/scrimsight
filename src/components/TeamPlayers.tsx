@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import { contextualStatAtoms, teamPlayers } from "@atoms";
 import { PlayerCard, ErrorMessage } from "@components";
-import { prettyFormat } from "@library";
+import { formatStat } from "@library";
 
 const { playerStatsForTeamAtom } = contextualStatAtoms;
 
@@ -29,11 +29,11 @@ const PlayerCardLoader = ({
 
   const kda =
     playerStats.deaths === 0
-      ? prettyFormat(
+      ? formatStat('eliminations',
         playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)
       )
-      : prettyFormat(
+      : formatStat('eliminations',
         (playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)) /
             playerStats.deaths
@@ -50,7 +50,7 @@ const PlayerCardLoader = ({
         primaryStats={[{ value: kda, label: "Team KDA" }]} // Example stat for team performance
         secondaryStats={[
           {
-            value: prettyFormat(playerStats.eliminationsPer10Minutes),
+            value: formatStat('eliminationsPer10Minutes', playerStats.eliminationsPer10Minutes),
             label: "Elims/10",
           },
         ]} // Example stat

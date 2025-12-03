@@ -13,6 +13,7 @@ import {
   playerStatsNumericalKeys,
   playerStatsBase
 } from '@library';
+import { PlayerStatKey } from './statConfig';
 
 function filterBaseAtom<T extends PlayerStatsCategoryKeys>(
   metricAtom: Atom<Promise<Metric<PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys>>>,
@@ -173,7 +174,7 @@ export const useStats = <T extends PlayerStatsCategoryKeys>(
   groupBy: T[], 
   filter?: Partial<Record<T, string[]>>, // Changed to Partial
   // Update sortBy type to accept both category and numerical keys
-  sortBy?: PlayerStatsCategoryKeys | PlayerStatsNumericalKeys | undefined,
+  sortBy?: PlayerStatsCategoryKeys | PlayerStatKey | undefined,
   sortDirection?: 'asc' | 'desc'
 ) => {
   const cacheKey = JSON.stringify({ groupBy, filter, sortBy, sortDirection });

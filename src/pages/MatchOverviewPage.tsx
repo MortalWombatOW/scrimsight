@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import { matchData, contextualStatAtoms } from "@library";
 import { TeamCard, TeamStatsComparison, KillsTable } from "@components";
-import { formatTime, prettyFormat, mapNameToFileName } from "@library";
+import { formatTime, formatStat, mapNameToFileName } from "@library";
 
 export const MatchOverviewPage = () => {
   const { matchId } = useParams<{ matchId: string }>();
@@ -31,10 +31,10 @@ export const MatchOverviewPage = () => {
           teamName === match.team1Name ? match.team1Players : match.team2Players
         }
         primaryStats={[
-          { value: prettyFormat(teamStats.eliminations), label: "Elims" },
+          { value: formatStat('eliminations', teamStats.eliminations), label: "Elims" },
         ]}
         secondaryStats={[
-          { value: prettyFormat(teamStats.deaths), label: "Deaths" },
+          { value: formatStat('deaths', teamStats.deaths), label: "Deaths" },
         ]}
         linkUrl={`/teams/${teamName}`}
       />

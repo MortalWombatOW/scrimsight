@@ -2,7 +2,7 @@ import React from "react";
 import { useAtomValue } from "jotai";
 import { matchData } from "@atoms";
 import { useStats } from "@library";
-import { camelCaseToWords, prettyFormat } from "@library";
+import { PlayerStatKey, getStatLabel, formatStat } from "@library";
 import { ProgressBar } from "@components";
 
 interface TeamStatsComparisonProps {
@@ -20,7 +20,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
 
   const teamStats = useStats(["playerTeam"]);
 
-  const statsToShow = [
+  const statsToShow: PlayerStatKey[] = [
     "finalBlows",
     "allDamageDealt",
     "healingDealt",
@@ -49,7 +49,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   const teamData = getTeamData();
 
   // Calculate which team has the higher value for each stat
-  const getWinnerTeam = (stat: string) => {
+  const getWinnerTeam = (stat: PlayerStatKey) => {
     const team1Value = teamData[matchDataItem.team1Name][stat] || 0;
     const team2Value = teamData[matchDataItem.team2Name][stat] || 0;
 
@@ -83,11 +83,11 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
             <div className="col-span-3 flex flex-col items-end">
               <div className="flex items-center justify-end w-full mb-1">
                 <span className="text-sm font-medium text-base-800 dark:text-base-200 mr-2">
-                  {prettyFormat(team1Value)}
+                  {formatStat(stat, team1Value)}
                 </span>
                 {winner === matchDataItem.team1Name && (
                   <span className="text-xs px-1 py-0.5 bg-base-600 text-white dark:bg-base-200 dark:text-base-800 rounded">
-                    +{prettyFormat(team1Value - team2Value)}
+                    +{formatStat(stat, team1Value - team2Value)}
                   </span>
                 )}
               </div>
@@ -102,7 +102,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
             {/* Center label */}
             <div className="col-span-1 flex items-center justify-center">
               <span className="text-xs text-base-500 dark:text-base-400 text-center capitalize">
-                {camelCaseToWords(stat)}
+                {getStatLabel(stat)}
               </span>
             </div>
 
@@ -110,11 +110,11 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
             <div className="col-span-3 flex flex-col">
               <div className="flex items-center w-full mb-1">
                 <span className="text-sm font-medium text-base-800 dark:text-base-200 ml-2">
-                  {prettyFormat(team2Value)}
+                  {formatStat(stat, team2Value)}
                 </span>
                 {winner === matchDataItem.team2Name && (
                   <span className="text-xs px-1 py-0.5 bg-base-600 text-white dark:bg-base-200 dark:text-base-800 rounded ml-2">
-                    +{prettyFormat(team2Value - team1Value)}
+                    +{formatStat(stat, team2Value - team1Value)}
                   </span>
                 )}
               </div>

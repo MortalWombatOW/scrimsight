@@ -9,12 +9,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import {
-  PlayerStatsNumericalKeys,
-  playerStatsNumericalKeys,
-  matchData,
-} from "@atoms";
+  PlayerStatKey,
+  STAT_CONFIG,
+  getStatLabel,
+  formatStat,
+} from "@library";
 import { useStats } from "@library";
-import { camelCaseToWords, prettyFormat } from "@library";
 
 interface SingleStatPlayerComparisonProps {
   matchId: string;
@@ -37,7 +37,7 @@ export const SingleStatPlayerComparison = ({
     (match) => match.matchId === matchId
   );
   const playerStats = useStats(["playerName", "playerTeam"]);
-  const [stat, setStat] = useState<PlayerStatsNumericalKeys>("finalBlows");
+  const [stat, setStat] = useState<PlayerStatKey>("finalBlows");
   const [sortBy, setSortBy] = useState<string>(stat);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
@@ -115,7 +115,7 @@ export const SingleStatPlayerComparison = ({
             Team: {data.playerTeam}
           </p>
           <p className="text-sm text-base-600 dark:text-base-400">
-            {camelCaseToWords(stat)}: {prettyFormat(data.value)}
+            {getStatLabel(stat)}: {formatStat(stat, data.value)}
           </p>
         </div>
       );
@@ -139,14 +139,14 @@ export const SingleStatPlayerComparison = ({
               className="w-full rounded-md border border-gray-700 border-gray-700 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-gray-700 dark:bg-base-700 dark:text-white"
               value={stat}
               onChange={(e) => {
-                const newStat = e.target.value as PlayerStatsNumericalKeys;
+                const newStat = e.target.value as PlayerStatKey;
                 setStat(newStat);
                 setSortBy(newStat);
               }}
             >
-              {playerStatsNumericalKeys.map((key) => (
+              {(Object.keys(STAT_CONFIG) as PlayerStatKey[]).map((key) => (
                 <option key={key} value={key}>
-                  {camelCaseToWords(key)}
+                  {getStatLabel(key)}
                 </option>
               ))}
             </select>
@@ -191,7 +191,7 @@ export const SingleStatPlayerComparison = ({
                     radius={[0, 4, 4, 0]}
                     label={{
                       position: "right",
-                      formatter: (value: number) => prettyFormat(value),
+                      formatter: (value: number) => formatStat(stat, value),
                       fill: "var(--color-base-content)",
                       fontSize: 12,
                       fontWeight: "bold",
@@ -238,7 +238,7 @@ export const SingleStatPlayerComparison = ({
                     radius={[0, 4, 4, 0]}
                     label={{
                       position: "right",
-                      formatter: (value: number) => prettyFormat(value),
+                      formatter: (value: number) => formatStat(stat, value),
                       fill: "var(--color-base-content)",
                       fontSize: 12,
                       fontWeight: "bold",
@@ -289,7 +289,7 @@ export const SingleStatPlayerComparison = ({
                     onClick={() => handleSort(stat)}
                   >
                     <div className="flex items-center justify-end">
-                      {camelCaseToWords(stat)}
+                      {getStatLabel(stat)}
                       {sortBy === stat && (
                         <span className="ml-1">
                           {sortDirection === "asc" ? "↑" : "↓"}
@@ -338,7 +338,7 @@ export const SingleStatPlayerComparison = ({
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap text-sm text-base-700 dark:text-base-300 text-right">
                       <span className="font-medium">
-                        {prettyFormat(player[stat])}
+                        {formatStat(stat, player[stat] as number)}
                       </span>
                     </td>
                   </tr>

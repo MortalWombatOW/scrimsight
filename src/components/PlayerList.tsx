@@ -1,7 +1,7 @@
 // Removed useState, useStats, RoleIcon, prettyFormat, Link, PlayerStatsNumericalKeys imports as they are no longer needed here
 import { PlayerCard } from "@components"; // Import PlayerCard
 import { PlayerListSummary } from "@atoms"; // Import the summary type
-import { prettyFormat } from "@library"; // Keep prettyFormat for KDA
+import { formatStat } from "@library"; // Keep formatStat for stats
 
 interface PlayerListProps {
   players: PlayerListSummary[]; // Accept players summary as prop
@@ -17,8 +17,8 @@ export const PlayerList = ({ players }: PlayerListProps) => {
         // Calculate KDA string (handle potential division by zero if deaths is 0)
         const kda =
           player.deaths === 0
-            ? prettyFormat(player.eliminations + player.assists) // If no deaths, just show K+A
-            : prettyFormat(
+            ? formatStat('eliminations', player.eliminations + player.assists) // If no deaths, just show K+A
+            : formatStat('eliminations',
               (player.eliminations + player.assists) / player.deaths
             );
 
@@ -31,13 +31,13 @@ export const PlayerList = ({ players }: PlayerListProps) => {
             primaryStats={[
               { value: kda, label: "KDA" },
               // Add other primary stats if desired, e.g., elims
-              { value: prettyFormat(player.eliminations), label: "Elims" },
+              { value: formatStat('eliminations', player.eliminations), label: "Elims" },
             ]}
             secondaryStats={[
               { value: player.role, label: "Role" },
               // Add other secondary stats if desired, e.g., deaths, assists
-              { value: prettyFormat(player.deaths), label: "Deaths" },
-              { value: prettyFormat(player.assists), label: "Assists" },
+              { value: formatStat('deaths', player.deaths), label: "Deaths" },
+              { value: formatStat('offensiveAssists', player.assists), label: "Assists" },
             ]}
             // Add link to player details page
             linkUrl={`/player/${player.playerName}`}

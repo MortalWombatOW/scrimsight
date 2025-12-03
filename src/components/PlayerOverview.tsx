@@ -21,7 +21,7 @@ import { matchData } from "@atoms";
 import { format } from "date-fns";
 import { getRoleFromHero } from "@library";
 import { useParams } from "react-router-dom";
-import { prettyFormat } from "@library"; // Import prettyFormat
+import { formatStat } from "@library"; // Import formatStat
 
 // interface PlayerOverviewProps { // Remove prop interface
 //   playerName: string;
@@ -60,8 +60,8 @@ export const PlayerOverview = (): ReactNode => { // Remove props
 
   // Calculate KDA from summary
   const kda = playerSummary.deaths === 0
-    ? prettyFormat(playerSummary.eliminations + playerSummary.assists)
-    : prettyFormat((playerSummary.eliminations + playerSummary.assists) / playerSummary.deaths);
+    ? formatStat('eliminations', playerSummary.eliminations + playerSummary.assists)
+    : formatStat('eliminations', (playerSummary.eliminations + playerSummary.assists) / playerSummary.deaths);
 
   // --- Keep existing calculations for charts/detailed stats ---
   // Calculate win rate from match data (still needed for trend chart)
@@ -197,12 +197,12 @@ export const PlayerOverview = (): ReactNode => { // Remove props
         heroes={[playerSummary.topHero]}
         primaryStats={[
           { value: kda, label: "KDA" },
-          { value: prettyFormat(playerSummary.eliminations), label: "Elims" },
+          { value: formatStat('eliminations', playerSummary.eliminations), label: "Elims" },
         ]}
         secondaryStats={[
           { value: playerSummary.role, label: "Role" },
-          { value: prettyFormat(playerSummary.deaths), label: "Deaths" },
-          { value: prettyFormat(playerSummary.assists), label: "Assists" },
+          { value: formatStat('deaths', playerSummary.deaths), label: "Deaths" },
+          { value: formatStat('offensiveAssists', playerSummary.assists), label: "Assists" },
         ]}
         // Add linkUrl if needed
       />

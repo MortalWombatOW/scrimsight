@@ -17,6 +17,7 @@ export {
   formatTime,
   formatDuration as formatDurationDetailed, // Rename to avoid conflict
   formatPercentage,
+  formatStat,
 } from './format';
 export * from './hero';
 export * from './scrimtime';
@@ -34,6 +35,7 @@ export * from './killMatrixUtils';
 export * from './useMetricsTableColumns';
 export * from './metricExplorerStyles';
 export * from './dagre';
+export * from './statConfig';
 
 // Re-export atoms that pages need (per architecture rules, pages can only import from @components or @library)
 export { 

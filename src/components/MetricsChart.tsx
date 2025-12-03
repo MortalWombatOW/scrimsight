@@ -17,9 +17,8 @@ import {
 } from "recharts";
 import {
   PlayerStatsCategoryKeys,
-  PlayerStatsNumericalKeys,
 } from "@atoms";
-import { getColor, prettyFormat } from "@library"; // Import color function and prettyFormat
+import { getColor, formatStat, PlayerStatKey, getStatLabel } from "@library"; // Import color function and prettyFormat
 
 const CustomTooltip = ({ active, payload, groupBy }: any) => {
   if (active && payload && payload.length) {
@@ -37,9 +36,9 @@ const CustomTooltip = ({ active, payload, groupBy }: any) => {
         <div className="space-y-1">
           {payload.map((entry: any) => (
             <div key={entry.name} className="text-sm flex justify-between gap-4">
-              <span className="text-base-content/70 capitalize">{entry.name.replace(/([A-Z])/g, ' $1').trim()}: </span>
+              <span className="text-base-content/70 capitalize">{getStatLabel(entry.name as PlayerStatKey)}: </span>
               <span className="font-mono font-bold text-base-content">
-                {prettyFormat(entry.value)}
+                {formatStat(entry.name as PlayerStatKey, entry.value)}
               </span>
             </div>
           ))}
@@ -53,7 +52,7 @@ const CustomTooltip = ({ active, payload, groupBy }: any) => {
 interface MetricsChartProps {
   data: Record<string, unknown>[];
   groupBy: PlayerStatsCategoryKeys[];
-  metrics: PlayerStatsNumericalKeys[];
+  metrics: PlayerStatKey[];
   hoveredRowId?: string | null;
   getRowId?: (row: any) => string;
   onPointHover?: (id: string | null) => void;
@@ -104,7 +103,7 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({
             strokeOpacity={0.2}
           >
             <Label
-              value={metricKey}
+              value={getStatLabel(metricKey)}
               offset={-10}
               position="insideBottom"
               style={{
@@ -192,7 +191,7 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({
             strokeOpacity={0.2}
           >
             <Label
-              value={xMetric}
+              value={getStatLabel(xMetric)}
               offset={-15}
               position="insideBottom"
               fill="var(--color-base-content)"
@@ -207,7 +206,7 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({
             strokeOpacity={0.2}
           >
             <Label
-              value={yMetric}
+              value={getStatLabel(yMetric)}
               angle={-90}
               position="insideLeft"
               style={{

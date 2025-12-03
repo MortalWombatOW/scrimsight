@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { contextualStatAtoms, prettyFormat } from "@library";
+import { contextualStatAtoms, formatStat } from "@library";
 import { PlayerCard } from "@components";
 
 interface ScrimPlayerStatsProps {
@@ -21,11 +21,11 @@ export const ScrimPlayerStats = ({
 
   const kda =
     playerStats.deaths === 0
-      ? prettyFormat(
+      ? formatStat('eliminations',
           playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)
         )
-      : prettyFormat(
+      : formatStat('eliminations',
           (playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)) /
             playerStats.deaths
@@ -39,7 +39,7 @@ export const ScrimPlayerStats = ({
       primaryStats={[{ value: kda, label: "Scrim KDA" }]}
       secondaryStats={[
         {
-          value: prettyFormat(playerStats.heroDamageDealt),
+          value: formatStat('heroDamageDealt', playerStats.heroDamageDealt),
           label: "Total Hero Dmg",
         },
       ]}

@@ -9,12 +9,10 @@ import {
   Label,
 } from "recharts";
 import {
-  PlayerStatsNumericalKeys,
   matchData,
-  playerStatsNumericalKeys,
 } from "@atoms";
 import { useStats } from "@library";
-import { camelCaseToWords, prettyFormat } from "@library";
+import { PlayerStatKey, STAT_CONFIG, getStatLabel, formatStat } from "@library";
 
 interface AllPlayerComparisonProps {
   matchId: string;
@@ -39,8 +37,8 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
   // All hooks must be called before any conditional returns
   const matchDataValue = useAtomValue(matchData.atom);
   const playerStats = useStats(["playerName", "playerTeam"]);
-  const [xStat, setXStat] = useState<PlayerStatsNumericalKeys>("finalBlows");
-  const [yStat, setYStat] = useState<PlayerStatsNumericalKeys>("deaths");
+  const [xStat, setXStat] = useState<PlayerStatKey>("finalBlows");
+  const [yStat, setYStat] = useState<PlayerStatKey>("deaths");
   const [sortBy, setSortBy] = useState<string>("playerName");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
@@ -107,8 +105,8 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
     const { cx, cy, payload } = props as { cx: number; cy: number; payload: PlayerDataPoint & { team1Name: string; team2Name: string } };
 
     // Format the x and y values nicely
-    const xValue = prettyFormat(payload.x);
-    const yValue = prettyFormat(payload.y);
+    const xValue = formatStat(xStat, payload.x);
+    const yValue = formatStat(yStat, payload.y);
 
     // Team colors based on the project's color scheme
     const team1Color = "#566fdd"; // From constants.scss 'team-1'
@@ -174,7 +172,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
           fontSize={9}
           style={{ textShadow: "0px 0px 3px rgba(0,0,0,0.9)" }}
         >
-          {camelCaseToWords(xStat)}: {xValue} | {camelCaseToWords(yStat)}:{" "}
+          {getStatLabel(xStat)}: {xValue} | {getStatLabel(yStat)}:{" "}
           {yValue}
         </text>
 
@@ -233,12 +231,12 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
               className="w-full rounded-md border border-gray-700 border-gray-700 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-gray-700 dark:bg-base-700 dark:text-white"
               value={xStat}
               onChange={(e) =>
-                setXStat(e.target.value as PlayerStatsNumericalKeys)
+                setXStat(e.target.value as PlayerStatKey)
               }
             >
-              {playerStatsNumericalKeys.map((key) => (
+              {(Object.keys(STAT_CONFIG) as PlayerStatKey[]).map((key) => (
                 <option key={key} value={key}>
-                  {camelCaseToWords(key)}
+                  {getStatLabel(key)}
                 </option>
               ))}
             </select>
@@ -252,12 +250,12 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
               className="w-full rounded-md border border-gray-700 border-gray-700 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-gray-700 dark:bg-base-700 dark:text-white"
               value={yStat}
               onChange={(e) =>
-                setYStat(e.target.value as PlayerStatsNumericalKeys)
+                setYStat(e.target.value as PlayerStatKey)
               }
             >
-              {playerStatsNumericalKeys.map((key) => (
+              {(Object.keys(STAT_CONFIG) as PlayerStatKey[]).map((key) => (
                 <option key={key} value={key}>
-                  {camelCaseToWords(key)}
+                  {getStatLabel(key)}
                 </option>
               ))}
             </select>
@@ -271,12 +269,12 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
               <XAxis
                 type="number"
                 dataKey="x"
-                name={camelCaseToWords(xStat)}
+                name={getStatLabel(xStat)}
                 domain={["auto", "auto"]}
                 tick={{ fill: "#666" }}
               >
                 <Label
-                  value={camelCaseToWords(xStat)}
+                  value={getStatLabel(xStat)}
                   position="bottom"
                   offset={20}
                   style={{ textAnchor: "middle", fill: "#666", fontSize: 12 }}
@@ -285,13 +283,13 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
               <YAxis
                 type="number"
                 dataKey="y"
-                name={camelCaseToWords(yStat)}
+                name={getStatLabel(yStat)}
                 tick={{ fill: "#666" }}
                 width={45}
                 tickFormatter={(value) => value.toString()}
               >
                 <Label
-                  value={camelCaseToWords(yStat)}
+                  value={getStatLabel(yStat)}
                   angle={-90}
                   position="insideLeft"
                   offset={-15}
@@ -353,7 +351,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
                   onClick={() => handleSort("x")}
                 >
                   <div className="flex items-center">
-                    {camelCaseToWords(xStat)}
+                    {getStatLabel(xStat)}
                     {sortBy === "x" && (
                       <span className="ml-1">
                         {sortDirection === "asc" ? "↑" : "↓"}
@@ -367,7 +365,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
                   onClick={() => handleSort("y")}
                 >
                   <div className="flex items-center">
-                    {camelCaseToWords(yStat)}
+                    {getStatLabel(yStat)}
                     {sortBy === "y" && (
                       <span className="ml-1">
                         {sortDirection === "asc" ? "↑" : "↓"}
@@ -409,10 +407,10 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
                     </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-base-700 dark:text-base-300">
-                    {prettyFormat(player.x)}
+                    {formatStat(xStat, player.x)}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-base-700 dark:text-base-300">
-                    {prettyFormat(player.y)}
+                    {formatStat(yStat, player.y)}
                   </td>
                 </tr>
               ))}

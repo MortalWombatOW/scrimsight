@@ -3,10 +3,10 @@ import { useAtomValue } from "jotai";
 import {
   getHeroImage,
   camelCaseToAbbreviation,
-  camelCaseToWords,
-  prettyFormat,
   playerRankingsAtom,
-  PlayerStatsNumericalKeys,
+  PlayerStatKey,
+  formatStat,
+  getStatLabel,
 } from "@library";
 import { VisualCard } from "@components";
 
@@ -29,7 +29,7 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
   const { playerRole, playerTeam } = playerStats;
 
   // Build list of stats to show - always include these 3
-  const statsToShow: PlayerStatsNumericalKeys[] = [
+  const statsToShow: PlayerStatKey[] = [
     "finalBlows",
     "allDamageDealt",
     "ultimatesUsed",
@@ -98,7 +98,7 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
                 </span>
                 {showTooltip === stat && (
                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-1 bg-base-800 text-white text-xs px-2 py-1 rounded shadow-lg z-10 whitespace-nowrap">
-                    {camelCaseToWords(stat)}
+                    {getStatLabel(stat)}
                   </div>
                 )}
               </div>
@@ -114,16 +114,10 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
               <div key={stat}>
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-xs text-base-content/70">
-                    {stat === "finalBlows"
-                      ? "Final Blows"
-                      : stat === "allDamageDealt"
-                      ? "All Damage"
-                      : stat === "ultimatesUsed"
-                      ? "Ultimates"
-                      : camelCaseToWords(stat)}
+                    {getStatLabel(stat)}
                   </span>
                   <span className="text-sm font-semibold text-white">
-                    {prettyFormat(ranking.value)}
+                    {formatStat(stat, ranking.value)}
                   </span>
                 </div>
                 <div className="w-full bg-base-200/40 rounded-full h-1.5 overflow-hidden">

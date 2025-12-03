@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { contextualStatAtoms, prettyFormat } from "@library";
+import { contextualStatAtoms, formatStat } from "@library";
 import { TeamCard } from "@components";
 
 interface ScrimTeamStatsProps {
@@ -29,10 +29,10 @@ export const ScrimTeamStats = ({
       teamName={teamName}
       playerNames={players}
       primaryStats={[
-        { value: prettyFormat(teamStats.eliminations), label: "Total Elims" },
+        { value: formatStat('eliminations', teamStats.eliminations), label: "Total Elims" },
       ]}
       secondaryStats={[
-        { value: prettyFormat(teamStats.deaths), label: "Total Deaths" },
+        { value: formatStat('deaths', teamStats.deaths), label: "Total Deaths" },
       ]}
       linkUrl={`/teams/${teamName}`}
     />
