@@ -37,33 +37,34 @@ export * from './metricExplorerStyles';
 export * from './dagre';
 export * from './statConfig';
 
-// Re-export atoms that pages need (per architecture rules, pages can only import from @components or @library)
-export { 
-  logFileInputAtom, 
-  sampleDataEnabledAtom,
-  matchData,
-  scrimListSummaryAtom,
-  teamListSummaryAtom,
-  playerListSummaryAtom,
-  contextualStatAtoms,
-  scrims,
-  teamNames,
-  teamStats,
-  uniqueCategoryValues,
-  playerStatsBase,
-  playerStatsNumericalKeys,
-  playerRankingsAtom
-} from '@atoms';
-
-export type { 
+// Re-export types from data layer
+export type {
+  // Match and metadata types
   MatchData,
-  ScrimListSummary,
+  MatchMetadata,
+  ProcessedMatch,
+  RepositoryState,
+
+  // Player stats types
   PlayerStatsCategoryKeys,
+  PlayerStatsBaseNumericalKeys,
+  PlayerStatsDerivedNumericalKeys,
   PlayerStatsNumericalKeys,
   PlayerStatsBase,
   PlayerStats,
-  PlayerStatsBaseNumericalKeys,
-  // Re-export event types that were previously duplicated in lib/types.ts
+
+  // Summary types
+  PlayerListSummary,
+  TeamListSummary,
+  ScrimListSummary,
+  TeamStats,
+
+  // Scrim and teamfight types
+  Scrim,
+  Teamfight,
+
+  // Ultimate and event types
+  UltimateEvent,
   DefensiveAssistLogEvent,
   DefensiveAssistType,
   OffensiveAssistLogEvent,
@@ -75,6 +76,51 @@ export type {
   Ability1UsedLogEvent,
   Ability1UsedType,
   Ability2UsedLogEvent,
-  Ability2UsedType
+  Ability2UsedType,
+  KillLogEvent,
+  KillType,
+  DamageLogEvent,
+  DamageType,
+  HealingLogEvent,
+  HealingType,
+  RoundStartLogEvent,
+  RoundStartType,
+  RoundEndLogEvent,
+  RoundEndType,
+  MatchStartLogEvent,
+  MatchStartType,
+  MatchEndLogEvent,
+  MatchEndType,
+  UltimateChargedLogEvent,
+  UltimateStartLogEvent,
+  UltimateEndLogEvent,
+  PlayerStatLogEvent,
+  PlayerStatType,
+  MatchEvents,
+
+  // Timeline types
+  PlayerStatusEntry,
+  PlayerStatusTimeline,
+
+  // Map and round types
+  MapTimes,
+  RoundTimes
+} from '../data/types';
+
+// Re-export constants from data layer
+export {
+  playerStatsCategoryKeys,
+  playerStatsBaseNumericalKeys,
+  playerStatsDerivedNumericalKeys,
+  playerStatsNumericalKeys,
+} from '../data/types';
+
+// Re-export atoms that are still needed
+// TODO: Remove sampleDataEnabledAtom after migrating ZeroState and AddFilesPage
+export {
+  sampleDataEnabledAtom,
 } from '@atoms';
+
+// TODO: Remove once MetricsExplorerPage is migrated to new hooks with grouping support
+export { playerStatsBase } from '@atoms';
 

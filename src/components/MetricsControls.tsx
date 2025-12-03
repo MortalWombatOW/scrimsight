@@ -3,8 +3,10 @@ import Select, { MultiValue } from "react-select"; // Removed StylesConfig
 import {
   PlayerStatsCategoryKeys,
   playerStatsCategoryKeys,
-} from "@atoms";
-import { PlayerStatKey, STAT_CONFIG, getStatLabel } from "@library";
+  PlayerStatKey,
+  STAT_CONFIG,
+  getStatLabel,
+} from "@library";
 // Import specific style objects
 import {
   groupBySelectStyles,

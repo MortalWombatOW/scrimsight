@@ -385,6 +385,116 @@ export type PlayerStatsBase = { [k in PlayerStatsCategoryKeys]: string } & {
 
 export type PlayerStats = PlayerStatsBase & { [k in PlayerStatsDerivedNumericalKeys]: number };
 
+// Category and numerical key constants (arrays for iteration)
+export const playerStatsCategoryKeys: PlayerStatsCategoryKeys[] = [
+  'matchId',
+  'roundNumber',
+  'playerTeam',
+  'playerName',
+  'playerHero',
+  'playerRole'
+];
+
+export const playerStatsBaseNumericalKeys: PlayerStatsBaseNumericalKeys[] = [
+  'playtime',
+  'eliminations',
+  'finalBlows',
+  'deaths',
+  'allDamageDealt',
+  'barrierDamageDealt',
+  'heroDamageDealt',
+  'healingDealt',
+  'healingReceived',
+  'selfHealing',
+  'damageTaken',
+  'damageBlocked',
+  'defensiveAssists',
+  'offensiveAssists',
+  'ultimatesEarned',
+  'ultimatesUsed',
+  'multikills',
+  'soloKills',
+  'objectiveKills',
+  'environmentalKills',
+  'environmentalDeaths',
+  'criticalHits',
+  'shotsFired',
+  'shotsHit',
+  'shotsMissed',
+  'scopedShotsFired',
+  'scopedShotsHit',
+];
+
+export const playerStatsDerivedNumericalKeys: PlayerStatsDerivedNumericalKeys[] = [
+  'eliminationsPer10Minutes',
+  'finalBlowsPer10Minutes',
+  'deathsPer10Minutes',
+  'allDamageDealtPer10Minutes',
+  'barrierDamageDealtPer10Minutes',
+  'heroDamageDealtPer10Minutes',
+  'healingDealtPer10Minutes',
+  'healingReceivedPer10Minutes',
+  'selfHealingPer10Minutes',
+  'damageTakenPer10Minutes',
+  'damageBlockedPer10Minutes',
+  'defensiveAssistsPer10Minutes',
+  'offensiveAssistsPer10Minutes',
+  'ultimatesEarnedPer10Minutes',
+  'ultimatesUsedPer10Minutes',
+  'multikillsPer10Minutes',
+  'soloKillsPer10Minutes',
+  'objectiveKillsPer10Minutes',
+  'environmentalKillsPer10Minutes',
+  'environmentalDeathsPer10Minutes',
+  'criticalHitsPer10Minutes',
+  'shotsFiredPer10Minutes',
+  'shotsHitPer10Minutes',
+  'shotsMissedPer10Minutes',
+  'scopedShotsFiredPer10Minutes',
+  'scopedShotsHitPer10Minutes',
+  'weaponAccuracy',
+  'scopedWeaponAccuracy',
+  'criticalHitRate'
+];
+
+export const playerStatsNumericalKeys: PlayerStatsNumericalKeys[] = [
+  ...playerStatsBaseNumericalKeys,
+  ...playerStatsDerivedNumericalKeys
+];
+
+// ============================================================================
+// List Summary Types - Used for overview lists of players/teams
+// ============================================================================
+
+export interface PlayerListSummary {
+  playerName: string;
+  teamName: string; // Primary team (most playtime)
+  topHero: string; // Hero with most playtime
+  eliminations: number;
+  deaths: number;
+  assists: number; // Calculated as offensive + defensive assists
+  role: OverwatchRole; // Role with most playtime
+  firstKillRate: number; // Percentage of teamfights participated in where player got first kill
+}
+
+export interface TeamListSummary {
+  teamName: string;
+  playerCount: number;
+  winRate: number; // Calculated as wins / (wins + losses)
+  gamesPlayed: number;
+  firstKillWinRate: number; // Win rate in teamfights where this team got the first kill
+}
+
+export interface ScrimListSummary {
+  scrimId: string; // Unique ID derived from date and teams
+  teamNames: string[];
+  dateString: string;
+  mapCount: number;
+  score: string; // e.g., "3-2-1" (W-L-D for team1)
+  duration: number; // Total duration in seconds
+  maps: string[]; // List of map names played
+}
+
 // ============================================================================
 // Teamfight Types
 // ============================================================================
@@ -510,6 +620,9 @@ export interface MatchMetadata {
   roundWinners: ('team1' | 'team2' | 'draw')[];
   winner: string | null;
 }
+
+// Backward compatibility alias
+export type MatchData = MatchMetadata;
 
 // ============================================================================
 // Processed Match - The "Database Schema"

@@ -15,8 +15,11 @@ import {
 } from "recharts";
 import {
   PlayerStatsCategoryKeys,
-} from "@atoms";
-import { getColor, formatStat, PlayerStatKey, getStatLabel } from "@library";
+  getColor,
+  formatStat,
+  PlayerStatKey,
+  getStatLabel,
+} from "@library";
 
 const CustomTooltip = ({ active, payload, groupBy }: any) => {
   if (active && payload && payload.length) {
