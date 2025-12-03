@@ -14,7 +14,7 @@ export { StatCard } from './StatCard';
 export { SubPageNavigation } from './SubPageNavigation';
 export { TeamCard } from './TeamCard';
 export { Timeline } from './Timeline';
-export { TimelineButton, type TimelineSegmentButtonData } from './TimelineButton';
+export { TimelineButton } from './TimelineButton';
 export { TimelineProvider, useTimelineContext, type TimelineEvent } from './TimelineContext';
 export { TimelineControls } from './TimelineControls';
 export { TimelineEvents } from './TimelineEvents';

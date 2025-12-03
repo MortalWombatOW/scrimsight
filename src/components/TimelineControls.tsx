@@ -1,98 +1,20 @@
 import { type ReactNode, useMemo } from "react";
 import { useAtomValue } from "jotai"; // Import useAtomValue
-import { useTimelineContext, TimelineButton, type TimelineSegmentButtonData } from "@components"; // Import new component and type
+import { useTimelineContext, TimelineButton } from "@components"; // Import new component
 import {
-  roundEnd,
-  type RoundEndLogEvent,
+  timelineSegmentsAtomFamily,
 } from "@atoms";
 
 export const TimelineControls = (): ReactNode => {
   const { setCurrentTimeRange, loadedData, currentTimeRange } =
     useTimelineContext();
 
-  // Move hooks before early return
-  const allRoundEnds = useAtomValue(roundEnd.atom); // Get all round end events
-
-  // Prepare flattened and sorted data structure for buttons
-  const flatSegments = useMemo<TimelineSegmentButtonData[]>(() => {
-    if (!loadedData) return [];
-    const { mapTime, roundTimes, teamfights, matchData } = loadedData;
-    if (!mapTime || !matchData) return [];
-
-    const segments: TimelineSegmentButtonData[] = [];
-    let fightCounter = 1; // Simple counter for fight IDs/labels
-
-    roundTimes.forEach((roundTime) => {
-      const roundMatchId = roundTime.matchId || mapTime.matchId;
-      if (!roundMatchId) return;
-
-      // Add teamfights for this round
-      const roundTeamfights = teamfights
-        .filter(
-          (tf) =>
-            tf.matchId === roundMatchId &&
-            tf.startTime >= roundTime.roundStartTime &&
-            tf.endTime <= roundTime.roundEndTime
-        )
-        .sort((a, b) => a.startTime - b.startTime) // Ensure fights are chronological
-        .map((tf): TimelineSegmentButtonData => ({
-          id: `tf-${fightCounter++}`, // Generate unique ID
-          title: `${tf.winner} Fight Win (${Math.round(tf.startTime)}s - ${Math.round(tf.endTime)}s)`,
-          type: "teamfight",
-          startTime: tf.startTime,
-          endTime: tf.endTime,
-          sortTime: tf.startTime, // Add sortTime for teamfights
-          winner: tf.winner,
-          team1Name: matchData.team1Name,
-          team2Name: matchData.team2Name,
-        }));
-
-      segments.push(...roundTeamfights);
-
-      // Filter round ends for the current match
-      const matchRoundEnds = allRoundEnds.filter(re => re.matchId === matchData.matchId);
-
-      // Add round result segment
-      // Find the corresponding round end event to get the winner
-      const roundEndEvent = matchRoundEnds.find(
-        (re: RoundEndLogEvent) => // Corrected type annotation here
-          re.matchId === roundMatchId && re.roundNumber === roundTime.roundNumber
-      );
-      const roundWinner = roundEndEvent?.capturingTeam; // Use capturingTeam from the event
-
-      segments.push({
-        id: `round-${roundTime.roundNumber}`,
-        title: roundWinner
-          ? `${roundWinner} Wins Round ${roundTime.roundNumber}`
-          : `Round ${roundTime.roundNumber} End`,
-        type: "round",
-        startTime: roundTime.roundStartTime, // Use round times for selection
-        endTime: roundTime.roundEndTime,
-        sortTime: roundTime.roundEndTime, // Add sortTime for rounds (use end time)
-        winner: roundWinner,
-        roundNumber: roundTime.roundNumber,
-        team1Name: matchData.team1Name,
-        team2Name: matchData.team2Name,
-      });
-    });
-
-    // Add final match result segment
-    segments.push({
-      id: "map-result",
-      title: `${matchData.winner} Wins Match`,
-      type: "map",
-      startTime: mapTime.startTime,
-      endTime: mapTime.endTime,
-      sortTime: mapTime.endTime, // Add sortTime for map (use end time)
-      winner: matchData.winner,
-      team1Name: matchData.team1Name,
-      team2Name: matchData.team2Name,
-    });
-
-    // Final sort using the new sortTime property
-    return segments.sort((a, b) => a.sortTime - b.sortTime);
-
-  }, [loadedData, allRoundEnds]); // Use loadedData instead of individual props
+  // Use the derived atom to get timeline segments
+  const timelineSegmentsAtom = useMemo(
+    () => timelineSegmentsAtomFamily({ matchId: loadedData?.matchData?.matchId || "" }),
+    [loadedData?.matchData?.matchId]
+  );
+  const flatSegments = useAtomValue(timelineSegmentsAtom);
 
   if (!loadedData) {
     return <div>Loading...</div>;

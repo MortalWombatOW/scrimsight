@@ -586,3 +586,10 @@ export { default as detailedTeamCompositionsAtom } from './detailedTeamCompositi
 export { default as teamMapTypeStatsAtom } from './teamMapTypeStatsAtom';
 export { default as contextualStatAtoms } from './contextualStatAtoms';
 export { playerRankingsAtom } from './playerRankingAtom';
+export { 
+  default as timelineSegmentsAtom, 
+  timelineSegmentsAtomFamily,
+  generateTimelineSegments,
+  type TimelineSegmentButtonData,
+  type TimelineSegmentsParams
+} from './timelineSegmentsAtom';

@@ -1,19 +1,6 @@
 import { type ReactNode } from "react";
 import { GiBattleAxe, GiPodiumWinner, GiCheckeredFlag } from "react-icons/gi"; // Example icons
-
-// Interface for the data passed to the button
-export interface TimelineSegmentButtonData {
-  id: string; // Unique ID for React key
-  type: "teamfight" | "round" | "map";
-  title: string; // Text to display on the button
-  startTime: number; // Used for selection range
-  endTime: number; // Used for selection range
-  sortTime: number; // Used for chronological sorting
-  winner?: string | null; // Team name or null/undefined
-  team1Name?: string;
-  team2Name?: string;
-  roundNumber?: number; // Optional, for round segments
-}
+import { type TimelineSegmentButtonData } from "@atoms";
 
 interface TimelineButtonProps {
   segment: TimelineSegmentButtonData;
