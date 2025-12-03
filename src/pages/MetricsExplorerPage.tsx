@@ -1,8 +1,5 @@
 import React, { useState, useMemo } from "react";
 import { Container, VisualCard } from "@components";
-// TODO: This page uses advanced grouping features not yet supported by new hooks
-// Temporarily keeping old useStats import until grouping functionality is migrated
-import { useStats as useLibraryStats } from "@library";
 import {
   PlayerStatsCategoryKeys,
   PlayerStatKey,
@@ -11,6 +8,8 @@ import {
 import { useMetricsTableColumns, formatStat } from "@library";
 import { MetricsDataTable, MetricsChart, MetricsControls } from "@components";
 import { useMatches } from "../hooks/useRepository";
+import { useStatsGrouped } from "../hooks/useStatsGrouped";
+import { StatsFilters } from "../hooks/useStats";
 
 export const MetricsExplorerPage: React.FC = () => {
   const [groupBy, setGroupBy] = useState<PlayerStatsCategoryKeys[]>([
@@ -31,8 +30,21 @@ export const MetricsExplorerPage: React.FC = () => {
     "asc" | "desc" | undefined
   >(undefined);
 
-  // TODO: Migrate to new hooks once grouping functionality is implemented
-  const statsData = useLibraryStats(groupBy, filters, sortBy, sortDirection);
+  // Convert old filter format to new StatsFilters format
+  const statsFilters = useMemo<StatsFilters | undefined>(() => {
+    if (!filters) return undefined;
+
+    const converted: StatsFilters = {};
+    if (filters.matchId?.length) converted.matchId = filters.matchId[0];
+    if (filters.playerName?.length) converted.playerName = filters.playerName[0];
+    if (filters.playerTeam?.length) converted.team = filters.playerTeam[0];
+    if (filters.playerRole?.length) converted.role = filters.playerRole[0];
+    if (filters.playerHero?.length) converted.hero = filters.playerHero[0];
+
+    return Object.keys(converted).length > 0 ? converted : undefined;
+  }, [filters]);
+
+  const statsData = useStatsGrouped(groupBy, statsFilters, sortBy, sortDirection);
 
   const matches = useMatches();
   const uniqueValues = useMemo(() => {

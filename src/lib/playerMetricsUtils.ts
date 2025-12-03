@@ -1,18 +1,18 @@
 import { useAtomValue, atom, Atom, Getter } from "jotai";
-import { 
-  groupByAtom, 
-  Grouped, 
-  Metric, 
-  OverwatchRole, 
+import {
+  groupByAtom,
+  Grouped,
+  Metric,
+  OverwatchRole,
   getRankForRole,
-  PlayerStatsCategoryKeys, 
+  PlayerStatsCategoryKeys,
   PlayerStatsBaseNumericalKeys,
   PlayerStatsBase,
   PlayerStats,
   PlayerStatsNumericalKeys,
   playerStatsNumericalKeys,
-  playerStatsBase
 } from '@library';
+import { playerStatsBase } from '@atoms'; // Direct import from atoms - this file is deprecated
 import { PlayerStatKey } from './statConfig';
 
 function filterBaseAtom<T extends PlayerStatsCategoryKeys>(

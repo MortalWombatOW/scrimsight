@@ -5,7 +5,7 @@ import { matchesRepositoryAtom } from '../data/repository';
 import { PlayerStatsBase, PlayerStats } from '../data/types';
 import { Metric } from '@library';
 
-interface StatsFilters {
+export interface StatsFilters {
   hero?: string;
   role?: string;
   team?: string;

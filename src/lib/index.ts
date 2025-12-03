@@ -23,13 +23,14 @@ export * from './hero';
 export * from './scrimtime';
 export * from './eventExtractionUtils';
 // Re-export specific functions from metricUtils to ensure they're available
-export { 
+export {
   groupByAtom,
   type Grouped,
   type Metric,
   type MetricAtom
 } from './metricUtils';
-export * from './playerMetricsUtils';
+// Temporarily export getStatsAtom for old atoms - will be removed when atoms directory is deleted
+export { getStatsAtom } from './playerMetricsUtils';
 export * from './playerComparison';
 export * from './killMatrixUtils';
 export * from './useMetricsTableColumns';
@@ -120,7 +121,4 @@ export {
 export {
   sampleDataEnabledAtom,
 } from '@atoms';
-
-// TODO: Remove once MetricsExplorerPage is migrated to new hooks with grouping support
-export { playerStatsBase } from '@atoms';
 
