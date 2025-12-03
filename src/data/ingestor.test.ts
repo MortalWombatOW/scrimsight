@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { ingestFile } from './ingestor';
-import sampleFile1 from '@library/sampledata/Log-2023-08-28-17-05-38.txt?raw';
+import sampleFile1 from '../lib/sampledata/Log-2023-08-28-17-05-38.txt?raw';
 
 const SAMPLE_LOG_CONTENT = sampleFile1;
 
 describe('ingestFile', () => {
-  it('should parse and process a log file into a ProcessedMatch', async () => {
+  it('should parse and process a valid log file into a ProcessedMatch', async () => {
     const result = await ingestFile({
       fileContent: SAMPLE_LOG_CONTENT,
       fileName: 'test-match.txt',
@@ -44,9 +44,33 @@ describe('ingestFile', () => {
     expect(typeof result.metadata.team2Score).toBe('number');
     expect(result.metadata.matchId).toBeDefined();
     expect(result.metadata.duration).toBeGreaterThan(0);
+    
+    // Check for realistic data
+    expect(result.metadata.team1Players.length).toBeGreaterThan(0);
+    expect(result.metadata.team2Players.length).toBeGreaterThan(0);
   });
 
-  it('should group events by type', async () => {
+  it('should throw error for malformed files', async () => {
+    // Test with garbage content
+    await expect(ingestFile({
+      fileContent: 'GARBAGE_DATA_NOT_A_LOG_FILE',
+      fileName: 'garbage.txt',
+      fileModified: Date.now(),
+    })).rejects.toThrow();
+  });
+
+  it('should handle empty files', async () => {
+    const result = await ingestFile({
+      fileContent: '',
+      fileName: 'empty.txt',
+      fileModified: Date.now(),
+    });
+
+    expect(result).toBeDefined();
+    expect(result.events.matchStart).toHaveLength(0);
+  });
+
+  it('should group events by type correctly', async () => {
     const result = await ingestFile({
       fileContent: SAMPLE_LOG_CONTENT,
       fileName: 'test-match.txt',
@@ -59,7 +83,7 @@ describe('ingestFile', () => {
     expect(result.events.kills.length).toBeGreaterThan(0);
   });
 
-  it('should calculate player stats', async () => {
+  it('should calculate player stats with valid values', async () => {
     const result = await ingestFile({
       fileContent: SAMPLE_LOG_CONTENT,
       fileName: 'test-match.txt',
@@ -78,7 +102,7 @@ describe('ingestFile', () => {
     expect(typeof firstPlayer.playtime).toBe('number');
   });
 
-  it('should calculate round times', async () => {
+  it('should calculate round times and map times', async () => {
     const result = await ingestFile({
       fileContent: SAMPLE_LOG_CONTENT,
       fileName: 'test-match.txt',
@@ -93,28 +117,9 @@ describe('ingestFile', () => {
     expect(typeof firstRound.roundStartTime).toBe('number');
     expect(typeof firstRound.roundEndTime).toBe('number');
     expect(firstRound.roundEndTime).toBeGreaterThan(firstRound.roundStartTime);
-  });
-
-  it('should calculate map times', async () => {
-    const result = await ingestFile({
-      fileContent: SAMPLE_LOG_CONTENT,
-      fileName: 'test-match.txt',
-      fileModified: Date.now(),
-    });
 
     expect(result.mapTimes).toBeDefined();
     expect(result.mapTimes.startTime).toBeDefined();
     expect(result.mapTimes.endTime).toBeDefined();
-  });
-
-  it('should handle empty file content', async () => {
-    const result = await ingestFile({
-      fileContent: '',
-      fileName: 'empty.txt',
-      fileModified: Date.now(),
-    });
-
-    expect(result).toBeDefined();
-    expect(result.events).toBeDefined();
   });
 });
