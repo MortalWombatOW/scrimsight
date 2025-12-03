@@ -47,17 +47,10 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               </span>
             </Link>
           </div>
-
-          {/* Right side buttons */}
-          <div className="flex items-center gap-4">
-            {/* Removed Discord Button, Sample Data Toggle, and Auth Button */}
-          </div>
         </div>
       </header>
 
-      {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar/Navigation */}
         <aside
           className={`p-4 transition-all sm:relative sm:block sm:w-[300px] ${
             isMobileMenuOpen ? "w-full" : "hidden sm:block"
@@ -74,9 +67,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           </Suspense>
         </aside>
 
-        {/* Main content area */}
         <main
-          className={`flex-1 overflow-auto p-4 ${
+          className={`flex-1 overflow-auto p-4${
             isMobileMenuOpen ? "hidden" : ""
           }`}
         >

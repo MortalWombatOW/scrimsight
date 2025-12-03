@@ -105,7 +105,7 @@ export const MetricsExplorerPage: React.FC = () => {
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gradient">Metrics Explorer</h1>
+            <h1 className="text-3xl font-bold">Metrics Explorer</h1>
             <p className="text-base-content/70 mt-1">
               Analyze and compare player performance across all metrics
             </p>

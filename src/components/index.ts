@@ -1,4 +1,4 @@
-export { CardBase, CardBaseFact } from './CardBase';
+
 export { default as Container } from './Container';
 export { ErrorMessage } from './ErrorMessage';
 export { HeatmapGrid } from './HeatmapGrid';
