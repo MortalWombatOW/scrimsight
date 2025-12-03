@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { ErrorMessage, SubPageNavigation } from "@components";
-import { Container } from "@components";
+import { ErrorMessage, Page } from "@components";
 import { useStats } from "../hooks/useStats";
 
 export const PlayersPage = () => {
@@ -25,29 +24,18 @@ export const PlayersPage = () => {
   ];
 
   return (
-    <Container>
-      {" "}
-      {/* Added Container */}
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <header className="mb-8 bg-base-200 p-6 rounded-box">
-          <h1 className="text-3xl font-bold text-base-content">
-            Player Statistics
-          </h1>
-          <p className="mt-2 text-base-content/70">
-            Comprehensive analysis of player performance across all matches
-          </p>
-        </header>
+    <Page>
+      <Page.Header
+        title="Player Statistics"
+        subtitle="Comprehensive analysis of player performance across all matches"
+      />
 
-        {/* Navigation */}
-        <SubPageNavigation navItems={playerNavItems} />
+      <Page.Navigation navItems={playerNavItems} />
 
-        {/* Content */}
-        <div className="mt-8">
-          <Outlet />
-        </div>
-      </div>
-    </Container> // Added closing Container
+      <Page.Content>
+        <Outlet />
+      </Page.Content>
+    </Page>
   );
 };
 

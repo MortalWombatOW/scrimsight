@@ -1,7 +1,7 @@
 import React, { Suspense, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ZeroState } from "@components";
-import { ScrimCard, TeamCard, PlayerCard, Container } from "@components";
+import { ZeroState, Page } from "@components";
+import { ScrimCard, TeamCard, PlayerCard } from "@components";
 import { formatTime, formatPercentage, prettyFormat } from "@library";
 import { useMatches } from "../hooks/useRepository";
 import { useScrims } from "../hooks/useScrims";
@@ -246,20 +246,19 @@ export const HomePage = (): React.ReactNode => {
 
   // If data exists, show the main page content
   return (
-    <Container>
-      {" "}
-      {/* Replaced div with Container */}
-      {/* Sections for Scrims, Teams, Players */}
-      <Suspense
-        fallback={
-          <div className="text-center p-4">Loading dashboard sections...</div>
-        }
-      >
-        <RecentScrimsSection />
-        <TopTeamsSection />
-        <TopPlayersSection />
-      </Suspense>
-    </Container> // Closing Container tag
+    <Page>
+      <Page.Content>
+        <Suspense
+          fallback={
+            <div className="text-center p-4">Loading dashboard sections...</div>
+          }
+        >
+          <RecentScrimsSection />
+          <TopTeamsSection />
+          <TopPlayersSection />
+        </Suspense>
+      </Page.Content>
+    </Page>
   );
 };
 

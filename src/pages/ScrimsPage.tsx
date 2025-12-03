@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { formatTime } from "@library";
-import { ScrimCard, Container } from "@components";
+import { ScrimCard, Page } from "@components";
 import { useScrims } from "../hooks/useScrims";
 import { useMatches } from "../hooks/useRepository";
 
@@ -40,32 +40,32 @@ export const ScrimsPage = () => {
   }
 
   return (
-    <Container>
-      {" "}
-      {/* Added Container */}
-      <h1 className="text-3xl font-bold mb-6">Scrims</h1>
-      {/* Use flex layout for cards */}
-      <div className="flex flex-col md:flex-row flex-wrap gap-6">
-        {scrimSummaries.map((scrim) => (
-          <ScrimCard
-            key={scrim.scrimId}
-            title={`${scrim.teamNames[0]} vs ${scrim.teamNames[1]}`}
-            teamNames={scrim.teamNames}
-            date={scrim.dateString}
-            // Display map count instead of list
-            mapsPlayed={scrim.maps}
-            primaryStats={[{ value: scrim.score, label: "Score (W-L-D)" }]}
-            secondaryStats={[
-              { value: formatTime(scrim.duration), label: "Total Duration" },
-              { value: scrim.mapCount.toString(), label: "Maps Played" },
-            ]}
-            // Construct link URL using the scrimId from summary
-            linkUrl={`/scrims/${encodeURIComponent(scrim.scrimId)}`}
-            // linkText uses default "View Details"
-          />
-        ))}
-      </div>
-    </Container> // Added closing Container
+    <Page>
+      <Page.Header title="Scrims" />
+      <Page.Content>
+        {/* Use flex layout for cards */}
+        <div className="flex flex-col md:flex-row flex-wrap gap-6">
+          {scrimSummaries.map((scrim) => (
+            <ScrimCard
+              key={scrim.scrimId}
+              title={`${scrim.teamNames[0]} vs ${scrim.teamNames[1]}`}
+              teamNames={scrim.teamNames}
+              date={scrim.dateString}
+              // Display map count instead of list
+              mapsPlayed={scrim.maps}
+              primaryStats={[{ value: scrim.score, label: "Score (W-L-D)" }]}
+              secondaryStats={[
+                { value: formatTime(scrim.duration), label: "Total Duration" },
+                { value: scrim.mapCount.toString(), label: "Maps Played" },
+              ]}
+              // Construct link URL using the scrimId from summary
+              linkUrl={`/scrims/${encodeURIComponent(scrim.scrimId)}`}
+              // linkText uses default "View Details"
+            />
+          ))}
+        </div>
+      </Page.Content>
+    </Page>
   );
 };
 

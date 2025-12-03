@@ -1,7 +1,6 @@
 import { useParams, Outlet } from "react-router-dom";
 import { useMemo } from "react";
-import { StatCard, ErrorMessage, SubPageNavigation } from "@components";
-import { Container } from "@components";
+import { StatCard, ErrorMessage, Page } from "@components";
 import { useMatches } from "../hooks/useRepository";
 
 export const TeamPage = () => {
@@ -65,38 +64,24 @@ export const TeamPage = () => {
   ];
 
   return (
-    <Container>
-      {" "}
-      {/* Added Container */}
-      {/* Team Header - Apply consistent card styling */}
-      <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg p-6 mb-6">
-        {" "}
-        {/* Updated classes */}
-        <h1 className="text-4xl font-bold mb-4 text-primary">
-          {teamNameDisplay}
-        </h1>
+    <Page>
+      <Page.Header
+        title={teamNameDisplay}
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard title="Win Rate" value={`${winRate.toFixed(1)}%`} />
           <StatCard title="Wins" value={teamRecord.wins.toString()} />
           <StatCard title="Losses" value={teamRecord.losses.toString()} />
           <StatCard title="Draws" value={teamRecord.draws.toString()} />
         </div>
-      </div>
-      {/* Sub-route Navigation and Content - Apply consistent card styling */}
-      <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg">
-        {" "}
-        {/* Updated classes */}
-        {/* Navigation Links using SubPageNavigation */}
-        {/* Note: Removed border border-gray-700 class from outer div as tabs-boxed includes padding */}
-        <SubPageNavigation navItems={teamNavItems} />
-        {/* Outlet for rendering sub-route components */}
-        <div className="p-6 pt-0">
-          {" "}
-          {/* Adjusted padding top */}
-          <Outlet />
-        </div>
-      </div>
-    </Container> // Added closing Container
+      </Page.Header>
+
+      <Page.Navigation navItems={teamNavItems} />
+
+      <Page.Content>
+        <Outlet />
+      </Page.Content>
+    </Page>
   );
 };
 

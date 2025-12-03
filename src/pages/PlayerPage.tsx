@@ -1,15 +1,10 @@
 import { Suspense } from "react";
 import { useParams, Outlet } from "react-router-dom";
 import { getRoleFromHero } from "@library";
-import { SubPageNavigation } from "@components";
 import { RoleIcon } from "@icons";
 import { ErrorBoundary } from "react-error-boundary";
-import { Container } from "@components";
+import { Page } from "@components";
 import { useStats } from "../hooks/useStats";
-// Removed direct imports of child components as they are handled by Outlet
-// import { PlayerOverview } from "./components/PlayerOverview";
-// import { PlayerHeroes } from "./components/PlayerHeroes";
-// import { PlayerMatches } from "./components/PlayerMatches";
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center min-h-[400px]">
@@ -65,30 +60,23 @@ export const PlayerPage = () => {
   ];
 
   return (
-    <Container>
-      {" "}
-      {/* Added Container */}
-      {/* Header Section - Apply consistent card styling */}
-      <header className="mb-8 bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg p-6">
-        {" "}
-        {/* Updated classes */}
-        <div className="flex items-center gap-4">
-          <RoleIcon role={mostPlayedRole} className="w-12 h-12" />
-          <div>
-            <h1 className="text-3xl font-bold">{playerName}</h1>
-            <p className="text-base-content/70">{(playerData as any).playerTeam || 'Unknown Team'}</p>
-          </div>
-        </div>
-      </header>
-      {/* SubPage Navigation */}
-      <SubPageNavigation navItems={playerNavItems} />
-      {/* Content Outlet */}
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <Suspense fallback={<LoadingSpinner />}>
-          <Outlet /> {/* Replaced conditional rendering with Outlet */}
-        </Suspense>
-      </ErrorBoundary>
-    </Container> // Added closing Container
+    <Page>
+      <Page.Header
+        title={playerName}
+        subtitle={(playerData as any).playerTeam || 'Unknown Team'}
+        icon={<RoleIcon role={mostPlayedRole} className="w-12 h-12" />}
+      />
+      
+      <Page.Navigation navItems={playerNavItems} />
+      
+      <Page.Content>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
+      </Page.Content>
+    </Page>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Container, VisualCard } from "@components";
+import { Page, Card, VisualCard } from "@components";
 import {
   PlayerStatsCategoryKeys,
   PlayerStatKey,
@@ -146,18 +146,13 @@ export const MetricsExplorerPage: React.FC = () => {
   };
 
   return (
-    <Container>
-      <div className="space-y-6">
-        {/* Page Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Metrics Explorer</h1>
-            <p className="text-base-content/70 mt-1">
-              Analyze and compare player performance across all metrics
-            </p>
-          </div>
-        </div>
+    <Page>
+      <Page.Header
+        title="Metrics Explorer"
+        subtitle="Analyze and compare player performance across all metrics"
+      />
 
+      <Page.Content>
         {/* Summary Cards */}
         {summaryStats && summaryStats.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -193,7 +188,7 @@ export const MetricsExplorerPage: React.FC = () => {
         )}
 
         {/* Controls */}
-        <div className="glass-panel rounded-xl p-6">
+        <Card variant="glass" className="p-6">
           <h2 className="text-xl font-bold text-white mb-4">Filters & Options</h2>
           <MetricsControls
             groupBy={groupBy}
@@ -210,12 +205,12 @@ export const MetricsExplorerPage: React.FC = () => {
             sortDirection={sortDirection}
             setSortDirection={setSortDirection}
           />
-        </div>
+        </Card>
 
         {/* Data Visualization */}
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Table View */}
-          <div className="glass-panel rounded-xl p-6">
+          <Card variant="glass" className="p-6">
             <h2 className="text-xl font-bold text-white mb-4">Data Table</h2>
             <div className="overflow-auto max-h-[600px]">
               <MetricsDataTable
@@ -226,10 +221,10 @@ export const MetricsExplorerPage: React.FC = () => {
                 hoveredRowId={hoveredRowId}
               />
             </div>
-          </div>
+          </Card>
 
           {/* Chart View */}
-          <div className="glass-panel rounded-xl p-6">
+          <Card variant="glass" className="p-6">
             <h2 className="text-xl font-bold text-white mb-4">Visual Comparison</h2>
             <div className="h-[500px]">
               <MetricsChart
@@ -241,10 +236,10 @@ export const MetricsExplorerPage: React.FC = () => {
                 onPointHover={setHoveredRowId}
               />
             </div>
-          </div>
+          </Card>
         </div>
-      </div>
-    </Container>
+      </Page.Content>
+    </Page>
   );
 };
 

@@ -10,11 +10,12 @@ interface SubPageNavigationProps {
   navItems: NavItem[];
 }
 
-export const SubPageNavigation: React.FC<SubPageNavigationProps> = ({
+export const SubPageNavigation: React.FC<SubPageNavigationProps & { className?: string }> = ({
   navItems,
+  className = "",
 }) => {
   return (
-    <div className="tabs tabs-boxed bg-base-200 p-1 mb-8">
+    <div className={`tabs tabs-boxed bg-base-200 p-1 ${className}`}>
       {navItems.map((item) => (
         <NavLink
           key={item.path}

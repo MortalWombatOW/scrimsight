@@ -1,4 +1,5 @@
 import { GoTrophy } from "react-icons/go";
+import { Card } from "@components";
 
 interface MatchScoreCardProps {
   matchData: {
@@ -12,9 +13,7 @@ interface MatchScoreCardProps {
 
 export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
   return (
-    // Apply consistent card styling to the main container
-    <div className="bg-base-200 border border-gray-700 border-gray-700 shadow-md rounded-lg p-6 w-fit">
-      {" "}
+    <Card className="w-fit">
       <div className="flex flex-row flex-wrap gap-6 justify-center">
         {/* Round Results Section */}
         <div className="flex flex-col gap-2 min-w-[300px]">
@@ -86,6 +85,6 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };

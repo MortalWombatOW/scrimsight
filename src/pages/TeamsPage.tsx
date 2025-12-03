@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { TeamsSummaryStats, TeamsFilter, TeamsList, Container } from "@components";
+import { TeamsSummaryStats, TeamsFilter, TeamsList, Page, Card } from "@components";
 import { useMatches } from "../hooks/useRepository";
 
 type SortOption = "name" | "wins" | "players";
@@ -86,41 +86,31 @@ export const TeamsPage = () => {
     });
 
   return (
-    <Container>
-      {/* Use theme background, consistent padding/margin */}
-      <div className="mb-8 bg-base-200 rounded-lg p-6 shadow-md">
-        {" "}
-        {/* Adjusted background to base-200 for header */}
-        <h1 className="text-3xl font-bold mb-2 text-base-content">
-          {" "}
-          {/* Use theme text color */}
-          Teams
-        </h1>
-        <p className="text-lg text-base-content/70">
-          {" "}
-          {/* Use theme text color with opacity */}
-          Overview of all teams and their performance
-        </p>
-      </div>
-      <TeamsSummaryStats
-        totalTeams={totalTeams}
-        totalGames={totalGames}
-        totalWins={totalWins}
-        totalPlayers={totalPlayers}
+    <Page>
+      <Page.Header
+        title="Teams"
+        subtitle="Overview of all teams and their performance"
       />
-      {/* Use theme background, consistent padding/shadow */}
-      <div className="bg-base-200 rounded-lg p-6 shadow-md mb-6">
-        {" "}
-        {/* Adjusted background to base-200 */}
-        <TeamsFilter
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          sortBy={sortBy}
-          onSortChange={(value) => setSortBy(value)}
+
+      <Page.Content>
+        <TeamsSummaryStats
+          totalTeams={totalTeams}
+          totalGames={totalGames}
+          totalWins={totalWins}
+          totalPlayers={totalPlayers}
         />
-        <TeamsList teams={filteredAndSortedTeams} />
-      </div>
-    </Container> // Added closing Container
+        {/* Use theme background, consistent padding/shadow */}
+        <Card className="p-6 mb-6">
+          <TeamsFilter
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortBy={sortBy}
+            onSortChange={(value) => setSortBy(value)}
+          />
+          <TeamsList teams={filteredAndSortedTeams} />
+        </Card>
+      </Page.Content>
+    </Page>
   );
 };
 

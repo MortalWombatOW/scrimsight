@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { GoArrowRight } from "react-icons/go";
+import { Card } from "@components";
 
 export interface DataCardProps {
   title: string;
@@ -26,8 +27,10 @@ export const DataCard = ({
   footer,
 }: DataCardProps) => {
   const CardContent = () => (
-    <div
-      className={`glass-card rounded-xl overflow-hidden relative flex flex-col h-full ${className}`}
+    <Card
+      variant="glass"
+      noPadding
+      className={`rounded-xl overflow-hidden relative flex flex-col h-full ${className}`}
     >
       {backgroundImage && (
         <div className="absolute inset-0 z-0">
@@ -68,7 +71,7 @@ export const DataCard = ({
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 
   if (linkUrl) {

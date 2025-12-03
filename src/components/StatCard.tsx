@@ -1,4 +1,5 @@
 import React, { type ReactNode } from "react";
+import { Card } from "@components";
 
 export interface StatCardProps {
   title: string;
@@ -14,11 +15,11 @@ export const StatCard = ({
   description,
 }: StatCardProps): ReactNode => {
   return (
-    <div className="stat">
-      {icon && <div className="stat-figure">{icon}</div>}
+    <Card className="stat" noPadding>
+      {icon && <div className="stat-figure text-primary">{icon}</div>}
       <div className={`stat-title`}>{title}</div>
       <div className={`stat-value`}>{value}</div>
       {description && <div className="stat-desc">{description}</div>}
-    </div>
+    </Card>
   );
 };

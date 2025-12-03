@@ -1,9 +1,10 @@
 
-export { default as Container } from './Container';
+export { Card } from './Surface';
 export { ErrorMessage } from './ErrorMessage';
 export { HeatmapGrid } from './HeatmapGrid';
 export { default as KillsTable } from './KillsTable';
 export { Layout } from './Layout';
+export { Page } from './Layout/Page';
 export { MatchCard } from './MatchCard';
 export { Navigation } from './Navigation';
 export { PlayerCard } from './PlayerCard';
