@@ -116,9 +116,5 @@ export {
   playerStatsNumericalKeys,
 } from '../data/types';
 
-// Re-export atoms that are still needed
-// TODO: Remove sampleDataEnabledAtom after migrating ZeroState and AddFilesPage
-export {
-  sampleDataEnabledAtom,
-} from '@atoms';
+// No atom re-exports needed anymore - all migrated to new architecture!
 

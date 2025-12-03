@@ -1,13 +1,12 @@
 import { GoLinkExternal } from "react-icons/go";
-import { useAtom } from "jotai";
-import { sampleDataEnabledAtom } from "@library";
 import { MdOutlineFileOpen } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { useState, useCallback } from "react";
 import { useLoadFiles } from "../hooks/useRepository";
+import { useSampleData } from "../hooks/useSampleData";
 
 const ZeroState = () => {
-  const [_, setSampleDataEnabled] = useAtom(sampleDataEnabledAtom);
+  const { enable: enableSampleData } = useSampleData();
   const loadFiles = useLoadFiles();
   const [isDragActive, setIsDragActive] = useState(false);
   const [isDragAccept, setIsDragAccept] = useState(false);
@@ -162,7 +161,7 @@ const ZeroState = () => {
         <div className="flex items-center justify-center gap-2 mt-6">
           <span>or</span>
           <button
-            onClick={() => setSampleDataEnabled(true)}
+            onClick={enableSampleData}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
           >
             Explore example data

@@ -17,20 +17,17 @@ declare global {
   }
 }
 
-import { useAtom } from "jotai";
-import { sampleDataEnabledAtom } from "@library";
 import { ChangeEvent, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { Container } from "@components";
 import { useLoadFiles, useIsProcessing } from "../hooks/useRepository";
+import { useSampleData } from "../hooks/useSampleData";
 
 export const AddFilesPage = () => {
   const [files, setFiles] = useState<File[]>([]);
   const loadFiles = useLoadFiles();
   const isProcessing = useIsProcessing();
-  const [sampleDataEnabled, setSampleDataEnabled] = useAtom(
-    sampleDataEnabledAtom
-  );
+  const { enabled: sampleDataEnabled, toggle: setSampleDataEnabled } = useSampleData();
 
   const handleAddDirectory = async () => {
     try {
