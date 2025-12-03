@@ -29,8 +29,6 @@ export {
   type Metric,
   type MetricAtom
 } from './metricUtils';
-// Temporarily export getStatsAtom for old atoms - will be removed when atoms directory is deleted
-export { getStatsAtom } from './playerMetricsUtils';
 export * from './playerComparison';
 export * from './killMatrixUtils';
 export * from './useMetricsTableColumns';

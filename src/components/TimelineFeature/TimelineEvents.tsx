@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { useTimelineContext, type TimelineEvent } from "./TimelineContext";
-import { getHeroImage } from "@library";
-import { type MatchData } from "@atoms";
+import { getHeroImage, type MatchData } from "@library";
 
 // Event type display text mapping (Simplified for kill feed)
 const getEventDisplayText = (eventType: string): string => {
