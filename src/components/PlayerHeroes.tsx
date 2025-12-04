@@ -1,4 +1,6 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useMemo } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "./Table/DataTable";
 import {
   OverwatchRole,
   getRoleFromHero,
@@ -155,6 +157,48 @@ export const PlayerHeroes = (): ReactNode => {
     }
   };
 
+  const columns = useMemo<ColumnDef<typeof heroData[0]>[]>(
+    () => [
+      {
+        accessorKey: "hero",
+        header: "Hero",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <img
+              src={getHeroImage(row.original.hero, true)}
+              alt={row.original.hero}
+              className="w-8 h-8 rounded-full"
+            />
+            {row.original.hero}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "playtime",
+        header: "Playtime",
+        cell: ({ getValue }) => `${getValue()} min`,
+      },
+      {
+        accessorKey: "elimsPerLife",
+        header: "Elims/Life",
+      },
+      {
+        accessorKey: "damagePerMin",
+        header: "Damage/min",
+      },
+      {
+        accessorKey: "healingPerMin",
+        header: "Healing/min",
+      },
+      {
+        accessorKey: "accuracy",
+        header: "Accuracy",
+        cell: ({ getValue }) => `${getValue()}%`,
+      },
+    ],
+    []
+  );
+
   return (
     <div className="space-y-8">
       {/* Hero Usage Overview */}
@@ -227,37 +271,13 @@ export const PlayerHeroes = (): ReactNode => {
             </h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="table w-full">
-              <thead>
-                <tr className="text-base-content">
-                  <th>Hero</th>
-                  <th>Playtime</th>
-                  <th>Elims/Life</th>
-                  <th>Damage/min</th>
-                  <th>Healing/min</th>
-                  <th>Accuracy</th>
-                </tr>
-              </thead>
-              <tbody className="text-base-content">
-                {roleGroups[role].map((hero) => (
-                  <tr key={hero.hero}>
-                    <td className="flex items-center gap-2">
-                      <img
-                        src={getHeroImage(hero.hero, true)}
-                        alt={hero.hero}
-                        className="w-8 h-8 rounded-full"
-                      />
-                      {hero.hero}
-                    </td>
-                    <td>{hero.playtime} min</td>
-                    <td>{hero.elimsPerLife}</td>
-                    <td>{hero.damagePerMin}</td>
-                    <td>{hero.healingPerMin}</td>
-                    <td>{hero.accuracy}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DataTable
+              data={roleGroups[role]}
+              columns={columns}
+              initialState={{
+                sorting: [{ id: "playtime", desc: true }],
+              }}
+            />
           </div>
         </div>
       ))}

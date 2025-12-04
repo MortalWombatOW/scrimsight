@@ -1,4 +1,6 @@
 import { useState, useMemo } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "./Table/DataTable";
 import { OverwatchRole, PlayerStatKey, formatStat } from "@library";
 import { RoleIcon } from "@icons";
 import { useStatsWithDerived } from "../hooks/useStats";
@@ -94,6 +96,31 @@ export const PlayersPerformance = () => {
 
   const currentMetrics = getMetricsByCategory(selectedCategory);
 
+  const columns = useMemo<ColumnDef<any>[]>(() => {
+    const baseColumns: ColumnDef<any>[] = [
+      {
+        accessorKey: "playerName",
+        header: "Player",
+        cell: ({ row }) => (
+          <div className="font-medium">{row.original.playerName}</div>
+        ),
+      },
+      {
+        accessorKey: "playerRole",
+        header: "Role",
+        cell: ({ row }) => <RoleIcon role={row.original.playerRole} />,
+      },
+    ];
+
+    const metricColumns: ColumnDef<any>[] = currentMetrics.map((metric) => ({
+      accessorKey: metric.key,
+      header: metric.label,
+      cell: ({ getValue }) => formatStat(metric.key, getValue() as number),
+    }));
+
+    return [...baseColumns, ...metricColumns];
+  }, [currentMetrics]);
+
   return (
     <div className="space-y-6">
       {/* Filters */}
@@ -142,32 +169,13 @@ export const PlayersPerformance = () => {
 
       {/* Stats Table */}
       <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>Player</th>
-              <th>Role</th>
-              {currentMetrics.map((metric) => (
-                <th key={metric.key}>{metric.label}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {playerStats.map((player) => (
-              <tr key={player.playerName}>
-                <td>{player.playerName}</td>
-                <td>
-                  <RoleIcon role={player.playerRole} />
-                </td>
-                {currentMetrics.map((metric) => (
-                  <td key={metric.key}>
-                    {formatStat(metric.key, player[metric.key as keyof typeof player] as number)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          data={playerStats}
+          columns={columns}
+          initialState={{
+            sorting: [{ id: "playerName", desc: false }],
+          }}
+        />
       </div>
     </div>
   );

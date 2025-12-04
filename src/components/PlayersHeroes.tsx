@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "./Table/DataTable";
 import { OverwatchRole, getHeroImage } from "@library";
 import { useStatsWithDerived } from "../hooks/useStats";
 import { RoleIcon } from "@icons";
@@ -34,6 +36,51 @@ export const PlayersHeroes = () => {
     acc[hero.role].push(hero);
     return acc;
   }, {} as Record<OverwatchRole, typeof heroData>);
+
+  const columns = useMemo<ColumnDef<typeof heroData[0]>[]>(
+    () => [
+      {
+        accessorKey: "hero",
+        header: "Hero",
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <img
+              src={getHeroImage(row.original.hero)}
+              alt={row.original.hero}
+              className="w-8 h-8 rounded-full"
+            />
+            {row.original.hero}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "playtime",
+        header: "Playtime",
+        cell: ({ getValue }) => `${getValue()} min`,
+      },
+      {
+        accessorKey: "elimsPerLife",
+        header: "Elims/Life",
+        cell: ({ getValue }) => prettyFormat(getValue() as number),
+      },
+      {
+        accessorKey: "damagePerMin",
+        header: "Damage/min",
+        cell: ({ getValue }) => prettyFormat(getValue() as number),
+      },
+      {
+        accessorKey: "healingPerMin",
+        header: "Healing/min",
+        cell: ({ getValue }) => prettyFormat(getValue() as number),
+      },
+      {
+        accessorKey: "accuracy",
+        header: "Accuracy",
+        cell: ({ getValue }) => `${prettyFormat(getValue() as number)}%`,
+      },
+    ],
+    []
+  );
 
   return (
     <div className="space-y-6">
@@ -79,37 +126,13 @@ export const PlayersHeroes = () => {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="table w-full">
-                  <thead>
-                    <tr>
-                      <th>Hero</th>
-                      <th>Playtime</th>
-                      <th>Elims/Life</th>
-                      <th>Damage/min</th>
-                      <th>Healing/min</th>
-                      <th>Accuracy</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {roleGroups[role as OverwatchRole].map((hero) => (
-                      <tr key={hero.hero}>
-                        <td className="flex items-center gap-2">
-                          <img
-                            src={getHeroImage(hero.hero)}
-                            alt={hero.hero}
-                            className="w-8 h-8 rounded-full"
-                          />
-                          {hero.hero}
-                        </td>
-                        <td>{hero.playtime} min</td>
-                        <td>{prettyFormat(hero.elimsPerLife)}</td>
-                        <td>{prettyFormat(hero.damagePerMin)}</td>
-                        <td>{prettyFormat(hero.healingPerMin)}</td>
-                        <td>{prettyFormat(hero.accuracy)}%</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <DataTable
+                  data={roleGroups[role as OverwatchRole]}
+                  columns={columns}
+                  initialState={{
+                    sorting: [{ id: "playtime", desc: true }],
+                  }}
+                />
               </div>
             </div>
           )

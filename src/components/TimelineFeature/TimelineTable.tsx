@@ -1,4 +1,6 @@
 import { useMemo, type ReactNode } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "../Table/DataTable";
 import { useTimelineContext } from "./TimelineContext";
 import { formatDuration } from "@library";
 
@@ -145,6 +147,48 @@ export const TimelineTable = (): ReactNode => {
     return { team1, team2 };
   }, [playerStats]);
 
+  const columns = useMemo<ColumnDef<typeof playerStats[0]>[]>(
+    () => [
+      {
+        accessorKey: "teamName",
+        header: "Team",
+      },
+      {
+        accessorKey: "playerName",
+        header: "Player",
+      },
+      {
+        accessorKey: "hero",
+        header: "Hero",
+      },
+      {
+        accessorKey: "role",
+        header: "Role",
+      },
+      {
+        accessorKey: "kills",
+        header: "K",
+      },
+      {
+        accessorKey: "deaths",
+        header: "D",
+      },
+      {
+        accessorKey: "ultimatesUsed",
+        header: "ULT",
+      },
+      {
+        accessorKey: "assists",
+        header: "AST",
+      },
+      {
+        accessorKey: "resurrections",
+        header: "RES",
+      },
+    ],
+    []
+  );
+
   if (!loadedData?.events || playerStats.length === 0) {
     return (
       <div className="p-4 text-center">
@@ -221,43 +265,13 @@ export const TimelineTable = (): ReactNode => {
 
       {/* Player Stats Table */}
       <div className="overflow-x-auto">
-        <table className="table table-compact w-full">
-          <thead>
-            <tr>
-              <th>Team</th>
-              <th>Player</th>
-              <th>Hero</th>
-              <th>Role</th>
-              <th>K</th>
-              <th>D</th>
-              {/* <th>DMG</th>
-              <th>HEAL</th> */}
-              <th>ULT</th>
-              <th>AST</th>
-              <th>RES</th>
-            </tr>
-          </thead>
-          <tbody>
-            {playerStats.map((player, index) => (
-              <tr
-                key={`${player.playerName}-${player.teamName}-${index}`}
-                className={player.isTeam1 ? "bg-base-200/20" : "bg-base-300/20"}
-              >
-                <td>{player.teamName}</td>
-                <td>{player.playerName}</td>
-                <td>{player.hero}</td>
-                <td>{player.role}</td>
-                <td>{player.kills}</td>
-                <td>{player.deaths}</td>
-                {/* <td>{player.damageDealt}</td>
-                <td>{player.healingDealt}</td> */}
-                <td>{player.ultimatesUsed}</td>
-                <td>{player.assists}</td>
-                <td>{player.resurrections}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          data={playerStats}
+          columns={columns}
+          getRowClassName={(row) =>
+            row.isTeam1 ? "bg-base-200/20" : "bg-base-300/20"
+          }
+        />
       </div>
     </div>
   );

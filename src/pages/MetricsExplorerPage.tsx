@@ -6,7 +6,8 @@ import {
   getStatLabel,
 } from "@library";
 import { useMetricsTableColumns, formatStat } from "@library";
-import { MetricsDataTable, MetricsChart, MetricsControls } from "@components";
+import { MetricsChart, MetricsControls } from "@components";
+import { DataTable } from "../components/Table/DataTable";
 import { useMatches } from "../hooks/useRepository";
 import { useStatsGrouped } from "../hooks/useStatsGrouped";
 import { StatsFilters } from "../hooks/useStats";
@@ -213,10 +214,12 @@ export const MetricsExplorerPage: React.FC = () => {
           <Card variant="glass" className="p-6">
             <h2 className="text-xl font-bold text-white mb-4">Data Table</h2>
             <div className="overflow-auto max-h-[600px]">
-              <MetricsDataTable
+              <DataTable
                 data={statsData.rows ?? []}
                 columns={tableColumns}
-                onRowHover={setHoveredRowId}
+                onRowHover={(row) =>
+                  setHoveredRowId(row ? getRowId(row, groupBy) : null)
+                }
                 getRowId={(row) => getRowId(row, groupBy)}
                 hoveredRowId={hoveredRowId}
               />

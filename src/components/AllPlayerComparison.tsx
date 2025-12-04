@@ -7,9 +7,11 @@ import {
   ResponsiveContainer,
   Label,
 } from "recharts";
+import { ColumnDef } from "@tanstack/react-table";
 import { PlayerStatKey, STAT_CONFIG, getStatLabel, formatStat } from "@library";
 import { useMatch } from "../hooks/useMatch";
 import { useStats } from "../hooks/useStats";
+import { DataTable } from "./Table/DataTable";
 
 interface AllPlayerComparisonProps {
   matchId: string;
@@ -36,8 +38,6 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
   const playerStats = useStats({ matchId });
   const [xStat, setXStat] = useState<PlayerStatKey>("finalBlows");
   const [yStat, setYStat] = useState<PlayerStatKey>("deaths");
-  const [sortBy, setSortBy] = useState<string>("playerName");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   // Prepare data for both teams (conditional logic moved inside useMemo)
   const allPlayerData = useMemo(() => {
@@ -66,21 +66,58 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
     return [...team1Data, ...team2Data];
   }, [playerStats, match, xStat, yStat]);
 
-  // Sort data for the table
-  const sortedData = useMemo(() => {
-    return [...allPlayerData].sort((a, b) => {
-      let aValue = a[sortBy];
-      let bValue = b[sortBy];
-
-      // Handle numeric vs string sorting
-      const comparison =
-        typeof aValue === "number" && typeof bValue === "number"
-          ? aValue - bValue
-          : String(aValue).localeCompare(String(bValue));
-
-      return sortDirection === "asc" ? comparison : -comparison;
-    });
-  }, [allPlayerData, sortBy, sortDirection]);
+  const columns = useMemo<ColumnDef<PlayerDataPoint>[]>(
+    () => [
+      {
+        accessorKey: "playerName",
+        header: "Player",
+        cell: ({ row }) => (
+          <div className="flex items-center">
+            <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full border-2 border-gray-700 flex items-center justify-center">
+                <span className="text-xs font-medium">
+                  {row.original.playerName.charAt(0)}
+                </span>
+              </div>
+            </div>
+            <div className="ml-3">
+              <div className="text-sm font-medium text-base-800 dark:text-base-200">
+                {row.original.playerName}
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        accessorKey: "team",
+        header: "Team",
+        cell: ({ row }) => (
+          <div className="text-sm text-base-700 dark:text-base-300">
+            {row.original.team}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "x",
+        header: getStatLabel(xStat),
+        cell: ({ getValue }) => (
+          <div className="text-sm text-base-700 dark:text-base-300">
+            {formatStat(xStat, getValue() as number)}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "y",
+        header: getStatLabel(yStat),
+        cell: ({ getValue }) => (
+          <div className="text-sm text-base-700 dark:text-base-300">
+            {formatStat(yStat, getValue() as number)}
+          </div>
+        ),
+      },
+    ],
+    [xStat, yStat]
+  );
   
   if (!match) {
     return null;
@@ -190,16 +227,6 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
 
   // Tooltip removed as we now have permanent annotations for each data point
 
-  // Function to handle column sorting
-  const handleSort = (column: string) => {
-    if (sortBy === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortBy(column);
-      setSortDirection("asc");
-    }
-  };
-
   return (
     <div className="bg-base rounded-lg border border-gray-700 border-gray-700 w-full p-6 shadow-sm dark:bg-base-800 dark:border-gray-700">
       <div className="flex flex-col gap-6">
@@ -300,108 +327,13 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
 
         {/* Data Table - UI Principle: Complementary data representation */}
         <div className="overflow-x-auto border border-gray-700 rounded-lg border-gray-700 dark:border-gray-700">
-          <table className="min-w-full divide-y divide-base-200 dark:divide-base-700">
-            <thead className="bg-base-50 dark:bg-base-700">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-4 py-3 text-left text-xs font-medium text-base-500 uppercase tracking-wider dark:text-base-300 cursor-pointer"
-                  onClick={() => handleSort("playerName")}
-                >
-                  <div className="flex items-center">
-                    Player
-                    {sortBy === "playerName" && (
-                      <span className="ml-1">
-                        {sortDirection === "asc" ? "↑" : "↓"}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-3 text-left text-xs font-medium text-base-500 uppercase tracking-wider dark:text-base-300 cursor-pointer"
-                  onClick={() => handleSort("team")}
-                >
-                  <div className="flex items-center">
-                    Team
-                    {sortBy === "team" && (
-                      <span className="ml-1">
-                        {sortDirection === "asc" ? "↑" : "↓"}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-3 text-left text-xs font-medium text-base-500 uppercase tracking-wider dark:text-base-300 cursor-pointer"
-                  onClick={() => handleSort("x")}
-                >
-                  <div className="flex items-center">
-                    {getStatLabel(xStat)}
-                    {sortBy === "x" && (
-                      <span className="ml-1">
-                        {sortDirection === "asc" ? "↑" : "↓"}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-3 text-left text-xs font-medium text-base-500 uppercase tracking-wider dark:text-base-300 cursor-pointer"
-                  onClick={() => handleSort("y")}
-                >
-                  <div className="flex items-center">
-                    {getStatLabel(yStat)}
-                    {sortBy === "y" && (
-                      <span className="ml-1">
-                        {sortDirection === "asc" ? "↑" : "↓"}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-base divide-y divide-base-200 dark:bg-base-800 dark:divide-base-700">
-              {sortedData.map((player, index) => (
-                <tr
-                  key={player.playerName}
-                  className={
-                    index % 2 === 0
-                      ? "bg-base dark:bg-base-800"
-                      : "bg-base-50 dark:bg-base-750"
-                  }
-                >
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center">
-                        <div className="w-5 h-5 rounded-full border-2 border-gray-700 flex items-center justify-center">
-                          <span className="text-xs font-medium">
-                            {player.playerName.charAt(0)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="ml-3">
-                        <div className="text-sm font-medium text-base-800 dark:text-base-200">
-                          {player.playerName}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="text-sm text-base-700 dark:text-base-300">
-                      {player.team}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-base-700 dark:text-base-300">
-                    {formatStat(xStat, player.x)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-base-700 dark:text-base-300">
-                    {formatStat(yStat, player.y)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <DataTable
+            data={allPlayerData}
+            columns={columns}
+            initialState={{
+              sorting: [{ id: "playerName", desc: false }],
+            }}
+          />
         </div>
       </div>
     </div>
