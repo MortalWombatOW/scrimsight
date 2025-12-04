@@ -1,7 +1,10 @@
-import { type ReactNode, useMemo } from "react";
+import { type ReactNode } from "react";
 import { useStatsWithDerived } from "../../hooks/useStats";
-import { PlayerCard } from "@components";
-import { StatCard } from "@components";
+import {
+  usePlayerSummary,
+  usePlayerPerformanceTrends,
+} from "../../hooks/usePlayerMetrics";
+import { PlayerCard, StatCard } from "@components";
 import {
   ResponsiveContainer,
   BarChart,
@@ -13,100 +16,22 @@ import {
   Line,
   Cell,
 } from "recharts";
-import { format } from "date-fns";
-import { getRoleFromHero } from "@library";
+import { getRoleFromHero, formatStat } from "@library";
 import { useParams } from "react-router-dom";
-import { formatStat } from "@library";
-import { useMatches } from "../../hooks/useRepository";
-
-// interface PlayerOverviewProps { // Remove prop interface
-//   playerName: string;
-// }
-
-type PerformanceTrend = {
-  date: string;
-  kda: number;
-  winRate: number;
-  avgElims: number;
-};
 
 export const PlayerOverview = (): ReactNode => {
   const { playerName } = useParams<{ playerName: string }>();
 
-  const processedMatches = useMatches();
+  // Use custom hooks for data aggregation
+  const playerSummary = usePlayerSummary(playerName);
+  const performanceTrends = usePlayerPerformanceTrends(playerName);
 
-  // Compute player summary from matches
-  const playerSummary = useMemo(() => {
-    if (!playerName) return null;
-
-    const playerMap = new Map<string, {
-      eliminations: number;
-      deaths: number;
-      assists: number;
-      teamName: string;
-      topHero: string;
-      heroPlaytime: Map<string, number>;
-      role: string;
-    }>();
-
-    for (const match of processedMatches) {
-      for (const stat of match.playerStats.rows) {
-        if (stat.playerName !== playerName) continue;
-
-        if (!playerMap.has(stat.playerName)) {
-          playerMap.set(stat.playerName, {
-            eliminations: 0,
-            deaths: 0,
-            assists: 0,
-            teamName: stat.playerTeam,
-            topHero: stat.playerHero,
-            heroPlaytime: new Map(),
-            role: stat.playerRole,
-          });
-        }
-
-        const playerData = playerMap.get(stat.playerName)!;
-        playerData.eliminations += stat.eliminations;
-        playerData.deaths += stat.deaths;
-        playerData.assists += stat.defensiveAssists + stat.offensiveAssists;
-
-        const currentPlaytime = playerData.heroPlaytime.get(stat.playerHero) || 0;
-        playerData.heroPlaytime.set(stat.playerHero, currentPlaytime + stat.playtime);
-      }
-    }
-
-    const data = playerMap.get(playerName);
-    if (!data) return null;
-
-    let topHero = '';
-    let maxPlaytime = 0;
-    data.heroPlaytime.forEach((playtime, hero) => {
-      if (playtime > maxPlaytime) {
-        maxPlaytime = playtime;
-        topHero = hero;
-      }
-    });
-
-    return {
-      playerName,
-      teamName: data.teamName,
-      topHero: topHero || data.topHero,
-      eliminations: data.eliminations,
-      deaths: data.deaths,
-      assists: data.assists,
-      role: data.role,
-    };
-  }, [playerName, processedMatches]);
-
+  // Hero stats for the hero usage chart
   const heroStats = useStatsWithDerived({
     playerName: playerName || undefined,
   });
 
-  const matches = useMemo(
-    () => processedMatches.map(m => m.metadata),
-    [processedMatches]
-  );
-
+  // Detailed stats for the performance breakdown
   const detailedOverallStats = useStatsWithDerived({ playerName: playerName || undefined });
 
   if (!playerName) {
@@ -115,80 +40,6 @@ export const PlayerOverview = (): ReactNode => {
   if (!playerSummary) {
     return <div>Player summary data not found for {playerName}.</div>;
   }
-
-  // Calculate KDA from summary
-  const kda = playerSummary.deaths === 0
-    ? formatStat('eliminations', playerSummary.eliminations + playerSummary.assists)
-    : formatStat('eliminations', (playerSummary.eliminations + playerSummary.assists) / playerSummary.deaths);
-
-  // --- Keep existing calculations for charts/detailed stats ---
-  // Calculate win rate from match data (still needed for trend chart)
-  const playerMatches = matches.filter(
-    (match) =>
-      match.team1Players.includes(playerName) ||
-       match.team2Players.includes(playerName)
-  );
-  // Calculate performance trends (keep function as is for now)
-  const calculatePerformanceTrends = (matches: Array<{ fileModified: number; team1Players: string[]; team2Players: string[]; team1Score: number; team2Score: number; playerStats?: Record<string, { eliminations?: number; deaths?: number }>}>): PerformanceTrend[] => {
-    // Filter out any invalid matches first
-    const validMatches = matches.filter(
-      (match) =>
-        match &&
-        match.fileModified && // Ensure we have a valid timestamp
-        typeof match.fileModified === "number"
-    );
-
-    // Group matches by date
-    const matchesByDate = validMatches.reduce(
-      (acc: Record<string, typeof validMatches>, match) => {
-        try {
-          const date = format(match.fileModified, "MMM d");
-          if (!acc[date]) acc[date] = [];
-          acc[date].push(match);
-        } catch {
-          console.warn("Invalid date for match:", match);
-        }
-        return acc;
-      },
-      {}
-    );
-
-    // Calculate daily stats
-    return Object.entries(matchesByDate)
-      .map(([date, dailyMatches]) => {
-        const stats = dailyMatches.reduce(
-          (acc, match) => {
-            const isTeam1 = match.team1Players.includes(playerName);
-            const won =
-              (isTeam1 && match.team1Score > match.team2Score) ||
-              (!isTeam1 && match.team2Score > match.team1Score);
-
-            return {
-              wins: acc.wins + (won ? 1 : 0),
-              total: acc.total + 1,
-              elims:
-                acc.elims +
-                (match.playerStats?.[playerName]?.eliminations || 0),
-              deaths:
-                acc.deaths + (match.playerStats?.[playerName]?.deaths || 0),
-            };
-          },
-          { wins: 0, total: 0, elims: 0, deaths: 0 }
-        );
-
-        return {
-          date,
-          kda: stats.deaths > 0 ? stats.elims / stats.deaths : stats.elims,
-          winRate: (stats.wins / stats.total) * 100,
-          avgElims: stats.elims / stats.total,
-        };
-      })
-      .sort((a, b) => {
-        const dateA = new Date(a.date + " 2024").getTime();
-        const dateB = new Date(b.date + " 2024").getTime();
-        return dateA - dateB;
-      });
-  };
 
   // Prepare hero usage data for chart (keep as is)
   const heroUsageData = heroStats
@@ -254,7 +105,7 @@ export const PlayerOverview = (): ReactNode => {
         teamNames={[playerSummary.teamName]}
         heroes={[playerSummary.topHero]}
         primaryStats={[
-          { value: kda, label: "KDA" },
+          { value: playerSummary.kda, label: "KDA" },
           { value: formatStat('eliminations', playerSummary.eliminations), label: "Elims" },
         ]}
         secondaryStats={[
@@ -275,7 +126,7 @@ export const PlayerOverview = (): ReactNode => {
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
-                data={calculatePerformanceTrends(playerMatches)}
+                data={performanceTrends}
                 margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
                 <XAxis
@@ -436,8 +287,8 @@ export const PlayerOverview = (): ReactNode => {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <StatCard
-            title="Total Matches"
-            value={playerMatches.length.toString()}
+            title="Days Played"
+            value={performanceTrends.length.toString()}
           />
           <StatCard
             title="Total Playtime"
