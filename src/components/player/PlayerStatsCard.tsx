@@ -11,7 +11,9 @@ import { usePlayerRankings } from "../../hooks/useStats";
 import { PlayerImpactCard } from "./PlayerImpactCard";
 import { useFightAnalysis } from "../../hooks/useFightAnalysis";
 import { useMatch } from "../../hooks/useMatch";
+import { useMatches } from "../../hooks/useRepository";
 import { useParams } from "react-router-dom";
+import { useMemo } from "react";
 
 interface PlayerStatsCardProps {
   playerName: string;
@@ -21,10 +23,25 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
   const { getRanking, getPlayerStats } = usePlayerRankings();
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
-  // Get Match Context for Impact Analysis
+  // Get Match Context or Global Context for Impact Analysis
   const { matchId } = useParams<{ matchId: string }>();
-  const matchData = useMatch(matchId || "");
-  const { getPlayerImpact } = useFightAnalysis(matchData?.teamfights || []);
+  const singleMatchData = useMatch(matchId || "");
+  const allMatches = useMatches();
+
+  const relevantTeamfights = useMemo(() => {
+    if (matchId && singleMatchData) {
+      return singleMatchData.teamfights;
+    }
+    // Global context: aggregate from all matches where player played
+    return allMatches
+      .filter((m) =>
+        m.metadata.team1Players.includes(playerName) ||
+        m.metadata.team2Players.includes(playerName)
+      )
+      .flatMap((m) => m.teamfights);
+  }, [matchId, singleMatchData, allMatches, playerName]);
+
+  const { getPlayerImpact } = useFightAnalysis(relevantTeamfights);
 
   const playerStats = getPlayerStats(playerName);
 
@@ -139,8 +156,8 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
           })}
         </div>
 
-        {/* Impact Card (Only show if in Match Context) */}
-        {matchId && matchData && (
+        {/* Impact Card (Show if we have data) */}
+        {relevantTeamfights.length > 0 && (
           <PlayerImpactCard metrics={getPlayerImpact(playerName)} />
         )}
       </div>

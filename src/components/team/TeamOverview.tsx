@@ -12,6 +12,8 @@ import { TeamCard } from "@components";
 import { formatPercentage } from "@library";
 import { ErrorMessage } from "@components";
 import { useMatches } from "../../hooks/useRepository";
+import { useFightAnalysis } from "../../hooks/useFightAnalysis";
+import { WinConditionCard } from "../analysis/WinConditionCard";
 
 export const TeamOverview = () => {
   const { teamId } = useParams<{ teamId: string }>();
@@ -87,6 +89,16 @@ export const TeamOverview = () => {
     );
   }, [teamId, matches]);
 
+  // Aggregate teamfights for Win Conditions
+  const teamTeamfights = useMemo(() => {
+    if (!teamId) return [];
+    return matches
+      .filter(m => m.metadata.team1Name === teamId || m.metadata.team2Name === teamId)
+      .flatMap(m => m.teamfights);
+  }, [teamId, matches]);
+
+  const { getTeamWinConditions } = useFightAnalysis(teamTeamfights);
+
   if (!teamId) {
     return <ErrorMessage message="Team ID not found in URL." />;
   }
@@ -131,6 +143,14 @@ export const TeamOverview = () => {
         ]}
         // No link needed if already on the page
       />
+
+      {/* Win Conditions */}
+      {teamSummary && (
+        <WinConditionCard 
+          teamName={teamSummary.teamName} 
+          metrics={getTeamWinConditions(teamSummary.teamName)} 
+        />
+      )}
 
       {/* Keep existing charts/stats below */}
       <h2 className="text-2xl font-semibold">Detailed Overview</h2>
