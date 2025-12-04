@@ -8,6 +8,10 @@ import {
 } from "@library";
 import { VisualCard } from "@components";
 import { usePlayerRankings } from "../../hooks/useStats";
+import { PlayerImpactCard } from "./PlayerImpactCard";
+import { useFightAnalysis } from "../../hooks/useFightAnalysis";
+import { useMatch } from "../../hooks/useMatch";
+import { useParams } from "react-router-dom";
 
 interface PlayerStatsCardProps {
   playerName: string;
@@ -16,6 +20,11 @@ interface PlayerStatsCardProps {
 export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
   const { getRanking, getPlayerStats } = usePlayerRankings();
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
+
+  // Get Match Context for Impact Analysis
+  const { matchId } = useParams<{ matchId: string }>();
+  const matchData = useMatch(matchId || "");
+  const { getPlayerImpact } = useFightAnalysis(matchData?.teamfights || []);
 
   const playerStats = getPlayerStats(playerName);
 
@@ -129,6 +138,11 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
             );
           })}
         </div>
+
+        {/* Impact Card (Only show if in Match Context) */}
+        {matchId && matchData && (
+          <PlayerImpactCard metrics={getPlayerImpact(playerName)} />
+        )}
       </div>
     </VisualCard>
   );
