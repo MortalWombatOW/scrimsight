@@ -3,6 +3,7 @@ import { useStatsWithDerived } from "../../hooks/useStats";
 import {
   usePlayerSummary,
   usePlayerPerformanceTrends,
+  usePlayerHeroStats,
 } from "../../hooks/usePlayerMetrics";
 import { PlayerCard, StatCard } from "@components";
 import {
@@ -27,9 +28,7 @@ export const PlayerOverview = (): ReactNode => {
   const performanceTrends = usePlayerPerformanceTrends(playerName);
 
   // Hero stats for the hero usage chart
-  const heroStats = useStatsWithDerived({
-    playerName: playerName || undefined,
-  });
+  const heroStats = usePlayerHeroStats(playerName);
 
   // Detailed stats for the performance breakdown
   const detailedOverallStats = useStatsWithDerived({ playerName: playerName || undefined });

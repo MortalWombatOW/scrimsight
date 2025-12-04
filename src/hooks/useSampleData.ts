@@ -17,17 +17,11 @@ import file5 from '../lib/sampledata/Log-2023-08-28-18-40-39.txt?raw';
  * @returns Object with enabled state, toggle function, and enable function
  */
 export function useSampleData() {
-  const [enabled, setEnabled] = useState(() => {
-    // Check localStorage for persisted state
-    const stored = localStorage.getItem('sampleDataEnabled');
-    return stored === 'true';
-  });
+  const [enabled, setEnabled] = useState(false);
   const loadFiles = useLoadFiles();
 
   // Persist enabled state to localStorage
-  useEffect(() => {
-    localStorage.setItem('sampleDataEnabled', String(enabled));
-  }, [enabled]);
+
 
   // Load sample data when enabled
   useEffect(() => {

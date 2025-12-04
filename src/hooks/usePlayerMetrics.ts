@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { useMatches } from './useRepository';
 import { formatStat } from '@library';
-import { MatchMetadata } from '../types';
+import { MatchMetadata, PlayerStats } from '../types';
+import { useStatsWithDerived } from './useStats';
 
 // ============================================================================
 // Types
@@ -212,4 +213,46 @@ function calculatePerformanceTrends(
       const dateB = new Date(b.date + ' 2024').getTime();
       return dateA - dateB;
     });
+}
+
+// ============================================================================
+// usePlayerHeroStats Hook
+// ============================================================================
+
+/**
+ * Aggregates player stats by hero.
+ * Sums up playtime, eliminations, deaths, etc. for the same hero across different matches/rounds.
+ */
+export function usePlayerHeroStats(playerName: string | undefined): PlayerStats[] {
+  const stats = useStatsWithDerived({ playerName });
+
+  return useMemo(() => {
+    if (!stats || stats.length === 0) return [];
+
+    const heroMap = new Map<string, PlayerStats>();
+
+    for (const stat of stats) {
+      const existing = heroMap.get(stat.playerHero);
+
+      if (!existing) {
+        heroMap.set(stat.playerHero, { ...stat });
+      } else {
+        // Aggregate numerical values
+        const merged: PlayerStats = { ...existing };
+        
+        // Helper to sum values safely
+        // We iterate over keys that are numbers in the stat object and sum them
+        Object.keys(stat).forEach((key) => {
+            const k = key as keyof PlayerStats;
+            if (typeof stat[k] === 'number' && typeof existing[k] === 'number') {
+                (merged as any)[k] = (existing[k] as number) + (stat[k] as number);
+            }
+        });
+
+        heroMap.set(stat.playerHero, merged);
+      }
+    }
+
+    return Array.from(heroMap.values());
+  }, [stats]);
 }
