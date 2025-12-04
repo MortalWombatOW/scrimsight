@@ -24,11 +24,12 @@ describe('Repository', () => {
     });
 
     it('should store matches by matchId', () => {
-      const mockRepo = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const mockRepo: Record<string, any> = {
         'match-1': {
           metadata: { matchId: 'match-1' },
           events: {},
-        } as any,
+        },
       };
 
       store.set(matchesRepositoryAtom, mockRepo);
@@ -135,7 +136,7 @@ describe('Repository', () => {
       // Should not throw, but processing flag should be reset
       try {
         await store.set(loadFilesAction, [badFile]);
-      } catch (error) {
+      } catch {
         // Expected to potentially fail
       }
 

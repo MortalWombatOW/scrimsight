@@ -2,36 +2,36 @@ import React, { useMemo } from "react";
 import { PlayerStatKey, getStatLabel, formatStat } from "@library";
 import { ProgressBar } from "@components";
 import { useMatch } from "../../hooks/useMatch";
+import { PlayerStatsBase } from "../../types";
 
 interface TeamStatsComparisonProps {
   matchId: string;
 }
 
+// Stats to display in the comparison
+const STATS_TO_SHOW: PlayerStatKey[] = [
+  "finalBlows",
+  "allDamageDealt",
+  "healingDealt",
+  "ultimatesUsed",
+];
+
 export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   const match = useMatch(matchId);
 
-  if (!match) {
-    return <div className="text-center p-4">Match not found.</div>;
-  }
-
-  const matchDataItem = match.metadata;
-
-  const statsToShow: PlayerStatKey[] = [
-    "finalBlows",
-    "allDamageDealt",
-    "healingDealt",
-    "ultimatesUsed",
-  ];
-
-  // Compute team data from match player stats
+  // Compute team data from match player stats - MUST be before early return
   const teamData = useMemo(() => {
-    const result = {
-      [matchDataItem.team1Name]: {} as Record<string, number>,
-      [matchDataItem.team2Name]: {} as Record<string, number>,
+    if (!match) {
+      return null;
+    }
+    const matchDataItem = match.metadata;
+    const result: Record<string, Record<string, number>> = {
+      [matchDataItem.team1Name]: {},
+      [matchDataItem.team2Name]: {},
     };
 
     // Initialize all stats to 0
-    for (const stat of statsToShow) {
+    for (const stat of STATS_TO_SHOW) {
       result[matchDataItem.team1Name][stat] = 0;
       result[matchDataItem.team2Name][stat] = 0;
     }
@@ -40,14 +40,21 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
     for (const playerStat of match.playerStats.rows) {
       const teamName = playerStat.playerTeam;
       if (result[teamName]) {
-        for (const stat of statsToShow) {
-          result[teamName][stat] += (playerStat as any)[stat] || 0;
+        for (const stat of STATS_TO_SHOW) {
+          result[teamName][stat] += (playerStat[stat as keyof PlayerStatsBase] as number) || 0;
         }
       }
     }
 
     return result;
-  }, [match, matchDataItem, statsToShow]);
+  }, [match]);
+
+  // Early return after all hooks
+  if (!match || !teamData) {
+    return <div className="text-center p-4">Match not found.</div>;
+  }
+
+  const matchDataItem = match.metadata;
 
   // Calculate which team has the higher value for each stat
   const getWinnerTeam = (stat: PlayerStatKey) => {
@@ -74,7 +81,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
         </span>
       </div>
       {/* Stat rows */}
-      {statsToShow.map((stat) => {
+      {STATS_TO_SHOW.map((stat) => {
         const team1Value = teamData[matchDataItem.team1Name][stat] || 0;
         const team2Value = teamData[matchDataItem.team2Name][stat] || 0;
         const winner = getWinnerTeam(stat);

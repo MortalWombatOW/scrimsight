@@ -82,6 +82,7 @@ const mockRepository = {
   match2: createMockMatch('match2', [{ ...mockStats, matchId: 'match2', playerName: 'Player2', playerTeam: 'Team B', playerHero: 'Ana', playerRole: 'support' }]),
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const HydrateAtoms = ({ initialValues, children }: { initialValues: any; children: React.ReactNode }) => {
   useHydrateAtoms(initialValues);
   return children;

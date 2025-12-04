@@ -96,8 +96,8 @@ export const PlayersPerformance = () => {
 
   const currentMetrics = getMetricsByCategory(selectedCategory);
 
-  const columns = useMemo<ColumnDef<any>[]>(() => {
-    const baseColumns: ColumnDef<any>[] = [
+  const columns = useMemo<ColumnDef<typeof playerStats[0]>[]>(() => {
+    const baseColumns: ColumnDef<typeof playerStats[0]>[] = [
       {
         accessorKey: "playerName",
         header: "Player",
@@ -112,7 +112,7 @@ export const PlayersPerformance = () => {
       },
     ];
 
-    const metricColumns: ColumnDef<any>[] = currentMetrics.map((metric) => ({
+    const metricColumns: ColumnDef<typeof playerStats[0]>[] = currentMetrics.map((metric) => ({
       accessorKey: metric.key,
       header: metric.label,
       cell: ({ getValue }) => formatStat(metric.key, getValue() as number),

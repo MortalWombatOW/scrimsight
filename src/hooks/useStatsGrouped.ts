@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
-import { useStatsWithDerived, StatsFilters } from './useStats';
+import { useStatsWithDerived, StatsFilters, addDerivedMetrics } from './useStats';
 import {
   PlayerStatsCategoryKeys,
   PlayerStatsBaseNumericalKeys,
   PlayerStatsDerivedNumericalKeys,
   PlayerStats,
+  PlayerStatsBase,
   playerStatsBaseNumericalKeys,
   playerStatsDerivedNumericalKeys,
 } from '../types';
@@ -25,6 +26,16 @@ export interface GroupedStatsResult<G extends PlayerStatsCategoryKeys> {
   categoryKeys: G[];
   numericalKeys: (PlayerStatsBaseNumericalKeys | PlayerStatsDerivedNumericalKeys)[];
   rows: GroupedStats<G>[];
+}
+
+// Type-safe helper to get a value from an object with a dynamic key
+function getStatValue<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+// Type-safe helper to set a value on an object with a dynamic key
+function setStatValue(obj: Record<string, unknown>, key: string, value: unknown): void {
+  obj[key] = value;
 }
 
 /**
@@ -76,83 +87,54 @@ export function useStatsGrouped<G extends PlayerStatsCategoryKeys>(
       groupMap.get(groupKey)!.push(stat);
     }
 
-    // Aggregate each group
+    // Aggregate each group - build base stats first, then derive
     const aggregatedRows: GroupedStats<G>[] = [];
 
     for (const group of groupMap.values()) {
-      const aggregated: Partial<GroupedStats<G>> = {};
+      // Start with a base stats object
+      const baseAggregated: Record<string, string | number> = {};
 
       // Copy category values from first row (they're all the same in this group)
       for (const categoryKey of groupBy) {
-        (aggregated as any)[categoryKey] = group[0][categoryKey];
+        setStatValue(baseAggregated, categoryKey, getStatValue(group[0], categoryKey));
+      }
+
+      // Add all category keys with default values (needed for PlayerStatsBase type)
+      const allCategoryKeys: PlayerStatsCategoryKeys[] = [
+        'matchId', 'roundNumber', 'playerTeam', 'playerName', 'playerHero', 'playerRole'
+      ];
+      for (const catKey of allCategoryKeys) {
+        if (!(catKey in baseAggregated)) {
+          setStatValue(baseAggregated, catKey, group[0][catKey]);
+        }
       }
 
       // Sum all base numerical values
       for (const numKey of playerStatsBaseNumericalKeys) {
         let sum = 0;
         for (const stat of group) {
-          sum += stat[numKey];
+          sum += getStatValue(stat, numKey);
         }
-        (aggregated as any)[numKey] = sum;
+        setStatValue(baseAggregated, numKey, sum);
       }
 
-      // Recalculate derived metrics based on aggregated base stats
-      const playtime = (aggregated as any).playtime || 0;
-      const per10Min = playtime > 0 ? 600 / playtime : 0;
+      // Cast to PlayerStatsBase and add derived metrics
+      const baseStatsArray = [baseAggregated as unknown as PlayerStatsBase];
+      const withDerived = addDerivedMetrics(baseStatsArray)[0];
 
-      (aggregated as any).eliminationsPer10Minutes = ((aggregated as any).eliminations || 0) * per10Min;
-      (aggregated as any).finalBlowsPer10Minutes = ((aggregated as any).finalBlows || 0) * per10Min;
-      (aggregated as any).deathsPer10Minutes = ((aggregated as any).deaths || 0) * per10Min;
-      (aggregated as any).allDamageDealtPer10Minutes = ((aggregated as any).allDamageDealt || 0) * per10Min;
-      (aggregated as any).barrierDamageDealtPer10Minutes = ((aggregated as any).barrierDamageDealt || 0) * per10Min;
-      (aggregated as any).heroDamageDealtPer10Minutes = ((aggregated as any).heroDamageDealt || 0) * per10Min;
-      (aggregated as any).healingDealtPer10Minutes = ((aggregated as any).healingDealt || 0) * per10Min;
-      (aggregated as any).healingReceivedPer10Minutes = ((aggregated as any).healingReceived || 0) * per10Min;
-      (aggregated as any).selfHealingPer10Minutes = ((aggregated as any).selfHealing || 0) * per10Min;
-      (aggregated as any).damageTakenPer10Minutes = ((aggregated as any).damageTaken || 0) * per10Min;
-      (aggregated as any).damageBlockedPer10Minutes = ((aggregated as any).damageBlocked || 0) * per10Min;
-      (aggregated as any).defensiveAssistsPer10Minutes = ((aggregated as any).defensiveAssists || 0) * per10Min;
-      (aggregated as any).offensiveAssistsPer10Minutes = ((aggregated as any).offensiveAssists || 0) * per10Min;
-      (aggregated as any).ultimatesEarnedPer10Minutes = ((aggregated as any).ultimatesEarned || 0) * per10Min;
-      (aggregated as any).ultimatesUsedPer10Minutes = ((aggregated as any).ultimatesUsed || 0) * per10Min;
-      (aggregated as any).multikillsPer10Minutes = ((aggregated as any).multikills || 0) * per10Min;
-      (aggregated as any).soloKillsPer10Minutes = ((aggregated as any).soloKills || 0) * per10Min;
-      (aggregated as any).objectiveKillsPer10Minutes = ((aggregated as any).objectiveKills || 0) * per10Min;
-      (aggregated as any).environmentalKillsPer10Minutes = ((aggregated as any).environmentalKills || 0) * per10Min;
-      (aggregated as any).environmentalDeathsPer10Minutes = ((aggregated as any).environmentalDeaths || 0) * per10Min;
-      (aggregated as any).criticalHitsPer10Minutes = ((aggregated as any).criticalHits || 0) * per10Min;
-      (aggregated as any).shotsFiredPer10Minutes = ((aggregated as any).shotsFired || 0) * per10Min;
-      (aggregated as any).shotsHitPer10Minutes = ((aggregated as any).shotsHit || 0) * per10Min;
-      (aggregated as any).shotsMissedPer10Minutes = ((aggregated as any).shotsMissed || 0) * per10Min;
-      (aggregated as any).scopedShotsFiredPer10Minutes = ((aggregated as any).scopedShotsFired || 0) * per10Min;
-      (aggregated as any).scopedShotsHitPer10Minutes = ((aggregated as any).scopedShotsHit || 0) * per10Min;
-
-      // Calculate accuracy metrics
-      const shotsFired = (aggregated as any).shotsFired || 0;
-      const scopedShotsFired = (aggregated as any).scopedShotsFired || 0;
-
-      (aggregated as any).weaponAccuracy = shotsFired > 0
-        ? ((aggregated as any).shotsHit || 0) / shotsFired
-        : 0;
-      (aggregated as any).scopedWeaponAccuracy = scopedShotsFired > 0
-        ? ((aggregated as any).scopedShotsHit || 0) / scopedShotsFired
-        : 0;
-      (aggregated as any).criticalHitRate = shotsFired > 0
-        ? ((aggregated as any).criticalHits || 0) / shotsFired
-        : 0;
-
-      aggregatedRows.push(aggregated as GroupedStats<G>);
+      aggregatedRows.push(withDerived as GroupedStats<G>);
     }
 
     // Sort if requested
     if (sortBy && aggregatedRows.length > 0) {
-      const isNumerical = [...playerStatsBaseNumericalKeys, ...playerStatsDerivedNumericalKeys].includes(
-        sortBy as any
-      );
+      const allNumericalKeys = [...playerStatsBaseNumericalKeys, ...playerStatsDerivedNumericalKeys];
+      const isNumerical = allNumericalKeys.includes(sortBy as PlayerStatsBaseNumericalKeys | PlayerStatsDerivedNumericalKeys);
 
       aggregatedRows.sort((a, b) => {
-        const valA = (a as any)[sortBy];
-        const valB = (b as any)[sortBy];
+        const aRecord = a as Record<string, string | number>;
+        const bRecord = b as Record<string, string | number>;
+        const valA = aRecord[sortBy];
+        const valB = bRecord[sortBy];
 
         // Handle null/undefined
         if (valA == null && valB == null) return 0;

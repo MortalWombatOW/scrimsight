@@ -63,7 +63,7 @@ export const PlayerPage = () => {
     <Page>
       <Page.Header
         title={playerName}
-        subtitle={(playerData as any).playerTeam || 'Unknown Team'}
+        subtitle={playerData.playerTeam || 'Unknown Team'}
         icon={<RoleIcon role={mostPlayedRole} className="w-12 h-12" />}
       />
       

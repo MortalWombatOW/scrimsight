@@ -6,8 +6,9 @@ import { TbClockHour1 } from "react-icons/tb";
 import { FiMapPin } from "react-icons/fi";
 import { MatchScoreCard, Page, Card } from "@components";
 import { useMatch } from "../hooks/useMatch";
+import { MatchMetadata } from "../types";
 
-const MatchInfoCard = ({ matchData }: { matchData: any }) => (
+const MatchInfoCard = ({ matchData }: { matchData: MatchMetadata }) => (
   <Card className="flex flex-row flex-wrap gap-4 p-6 w-fit h-fit">
     <img
       src={mapNameToFileName(matchData.map, false)}

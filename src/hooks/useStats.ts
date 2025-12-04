@@ -214,9 +214,11 @@ export function usePlayerRankings() {
         playerMap.set(stat.playerName, { ...stat });
         playerPlaytime.set(stat.playerName, stat.playtime);
       } else {
-        // Sum numerical values
+        // Sum numerical values using typed record access
+        const existingRecord = existing as Record<string, string | number>;
+        const statRecord = stat as Record<string, string | number>;
         for (const key of allStatsMetric.numericalKeys) {
-          (existing as any)[key] = ((existing as any)[key] || 0) + ((stat as any)[key] || 0);
+          existingRecord[key] = ((existingRecord[key] as number) || 0) + ((statRecord[key] as number) || 0);
         }
         
         // Update metadata if this row has more playtime (to represent the "main" hero/role)
@@ -234,13 +236,14 @@ export function usePlayerRankings() {
 
     const getRanking = (playerName: string, stat: string): PlayerRanking => {
       const playerRow = rows.find((r) => r.playerName === playerName);
-      const value = playerRow ? ((playerRow as any)[stat] as number) || 0 : 0;
+      const playerRecord = playerRow as Record<string, string | number> | undefined;
+      const value = playerRecord ? (playerRecord[stat] as number) || 0 : 0;
 
       // Calculate max for this stat across all players
-      const max = Math.max(...rows.map((r) => ((r as any)[stat] as number) || 0));
+      const max = Math.max(...rows.map((r) => ((r as Record<string, string | number>)[stat] as number) || 0));
 
       // Calculate rank
-      const rank = rows.filter((r) => ((r as any)[stat] as number) || 0 > value).length + 1;
+      const rank = rows.filter((r) => ((r as Record<string, string | number>)[stat] as number) || 0 > value).length + 1;
 
       const percentage = max > 0 ? (value / max) * 100 : 0;
 

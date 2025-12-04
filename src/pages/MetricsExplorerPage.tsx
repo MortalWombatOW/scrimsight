@@ -127,7 +127,7 @@ export const MetricsExplorerPage: React.FC = () => {
     if (!statsData.rows || statsData.rows.length === 0) return null;
 
     const totals = metrics.map((metric) => {
-      const values = statsData.rows.map((row) => (row as any)[metric] || 0);
+      const values = statsData.rows.map((row) => (row as Record<string, string | number>)[metric] as number || 0);
       const total = values.reduce((sum, val) => sum + val, 0);
       const avg = total / values.length;
       const max = Math.max(...values);
@@ -142,7 +142,7 @@ export const MetricsExplorerPage: React.FC = () => {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
   // Helper to generate a unique ID for a row based on grouping keys
-  const getRowId = (row: any, groupKeys: PlayerStatsCategoryKeys[]) => {
+  const getRowId = (row: Record<string, unknown>, groupKeys: PlayerStatsCategoryKeys[]) => {
     return groupKeys.map((key) => row[key]).join("-");
   };
 

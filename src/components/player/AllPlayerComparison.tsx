@@ -45,23 +45,29 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
     
     const team1Data: PlayerDataPoint[] = playerStats
       .filter((stats) => stats.playerTeam === match.metadata.team1Name)
-      .map((player) => ({
-        ...player,
-        x: (player as any)[xStat] || 0,
-        y: (player as any)[yStat] || 0,
-        z: 10,
-        team: match.metadata.team1Name,
-      }));
+      .map((player) => {
+        const playerRecord = player as Record<string, string | number>;
+        return {
+          ...player,
+          x: (playerRecord[xStat] as number) || 0,
+          y: (playerRecord[yStat] as number) || 0,
+          z: 10,
+          team: match.metadata.team1Name,
+        };
+      });
 
     const team2Data: PlayerDataPoint[] = playerStats
       .filter((stats) => stats.playerTeam === match.metadata.team2Name)
-      .map((player) => ({
-        ...player,
-        x: (player as any)[xStat] || 0,
-        y: (player as any)[yStat] || 0,
-        z: 10,
-        team: match.metadata.team2Name,
-      }));
+      .map((player) => {
+        const playerRecord = player as Record<string, string | number>;
+        return {
+          ...player,
+          x: (playerRecord[xStat] as number) || 0,
+          y: (playerRecord[yStat] as number) || 0,
+          z: 10,
+          team: match.metadata.team2Name,
+        };
+      });
 
     return [...team1Data, ...team2Data];
   }, [playerStats, match, xStat, yStat]);

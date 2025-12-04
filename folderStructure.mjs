@@ -46,6 +46,58 @@ export const folderStructureConfig = createFolderStructure({
             { name: "{camelCase}.ts" },
             // Library: src/lib/{camelCase}.test.ts
             { name: "{camelCase}.test.ts" },
+            // Sample data folder for testing
+            {
+              name: "sampledata",
+              children: [
+                { name: "*.txt" },
+              ],
+            },
+          ],
+        },
+        // Data layer: src/data folder
+        {
+          name: "data",
+          children: [
+            { name: "index.ts" },
+            { name: "{camelCase}.ts" },
+            { name: "{camelCase}.test.ts" },
+          ],
+        },
+        // Domain layer: src/domain folder
+        {
+          name: "domain",
+          children: [
+            { name: "index.ts" },
+            { name: "{camelCase}.ts" },
+            { name: "{camelCase}.test.ts" },
+          ],
+        },
+        // Hooks: src/hooks folder
+        {
+          name: "hooks",
+          children: [
+            { name: "index.ts" },
+            { name: "{camelCase}.ts" },
+            { name: "{camelCase}.tsx" },
+            { name: "{camelCase}.test.ts" },
+            { name: "{camelCase}.test.tsx" },
+          ],
+        },
+        // Types: src/types folder
+        {
+          name: "types",
+          children: [
+            { name: "index.ts" },
+            { name: "{camelCase}.ts" },
+          ],
+        },
+        // Integration tests: src/integration folder
+        {
+          name: "integration",
+          children: [
+            { name: "{camelCase}.test.ts" },
+            { name: "{camelCase}.test.tsx" },
           ],
         },
         // Components: src/components folder
@@ -53,9 +105,23 @@ export const folderStructureConfig = createFolderStructure({
           name: "components",
           children: [
             { name: "index.ts" }, // Component index file
-            // Component implementation files
+            // Component implementation files at root
+            { name: "{PascalCase}.tsx" },
+            // Component subdirectories (feature-based organization)
             {
-              name: "{PascalCase}.tsx",
+              name: "{camelCase}",
+              children: [
+                { name: "index.ts" },
+                { name: "{PascalCase}.tsx" },
+                // Nested component folders
+                {
+                  name: "{PascalCase}",
+                  children: [
+                    { name: "index.ts" },
+                    { name: "{PascalCase}.tsx" },
+                  ],
+                },
+              ],
             },
           ],
         },

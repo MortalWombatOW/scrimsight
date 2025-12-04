@@ -98,8 +98,8 @@ export const TimelineProvider = ({
 
   const currentMatchData = match?.metadata;
   const currentMapTime = match?.mapTimes;
-  const currentRoundTimes = match?.roundTimes || [];
-  const currentTeamfights = match?.teamfights || [];
+  const currentRoundTimes = useMemo(() => match?.roundTimes || [], [match]);
+  const currentTeamfights = useMemo(() => match?.teamfights || [], [match]);
   const currentRoundEndEvents = match?.events.roundEnd || [];
 
   // Calculate player lives from hero spawn and kill events (for future use)
@@ -201,15 +201,16 @@ export const TimelineProvider = ({
     [allPlayerInteractionEvents, currentTimeRange]
   );
 
-  const allUltimateEvents = match?.ultimateEvents || [];
   const currentUltimateEvents = useMemo(
-    () =>
-      allUltimateEvents.filter(
+    () => {
+      const allUltimateEvents = match?.ultimateEvents || [];
+      return allUltimateEvents.filter(
         (ue) =>
           ue.ultimateStartTime >= currentTimeRange.start &&
           ue.ultimateStartTime <= currentTimeRange.end
-      ),
-    [allUltimateEvents, matchId, currentTimeRange]
+      );
+    },
+    [match?.ultimateEvents, currentTimeRange]
   );
 
   // A nicely formatted label for the current time range

@@ -70,7 +70,7 @@ export const SingleStatPlayerComparison = ({
     };
   }, [playerStats, matchDataItem, stat]);
 
-  const columns = useMemo<ColumnDef<any>[]>(
+  const columns = useMemo<ColumnDef<typeof allPlayerData[0]>[]>(
     () => [
       {
         accessorKey: "playerName",

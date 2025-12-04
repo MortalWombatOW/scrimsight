@@ -89,6 +89,7 @@ const mockRepository = {
   match2: createMockMatch('match2', [mockStats2]),
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const HydrateAtoms = ({ initialValues, children }: { initialValues: any; children: React.ReactNode }) => {
   useHydrateAtoms(initialValues);
   return children;

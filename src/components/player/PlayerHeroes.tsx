@@ -118,46 +118,19 @@ export const PlayerHeroes = (): ReactNode => {
     playerName: playerName || undefined,
   });
 
-  if (!playerName) {
-    return <div>Player name not found in URL.</div>;
-  }
-
-  // Prepare hero statistics
-  const heroData = heroStats
-    .map((row) => ({
-      hero: row.playerHero,
-      role: getRoleFromHero(row.playerHero),
-      playtime: Math.round(row.playtime / 60),
-      elimsPerLife: (row.eliminations / Math.max(row.deaths, 1)).toFixed(2),
-      damagePerMin: Math.round(row.heroDamageDealtPer10Minutes / 10),
-      healingPerMin: Math.round(row.healingDealtPer10Minutes / 10),
-      accuracy: (row.weaponAccuracy * 100).toFixed(1),
-    }))
-    .sort((a, b) => b.playtime - a.playtime);
-
-  const roleGroups = heroData.reduce((acc, hero) => {
-    if (!acc[hero.role]) {
-      acc[hero.role] = [];
-    }
-    acc[hero.role].push(hero);
-    return acc;
-  }, {} as Record<OverwatchRole, typeof heroData>);
-
-  // Role-based colors using theme colors
-  const getRoleColor = (role: OverwatchRole) => {
-    switch (role) {
-      case "tank":
-        return "--var(--color-base-content)";
-      case "damage":
-        return "var(--secondary)";
-      case "support":
-        return "var(--accent)";
-      default:
-        return "var(--primary)";
-    }
+  // Define hero data type for column definitions
+  type HeroDataRow = {
+    hero: string;
+    role: OverwatchRole;
+    playtime: number;
+    elimsPerLife: string;
+    damagePerMin: number;
+    healingPerMin: number;
+    accuracy: string;
   };
 
-  const columns = useMemo<ColumnDef<typeof heroData[0]>[]>(
+  // Columns must be defined before early return (hooks must always be called)
+  const columns = useMemo<ColumnDef<HeroDataRow>[]>(
     () => [
       {
         accessorKey: "hero",
@@ -198,6 +171,46 @@ export const PlayerHeroes = (): ReactNode => {
     ],
     []
   );
+
+  // Early return after all hooks
+  if (!playerName) {
+    return <div>Player name not found in URL.</div>;
+  }
+
+  // Prepare hero statistics
+  const heroData: HeroDataRow[] = heroStats
+    .map((row) => ({
+      hero: row.playerHero,
+      role: getRoleFromHero(row.playerHero),
+      playtime: Math.round(row.playtime / 60),
+      elimsPerLife: (row.eliminations / Math.max(row.deaths, 1)).toFixed(2),
+      damagePerMin: Math.round(row.heroDamageDealtPer10Minutes / 10),
+      healingPerMin: Math.round(row.healingDealtPer10Minutes / 10),
+      accuracy: (row.weaponAccuracy * 100).toFixed(1),
+    }))
+    .sort((a, b) => b.playtime - a.playtime);
+
+  const roleGroups = heroData.reduce((acc, hero) => {
+    if (!acc[hero.role]) {
+      acc[hero.role] = [];
+    }
+    acc[hero.role].push(hero);
+    return acc;
+  }, {} as Record<OverwatchRole, typeof heroData>);
+
+  // Role-based colors using theme colors
+  const getRoleColor = (role: OverwatchRole) => {
+    switch (role) {
+      case "tank":
+        return "--var(--color-base-content)";
+      case "damage":
+        return "var(--secondary)";
+      case "support":
+        return "var(--accent)";
+      default:
+        return "var(--primary)";
+    }
+  };
 
   return (
     <div className="space-y-8">

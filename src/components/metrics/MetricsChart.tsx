@@ -21,7 +21,19 @@ import {
   getStatLabel,
 } from "@library";
 
-const CustomTooltip = ({ active, payload, groupBy }: any) => {
+interface TooltipPayloadEntry {
+  name: string;
+  value: number;
+  payload: Record<string, unknown>;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayloadEntry[];
+  groupBy: string[];
+}
+
+const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, groupBy }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
 
@@ -30,11 +42,11 @@ const CustomTooltip = ({ active, payload, groupBy }: any) => {
         {groupBy.map((key: string) => (
           <div key={key} className="font-bold text-white mb-2 border-b border-base-content/10 pb-1">
             <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}: </span>
-            <span className="text-primary">{data[key]}</span>
+            <span className="text-primary">{data[key] as string}</span>
           </div>
         ))}
         <div className="space-y-1">
-          {payload.map((entry: any) => (
+          {payload.map((entry: TooltipPayloadEntry) => (
             <div key={entry.name} className="text-sm flex justify-between gap-4">
               <span className="text-base-content/70 capitalize">{getStatLabel(entry.name as PlayerStatKey)}: </span>
               <span className="font-mono font-bold text-base-content">
@@ -54,7 +66,7 @@ interface MetricsChartProps {
   groupBy: PlayerStatsCategoryKeys[];
   metrics: PlayerStatKey[];
   hoveredRowId?: string | null;
-  getRowId?: (row: any) => string;
+  getRowId?: (row: Record<string, unknown>) => string;
   onPointHover?: (id: string | null) => void;
 }
 
@@ -114,9 +126,9 @@ const MetricsBarChart: React.FC<MetricsBarChartProps> = ({
         />
         <Bar
           dataKey={metricKey}
-          onMouseEnter={(data: any) => {
+          onMouseEnter={(data: { payload?: Record<string, unknown> }) => {
             if (onPointHover && getRowId) {
-              const item = data.payload || data;
+              const item = (data.payload || data) as Record<string, unknown>;
               onPointHover(getRowId(item));
             }
           }}
@@ -216,9 +228,9 @@ const MetricsScatterChart: React.FC<MetricsScatterChartProps> = ({
         <Scatter
           name={groupBy[0]}
           data={data}
-          onMouseEnter={(data: any) => {
+          onMouseEnter={(data: { payload?: Record<string, unknown> }) => {
             if (onPointHover && getRowId) {
-              const item = data.payload || data;
+              const item = (data.payload || data) as Record<string, unknown>;
               onPointHover(getRowId(item));
             }
           }}

@@ -66,9 +66,9 @@ export const TopPlayersList = () => {
               </div>
               <div className="text-sm">
                 <span className="font-medium">
-                  {formatStat('eliminations', ((player as any).winRate || 0) * 100)}%
+                  {formatStat('deaths', player.deaths)}
                 </span>
-                <span className="text-base-content/70 ml-1">win rate</span>
+                <span className="text-base-content/70 ml-1">deaths</span>
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ import sampleFile1 from '../lib/sampledata/Log-2023-08-28-17-05-38.txt?raw';
 import sampleFile2 from '../lib/sampledata/Log-2023-08-28-17-29-57.txt?raw';
 
 // Helper to hydrate atoms
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const HydrateAtoms = ({ initialValues, children }: { initialValues: any; children: React.ReactNode }) => {
   useHydrateAtoms(initialValues);
   return children;
