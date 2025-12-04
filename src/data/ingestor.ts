@@ -1,34 +1,37 @@
+import { z } from 'zod';
 import { parseFile, ParsedLogFile } from '../lib/scrimtime';
 import { 
   ProcessedMatch, 
   MatchEvents, 
   MatchMetadata,
-  Ability1UsedLogEvent,
-  Ability2UsedLogEvent,
-  DamageLogEvent,
-  DefensiveAssistLogEvent,
-  DvaDemechLogEvent,
-  DvaRemechLogEvent,
-  HealingLogEvent,
-  HeroSpawnLogEvent,
-  HeroSwapLogEvent,
-  KillLogEvent,
-  MatchEndLogEvent,
-  MatchStartLogEvent,
-  MercyRezLogEvent,
-  OffensiveAssistLogEvent,
-  PlayerStatLogEvent,
-  RoundEndLogEvent,
-  RoundStartLogEvent,
-  SetupCompleteLogEvent,
-  UltimateChargedLogEvent,
-  UltimateEndLogEvent,
-  UltimateStartLogEvent,
 } from '../types';
 import { calculateTeamfights } from '../domain/teamfights';
 import { calculatePlayerStats } from '../domain/stats';
 import { calculateRoundTimes, calculateMapTimes, calculatePlayerStatusTimeline } from '../domain/timeline';
 import { calculateUltimateEvents } from '../domain/ultimateEvents';
+import {
+  Ability1UsedLogEventSchema,
+  Ability2UsedLogEventSchema,
+  DamageLogEventSchema,
+  DefensiveAssistLogEventSchema,
+  DvaDemechLogEventSchema,
+  DvaRemechLogEventSchema,
+  HealingLogEventSchema,
+  HeroSpawnLogEventSchema,
+  HeroSwapLogEventSchema,
+  KillLogEventSchema,
+  MatchEndLogEventSchema,
+  MatchStartLogEventSchema,
+  MercyRezLogEventSchema,
+  OffensiveAssistLogEventSchema,
+  PlayerStatLogEventSchema,
+  RoundEndLogEventSchema,
+  RoundStartLogEventSchema,
+  SetupCompleteLogEventSchema,
+  UltimateChargedLogEventSchema,
+  UltimateEndLogEventSchema,
+  UltimateStartLogEventSchema,
+} from './schemas';
 
 interface IngestFileParams {
   fileContent: string;
@@ -74,13 +77,25 @@ function isHandledSpecName(specName: string): specName is SpecNameKey {
 }
 
 /**
- * Casts log data to the appropriate event type.
- * The data comes from the parser as Record<string, unknown>[] but we know
- * the structure matches our log event interfaces based on the specName.
+ * Parses and validates event data using Zod schemas.
+ * Throws a ZodError if validation fails, providing detailed error messages.
  */
-function castEventData<T>(data: Record<string, unknown>[]): T {
-  // The parser guarantees the structure matches the specName, so this cast is safe
-  return data as unknown as T;
+function parseEventData<T>(
+  data: Record<string, unknown>[],
+  schema: z.ZodSchema<T>,
+  eventType: string
+): T[] {
+  try {
+    return z.array(schema).parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error(`Validation failed for event type: ${eventType}`, {
+        errors: error.errors,
+        firstItem: data[0],
+      });
+    }
+    throw error;
+  }
 }
 
 function groupEventsByType(parsedFile: ParsedLogFile): MatchEvents {
@@ -116,71 +131,76 @@ function groupEventsByType(parsedFile: ParsedLogFile): MatchEvents {
       continue;
     }
 
-    // Use the type-safe mapping to assign events
-    switch (specName) {
-      case 'ability_1_used':
-        events.ability1Used = castEventData<Ability1UsedLogEvent[]>(data);
-        break;
-      case 'ability_2_used':
-        events.ability2Used = castEventData<Ability2UsedLogEvent[]>(data);
-        break;
-      case 'damage':
-        events.damage = castEventData<DamageLogEvent[]>(data);
-        break;
-      case 'defensive_assist':
-        events.defensiveAssist = castEventData<DefensiveAssistLogEvent[]>(data);
-        break;
-      case 'dva_demech':
-        events.dvaDemech = castEventData<DvaDemechLogEvent[]>(data);
-        break;
-      case 'dva_remech':
-        events.dvaRemech = castEventData<DvaRemechLogEvent[]>(data);
-        break;
-      case 'healing':
-        events.healing = castEventData<HealingLogEvent[]>(data);
-        break;
-      case 'hero_spawn':
-        events.heroSpawn = castEventData<HeroSpawnLogEvent[]>(data);
-        break;
-      case 'hero_swap':
-        events.heroSwap = castEventData<HeroSwapLogEvent[]>(data);
-        break;
-      case 'kill':
-        events.kills = castEventData<KillLogEvent[]>(data);
-        break;
-      case 'match_end':
-        events.matchEnd = castEventData<MatchEndLogEvent[]>(data);
-        break;
-      case 'match_start':
-        events.matchStart = castEventData<MatchStartLogEvent[]>(data);
-        break;
-      case 'mercy_rez':
-        events.mercyRez = castEventData<MercyRezLogEvent[]>(data);
-        break;
-      case 'offensive_assist':
-        events.offensiveAssist = castEventData<OffensiveAssistLogEvent[]>(data);
-        break;
-      case 'player_stat':
-        events.playerStat = castEventData<PlayerStatLogEvent[]>(data);
-        break;
-      case 'round_end':
-        events.roundEnd = castEventData<RoundEndLogEvent[]>(data);
-        break;
-      case 'round_start':
-        events.roundStart = castEventData<RoundStartLogEvent[]>(data);
-        break;
-      case 'setup_complete':
-        events.setupComplete = castEventData<SetupCompleteLogEvent[]>(data);
-        break;
-      case 'ultimate_charged':
-        events.ultimateCharged = castEventData<UltimateChargedLogEvent[]>(data);
-        break;
-      case 'ultimate_end':
-        events.ultimateEnd = castEventData<UltimateEndLogEvent[]>(data);
-        break;
-      case 'ultimate_start':
-        events.ultimateStart = castEventData<UltimateStartLogEvent[]>(data);
-        break;
+    try {
+      // Use Zod schemas for runtime type validation
+      switch (specName) {
+        case 'ability_1_used':
+          events.ability1Used = parseEventData(data, Ability1UsedLogEventSchema, specName);
+          break;
+        case 'ability_2_used':
+          events.ability2Used = parseEventData(data, Ability2UsedLogEventSchema, specName);
+          break;
+        case 'damage':
+          events.damage = parseEventData(data, DamageLogEventSchema, specName);
+          break;
+        case 'defensive_assist':
+          events.defensiveAssist = parseEventData(data, DefensiveAssistLogEventSchema, specName);
+          break;
+        case 'dva_demech':
+          events.dvaDemech = parseEventData(data, DvaDemechLogEventSchema, specName);
+          break;
+        case 'dva_remech':
+          events.dvaRemech = parseEventData(data, DvaRemechLogEventSchema, specName);
+          break;
+        case 'healing':
+          events.healing = parseEventData(data, HealingLogEventSchema, specName);
+          break;
+        case 'hero_spawn':
+          events.heroSpawn = parseEventData(data, HeroSpawnLogEventSchema, specName);
+          break;
+        case 'hero_swap':
+          events.heroSwap = parseEventData(data, HeroSwapLogEventSchema, specName);
+          break;
+        case 'kill':
+          events.kills = parseEventData(data, KillLogEventSchema, specName);
+          break;
+        case 'match_end':
+          events.matchEnd = parseEventData(data, MatchEndLogEventSchema, specName);
+          break;
+        case 'match_start':
+          events.matchStart = parseEventData(data, MatchStartLogEventSchema, specName);
+          break;
+        case 'mercy_rez':
+          events.mercyRez = parseEventData(data, MercyRezLogEventSchema, specName);
+          break;
+        case 'offensive_assist':
+          events.offensiveAssist = parseEventData(data, OffensiveAssistLogEventSchema, specName);
+          break;
+        case 'player_stat':
+          events.playerStat = parseEventData(data, PlayerStatLogEventSchema, specName);
+          break;
+        case 'round_end':
+          events.roundEnd = parseEventData(data, RoundEndLogEventSchema, specName);
+          break;
+        case 'round_start':
+          events.roundStart = parseEventData(data, RoundStartLogEventSchema, specName);
+          break;
+        case 'setup_complete':
+          events.setupComplete = parseEventData(data, SetupCompleteLogEventSchema, specName);
+          break;
+        case 'ultimate_charged':
+          events.ultimateCharged = parseEventData(data, UltimateChargedLogEventSchema, specName);
+          break;
+        case 'ultimate_end':
+          events.ultimateEnd = parseEventData(data, UltimateEndLogEventSchema, specName);
+          break;
+        case 'ultimate_start':
+          events.ultimateStart = parseEventData(data, UltimateStartLogEventSchema, specName);
+          break;
+      }
+    } catch (error) {
+      console.error(`Validation failed for event type: ${specName}`, error);
+      throw error;
     }
   }
 
