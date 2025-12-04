@@ -1,5 +1,30 @@
 import { parseFile, ParsedLogFile } from '../lib/scrimtime';
-import { ProcessedMatch, MatchEvents, MatchMetadata } from './types';
+import { 
+  ProcessedMatch, 
+  MatchEvents, 
+  MatchMetadata,
+  Ability1UsedLogEvent,
+  Ability2UsedLogEvent,
+  DamageLogEvent,
+  DefensiveAssistLogEvent,
+  DvaDemechLogEvent,
+  DvaRemechLogEvent,
+  HealingLogEvent,
+  HeroSpawnLogEvent,
+  HeroSwapLogEvent,
+  KillLogEvent,
+  MatchEndLogEvent,
+  MatchStartLogEvent,
+  MercyRezLogEvent,
+  OffensiveAssistLogEvent,
+  PlayerStatLogEvent,
+  RoundEndLogEvent,
+  RoundStartLogEvent,
+  SetupCompleteLogEvent,
+  UltimateChargedLogEvent,
+  UltimateEndLogEvent,
+  UltimateStartLogEvent,
+} from '../types';
 import { calculateTeamfights } from '../domain/teamfights';
 import { calculatePlayerStats } from '../domain/stats';
 import { calculateRoundTimes, calculateMapTimes, calculatePlayerStatusTimeline } from '../domain/timeline';
@@ -9,6 +34,53 @@ interface IngestFileParams {
   fileContent: string;
   fileName: string;
   fileModified: number;
+}
+
+/**
+ * Maps MatchEvents property keys to their corresponding specName strings.
+ * This provides a type-safe bidirectional mapping for the groupEventsByType function.
+ */
+const SPEC_NAME_TO_EVENTS_KEY = {
+  ability_1_used: 'ability1Used',
+  ability_2_used: 'ability2Used',
+  damage: 'damage',
+  defensive_assist: 'defensiveAssist',
+  dva_demech: 'dvaDemech',
+  dva_remech: 'dvaRemech',
+  healing: 'healing',
+  hero_spawn: 'heroSpawn',
+  hero_swap: 'heroSwap',
+  kill: 'kills',
+  match_end: 'matchEnd',
+  match_start: 'matchStart',
+  mercy_rez: 'mercyRez',
+  offensive_assist: 'offensiveAssist',
+  player_stat: 'playerStat',
+  round_end: 'roundEnd',
+  round_start: 'roundStart',
+  setup_complete: 'setupComplete',
+  ultimate_charged: 'ultimateCharged',
+  ultimate_end: 'ultimateEnd',
+  ultimate_start: 'ultimateStart',
+} as const;
+
+type SpecNameKey = keyof typeof SPEC_NAME_TO_EVENTS_KEY;
+
+/**
+ * Type guard to check if a specName is one we handle.
+ */
+function isHandledSpecName(specName: string): specName is SpecNameKey {
+  return specName in SPEC_NAME_TO_EVENTS_KEY;
+}
+
+/**
+ * Casts log data to the appropriate event type.
+ * The data comes from the parser as Record<string, unknown>[] but we know
+ * the structure matches our log event interfaces based on the specName.
+ */
+function castEventData<T>(data: Record<string, unknown>[]): T {
+  // The parser guarantees the structure matches the specName, so this cast is safe
+  return data as unknown as T;
 }
 
 function groupEventsByType(parsedFile: ParsedLogFile): MatchEvents {
@@ -37,69 +109,77 @@ function groupEventsByType(parsedFile: ParsedLogFile): MatchEvents {
   };
 
   for (const log of parsedFile.logs) {
-    switch (log.specName) {
+    const { specName, data } = log;
+    
+    // Skip unhandled event types (e.g., echo_duplicate_start, payload_progress)
+    if (!isHandledSpecName(specName)) {
+      continue;
+    }
+
+    // Use the type-safe mapping to assign events
+    switch (specName) {
       case 'ability_1_used':
-        events.ability1Used = log.data as any;
+        events.ability1Used = castEventData<Ability1UsedLogEvent[]>(data);
         break;
       case 'ability_2_used':
-        events.ability2Used = log.data as any;
+        events.ability2Used = castEventData<Ability2UsedLogEvent[]>(data);
         break;
       case 'damage':
-        events.damage = log.data as any;
+        events.damage = castEventData<DamageLogEvent[]>(data);
         break;
       case 'defensive_assist':
-        events.defensiveAssist = log.data as any;
+        events.defensiveAssist = castEventData<DefensiveAssistLogEvent[]>(data);
         break;
       case 'dva_demech':
-        events.dvaDemech = log.data as any;
+        events.dvaDemech = castEventData<DvaDemechLogEvent[]>(data);
         break;
       case 'dva_remech':
-        events.dvaRemech = log.data as any;
+        events.dvaRemech = castEventData<DvaRemechLogEvent[]>(data);
         break;
       case 'healing':
-        events.healing = log.data as any;
+        events.healing = castEventData<HealingLogEvent[]>(data);
         break;
       case 'hero_spawn':
-        events.heroSpawn = log.data as any;
+        events.heroSpawn = castEventData<HeroSpawnLogEvent[]>(data);
         break;
       case 'hero_swap':
-        events.heroSwap = log.data as any;
+        events.heroSwap = castEventData<HeroSwapLogEvent[]>(data);
         break;
       case 'kill':
-        events.kills = log.data as any;
+        events.kills = castEventData<KillLogEvent[]>(data);
         break;
       case 'match_end':
-        events.matchEnd = log.data as any;
+        events.matchEnd = castEventData<MatchEndLogEvent[]>(data);
         break;
       case 'match_start':
-        events.matchStart = log.data as any;
+        events.matchStart = castEventData<MatchStartLogEvent[]>(data);
         break;
       case 'mercy_rez':
-        events.mercyRez = log.data as any;
+        events.mercyRez = castEventData<MercyRezLogEvent[]>(data);
         break;
       case 'offensive_assist':
-        events.offensiveAssist = log.data as any;
+        events.offensiveAssist = castEventData<OffensiveAssistLogEvent[]>(data);
         break;
       case 'player_stat':
-        events.playerStat = log.data as any;
+        events.playerStat = castEventData<PlayerStatLogEvent[]>(data);
         break;
       case 'round_end':
-        events.roundEnd = log.data as any;
+        events.roundEnd = castEventData<RoundEndLogEvent[]>(data);
         break;
       case 'round_start':
-        events.roundStart = log.data as any;
+        events.roundStart = castEventData<RoundStartLogEvent[]>(data);
         break;
       case 'setup_complete':
-        events.setupComplete = log.data as any;
+        events.setupComplete = castEventData<SetupCompleteLogEvent[]>(data);
         break;
       case 'ultimate_charged':
-        events.ultimateCharged = log.data as any;
+        events.ultimateCharged = castEventData<UltimateChargedLogEvent[]>(data);
         break;
       case 'ultimate_end':
-        events.ultimateEnd = log.data as any;
+        events.ultimateEnd = castEventData<UltimateEndLogEvent[]>(data);
         break;
       case 'ultimate_start':
-        events.ultimateStart = log.data as any;
+        events.ultimateStart = castEventData<UltimateStartLogEvent[]>(data);
         break;
     }
   }

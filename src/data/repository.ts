@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { RepositoryState, ProcessedMatch } from './types';
+import { RepositoryState, ProcessedMatch } from '../types';
 import { readFileAsync } from '../lib/scrimtime';
 import { ingestFile } from './ingestor';
 

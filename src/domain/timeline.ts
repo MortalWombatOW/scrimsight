@@ -1,4 +1,4 @@
-import { MatchEvents, RoundTimes, MapTimes, PlayerStatusTimeline, PlayerStatusEntry } from '../data/types';
+import { MatchEvents, RoundTimes, MapTimes, PlayerStatusTimeline, PlayerStatusEntry } from '../types';
 
 export function calculateRoundTimes(events: MatchEvents): RoundTimes[] {
   const roundStarts = events.roundStart;
@@ -137,11 +137,11 @@ export interface TimelineSegmentButtonData {
  * Pure function to generate timeline segments from match data
  */
 export function generateTimelineSegments(
-  matchMetadata: import('../data/types').MatchMetadata,
+  matchMetadata: import('../types').MatchMetadata,
   mapTime: MapTimes,
   roundTimesData: RoundTimes[],
-  teamfightsData: import('../data/types').Teamfight[],
-  allRoundEnds: import('../data/types').RoundEndLogEvent[]
+  teamfightsData: import('../types').Teamfight[],
+  allRoundEnds: import('../types').RoundEndLogEvent[]
 ): TimelineSegmentButtonData[] {
   if (!mapTime || !matchMetadata) return [];
 

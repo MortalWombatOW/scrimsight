@@ -1,4 +1,4 @@
-import { UltimateEvent, MatchEvents } from '../data/types';
+import { UltimateEvent, MatchEvents } from '../types';
 
 export function calculateUltimateEvents(events: MatchEvents): UltimateEvent[] {
   const chargedEvents = events.ultimateCharged;

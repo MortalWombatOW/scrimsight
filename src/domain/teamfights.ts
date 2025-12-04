@@ -3,7 +3,7 @@ import {
   MatchEvents,
   MatchMetadata,
   UltimateEvent,
-} from '../data/types';
+} from '../types';
 
 interface PlayerInteractionEvent {
   matchId: string;

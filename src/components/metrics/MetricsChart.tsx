@@ -28,10 +28,10 @@ const CustomTooltip = ({ active, payload, groupBy }: any) => {
     return (
       <div className="bg-base-200 border border-base-300 p-3 rounded shadow-xl z-50 min-w-[150px]">
         {groupBy.map((key: string) => (
-           <div key={key} className="font-bold text-white mb-2 border-b border-base-content/10 pb-1">
-             <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}: </span>
-             <span className="text-primary">{data[key]}</span>
-           </div>
+          <div key={key} className="font-bold text-white mb-2 border-b border-base-content/10 pb-1">
+            <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}: </span>
+            <span className="text-primary">{data[key]}</span>
+          </div>
         ))}
         <div className="space-y-1">
           {payload.map((entry: any) => (

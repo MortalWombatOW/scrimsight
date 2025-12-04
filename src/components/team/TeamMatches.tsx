@@ -4,7 +4,7 @@ import { formatTime } from "@library";
 import { ErrorMessage } from "@components";
 import { MatchCard } from "@components";
 import { useMatches } from "../../hooks/useRepository";
-import type { MatchMetadata } from "../../data/types";
+import type { MatchMetadata } from "../../types";
 
 // Define a type for keys of MatchMetadata that hold string values
 type StringMatchDataKeys = {

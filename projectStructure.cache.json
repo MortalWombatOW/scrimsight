@@ -1,27 +1,67 @@
 [
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/VisualCard.test.tsx",
-    "errorMessage": "🔥 File 'VisualCard.test.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}.tsx\nError location = ./src/components/VisualCard.test.tsx\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/types/domain.ts",
+    "errorMessage": "🔥 Folder 'types' is invalid. 🔥\n\nAllowed names  = atoms, lib, components, icons, pages\nError location = ./src/types\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamStatsComparison.test.tsx",
-    "errorMessage": "🔥 File 'TeamStatsComparison.test.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}.tsx\nError location = ./src/components/TeamStatsComparison.test.tsx\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/integration/workflows.test.tsx",
+    "errorMessage": "🔥 Folder 'integration' is invalid. 🔥\n\nAllowed names  = atoms, lib, components, icons, pages\nError location = ./src/integration\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/VisualCard.test.tsx",
-    "errorMessage": "🔥 File 'VisualCard.test.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}.tsx, {PascalCase}.stories.tsx\nError location = ./src/components/VisualCard.test.tsx\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/hooks/useMatch.ts",
+    "errorMessage": "🔥 Folder 'hooks' is invalid. 🔥\n\nAllowed names  = atoms, lib, components, icons, pages\nError location = ./src/hooks\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TimelineFeature/Timeline.tsx",
-    "errorMessage": "🔥 Folder 'TimelineFeature' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/TimelineFeature\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/domain/domain.test.ts",
+    "errorMessage": "🔥 Folder 'domain' is invalid. 🔥\n\nAllowed names  = atoms, lib, components, icons, pages\nError location = ./src/domain\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/components/TeamStatsComparison.test.tsx",
-    "errorMessage": "🔥 File 'TeamStatsComparison.test.tsx' is invalid. 🔥\n\nAllowed names  = index.ts, {PascalCase}.tsx, {PascalCase}.stories.tsx\nError location = ./src/components/TeamStatsComparison.test.tsx\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/data/ingestor.test.ts",
+    "errorMessage": "🔥 Folder 'data' is invalid. 🔥\n\nAllowed names  = atoms, lib, components, icons, pages\nError location = ./src/data\n\n"
   },
   {
-    "filename": "/home/andrewgleeson/code/scrimsight/src/atoms/playerRankingAtom.ts",
-    "errorMessage": "🔥 File 'playerRankingAtom.ts' enforces the existence of other folders/files. 🔥\n\nEnforce existence = ./src/atoms/playerRankingAtom.test.ts\nError location = ./src/atoms/playerRankingAtom.ts\n\n"
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/ui/DataCard.tsx",
+    "errorMessage": "🔥 Folder 'ui' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/ui\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/timeline/Timeline.tsx",
+    "errorMessage": "🔥 Folder 'timeline' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/timeline\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/team/TeamCard.tsx",
+    "errorMessage": "🔥 Folder 'team' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/team\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/table/DataTable.tsx",
+    "errorMessage": "🔥 Folder 'table' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/table\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/surface/Card.tsx",
+    "errorMessage": "🔥 Folder 'surface' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/surface\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/scrim/ScrimCard.tsx",
+    "errorMessage": "🔥 Folder 'scrim' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/scrim\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/player/AllPlayerComparison.tsx",
+    "errorMessage": "🔥 Folder 'player' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/player\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/navigation/Navigation.tsx",
+    "errorMessage": "🔥 Folder 'navigation' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/navigation\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/metrics/MetricsChart.tsx",
+    "errorMessage": "🔥 Folder 'metrics' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/metrics\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/match/MatchCard.tsx",
+    "errorMessage": "🔥 Folder 'match' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/match\n\n"
+  },
+  {
+    "filename": "/home/andrewgleeson/code/scrimsight/src/components/layout/Layout.tsx",
+    "errorMessage": "🔥 Folder 'layout' is invalid. 🔥\n\nAccording to the structure, the 'components' folder can only contain files.\nError location = ./src/components/layout\n\n"
   },
   {
     "filename": "/home/andrewgleeson/code/scrimsight/src/lib/sampledata/Log-2023-08-28-17-29-57.txt",

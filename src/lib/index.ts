@@ -36,7 +36,7 @@ export * from './metricExplorerStyles';
 export * from './dagre';
 export * from './statConfig';
 
-// Re-export types from data layer
+// Re-export types from types layer
 export type {
   // Match and metadata types
   MatchData,
@@ -104,15 +104,15 @@ export type {
   // Map and round types
   MapTimes,
   RoundTimes
-} from '../data/types';
+} from '../types';
 
-// Re-export constants from data layer
+// Re-export constants from types layer
 export {
   playerStatsCategoryKeys,
   playerStatsBaseNumericalKeys,
   playerStatsDerivedNumericalKeys,
   playerStatsNumericalKeys,
-} from '../data/types';
+} from '../types';
 
 // No atom re-exports needed anymore - all migrated to new architecture!
 

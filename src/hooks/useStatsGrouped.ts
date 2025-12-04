@@ -7,7 +7,7 @@ import {
   PlayerStats,
   playerStatsBaseNumericalKeys,
   playerStatsDerivedNumericalKeys,
-} from '../data/types';
+} from '../types';
 import { PlayerStatKey } from '@library';
 
 /**

@@ -3,7 +3,7 @@ import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { useStats, useStatsWithDerived } from './useStats';
 import { matchesRepositoryAtom } from '../data/repository';
-import { ProcessedMatch, PlayerStatsBase } from '../data/types';
+import { ProcessedMatch, PlayerStatsBase } from '../types';
 import { describe, it, expect } from 'vitest';
 
 // Mock data helper
@@ -43,7 +43,7 @@ const createMockMatch = (id: string, playerStats: PlayerStatsBase[]): ProcessedM
 
 const mockStats: PlayerStatsBase = {
   matchId: 'match1',
-  roundNumber: 1,
+  roundNumber: '1',
   playerTeam: 'Team A',
   playerName: 'Player1',
   playerHero: 'Tracer',

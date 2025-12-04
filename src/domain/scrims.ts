@@ -1,4 +1,4 @@
-import { Scrim, MatchMetadata, ProcessedMatch } from '../data/types';
+import { Scrim, MatchMetadata, ProcessedMatch } from '../types';
 
 export function detectScrims(matches: ProcessedMatch[]): Scrim[] {
   const allMatchData = matches.map((m) => m.metadata);

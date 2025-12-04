@@ -84,10 +84,10 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
                   className={`
                   flex items-center justify-center rounded-full w-8 h-8 text-sm font-bold
                   ${
-                    ranking.rank === 1
-                      ? "bg-primary text-primary-content"
-                      : "bg-base-200/60 text-base-content"
-                  }
+              ranking.rank === 1
+                ? "bg-primary text-primary-content"
+                : "bg-base-200/60 text-base-content"
+              }
                 `}
                 >
                   #{ranking.rank}

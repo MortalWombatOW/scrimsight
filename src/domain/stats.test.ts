@@ -101,11 +101,11 @@ describe('Stats Domain Logic', () => {
         
         // Crit accuracy
         if (row.shotsHit > 0) {
-           // Critical hits might be tracked separately or as a subset. 
-           // Usually critical hits <= shots hit, but sometimes mechanics differ.
-           // Let's assume critical hits are a subset of hits or fired.
-           // In OW, crits are usually a subset of hits.
-           expect(row.criticalHits).toBeLessThanOrEqual(row.shotsHit);
+          // Critical hits might be tracked separately or as a subset. 
+          // Usually critical hits <= shots hit, but sometimes mechanics differ.
+          // Let's assume critical hits are a subset of hits or fired.
+          // In OW, crits are usually a subset of hits.
+          expect(row.criticalHits).toBeLessThanOrEqual(row.shotsHit);
         }
       });
     });

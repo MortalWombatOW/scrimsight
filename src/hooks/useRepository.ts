@@ -1,6 +1,6 @@
 import { useAtomValue, useSetAtom } from 'jotai';
 import { matchesRepositoryAtom, isProcessingAtom, loadFilesAction } from '../data/repository';
-import { ProcessedMatch } from '../data/types';
+import { ProcessedMatch } from '../types';
 
 export function useMatches(): ProcessedMatch[] {
   const repository = useAtomValue(matchesRepositoryAtom);

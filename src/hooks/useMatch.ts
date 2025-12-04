@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 import { useMemo } from 'react';
 import { matchesRepositoryAtom } from '../data/repository';
-import { ProcessedMatch, MatchEvents } from '../data/types';
+import { ProcessedMatch, MatchEvents } from '../types';
 
 export function useMatch(matchId: string): ProcessedMatch | undefined {
   const matchAtom = useMemo(

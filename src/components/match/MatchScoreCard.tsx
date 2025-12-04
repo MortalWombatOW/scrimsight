@@ -52,9 +52,9 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
         {/* Final Result Section */}
         <div className="min-w-[300px] flex items-start">
           {/* Use slightly darker background for inner card, consistent rounding */}
-            <div className="bg-base-300 rounded-lg w-full p-4">
-              <div className="flex items-center gap-2 justify-center mb-4">
-                <GoTrophy className="text-base-content/70" size={18} />
+          <div className="bg-base-300 rounded-lg w-full p-4">
+            <div className="flex items-center gap-2 justify-center mb-4">
+              <GoTrophy className="text-base-content/70" size={18} />
               <span className="text-lg font-bold">
                 {matchData.team1Score > matchData.team2Score
                   ? matchData.team1Name

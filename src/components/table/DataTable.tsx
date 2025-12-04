@@ -67,9 +67,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                       {{
                         asc: " ↑",
                         desc: " ↓",
@@ -98,10 +98,10 @@ export function DataTable<TData, TValue>({
                   onMouseLeave={() => onRowHover?.(null)}
                   className={`
                   ${
-                    onRowClick
-                      ? "cursor-pointer hover:bg-base-200 dark:hover:bg-base-700"
-                      : ""
-                  }
+                onRowClick
+                  ? "cursor-pointer hover:bg-base-200 dark:hover:bg-base-700"
+                  : ""
+                }
                   ${isHovered ? "!bg-primary/20 hover:!bg-primary/30" : ""}
                   ${getRowClassName ? getRowClassName(row.original) : ""}
                 `}

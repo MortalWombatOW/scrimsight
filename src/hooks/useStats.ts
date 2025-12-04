@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 import { selectAtom } from 'jotai/utils';
 import { useMemo } from 'react';
 import { matchesRepositoryAtom } from '../data/repository';
-import { PlayerStatsBase, PlayerStats } from '../data/types';
+import { PlayerStatsBase, PlayerStats } from '../types';
 import { Metric } from '@library';
 
 export interface StatsFilters {
@@ -222,10 +222,10 @@ export function usePlayerRankings() {
         // Update metadata if this row has more playtime (to represent the "main" hero/role)
         const currentPlaytime = playerPlaytime.get(stat.playerName) || 0;
         if (stat.playtime > currentPlaytime) {
-           existing.playerHero = stat.playerHero;
-           existing.playerRole = stat.playerRole;
-           existing.playerTeam = stat.playerTeam;
-           playerPlaytime.set(stat.playerName, stat.playtime);
+          existing.playerHero = stat.playerHero;
+          existing.playerRole = stat.playerRole;
+          existing.playerTeam = stat.playerTeam;
+          playerPlaytime.set(stat.playerName, stat.playtime);
         }
       }
     }

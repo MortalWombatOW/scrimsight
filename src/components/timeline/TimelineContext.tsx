@@ -7,7 +7,7 @@ import {
   RoundTimes,
   Teamfight,
   UltimateEvent,
-} from "../../data/types";
+} from "../../types";
 
 interface PlayerEventWithType {
   matchId: string;
@@ -71,7 +71,7 @@ interface TimelineContextType {
     teamfights: Teamfight[];
     events: TimelineEvent[];
     groupedEvents: GroupedTimelineEvents[];
-    roundEndEvents: import("../../data/types").RoundEndLogEvent[];
+    roundEndEvents: import("../../types").RoundEndLogEvent[];
   };
 }
 

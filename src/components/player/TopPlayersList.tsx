@@ -3,7 +3,7 @@ import { RoleIcon } from "@icons";
 import { formatStat } from "@library";
 import { Link } from "react-router-dom";
 import { useStatsWithDerived } from "../../hooks/useStats";
-import { PlayerStats } from "../../data/types";
+import { PlayerStats } from "../../types";
 
 export const TopPlayersList = () => {
   const allStats = useStatsWithDerived();

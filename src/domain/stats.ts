@@ -6,7 +6,7 @@ import {
   PlayerStatsBaseNumericalKeys,
   MatchEvents,
   RoundTimes,
-} from '../data/types';
+} from '../types';
 
 interface PlayerEventForPlaytime {
   matchId: string;

@@ -48,14 +48,14 @@ export const ScrimPlayerStats = ({
   const kda =
     playerStats.deaths === 0
       ? formatStat('eliminations',
-          playerStats.eliminations +
+        playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)
-        )
+      )
       : formatStat('eliminations',
-          (playerStats.eliminations +
+        (playerStats.eliminations +
             (playerStats.offensiveAssists + playerStats.defensiveAssists)) /
             playerStats.deaths
-        );
+      );
 
   return (
     <PlayerCard
