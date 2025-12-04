@@ -1,0 +1,278 @@
+import { useMemo, type ReactNode } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "../table/DataTable";
+import { useTimelineContext } from "./TimelineContext";
+import { formatDuration } from "@library";
+
+export const TimelineTable = (): ReactNode => {
+  // Removed unused timeRangeLabel from context destructuring
+  const { loadedData, currentTimeRange } = useTimelineContext();
+
+  const playerStats = useMemo(() => {
+    if (!loadedData?.events) return [];
+
+    // Filter events within current time range
+    const filteredEvents = loadedData.events.filter(
+      (event) =>
+        event.time >= currentTimeRange.start &&
+        event.time <= currentTimeRange.end
+    );
+
+    // Create a map to store stats for each player
+    const playerStatsMap = new Map();
+
+    // Process each event to calculate stats
+    filteredEvents.forEach((event) => {
+      // Initialize player entry if it doesn't exist
+      const playerKey = `${event.playerName}-${event.teamName}`;
+      if (!playerStatsMap.has(playerKey)) {
+        playerStatsMap.set(playerKey, {
+          playerName: event.playerName,
+          teamName: event.teamName,
+          hero: event.playerHero,
+          role: event.playerRole,
+          isTeam1: event.isTeam1,
+          kills: 0,
+          deaths: 0,
+          damageDealt: 0,
+          damageReceived: 0,
+          healingDealt: 0,
+          healingReceived: 0,
+          ultimatesUsed: 0,
+          resurrections: 0,
+          assists: 0,
+        });
+      }
+
+      const playerStats = playerStatsMap.get(playerKey);
+
+      // Update stats based on event type
+      if (
+        event.type === "playerInteractionEvent" &&
+        event.playerInteractionEvent
+      ) {
+        const {
+          playerInteractionEventType,
+          direction,
+        } = event.playerInteractionEvent;
+
+        if (
+          playerInteractionEventType === "Killed player" &&
+          direction === "outgoing"
+        ) {
+          playerStats.kills += 1;
+        }
+
+        if (playerInteractionEventType === "Died" && direction === "incoming") {
+          playerStats.deaths += 1;
+        }
+
+        if (playerInteractionEventType === "Dealt Damage") {
+          playerStats.damageDealt += 1;
+        }
+
+        if (playerInteractionEventType === "Received Damage") {
+          playerStats.damageReceived += 1;
+        }
+
+        if (playerInteractionEventType === "Dealt Healing") {
+          playerStats.healingDealt += 1;
+        }
+
+        if (playerInteractionEventType === "Received Healing") {
+          playerStats.healingReceived += 1;
+        }
+
+        if (playerInteractionEventType === "Resurrected Player") {
+          playerStats.resurrections += 1;
+        }
+      }
+
+      if (event.type === "playerEvent" && event.playerEvent) {
+        const { eventType } = event.playerEvent;
+
+        if (
+          eventType === "defensiveAssist" ||
+          eventType === "offensiveAssist"
+        ) {
+          playerStats.assists += 1;
+        }
+      }
+
+      if (event.type === "ultimateEvent") {
+        playerStats.ultimatesUsed += 1;
+      }
+
+      playerStatsMap.set(playerKey, playerStats);
+    });
+
+    // Convert map to array and sort by team then player name
+    return Array.from(playerStatsMap.values()).sort((a, b) => {
+      if (a.isTeam1 !== b.isTeam1) {
+        return a.isTeam1 ? -1 : 1;
+      }
+      return a.playerName.localeCompare(b.playerName);
+    });
+  }, [loadedData?.events, currentTimeRange]);
+
+  // Calculate team totals
+  const teamStats = useMemo(() => {
+    const team1 = {
+      name: playerStats.find((p) => p.isTeam1)?.teamName || "Team 1",
+      kills: 0,
+      deaths: 0,
+      damageDealt: 0,
+      healingDealt: 0,
+      ultimatesUsed: 0,
+    };
+
+    const team2 = {
+      name: playerStats.find((p) => !p.isTeam1)?.teamName || "Team 2",
+      kills: 0,
+      deaths: 0,
+      damageDealt: 0,
+      healingDealt: 0,
+      ultimatesUsed: 0,
+    };
+
+    playerStats.forEach((player) => {
+      const team = player.isTeam1 ? team1 : team2;
+      team.kills += player.kills;
+      team.deaths += player.deaths;
+      team.damageDealt += player.damageDealt;
+      team.healingDealt += player.healingDealt;
+      team.ultimatesUsed += player.ultimatesUsed;
+    });
+
+    return { team1, team2 };
+  }, [playerStats]);
+
+  const columns = useMemo<ColumnDef<typeof playerStats[0]>[]>(
+    () => [
+      {
+        accessorKey: "teamName",
+        header: "Team",
+      },
+      {
+        accessorKey: "playerName",
+        header: "Player",
+      },
+      {
+        accessorKey: "hero",
+        header: "Hero",
+      },
+      {
+        accessorKey: "role",
+        header: "Role",
+      },
+      {
+        accessorKey: "kills",
+        header: "K",
+      },
+      {
+        accessorKey: "deaths",
+        header: "D",
+      },
+      {
+        accessorKey: "ultimatesUsed",
+        header: "ULT",
+      },
+      {
+        accessorKey: "assists",
+        header: "AST",
+      },
+      {
+        accessorKey: "resurrections",
+        header: "RES",
+      },
+    ],
+    []
+  );
+
+  if (!loadedData?.events || playerStats.length === 0) {
+    return (
+      <div className="p-4 text-center">
+        No data available for the selected time range
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto p-4">
+      <h2 className="text-lg font-semibold mb-2">
+        Totals between {formatDuration(currentTimeRange.start)} and {formatDuration(currentTimeRange.end)} (
+        {formatDuration(currentTimeRange.end - currentTimeRange.start)})
+      </h2>
+
+      {/* Team Summary Section */}
+      <div className="mb-4 grid grid-cols-2 gap-4">
+        <div className="p-3 border border-gray-700 rounded-lg shadow-sm bg-base-200">
+          <h3 className="font-medium text-base-content">
+            {teamStats.team1.name}
+          </h3>
+          <div className="grid grid-cols-5 gap-2 mt-2 text-sm">
+            <div className="text-center">
+              <div className="font-bold">{teamStats.team1.kills}</div>
+              <div className="text-xs opacity-70">Kills</div>
+            </div>
+            <div className="text-center">
+              <div className="font-bold">{teamStats.team1.deaths}</div>
+              <div className="text-xs opacity-70">Deaths</div>
+            </div>
+            {/* <div className="text-center">
+              <div className="font-bold">{teamStats.team1.damageDealt}</div>
+              <div className="text-xs opacity-70">Damage</div>
+            </div>
+            <div className="text-center">
+              <div className="font-bold">{teamStats.team1.healingDealt}</div>
+              <div className="text-xs opacity-70">Healing</div>
+            </div> */}
+            <div className="text-center">
+              <div className="font-bold">{teamStats.team1.ultimatesUsed}</div>
+              <div className="text-xs opacity-70">Ultimates</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-3 border border-gray-700 rounded-lg shadow-sm bg-base-200">
+          <h3 className="font-medium text-base-content">
+            {teamStats.team2.name}
+          </h3>
+          <div className="grid grid-cols-5 gap-2 mt-2 text-sm">
+            <div className="text-center">
+              <div className="font-bold">{teamStats.team2.kills}</div>
+              <div className="text-xs opacity-70">Kills</div>
+            </div>
+            <div className="text-center">
+              <div className="font-bold">{teamStats.team2.deaths}</div>
+              <div className="text-xs opacity-70">Deaths</div>
+            </div>
+            {/* /   <div className="text-center">
+              <div className="font-bold">{teamStats.team2.damageDealt}</div>
+              <div className="text-xs opacity-70">Damage</div>
+            </div>
+            <div className="text-center">
+              <div className="font-bold">{teamStats.team2.healingDealt}</div>
+              <div className="text-xs opacity-70">Healing</div>
+            </div>/ */}
+            <div className="text-center">
+              <div className="font-bold">{teamStats.team2.ultimatesUsed}</div>
+              <div className="text-xs opacity-70">Ultimates</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Player Stats Table */}
+      <div className="overflow-x-auto">
+        <DataTable
+          data={playerStats}
+          columns={columns}
+          getRowClassName={(row) =>
+            row.isTeam1 ? "bg-base-200/20" : "bg-base-300/20"
+          }
+        />
+      </div>
+    </div>
+  );
+};

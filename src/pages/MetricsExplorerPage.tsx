@@ -1,20 +1,22 @@
 import React, { useState, useMemo } from "react";
-import { useAtomValue } from "jotai";
-import { Container, VisualCard } from "@components";
-import { useStats } from "@library";
+import { Page, Card, VisualCard } from "@components";
 import {
-  uniqueCategoryValues,
   PlayerStatsCategoryKeys,
-  PlayerStatsNumericalKeys,
+  PlayerStatKey,
+  getStatLabel,
 } from "@library";
-import { useMetricsTableColumns, prettyFormat } from "@library";
-import { MetricsDataTable, MetricsChart, MetricsControls } from "@components";
+import { useMetricsTableColumns, formatStat } from "@library";
+import { MetricsChart, MetricsControls } from "@components";
+import { DataTable } from "../components/table/DataTable";
+import { useMatches } from "../hooks/useRepository";
+import { useStatsGrouped } from "../hooks/useStatsGrouped";
+import { StatsFilters } from "../hooks/useStats";
 
 export const MetricsExplorerPage: React.FC = () => {
   const [groupBy, setGroupBy] = useState<PlayerStatsCategoryKeys[]>([
     "playerName",
   ]);
-  const [metrics, setMetrics] = useState<PlayerStatsNumericalKeys[]>([
+  const [metrics, setMetrics] = useState<PlayerStatKey[]>([
     "eliminations",
     "deaths",
     "heroDamageDealt",
@@ -23,14 +25,59 @@ export const MetricsExplorerPage: React.FC = () => {
     Record<PlayerStatsCategoryKeys, string[]> | undefined
   >(undefined);
   const [sortBy, setSortBy] = useState<
-    PlayerStatsCategoryKeys | PlayerStatsNumericalKeys | undefined
+    PlayerStatsCategoryKeys | PlayerStatKey | undefined
   >(undefined);
   const [sortDirection, setSortDirection] = useState<
     "asc" | "desc" | undefined
   >(undefined);
 
-  const statsData = useStats(groupBy, filters, sortBy, sortDirection);
-  const uniqueValues = useAtomValue(uniqueCategoryValues.atom);
+  // Convert old filter format to new StatsFilters format
+  const statsFilters = useMemo<StatsFilters | undefined>(() => {
+    if (!filters) return undefined;
+
+    const converted: StatsFilters = {};
+    if (filters.matchId?.length) converted.matchId = filters.matchId[0];
+    if (filters.playerName?.length) converted.playerName = filters.playerName[0];
+    if (filters.playerTeam?.length) converted.team = filters.playerTeam[0];
+    if (filters.playerRole?.length) converted.role = filters.playerRole[0];
+    if (filters.playerHero?.length) converted.hero = filters.playerHero[0];
+
+    return Object.keys(converted).length > 0 ? converted : undefined;
+  }, [filters]);
+
+  const statsData = useStatsGrouped(groupBy, statsFilters, sortBy, sortDirection);
+
+  const matches = useMatches();
+  const uniqueValues = useMemo(() => {
+    const values: Record<PlayerStatsCategoryKeys, Set<string>> = {
+      matchId: new Set(),
+      roundNumber: new Set(),
+      playerTeam: new Set(),
+      playerName: new Set(),
+      playerHero: new Set(),
+      playerRole: new Set(),
+    };
+
+    for (const match of matches) {
+      for (const stat of match.playerStats.rows) {
+        values.matchId.add(stat.matchId);
+        values.roundNumber.add(stat.roundNumber);
+        values.playerTeam.add(stat.playerTeam);
+        values.playerName.add(stat.playerName);
+        values.playerHero.add(stat.playerHero);
+        values.playerRole.add(stat.playerRole);
+      }
+    }
+
+    return {
+      matchId: Array.from(values.matchId),
+      roundNumber: Array.from(values.roundNumber),
+      playerTeam: Array.from(values.playerTeam),
+      playerName: Array.from(values.playerName),
+      playerHero: Array.from(values.playerHero),
+      playerRole: Array.from(values.playerRole),
+    };
+  }, [matches]);
   const tableColumns = useMetricsTableColumns(groupBy, metrics);
 
   const [expandedFilters, setExpandedFilters] = useState<
@@ -80,7 +127,7 @@ export const MetricsExplorerPage: React.FC = () => {
     if (!statsData.rows || statsData.rows.length === 0) return null;
 
     const totals = metrics.map((metric) => {
-      const values = statsData.rows.map((row) => (row as any)[metric] || 0);
+      const values = statsData.rows.map((row) => (row as Record<string, string | number>)[metric] as number || 0);
       const total = values.reduce((sum, val) => sum + val, 0);
       const avg = total / values.length;
       const max = Math.max(...values);
@@ -95,49 +142,44 @@ export const MetricsExplorerPage: React.FC = () => {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
   // Helper to generate a unique ID for a row based on grouping keys
-  const getRowId = (row: any, groupKeys: PlayerStatsCategoryKeys[]) => {
+  const getRowId = (row: Record<string, unknown>, groupKeys: PlayerStatsCategoryKeys[]) => {
     return groupKeys.map((key) => row[key]).join("-");
   };
 
   return (
-    <Container>
-      <div className="space-y-6">
-        {/* Page Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gradient">Metrics Explorer</h1>
-            <p className="text-base-content/70 mt-1">
-              Analyze and compare player performance across all metrics
-            </p>
-          </div>
-        </div>
+    <Page>
+      <Page.Header
+        title="Metrics Explorer"
+        subtitle="Analyze and compare player performance across all metrics"
+      />
 
+      <Page.Content>
         {/* Summary Cards */}
         {summaryStats && summaryStats.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {summaryStats.map(({ metric, total, avg, max }) => (
               <VisualCard
                 key={metric}
-                title={metric.replace(/([A-Z])/g, " $1").trim()}
+                title={getStatLabel(metric)}
                 className="min-h-[120px]"
               >
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div>
                     <div className="text-xs text-base-content/60 mb-1">Total</div>
                     <div className="text-lg font-bold text-white">
-                      {prettyFormat(total)}
+                      {formatStat(metric, total)}
                     </div>
                   </div>
                   <div>
                     <div className="text-xs text-base-content/60 mb-1">Avg</div>
                     <div className="text-lg font-bold text-primary">
-                      {prettyFormat(avg)}
+                      {formatStat(metric, avg)}
                     </div>
                   </div>
                   <div>
                     <div className="text-xs text-base-content/60 mb-1">Max</div>
                     <div className="text-lg font-bold text-secondary">
-                      {prettyFormat(max)}
+                      {formatStat(metric, max)}
                     </div>
                   </div>
                 </div>
@@ -147,7 +189,7 @@ export const MetricsExplorerPage: React.FC = () => {
         )}
 
         {/* Controls */}
-        <div className="glass-panel rounded-xl p-6">
+        <Card variant="glass" className="p-6">
           <h2 className="text-xl font-bold text-white mb-4">Filters & Options</h2>
           <MetricsControls
             groupBy={groupBy}
@@ -164,26 +206,28 @@ export const MetricsExplorerPage: React.FC = () => {
             sortDirection={sortDirection}
             setSortDirection={setSortDirection}
           />
-        </div>
+        </Card>
 
         {/* Data Visualization */}
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Table View */}
-          <div className="glass-panel rounded-xl p-6">
+          <Card variant="glass" className="p-6">
             <h2 className="text-xl font-bold text-white mb-4">Data Table</h2>
             <div className="overflow-auto max-h-[600px]">
-              <MetricsDataTable
+              <DataTable
                 data={statsData.rows ?? []}
                 columns={tableColumns}
-                onRowHover={setHoveredRowId}
+                onRowHover={(row) =>
+                  setHoveredRowId(row ? getRowId(row, groupBy) : null)
+                }
                 getRowId={(row) => getRowId(row, groupBy)}
                 hoveredRowId={hoveredRowId}
               />
             </div>
-          </div>
+          </Card>
 
           {/* Chart View */}
-          <div className="glass-panel rounded-xl p-6">
+          <Card variant="glass" className="p-6">
             <h2 className="text-xl font-bold text-white mb-4">Visual Comparison</h2>
             <div className="h-[500px]">
               <MetricsChart
@@ -195,10 +239,10 @@ export const MetricsExplorerPage: React.FC = () => {
                 onPointHover={setHoveredRowId}
               />
             </div>
-          </div>
+          </Card>
         </div>
-      </div>
-    </Container>
+      </Page.Content>
+    </Page>
   );
 };
 

@@ -5,6 +5,8 @@ export const safeDivide = (a: number | string, b: number | string) => {
   return (a as number) / (b as number);
 };
 
+import { PlayerStatKey, getStatFormat } from './statConfig';
+
 export const prettyFormat = (val: number | string | undefined, decimals = 2): string => {
   if (val === undefined) {
     return 'undefined';
@@ -59,4 +61,20 @@ export const formatPercentage = (value: number | undefined, decimals = 1): strin
     return 'N/A';
   }
   return `${(value * 100).toFixed(decimals)}%`;
+};
+
+export const formatStat = (key: PlayerStatKey, value: number | undefined): string => {
+  if (value === undefined) return 'N/A';
+  
+  const format = getStatFormat(key);
+  
+  switch (format) {
+    case 'percent':
+      return formatPercentage(value);
+    case 'duration':
+      return formatDuration(value);
+    case 'number':
+    default:
+      return prettyFormat(value);
+  }
 };

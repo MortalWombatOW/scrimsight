@@ -1,29 +1,44 @@
 import { useParams } from "react-router-dom";
-import { useAtomValue } from "jotai";
-import { matchData, contextualStatAtoms } from "@library";
+import { useMemo } from "react";
 import { TeamCard, TeamStatsComparison, KillsTable } from "@components";
-import { formatTime, prettyFormat, mapNameToFileName } from "@library";
+import { formatTime, formatStat, mapNameToFileName } from "@library";
+import { useMatch } from "../hooks/useMatch";
 
 export const MatchOverviewPage = () => {
   const { matchId } = useParams<{ matchId: string }>();
-  const allMatches = useAtomValue(matchData.atom);
+  const matchData = useMatch(matchId || "");
 
   if (!matchId) {
     return <div className="text-center p-4">No match ID provided.</div>;
   }
 
-  const match = allMatches.find((m) => m.matchId === matchId);
-
-  if (!match) {
+  if (!matchData) {
     return <div className="text-center p-4">Match not found.</div>;
   }
 
+  const match = matchData.metadata;
+
   const TeamStatsDisplay = ({ teamName }: { teamName: string }) => {
-    const teamStats = useAtomValue(
-      contextualStatAtoms.teamStatsForMatchAtom({ matchId, teamName })
-    );
+    const teamStats = useMemo(() => {
+      if (!matchData) return null;
+
+      const stats = matchData.playerStats.rows
+        .filter((stat) => stat.playerTeam === teamName)
+        .reduce(
+          (acc, stat) => ({
+            eliminations: acc.eliminations + stat.eliminations,
+            deaths: acc.deaths + stat.deaths,
+            allDamageDealt: acc.allDamageDealt + stat.allDamageDealt,
+            healingDealt: acc.healingDealt + stat.healingDealt,
+          }),
+          { eliminations: 0, deaths: 0, allDamageDealt: 0, healingDealt: 0 }
+        );
+
+      return stats;
+    }, [teamName]);
+
     if (!teamStats) return null;
-    
+
     return (
       <TeamCard
         teamName={teamName}
@@ -31,10 +46,10 @@ export const MatchOverviewPage = () => {
           teamName === match.team1Name ? match.team1Players : match.team2Players
         }
         primaryStats={[
-          { value: prettyFormat(teamStats.eliminations), label: "Elims" },
+          { value: formatStat('eliminations', teamStats.eliminations), label: "Elims" },
         ]}
         secondaryStats={[
-          { value: prettyFormat(teamStats.deaths), label: "Deaths" },
+          { value: formatStat('deaths', teamStats.deaths), label: "Deaths" },
         ]}
         linkUrl={`/teams/${teamName}`}
       />

@@ -1,0 +1,68 @@
+export const STAT_CONFIG = {
+  // Base Stats
+  playtime: { label: "Playtime", format: "duration" },
+  eliminations: { label: "Eliminations", format: "number" },
+  finalBlows: { label: "Final Blows", format: "number" },
+  deaths: { label: "Deaths", format: "number" },
+  allDamageDealt: { label: "All Damage Dealt", format: "number" },
+  barrierDamageDealt: { label: "Barrier Damage Dealt", format: "number" },
+  heroDamageDealt: { label: "Hero Damage Dealt", format: "number" },
+  healingDealt: { label: "Healing Dealt", format: "number" },
+  healingReceived: { label: "Healing Received", format: "number" },
+  selfHealing: { label: "Self Healing", format: "number" },
+  damageTaken: { label: "Damage Taken", format: "number" },
+  damageBlocked: { label: "Damage Blocked", format: "number" },
+  defensiveAssists: { label: "Defensive Assists", format: "number" },
+  offensiveAssists: { label: "Offensive Assists", format: "number" },
+  ultimatesEarned: { label: "Ultimates Earned", format: "number" },
+  ultimatesUsed: { label: "Ultimates Used", format: "number" },
+  multikills: { label: "Multikills", format: "number" },
+  soloKills: { label: "Solo Kills", format: "number" },
+  objectiveKills: { label: "Objective Kills", format: "number" },
+  environmentalKills: { label: "Environmental Kills", format: "number" },
+  environmentalDeaths: { label: "Environmental Deaths", format: "number" },
+  criticalHits: { label: "Critical Hits", format: "number" },
+  shotsFired: { label: "Shots Fired", format: "number" },
+  shotsHit: { label: "Shots Hit", format: "number" },
+  shotsMissed: { label: "Shots Missed", format: "number" },
+  scopedShotsFired: { label: "Scoped Shots Fired", format: "number" },
+  scopedShotsHit: { label: "Scoped Shots Hit", format: "number" },
+
+  // Per 10 Minutes
+  eliminationsPer10Minutes: { label: "Eliminations / 10m", format: "number" },
+  finalBlowsPer10Minutes: { label: "Final Blows / 10m", format: "number" },
+  deathsPer10Minutes: { label: "Deaths / 10m", format: "number" },
+  allDamageDealtPer10Minutes: { label: "All Damage / 10m", format: "number" },
+  barrierDamageDealtPer10Minutes: { label: "Barrier Damage / 10m", format: "number" },
+  heroDamageDealtPer10Minutes: { label: "Hero Damage / 10m", format: "number" },
+  healingDealtPer10Minutes: { label: "Healing / 10m", format: "number" },
+  healingReceivedPer10Minutes: { label: "Healing Received / 10m", format: "number" },
+  selfHealingPer10Minutes: { label: "Self Healing / 10m", format: "number" },
+  damageTakenPer10Minutes: { label: "Damage Taken / 10m", format: "number" },
+  damageBlockedPer10Minutes: { label: "Damage Blocked / 10m", format: "number" },
+  defensiveAssistsPer10Minutes: { label: "Defensive Assists / 10m", format: "number" },
+  offensiveAssistsPer10Minutes: { label: "Offensive Assists / 10m", format: "number" },
+  ultimatesEarnedPer10Minutes: { label: "Ultimates Earned / 10m", format: "number" },
+  ultimatesUsedPer10Minutes: { label: "Ultimates Used / 10m", format: "number" },
+  multikillsPer10Minutes: { label: "Multikills / 10m", format: "number" },
+  soloKillsPer10Minutes: { label: "Solo Kills / 10m", format: "number" },
+  objectiveKillsPer10Minutes: { label: "Objective Kills / 10m", format: "number" },
+  environmentalKillsPer10Minutes: { label: "Environmental Kills / 10m", format: "number" },
+  environmentalDeathsPer10Minutes: { label: "Environmental Deaths / 10m", format: "number" },
+  criticalHitsPer10Minutes: { label: "Critical Hits / 10m", format: "number" },
+  shotsFiredPer10Minutes: { label: "Shots Fired / 10m", format: "number" },
+  shotsHitPer10Minutes: { label: "Shots Hit / 10m", format: "number" },
+  shotsMissedPer10Minutes: { label: "Shots Missed / 10m", format: "number" },
+  scopedShotsFiredPer10Minutes: { label: "Scoped Shots Fired / 10m", format: "number" },
+  scopedShotsHitPer10Minutes: { label: "Scoped Shots Hit / 10m", format: "number" },
+
+  // Rates / Accuracy
+  weaponAccuracy: { label: "Weapon Accuracy", format: "percent" },
+  scopedWeaponAccuracy: { label: "Scoped Weapon Accuracy", format: "percent" },
+  criticalHitRate: { label: "Critical Hit Rate", format: "percent" },
+} as const;
+
+export type PlayerStatKey = keyof typeof STAT_CONFIG;
+
+export const getStatLabel = (key: PlayerStatKey) => STAT_CONFIG[key].label;
+export const getStatFormat = (key: PlayerStatKey) => STAT_CONFIG[key].format;

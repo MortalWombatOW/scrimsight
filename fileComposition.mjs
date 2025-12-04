@@ -5,12 +5,30 @@ import { createFileComposition } from "eslint-plugin-project-structure";
 
 export const fileCompositionConfig = createFileComposition({
   filesRules: [
+    // Test Files Pattern - Allow describe blocks, variables, and helper functions
+    // This must come FIRST to take precedence over other patterns
+    {
+      filePattern: [["src/**/*.test.ts", "src/**/*.test.tsx"]],
+      allowOnlySpecifiedSelectors: {
+        fileRoot: true,
+        fileExport: true,
+        nestedSelectors: false,
+      },
+      rootSelectorsLimits: [
+        { selector: "variableExpression", limit: 20 }, // describe calls and other expressions
+        { selector: "variable", limit: 20 }, // Constants for test data
+        { selector: "function", limit: 20 }, // Helper functions
+        { selector: "arrowFunction", limit: 20 }, // Arrow helper functions
+      ],
+      rules: [],
+    },
+
     // AtomFamily Pattern - Files ending with AtomFamily.ts
     {
       filePattern: "src/atoms/*AtomFamily.ts",
       allowOnlySpecifiedSelectors: {
         fileRoot: true,
-        fileExport: true, 
+        fileExport: true,
         nestedSelectors: false,
       },
       rootSelectorsLimits: [
@@ -20,12 +38,12 @@ export const fileCompositionConfig = createFileComposition({
       rules: [
         {
           selector: "arrowFunction",
-          scope: "fileExport", 
+          scope: "fileExport",
           format: "{fileName}Fn", // Named function export
-          positionIndex: 0, 
+          positionIndex: 0,
         },
         {
-          selector: "variable", 
+          selector: "variable",
           scope: "fileExport",
           format: "default", // Default export
           positionIndex: 1,
@@ -55,7 +73,7 @@ export const fileCompositionConfig = createFileComposition({
         },
         // Private atom variable (non-exported)
         {
-          selector: "variable", 
+          selector: "variable",
           scope: "fileRoot",
           format: "_{camelCase}",
           positionIndex: 1,
@@ -88,7 +106,7 @@ export const fileCompositionConfig = createFileComposition({
       filePattern: [["src/atoms/*.ts", "!src/atoms/index.ts", "!src/atoms/*.test.ts", "!src/atoms/*AtomFamily.ts", "!src/atoms/*Input*.ts", "!src/atoms/atomTemplate.ts.txt"]],
       allowOnlySpecifiedSelectors: {
         fileRoot: true,
-        fileExport: true, 
+        fileExport: true,
         nestedSelectors: false,
       },
       rootSelectorsLimits: [
@@ -99,38 +117,16 @@ export const fileCompositionConfig = createFileComposition({
         // Implementation function export (named export for testing)
         {
           selector: "arrowFunction",
-          scope: "fileExport", 
-          format: "{fileName}Fn", 
-          positionIndex: 0, 
+          scope: "fileExport",
+          format: "{fileName}Fn",
+          positionIndex: 0,
         },
         // Atom default export (unnamed default export)
         {
-          selector: "variable", 
+          selector: "variable",
           scope: "fileExport",
           format: "default",
           positionIndex: 1,
-        },
-      ],
-    },
-
-    // Test Files Pattern - Require exactly one describe statement
-    {
-      filePattern: "src/**/*.test.ts",
-      allowOnlySpecifiedSelectors: {
-        fileRoot: true,
-        fileExport: true,
-        nestedSelectors: false,
-      },
-      rootSelectorsLimits: [
-        { selector: "variableExpression", limit: 1 }, // Exactly one describe call
-      ],
-      rules: [
-        // Require exactly one describe call at file root
-        {
-          selector: "variableExpression",
-          scope: "fileRoot",
-          format: "describe",
-          positionIndex: 0,
         },
       ],
     },

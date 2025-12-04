@@ -21,12 +21,6 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@atoms/*": [
-        "src/atoms/*"
-      ],
-      "@atoms": [
-        "src/atoms/index.ts"
-      ],
       "@components/*": [
         "src/components/*"
       ],

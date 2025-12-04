@@ -1,39 +1,17 @@
 # TypeScript Guidelines
 
-Scrimsight runs with `"strict": true`, so the TypeScript compiler should be treated as
-the first line of defence against bugs. The tips below keep types predictable across
-the project.
+## Import Aliases
+We use `tsconfig` paths to avoid `../../` hell.
 
----
+* ✅ `import { useScrims } from '@hooks';`
+* ❌ `import { useScrims } from '../../hooks/useScrims';`
 
-## 1. Central type registry
+## Strict Mode
+`strict: true` is enabled.
+* No implicit `any`.
+* All component props must be typed.
+* Use `zod` for validating external data (file ingestion) in `src/data`.
 
-Domain types that need to be shared live in `src/atoms/index.ts`. Keeping types close to
-the atoms that use them makes auto-imports reliable and helps the
-`project-structure/file-composition` rule enforce consistency.
-
----
-
-## 2. Import patterns
-
-| Situation | Preferred import |
-| --------- | ---------------- |
-| Using an atom in a component | `import playerStatsAtom from '@atoms/playerStatsAtom';` |
-| Reusing a shared type | `import type { PlayerStats } from '@atoms';` |
-| Registering an atom in the index | `import playerStatsAtom from './playerStatsAtom';` |
-
-Stick to the path aliases defined in `tsconfig.json` so lint rules continue to validate
-dependencies correctly.
-
----
-
-## 3. General advice
-
-* Prefer `unknown` over `any` when handling untyped JSON payloads—narrow as soon as
-  possible using type guards or `zod` schemas.
-* Use discriminated unions for status enums (`"loading" | "ready" | "error"`) rather
-  than boolean flags.
-* If a helper is reused across multiple files, move it into `src/lib` to keep atom files
-  small and focused.
-* Keep literal values (for example, hero names) in dedicated constants in `src/lib` so
-  the same strings are reused across atoms, components, and tests.
+## Type Locations
+* **Domain Entities**: Define in `src/data/types.ts` if they represent raw data, or `src/domain/{context}.ts` if they are derived.
+* **Component Props**: Define inline with the component or in a separate `types.ts` if shared.

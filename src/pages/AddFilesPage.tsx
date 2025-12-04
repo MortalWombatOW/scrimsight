@@ -17,18 +17,17 @@ declare global {
   }
 }
 
-import { useAtom, useAtomValue } from "jotai";
-import { logFileInputAtom, sampleDataEnabledAtom } from "@library";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { MdDelete } from "react-icons/md";
-import { Container } from "@components";
+import { Page, Card } from "@components";
+import { useLoadFiles, useIsProcessing } from "../hooks/useRepository";
+import { useSampleData } from "../hooks/useSampleData";
 
 export const AddFilesPage = () => {
-  const [, setFiles] = useAtom(logFileInputAtom);
-  const logFileInput = useAtomValue(logFileInputAtom);
-  const [sampleDataEnabled, setSampleDataEnabled] = useAtom(
-    sampleDataEnabledAtom
-  );
+  const [files, setFiles] = useState<File[]>([]);
+  const loadFiles = useLoadFiles();
+  const isProcessing = useIsProcessing();
+  const { enabled: sampleDataEnabled, toggle: setSampleDataEnabled } = useSampleData();
 
   const handleAddDirectory = async () => {
     try {
@@ -54,6 +53,7 @@ export const AddFilesPage = () => {
       }
 
       setFiles(files);
+      loadFiles(files);
     } catch (error) {
       console.error("Error adding directory:", error);
     }
@@ -68,95 +68,95 @@ export const AddFilesPage = () => {
           file.name.endsWith(".txt")
       );
       setFiles(filteredFiles);
+      loadFiles(filteredFiles);
     }
   };
 
   const handleRemoveFile = (index: number) => {
-    const updatedFiles = logFileInput.files.filter((_, i) => i !== index);
+    const updatedFiles = files.filter((_, i) => i !== index);
     setFiles(updatedFiles);
   };
 
   return (
-    <Container>
-      <h1 className="text-2xl font-bold mb-6 text-base-900 dark:text-white">
-        Add Files
-      </h1>
+    <Page>
+      <Page.Header title="Add Files" />
 
-      <div className="mb-6 p-4 border border-gray-700 border-gray-700 rounded-md dark:border-gray-700">
-        <h2 className="text-lg font-semibold mb-2 text-base-900 dark:text-white">
-          Sample Data
-        </h2>
-        <label className="inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            className="sr-only peer"
-            checked={sampleDataEnabled}
-            onChange={(e) => setSampleDataEnabled(e.target.checked)}
-          />
-          <div className="relative w-11 h-6 bg-base-100 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-800 rounded-full peer dark:bg-base-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base after:border-gray-700 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-700 peer-checked:bg-primary-600"></div>
-        </label>
-      </div>
+      <Page.Content>
+        <Card className="p-4">
+          <h2 className="text-lg font-semibold mb-2 text-base-900 dark:text-white">
+            Sample Data
+          </h2>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              className="sr-only peer"
+              checked={sampleDataEnabled}
+              onChange={(e) => setSampleDataEnabled(e.target.checked)}
+            />
+            <div className="relative w-11 h-6 bg-base-100 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-800 rounded-full peer dark:bg-base-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base after:border-gray-700 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-700 peer-checked:bg-primary-600"></div>
+          </label>
+        </Card>
 
-      <div className="mb-6 p-4 border border-gray-700 border-gray-700 rounded-lg">
-        {" "}
-        {/* Use theme border border-gray-700 and radius */}
-        {/* Use DaisyUI button classes */}
-        <button
-          className={`btn rounded-lg mb-4 ${
-            window.showDirectoryPicker ? "btn-primary" : "btn-disabled"
-          }`}
-          onClick={handleAddDirectory}
-          disabled={!window.showDirectoryPicker}
-        >
-          Add Directory
-        </button>
-        {!window.showDirectoryPicker && (
-          <p className="text-sm text-red-500 mt-2">
-            Directory upload is only supported in Chrome.
-          </p>
-        )}
-      </div>
+        <Card className="p-4">
+          <button
+            className={`btn rounded-lg mb-4 ${
+              window.showDirectoryPicker ? "btn-primary" : "btn-disabled"
+            }`}
+            onClick={handleAddDirectory}
+            disabled={!window.showDirectoryPicker}
+          >
+            Add Directory
+          </button>
+          {!window.showDirectoryPicker && (
+            <p className="text-sm text-red-500 mt-2">
+              Directory upload is only supported in Chrome.
+            </p>
+          )}
+        </Card>
 
-      <div className="mb-6 p-4 border border-gray-700 border-gray-700 rounded-lg">
-        {" "}
-        {/* Use theme border border-gray-700 and radius */}
-        <h2 className="text-lg font-semibold mb-2">Upload Files</h2>
-        {/* Style label like an outline button */}
-        <label className="btn btn-outline rounded-lg cursor-pointer">
-          Browse Files
-          <input
-            type="file"
-            multiple
-            accept="text/*,.txt"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-        </label>
-      </div>
+        <Card className="p-4">
+          <h2 className="text-lg font-semibold mb-2">Upload Files</h2>
+          <label className="btn btn-outline rounded-lg cursor-pointer">
+            Browse Files
+            <input
+              type="file"
+              multiple
+              accept="text/*,.txt"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </label>
+        </Card>
 
-      <div className="bg-base rounded-lg shadow-md p-4 dark:bg-base-800">
-        <h2 className="text-lg font-semibold mb-4 text-base-900 dark:text-white">
-          Files Added
-        </h2>
-        <ul className="divide-y divide-base-200 dark:divide-base-700">
-          {logFileInput.files.map((file, index) => (
-            <li key={index} className="py-3 flex justify-between items-center">
-              <span className="text-base-800 dark:text-base-200">
-                {file.name}
-              </span>
-              {/* Use DaisyUI ghost button for delete */}
-              <button
-                className="btn btn-ghost btn-circle btn-sm text-base-content/70 hover:bg-error/20 hover:text-error"
-                onClick={() => handleRemoveFile(index)}
-                aria-label="delete"
-              >
-                <MdDelete size={20} />
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </Container>
+        <Card className="p-4">
+          <h2 className="text-lg font-semibold mb-4 text-base-900 dark:text-white">
+            Files Added
+          </h2>
+          {isProcessing && (
+            <div className="mb-4 p-3 bg-primary-100 dark:bg-primary-900/20 rounded-lg">
+              <p className="text-primary-700 dark:text-primary-300">Processing files...</p>
+            </div>
+          )}
+          <ul className="divide-y divide-base-200 dark:divide-base-700">
+            {files.map((file, index) => (
+              <li key={index} className="py-3 flex justify-between items-center">
+                <span className="text-base-800 dark:text-base-200">
+                  {file.name}
+                </span>
+                <button
+                  className="btn btn-ghost btn-circle btn-sm text-base-content/70 hover:bg-error/20 hover:text-error"
+                  onClick={() => handleRemoveFile(index)}
+                  aria-label="delete"
+                  disabled={isProcessing}
+                >
+                  <MdDelete size={20} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      </Page.Content>
+    </Page>
   );
 };
 
