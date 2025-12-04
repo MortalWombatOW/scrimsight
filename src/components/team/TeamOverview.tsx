@@ -11,7 +11,7 @@ import {
 import { TeamCard } from "@components";
 import { formatPercentage } from "@library";
 import { ErrorMessage } from "@components";
-import { useMatches } from "../hooks/useRepository";
+import { useMatches } from "../../hooks/useRepository";
 
 export const TeamOverview = () => {
   const { teamId } = useParams<{ teamId: string }>();

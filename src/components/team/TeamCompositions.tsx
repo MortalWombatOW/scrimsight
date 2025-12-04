@@ -8,7 +8,7 @@ import {
 import { formatDuration } from "@library";
 import { RoleIcon } from "@icons";
 import { ErrorMessage } from "@components";
-import { useMatches } from "../hooks/useRepository";
+import { useMatches } from "../../hooks/useRepository";
 
 interface TeamComposition {
   composition: string[];

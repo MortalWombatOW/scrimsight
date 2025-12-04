@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo } from "react";
 import { HeatmapGrid } from "@components";
-import { useMatch } from "../hooks/useMatch";
+import { useMatch } from "../../hooks/useMatch";
 
 interface KillsTableProps {
   matchId: string;

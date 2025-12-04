@@ -3,8 +3,8 @@ import { useParams } from "react-router-dom";
 import { formatTime } from "@library";
 import { ErrorMessage } from "@components";
 import { MatchCard } from "@components";
-import { useMatches } from "../hooks/useRepository";
-import type { MatchMetadata } from "../data/types";
+import { useMatches } from "../../hooks/useRepository";
+import type { MatchMetadata } from "../../data/types";
 
 // Define a type for keys of MatchMetadata that hold string values
 type StringMatchDataKeys = {

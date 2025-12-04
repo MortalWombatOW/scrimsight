@@ -8,9 +8,9 @@ import { IoStatsChartOutline } from "react-icons/io5";
 import { useEffect, useMemo } from "react";
 import { RoleIcon } from "@icons";
 import { CiMap } from "react-icons/ci";
-import { useMatches } from "../hooks/useRepository";
-import { useScrims } from "../hooks/useScrims";
-import { useStats } from "../hooks/useStats";
+import { useMatches } from "../../hooks/useRepository";
+import { useScrims } from "../../hooks/useScrims";
+import { useStats } from "../../hooks/useStats";
 
 const getTitle = (pathname: string) => {
   if (pathname === "/") {

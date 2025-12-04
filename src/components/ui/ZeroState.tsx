@@ -2,8 +2,8 @@ import { GoLinkExternal } from "react-icons/go";
 import { MdOutlineFileOpen } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { useState, useCallback } from "react";
-import { useLoadFiles } from "../hooks/useRepository";
-import { useSampleData } from "../hooks/useSampleData";
+import { useLoadFiles } from "../../hooks/useRepository";
+import { useSampleData } from "../../hooks/useSampleData";
 
 const ZeroState = () => {
   const { enable: enableSampleData } = useSampleData();

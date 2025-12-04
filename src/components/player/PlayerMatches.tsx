@@ -2,7 +2,7 @@ import { type ReactNode, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { MatchCard } from "@components";
 import { formatTime } from "@library";
-import { useMatches } from "../hooks/useRepository";
+import { useMatches } from "../../hooks/useRepository";
 
 export const PlayerMatches = (): ReactNode => {
   const { playerName } = useParams<{ playerName: string }>();

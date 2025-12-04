@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { RoleIcon } from "@icons";
 import { formatStat } from "@library";
 import { Link } from "react-router-dom";
-import { useStatsWithDerived } from "../hooks/useStats";
-import { PlayerStats } from "../data/types";
+import { useStatsWithDerived } from "../../hooks/useStats";
+import { PlayerStats } from "../../data/types";
 
 export const TopPlayersList = () => {
   const allStats = useStatsWithDerived();

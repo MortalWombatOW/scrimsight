@@ -9,9 +9,9 @@ import {
 } from "recharts";
 import { ColumnDef } from "@tanstack/react-table";
 import { PlayerStatKey, STAT_CONFIG, getStatLabel, formatStat } from "@library";
-import { useMatch } from "../hooks/useMatch";
-import { useStats } from "../hooks/useStats";
-import { DataTable } from "./Table/DataTable";
+import { useMatch } from "../../hooks/useMatch";
+import { useStats } from "../../hooks/useStats";
+import { DataTable } from "../table/DataTable";
 
 interface AllPlayerComparisonProps {
   matchId: string;

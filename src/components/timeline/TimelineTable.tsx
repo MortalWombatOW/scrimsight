@@ -1,6 +1,6 @@
 import { useMemo, type ReactNode } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "../Table/DataTable";
+import { DataTable } from "../table/DataTable";
 import { useTimelineContext } from "./TimelineContext";
 import { formatDuration } from "@library";
 

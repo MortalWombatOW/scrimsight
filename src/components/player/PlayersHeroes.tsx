@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "./Table/DataTable";
+import { DataTable } from "../table/DataTable";
 import { OverwatchRole, getHeroImage } from "@library";
-import { useStatsWithDerived } from "../hooks/useStats";
+import { useStatsWithDerived } from "../../hooks/useStats";
 import { RoleIcon } from "@icons";
 import { prettyFormat } from "@library";
 

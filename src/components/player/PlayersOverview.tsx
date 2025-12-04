@@ -2,7 +2,7 @@ import { type ReactNode, useState, useMemo } from "react";
 import { RoleIcon } from "@icons";
 import { getRoleFromHero, OverwatchRole } from "@library";
 import { PlayerList } from "@components";
-import { useMatches } from "../hooks/useRepository";
+import { useMatches } from "../../hooks/useRepository";
 
 // Define sort options for players
 type PlayerSortOption = "name" | "kda" | "elims" | "role";

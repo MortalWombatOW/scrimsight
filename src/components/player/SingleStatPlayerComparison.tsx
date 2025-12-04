@@ -8,15 +8,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "./Table/DataTable";
+import { DataTable } from "../table/DataTable";
 import {
   PlayerStatKey,
   STAT_CONFIG,
   getStatLabel,
   formatStat,
 } from "@library";
-import { useMatch } from "../hooks/useMatch";
-import { useStatsWithDerived } from "../hooks/useStats";
+import { useMatch } from "../../hooks/useMatch";
+import { useStatsWithDerived } from "../../hooks/useStats";
 
 interface SingleStatPlayerComparisonProps {
   matchId: string;

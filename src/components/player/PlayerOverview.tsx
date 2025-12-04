@@ -1,5 +1,5 @@
 import { type ReactNode, useMemo } from "react";
-import { useStatsWithDerived } from "../hooks/useStats";
+import { useStatsWithDerived } from "../../hooks/useStats";
 import { PlayerCard } from "@components";
 import { StatCard } from "@components";
 import {
@@ -17,7 +17,7 @@ import { format } from "date-fns";
 import { getRoleFromHero } from "@library";
 import { useParams } from "react-router-dom";
 import { formatStat } from "@library";
-import { useMatches } from "../hooks/useRepository";
+import { useMatches } from "../../hooks/useRepository";
 
 // interface PlayerOverviewProps { // Remove prop interface
 //   playerName: string;

@@ -7,7 +7,7 @@ import {
   getStatLabel,
 } from "@library";
 import { VisualCard } from "@components";
-import { usePlayerRankings } from "../hooks/useStats";
+import { usePlayerRankings } from "../../hooks/useStats";
 
 interface PlayerStatsCardProps {
   playerName: string;

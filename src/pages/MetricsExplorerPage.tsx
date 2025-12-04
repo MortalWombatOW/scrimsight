@@ -7,7 +7,7 @@ import {
 } from "@library";
 import { useMetricsTableColumns, formatStat } from "@library";
 import { MetricsChart, MetricsControls } from "@components";
-import { DataTable } from "../components/Table/DataTable";
+import { DataTable } from "../components/table/DataTable";
 import { useMatches } from "../hooks/useRepository";
 import { useStatsGrouped } from "../hooks/useStatsGrouped";
 import { StatsFilters } from "../hooks/useStats";

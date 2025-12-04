@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useMemo } from "react";
 import { PlayerCard, ErrorMessage } from "@components";
 import { formatStat } from "@library";
-import { useMatches } from "../hooks/useRepository";
+import { useMatches } from "../../hooks/useRepository";
 
 // Component to render a single player card
 const PlayerCardLoader = ({

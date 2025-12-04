@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { PlayerStatKey, getStatLabel, formatStat } from "@library";
 import { ProgressBar } from "@components";
-import { useMatch } from "../hooks/useMatch";
+import { useMatch } from "../../hooks/useMatch";
 
 interface TeamStatsComparisonProps {
   matchId: string;

@@ -1,12 +1,12 @@
 import { type ReactNode, useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "./Table/DataTable";
+import { DataTable } from "../table/DataTable";
 import {
   OverwatchRole,
   getRoleFromHero,
   getHeroImage,
 } from "@library";
-import { useStatsWithDerived } from "../hooks/useStats";
+import { useStatsWithDerived } from "../../hooks/useStats";
 import { RoleIcon } from "@icons";
 import {
   BarChart,

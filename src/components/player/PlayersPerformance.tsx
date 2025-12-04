@@ -1,9 +1,9 @@
 import { useState, useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "./Table/DataTable";
+import { DataTable } from "../table/DataTable";
 import { OverwatchRole, PlayerStatKey, formatStat } from "@library";
 import { RoleIcon } from "@icons";
-import { useStatsWithDerived } from "../hooks/useStats";
+import { useStatsWithDerived } from "../../hooks/useStats";
 
 type StatCategory = "damage" | "healing" | "utility";
 

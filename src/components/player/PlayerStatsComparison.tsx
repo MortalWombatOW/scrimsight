@@ -1,6 +1,6 @@
 import { PlayerStatsCard } from "@components";
-import { useMatch } from "../hooks/useMatch";
-import { useStats } from "../hooks/useStats";
+import { useMatch } from "../../hooks/useMatch";
+import { useStats } from "../../hooks/useStats";
 
 interface PlayerStatsComparisonProps {
   matchId: string;

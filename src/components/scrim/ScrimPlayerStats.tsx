@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { formatStat } from "@library";
 import { PlayerCard } from "@components";
-import { useScrim } from "../hooks/useScrims";
-import { useStats } from "../hooks/useStats";
+import { useScrim } from "../../hooks/useScrims";
+import { useStats } from "../../hooks/useStats";
 
 interface ScrimPlayerStatsProps {
   scrimId: string;
