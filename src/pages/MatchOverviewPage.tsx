@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useMemo } from "react";
 import { TeamCard, TeamStatsComparison, KillsTable } from "@components";
+import { WinConditionCard } from "../components/analysis/WinConditionCard";
+import { useFightAnalysis } from "../hooks/useFightAnalysis";
 import { formatTime, formatStat, mapNameToFileName } from "@library";
 import { useMatch } from "../hooks/useMatch";
 
@@ -17,6 +19,7 @@ export const MatchOverviewPage = () => {
   }
 
   const match = matchData.metadata;
+  const { getTeamWinConditions } = useFightAnalysis(matchData.teamfights);
 
   const TeamStatsDisplay = ({ teamName }: { teamName: string }) => {
     const teamStats = useMemo(() => {
@@ -131,6 +134,18 @@ export const MatchOverviewPage = () => {
       <div className="grid md:grid-cols-2 gap-6">
         <TeamStatsDisplay teamName={match.team1Name} />
         <TeamStatsDisplay teamName={match.team2Name} />
+      </div>
+
+      {/* Win Conditions */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <WinConditionCard 
+          teamName={match.team1Name} 
+          metrics={getTeamWinConditions(match.team1Name)} 
+        />
+        <WinConditionCard 
+          teamName={match.team2Name} 
+          metrics={getTeamWinConditions(match.team2Name)} 
+        />
       </div>
 
       {/* Team Stats Comparison */}

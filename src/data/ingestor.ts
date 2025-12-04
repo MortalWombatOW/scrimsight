@@ -289,7 +289,7 @@ export async function ingestFile(params: IngestFileParams): Promise<ProcessedMat
   const roundTimes = calculateRoundTimes(events);
   const mapTimes = calculateMapTimes(events, roundTimes);
   const ultimateEvents = calculateUltimateEvents(events);
-  const teamfights = calculateTeamfights(events, metadata, ultimateEvents);
+  const teamfights = calculateTeamfights(events, metadata);
   const playerStats = calculatePlayerStats(events, roundTimes);
   const playerStatusTimeline = calculatePlayerStatusTimeline(events, matchId);
 

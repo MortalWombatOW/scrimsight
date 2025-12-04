@@ -2,227 +2,185 @@ import {
   Teamfight,
   MatchEvents,
   MatchMetadata,
-  UltimateEvent,
-} from '../types';
+} from '../types/domain';
+import { calculateUltCycles, getUltCycleForFight } from './economy';
 
-interface PlayerInteractionEvent {
-  matchId: string;
-  playerName: string;
-  playerTeam: string;
-  playerInteractionEventTime: number;
-  playerInteractionEventType: string;
-  otherPlayerName: string;
-}
+const TEAMFIGHT_SUSTAIN_TIME = 12; // seconds
 
-const TEAMFIGHT_BUFFER_TIME = 10; // seconds
-const TEAMFIGHT_PADDING = 2; // seconds to add before/after deaths
-
-function createPlayerInteractionEvents(events: MatchEvents): PlayerInteractionEvent[] {
-  const interactions: PlayerInteractionEvent[] = [];
-
-  for (const kill of events.kills) {
-    interactions.push({
-      matchId: kill.matchId,
-      playerName: kill.attackerName,
-      playerTeam: kill.attackerTeam,
-      playerInteractionEventTime: kill.matchTime,
-      playerInteractionEventType: 'Killed player',
-      otherPlayerName: kill.victimName,
-    });
-  }
-
-  return interactions.sort((a, b) => a.playerInteractionEventTime - b.playerInteractionEventTime);
+interface FightEvent {
+  time: number;
+  type: 'kill' | 'ult_start' | 'rez';
+  data: any;
 }
 
 export function calculateTeamfights(
   events: MatchEvents,
-  metadata: MatchMetadata,
-  ultimateEvents: UltimateEvent[]
+  metadata: MatchMetadata
 ): Teamfight[] {
-  const playerInteractionEvents = createPlayerInteractionEvents(events);
-
-  const killEvents = playerInteractionEvents.filter(
-    (event) => event.playerInteractionEventType === 'Killed player'
-  );
-
-  if (killEvents.length === 0) {
-    return [];
-  }
-
-  const { matchId, team1Name, team2Name, team1Players, team2Players } = metadata;
-
-  const teamfights: Teamfight[] = [];
-
-  const allPlayersWithTeams = [
-    ...team1Players.map((p) => ({ playerName: p, teamName: team1Name })),
-    ...team2Players.map((p) => ({ playerName: p, teamName: team2Name })),
-  ];
-
-  let teamfightStartTime: number | null = null;
-  let teamfightKills: typeof killEvents = [];
-
-  for (let i = 0; i < killEvents.length; i++) {
-    const currentKill = killEvents[i];
-    const currentTime = currentKill.playerInteractionEventTime;
-
-    if (
-      teamfightStartTime === null ||
-      (i > 0 && currentTime - killEvents[i - 1].playerInteractionEventTime > TEAMFIGHT_BUFFER_TIME)
-    ) {
-      if (teamfightStartTime !== null && i > 0) {
-        const fight = createTeamfight(
-          teamfightStartTime,
-          killEvents[i - 1].playerInteractionEventTime,
-          teamfightKills,
-          matchId,
-          team1Name,
-          team2Name,
-          allPlayersWithTeams,
-          ultimateEvents
-        );
-        teamfights.push(fight);
+  const { matchId, team1Name, team2Name } = metadata;
+  
+  // 1. Flatten relevant events into a time-sorted list
+  const fightEvents: FightEvent[] = [];
+  
+  events.kills.forEach(e => fightEvents.push({ time: e.matchTime, type: 'kill', data: e }));
+  events.ultimateStart.forEach(e => fightEvents.push({ time: e.matchTime, type: 'ult_start', data: e }));
+  events.mercyRez.forEach(e => fightEvents.push({ time: e.matchTime, type: 'rez', data: e }));
+  
+  fightEvents.sort((a, b) => a.time - b.time);
+  
+  // 2. Cluster events into fights
+  const fights: Teamfight[] = [];
+  const ultCycles = calculateUltCycles(events);
+  
+  let currentFightEvents: FightEvent[] = [];
+  let fightStartTime: number | null = null;
+  let lastEventTime: number | null = null;
+  
+  for (let i = 0; i < fightEvents.length; i++) {
+    const event = fightEvents[i];
+    
+    // Start a new fight if none active
+    if (fightStartTime === null) {
+      // Only start on kill or ult (not rez, though rez usually implies a death happened)
+      if (event.type === 'kill' || event.type === 'ult_start') {
+        fightStartTime = event.time;
+        lastEventTime = event.time;
+        currentFightEvents.push(event);
       }
-
-      teamfightStartTime = currentTime;
-      teamfightKills = [currentKill];
-    } else {
-      teamfightKills.push(currentKill);
+      continue;
     }
-
-    if (i === killEvents.length - 1 && teamfightStartTime !== null) {
-      const fight = createTeamfight(
-        teamfightStartTime,
-        currentTime,
-        teamfightKills,
+    
+    // Check if we should sustain the current fight
+    if (event.time - lastEventTime! <= TEAMFIGHT_SUSTAIN_TIME) {
+      currentFightEvents.push(event);
+      lastEventTime = event.time;
+    } else {
+      // Fight ended. Close it.
+      // The fight ends at the last event time + some buffer? 
+      // Or just the last event time?
+      // The prompt says "Close the fight if no significant events occur for 12 seconds."
+      // So the fight effectively ended at lastEventTime.
+      // But we might want to include the "quiet period" or just the active period.
+      // Usually "fight duration" is active time.
+      
+      fights.push(createTeamfight(
         matchId,
         team1Name,
         team2Name,
-        allPlayersWithTeams,
-        ultimateEvents
-      );
-      teamfights.push(fight);
+        fightStartTime,
+        lastEventTime!,
+        currentFightEvents,
+        ultCycles
+      ));
+      
+      // Reset
+      fightStartTime = null;
+      lastEventTime = null;
+      currentFightEvents = [];
+      
+      // Re-process this event as it might start a new fight
+      i--; 
     }
   }
-
-  return teamfights;
+  
+  // Close final fight if exists
+  if (fightStartTime !== null && currentFightEvents.length > 0) {
+     fights.push(createTeamfight(
+        matchId,
+        team1Name,
+        team2Name,
+        fightStartTime,
+        lastEventTime!,
+        currentFightEvents,
+        ultCycles
+      ));
+  }
+  
+  return fights;
 }
 
 function createTeamfight(
-  startTime: number,
-  endTime: number,
-  kills: PlayerInteractionEvent[],
   matchId: string,
   team1Name: string,
   team2Name: string,
-  allPlayersWithTeams: { playerName: string; teamName: string }[],
-  ultimateEvents: UltimateEvent[]
+  startTime: number,
+  endTime: number,
+  events: FightEvent[],
+  ultCycles: any[] // UltCycle[]
 ): Teamfight {
-  const adjustedStartTime = Math.max(0, startTime - TEAMFIGHT_PADDING);
-  const adjustedEndTime = endTime + TEAMFIGHT_PADDING;
-
+  const duration = endTime - startTime;
+  
+  // Extract specific event types
+  const kills = events.filter(e => e.type === 'kill').map(e => e.data);
+  
+  // Determine Winner
   let team1Kills = 0;
   let team2Kills = 0;
-
-  kills.forEach((kill) => {
-    if (kill.playerTeam === team1Name) {
-      team1Kills++;
-    } else {
-      team2Kills++;
-    }
+  kills.forEach(k => {
+    if (k.attackerTeam === team1Name) team1Kills++; // Attacker kills victim? Wait.
+    // If attackerTeam is team1, it's a kill FOR team1.
+    // But we should check victimTeam.
+    // If victimTeam is team2, team1 got a kill.
+    // If victimTeam is team1, team2 got a kill.
+    if (k.victimTeam === team2Name) team1Kills++;
+    if (k.victimTeam === team1Name) team2Kills++;
   });
-
-  let winner: string | null;
-  if (team1Kills > team2Kills) {
-    winner = team1Name;
-  } else if (team2Kills > team1Kills) {
-    winner = team2Name;
-  } else {
-    winner = null;
+  
+  let winner: string | null = null;
+  if (team1Kills > team2Kills) winner = team1Name;
+  else if (team2Kills > team1Kills) winner = team2Name;
+  
+  // First Pick
+  let firstPick = null;
+  if (kills.length > 0) {
+    const firstKill = kills[0]; // Already sorted by time
+    firstPick = {
+      player: firstKill.attackerName,
+      team: firstKill.attackerTeam,
+      hero: firstKill.attackerHero,
+      victim: firstKill.victimName,
+      time: firstKill.matchTime
+    };
   }
-
-  const fightId = `${matchId}-${adjustedStartTime.toFixed(3)}`;
-
-  let firstKillPlayer: string | undefined;
-  let firstKillTeam: string | undefined;
-  let firstKillTime: number | undefined;
-  let firstDeathPlayer: string | undefined;
-  let firstDeathTeam: string | undefined;
-  let firstDeathTime: number | undefined;
-
-  const sortedKills = kills.sort((a, b) => a.playerInteractionEventTime - b.playerInteractionEventTime);
-
-  if (sortedKills.length > 0) {
-    const firstKillEvent = sortedKills[0];
-    firstKillPlayer = firstKillEvent.playerName;
-    firstKillTeam = firstKillEvent.playerTeam;
-    firstKillTime = firstKillEvent.playerInteractionEventTime;
-    firstDeathPlayer = firstKillEvent.otherPlayerName;
-    firstDeathTime = firstKillEvent.playerInteractionEventTime;
-
-    const victimPlayerData = allPlayersWithTeams.find((p) => p.playerName === firstDeathPlayer);
-    firstDeathTeam = victimPlayerData?.teamName;
+  
+  // Economy
+  const { used } = getUltCycleForFight(startTime, endTime, ultCycles);
+  const team1UltsUsed = used.filter((u: any) => u.playerTeam === team1Name).map((u: any) => u.hero); // Using hero name as proxy for ult name? Or do we have ult name?
+  // UltCycle has 'hero'. We don't have ult name in UltCycle, but we can infer it or just use hero name.
+  // The requirement says "List of ult names (e.g., ["Nano Boost", "Blizzard"])".
+  // We don't have ult names in UltCycle, only hero.
+  // We can map hero to ult name if we had a config, or just use Hero name for now.
+  // Let's use Hero name for now as "Genji Blade" is implied by "Genji".
+  const team2UltsUsed = used.filter((u: any) => u.playerTeam === team2Name).map((u: any) => u.hero);
+  
+  // Classification
+  const totalUlts = team1UltsUsed.length + team2UltsUsed.length;
+  let type: Teamfight['type'] = 'dry';
+  if (totalUlts === 0) type = 'dry';
+  else if (totalUlts >= 4) type = 'all-in';
+  else type = 'ult-invested';
+  
+  // Stagger check: Very short fight with few kills?
+  // Or isolated pick?
+  if (duration < 5 && kills.length <= 1 && totalUlts === 0) {
+    type = 'stagger';
   }
-
-  const team1PlayersWithUltimatesChargedAtStart = ultimateEvents
-    .filter(
-      (ult) =>
-        ult.matchId === matchId &&
-        ult.playerTeam === team1Name &&
-        ult.ultimateChargedTime <= adjustedStartTime &&
-        ult.ultimateStartTime >= adjustedEndTime
-    )
-    .map((e) => e.playerName);
-
-  const team2PlayersWithUltimatesChargedAtStart = ultimateEvents
-    .filter(
-      (ult) =>
-        ult.matchId === matchId &&
-        ult.playerTeam === team2Name &&
-        ult.ultimateChargedTime <= adjustedStartTime &&
-        ult.ultimateStartTime >= adjustedEndTime
-    )
-    .map((e) => e.playerName);
-
-  const team1PlayersWithUltimatesUsed = ultimateEvents
-    .filter(
-      (ult) =>
-        ult.matchId === matchId &&
-        ult.playerTeam === team1Name &&
-        ult.ultimateStartTime >= adjustedStartTime &&
-        ult.ultimateStartTime <= adjustedEndTime
-    )
-    .map((e) => e.playerName);
-
-  const team2PlayersWithUltimatesUsed = ultimateEvents
-    .filter(
-      (ult) =>
-        ult.matchId === matchId &&
-        ult.playerTeam === team2Name &&
-        ult.ultimateStartTime >= adjustedStartTime &&
-        ult.ultimateStartTime <= adjustedEndTime
-    )
-    .map((e) => e.playerName);
 
   return {
-    fightId,
+    fightId: `${matchId}-${startTime.toFixed(3)}`,
     matchId,
-    startTime: adjustedStartTime,
-    endTime: adjustedEndTime,
+    startTime,
+    endTime,
+    duration,
     team1Name,
     team2Name,
-    winner,
-    duration: adjustedEndTime - adjustedStartTime,
     team1Kills,
     team2Kills,
-    team1PlayersWithUltimatesChargedAtStart,
-    team2PlayersWithUltimatesChargedAtStart,
-    team1PlayersWithUltimatesUsed,
-    team2PlayersWithUltimatesUsed,
-    firstKillPlayer,
-    firstKillTeam,
-    firstKillTime,
-    firstDeathPlayer,
-    firstDeathTeam,
-    firstDeathTime,
+    type,
+    winner,
+    firstPick,
+    team1UltsUsed,
+    team2UltsUsed,
+    events: events.map(e => e.data)
   };
 }

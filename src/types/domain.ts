@@ -92,22 +92,31 @@ export interface Teamfight {
   matchId: string;
   startTime: number;
   endTime: number;
+  duration: number;
   team1Name: string;
   team2Name: string;
-  winner: string | null;
-  duration: number;
   team1Kills: number;
   team2Kills: number;
-  team1PlayersWithUltimatesChargedAtStart: string[];
-  team2PlayersWithUltimatesChargedAtStart: string[];
-  team1PlayersWithUltimatesUsed: string[];
-  team2PlayersWithUltimatesUsed: string[];
-  firstKillPlayer?: string;
-  firstKillTeam?: string;
-  firstKillTime?: number;
-  firstDeathPlayer?: string;
-  firstDeathTeam?: string;
-  firstDeathTime?: number;
+
+  // Classification
+  type: 'dry' | 'ult-invested' | 'all-in' | 'stagger';
+  winner: string | null;
+
+  // Win Condition Context
+  firstPick: {
+    player: string;
+    team: string;
+    hero: string;
+    victim: string;
+    time: number;
+  } | null;
+
+  // Economy Context
+  team1UltsUsed: string[];
+  team2UltsUsed: string[];
+
+  // Events contained in this fight
+  events: any[];
 }
 
 // ============================================================================
