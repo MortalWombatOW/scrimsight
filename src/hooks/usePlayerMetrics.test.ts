@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
 import { usePlayerHeroStats } from './usePlayerMetrics';
-import { useStats, addDerivedMetrics } from './useStats';
+import { useStats } from './useStats';
 
 // Mock useStats and addDerivedMetrics
 vi.mock('./useStats', () => ({

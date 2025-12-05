@@ -5,9 +5,14 @@ import { Teamfight } from '../types/domain';
 describe('useFightAnalysis', () => {
   const mockTeamfights: Teamfight[] = [
     {
+      fightId: 'fight-1',
+      matchId: 'match-1',
+      duration: 20,
+      team1Name: 'Team A',
+      team2Name: 'Team B',
       startTime: 100,
       endTime: 120,
-      type: 'standard',
+      type: 'ult-invested',
       winner: 'Team A',
       team1Kills: 5,
       team2Kills: 0,
@@ -17,6 +22,7 @@ describe('useFightAnalysis', () => {
         time: 105,
         team: 'Team A',
         player: 'Player A1',
+        hero: 'Tracer',
         victim: 'Player B1',
       },
       events: [
@@ -24,9 +30,14 @@ describe('useFightAnalysis', () => {
       ],
     },
     {
+      fightId: 'fight-2',
+      matchId: 'match-1',
+      duration: 20,
+      team1Name: 'Team A',
+      team2Name: 'Team B',
       startTime: 200,
       endTime: 220,
-      type: 'standard',
+      type: 'ult-invested',
       winner: 'Team B',
       team1Kills: 0,
       team2Kills: 5,
@@ -36,6 +47,7 @@ describe('useFightAnalysis', () => {
         time: 205,
         team: 'Team B',
         player: 'Player B1',
+        hero: 'Genji',
         victim: 'Player A1',
       },
       events: [
@@ -43,6 +55,11 @@ describe('useFightAnalysis', () => {
       ],
     },
     {
+      fightId: 'fight-3',
+      matchId: 'match-1',
+      duration: 20,
+      team1Name: 'Team A',
+      team2Name: 'Team B',
       startTime: 300,
       endTime: 320,
       type: 'dry',
