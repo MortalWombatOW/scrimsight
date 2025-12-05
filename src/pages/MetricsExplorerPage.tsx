@@ -24,12 +24,7 @@ export const MetricsExplorerPage: React.FC = () => {
   const [filters, setFilters] = useState<
     Record<PlayerStatsCategoryKeys, string[]> | undefined
   >(undefined);
-  const [sortBy, setSortBy] = useState<
-    PlayerStatsCategoryKeys | PlayerStatKey | undefined
-  >(undefined);
-  const [sortDirection, setSortDirection] = useState<
-    "asc" | "desc" | undefined
-  >(undefined);
+
 
   // Convert old filter format to new StatsFilters format
   const statsFilters = useMemo<StatsFilters | undefined>(() => {
@@ -45,7 +40,7 @@ export const MetricsExplorerPage: React.FC = () => {
     return Object.keys(converted).length > 0 ? converted : undefined;
   }, [filters]);
 
-  const statsData = useStatsGrouped(groupBy, statsFilters, sortBy, sortDirection);
+  const statsData = useStatsGrouped(groupBy, statsFilters);
 
   const matches = useMatches();
   const uniqueValues = useMemo(() => {
@@ -188,58 +183,57 @@ export const MetricsExplorerPage: React.FC = () => {
           </div>
         )}
 
-        {/* Controls */}
-        <Card variant="glass" className="p-6">
-          <h2 className="text-xl font-bold text-white mb-4">Filters & Options</h2>
-          <MetricsControls
-            groupBy={groupBy}
-            setGroupBy={setGroupBy}
-            metrics={metrics}
-            setMetrics={setMetrics}
-            filters={filters}
-            handleFilterChange={handleFilterChange}
-            expandedFilters={expandedFilters}
-            toggleFilterExpansion={toggleFilterExpansion}
-            uniqueValues={uniqueValues}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            sortDirection={sortDirection}
-            setSortDirection={setSortDirection}
-          />
-        </Card>
-
-        {/* Data Visualization */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Table View */}
-          <Card variant="glass" className="p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Data Table</h2>
-            <div className="overflow-auto max-h-[600px]">
-              <DataTable
-                data={statsData.rows ?? []}
-                columns={tableColumns}
-                onRowHover={(row) =>
-                  setHoveredRowId(row ? getRowId(row, groupBy) : null)
-                }
-                getRowId={(row) => getRowId(row, groupBy)}
-                hoveredRowId={hoveredRowId}
-              />
-            </div>
+        {/* Main Layout Grid */}
+        <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-200px)]">
+          {/* Sidebar Controls */}
+          <Card variant="glass" className="w-full lg:w-80 flex-shrink-0 overflow-y-auto p-4 h-full">
+            <MetricsControls
+              groupBy={groupBy}
+              setGroupBy={setGroupBy}
+              metrics={metrics}
+              setMetrics={setMetrics}
+              filters={filters}
+              handleFilterChange={handleFilterChange}
+              expandedFilters={expandedFilters}
+              toggleFilterExpansion={toggleFilterExpansion}
+              uniqueValues={uniqueValues}
+            />
           </Card>
 
-          {/* Chart View */}
-          <Card variant="glass" className="p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Visual Comparison</h2>
-            <div className="h-[500px]">
-              <MetricsChart
-                data={statsData.rows ?? []}
-                groupBy={groupBy}
-                metrics={metrics}
-                hoveredRowId={hoveredRowId}
-                getRowId={(row) => getRowId(row, groupBy)}
-                onPointHover={setHoveredRowId}
-              />
-            </div>
-          </Card>
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col gap-6 h-full overflow-hidden">
+            {/* Chart View - Only visible when 1 or 2 metrics are selected */}
+            {metrics.length >= 1 && metrics.length <= 2 && (
+              <Card variant="glass" className="p-6 flex-shrink-0 h-[400px]">
+                <div className="h-full w-full">
+                  <MetricsChart
+                    data={statsData.rows ?? []}
+                    groupBy={groupBy}
+                    metrics={metrics}
+                    hoveredRowId={hoveredRowId}
+                    getRowId={(row) => getRowId(row, groupBy)}
+                    onPointHover={setHoveredRowId}
+                  />
+                </div>
+              </Card>
+            )}
+
+            {/* Table View */}
+            <Card variant="glass" className="flex-1 overflow-hidden flex flex-col">
+              <div className="flex-1 overflow-auto p-0">
+                <DataTable
+                  data={statsData.rows ?? []}
+                  columns={tableColumns}
+                  onRowHover={(row) =>
+                    setHoveredRowId(row ? getRowId(row, groupBy) : null)
+                  }
+                  getRowId={(row) => getRowId(row, groupBy)}
+                  hoveredRowId={hoveredRowId}
+                  className="h-full"
+                />
+              </div>
+            </Card>
+          </div>
         </div>
       </Page.Content>
     </Page>
