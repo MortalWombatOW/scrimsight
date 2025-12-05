@@ -2,7 +2,6 @@ import React, { useState, useMemo } from "react";
 import { Page, Card } from "@components";
 import {
   PlayerStatsCategoryKeys,
-  PlayerStatKey,
   getStatLabel,
 } from "@library";
 import { useMetricsTableColumns } from "@library";
@@ -11,20 +10,17 @@ import { DataTable } from "../components/table/DataTable";
 import { useMatches } from "../hooks/useRepository";
 import { useStatsGrouped } from "../hooks/useStatsGrouped";
 import { StatsFilters } from "../hooks/useStats";
+import { useMetricsUrlState } from "../hooks/useMetricsUrlState";
 
 export const MetricsExplorerPage: React.FC = () => {
-  const [groupBy, setGroupBy] = useState<PlayerStatsCategoryKeys[]>([
-    "playerName",
-  ]);
-  const [metrics, setMetrics] = useState<PlayerStatKey[]>([
-    "eliminations",
-    "deaths",
-    "heroDamageDealt",
-  ]);
-  const [filters, setFilters] = useState<
-    Record<PlayerStatsCategoryKeys, string[]> | undefined
-  >(undefined);
-
+  const {
+    groupBy,
+    setGroupBy,
+    metrics,
+    setMetrics,
+    filters,
+    handleFilterChange,
+  } = useMetricsUrlState();
 
   const statsFilters = useMemo<StatsFilters | undefined>(() => {
     if (!filters) return undefined;
@@ -77,32 +73,6 @@ export const MetricsExplorerPage: React.FC = () => {
   const [expandedFilters, setExpandedFilters] = useState<
     Set<PlayerStatsCategoryKeys>
   >(new Set());
-
-  const handleFilterChange = (
-    key: PlayerStatsCategoryKeys,
-    selectedOptions: readonly { value: string; label: string }[] | null
-  ) => {
-    setFilters((prevFilters) => {
-      const currentFilters = prevFilters ?? {};
-      let updatedFilters: Partial<Record<PlayerStatsCategoryKeys, string[]>> = {
-        ...currentFilters,
-      };
-
-      if (selectedOptions && selectedOptions.length > 0) {
-        updatedFilters[key] = selectedOptions.map((option) => option.value);
-      } else {
-        if (key in updatedFilters) {
-          delete updatedFilters[key];
-        }
-      }
-
-      if (Object.keys(updatedFilters).length === 0) {
-        return undefined;
-      } else {
-        return updatedFilters as Record<PlayerStatsCategoryKeys, string[]>;
-      }
-    });
-  };
 
   const toggleFilterExpansion = (key: PlayerStatsCategoryKeys) => {
     setExpandedFilters((prev) => {
