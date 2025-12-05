@@ -1,11 +1,12 @@
 import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
 import { usePlayerHeroStats } from './usePlayerMetrics';
-import { useStatsWithDerived } from './useStats';
+import { useStats, addDerivedMetrics } from './useStats';
 
-// Mock useStatsWithDerived
+// Mock useStats and addDerivedMetrics
 vi.mock('./useStats', () => ({
-  useStatsWithDerived: vi.fn(),
+  useStats: vi.fn(),
+  addDerivedMetrics: vi.fn((stats) => stats), // Pass through for simple aggregation test
 }));
 
 describe('usePlayerHeroStats', () => {
@@ -47,7 +48,7 @@ describe('usePlayerHeroStats', () => {
       },
     ];
 
-    (useStatsWithDerived as any).mockReturnValue(mockStats);
+    (useStats as any).mockReturnValue(mockStats);
 
     const { result } = renderHook(() => usePlayerHeroStats('Player1'));
 

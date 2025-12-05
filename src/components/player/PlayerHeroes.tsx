@@ -6,7 +6,7 @@ import {
   getRoleFromHero,
   getHeroImage,
 } from "@library";
-import { useStatsWithDerived } from "../../hooks/useStats";
+import { usePlayerHeroStats } from "../../hooks/usePlayerMetrics";
 import { RoleIcon } from "@icons";
 import {
   BarChart,
@@ -114,9 +114,7 @@ export const PlayerHeroes = (): ReactNode => {
   const { playerName } = useParams<{ playerName: string }>();
 
   // Always call hooks before any conditional logic
-  const heroStats = useStatsWithDerived({
-    playerName: playerName || undefined,
-  });
+  const heroStats = usePlayerHeroStats(playerName);
 
   // Define hero data type for column definitions
   type HeroDataRow = {

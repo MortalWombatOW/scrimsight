@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { useMatches } from './useRepository';
 import { formatStat } from '@library';
-import { MatchMetadata, PlayerStats } from '../types';
-import { useStatsWithDerived } from './useStats';
+import { MatchMetadata, PlayerStats, PlayerStatsBase } from '../types';
+import { useStats, addDerivedMetrics } from './useStats';
 
 // ============================================================================
 // Types
@@ -224,12 +224,13 @@ function calculatePerformanceTrends(
  * Sums up playtime, eliminations, deaths, etc. for the same hero across different matches/rounds.
  */
 export function usePlayerHeroStats(playerName: string | undefined): PlayerStats[] {
-  const stats = useStatsWithDerived({ playerName });
+  // Get base stats without derived metrics first
+  const stats = useStats({ playerName });
 
   return useMemo(() => {
     if (!stats || stats.length === 0) return [];
 
-    const heroMap = new Map<string, PlayerStats>();
+    const heroMap = new Map<string, PlayerStatsBase>();
 
     for (const stat of stats) {
       const existing = heroMap.get(stat.playerHero);
@@ -238,12 +239,13 @@ export function usePlayerHeroStats(playerName: string | undefined): PlayerStats[
         heroMap.set(stat.playerHero, { ...stat });
       } else {
         // Aggregate numerical values
-        const merged: PlayerStats = { ...existing };
+        const merged: PlayerStatsBase = { ...existing };
         
         // Helper to sum values safely
         // We iterate over keys that are numbers in the stat object and sum them
         Object.keys(stat).forEach((key) => {
-            const k = key as keyof PlayerStats;
+            const k = key as keyof PlayerStatsBase;
+            // Only sum numerical properties, skip strings like matchId, etc.
             if (typeof stat[k] === 'number' && typeof existing[k] === 'number') {
                 (merged as any)[k] = (existing[k] as number) + (stat[k] as number);
             }
@@ -253,6 +255,10 @@ export function usePlayerHeroStats(playerName: string | undefined): PlayerStats[
       }
     }
 
-    return Array.from(heroMap.values());
+    // Convert map to array
+    const aggregatedBaseStats = Array.from(heroMap.values());
+
+    // Calculate derived metrics (per 10 mins, accuracy, etc.) on the aggregated data
+    return addDerivedMetrics(aggregatedBaseStats);
   }, [stats]);
 }
