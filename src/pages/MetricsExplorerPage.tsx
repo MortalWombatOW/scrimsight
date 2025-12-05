@@ -1,37 +1,27 @@
 import React, { useState, useMemo } from "react";
-import { Page, Card, VisualCard } from "@components";
+import { Page, Card } from "@components";
 import {
   PlayerStatsCategoryKeys,
-  PlayerStatKey,
   getStatLabel,
 } from "@library";
-import { useMetricsTableColumns, formatStat } from "@library";
-import { MetricsChart, MetricsControls } from "@components";
+import { useMetricsTableColumns } from "@library";
+import { MetricsChart, MetricsControls, StatDistributionCard } from "@components";
 import { DataTable } from "../components/table/DataTable";
 import { useMatches } from "../hooks/useRepository";
 import { useStatsGrouped } from "../hooks/useStatsGrouped";
 import { StatsFilters } from "../hooks/useStats";
+import { useMetricsUrlState } from "../hooks/useMetricsUrlState";
 
 export const MetricsExplorerPage: React.FC = () => {
-  const [groupBy, setGroupBy] = useState<PlayerStatsCategoryKeys[]>([
-    "playerName",
-  ]);
-  const [metrics, setMetrics] = useState<PlayerStatKey[]>([
-    "eliminations",
-    "deaths",
-    "heroDamageDealt",
-  ]);
-  const [filters, setFilters] = useState<
-    Record<PlayerStatsCategoryKeys, string[]> | undefined
-  >(undefined);
-  const [sortBy, setSortBy] = useState<
-    PlayerStatsCategoryKeys | PlayerStatKey | undefined
-  >(undefined);
-  const [sortDirection, setSortDirection] = useState<
-    "asc" | "desc" | undefined
-  >(undefined);
+  const {
+    groupBy,
+    setGroupBy,
+    metrics,
+    setMetrics,
+    filters,
+    handleFilterChange,
+  } = useMetricsUrlState();
 
-  // Convert old filter format to new StatsFilters format
   const statsFilters = useMemo<StatsFilters | undefined>(() => {
     if (!filters) return undefined;
 
@@ -45,7 +35,7 @@ export const MetricsExplorerPage: React.FC = () => {
     return Object.keys(converted).length > 0 ? converted : undefined;
   }, [filters]);
 
-  const statsData = useStatsGrouped(groupBy, statsFilters, sortBy, sortDirection);
+  const statsData = useStatsGrouped(groupBy, statsFilters);
 
   const matches = useMatches();
   const uniqueValues = useMemo(() => {
@@ -84,32 +74,6 @@ export const MetricsExplorerPage: React.FC = () => {
     Set<PlayerStatsCategoryKeys>
   >(new Set());
 
-  const handleFilterChange = (
-    key: PlayerStatsCategoryKeys,
-    selectedOptions: readonly { value: string; label: string }[] | null
-  ) => {
-    setFilters((prevFilters) => {
-      const currentFilters = prevFilters ?? {};
-      let updatedFilters: Partial<Record<PlayerStatsCategoryKeys, string[]>> = {
-        ...currentFilters,
-      };
-
-      if (selectedOptions && selectedOptions.length > 0) {
-        updatedFilters[key] = selectedOptions.map((option) => option.value);
-      } else {
-        if (key in updatedFilters) {
-          delete updatedFilters[key];
-        }
-      }
-
-      if (Object.keys(updatedFilters).length === 0) {
-        return undefined;
-      } else {
-        return updatedFilters as Record<PlayerStatsCategoryKeys, string[]>;
-      }
-    });
-  };
-
   const toggleFilterExpansion = (key: PlayerStatsCategoryKeys) => {
     setExpandedFilters((prev) => {
       const newSet = new Set(prev);
@@ -128,11 +92,7 @@ export const MetricsExplorerPage: React.FC = () => {
 
     const totals = metrics.map((metric) => {
       const values = statsData.rows.map((row) => (row as Record<string, string | number>)[metric] as number || 0);
-      const total = values.reduce((sum, val) => sum + val, 0);
-      const avg = total / values.length;
-      const max = Math.max(...values);
-      
-      return { metric, total, avg, max };
+      return { metric, values };
     });
 
     return totals;
@@ -157,89 +117,69 @@ export const MetricsExplorerPage: React.FC = () => {
         {/* Summary Cards */}
         {summaryStats && summaryStats.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {summaryStats.map(({ metric, total, avg, max }) => (
-              <VisualCard
+            {summaryStats.map(({ metric, values }) => (
+              <StatDistributionCard
                 key={metric}
                 title={getStatLabel(metric)}
-                className="min-h-[120px]"
-              >
-                <div className="grid grid-cols-3 gap-3 text-center">
-                  <div>
-                    <div className="text-xs text-base-content/60 mb-1">Total</div>
-                    <div className="text-lg font-bold text-white">
-                      {formatStat(metric, total)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-base-content/60 mb-1">Avg</div>
-                    <div className="text-lg font-bold text-primary">
-                      {formatStat(metric, avg)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-base-content/60 mb-1">Max</div>
-                    <div className="text-lg font-bold text-secondary">
-                      {formatStat(metric, max)}
-                    </div>
-                  </div>
-                </div>
-              </VisualCard>
+                data={values}
+                metricKey={metric}
+                className="min-h-[200px]"
+              />
             ))}
           </div>
         )}
 
-        {/* Controls */}
-        <Card variant="glass" className="p-6">
-          <h2 className="text-xl font-bold text-white mb-4">Filters & Options</h2>
-          <MetricsControls
-            groupBy={groupBy}
-            setGroupBy={setGroupBy}
-            metrics={metrics}
-            setMetrics={setMetrics}
-            filters={filters}
-            handleFilterChange={handleFilterChange}
-            expandedFilters={expandedFilters}
-            toggleFilterExpansion={toggleFilterExpansion}
-            uniqueValues={uniqueValues}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            sortDirection={sortDirection}
-            setSortDirection={setSortDirection}
-          />
-        </Card>
-
-        {/* Data Visualization */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Table View */}
-          <Card variant="glass" className="p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Data Table</h2>
-            <div className="overflow-auto max-h-[600px]">
-              <DataTable
-                data={statsData.rows ?? []}
-                columns={tableColumns}
-                onRowHover={(row) =>
-                  setHoveredRowId(row ? getRowId(row, groupBy) : null)
-                }
-                getRowId={(row) => getRowId(row, groupBy)}
-                hoveredRowId={hoveredRowId}
-              />
-            </div>
+        {/* Main Layout Grid */}
+        <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-200px)]">
+          {/* Sidebar Controls */}
+          <Card variant="glass" className="w-full lg:w-80 flex-shrink-0 overflow-y-auto p-4 h-full">
+            <MetricsControls
+              groupBy={groupBy}
+              setGroupBy={setGroupBy}
+              metrics={metrics}
+              setMetrics={setMetrics}
+              filters={filters}
+              handleFilterChange={handleFilterChange}
+              expandedFilters={expandedFilters}
+              toggleFilterExpansion={toggleFilterExpansion}
+              uniqueValues={uniqueValues}
+            />
           </Card>
 
-          {/* Chart View */}
-          <Card variant="glass" className="p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Visual Comparison</h2>
-            <div className="h-[500px]">
-              <MetricsChart
-                data={statsData.rows ?? []}
-                groupBy={groupBy}
-                metrics={metrics}
-                hoveredRowId={hoveredRowId}
-                getRowId={(row) => getRowId(row, groupBy)}
-                onPointHover={setHoveredRowId}
-              />
-            </div>
-          </Card>
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col gap-6 h-full overflow-hidden">
+            {/* Chart View - Only visible when 1 or 2 metrics are selected */}
+            {metrics.length >= 1 && metrics.length <= 2 && (
+              <Card variant="glass" className="p-6 flex-shrink-0 h-[400px]">
+                <div className="h-full w-full">
+                  <MetricsChart
+                    data={statsData.rows ?? []}
+                    groupBy={groupBy}
+                    metrics={metrics}
+                    hoveredRowId={hoveredRowId}
+                    getRowId={(row) => getRowId(row, groupBy)}
+                    onPointHover={setHoveredRowId}
+                  />
+                </div>
+              </Card>
+            )}
+
+            {/* Table View */}
+            <Card variant="glass" className="flex-1 overflow-hidden flex flex-col">
+              <div className="flex-1 overflow-auto p-0">
+                <DataTable
+                  data={statsData.rows ?? []}
+                  columns={tableColumns}
+                  onRowHover={(row) =>
+                    setHoveredRowId(row ? getRowId(row, groupBy) : null)
+                  }
+                  getRowId={(row) => getRowId(row, groupBy)}
+                  hoveredRowId={hoveredRowId}
+                  className="h-full"
+                />
+              </div>
+            </Card>
+          </div>
         </div>
       </Page.Content>
     </Page>
