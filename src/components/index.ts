@@ -12,6 +12,7 @@ export { Timeline, type TimelineEvent } from './timeline';
 // Metrics Components
 export { MetricsChart } from './metrics/MetricsChart';
 export { MetricsControls } from './metrics/MetricsControls';
+export { StatDistributionCard } from './metrics/StatDistributionCard';
 
 // UI Components
 export { Card } from './surface';

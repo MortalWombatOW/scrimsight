@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { Page, Card, VisualCard } from "@components";
+import { Page, Card } from "@components";
 import {
   PlayerStatsCategoryKeys,
   PlayerStatKey,
   getStatLabel,
 } from "@library";
-import { useMetricsTableColumns, formatStat } from "@library";
-import { MetricsChart, MetricsControls } from "@components";
+import { useMetricsTableColumns } from "@library";
+import { MetricsChart, MetricsControls, StatDistributionCard } from "@components";
 import { DataTable } from "../components/table/DataTable";
 import { useMatches } from "../hooks/useRepository";
 import { useStatsGrouped } from "../hooks/useStatsGrouped";
@@ -26,7 +26,6 @@ export const MetricsExplorerPage: React.FC = () => {
   >(undefined);
 
 
-  // Convert old filter format to new StatsFilters format
   const statsFilters = useMemo<StatsFilters | undefined>(() => {
     if (!filters) return undefined;
 
@@ -123,11 +122,7 @@ export const MetricsExplorerPage: React.FC = () => {
 
     const totals = metrics.map((metric) => {
       const values = statsData.rows.map((row) => (row as Record<string, string | number>)[metric] as number || 0);
-      const total = values.reduce((sum, val) => sum + val, 0);
-      const avg = total / values.length;
-      const max = Math.max(...values);
-      
-      return { metric, total, avg, max };
+      return { metric, values };
     });
 
     return totals;
@@ -152,33 +147,14 @@ export const MetricsExplorerPage: React.FC = () => {
         {/* Summary Cards */}
         {summaryStats && summaryStats.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {summaryStats.map(({ metric, total, avg, max }) => (
-              <VisualCard
+            {summaryStats.map(({ metric, values }) => (
+              <StatDistributionCard
                 key={metric}
                 title={getStatLabel(metric)}
-                className="min-h-[120px]"
-              >
-                <div className="grid grid-cols-3 gap-3 text-center">
-                  <div>
-                    <div className="text-xs text-base-content/60 mb-1">Total</div>
-                    <div className="text-lg font-bold text-white">
-                      {formatStat(metric, total)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-base-content/60 mb-1">Avg</div>
-                    <div className="text-lg font-bold text-primary">
-                      {formatStat(metric, avg)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-base-content/60 mb-1">Max</div>
-                    <div className="text-lg font-bold text-secondary">
-                      {formatStat(metric, max)}
-                    </div>
-                  </div>
-                </div>
-              </VisualCard>
+                data={values}
+                metricKey={metric}
+                className="min-h-[200px]"
+              />
             ))}
           </div>
         )}
