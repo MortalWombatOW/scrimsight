@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { useMatches } from './useRepository';
 import { formatStat } from '@library';
-import { MatchMetadata } from '../types';
+import { MatchMetadata, PlayerStats, PlayerStatsBase } from '../types';
+import { useStats, addDerivedMetrics } from './useStats';
 
 // ============================================================================
 // Types
@@ -212,4 +213,52 @@ function calculatePerformanceTrends(
       const dateB = new Date(b.date + ' 2024').getTime();
       return dateA - dateB;
     });
+}
+
+// ============================================================================
+// usePlayerHeroStats Hook
+// ============================================================================
+
+/**
+ * Aggregates player stats by hero.
+ * Sums up playtime, eliminations, deaths, etc. for the same hero across different matches/rounds.
+ */
+export function usePlayerHeroStats(playerName: string | undefined): PlayerStats[] {
+  // Get base stats without derived metrics first
+  const stats = useStats({ playerName });
+
+  return useMemo(() => {
+    if (!stats || stats.length === 0) return [];
+
+    const heroMap = new Map<string, PlayerStatsBase>();
+
+    for (const stat of stats) {
+      const existing = heroMap.get(stat.playerHero);
+
+      if (!existing) {
+        heroMap.set(stat.playerHero, { ...stat });
+      } else {
+        // Aggregate numerical values
+        const merged: PlayerStatsBase = { ...existing };
+        
+        // Helper to sum values safely
+        // We iterate over keys that are numbers in the stat object and sum them
+        Object.keys(stat).forEach((key) => {
+            const k = key as keyof PlayerStatsBase;
+            // Only sum numerical properties, skip strings like matchId, etc.
+            if (typeof stat[k] === 'number' && typeof existing[k] === 'number') {
+                (merged as any)[k] = (existing[k] as number) + (stat[k] as number);
+            }
+        });
+
+        heroMap.set(stat.playerHero, merged);
+      }
+    }
+
+    // Convert map to array
+    const aggregatedBaseStats = Array.from(heroMap.values());
+
+    // Calculate derived metrics (per 10 mins, accuracy, etc.) on the aggregated data
+    return addDerivedMetrics(aggregatedBaseStats);
+  }, [stats]);
 }

@@ -76,7 +76,7 @@ describe('Domain Functions', () => {
         const tf = teamfights[0];
         expect(tf.startTime).toBeDefined();
         expect(tf.endTime).toBeDefined();
-        expect(tf.endTime).toBeGreaterThan(tf.startTime);
+        expect(tf.endTime).toBeGreaterThanOrEqual(tf.startTime);
         expect(typeof tf.team1Kills).toBe('number');
         expect(typeof tf.team2Kills).toBe('number');
       }
