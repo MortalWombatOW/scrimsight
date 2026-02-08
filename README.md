@@ -10,7 +10,7 @@ using a domain-driven architecture to transform raw log data into insights.
 
 ```bash
 npm install            # install dependencies
-npm run dev            # launch Vite on http://localhost:5173
+npm run dev            # launch Vite on http://localhost:3000
 ```
 
 All quality gates (linting, testing, building) are managed via `npm run` scripts defined

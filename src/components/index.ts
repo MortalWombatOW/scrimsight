@@ -62,3 +62,6 @@ export { ScrimMatchList } from './match/ScrimMatchList';
 export { ScrimCard } from './scrim/ScrimCard';
 export { ScrimPlayerStats } from './scrim/ScrimPlayerStats';
 export { ScrimTeamStats } from './scrim/ScrimTeamStats';
+
+// Trend Components
+export * from './trends';
