@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryParamProvider } from "use-query-params";
 import { ReactRouter6Adapter } from "use-query-params/adapters/react-router-6";
 import { Suspense } from "react";
+import { useHydration } from "@hooks/useHydration";
 import {
   HomePage,
   AddFilesPage,
@@ -32,20 +33,21 @@ import {
   TeamCompositions,
 } from "@components";
 
-const App = () => {
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center h-full">
+    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-500"></div>
+  </div>
+);
+
+const HydratedRoutes = () => {
+  const isHydrated = useHydration();
+
+  if (!isHydrated) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <Router>
-      <QueryParamProvider adapter={ReactRouter6Adapter}>
-        <div className="font-poppins min-h-screen bg-base-200 dark:bg-base-900 text-base-900 dark:text-white">
-          <Layout>
-            <Suspense
-              fallback={
-                <div className="flex justify-center items-center h-full">
-                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-500"></div>
-                </div>
-              }
-            >
-              <Routes>
+    <Routes>
                 <Route path="/" index element={<HomePage />} />
                 <Route path="/scrims" element={<ScrimsPage />} />
                 <Route path="/scrims/:scrimId" element={<ScrimPage />} />
@@ -83,6 +85,17 @@ const App = () => {
                 <Route path="/files" element={<AddFilesPage />} />
                 <Route path="/metrics" element={<MetricsExplorerPage />} />
               </Routes>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <div className="font-poppins min-h-screen bg-base-200 dark:bg-base-900 text-base-900 dark:text-white">
+          <Layout>
+            <Suspense fallback={<LoadingSpinner />}>
+              <HydratedRoutes />
             </Suspense>
           </Layout>
         </div>

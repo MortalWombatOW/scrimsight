@@ -20,14 +20,23 @@ declare global {
 import { ChangeEvent, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { Page, Card } from "@components";
-import { useLoadFiles, useIsProcessing } from "../hooks/useRepository";
+import { useLoadFiles, useIsProcessing, useMatches, useClearData } from "../hooks/useRepository";
 import { useSampleData } from "../hooks/useSampleData";
 
 export const AddFilesPage = () => {
   const [files, setFiles] = useState<File[]>([]);
   const loadFiles = useLoadFiles();
   const isProcessing = useIsProcessing();
+  const matches = useMatches();
+  const clearData = useClearData();
   const { enabled: sampleDataEnabled, toggle: setSampleDataEnabled } = useSampleData();
+
+  const handleClearData = () => {
+    if (window.confirm("Are you sure you want to clear all match data? This cannot be undone.")) {
+      clearData();
+      setFiles([]);
+    }
+  };
 
   const handleAddDirectory = async () => {
     try {
@@ -155,6 +164,24 @@ export const AddFilesPage = () => {
             ))}
           </ul>
         </Card>
+
+        {matches.length > 0 && (
+          <Card className="p-4">
+            <h2 className="text-lg font-semibold mb-2 text-base-900 dark:text-white">
+              Data Management
+            </h2>
+            <p className="text-sm text-base-600 dark:text-base-400 mb-3">
+              {matches.length} match{matches.length !== 1 ? "es" : ""} stored locally.
+            </p>
+            <button
+              className="btn btn-error btn-outline rounded-lg"
+              onClick={handleClearData}
+              disabled={isProcessing}
+            >
+              Clear All Data
+            </button>
+          </Card>
+        )}
       </Page.Content>
     </Page>
   );

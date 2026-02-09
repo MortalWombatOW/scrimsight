@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Navigation } from "@components";
 import { Suspense, useState } from "react";
+import { PrivacyFooter } from "./PrivacyFooter";
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -75,6 +76,8 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </main>
       </div>
+
+      <PrivacyFooter />
     </div>
   );
 };

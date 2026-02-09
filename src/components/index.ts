@@ -1,6 +1,7 @@
 // Layout Components
 export { Layout } from './layout/Layout';
 export { Page } from './layout/Page';
+export { PrivacyFooter } from './layout/PrivacyFooter';
 
 // Navigation Components
 export { Navigation } from './navigation/Navigation';

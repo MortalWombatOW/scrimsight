@@ -1,6 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createStore } from 'jotai';
-import { matchesRepositoryAtom, isProcessingAtom, loadFilesAction } from './repository';
+import {
+  matchesRepositoryAtom,
+  isProcessingAtom,
+  loadFilesAction,
+  isHydratedAtom,
+  hydrateFromDbAction,
+  clearDataAction,
+} from './repository';
+import { db } from './db';
 import sampleFile1 from '@library/sampledata/Log-2023-08-28-17-05-38.txt?raw';
 import sampleFile2 from '@library/sampledata/Log-2023-08-28-17-29-57.txt?raw';
 
@@ -142,6 +150,91 @@ describe('Repository', () => {
 
       const processingAfter = store.get(isProcessingAtom);
       expect(processingAfter).toBe(false);
+    });
+  });
+
+  describe('loadFilesAction persistence', () => {
+    beforeEach(async () => {
+      await db.delete();
+      await db.open();
+    });
+
+    it('should persist newly loaded matches to IndexedDB', async () => {
+      const file = createMockFile(sampleFile1, 'sample.txt');
+      await store.set(loadFilesAction, [file]);
+
+      const stored = await db.matches.toArray();
+      expect(stored.length).toBe(1);
+      expect(stored[0].schemaVersion).toBe(1);
+    });
+
+    it('should persist multiple loaded files to IndexedDB', async () => {
+      const file1 = createMockFile(sampleFile1, 'sample1.txt');
+      const file2 = createMockFile(sampleFile2, 'sample2.txt');
+      await store.set(loadFilesAction, [file1, file2]);
+
+      const stored = await db.matches.toArray();
+      expect(stored.length).toBe(2);
+    });
+  });
+
+  describe('hydrateFromDbAction', () => {
+    beforeEach(async () => {
+      await db.delete();
+      await db.open();
+    });
+
+    it('should set isHydrated to true even with empty DB', async () => {
+      expect(store.get(isHydratedAtom)).toBe(false);
+
+      await store.set(hydrateFromDbAction);
+
+      expect(store.get(isHydratedAtom)).toBe(true);
+      expect(Object.keys(store.get(matchesRepositoryAtom)).length).toBe(0);
+    });
+
+    it('should populate matchesRepositoryAtom from IndexedDB', async () => {
+      // Pre-populate DB by loading a file
+      const file = createMockFile(sampleFile1, 'sample.txt');
+      await store.set(loadFilesAction, [file]);
+
+      const matchIds = Object.keys(store.get(matchesRepositoryAtom));
+      expect(matchIds.length).toBe(1);
+
+      // Reset atom (simulates fresh page load)
+      store.set(matchesRepositoryAtom, {});
+      expect(Object.keys(store.get(matchesRepositoryAtom)).length).toBe(0);
+
+      // Hydrate from DB
+      await store.set(hydrateFromDbAction);
+
+      const repo = store.get(matchesRepositoryAtom);
+      expect(Object.keys(repo).length).toBe(1);
+      expect(repo[matchIds[0]]).toBeDefined();
+      expect(repo[matchIds[0]].playerStatusTimeline).toBeInstanceOf(Map);
+    });
+  });
+
+  describe('clearDataAction', () => {
+    beforeEach(async () => {
+      await db.delete();
+      await db.open();
+    });
+
+    it('should clear IndexedDB and reset atoms', async () => {
+      // Load a file first
+      const file = createMockFile(sampleFile1, 'sample.txt');
+      await store.set(loadFilesAction, [file]);
+
+      expect(Object.keys(store.get(matchesRepositoryAtom)).length).toBe(1);
+      expect((await db.matches.toArray()).length).toBe(1);
+
+      // Clear
+      await store.set(clearDataAction);
+
+      expect(store.get(matchesRepositoryAtom)).toEqual({});
+      expect(store.get(isProcessingAtom)).toBe(false);
+      expect((await db.matches.toArray()).length).toBe(0);
     });
   });
 

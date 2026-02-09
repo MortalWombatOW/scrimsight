@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai';
-import { matchesRepositoryAtom, isProcessingAtom, loadFilesAction } from '../data/repository';
+import { matchesRepositoryAtom, isProcessingAtom, loadFilesAction, clearDataAction } from '../data/repository';
 import { ProcessedMatch } from '../types';
 
 export function useMatches(): ProcessedMatch[] {
@@ -13,4 +13,8 @@ export function useIsProcessing(): boolean {
 
 export function useLoadFiles() {
   return useSetAtom(loadFilesAction);
+}
+
+export function useClearData() {
+  return useSetAtom(clearDataAction);
 }
