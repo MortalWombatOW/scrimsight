@@ -132,7 +132,7 @@ export const MetricsExplorerPage: React.FC = () => {
         {/* Main Layout Grid */}
         <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-200px)]">
           {/* Sidebar Controls */}
-          <Card variant="glass" className="w-full lg:w-80 flex-shrink-0 overflow-y-auto p-4 h-full">
+          <Card variant="default" className="w-full lg:w-80 flex-shrink-0 overflow-y-auto p-4 h-full">
             <MetricsControls
               groupBy={groupBy}
               setGroupBy={setGroupBy}
@@ -150,7 +150,7 @@ export const MetricsExplorerPage: React.FC = () => {
           <div className="flex-1 flex flex-col gap-6 h-full overflow-hidden">
             {/* Chart View - Only visible when 1 or 2 metrics are selected */}
             {metrics.length >= 1 && metrics.length <= 2 && (
-              <Card variant="glass" className="p-6 flex-shrink-0 h-[400px]">
+              <Card variant="default" className="p-6 flex-shrink-0 h-[400px]">
                 <div className="h-full w-full">
                   <MetricsChart
                     data={statsData.rows ?? []}
@@ -165,7 +165,7 @@ export const MetricsExplorerPage: React.FC = () => {
             )}
 
             {/* Table View */}
-            <Card variant="glass" className="flex-1 overflow-hidden flex flex-col">
+            <Card variant="default" className="flex-1 overflow-hidden flex flex-col">
               <div className="flex-1 overflow-auto p-0">
                 <DataTable
                   data={statsData.rows ?? []}

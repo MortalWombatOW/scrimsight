@@ -74,13 +74,13 @@ export function calculateUltCycles(events: MatchEvents): UltCycle[] {
     if (event.evtType === 'round_end') {
       activeCycles.forEach((cycle, key) => {
         if (cycle.chargeEndTime && !cycle.useTime) {
-           // Held until round end
-           cycles.push({
-             ...cycle as UltCycle,
-             status: 'round-end',
-             timeHeld: event.matchTime - cycle.chargeEndTime,
-             endTime: event.matchTime
-           });
+          // Held until round end
+          cycles.push({
+            ...cycle as UltCycle,
+            status: 'round-end',
+            timeHeld: event.matchTime - cycle.chargeEndTime,
+            endTime: event.matchTime
+          });
         }
         activeCycles.delete(key);
       });
@@ -190,15 +190,15 @@ export function calculateUltMetrics(cycles: UltCycle[]): PlayerUltMetrics[] {
     const stats = playerMap.get(key)!;
     
     if (cycle.status !== 'swapped' && cycle.status !== 'round-end') {
-        // Only count "earned" if they actually finished charging (which they did if they have a cycle entry from 'charged')
-        // Actually, our logic creates a cycle on 'charged'.
-        stats.totalUltsEarned++;
-        stats.avgTimeToCharge += cycle.timeToCharge;
-        stats.avgTimeHeld += cycle.timeHeld;
+      // Only count "earned" if they actually finished charging (which they did if they have a cycle entry from 'charged')
+      // Actually, our logic creates a cycle on 'charged'.
+      stats.totalUltsEarned++;
+      stats.avgTimeToCharge += cycle.timeToCharge;
+      stats.avgTimeHeld += cycle.timeHeld;
     }
     
     if (cycle.status === 'used') {
-        stats.totalUltsUsed++;
+      stats.totalUltsUsed++;
     }
   });
 

@@ -42,7 +42,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
   // Prepare data for both teams (conditional logic moved inside useMemo)
   const allPlayerData = useMemo(() => {
     if (!match) return [];
-    
+
     const team1Data: PlayerDataPoint[] = playerStats
       .filter((stats) => stats.playerTeam === match.metadata.team1Name)
       .map((player) => {
@@ -80,14 +80,14 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
         cell: ({ row }) => (
           <div className="flex items-center">
             <div className="flex-shrink-0 h-8 w-8 flex items-center justify-center">
-              <div className="w-5 h-5 rounded-full border-2 border-gray-700 flex items-center justify-center">
+              <div className="w-5 h-5 rounded-full border-2 border-base-content/10 flex items-center justify-center">
                 <span className="text-xs font-medium">
                   {row.original.playerName.charAt(0)}
                 </span>
               </div>
             </div>
             <div className="ml-3">
-              <div className="text-sm font-medium text-base-800 dark:text-base-200">
+              <div className="text-sm font-medium text-base-content">
                 {row.original.playerName}
               </div>
             </div>
@@ -98,7 +98,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
         accessorKey: "team",
         header: "Team",
         cell: ({ row }) => (
-          <div className="text-sm text-base-700 dark:text-base-300">
+          <div className="text-sm text-base-content/80">
             {row.original.team}
           </div>
         ),
@@ -107,7 +107,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
         accessorKey: "x",
         header: getStatLabel(xStat),
         cell: ({ getValue }) => (
-          <div className="text-sm text-base-700 dark:text-base-300">
+          <div className="text-sm text-base-content/80">
             {formatStat(xStat, getValue() as number)}
           </div>
         ),
@@ -116,7 +116,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
         accessorKey: "y",
         header: getStatLabel(yStat),
         cell: ({ getValue }) => (
-          <div className="text-sm text-base-700 dark:text-base-300">
+          <div className="text-sm text-base-content/80">
             {formatStat(yStat, getValue() as number)}
           </div>
         ),
@@ -124,7 +124,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
     ],
     [xStat, yStat]
   );
-  
+
   if (!match) {
     return null;
   }
@@ -234,20 +234,20 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
   // Tooltip removed as we now have permanent annotations for each data point
 
   return (
-    <div className="bg-base rounded-lg border border-gray-700 border-gray-700 w-full p-6 shadow-sm dark:bg-base-800 dark:border-gray-700">
+    <div className="bg-base-100 rounded-lg border border-base-content/10 w-full p-6 shadow-sm">
       <div className="flex flex-col gap-6">
-        <h2 className="text-xl font-semibold text-base-800 dark:text-base-200 pb-2 border-b border-gray-700 dark:border-gray-700">
+        <h2 className="text-xl font-semibold text-base-content pb-2 border-b border-base-content/10">
           Player Comparison
         </h2>
 
         {/* Controls moved to the top - UI Principle: User control and freedom */}
         <div className="flex flex-wrap gap-4 mb-4">
           <div className="w-full sm:w-48">
-            <label className="block text-sm font-medium text-base-700 dark:text-base-300 mb-1">
+            <label className="block text-sm font-medium text-base-content/80 mb-1">
               X Metric
             </label>
             <select
-              className="w-full rounded-md border border-gray-700 border-gray-700 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-gray-700 dark:bg-base-700 dark:text-white"
+              className="w-full rounded-md border border-base-content/10 px-3 py-2 text-base-content/80 focus:outline-none focus:ring-1 focus:ring-primary/30"
               value={xStat}
               onChange={(e) =>
                 setXStat(e.target.value as PlayerStatKey)
@@ -262,11 +262,11 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
           </div>
 
           <div className="w-full sm:w-48">
-            <label className="block text-sm font-medium text-base-700 dark:text-base-300 mb-1">
+            <label className="block text-sm font-medium text-base-content/80 mb-1">
               Y Metric
             </label>
             <select
-              className="w-full rounded-md border border-gray-700 border-gray-700 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-gray-700 dark:bg-base-700 dark:text-white"
+              className="w-full rounded-md border border-base-content/10 px-3 py-2 text-base-content/80 focus:outline-none focus:ring-1 focus:ring-primary/30"
               value={yStat}
               onChange={(e) =>
                 setYStat(e.target.value as PlayerStatKey)
@@ -332,7 +332,7 @@ export const AllPlayerComparison = ({ matchId }: AllPlayerComparisonProps) => {
         </div>
 
         {/* Data Table - UI Principle: Complementary data representation */}
-        <div className="overflow-x-auto border border-gray-700 rounded-lg border-gray-700 dark:border-gray-700">
+        <div className="overflow-x-auto border border-base-content/10 rounded-lg">
           <DataTable
             data={allPlayerData}
             columns={columns}

@@ -18,10 +18,10 @@ export const TrendSection = () => {
           <p className="text-sm text-base-content/60">Performance over time for {teamName}</p>
         </div>
         {/* Placeholder link for future metrics explorer */}
-             {/* <Link to="/analytics" className="link link-primary text-sm">View Details</Link> */}
+        {/* <Link to="/analytics" className="link link-primary text-sm">View Details</Link> */}
       </div>
 
-      <div className="card bg-base-100 shadow-xl border border-base-200 dark:border-base-700">
+      <div className="card bg-base-100 shadow-xl border border-base-content/10">
         <div className="card-body p-6">
           <TrendsChart 
             data={data} 

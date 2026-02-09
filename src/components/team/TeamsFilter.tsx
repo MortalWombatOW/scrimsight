@@ -15,26 +15,26 @@ export const TeamsFilter = ({
   onSortChange,
 }: TeamsFilterProps) => {
   return (
-    <div className="rounded-lg bg-base p-4 shadow-md mb-6 dark:bg-base-800">
+    <div className="rounded-lg bg-base-100 p-4 shadow-md mb-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
         <div>
-          <label className="block text-sm font-medium text-base-700 dark:text-base-300 mb-1">
+          <label className="block text-sm font-medium text-base-content/80 mb-1">
             Search Teams
           </label>
           <input
             type="text"
-            className="w-full px-3 py-2 border border-gray-700 border-gray-700 bg-base-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-base-700 dark:border-gray-700 dark:text-white"
+            className="w-full px-3 py-2 border border-base-content/10 bg-base-200 rounded-md shadow-sm focus:outline-none focus:ring-primary/30 focus:border-primary"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Enter team name..."
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-base-700 dark:text-base-300 mb-1">
+          <label className="block text-sm font-medium text-base-content/80 mb-1">
             Sort By
           </label>
           <select
-            className="w-full px-3 py-2 border border-gray-700 border-gray-700 bg-base-200 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-base-700 dark:border-gray-700 dark:text-white"
+            className="w-full px-3 py-2 border border-base-content/10 bg-base-200 rounded-md shadow-sm focus:outline-none focus:ring-primary/30 focus:border-primary"
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value as SortOption)}
           >

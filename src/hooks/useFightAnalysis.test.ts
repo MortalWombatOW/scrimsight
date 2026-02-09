@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { useFightAnalysis } from './useFightAnalysis';
-import { Teamfight } from '../types/domain';
+import { Teamfight, TeamfightEvent } from '../types/domain';
 
 describe('useFightAnalysis', () => {
   const mockTeamfights: Teamfight[] = [
@@ -26,7 +26,7 @@ describe('useFightAnalysis', () => {
         victim: 'Player B1',
       },
       events: [
-        { type: 'ult_start', playerName: 'Player A1', playerTeam: 'Team A' } as any,
+        { type: 'ult_start', matchId: 'match-1', matchTime: 105, playerName: 'Player A1', playerTeam: 'Team A', playerHero: 'Tracer', heroDuplicated: '', ultimateId: 1 } as TeamfightEvent,
       ],
     },
     {
@@ -51,7 +51,7 @@ describe('useFightAnalysis', () => {
         victim: 'Player A1',
       },
       events: [
-         { type: 'ult_start', playerName: 'Player B1', playerTeam: 'Team B' } as any,
+        { type: 'ult_start', matchId: 'match-1', matchTime: 205, playerName: 'Player B1', playerTeam: 'Team B', playerHero: 'Genji', heroDuplicated: '', ultimateId: 2 } as TeamfightEvent,
       ],
     },
     {

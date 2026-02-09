@@ -134,7 +134,7 @@ export const Navigation = ({
               <Link
                 to={item.link}
                 // Apply active style directly to Link for non-parent items if needed, or rely on parent summary style
-                className={`flex flex-col items-start rounded-md border-b border-gray-700 p-2 hover:border-gray-700 ${
+                className={`flex flex-col items-start rounded-md border-b border-base-content/10 p-2 hover:border-base-content/10 ${
                   isActive(item.link) && !hasChildren
                     ? "bg-primary text-primary-content"
                     : "" // Active style for top-level links
@@ -146,7 +146,7 @@ export const Navigation = ({
                   <span className="text-sm font-medium">{item.title}</span>
                 </div>
                 {item.subtitle && (
-                  <span className="text-xs text-base-500">{item.subtitle}</span>
+                  <span className="text-xs text-base-content/50">{item.subtitle}</span>
                 )}
               </Link>
             </summary>
@@ -171,7 +171,7 @@ export const Navigation = ({
             <span className="text-sm font-medium">{item.title}</span>
           </div>
           {item.subtitle && (
-            <span className="text-xs text-base-500">{item.subtitle}</span>
+            <span className="text-xs text-base-content/50">{item.subtitle}</span>
           )}
         </Link>
       </li>
@@ -181,7 +181,7 @@ export const Navigation = ({
   return (
     // Added padding, use theme background, remove explicit border
     <nav className="h-full w-full overflow-y-auto p-2">
-      <ul className="menu menu-md glass-card rounded-box w-full gap-2">
+      <ul className="menu menu-md card-surface rounded-xl w-full gap-2">
         {renderMenuItem({
           title: "Home",
           link: "/",

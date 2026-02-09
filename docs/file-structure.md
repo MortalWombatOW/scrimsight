@@ -22,8 +22,8 @@ src/
 ## 2. Folder details
 
 ### `src/data`
-Contains the application state.
-* **Key Files**: `repository.ts` (Stores matches), `ingestor.ts` (Parses files).
+Contains the application state and persistence layer.
+* **Key Files**: `repository.ts` (Stores matches, hydration & clear actions), `ingestor.ts` (Parses files), `db.ts` (Dexie/IndexedDB database), `serialization.ts` (Map/Set ↔ JSON-safe conversions).
 * **Pattern**: Export atoms named `*Atom` and action atoms named `*Action`.
 
 ### `src/domain`

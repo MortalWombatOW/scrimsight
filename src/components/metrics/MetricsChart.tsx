@@ -40,7 +40,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, groupBy 
     return (
       <div className="bg-base-200 border border-base-300 p-3 rounded shadow-xl z-50 min-w-[150px]">
         {groupBy.map((key: string) => (
-          <div key={key} className="font-bold text-white mb-2 border-b border-base-content/10 pb-1">
+          <div key={key} className="font-bold text-base-content mb-2 border-b border-base-content/10 pb-1">
             <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}: </span>
             <span className="text-primary">{data[key] as string}</span>
           </div>

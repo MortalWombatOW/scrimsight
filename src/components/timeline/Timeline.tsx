@@ -17,7 +17,7 @@ const TimelineContent = (): ReactNode => {
   const [selectedFightId, setSelectedFightId] = useState<string | undefined>(undefined);
 
   if (!loadedData) {
-    return <div className="p-8 text-center text-gray-500">Loading match data...</div>;
+    return <div className="p-8 text-center text-base-content/50">Loading match data...</div>;
   }
 
   const { teamfights, matchData } = loadedData;
@@ -50,7 +50,7 @@ const TimelineContent = (): ReactNode => {
           userTeamName={userTeamName}
         />
       ) : (
-        <div className="text-center p-12 border border-gray-800 rounded-lg bg-gray-900/20 text-gray-500">
+        <div className="text-center p-12 border border-base-content/8 rounded-xl bg-base-200/20 text-base-content/50">
           Select a fight from the timeline above to view details.
         </div>
       )}
