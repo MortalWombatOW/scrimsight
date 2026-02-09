@@ -9,6 +9,7 @@ import { useMatch } from "../hooks/useMatch";
 export const MatchOverviewPage = () => {
   const { matchId } = useParams<{ matchId: string }>();
   const matchData = useMatch(matchId || "");
+  const { getTeamWinConditions } = useFightAnalysis(matchData?.teamfights ?? []);
 
   if (!matchId) {
     return <div className="text-center p-4">No match ID provided.</div>;
@@ -19,7 +20,6 @@ export const MatchOverviewPage = () => {
   }
 
   const match = matchData.metadata;
-  const { getTeamWinConditions } = useFightAnalysis(matchData.teamfights);
 
   const TeamStatsDisplay = ({ teamName }: { teamName: string }) => {
     const teamStats = useMemo(() => {

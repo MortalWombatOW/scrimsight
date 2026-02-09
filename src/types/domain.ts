@@ -27,6 +27,9 @@ import {
   UltimateEndLogEvent,
   UltimateStartLogEvent,
 } from './logs';
+
+/** Events that can occur within a teamfight */
+export type TeamfightEvent = KillLogEvent | UltimateStartLogEvent | MercyRezLogEvent;
 import { PlayerStatsBase, PlayerStatsCategoryKeys, PlayerStatsBaseNumericalKeys } from './stats';
 
 // ============================================================================
@@ -116,7 +119,7 @@ export interface Teamfight {
   team2UltsUsed: string[];
 
   // Events contained in this fight
-  events: any[];
+  events: TeamfightEvent[];
 }
 
 // ============================================================================

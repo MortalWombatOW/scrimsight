@@ -48,3 +48,27 @@ When a user opens the "Scrims" page:
     * It memoizes the result of `detectScrims(matches)`.
 3.  **UI**: `ScrimsPage.tsx` receives a list of `Scrim` objects and renders them.
 
+---
+
+## Invariants
+
+Hard rules about how ScrimSight is structured.
+
+### Persistence is fire-and-forget
+Atom updates happen first (instant UI), Dexie writes happen after (async, best-effort). Log persistence errors — never throw. If IndexedDB fails, data is still available for the current session.
+
+### Serialization boundary
+`ProcessedMatch` contains non-JSON types: `playerStatusTimeline` is a `Map<string, PlayerStatusTimeline>`, and `PlayerStatusEntry` contains `Set<string>`. Serialization helpers in `src/data/serialization.ts` handle Map↔Record and Set↔Array conversion at the Dexie boundary. Any new non-JSON-safe types added to `ProcessedMatch` must have corresponding serialization logic.
+
+### Domain capabilities exceed UI surface
+Not all domain functions are displayed in the UI. The domain layer computes more than the UI currently shows (e.g., `calculateUltMetrics()` exists but has no UI). Check `docs/information-architecture.md` for the current coverage matrix before adding new UI — the domain layer may already have what you need.
+
+### Insights are rule-based, not AI
+All auto-generated insights must be deterministic and explainable. No ML models, no LLM calls in the product. AI is used for development only.
+
+### Code splitting requires direct imports
+`React.lazy()` requires direct file imports, not barrel exports (`@pages`, `@components`). Barrel re-exports defeat chunk splitting. For named exports, use `.then(m => ({ default: m.ComponentName }))` to adapt for `React.lazy()`.
+
+### Type safety for union types
+When working with union types like `TeamfightEvent` (`KillLogEvent | UltimateStartLogEvent | MercyRezLogEvent`), use type guard functions (`isKillEvent()`, `isUltStartEvent()`) for narrowing. Avoid `as` casts — they bypass the compiler and hide bugs.
+

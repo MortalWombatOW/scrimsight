@@ -143,7 +143,7 @@ describe('Serialization', () => {
       const stored = serializeMatch(match);
       const restored = deserializeMatch(stored);
 
-      expect((restored as any).schemaVersion).toBeUndefined();
+      expect((restored as unknown as Record<string, unknown>).schemaVersion).toBeUndefined();
     });
   });
 

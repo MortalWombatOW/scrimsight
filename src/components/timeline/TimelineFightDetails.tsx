@@ -1,7 +1,12 @@
 import React from 'react';
-import { Teamfight } from '../../types/domain';
+import { Teamfight, TeamfightEvent } from '../../types/domain';
+import { KillLogEvent } from '../../types/logs';
 import { Clock, Target } from 'lucide-react';
 import { cn } from '@library/cn';
+
+function isKillEvent(e: TeamfightEvent): e is KillLogEvent {
+  return 'attackerName' in e && 'victimName' in e;
+}
 
 interface TimelineFightDetailsProps {
   fight: Teamfight;
@@ -100,16 +105,16 @@ export const TimelineFightDetails: React.FC<TimelineFightDetailsProps> = ({
 
       {/* Kill Feed (Simplified) */}
       <div className="space-y-1">
-        {fight.events.filter((e: any) => e.type === 'kill' || (e.attackerName && e.victimName)).map((e: any, i) => (
+        {fight.events.filter(isKillEvent).map((e, i) => (
           <div key={i} className="flex items-center gap-2 text-xs py-1 border-b border-base-content/8 last:border-0">
-             <span className="text-base-content/50 font-mono w-12 text-right">{formatTime(e.matchTime)}</span>
-             <span className={e.attackerTeam === userTeamName ? "text-success font-medium" : "text-error font-medium"}>
-               {e.attackerName} ({e.attackerHero})
-             </span>
-             <span className="text-base-content/40">killed</span>
-             <span className={e.victimTeam === userTeamName ? "text-success" : "text-error"}>
-               {e.victimName} ({e.victimHero})
-             </span>
+            <span className="text-base-content/50 font-mono w-12 text-right">{formatTime(e.matchTime)}</span>
+            <span className={e.attackerTeam === userTeamName ? "text-success font-medium" : "text-error font-medium"}>
+              {e.attackerName} ({e.attackerHero})
+            </span>
+            <span className="text-base-content/40">killed</span>
+            <span className={e.victimTeam === userTeamName ? "text-success" : "text-error"}>
+              {e.victimName} ({e.victimHero})
+            </span>
           </div>
         ))}
       </div>

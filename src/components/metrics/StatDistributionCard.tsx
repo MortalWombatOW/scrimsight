@@ -38,7 +38,7 @@ export const StatDistributionCard: React.FC<StatDistributionCardProps> = ({
     };
   }, [data]);
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-base-300/90 p-2 rounded border border-base-content/10 text-xs shadow-xl backdrop-blur-sm">

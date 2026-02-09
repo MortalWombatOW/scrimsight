@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import { usePlayerHeroStats } from './usePlayerMetrics';
 import { useStats } from './useStats';
 
@@ -48,7 +48,7 @@ describe('usePlayerHeroStats', () => {
       },
     ];
 
-    (useStats as any).mockReturnValue(mockStats);
+    (useStats as Mock).mockReturnValue(mockStats);
 
     const { result } = renderHook(() => usePlayerHeroStats('Player1'));
 
