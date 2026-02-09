@@ -22,12 +22,12 @@ export const TimelineButton = ({
   };
 
   // Determine border color based on winner
-  let borderColorClass = "border-gray-700"; // Default border
+  let borderColorClass = "border-base-content/10"; // Default border
   if (segment.winner) {
     if (segment.winner === team1Name) {
-      borderColorClass = "border-blue-400"; // Team 1 win
+      borderColorClass = "border-info"; // Team 1 win
     } else if (segment.winner === team2Name) {
-      borderColorClass = "border-red-400"; // Team 2 win
+      borderColorClass = "border-error"; // Team 2 win
     }
   }
 

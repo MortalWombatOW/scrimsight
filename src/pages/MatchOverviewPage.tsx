@@ -62,7 +62,7 @@ export const MatchOverviewPage = () => {
   return (
     <div className="space-y-6">
       {/* Hero Section - Match Summary */}
-      <div className="glass-panel rounded-2xl p-8 relative overflow-hidden">
+      <div className="card-surface shadow-md rounded-2xl p-8 relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             src={mapNameToFileName(match.map, false)}
@@ -84,7 +84,7 @@ export const MatchOverviewPage = () => {
           <div className="flex items-center justify-center gap-8 mb-6">
             {/* Team 1 */}
             <div className="flex-1 text-right">
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-2xl font-bold text-base-content mb-2">
                 {match.team1Name}
               </h2>
               <div className="text-sm text-base-content/70">
@@ -93,13 +93,13 @@ export const MatchOverviewPage = () => {
             </div>
 
             {/* Score */}
-            <div className="glass-card px-8 py-6 rounded-xl">
+            <div className="card-surface px-8 py-6 rounded-xl">
               <div className="text-5xl font-bold text-center">
-                <span className={match.team1Score > match.team2Score ? "text-primary" : "text-white"}>
+                <span className={match.team1Score > match.team2Score ? "text-primary" : "text-base-content"}>
                   {match.team1Score}
                 </span>
                 <span className="text-base-content/50 mx-3">:</span>
-                <span className={match.team2Score > match.team1Score ? "text-primary" : "text-white"}>
+                <span className={match.team2Score > match.team1Score ? "text-primary" : "text-base-content"}>
                   {match.team2Score}
                 </span>
               </div>
@@ -107,7 +107,7 @@ export const MatchOverviewPage = () => {
 
             {/* Team 2 */}
             <div className="flex-1 text-left">
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-2xl font-bold text-base-content mb-2">
                 {match.team2Name}
               </h2>
               <div className="text-sm text-base-content/70">
@@ -120,11 +120,11 @@ export const MatchOverviewPage = () => {
           <div className="flex justify-center gap-8 text-sm">
             <div className="flex items-center gap-2">
               <span className="text-base-content/70">Duration:</span>
-              <span className="font-semibold text-white">{formatTime(match.duration)}</span>
+              <span className="font-semibold text-base-content">{formatTime(match.duration)}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-base-content/70">Date:</span>
-              <span className="font-semibold text-white">{match.dateString}</span>
+              <span className="font-semibold text-base-content">{match.dateString}</span>
             </div>
           </div>
         </div>
@@ -149,14 +149,14 @@ export const MatchOverviewPage = () => {
       </div>
 
       {/* Team Stats Comparison */}
-      <div className="glass-panel rounded-xl p-6">
-        <h2 className="text-xl font-bold mb-4 text-white">Team Comparison</h2>
+      <div className="card-surface shadow-md rounded-xl p-6">
+        <h2 className="text-xl font-bold mb-4 text-base-content">Team Comparison</h2>
         <TeamStatsComparison matchId={matchId} />
       </div>
 
       {/* Kills Matrix */}
-      <div className="glass-panel rounded-xl p-6">
-        <h2 className="text-xl font-bold mb-4 text-white">Kill Matrix</h2>
+      <div className="card-surface shadow-md rounded-xl p-6">
+        <h2 className="text-xl font-bold mb-4 text-base-content">Kill Matrix</h2>
         <KillsTable matchId={matchId} />
       </div>
     </div>

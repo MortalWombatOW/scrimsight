@@ -132,7 +132,7 @@ export const MetricsControls: React.FC<MetricsControlsProps> = ({
                   + Filter by {key}
                 </button>
               ) : (
-                <div className="p-3 bg-base-200/50 rounded-lg border border-base-300 dark:border-base-700">
+                <div className="p-3 bg-base-200/50 rounded-lg border border-base-content/10">
                   <div className="flex justify-between items-center mb-2">
                     <label
                       htmlFor={`filter-${key}`}

@@ -122,7 +122,7 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
                   {camelCaseToAbbreviation(stat)}
                 </span>
                 {showTooltip === stat && (
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-1 bg-base-800 text-white text-xs px-2 py-1 rounded shadow-lg z-10 whitespace-nowrap">
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 translate-y-1 bg-base-300 text-base-content text-xs px-2 py-1 rounded shadow-lg z-10 whitespace-nowrap">
                     {getStatLabel(stat)}
                   </div>
                 )}
@@ -141,7 +141,7 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
                   <span className="text-xs text-base-content/70">
                     {getStatLabel(stat)}
                   </span>
-                  <span className="text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-base-content">
                     {formatStat(stat, ranking.value)}
                   </span>
                 </div>

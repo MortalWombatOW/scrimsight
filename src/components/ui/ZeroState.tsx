@@ -86,9 +86,12 @@ const ZeroState = () => {
     <div className="flex flex-col items-center py-12 px-4 gap-12 max-w-[800px] mx-auto">
       {/* Section 1: Hero */}
       <div className="flex flex-col items-center">
-        <h1 className="text-6xl font-black text-white text-center">
+        <h1 className="text-6xl font-black text-base-content text-center">
           Welcome to&nbsp;
-          <span className="text-7xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-goldman">
+          <span
+            className="text-7xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+            style={{ fontFamily: "'Plus Jakarta Sans'" }}
+          >
             SCRIMSIGHT
           </span>
         </h1>
@@ -112,10 +115,10 @@ const ZeroState = () => {
         </div>
       </div>
 
-      {/* Section 2: How It Works */}
+      {/* Section 2: Getting Started */}
       <div className="w-full">
-        <h2 className="text-lg font-semibold text-white text-center mb-4">
-          How It Works
+        <h2 className="text-lg font-semibold text-base-content text-center mb-4">
+          Getting Started
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
@@ -143,14 +146,14 @@ const ZeroState = () => {
           ].map(({ step, icon, title, description }) => (
             <div
               key={step}
-              className="glass-card rounded-lg p-5 relative overflow-hidden"
+              className="card-surface rounded-xl p-5 relative overflow-hidden"
             >
               <span className="absolute top-1 right-2 text-6xl font-black text-primary/20 select-none pointer-events-none">
                 {step}
               </span>
               <div className="relative flex flex-col gap-2">
                 {icon}
-                <span className="font-semibold text-white">{title}</span>
+                <span className="font-semibold text-base-content">{title}</span>
                 <span className="text-sm text-base-content/60">
                   {description}
                 </span>
@@ -215,10 +218,10 @@ const ZeroState = () => {
         </div>
       </div>
 
-      {/* Section 4: Feature Preview */}
+      {/* Section 4: Explore Your Data */}
       <div className="w-full">
-        <h2 className="text-lg font-semibold text-white text-center mb-4">
-          What You'll Get
+        <h2 className="text-lg font-semibold text-base-content text-center mb-4">
+          Explore Your Data
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
@@ -243,10 +246,10 @@ const ZeroState = () => {
                 "Compare teams head-to-head with aggregated stats and trends",
             },
           ].map(({ icon, title, description }) => (
-            <Card key={title} variant="glass" className="p-5">
+            <Card key={title} variant="default" className="p-5">
               <div className="flex flex-col gap-2">
                 {icon}
-                <span className="font-semibold text-white">{title}</span>
+                <span className="font-semibold text-base-content">{title}</span>
                 <span className="text-sm text-base-content/60">
                   {description}
                 </span>

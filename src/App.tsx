@@ -35,7 +35,7 @@ import {
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center h-full">
-    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-500"></div>
+    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
   </div>
 );
 
@@ -92,7 +92,7 @@ const App = () => {
   return (
     <Router>
       <QueryParamProvider adapter={ReactRouter6Adapter}>
-        <div className="font-poppins min-h-screen bg-base-200 dark:bg-base-900 text-base-900 dark:text-white">
+        <div className="font-poppins min-h-screen bg-base-200 text-base-content">
           <Layout>
             <Suspense fallback={<LoadingSpinner />}>
               <HydratedRoutes />

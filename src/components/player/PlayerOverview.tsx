@@ -164,7 +164,7 @@ export const PlayerOverview = (): ReactNode => {
                       const avgElimsValue = payload[2]?.value;
 
                       return (
-                        <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-gray-700 border-gray-700">
+                        <div className="bg-base-200 p-3 rounded-lg shadow-lg border border-base-content/10">
                           <p className="font-semibold">{label}</p>
                           <p className="text-sm">
                             KDA:{" "}
@@ -194,7 +194,7 @@ export const PlayerOverview = (): ReactNode => {
                   yAxisId="left"
                   type="monotone"
                   dataKey="kda"
-                  stroke="hsl(var(--p))"
+                  stroke="var(--color-primary)"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -202,7 +202,7 @@ export const PlayerOverview = (): ReactNode => {
                   yAxisId="right"
                   type="monotone"
                   dataKey="winRate"
-                  stroke="hsl(var(--s))"
+                  stroke="var(--color-secondary)"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -210,7 +210,7 @@ export const PlayerOverview = (): ReactNode => {
                   yAxisId="left"
                   type="monotone"
                   dataKey="avgElims"
-                  stroke="hsl(var(--a))"
+                  stroke="var(--color-accent)"
                   strokeWidth={2}
                   dot={false}
                 />
@@ -250,7 +250,7 @@ export const PlayerOverview = (): ReactNode => {
                   {heroUsageData.map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={`hsl(var(--${index % 2 ? "s" : "p"}))`}
+                      fill={`var(--color-${index % 2 ? "secondary" : "primary"})`}
                     />
                   ))}
                 </Bar>

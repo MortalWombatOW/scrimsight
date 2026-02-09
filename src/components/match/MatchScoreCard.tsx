@@ -19,10 +19,10 @@ export const MatchScoreCard = ({ matchData }: MatchScoreCardProps) => {
         <div className="flex flex-col gap-2 min-w-[300px]">
           <div className="grid grid-cols-12 gap-2">
             <div className="col-span-4 text-center">
-              <span className="text-sm text-base-500">Round</span>
+              <span className="text-sm text-base-content/50">Round</span>
             </div>
             <div className="col-span-8 text-center">
-              <span className="text-sm text-base-500">Winner</span>
+              <span className="text-sm text-base-content/50">Winner</span>
             </div>
           </div>
 

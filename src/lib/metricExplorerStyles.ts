@@ -16,45 +16,45 @@ type SortDirectionOptionType = { value: "asc" | "desc"; label: string };
 // Colors derived from the scrimsight theme in index.css
 const baseControlStyles = (provided: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
   ...provided,
-  backgroundColor: "#1f1f23", // base-200: oklch(14% 0.004 49.25)
-  borderColor: state.isFocused ? "#c2e078" : "#000000", // primary / base-300
-  boxShadow: state.isFocused ? "0 0 0 1px #c2e078" : provided.boxShadow,
+  backgroundColor: "#1E2028", // base-200: oklch(14% 0.004 49.25)
+  borderColor: state.isFocused ? "#3B95B0" : "#14151A", // primary / base-300
+  boxShadow: state.isFocused ? "0 0 0 1px #3B95B0" : provided.boxShadow,
   "&:hover": {
     borderColor: "rgba(216, 216, 216, 0.5)",
   },
-  color: "#d8d8d8", // base-content
-  borderRadius: '0.25rem',
+  color: "#D8DCE4", // base-content
+  borderRadius: '0.5rem',
   minHeight: "38px",
 });
 
 const baseMenuStyles = (provided: CSSObjectWithLabel) => ({
   ...provided,
-  backgroundColor: "#2a2a2f", // base-100: oklch(21% 0.006 56.043)
+  backgroundColor: "#2A2D35", // base-100: oklch(21% 0.006 56.043)
   zIndex: 9999,
   borderRadius: '0.5rem',
-  border: "1px solid #000000", // base-300
+  border: "1px solid #14151A", // base-300
   boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
 });
 
 const baseOptionStyles = (provided: CSSObjectWithLabel, state: { isSelected: boolean; isFocused: boolean }) => ({
   ...provided,
   backgroundColor: state.isSelected
-    ? "#c2e078" // primary
+    ? "#3B95B0" // primary
     : state.isFocused
-      ? "#000000" // base-300
+      ? "#14151A" // base-300
       : "transparent",
-  color: state.isSelected ? "#1f2419" : "#d8d8d8", // primary-content / base-content
+  color: state.isSelected ? "#F5FAFC" : "#D8DCE4", // primary-content / base-content
   "&:active": {
     backgroundColor: "rgba(194, 224, 120, 0.8)",
   },
   borderRadius: '0.25rem',
 });
 
-const baseInputStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "#d8d8d8" });
-const baseSingleValueStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "#d8d8d8" });
+const baseInputStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "#D8DCE4" });
+const baseSingleValueStyles = (provided: CSSObjectWithLabel) => ({ ...provided, color: "#D8DCE4" });
 const baseMultiValueStyles = (provided: CSSObjectWithLabel) => ({
   ...provided,
-  backgroundColor: "#000000", // base-300
+  backgroundColor: "#14151A", // base-300
   borderRadius: '1.9rem',
   display: 'flex',
   alignItems: 'center',
@@ -62,7 +62,7 @@ const baseMultiValueStyles = (provided: CSSObjectWithLabel) => ({
 });
 const baseMultiValueLabelStyles = (provided: CSSObjectWithLabel) => ({ 
   ...provided, 
-  color: "#d8d8d8",
+  color: "#D8DCE4",
   padding: '2px 6px',
   paddingLeft: '8px',
 });

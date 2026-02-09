@@ -1,12 +1,7 @@
 import React from 'react';
 import { Teamfight } from '../../types/domain';
 import { Skull, Zap } from 'lucide-react';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { cn } from '@library/cn';
 
 interface TimelineStripProps {
   fights: Teamfight[];
@@ -26,7 +21,7 @@ export const TimelineStrip: React.FC<TimelineStripProps> = ({
   if (duration <= 0) return null;
 
   return (
-    <div className="w-full h-24 bg-gray-900 rounded-lg relative overflow-hidden border border-gray-700">
+    <div className="w-full h-24 bg-base-200 rounded-xl relative overflow-hidden border border-base-content/10">
       {/* Time markers could go here */}
       
       {fights.map((fight) => {
@@ -46,11 +41,11 @@ export const TimelineStrip: React.FC<TimelineStripProps> = ({
         if (fight.type === 'all-in') opacity = 1.0;
         if (fight.type === 'stagger') opacity = 0.4;
 
-        const bgClass = isDraw 
-          ? 'bg-gray-500' 
-          : isWin 
-            ? 'bg-green-500' 
-            : 'bg-red-500';
+        const bgClass = isDraw
+          ? 'bg-base-content/40'
+          : isWin
+            ? 'bg-success'
+            : 'bg-error';
 
         const isSelected = fight.fightId === selectedFightId;
 

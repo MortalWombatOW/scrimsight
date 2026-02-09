@@ -51,7 +51,7 @@ export const StatDistributionCard: React.FC<StatDistributionCardProps> = ({
   };
 
   return (
-    <Card variant="glass" className={`flex flex-col ${className}`}>
+    <Card variant="default" className={`flex flex-col ${className}`}>
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-sm font-bold text-base-content/70 uppercase tracking-wider">
           {title}
@@ -71,7 +71,7 @@ export const StatDistributionCard: React.FC<StatDistributionCardProps> = ({
               {stats.histogram.map((_, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill="hsl(var(--p))"
+                  fill="var(--color-primary)"
                   fillOpacity={0.6}
                 />
               ))}

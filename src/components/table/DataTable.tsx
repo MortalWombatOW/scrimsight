@@ -51,7 +51,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className={`overflow-x-auto ${className}`}>
       <table className="table table-zebra table-pin-rows table-sm w-full">
-        <thead className="bg-base-50 dark:bg-base-700">
+        <thead className="bg-base-100">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
             </tr>
           ))}
         </thead>
-        <tbody className="bg-base divide-y divide-base-200 dark:bg-base-800 dark:divide-base-700">
+        <tbody className="bg-base-100 divide-y divide-base-content/10">
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
               const isHovered =
@@ -99,7 +99,7 @@ export function DataTable<TData, TValue>({
                   className={`
                   ${
                 onRowClick
-                  ? "cursor-pointer hover:bg-base-200 dark:hover:bg-base-700"
+                  ? "cursor-pointer hover:bg-base-200"
                   : ""
                 }
                   ${isHovered ? "!bg-primary/20 hover:!bg-primary/30" : ""}

@@ -22,7 +22,7 @@ export const VisualCard = ({
 }: VisualCardProps) => {
   const CardContent = () => (
     <div
-      className={`glass-card rounded-xl overflow-hidden relative flex flex-col h-full ${className}`}
+      className={`card-surface rounded-xl overflow-hidden relative flex flex-col h-full ${className}`}
     >
       {backgroundImage && (
         <div className="absolute inset-0 z-0">
@@ -38,14 +38,14 @@ export const VisualCard = ({
       <div className="relative z-10 p-5 flex flex-col h-full">
         <div className="flex items-center gap-3 mb-4">
           {icon && <div className="text-primary">{icon}</div>}
-          <h3 className="text-lg font-bold text-white tracking-wide">
+          <h3 className="text-lg font-bold text-base-content tracking-wide">
             {title}
           </h3>
         </div>
 
         <div className="flex-grow">{children}</div>
 
-        {footer && <div className="mt-4 pt-4 border-t border-white/10">{footer}</div>}
+        {footer && <div className="mt-4 pt-4 border-t border-base-content/10">{footer}</div>}
       </div>
     </div>
   );

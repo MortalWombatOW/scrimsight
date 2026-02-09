@@ -161,7 +161,7 @@ export const HeatmapGrid = ({
               return (
                 <div
                   key={`cell-${y}-${x}`}
-                  className="flex items-center justify-center border border-gray-700 border-gray-700 relative group w-full h-full"
+                  className="flex items-center justify-center border border-base-content/10 relative group w-full h-full"
                   style={{
                     background: `rgba(120, 120, 120, ${ratio})`,
                     cursor: onClick ? "pointer" : "default",
@@ -175,7 +175,7 @@ export const HeatmapGrid = ({
                     {cellRender ? cellRender(x, y, value) : value}
                   </div>
                   {hoverText && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none bg-base-800 text-white text-sm rounded px-2 py-1 mt-1 shadow-lg max-w-xs text-center whitespace-normal">
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out pointer-events-none bg-base-300 text-base-content text-sm rounded px-2 py-1 mt-1 shadow-lg max-w-xs text-center whitespace-normal">
                       {hoverText(xLabel, yLabel, value)}
                     </div>
                   )}

@@ -14,7 +14,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center">
             {/* Mobile menu button */}
             <button
-              className="mr-2 rounded p-1 text-base-600 hover:bg-base-100 focus:outline-none sm:hidden dark:text-base-400 dark:hover:bg-base-700"
+              className="mr-2 rounded p-1 text-base-content/40 hover:bg-base-100 focus:outline-none sm:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <div className="space-y-1.5">
@@ -41,7 +41,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               <span
                 className="text-2xl font-black"
                 style={{
-                  fontFamily: "Goldman",
+                  fontFamily: "'Plus Jakarta Sans'",
                 }}
               >
                 SCRIMSIGHT
@@ -60,7 +60,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
           <Suspense
             fallback={
               <div className="flex h-full items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary-500"></div>
+                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
               </div>
             }
           >
@@ -81,4 +81,3 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
-
