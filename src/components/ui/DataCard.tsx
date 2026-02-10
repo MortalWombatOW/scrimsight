@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { GoArrowRight } from "react-icons/go";
-import { Card } from "@components";
+import { Card } from "../surface/Card";
 
 export interface DataCardProps {
   title: string;
@@ -28,7 +28,7 @@ export const DataCard = ({
 }: DataCardProps) => {
   const CardContent = () => (
     <Card
-      variant="glass"
+      variant="default"
       noPadding
       className={`rounded-xl overflow-hidden relative flex flex-col h-full ${className}`}
     >
@@ -48,7 +48,7 @@ export const DataCard = ({
           <div className="flex items-center gap-3">
             {icon && <div className="text-primary">{icon}</div>}
             <div>
-              <h3 className="text-lg font-bold text-white leading-tight">
+              <h3 className="text-lg font-bold text-base-content leading-tight">
                 {title}
               </h3>
               {subtitle && (

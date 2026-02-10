@@ -244,11 +244,11 @@ export function usePlayerHeroStats(playerName: string | undefined): PlayerStats[
         // Helper to sum values safely
         // We iterate over keys that are numbers in the stat object and sum them
         Object.keys(stat).forEach((key) => {
-            const k = key as keyof PlayerStatsBase;
-            // Only sum numerical properties, skip strings like matchId, etc.
-            if (typeof stat[k] === 'number' && typeof existing[k] === 'number') {
-                (merged as any)[k] = (existing[k] as number) + (stat[k] as number);
-            }
+          const k = key as keyof PlayerStatsBase;
+          // Only sum numerical properties, skip strings like matchId, etc.
+          if (typeof stat[k] === 'number' && typeof existing[k] === 'number') {
+            (merged as Record<string, unknown>)[k] = (existing[k] as number) + (stat[k] as number);
+          }
         });
 
         heroMap.set(stat.playerHero, merged);

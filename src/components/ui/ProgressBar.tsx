@@ -17,7 +17,7 @@ export const ProgressBar = ({
 
   return (
     <div
-      className={`w-full bg-base-200 dark:bg-base-700 rounded-sm overflow-hidden ${height} ${className}`}
+      className={`w-full bg-base-200 rounded-sm overflow-hidden ${height} ${className}`}
     >
       <div
         className="h-full"

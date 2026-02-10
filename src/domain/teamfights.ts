@@ -1,16 +1,18 @@
 import {
   Teamfight,
+  TeamfightEvent,
   MatchEvents,
   MatchMetadata,
 } from '../types/domain';
-import { calculateUltCycles, getUltCycleForFight } from './economy';
+import { KillLogEvent } from '../types/logs';
+import { UltCycle, calculateUltCycles, getUltCycleForFight } from './economy';
 
 const TEAMFIGHT_SUSTAIN_TIME = 12; // seconds
 
 interface FightEvent {
   time: number;
   type: 'kill' | 'ult_start' | 'rez';
-  data: any;
+  data: TeamfightEvent;
 }
 
 export function calculateTeamfights(
@@ -85,15 +87,15 @@ export function calculateTeamfights(
   
   // Close final fight if exists
   if (fightStartTime !== null && currentFightEvents.length > 0) {
-     fights.push(createTeamfight(
-        matchId,
-        team1Name,
-        team2Name,
-        fightStartTime,
-        lastEventTime!,
-        currentFightEvents,
-        ultCycles
-      ));
+    fights.push(createTeamfight(
+      matchId,
+      team1Name,
+      team2Name,
+      fightStartTime,
+      lastEventTime!,
+      currentFightEvents,
+      ultCycles
+    ));
   }
   
   return fights;
@@ -106,22 +108,17 @@ function createTeamfight(
   startTime: number,
   endTime: number,
   events: FightEvent[],
-  ultCycles: any[] // UltCycle[]
+  ultCycles: UltCycle[]
 ): Teamfight {
   const duration = endTime - startTime;
   
-  // Extract specific event types
-  const kills = events.filter(e => e.type === 'kill').map(e => e.data);
+  // Extract kill events — safe to narrow since we filter by type
+  const kills = events.filter(e => e.type === 'kill').map(e => e.data as KillLogEvent);
   
   // Determine Winner
   let team1Kills = 0;
   let team2Kills = 0;
   kills.forEach(k => {
-    if (k.attackerTeam === team1Name) team1Kills++; // Attacker kills victim? Wait.
-    // If attackerTeam is team1, it's a kill FOR team1.
-    // But we should check victimTeam.
-    // If victimTeam is team2, team1 got a kill.
-    // If victimTeam is team1, team2 got a kill.
     if (k.victimTeam === team2Name) team1Kills++;
     if (k.victimTeam === team1Name) team2Kills++;
   });
@@ -145,13 +142,8 @@ function createTeamfight(
   
   // Economy
   const { used } = getUltCycleForFight(startTime, endTime, ultCycles);
-  const team1UltsUsed = used.filter((u: any) => u.playerTeam === team1Name).map((u: any) => u.hero); // Using hero name as proxy for ult name? Or do we have ult name?
-  // UltCycle has 'hero'. We don't have ult name in UltCycle, but we can infer it or just use hero name.
-  // The requirement says "List of ult names (e.g., ["Nano Boost", "Blizzard"])".
-  // We don't have ult names in UltCycle, only hero.
-  // We can map hero to ult name if we had a config, or just use Hero name for now.
-  // Let's use Hero name for now as "Genji Blade" is implied by "Genji".
-  const team2UltsUsed = used.filter((u: any) => u.playerTeam === team2Name).map((u: any) => u.hero);
+  const team1UltsUsed = used.filter(u => u.playerTeam === team1Name).map(u => u.hero);
+  const team2UltsUsed = used.filter(u => u.playerTeam === team2Name).map(u => u.hero);
   
   // Classification
   const totalUlts = team1UltsUsed.length + team2UltsUsed.length;

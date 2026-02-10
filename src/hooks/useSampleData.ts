@@ -1,33 +1,49 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLoadFiles } from './useRepository';
 
-// Import sample data files
-import file1 from '../lib/sampledata/Log-2023-08-28-17-05-38.txt?raw';
-import file2 from '../lib/sampledata/Log-2023-08-28-17-29-57.txt?raw';
-import file3 from '../lib/sampledata/Log-2023-08-28-17-52-17.txt?raw';
-import file4 from '../lib/sampledata/Log-2023-08-28-18-28-25.txt?raw';
-import file5 from '../lib/sampledata/Log-2023-08-28-18-40-39.txt?raw';
+// Import all sample data files dynamically
+const sampleFilesMap = import.meta.glob('../lib/sampledata/*.txt', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
 
 /**
  * Hook to manage sample data loading.
- *
- * Provides functions to enable/disable sample data and check if it's currently enabled.
- * When enabled, sample data files are automatically loaded into the repository.
- *
- * @returns Object with enabled state, toggle function, and enable function
  */
 export function useSampleData() {
   const [enabled, setEnabled] = useState(false);
   const loadFiles = useLoadFiles();
 
-  // Persist enabled state to localStorage
-
-
-  // Load sample data when enabled
   useEffect(() => {
     if (enabled) {
-      const sampleFiles = createSampleFiles();
-      loadFiles(sampleFiles);
+      const files = Object.entries(sampleFilesMap).map(([path, content]) => {
+        const name = path.split('/').pop() || 'unknown.txt';
+        // Extract date from filename if possible Log-YYYY-MM-DD...
+        // Format: Log-2023-08-28-17-05-38.txt
+        let date = new Date();
+        const match = name.match(/Log-(\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2})/);
+        if (match) {
+          const parts = match[1].split('-');
+          // new Date(year, monthIndex, day, hours, minutes, seconds)
+          date = new Date(
+            parseInt(parts[0]),
+            parseInt(parts[1]) - 1,
+            parseInt(parts[2]),
+            parseInt(parts[3]),
+            parseInt(parts[4]),
+            parseInt(parts[5])
+          );
+        }
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        return new File([blob], name, {
+          type: 'text/plain',
+          lastModified: date.getTime(),
+        });
+      });
+      
+      loadFiles(files);
     }
   }, [enabled, loadFiles]);
 
@@ -40,27 +56,4 @@ export function useSampleData() {
   }, []);
 
   return { enabled, toggle, enable };
-}
-
-/**
- * Creates File objects from the imported sample data.
- * These files can be passed directly to the loadFiles action.
- */
-function createSampleFiles(): File[] {
-  const files = [
-    { name: 'Log-2023-08-28-17-05-38.txt', content: file1, date: new Date('2023-08-28T17:05:38.000Z') },
-    { name: 'Log-2023-08-28-17-29-57.txt', content: file2, date: new Date('2023-08-28T17:29:57.000Z') },
-    { name: 'Log-2023-08-28-17-52-17.txt', content: file3, date: new Date('2023-08-28T17:52:17.000Z') },
-    { name: 'Log-2023-08-28-18-28-25.txt', content: file4, date: new Date('2023-08-28T18:28:25.000Z') },
-    { name: 'Log-2023-08-28-18-40-39.txt', content: file5, date: new Date('2023-08-28T18:40-39.000Z') },
-  ];
-
-  return files.map(({ name, content, date }) => {
-    const blob = new Blob([content], { type: 'text/plain' });
-    const file = new File([blob], name, {
-      type: 'text/plain',
-      lastModified: date.getTime(),
-    });
-    return file;
-  });
 }

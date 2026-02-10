@@ -20,14 +20,23 @@ declare global {
 import { ChangeEvent, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import { Page, Card } from "@components";
-import { useLoadFiles, useIsProcessing } from "../hooks/useRepository";
+import { useLoadFiles, useIsProcessing, useMatches, useClearData } from "../hooks/useRepository";
 import { useSampleData } from "../hooks/useSampleData";
 
 export const AddFilesPage = () => {
   const [files, setFiles] = useState<File[]>([]);
   const loadFiles = useLoadFiles();
   const isProcessing = useIsProcessing();
+  const matches = useMatches();
+  const clearData = useClearData();
   const { enabled: sampleDataEnabled, toggle: setSampleDataEnabled } = useSampleData();
+
+  const handleClearData = () => {
+    if (window.confirm("Are you sure you want to clear all match data? This cannot be undone.")) {
+      clearData();
+      setFiles([]);
+    }
+  };
 
   const handleAddDirectory = async () => {
     try {
@@ -83,7 +92,7 @@ export const AddFilesPage = () => {
 
       <Page.Content>
         <Card className="p-4">
-          <h2 className="text-lg font-semibold mb-2 text-base-900 dark:text-white">
+          <h2 className="text-lg font-semibold mb-2 text-base-content">
             Sample Data
           </h2>
           <label className="inline-flex items-center cursor-pointer">
@@ -93,7 +102,7 @@ export const AddFilesPage = () => {
               checked={sampleDataEnabled}
               onChange={(e) => setSampleDataEnabled(e.target.checked)}
             />
-            <div className="relative w-11 h-6 bg-base-100 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-800 rounded-full peer dark:bg-base-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base after:border-gray-700 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-700 peer-checked:bg-primary-600"></div>
+            <div className="relative w-11 h-6 bg-base-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-base-content after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base-100 after:border-base-content/10 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
           </label>
         </Card>
 
@@ -108,7 +117,7 @@ export const AddFilesPage = () => {
             Add Directory
           </button>
           {!window.showDirectoryPicker && (
-            <p className="text-sm text-red-500 mt-2">
+            <p className="text-sm text-error mt-2">
               Directory upload is only supported in Chrome.
             </p>
           )}
@@ -129,18 +138,18 @@ export const AddFilesPage = () => {
         </Card>
 
         <Card className="p-4">
-          <h2 className="text-lg font-semibold mb-4 text-base-900 dark:text-white">
+          <h2 className="text-lg font-semibold mb-4 text-base-content">
             Files Added
           </h2>
           {isProcessing && (
-            <div className="mb-4 p-3 bg-primary-100 dark:bg-primary-900/20 rounded-lg">
-              <p className="text-primary-700 dark:text-primary-300">Processing files...</p>
+            <div className="mb-4 p-3 bg-primary/10 rounded-lg">
+              <p className="text-primary">Processing files...</p>
             </div>
           )}
-          <ul className="divide-y divide-base-200 dark:divide-base-700">
+          <ul className="divide-y divide-base-content/10">
             {files.map((file, index) => (
               <li key={index} className="py-3 flex justify-between items-center">
-                <span className="text-base-800 dark:text-base-200">
+                <span className="text-base-content">
                   {file.name}
                 </span>
                 <button
@@ -155,6 +164,24 @@ export const AddFilesPage = () => {
             ))}
           </ul>
         </Card>
+
+        {matches.length > 0 && (
+          <Card className="p-4">
+            <h2 className="text-lg font-semibold mb-2 text-base-content">
+              Data Management
+            </h2>
+            <p className="text-sm text-base-content/40 mb-3">
+              {matches.length} match{matches.length !== 1 ? "es" : ""} stored locally.
+            </p>
+            <button
+              className="btn btn-error btn-outline rounded-lg"
+              onClick={handleClearData}
+              disabled={isProcessing}
+            >
+              Clear All Data
+            </button>
+          </Card>
+        )}
       </Page.Content>
     </Page>
   );

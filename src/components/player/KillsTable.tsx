@@ -1,5 +1,5 @@
 import { type ReactNode, useMemo } from "react";
-import { HeatmapGrid } from "@components";
+import { HeatmapGrid } from "../ui/HeatmapGrid";
 import { useMatch } from "../../hooks/useMatch";
 
 interface KillsTableProps {
@@ -59,18 +59,18 @@ const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
   for (const player of team1Players) {
   */
   return (
-    <div className="bg-base rounded-lg border border-gray-700 border-gray-700 p-4 shadow-sm dark:bg-base-800 dark:border-gray-700">
+    <div className="bg-base-100 rounded-lg border border-base-content/10 p-4 shadow-sm">
       <div className="flex flex-col md:flex-row gap-6 justify-around"> {/* Added justify-around */}
         <div className="flex flex-col flex-1 min-w-0"> {/* Added flex-1 and min-w-0 */}
-          <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white truncate"> {/* Added truncate */}
+          <h3 className="text-xl font-semibold mb-4 text-base-content truncate"> {/* Added truncate */}
             Kills by {team1Name}
           </h3>
           {/* Simplified header structure */}
           <div className="flex justify-between mb-8">
-            <span className="text-xs text-base-500 dark:text-base-400 self-end pb-1 pr-2"> {/* Adjusted alignment */}
+            <span className="text-xs text-base-content/50 self-end pb-1 pr-2"> {/* Adjusted alignment */}
               Attackers
             </span>
-            <span className="text-xs text-base-500 dark:text-base-400 text-center flex-1"> {/* Adjusted alignment */}
+            <span className="text-xs text-base-content/50 text-center flex-1"> {/* Adjusted alignment */}
               Victims
             </span>
           </div>
@@ -84,7 +84,7 @@ const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
               `${yLabel} killed ${xLabel} ${value} times`
             }
             cellRender={(_x: number, _y: number, value: number) => (
-              <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
+              <span className="text-sm leading-[30px] text-base-content/40">
                 {value}
               </span>
             )}
@@ -114,18 +114,18 @@ const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
         </div>
 
         {/* Separator */}
-        <div className="border-l border-gray-700 dark:border-gray-700 mx-4 hidden md:block"></div>
+        <div className="border-l border-base-content/10 mx-4 hidden md:block"></div>
 
         <div className="flex flex-col flex-1 min-w-0 mr-6"> {/* Added flex-1 and min-w-0 */}
-          <h3 className="text-xl font-semibold mb-4 text-base-900 dark:text-white truncate"> {/* Added truncate */}
+          <h3 className="text-xl font-semibold mb-4 text-base-content truncate"> {/* Added truncate */}
             Kills by {team2Name}
           </h3>
           {/* Simplified header structure */}
           <div className="flex justify-between mb-8">
-            <span className="text-xs text-base-500 dark:text-base-400 self-end pb-1 pr-2"> {/* Adjusted alignment */}
+            <span className="text-xs text-base-content/50 self-end pb-1 pr-2"> {/* Adjusted alignment */}
               Attackers
             </span>
-            <span className="text-xs text-base-500 dark:text-base-400 text-center flex-1"> {/* Adjusted alignment */}
+            <span className="text-xs text-base-content/50 text-center flex-1"> {/* Adjusted alignment */}
               Victims
             </span>
           </div>
@@ -138,7 +138,7 @@ const KillsTableContent = ({ matchId }: KillsTableProps): ReactNode => {
               `${yLabel} killed ${xLabel} ${value} times`
             }
             cellRender={(_x: number, _y: number, value: number) => (
-              <span className="text-sm leading-[30px] text-base-600 dark:text-base-400">
+              <span className="text-sm leading-[30px] text-base-content/40">
                 {value}
               </span>
             )}

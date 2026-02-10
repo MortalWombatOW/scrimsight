@@ -96,7 +96,7 @@ const PlayerHeroDisplay = ({
     <span className="inline-flex items-center">
       <span
         className={`font-medium text-xs ${
-          isTeam1 ? "text-blue-400" : "text-red-400"
+          isTeam1 ? "text-info" : "text-error"
         }`}
       >
         {name}
@@ -194,7 +194,7 @@ const TimelineItem = ({
           <PlusIcon />
           <span
             className={`font-medium text-xs ${
-              targetIsTeam1 ? "text-blue-400" : "text-red-400"
+              targetIsTeam1 ? "text-info" : "text-error"
             }`}
           >
             {targetName}
@@ -249,7 +249,7 @@ const TimelineItem = ({
           <span className="text-xs ml-1">→ Damage →</span>
           <span
             className={`font-medium text-xs ${
-              targetIsTeam1 ? "text-blue-400" : "text-red-400"
+              targetIsTeam1 ? "text-info" : "text-error"
             }`}
           >
             {targetName}
@@ -270,7 +270,7 @@ const TimelineItem = ({
           <span className="text-xs ml-1">→ Healing →</span>
           <span
             className={`font-medium text-xs ${
-              !targetIsTeam1 ? "text-blue-400" : "text-red-400"
+              !targetIsTeam1 ? "text-info" : "text-error"
             }`}
           >
             {targetName}
@@ -291,7 +291,7 @@ const TimelineItem = ({
           <span className="text-xs ml-1">→ Resurrected →</span>
           <span
             className={`font-medium text-xs ${
-              !targetIsTeam1 ? "text-blue-400" : "text-red-400"
+              !targetIsTeam1 ? "text-info" : "text-error"
             }`}
           >
             {targetName}
@@ -340,7 +340,7 @@ const TimelineItem = ({
           <span className="text-xs ml-1">{eventType}</span>
           <span
             className={`font-medium text-xs ml-1 ${
-              targetIsTeam1 ? "text-blue-400" : "text-red-400"
+              targetIsTeam1 ? "text-info" : "text-error"
             }`}
           >
             {targetName}
@@ -368,7 +368,7 @@ const TimelineItem = ({
   return (
     <div
       className={`
-        py-1 px-2 text-center text-xs border-b border-gray-800 last:border-0
+        py-1 px-2 text-center text-xs border-b border-base-content/8 last:border-0
         ${
     isSelected ? "bg-base-300" : "bg-base-100"
     } // Adjusted background colors
@@ -498,7 +498,7 @@ export const TimelineEvents = (): ReactNode => {
           return null; // Should not happen with pre-filtering
         })}
         {events.length === 0 && (
-          <div className="text-center py-4 text-base-500 text-xs px-2">
+          <div className="text-center py-4 text-base-content/50 text-xs px-2">
             No relevant events found for kill feed.
           </div>
         )}

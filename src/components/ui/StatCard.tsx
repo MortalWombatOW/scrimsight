@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import { Card } from "@components";
+import { Card } from "../surface/Card";
 
 export interface StatCardProps {
   title: string;

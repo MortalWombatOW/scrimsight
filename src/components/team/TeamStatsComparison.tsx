@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { PlayerStatKey, getStatLabel, formatStat } from "@library";
-import { ProgressBar } from "@components";
+import { ProgressBar } from "../ui/ProgressBar";
 import { useMatch } from "../../hooks/useMatch";
 import { PlayerStatsBase } from "../../types";
 
@@ -67,16 +67,16 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
   };
 
   return (
-    <div className="grid grid-cols-7 gap-4 rounded-lg border border-gray-700 border-gray-700 w-full max-w-[800px] p-2 shadow-sm">
+    <div className="grid grid-cols-7 gap-4 rounded-lg border border-base-content/10 w-full max-w-[800px] p-2 shadow-sm">
       {/* Header row */}
       <div className="col-span-3 text-right">
-        <span className="text-md font-semibold text-base-800 dark:text-base-200">
+        <span className="text-md font-semibold text-base-content">
           {matchDataItem.team1Name}
         </span>
       </div>
       <div className="col-span-1"></div> {/* Center spacer */}
       <div className="col-span-3">
-        <span className="text-md font-semibold text-base-800 dark:text-base-200">
+        <span className="text-md font-semibold text-base-content">
           {matchDataItem.team2Name}
         </span>
       </div>
@@ -90,11 +90,11 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
             {/* Team 1 side */}
             <div className="col-span-3 flex flex-col items-end">
               <div className="flex items-center justify-end w-full mb-1">
-                <span className="text-sm font-medium text-base-800 dark:text-base-200 mr-2">
+                <span className="text-sm font-medium text-base-content mr-2">
                   {formatStat(stat, team1Value)}
                 </span>
                 {winner === matchDataItem.team1Name && (
-                  <span className="text-xs px-1 py-0.5 bg-base-600 text-white dark:bg-base-200 dark:text-base-800 rounded">
+                  <span className="text-xs px-1 py-0.5 bg-primary/20 text-primary rounded">
                     +{formatStat(stat, team1Value - team2Value)}
                   </span>
                 )}
@@ -102,14 +102,14 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
               <ProgressBar
                 value={team1Value}
                 maxValue={team1Value + team2Value}
-                className="rounded-l-sm border border-gray-700"
+                className="rounded-l-sm border border-base-content/10"
                 reverse
               />
             </div>
 
             {/* Center label */}
             <div className="col-span-1 flex items-center justify-center">
-              <span className="text-xs text-base-500 dark:text-base-400 text-center capitalize">
+              <span className="text-xs text-base-content/50 text-center capitalize">
                 {getStatLabel(stat)}
               </span>
             </div>
@@ -117,11 +117,11 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
             {/* Team 2 side */}
             <div className="col-span-3 flex flex-col">
               <div className="flex items-center w-full mb-1">
-                <span className="text-sm font-medium text-base-800 dark:text-base-200 ml-2">
+                <span className="text-sm font-medium text-base-content ml-2">
                   {formatStat(stat, team2Value)}
                 </span>
                 {winner === matchDataItem.team2Name && (
-                  <span className="text-xs px-1 py-0.5 bg-base-600 text-white dark:bg-base-200 dark:text-base-800 rounded ml-2">
+                  <span className="text-xs px-1 py-0.5 bg-primary/20 text-primary rounded ml-2">
                     +{formatStat(stat, team2Value - team1Value)}
                   </span>
                 )}
@@ -129,7 +129,7 @@ export const TeamStatsComparison = ({ matchId }: TeamStatsComparisonProps) => {
               <ProgressBar
                 value={team2Value}
                 maxValue={team1Value + team2Value}
-                className="rounded-r-sm border border-gray-700"
+                className="rounded-r-sm border border-base-content/10"
                 reverse={false}
               />
             </div>

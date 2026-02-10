@@ -68,9 +68,7 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true,
       environment: 'jsdom',
-      // You might want to exclude node_modules explicitly if needed,
-      // though Vitest often handles this by default.
-      // exclude: [...configDefaults.exclude, '**/node_modules/**'],
+      setupFiles: ['./src/test-setup.ts'],
     },
   };
 });

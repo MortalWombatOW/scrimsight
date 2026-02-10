@@ -1,6 +1,7 @@
 // Layout Components
 export { Layout } from './layout/Layout';
 export { Page } from './layout/Page';
+export { PrivacyFooter } from './layout/PrivacyFooter';
 
 // Navigation Components
 export { Navigation } from './navigation/Navigation';
@@ -62,3 +63,6 @@ export { ScrimMatchList } from './match/ScrimMatchList';
 export { ScrimCard } from './scrim/ScrimCard';
 export { ScrimPlayerStats } from './scrim/ScrimPlayerStats';
 export { ScrimTeamStats } from './scrim/ScrimTeamStats';
+
+// Trend Components
+export * from './trends';

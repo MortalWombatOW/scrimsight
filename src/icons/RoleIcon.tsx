@@ -23,17 +23,17 @@ interface RoleIconProps {
 const getColorClass = (color: ColorKey): string => {
   switch (color) {
     case "primary":
-      return "text-primary-600 dark:text-primary-400";
+      return "text-primary";
     case "secondary":
-      return "text-secondary-600 dark:text-secondary-400";
+      return "text-secondary";
     case "error":
-      return "text-red-600 dark:text-red-400";
+      return "text-error";
     case "warning":
-      return "text-amber-600 dark:text-amber-400";
+      return "text-warning";
     case "info":
-      return "text-blue-600 dark:text-blue-400";
+      return "text-info";
     case "success":
-      return "text-green-600 dark:text-green-400";
+      return "text-success";
     case "inherit":
     default:
       return "";

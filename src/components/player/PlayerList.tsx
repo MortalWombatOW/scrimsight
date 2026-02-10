@@ -1,5 +1,5 @@
 // Removed useState, useStats, RoleIcon, prettyFormat, Link, PlayerStatsNumericalKeys imports as they are no longer needed here
-import { PlayerCard } from "@components"; // Import PlayerCard
+import { PlayerCard } from "./PlayerCard";
 import { PlayerListSummary, formatStat } from "@library";
 
 interface PlayerListProps {

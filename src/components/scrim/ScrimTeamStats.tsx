@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { formatStat } from "@library";
-import { TeamCard } from "@components";
+import { TeamCard } from "../team/TeamCard";
 import { useScrim } from "../../hooks/useScrims";
 import { useStats } from "../../hooks/useStats";
 

@@ -1,13 +1,18 @@
-import { GoLinkExternal } from "react-icons/go";
-import { MdOutlineFileOpen } from "react-icons/md";
+import { GoLinkExternal, GoPeople } from "react-icons/go";
+import { MdOutlineFileOpen, MdOutlinePersonOutline } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
+import { IoStatsChartOutline, IoShieldCheckmarkOutline } from "react-icons/io5";
+import { TbTournament, TbDownload } from "react-icons/tb";
 import { useState, useCallback } from "react";
 import { useLoadFiles } from "../../hooks/useRepository";
 import { useSampleData } from "../../hooks/useSampleData";
+import { useLoadParsertimeDataset } from "../../hooks/useLoadParsertimeDataset";
+import { Card } from "../surface/Card";
 
 const ZeroState = () => {
   const { enable: enableSampleData } = useSampleData();
   const loadFiles = useLoadFiles();
+  const { load: loadParsertime, progress: parsertimeProgress, error: parsertimeError, isLoading: parsertimeLoading } = useLoadParsertimeDataset();
   const [isDragActive, setIsDragActive] = useState(false);
   const [isDragAccept, setIsDragAccept] = useState(false);
   const [isDragReject, setIsDragReject] = useState(false);
@@ -80,11 +85,15 @@ const ZeroState = () => {
   );
 
   return (
-    <div className="flex items-center justify-center h-[calc(100vh-68px-32px)]">
-      <div className="w-[600px] flex flex-col items-center">
-        <h1 className="text-6xl font-black text-white text-center">
+    <div className="flex flex-col items-center py-12 px-4 gap-12 max-w-[800px] mx-auto">
+      {/* Section 1: Hero */}
+      <div className="flex flex-col items-center">
+        <h1 className="text-6xl font-black text-base-content text-center">
           Welcome to&nbsp;
-          <span className="text-7xl font-black bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent font-goldman">
+          <span
+            className="text-7xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+            style={{ fontFamily: "'Plus Jakarta Sans'" }}
+          >
             SCRIMSIGHT
           </span>
         </h1>
@@ -95,77 +104,196 @@ const ZeroState = () => {
             href="https://workshop.codes/DKEEH"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 underline"
+            className="text-primary hover:text-primary/80 underline"
           >
             ScrimTime <GoLinkExternal className="inline relative top-0.5" />
           </a>{" "}
           workshop code.
         </p>
 
-        <div className="mt-8 w-full">
-          <div
-            className={`
-              border-2 border-dashed rounded-lg p-6 cursor-pointer
-              ${
-    isDragActive
-      ? "border-blue-400"
-      : "border-gray-700 dark:border-gray-700"
-    } 
-              ${
-    isDragAccept
-      ? "border-green-500 bg-green-50 dark:bg-green-900/20"
-      : ""
-    } 
-              ${
-    isDragReject
-      ? "border-red-500 bg-red-50 dark:bg-red-900/20"
-      : ""
-    }
-              hover:border-blue-400 transition-colors
-            `}
-            onDragEnter={handleDragIn}
-            onDragOver={handleDragIn}
-            onDragLeave={handleDragOut}
-            onDrop={handleDrop}
-            onClick={() => document.getElementById("file-input")?.click()}
-          >
-            <div className="flex flex-col items-center gap-4 pointer-events-none">
-              {isDragReject ? (
-                <IoMdClose className="text-red-500" size={50} />
-              ) : isDragAccept ? (
-                <MdOutlineFileOpen className="text-green-500" size={50} />
-              ) : (
-                <MdOutlineFileOpen className="text-base-400" size={50} />
-              )}
+        <div className="mt-4 flex items-center gap-2 bg-accent/10 border border-accent/30 text-accent/80 text-xs rounded-full px-3 py-1">
+          <IoShieldCheckmarkOutline size={14} />
+          <span>100% local — your data never leaves your browser</span>
+        </div>
+      </div>
 
-              <div className="flex flex-col items-center">
-                <span className="text-xl">
-                  Drag files here or click to select
-                </span>
-                <span className="text-sm text-base-500 dark:text-base-400">
-                  Upload your ScrimTime log files to get started
+      {/* Section 2: Getting Started */}
+      <div className="w-full">
+        <h2 className="text-lg font-semibold text-base-content text-center mb-4">
+          Getting Started
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            {
+              step: 1,
+              icon: <TbDownload size={24} className="text-primary" />,
+              title: "Export",
+              description:
+                "Run the ScrimTime workshop code in Overwatch. It exports .txt log files automatically.",
+            },
+            {
+              step: 2,
+              icon: <MdOutlineFileOpen size={24} className="text-primary" />,
+              title: "Import",
+              description:
+                "Drag your log files here or use the file picker. We handle the rest.",
+            },
+            {
+              step: 3,
+              icon: <IoStatsChartOutline size={24} className="text-primary" />,
+              title: "Analyze",
+              description:
+                "View scrims, player stats, team performance, and trends instantly.",
+            },
+          ].map(({ step, icon, title, description }) => (
+            <div
+              key={step}
+              className="card-surface rounded-xl p-5 relative overflow-hidden"
+            >
+              <span className="absolute top-1 right-2 text-6xl font-black text-primary/20 select-none pointer-events-none">
+                {step}
+              </span>
+              <div className="relative flex flex-col gap-2">
+                {icon}
+                <span className="font-semibold text-base-content">{title}</span>
+                <span className="text-sm text-base-content/60">
+                  {description}
                 </span>
               </div>
             </div>
-            <input
-              id="file-input"
-              type="file"
-              accept="text/*,.txt"
-              className="hidden"
-              multiple
-              onChange={handleFileSelect}
-            />
+          ))}
+        </div>
+      </div>
+
+      {/* Section 3: Import Area */}
+      <div className="w-full">
+        <div
+          className={`
+            border-2 border-dashed rounded-lg p-6 cursor-pointer
+            ${isDragActive ? "border-primary" : "border-primary/30"}
+            ${isDragAccept ? "border-success bg-success/10" : ""}
+            ${isDragReject ? "border-error bg-error/10" : ""}
+            hover:border-primary transition-colors
+          `}
+          onDragEnter={handleDragIn}
+          onDragOver={handleDragIn}
+          onDragLeave={handleDragOut}
+          onDrop={handleDrop}
+          onClick={() => document.getElementById("file-input")?.click()}
+        >
+          <div className="flex flex-col items-center gap-4 pointer-events-none">
+            {isDragReject ? (
+              <IoMdClose className="text-error" size={50} />
+            ) : isDragAccept ? (
+              <MdOutlineFileOpen className="text-success" size={50} />
+            ) : (
+              <MdOutlineFileOpen className="text-base-content/40" size={50} />
+            )}
+
+            <div className="flex flex-col items-center">
+              <span className="text-xl">
+                Drag files here or click to select
+              </span>
+              <span className="text-sm text-base-content/60">
+                Upload your ScrimTime log files to get started
+              </span>
+            </div>
           </div>
+          <input
+            id="file-input"
+            type="file"
+            accept="text/*,.txt"
+            className="hidden"
+            multiple
+            onChange={handleFileSelect}
+          />
         </div>
 
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <span>or</span>
-          <button
-            onClick={enableSampleData}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-          >
-            Explore example data
-          </button>
+        <div className="flex flex-col items-center gap-3 mt-6">
+          <div className="flex items-center justify-center gap-2">
+            <span>or</span>
+            <button
+              onClick={enableSampleData}
+              className="btn btn-outline btn-primary"
+            >
+              Explore example data
+            </button>
+            <button
+              onClick={loadParsertime}
+              disabled={parsertimeLoading}
+              className="btn btn-outline btn-secondary"
+            >
+              {parsertimeLoading ? 'Loading...' : 'Load Parsertime Dataset'}
+            </button>
+          </div>
+
+          {parsertimeProgress && (
+            <div className="w-full max-w-md flex flex-col gap-1">
+              <span className="text-xs text-base-content/60 text-center">
+                {parsertimeProgress.phase === 'downloading'
+                  ? `Downloading CSVs (${parsertimeProgress.filesCompleted}/${parsertimeProgress.filesTotal})`
+                  : `Processing matches (${parsertimeProgress.matchesProcessed}/${parsertimeProgress.matchesTotal})`}
+              </span>
+              <progress
+                className="progress progress-secondary w-full"
+                value={
+                  parsertimeProgress.phase === 'downloading'
+                    ? parsertimeProgress.filesCompleted
+                    : parsertimeProgress.matchesProcessed
+                }
+                max={
+                  parsertimeProgress.phase === 'downloading'
+                    ? parsertimeProgress.filesTotal
+                    : parsertimeProgress.matchesTotal
+                }
+              />
+            </div>
+          )}
+
+          {parsertimeError && (
+            <span className="text-error text-sm">{parsertimeError}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Section 4: Explore Your Data */}
+      <div className="w-full">
+        <h2 className="text-lg font-semibold text-base-content text-center mb-4">
+          Explore Your Data
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            {
+              icon: <TbTournament size={24} className="text-primary" />,
+              title: "Scrim Analysis",
+              description:
+                "See win/loss records, map breakdowns, and performance across series",
+            },
+            {
+              icon: (
+                <MdOutlinePersonOutline size={24} className="text-primary" />
+              ),
+              title: "Player Stats",
+              description:
+                "Track KDA, hero picks, and role performance for every player",
+            },
+            {
+              icon: <GoPeople size={24} className="text-primary" />,
+              title: "Team Comparisons",
+              description:
+                "Compare teams head-to-head with aggregated stats and trends",
+            },
+          ].map(({ icon, title, description }) => (
+            <Card key={title} variant="default" className="p-5">
+              <div className="flex flex-col gap-2">
+                {icon}
+                <span className="font-semibold text-base-content">{title}</span>
+                <span className="text-sm text-base-content/60">
+                  {description}
+                </span>
+              </div>
+            </Card>
+          ))}
         </div>
       </div>
     </div>

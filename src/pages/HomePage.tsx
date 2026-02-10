@@ -1,7 +1,7 @@
 import React, { Suspense, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ZeroState, Page } from "@components";
-import { ScrimCard, TeamCard, PlayerCard } from "@components";
+import { ScrimCard, TeamCard, PlayerCard, TrendSection } from "@components";
 import { formatTime, formatPercentage, prettyFormat } from "@library";
 import { useMatches } from "../hooks/useRepository";
 import { useScrims } from "../hooks/useScrims";
@@ -253,6 +253,7 @@ export const HomePage = (): React.ReactNode => {
             <div className="text-center p-4">Loading dashboard sections...</div>
           }
         >
+          <TrendSection />
           <RecentScrimsSection />
           <TopTeamsSection />
           <TopPlayersSection />

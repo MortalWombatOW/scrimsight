@@ -206,7 +206,7 @@ export const TimelineTable = (): ReactNode => {
 
       {/* Team Summary Section */}
       <div className="mb-4 grid grid-cols-2 gap-4">
-        <div className="p-3 border border-gray-700 rounded-lg shadow-sm bg-base-200">
+        <div className="p-3 border border-base-content/10 rounded-lg shadow-sm bg-base-200">
           <h3 className="font-medium text-base-content">
             {teamStats.team1.name}
           </h3>
@@ -234,7 +234,7 @@ export const TimelineTable = (): ReactNode => {
           </div>
         </div>
 
-        <div className="p-3 border border-gray-700 rounded-lg shadow-sm bg-base-200">
+        <div className="p-3 border border-base-content/10 rounded-lg shadow-sm bg-base-200">
           <h3 className="font-medium text-base-content">
             {teamStats.team2.name}
           </h3>

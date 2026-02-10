@@ -10,7 +10,7 @@ using a domain-driven architecture to transform raw log data into insights.
 
 ```bash
 npm install            # install dependencies
-npm run dev            # launch Vite on http://localhost:5173
+npm run dev            # launch Vite on http://localhost:3000
 ```
 
 All quality gates (linting, testing, building) are managed via `npm run` scripts defined
@@ -44,7 +44,7 @@ src/
 
 Scrimsight follows a **Repository & Facade** pattern:
 
-1.  **Ingestion (`src/data`)**: Raw files are read and normalized by `ingestor.ts`. State is held in atomic repositories (e.g., `matchesRepositoryAtom`).
+1.  **Ingestion & Persistence (`src/data`)**: Raw files are read and normalized by `ingestor.ts`. State is held in atomic repositories (e.g., `matchesRepositoryAtom`) and persisted to IndexedDB via Dexie.js so data survives page refreshes.
 2.  **Domain Logic (`src/domain`)**: Pure functions transform raw data into entities like `Scrims`, `Teamfights`, or `Stats`. These files contain *no* React or Jotai dependencies where possible.
 3.  **Access (`src/hooks`)**: Custom hooks (e.g., `useMatches`, `useScrims`) bind the data atoms to the domain logic, providing a clean API for the UI.
 4.  **Presentation (`src/components` / `src/pages`)**: UI components consume data exclusively via hooks.
@@ -58,6 +58,7 @@ See [docs/architecture.md](docs/architecture.md) for a deep dive.
 * **Core**: React 19, Vite 6, TypeScript 5.7
 * **Styling**: Tailwind CSS v4, daisyUI v5
 * **State**: Jotai 2.12
+* **Persistence**: Dexie.js (IndexedDB) — match data survives page refreshes
 * **Testing**: Vitest 3, React Testing Library
 
 Configuration is centralized in:

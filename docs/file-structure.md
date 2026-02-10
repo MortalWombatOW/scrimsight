@@ -22,8 +22,8 @@ src/
 ## 2. Folder details
 
 ### `src/data`
-Contains the application state.
-* **Key Files**: `repository.ts` (Stores matches), `ingestor.ts` (Parses files).
+Contains the application state and persistence layer.
+* **Key Files**: `repository.ts` (Stores matches, hydration & clear actions), `ingestor.ts` (Parses files), `db.ts` (Dexie/IndexedDB database), `serialization.ts` (Map/Set ↔ JSON-safe conversions).
 * **Pattern**: Export atoms named `*Atom` and action atoms named `*Action`.
 
 ### `src/domain`
@@ -53,3 +53,5 @@ The public API for the UI.
 | `@types` | `src/types/index.ts` | Shared types |
 
 *Note: Direct imports from `src/data` or `src/domain` in UI components are discouraged. Prefer using `@hooks`.*
+
+*Note: Files re-exported by a barrel must not import from that same barrel — use direct relative imports instead to avoid circular dependencies. See the "Barrel imports" invariant in `docs/architecture.md`.*

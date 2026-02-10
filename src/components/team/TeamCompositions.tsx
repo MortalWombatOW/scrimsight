@@ -7,7 +7,7 @@ import {
 } from "@library";
 import { formatDuration } from "@library";
 import { RoleIcon } from "@icons";
-import { ErrorMessage } from "@components";
+import { ErrorMessage } from "../ui/ErrorMessage";
 import { useMatches } from "../../hooks/useRepository";
 
 interface TeamComposition {
@@ -113,7 +113,7 @@ export const TeamCompositions = (): ReactNode => {
           sortedCompositions.map((comp, index) => (
             <div
               key={index} // Consider a more stable key if available (e.g., composition hash)
-              className="border border-gray-700 rounded-lg p-4"
+              className="border border-base-content/10 rounded-lg p-4"
             >
               <div className="flex flex-col gap-4">
                 {/* Hero Icons */}

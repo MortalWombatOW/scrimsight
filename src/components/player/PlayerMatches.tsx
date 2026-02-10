@@ -1,6 +1,6 @@
 import { type ReactNode, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { MatchCard } from "@components";
+import { MatchCard } from "../match/MatchCard";
 import { formatTime } from "@library";
 import { useMatches } from "../../hooks/useRepository";
 

@@ -19,6 +19,8 @@ export const folderStructureConfig = createFolderStructure({
         { name: "App.tsx" },
         // index.css
         { name: "index.css" },
+        // Vitest setup file
+        { name: "test-setup.ts" },
         // src/atoms folder
         {
           name: "atoms",

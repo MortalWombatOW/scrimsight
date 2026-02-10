@@ -81,8 +81,8 @@ export const SingleStatPlayerComparison = ({
               <div
                 className={`w-5 h-5 rounded-full border-2 ${
                   row.original.playerTeam === matchDataItem?.team1Name
-                    ? "border-gray-700 dark:border-gray-700"
-                    : "border-gray-700 dark:border-base-500"
+                    ? "border-base-content/10"
+                    : "border-base-content/10"
                 } flex items-center justify-center`}
               >
                 <span className="text-xs font-medium">
@@ -91,7 +91,7 @@ export const SingleStatPlayerComparison = ({
               </div>
             </div>
             <div className="ml-3">
-              <div className="text-sm font-medium text-base-800 dark:text-base-200">
+              <div className="text-sm font-medium text-base-content">
                 {row.original.playerName}
               </div>
             </div>
@@ -102,7 +102,7 @@ export const SingleStatPlayerComparison = ({
         accessorKey: "playerTeam",
         header: "Team",
         cell: ({ row }) => (
-          <div className="text-sm text-base-700 dark:text-base-300">
+          <div className="text-sm text-base-content/80">
             {row.original.playerTeam}
           </div>
         ),
@@ -111,7 +111,7 @@ export const SingleStatPlayerComparison = ({
         accessorKey: stat,
         header: () => <div className="text-right">{getStatLabel(stat)}</div>,
         cell: ({ getValue }) => (
-          <div className="text-sm text-base-700 dark:text-base-300 text-right font-medium">
+          <div className="text-sm text-base-content/80 text-right font-medium">
             {formatStat(stat, getValue() as number)}
           </div>
         ),
@@ -131,14 +131,14 @@ export const SingleStatPlayerComparison = ({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-base p-3 border border-gray-700 border-gray-700 rounded shadow-md dark:bg-base-800 dark:border-gray-700">
-          <p className="font-semibold text-base-800 dark:text-base-200 mb-1">
+        <div className="bg-base-100 p-3 border border-base-content/10 rounded shadow-md">
+          <p className="font-semibold text-base-content mb-1">
             {data.playerName}
           </p>
-          <p className="text-sm text-base-600 dark:text-base-400">
+          <p className="text-sm text-base-content/40">
             Team: {data.playerTeam}
           </p>
-          <p className="text-sm text-base-600 dark:text-base-400">
+          <p className="text-sm text-base-content/40">
             {getStatLabel(stat)}: {formatStat(stat, data.value)}
           </p>
         </div>
@@ -148,19 +148,19 @@ export const SingleStatPlayerComparison = ({
   };
 
   return (
-    <div className="bg-base rounded-lg border border-gray-700 border-gray-700 w-full p-6 shadow-sm dark:bg-base-800 dark:border-gray-700">
+    <div className="bg-base-100 rounded-lg border border-base-content/10 w-full p-6 shadow-sm">
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-4 border-b border-gray-700 dark:border-gray-700">
-          <h3 className="text-xl font-semibold text-base-900 dark:text-white">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pb-4 border-b border-base-content/10">
+          <h3 className="text-xl font-semibold text-base-content">
             Player Metric Comparison
           </h3>
 
           <div className="w-full sm:w-64">
-            <label className="block text-sm font-medium text-base-700 dark:text-base-300 mb-1">
+            <label className="block text-sm font-medium text-base-content/80 mb-1">
               Select Metric
             </label>
             <select
-              className="w-full rounded-md border border-gray-700 border-gray-700 px-3 py-2 text-base-700 focus:outline-none focus:ring-1 focus:ring-base-500 dark:border-gray-700 dark:bg-base-700 dark:text-white"
+              className="w-full rounded-md border border-base-content/10 px-3 py-2 text-base-content/80 focus:outline-none focus:ring-1 focus:ring-primary/30"
               value={stat}
               onChange={(e) => {
                 const newStat = e.target.value as PlayerStatKey;
@@ -181,7 +181,7 @@ export const SingleStatPlayerComparison = ({
         <div className="flex flex-col md:flex-row gap-8">
           {/* Team 1 */}
           <div className="flex-1">
-            <h4 className="text-lg font-medium text-base-800 dark:text-base-200 mb-4 flex items-center">
+            <h4 className="text-lg font-medium text-base-content mb-4 flex items-center">
               {matchDataItem.team1Name}
             </h4>
             <div className="h-[200px] w-full">
@@ -228,7 +228,7 @@ export const SingleStatPlayerComparison = ({
 
           {/* Team 2 */}
           <div className="flex-1">
-            <h4 className="text-lg font-medium text-base-800 dark:text-base-200 mb-4 flex items-center">
+            <h4 className="text-lg font-medium text-base-content mb-4 flex items-center">
               {matchDataItem.team2Name}
             </h4>
             <div className="h-[200px] w-full">
@@ -275,7 +275,7 @@ export const SingleStatPlayerComparison = ({
         </div>
 
         <div className="mt-6">
-          <div className="overflow-x-auto border border-gray-700 rounded-lg border-gray-700 dark:border-gray-700">
+          <div className="overflow-x-auto border border-base-content/10 rounded-lg">
             <DataTable
               data={allPlayerData}
               columns={columns}

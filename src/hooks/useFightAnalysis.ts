@@ -1,4 +1,9 @@
-import { Teamfight } from '../types/domain';
+import { Teamfight, TeamfightEvent } from '../types/domain';
+import { UltimateStartLogEvent } from '../types/logs';
+
+function isUltStartEvent(e: TeamfightEvent): e is UltimateStartLogEvent {
+  return 'playerName' in e && e.type === 'ult_start';
+}
 
 export interface WinConditionMetrics {
   winRateWithFirstPick: number;
@@ -118,9 +123,8 @@ export const useFightAnalysis = (teamfights: Teamfight[]) => {
       
       // Let's look at the `events` in the fight.
       // We can look for `ult_start` events in the fight where `playerName` matches.
-      const ultUsageEvent = fight.events.find((e: any) => 
-        (e.type === 'ult_start' || e.category === 'ultimate') && // Check event type
-        e.playerName === playerName
+      const ultUsageEvent = fight.events.find((e): e is UltimateStartLogEvent =>
+        isUltStartEvent(e) && e.playerName === playerName
       );
 
       if (ultUsageEvent) {
@@ -130,7 +134,7 @@ export const useFightAnalysis = (teamfights: Teamfight[]) => {
         // We can infer it from the event or pass it in.
         // The event usually has `playerTeam`.
         if (fight.winner === ultUsageEvent.playerTeam) {
-            ultsWon++;
+          ultsWon++;
         }
       }
     });

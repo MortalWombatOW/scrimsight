@@ -1,4 +1,4 @@
-import { PlayerStatsCard } from "@components";
+import { PlayerStatsCard } from "./PlayerStatsCard";
 import { useMatch } from "../../hooks/useMatch";
 import { useStats } from "../../hooks/useStats";
 
@@ -20,8 +20,8 @@ export const PlayerStatsComparison = ({
 
   return (
     <>
-      <div className="border-b border-gray-700 dark:border-gray-700 py-2 mb-4">
-        <h2 className="text-xl font-semibold text-base-800 dark:text-base-200">
+      <div className="border-b border-base-content/10 py-2 mb-4">
+        <h2 className="text-xl font-semibold text-base-content">
           {matchDataItem.team1Name} Players
         </h2>
       </div>
@@ -41,8 +41,8 @@ export const PlayerStatsComparison = ({
           ))}
       </div>
 
-      <div className="border-b border-gray-700 dark:border-gray-700 py-2 mb-4">
-        <h2 className="text-xl font-semibold text-base-800 dark:text-base-200">
+      <div className="border-b border-base-content/10 py-2 mb-4">
+        <h2 className="text-xl font-semibold text-base-content">
           {matchDataItem.team2Name} Players
         </h2>
       </div>

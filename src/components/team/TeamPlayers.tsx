@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useMemo } from "react";
-import { PlayerCard, ErrorMessage } from "@components";
+import { PlayerCard } from "../player/PlayerCard";
+import { ErrorMessage } from "../ui/ErrorMessage";
 import { formatStat } from "@library";
 import { useMatches } from "../../hooks/useRepository";
 

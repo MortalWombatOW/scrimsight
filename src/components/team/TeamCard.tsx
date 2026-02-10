@@ -1,4 +1,4 @@
-import { DataCard } from "@components";
+import { DataCard } from "../ui/DataCard";
 import { GoPeople } from "react-icons/go";
 
 interface TeamCardProps {
@@ -49,19 +49,19 @@ export const TeamCard = ({
         {primaryStats.map((stat) => (
           <div
             key={stat.label}
-            className="bg-base-300/60 backdrop-blur-md rounded-lg p-3 border border-white/5"
+            className="bg-base-300/60 backdrop-blur-md rounded-lg p-3 border border-base-content/8"
           >
             <div className="text-xs text-base-content/70 uppercase tracking-wider font-medium mb-1">
               {stat.label}
             </div>
-            <div className="text-xl font-bold text-white">{stat.value}</div>
+            <div className="text-xl font-bold text-base-content">{stat.value}</div>
           </div>
         ))}
       </div>
 
       {/* Secondary Stats */}
       {secondaryStats && secondaryStats.length > 0 && (
-        <div className="flex flex-wrap gap-x-4 gap-y-2 pt-2 border-t border-white/10">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 pt-2 border-t border-base-content/10">
           {secondaryStats.map((stat) => (
             <div key={stat.label} className="flex items-center gap-2">
               <span className="text-xs text-base-content/60">{stat.label}:</span>

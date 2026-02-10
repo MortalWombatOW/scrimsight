@@ -32,7 +32,7 @@ export const TimelineControls = (): ReactNode => {
 
   return (
     <div className="flex flex-col gap-2 ml-4 mt-3">
-      <div className="text-lg text-base-500 font-semibold mb-2">
+      <div className="text-lg text-base-content/50 font-semibold mb-2">
         Select segment to view
       </div>
 
@@ -57,9 +57,9 @@ export const TimelineControls = (): ReactNode => {
       </div>
 
       {/* Legend */}
-      <div className="flex justify-center mt-6 text-xs text-base-500 gap-4">
+      <div className="flex justify-center mt-6 text-xs text-base-content/50 gap-4">
         <div className="flex items-center">
-          <div className="w-2 h-2 rounded-full border border-blue-600 mr-1"></div>
+          <div className="w-2 h-2 rounded-full border border-info mr-1"></div>
           <span>{loadedData?.matchData?.team1Name ?? "Team 1"} Win</span>
         </div>
         <div className="flex items-center">
