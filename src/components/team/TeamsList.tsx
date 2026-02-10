@@ -1,4 +1,4 @@
-import { TeamCard } from "@components";
+import { TeamCard } from "./TeamCard";
 import { TeamListSummary, formatPercentage } from "@library";
 
 interface TeamsListProps {

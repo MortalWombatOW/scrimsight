@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Navigation } from "@components";
+import { Navigation } from "../navigation/Navigation";
 import { Suspense, useState } from "react";
 import { PrivacyFooter } from "./PrivacyFooter";
 

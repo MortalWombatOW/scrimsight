@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { formatTime } from "@library";
-import { MatchCard } from "@components";
+import { MatchCard } from "./MatchCard";
 import { useScrim } from "../../hooks/useScrims";
 import { useMatches } from "../../hooks/useRepository";
 

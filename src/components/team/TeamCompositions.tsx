@@ -7,7 +7,7 @@ import {
 } from "@library";
 import { formatDuration } from "@library";
 import { RoleIcon } from "@icons";
-import { ErrorMessage } from "@components";
+import { ErrorMessage } from "../ui/ErrorMessage";
 import { useMatches } from "../../hooks/useRepository";
 
 interface TeamComposition {

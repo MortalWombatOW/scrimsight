@@ -1,5 +1,5 @@
 import React from "react";
-import { SubPageNavigation } from "@components";
+import { SubPageNavigation } from "../../navigation/SubPageNavigation";
 
 // --- Types ---
 

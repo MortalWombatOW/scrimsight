@@ -1,7 +1,7 @@
 import { type ReactNode, useState, useMemo } from "react";
 import { RoleIcon } from "@icons";
 import { getRoleFromHero, OverwatchRole } from "@library";
-import { PlayerList } from "@components";
+import { PlayerList } from "./PlayerList";
 import { useMatches } from "../../hooks/useRepository";
 
 // Define sort options for players

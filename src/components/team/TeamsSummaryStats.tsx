@@ -1,4 +1,4 @@
-import { StatCard } from "@components";
+import { StatCard } from "../ui/StatCard";
 
 interface TeamsSummaryStatsProps {
   totalTeams: number;

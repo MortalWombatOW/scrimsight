@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { PlayerStatKey, getStatLabel, formatStat } from "@library";
-import { ProgressBar } from "@components";
+import { ProgressBar } from "../ui/ProgressBar";
 import { useMatch } from "../../hooks/useMatch";
 import { PlayerStatsBase } from "../../types";
 

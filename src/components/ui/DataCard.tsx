@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { GoArrowRight } from "react-icons/go";
-import { Card } from "@components";
+import { Card } from "../surface/Card";
 
 export interface DataCardProps {
   title: string;

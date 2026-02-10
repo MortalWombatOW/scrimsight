@@ -6,7 +6,7 @@ import {
   formatStat,
   getStatLabel,
 } from "@library";
-import { VisualCard } from "@components";
+import { VisualCard } from "../ui/VisualCard";
 import { usePlayerRankings } from "../../hooks/useStats";
 import { PlayerImpactCard } from "./PlayerImpactCard";
 import { useFightAnalysis } from "../../hooks/useFightAnalysis";
