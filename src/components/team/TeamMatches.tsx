@@ -1,8 +1,8 @@
 import { useState, useMemo, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import { formatTime } from "@library";
-import { ErrorMessage } from "@components";
-import { MatchCard } from "@components";
+import { ErrorMessage } from "../ui/ErrorMessage";
+import { MatchCard } from "../match/MatchCard";
 import { useMatches } from "../../hooks/useRepository";
 import type { MatchMetadata } from "../../types";
 

@@ -5,7 +5,8 @@ import {
   usePlayerPerformanceTrends,
   usePlayerHeroStats,
 } from "../../hooks/usePlayerMetrics";
-import { PlayerCard, StatCard } from "@components";
+import { PlayerCard } from "./PlayerCard";
+import { StatCard } from "../ui/StatCard";
 import {
   ResponsiveContainer,
   BarChart,

@@ -1,4 +1,4 @@
-import { DataCard } from "@components";
+import { DataCard } from "../ui/DataCard";
 import { GoTrophy } from "react-icons/go";
 
 interface MatchCardProps {

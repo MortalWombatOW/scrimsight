@@ -2,7 +2,7 @@ import {
   mapNameToFileName,
   formatDurationDetailed,
 } from "@library";
-import { DataCard } from "@components";
+import { DataCard } from "../ui/DataCard";
 import { GoCalendar, GoClock } from "react-icons/go";
 
 interface ScrimCardProps {

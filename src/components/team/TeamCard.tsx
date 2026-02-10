@@ -1,4 +1,4 @@
-import { DataCard } from "@components";
+import { DataCard } from "../ui/DataCard";
 import { GoPeople } from "react-icons/go";
 
 interface TeamCardProps {

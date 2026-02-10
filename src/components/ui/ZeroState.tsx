@@ -6,11 +6,13 @@ import { TbTournament, TbDownload } from "react-icons/tb";
 import { useState, useCallback } from "react";
 import { useLoadFiles } from "../../hooks/useRepository";
 import { useSampleData } from "../../hooks/useSampleData";
+import { useLoadParsertimeDataset } from "../../hooks/useLoadParsertimeDataset";
 import { Card } from "../surface/Card";
 
 const ZeroState = () => {
   const { enable: enableSampleData } = useSampleData();
   const loadFiles = useLoadFiles();
+  const { load: loadParsertime, progress: parsertimeProgress, error: parsertimeError, isLoading: parsertimeLoading } = useLoadParsertimeDataset();
   const [isDragActive, setIsDragActive] = useState(false);
   const [isDragAccept, setIsDragAccept] = useState(false);
   const [isDragReject, setIsDragReject] = useState(false);
@@ -207,14 +209,50 @@ const ZeroState = () => {
           />
         </div>
 
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <span>or</span>
-          <button
-            onClick={enableSampleData}
-            className="btn btn-outline btn-primary"
-          >
-            Explore example data
-          </button>
+        <div className="flex flex-col items-center gap-3 mt-6">
+          <div className="flex items-center justify-center gap-2">
+            <span>or</span>
+            <button
+              onClick={enableSampleData}
+              className="btn btn-outline btn-primary"
+            >
+              Explore example data
+            </button>
+            <button
+              onClick={loadParsertime}
+              disabled={parsertimeLoading}
+              className="btn btn-outline btn-secondary"
+            >
+              {parsertimeLoading ? 'Loading...' : 'Load Parsertime Dataset'}
+            </button>
+          </div>
+
+          {parsertimeProgress && (
+            <div className="w-full max-w-md flex flex-col gap-1">
+              <span className="text-xs text-base-content/60 text-center">
+                {parsertimeProgress.phase === 'downloading'
+                  ? `Downloading CSVs (${parsertimeProgress.filesCompleted}/${parsertimeProgress.filesTotal})`
+                  : `Processing matches (${parsertimeProgress.matchesProcessed}/${parsertimeProgress.matchesTotal})`}
+              </span>
+              <progress
+                className="progress progress-secondary w-full"
+                value={
+                  parsertimeProgress.phase === 'downloading'
+                    ? parsertimeProgress.filesCompleted
+                    : parsertimeProgress.matchesProcessed
+                }
+                max={
+                  parsertimeProgress.phase === 'downloading'
+                    ? parsertimeProgress.filesTotal
+                    : parsertimeProgress.matchesTotal
+                }
+              />
+            </div>
+          )}
+
+          {parsertimeError && (
+            <span className="text-error text-sm">{parsertimeError}</span>
+          )}
         </div>
       </div>
 

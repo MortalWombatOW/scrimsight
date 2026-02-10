@@ -1,5 +1,5 @@
 import { GoTrophy } from "react-icons/go";
-import { Card } from "@components";
+import { Card } from "../surface/Card";
 
 interface MatchScoreCardProps {
   matchData: {

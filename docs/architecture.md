@@ -66,6 +66,13 @@ Not all domain functions are displayed in the UI. The domain layer computes more
 ### Insights are rule-based, not AI
 All auto-generated insights must be deterministic and explainable. No ML models, no LLM calls in the product. AI is used for development only.
 
+### Barrel imports: avoid self-referencing
+A file that is re-exported by a barrel (`index.ts`) must not import from that same barrel — doing so creates circular chunk dependencies at build time. Use direct relative imports instead. In practice:
+- **Components** within `src/components/` import siblings via relative paths (e.g., `../ui/StatCard`), not `@components`.
+- **Pages**, **hooks**, and other leaf consumers that are NOT re-exported by a barrel may freely use barrel aliases like `@components` or `@library`.
+
+This rule applies to all barrel files (`@components`, `@library`, `@hooks`, etc.), not just components.
+
 ### Code splitting requires direct imports
 `React.lazy()` requires direct file imports, not barrel exports (`@pages`, `@components`). Barrel re-exports defeat chunk splitting. For named exports, use `.then(m => ({ default: m.ComponentName }))` to adapt for `React.lazy()`.
 

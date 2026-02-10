@@ -8,9 +8,9 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { TeamCard } from "@components";
+import { TeamCard } from "./TeamCard";
 import { formatPercentage } from "@library";
-import { ErrorMessage } from "@components";
+import { ErrorMessage } from "../ui/ErrorMessage";
 import { useMatches } from "../../hooks/useRepository";
 import { useFightAnalysis } from "../../hooks/useFightAnalysis";
 import { WinConditionCard } from "../analysis/WinConditionCard";

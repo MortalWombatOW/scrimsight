@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { Card } from "@components";
+import { Card } from "../surface/Card";
 import {
   calculateHistogram,
   calculateMean,

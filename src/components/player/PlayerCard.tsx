@@ -1,4 +1,4 @@
-import { DataCard } from "@components";
+import { DataCard } from "../ui/DataCard";
 import { getHeroImage } from "@library";
 import { RoleIcon } from "@icons";
 import { MdOutlinePersonOutline } from "react-icons/md";
