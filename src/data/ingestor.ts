@@ -207,7 +207,7 @@ function groupEventsByType(parsedFile: ParsedLogFile): MatchEvents {
   return events;
 }
 
-function extractMetadata(
+export function extractMetadata(
   matchId: string,
   fileName: string,
   fileModified: number,

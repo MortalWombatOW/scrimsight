@@ -94,6 +94,34 @@ export const hydrateFromDbAction = atom(
 );
 
 // ============================================================================
+// Action: Load Parsertime Matches (already processed)
+// ============================================================================
+
+export const loadParsertimeMatchesAction = atom(
+  null,
+  async (get, set, matches: ProcessedMatch[]) => {
+    set(isProcessingAtom, true);
+    try {
+      const currentRepository = get(matchesRepositoryAtom);
+      const newRepository = { ...currentRepository };
+      for (const match of matches) {
+        newRepository[match.metadata.matchId] = match;
+      }
+      set(matchesRepositoryAtom, newRepository);
+
+      try {
+        const storedMatches = matches.map(serializeMatch);
+        await putMatches(storedMatches);
+      } catch (error) {
+        console.error('Failed to persist parsertime matches to IndexedDB:', error);
+      }
+    } finally {
+      set(isProcessingAtom, false);
+    }
+  }
+);
+
+// ============================================================================
 // Action: Clear All Data
 // ============================================================================
 
