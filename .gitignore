@@ -59,3 +59,8 @@ package-lock.json
 storybook-static
 
 scrimsight.xml
+
+# Analysis
+analysis/data/*.csv
+analysis/venv/
+.ipynb_checkpoints/
