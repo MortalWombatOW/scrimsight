@@ -14,15 +14,14 @@ import pandas as pd
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
-# Columns that should always be categorical for memory efficiency
+# Columns that should be categorical for memory efficiency.
+# Excludes attacker/victim team/name since they're cross-compared
+# and pandas requires identical category sets for categorical comparisons.
 CATEGORICAL_COLS = {
-    "event_type", "player_team", "player_name", "player_hero", "previous_hero",
-    "attacker_team", "attacker_name", "attacker_hero",
-    "victim_team", "victim_name", "victim_hero",
+    "event_type", "player_team", "player_hero", "previous_hero",
+    "attacker_hero", "victim_hero",
     "event_ability", "map_name", "map_type",
     "team_1_name", "team_2_name", "capturing_team",
-    "resurrecter_team", "resurrecter_player", "resurrecter_hero",
-    "resurrectee_team", "resurrectee_player", "resurrectee_hero",
     "hero_duplicated",
 }
 

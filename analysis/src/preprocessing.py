@@ -114,3 +114,22 @@ def enrich_kills_with_match_info(kills: pd.DataFrame, matches: pd.DataFrame) -> 
         on="MapDataId",
         how="left",
     )
+
+
+KNOWN_HEROES = set(HERO_ROLES.keys())
+
+
+def filter_known_heroes(df: pd.DataFrame, hero_cols: list[str] | None = None) -> pd.DataFrame:
+    """
+    Filter out rows with localized (non-English) hero names.
+    ~4% of data has Japanese/Russian/Chinese/French hero names that
+    we can't reliably map to roles. Dropping them keeps analysis clean.
+    """
+    if hero_cols is None:
+        # Auto-detect hero columns
+        hero_cols = [c for c in df.columns if "hero" in c.lower()]
+    mask = pd.Series(True, index=df.index)
+    for col in hero_cols:
+        if col in df.columns:
+            mask &= df[col].isin(KNOWN_HEROES)
+    return df[mask].copy()
