@@ -16,6 +16,7 @@ const PlayerPage = lazy(() => import("./pages/PlayerPage"));
 const TeamPage = lazy(() => import("./pages/TeamPage"));
 const MatchPage = lazy(() => import("./pages/MatchPage"));
 const MetricsExplorerPage = lazy(() => import("./pages/MetricsExplorerPage"));
+const DetailedAnalysisPage = lazy(() => import("./pages/DetailedAnalysisPage"));
 const MatchOverviewPage = lazy(() => import("./pages/MatchOverviewPage"));
 const MatchPlayersPage = lazy(() => import("./pages/MatchPlayersPage"));
 const MatchStatComparisonPage = lazy(() => import("./pages/MatchStatComparisonPage"));
@@ -76,6 +77,7 @@ const HydratedRoutes = () => {
       </Route>
       <Route path="/files" element={<AddFilesPage />} />
       <Route path="/metrics" element={<MetricsExplorerPage />} />
+      <Route path="/analysis" element={<DetailedAnalysisPage />} />
     </Routes>
   );
 };
