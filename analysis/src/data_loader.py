@@ -14,22 +14,22 @@ import pandas as pd
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
-# Columns that should be categorical for memory efficiency.
-# Excludes attacker/victim team/name since they're cross-compared
-# and pandas requires identical category sets for categorical comparisons.
-CATEGORICAL_COLS = {
-    "event_type", "player_team", "player_hero", "previous_hero",
+# Columns safe to categorize (never cross-compared with other columns).
+# Team/player name columns are excluded because notebooks compare e.g.
+# attacker_team != victim_team, which fails with mismatched category sets.
+_SAFE_CATEGORY_COLS = {
+    "event_type", "player_hero", "previous_hero",
     "attacker_hero", "victim_hero",
     "event_ability", "map_name", "map_type",
-    "team_1_name", "team_2_name", "capturing_team",
     "hero_duplicated",
+    "resurrecter_hero", "resurrectee_hero",
 }
 
 
 def _optimize_dtypes(df: pd.DataFrame) -> pd.DataFrame:
-    """Convert string columns to category dtype where appropriate."""
+    """Convert safe string columns to category dtype for memory savings."""
     for col in df.columns:
-        if col in CATEGORICAL_COLS and df[col].dtype == "object":
+        if col in _SAFE_CATEGORY_COLS and df[col].dtype == "object":
             df[col] = df[col].astype("category")
     return df
 

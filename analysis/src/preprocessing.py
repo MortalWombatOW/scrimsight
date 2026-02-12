@@ -119,6 +119,16 @@ def enrich_kills_with_match_info(kills: pd.DataFrame, matches: pd.DataFrame) -> 
 KNOWN_HEROES = set(HERO_ROLES.keys())
 
 
+def cat_eq(s1: pd.Series, s2: pd.Series) -> pd.Series:
+    """Compare two categorical series safely (avoids pandas category mismatch error)."""
+    return s1.astype(str) == s2.astype(str)
+
+
+def cat_ne(s1: pd.Series, s2: pd.Series) -> pd.Series:
+    """Not-equal comparison for two categorical series."""
+    return s1.astype(str) != s2.astype(str)
+
+
 def filter_known_heroes(df: pd.DataFrame, hero_cols: list[str] | None = None) -> pd.DataFrame:
     """
     Filter out rows with localized (non-English) hero names.
