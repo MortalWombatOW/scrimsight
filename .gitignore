@@ -62,3 +62,8 @@ scrimsight.xml
 package-lock.json
 __pycache__/
 venv/
+
+# Analysis
+analysis/data/*.csv
+analysis/venv/
+.ipynb_checkpoints/
