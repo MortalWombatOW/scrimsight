@@ -4,6 +4,7 @@
  */
 
 import { Metric, OverwatchRole } from '@library';
+import type { UltCycle } from '../domain/economy';
 import {
   Ability1UsedLogEvent,
   Ability2UsedLogEvent,
@@ -216,6 +217,7 @@ export interface ProcessedMatch {
   mapTimes: MapTimes;
   playerStatusTimeline: Map<string, PlayerStatusTimeline>;
   ultimateEvents: UltimateEvent[];
+  ultCycles: UltCycle[];
 }
 
 // ============================================================================

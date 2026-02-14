@@ -5,7 +5,7 @@ import {
   MatchMetadata,
 } from '../types/domain';
 import { KillLogEvent } from '../types/logs';
-import { UltCycle, calculateUltCycles, getUltCycleForFight } from './economy';
+import { UltCycle, getUltCycleForFight } from './economy';
 
 const TEAMFIGHT_SUSTAIN_TIME = 12; // seconds
 
@@ -17,7 +17,8 @@ interface FightEvent {
 
 export function calculateTeamfights(
   events: MatchEvents,
-  metadata: MatchMetadata
+  metadata: MatchMetadata,
+  ultCycles: UltCycle[]
 ): Teamfight[] {
   const { matchId, team1Name, team2Name } = metadata;
   
@@ -32,7 +33,6 @@ export function calculateTeamfights(
   
   // 2. Cluster events into fights
   const fights: Teamfight[] = [];
-  const ultCycles = calculateUltCycles(events);
   
   let currentFightEvents: FightEvent[] = [];
   let fightStartTime: number | null = null;

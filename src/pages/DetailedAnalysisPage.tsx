@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Page, ZeroState } from '@components';
 import { useDetailedAnalysis } from '../hooks/useDetailedAnalysis';
+import { useUltCycles } from '../hooks/useUltCycles';
 import { generateKeyFindings } from '../domain/analysis';
 import { ExecutiveSummary } from '../components/analysis/ExecutiveSummary';
 import { FirstPickSection } from '../components/analysis/FirstPickSection';
@@ -12,6 +13,7 @@ import { TargetFocusSection } from '../components/analysis/TargetFocusSection';
 
 export const DetailedAnalysisPage: React.FC = () => {
   const analysis = useDetailedAnalysis();
+  const ultCycles = useUltCycles();
 
   const keyFindings = useMemo(() => {
     if (!analysis.hasData) return null;
@@ -38,7 +40,7 @@ export const DetailedAnalysisPage: React.FC = () => {
       <Page.Content>
         {keyFindings && <ExecutiveSummary keyFindings={keyFindings} />}
         <FirstPickSection data={analysis.firstPick} />
-        <UltEconomySection data={analysis.ultEconomy} />
+        <UltEconomySection data={analysis.ultEconomy} playerMetrics={ultCycles.playerMetrics} />
         <SurvivalSection data={analysis.survival} />
         <TFWRSection data={analysis.tfwr} />
         <StrategyProfileSection data={analysis.strategyProfile} />

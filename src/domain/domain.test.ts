@@ -66,7 +66,8 @@ describe('Domain Functions', () => {
     it('should detect teamfights from kill events', () => {
       const teamfights = calculateTeamfights(
         processedMatch1.events,
-        processedMatch1.metadata
+        processedMatch1.metadata,
+        processedMatch1.ultCycles
       );
 
       expect(teamfights).toBeDefined();
@@ -85,7 +86,8 @@ describe('Domain Functions', () => {
     it('should identify teamfight winners', () => {
       const teamfights = calculateTeamfights(
         processedMatch1.events,
-        processedMatch1.metadata
+        processedMatch1.metadata,
+        processedMatch1.ultCycles
       );
 
       const teamfightsWithWinners = teamfights.filter(tf => tf.winner !== null);

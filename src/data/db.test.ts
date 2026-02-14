@@ -58,6 +58,7 @@ function createTestMatch(id: string): ProcessedMatch {
     mapTimes: { matchId: id, startTime: 0, endTime: 600, duration: 600 },
     playerStatusTimeline: new Map([['round1', [entry]]]),
     ultimateEvents: [],
+    ultCycles: [],
   } as ProcessedMatch;
 }
 

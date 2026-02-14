@@ -1,5 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createStore } from 'jotai';
+
+// In test environment, bypass the Web Worker and call ingestFile directly
+vi.mock('../workers/ingestWorkerClient', async () => {
+  const { ingestFile } = await vi.importActual<typeof import('./ingestor')>('./ingestor');
+  return { ingestFileInWorker: ingestFile };
+});
+
 import {
   matchesRepositoryAtom,
   isProcessingAtom,

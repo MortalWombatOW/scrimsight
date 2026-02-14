@@ -39,6 +39,7 @@ const createMockMatch = (id: string, playerStats: PlayerStatsBase[]): ProcessedM
   mapTimes: { startTime: 0, endTime: 600, matchId: id, duration: 600 },
   playerStatusTimeline: new Map(),
   ultimateEvents: [],
+  ultCycles: [],
 });
 
 const mockStats1: PlayerStatsBase = {

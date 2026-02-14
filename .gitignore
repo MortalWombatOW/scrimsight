@@ -60,3 +60,5 @@ storybook-static
 
 scrimsight.xml
 package-lock.json
+__pycache__/
+venv/

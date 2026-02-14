@@ -1,0 +1,6 @@
+[
+  {
+    "filename": "/home/andrewgleeson/repos/scrimsight/src/workers/ingest.worker.ts",
+    "errorMessage": "🔥 Folder 'workers' is invalid. 🔥\n\nAllowed names  = atoms, lib, data, domain, hooks, types, integration, components, icons, pages\nError location = ./src/workers\n\n"
+  }
+]

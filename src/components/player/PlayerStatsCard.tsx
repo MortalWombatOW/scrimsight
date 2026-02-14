@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   getHeroImage,
   camelCaseToAbbreviation,
@@ -9,11 +9,12 @@ import {
 import { VisualCard } from "../ui/VisualCard";
 import { usePlayerRankings } from "../../hooks/useStats";
 import { PlayerImpactCard } from "./PlayerImpactCard";
+import { UltEfficiencyCard } from "./UltEfficiencyCard";
 import { useFightAnalysis } from "../../hooks/useFightAnalysis";
+import { useUltCycles } from "../../hooks/useUltCycles";
 import { useMatch } from "../../hooks/useMatch";
 import { useMatches } from "../../hooks/useRepository";
 import { useParams } from "react-router-dom";
-import { useMemo } from "react";
 
 interface PlayerStatsCardProps {
   playerName: string;
@@ -42,6 +43,12 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
   }, [matchId, singleMatchData, allMatches, playerName]);
 
   const { getPlayerImpact } = useFightAnalysis(relevantTeamfights);
+
+  const ultCycles = useUltCycles();
+  const playerUltMetrics = useMemo(
+    () => ultCycles.playerMetrics.filter(m => m.playerName === playerName),
+    [ultCycles.playerMetrics, playerName],
+  );
 
   const playerStats = getPlayerStats(playerName);
 
@@ -159,6 +166,11 @@ export const PlayerStatsCard = ({ playerName }: PlayerStatsCardProps) => {
         {/* Impact Card (Show if we have data) */}
         {relevantTeamfights.length > 0 && (
           <PlayerImpactCard metrics={getPlayerImpact(playerName)} />
+        )}
+
+        {/* Ult Efficiency (Show if we have cycle data for this player) */}
+        {playerUltMetrics.length > 0 && (
+          <UltEfficiencyCard metrics={playerUltMetrics} />
         )}
       </div>
     </VisualCard>
