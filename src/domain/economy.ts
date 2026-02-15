@@ -1,5 +1,6 @@
 import { UltimateChargedLogEvent, UltimateStartLogEvent, UltimateEndLogEvent, HeroSwapLogEvent, RoundEndLogEvent } from '../types/logs';
 import { MatchEvents } from '../types/domain';
+import { getRoleFromHero, OverwatchRole } from '../lib/hero';
 
 export interface UltCycle {
   playerId: string; // name-team-hero
@@ -244,4 +245,57 @@ export function getUltCycleForFight(
   );
   
   return { available, used, charged };
+}
+
+export interface RoleUltSummary {
+  role: OverwatchRole;
+  medianCharge: number;
+  p25Charge: number;
+  p75Charge: number;
+  medianHold: number;
+  p25Hold: number;
+  p75Hold: number;
+  count: number;
+}
+
+/**
+ * Compute charge/hold time distributions grouped by hero role.
+ */
+export function computeRoleDistributions(cycles: UltCycle[]): RoleUltSummary[] {
+  const roleData = new Map<OverwatchRole, { charges: number[]; holds: number[] }>();
+
+  for (const cycle of cycles) {
+    if (cycle.status === 'swapped' || cycle.status === 'round-end') continue;
+    const role = getRoleFromHero(cycle.hero);
+    const data = roleData.get(role) || { charges: [], holds: [] };
+    if (cycle.timeToCharge > 0) data.charges.push(cycle.timeToCharge);
+    if (cycle.status === 'used') data.holds.push(cycle.timeHeld);
+    roleData.set(role, data);
+  }
+
+  const quantile = (arr: number[], p: number) => {
+    if (arr.length === 0) return 0;
+    const sorted = [...arr].sort((a, b) => a - b);
+    const pos = (sorted.length - 1) * p;
+    const lo = Math.floor(pos);
+    const hi = Math.ceil(pos);
+    return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+  };
+
+  return (['tank', 'damage', 'support'] as OverwatchRole[])
+    .map(role => {
+      const data = roleData.get(role);
+      if (!data || data.charges.length === 0) return null;
+      return {
+        role,
+        medianCharge: quantile(data.charges, 0.5),
+        p25Charge: quantile(data.charges, 0.25),
+        p75Charge: quantile(data.charges, 0.75),
+        medianHold: quantile(data.holds, 0.5),
+        p25Hold: quantile(data.holds, 0.25),
+        p75Hold: quantile(data.holds, 0.75),
+        count: data.charges.length,
+      };
+    })
+    .filter((r): r is RoleUltSummary => r !== null);
 }

@@ -36,6 +36,7 @@ const EMPTY_RESULT: DetailedAnalysisResult = {
   ultEconomy: {
     winRateByFightType: [], fightTypeDistribution: [],
     ultEfficiency: { avgUltsPerWin: 0, avgUltsPerLoss: 0, totalFightsAnalyzed: 0 },
+    ultDifferentialWinRates: [], avgUltDifferential: 0, heroUltEffectiveness: [],
   },
   survival: {
     players: [], benchmarks: { excellent: 5, good: 6, average: 7.5, poor: 8 },

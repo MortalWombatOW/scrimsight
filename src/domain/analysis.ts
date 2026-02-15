@@ -58,6 +58,18 @@ export interface FightTypeWinRate {
   winnerWinRate: number;
 }
 
+export interface UltDifferentialWinRate {
+  differential: number;
+  winRate: number;
+  totalFights: number;
+}
+
+export interface HeroUltEffectiveness {
+  hero: string;
+  fightWinRate: number;
+  totalFightsWithUlt: number;
+}
+
 export interface UltEconomyAnalysis {
   winRateByFightType: FightTypeWinRate[];
   ultEfficiency: {
@@ -71,6 +83,9 @@ export interface UltEconomyAnalysis {
     count: number;
     percentage: number;
   }>;
+  ultDifferentialWinRates: UltDifferentialWinRate[];
+  avgUltDifferential: number;
+  heroUltEffectiveness: HeroUltEffectiveness[];
 }
 
 export interface SurvivalPlayerData {
@@ -268,6 +283,72 @@ export function computeUltEconomyAnalysis(fights: Teamfight[]): UltEconomyAnalys
     };
   });
 
+  // Ult differential win rates: from perspective of each team in each fight
+  const diffBuckets = new Map<number, { wins: number; total: number }>();
+  let totalDiff = 0;
+  let diffCount = 0;
+
+  for (const fight of fights) {
+    if (!fight.winner) continue;
+    const t1Ults = fight.team1UltsUsed.length;
+    const t2Ults = fight.team2UltsUsed.length;
+
+    // From team1 perspective
+    const diff1 = t1Ults - t2Ults;
+    const entry1 = diffBuckets.get(diff1) || { wins: 0, total: 0 };
+    entry1.total++;
+    if (fight.winner === fight.team1Name) entry1.wins++;
+    diffBuckets.set(diff1, entry1);
+
+    // From team2 perspective
+    const diff2 = t2Ults - t1Ults;
+    const entry2 = diffBuckets.get(diff2) || { wins: 0, total: 0 };
+    entry2.total++;
+    if (fight.winner === fight.team2Name) entry2.wins++;
+    diffBuckets.set(diff2, entry2);
+
+    totalDiff += diff1;
+    diffCount++;
+  }
+
+  const ultDifferentialWinRates: UltDifferentialWinRate[] = Array.from(diffBuckets.entries())
+    .map(([differential, { wins, total }]) => ({
+      differential,
+      winRate: total > 0 ? (wins / total) * 100 : 0,
+      totalFights: total,
+    }))
+    .sort((a, b) => a.differential - b.differential);
+
+  // Hero ult effectiveness: fight win rate when a hero uses their ult
+  const heroUltMap = new Map<string, { wins: number; total: number }>();
+  for (const fight of fights) {
+    if (!fight.winner) continue;
+    const allUlts = [
+      ...fight.team1UltsUsed.map(hero => ({ hero, team: fight.team1Name })),
+      ...fight.team2UltsUsed.map(hero => ({ hero, team: fight.team2Name })),
+    ];
+    // Deduplicate heroes per fight (a hero might ult twice in rare cases)
+    const seen = new Set<string>();
+    for (const { hero, team } of allUlts) {
+      const key = `${hero}-${team}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const entry = heroUltMap.get(hero) || { wins: 0, total: 0 };
+      entry.total++;
+      if (fight.winner === team) entry.wins++;
+      heroUltMap.set(hero, entry);
+    }
+  }
+
+  const heroUltEffectiveness: HeroUltEffectiveness[] = Array.from(heroUltMap.entries())
+    .filter(([, { total }]) => total >= 5)
+    .map(([hero, { wins, total }]) => ({
+      hero,
+      fightWinRate: (wins / total) * 100,
+      totalFightsWithUlt: total,
+    }))
+    .sort((a, b) => b.fightWinRate - a.fightWinRate);
+
   return {
     winRateByFightType,
     ultEfficiency: {
@@ -276,6 +357,9 @@ export function computeUltEconomyAnalysis(fights: Teamfight[]): UltEconomyAnalys
       totalFightsAnalyzed: analyzedFights,
     },
     fightTypeDistribution,
+    ultDifferentialWinRates,
+    avgUltDifferential: diffCount > 0 ? totalDiff / diffCount : 0,
+    heroUltEffectiveness,
   };
 }
 
