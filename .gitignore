@@ -66,4 +66,7 @@ venv/
 # Analysis
 analysis/data/*.csv
 analysis/venv/
+analysis/.venv/
+analysis/uv.lock
+analysis/outputs/figures/*.png
 .ipynb_checkpoints/
