@@ -2,7 +2,7 @@
 
 This document captures ScrimSight's **user-facing product structure** — how data is organized and presented to users. It complements [architecture.md](./architecture.md) (which covers code architecture) by documenting pages, navigation, data presentation, and gaps between domain capabilities and UI surfacing.
 
-**Last verified:** February 2025
+**Last verified:** February 2026
 
 ---
 
@@ -32,6 +32,7 @@ This document captures ScrimSight's **user-facing product structure** — how da
 │   ├── /players                TeamPlayers
 │   ├── /matches                TeamMatches
 │   └── /compositions           TeamCompositions
+├── /analysis                   DetailedAnalysisPage
 ├── /metrics                    MetricsExplorerPage
 └── /files                      AddFilesPage
 ```
@@ -84,13 +85,13 @@ Pages with sub-routes use tab-style navigation:
 
 | Section | Data Shown | User Question Answered |
 |---|---|---|
-| **Trend Analysis** | Cumulative win rate (%) and match K/D over time, for the auto-detected most-frequent team | "How are we trending?" |
+| **Trend Analysis** | Interactive metric selector (Win Rate, TFWR, K/D, D/10, First Pick %, First Death %) with benchmark reference lines, for the auto-detected most-frequent team. Defaults to Win Rate + TFWR. | "How are we trending?" |
 | **Recent Scrims** | Top 3 scrims by date — score (W-L-D), duration, map count | "What scrims have we played recently?" |
 | **Top Teams** | Top 3 teams by win rate — win rate, games played | "Who's winning the most?" |
 | **Top Players** | Top 3 players by KDA — KDA, role, team | "Who's performing best?" |
 | **Zero State** | Upload prompt when no data exists | "How do I get started?" |
 
-**Data sources:** `useTrendData()` (hook), `useScrims()`, `useMatches()`, `useStats()`
+**Data sources:** `useTrendData()` (hook — computes TFWR, D/10, first pick/death rates, 5-match rolling averages), `useScrims()`, `useMatches()`, `useStats()`
 
 ### Scrims List (`/scrims`)
 
@@ -165,6 +166,25 @@ Summary stats (total teams, games, wins, players), filterable/sortable team list
 | Matches | Match history for the team |
 | Compositions | Full 5-hero comp strings with hero icons, playtime, win rate, frequency |
 
+### Detailed Analysis (`/analysis`)
+
+Research-backed hypotheses validated by the user's dataset. Three-part structure: (1) What matters (hypotheses from competitive OW research), (2) What good looks like (community benchmarks from Parsertime dataset), (3) How you compare (per-team comparison via benchmark gauges).
+
+| Section | Data Shown | User Question |
+|---|---|---|
+| **Executive Summary** | Auto-ranked key findings across all sections by notability score | "What should I focus on?" |
+| **First Pick** | First pick win rate, conversion rate, resilience, per-player first pick/death rates | "How important is first pick for us?" |
+| **Ult Economy** | Fight type distribution/win rates, ult differential win rate (-5 to +5), hero ult effectiveness, role charge/hold time distributions, per-player ult metrics | "Are we spending ults wisely?" |
+| **Survival (D/10)** | Team and per-player deaths/10 by role, trend direction | "Who's dying too much?" |
+| **TFWR** | Per-match teamfight win rate distribution, cumulative TFWR | "Are we winning fights?" |
+| **Strategy Profile** | Win rate by fight type (dry, ult-invested, all-in, stagger) | "What kind of fights do we win?" |
+| **Target Focus** | Per-player FB/E ratio by role | "Are we finishing kills?" |
+| **Composition** | Archetype win rates (Dive/Brawl/Poke/Mixed) with community benchmark overlay, hero pick rates (top 15, role-colored), hero win rates (min 3 matches) | "What comps work for us?" |
+
+Each section includes benchmark comparison gauges (percentile position within community data) and progressive disclosure (collapsed by default, expandable).
+
+**Data sources:** `useDetailedAnalysis()`, `useUltCycles()`, `useBenchmarks()`, `useCompositionAnalysis()`
+
 ### Metrics Explorer (`/metrics`)
 
 Flexible analytics workbench:
@@ -193,20 +213,23 @@ This matrix shows what the domain layer computes vs. what the UI actually displa
 | First pick per fight | `Teamfight.firstPick` | WinConditionCard, Timeline | Displayed |
 | Fight winner | `Teamfight.winner` | WinConditionCard | Displayed |
 | Ults used per fight per team | `Teamfight.team1UltsUsed` / `team2UltsUsed` | Timeline (icon display) | Displayed |
-| Fight type distribution | Computable from `Teamfight.type` | — | **Not displayed** |
-| Fight type win rates (per type) | Computable from `Teamfight.type` + `winner` | — | **Not displayed** (only dry is shown) |
+| Fight type distribution | Computable from `Teamfight.type` | UltEconomySection, StrategyProfileSection | Displayed |
+| Fight type win rates (per type) | Computable from `Teamfight.type` + `winner` | StrategyProfileSection, WinConditionCard (dry only) | Displayed |
 
 ### Ultimate Economy
 
 | Capability | Domain Location | UI Location | Status |
 |---|---|---|---|
-| Ult cycle tracking (charge → hold → use) | `domain/economy.ts` `UltCycle` | — | **Not displayed** |
-| Average time to charge | `PlayerUltMetrics.avgTimeToCharge` | — | **Not displayed** |
-| Average hold time | `PlayerUltMetrics.avgTimeHeld` | — | **Not displayed** |
+| Ult cycle tracking (charge → hold → use) | `domain/economy.ts` `UltCycle` | UltEconomySection (per-player table) | Displayed |
+| Average time to charge | `PlayerUltMetrics.avgTimeToCharge` | UltEconomySection (per-player table, role distributions) | Displayed |
+| Average hold time | `PlayerUltMetrics.avgTimeHeld` | UltEconomySection (per-player table, role distributions) | Displayed |
 | First ult rate | `PlayerUltMetrics.firstUltRate` | — | **Not displayed** (field exists but never populated) |
-| Total ults earned/used | `PlayerUltMetrics.totalUltsEarned/Used` | — | **Not displayed** (base stats `ultimatesEarned`/`ultimatesUsed` shown in Metrics Explorer) |
+| Total ults earned/used | `PlayerUltMetrics.totalUltsEarned/Used` | UltEconomySection, Metrics Explorer | Displayed |
 | Ult state per fight (available, used, charged) | `economy.ts:getUltCycleForFight()` | Timeline (which ults were used) | Partially displayed |
-| Ultimate events with hold time | `ProcessedMatch.ultimateEvents` (`UltimateEvent` type) | — | **Not displayed** |
+| Ult differential win rate | `computeUltEconomyAnalysis()` | UltEconomySection (bar chart) | Displayed |
+| Hero ult effectiveness | `computeUltEconomyAnalysis()` | UltEconomySection (bar chart, min 5 uses) | Displayed |
+| Role charge/hold distributions | `computeRoleDistributions()` | UltEconomySection (summary cards) | Displayed |
+| Ultimate events with hold time | `ProcessedMatch.ultimateEvents` (`UltimateEvent` type) | — | **Not displayed** (raw events; aggregates shown via ult cycles) |
 
 ### Player Analysis
 
@@ -225,9 +248,10 @@ This matrix shows what the domain layer computes vs. what the UI actually displa
 | Scrim detection (grouping matches by date/teams) | `domain/scrims.ts` | ScrimsPage, ScrimPage | Displayed |
 | Win/loss/draw record | Computed in pages | TeamsPage, TeamOverview, HomePage | Displayed |
 | Win rate by map type | Computed in TeamOverview | TeamOverview | Displayed |
-| Trend data (cumulative win rate, K/D over time) | `useTrendData()` | HomePage TrendSection | Displayed |
+| Trend data (win rate, TFWR, K/D, D/10, first pick/death rates) | `useTrendData()` | HomePage TrendSection (interactive metric selector) | Displayed |
 | Composition analysis (full comp string, win rate, frequency) | Computed in TeamCompositions | TeamCompositions tab | Displayed |
-| Composition archetypes (Dive/Brawl/Poke) | — | — | **Not implemented** |
+| Composition archetypes (Dive/Brawl/Poke/Mixed) | `domain/composition.ts` `classifyComposition()` | CompositionSection on `/analysis` | Displayed |
+| Hero pick/win rates | `computeCompositionAnalysis()` | CompositionSection (bar charts) | Displayed |
 | Comp × map cross-analysis | — | — | **Not implemented** |
 
 ### Auto-Insights
@@ -248,13 +272,13 @@ This matrix shows what the domain layer computes vs. what the UI actually displa
 | User Question | Expected Navigation Path | Friction Level |
 |---|---|---|
 | "How did tonight go?" | Home → Scrims → find scrim → click in | **Medium** — no post-scrim summary, requires 3 clicks minimum |
-| "Are we improving?" | Home (TrendSection shows win rate + K/D over time) | **Low** — trend chart exists on Home for auto-detected team |
+| "Are we improving?" | Home (TrendSection shows win rate, TFWR, K/D, D/10, first pick/death % with benchmark lines) | **Low** — trend chart exists on Home with 6 selectable metrics |
 | "Is [player] improving?" | Player → Overview → Performance Trends chart | **Low** — per-player trends exist |
 | "Who's dying first?" | Match → Players tab (PlayerImpactCard shows first picks vs first deaths) + Timeline (first pick per fight) | **Low** — per-match data is good, but no cross-match aggregated view |
-| "What comp should we run on [map]?" | Team → Compositions tab | **High** — no comp × map analysis, no archetypes |
-| "Did we waste ults?" | Match → Timeline (ult icons visible per fight) | **High** — ult hold time/charge time computed but never shown |
+| "What comp should we run on [map]?" | Analysis → Composition section (archetype win rates, hero pick/win rates) OR Team → Compositions tab | **Medium** — archetype analysis exists, comp × map cross-analysis not yet built |
+| "Did we waste ults?" | Analysis → Ult Economy section (ult differential, hero effectiveness, charge/hold times, role distributions) | **Low** — full ult economy analysis now surfaced |
 | "How does [player] compare?" | Metrics Explorer (group by player, select metrics) | **Low** — Metrics Explorer is flexible |
-| "Show me just dry fights" | — | **Not possible** — fight type is computed but not filterable |
+| "Show me just dry fights" | Analysis → Strategy Profile (fight type win rates shown) | **Medium** — fight type stats displayed, but no per-fight filtering in timeline |
 | "Are we winning neutral fights?" | Match → Overview → WinConditions → Neutral/Dry section | **Low** — WinConditionCard shows this |
 | "How do we do when we get first pick?" | Match → Overview → WinConditions → Snowball section | **Low** — WinConditionCard shows this |
 
@@ -273,28 +297,31 @@ The sidebar organizes by **entity** (Scrims, Players, Teams, Metrics, Files). Us
 
 ## 6. Gaps Summary (Prioritized)
 
-### Priority 1 — Surface hidden ult economy data
-**Status:** Domain logic exists, pure UI work needed.
-- `economy.ts` computes `avgTimeToCharge`, `avgTimeHeld`, `totalUltsEarned/Used` per player per hero — **never displayed**
+### Priority 1 — Cross-scrim aggregation
+**Status:** Not implemented. Most metrics are per-match; the Training Path system needs rolling aggregates across the last N scrims.
 - `PlayerImpactMetrics` (entry pick rate, first death rate, ult win rate) are shown on the Match → Players tab, but only for a single match — no cross-match aggregation
-- `Teamfight.type` classification (dry/ult-invested/all-in/stagger) is computed but only dry win rate reaches the UI via WinConditionCard
-- `ProcessedMatch.ultimateEvents` stores hold times per ult — **never displayed**
+- The `/analysis` page aggregates across all loaded matches, but doesn't support windowed aggregation (last N scrims)
 
 ### Priority 2 — Extend auto-insight generation
-**Status:** Pattern proven in WinConditionCard, needs expansion.
+**Status:** Pattern proven in WinConditionCard + Executive Summary, needs expansion.
 - WinConditionCard generates 4 insight variants based on thresholds
+- Executive Summary auto-ranks key findings by notability score
 - Same pattern could apply to: player performance alerts, scrim summaries, statistical outliers
 
-### Priority 3 — Enhanced composition analysis
-**Status:** Basic comp display exists, needs enrichment.
-- Currently shows full 5-hero strings — no archetype classification
+### Priority 3 — Composition depth
+**Status:** Archetype classification and hero pick/win rates implemented. Needs enrichment.
 - No comp × map cross-analysis
-- No hero pick rate per player (only full-team comps)
+- No hero synergy matrix
+- No swap analysis (data available via `events.heroSwap`)
 
 ### Priority 4 — Post-scrim summary experience
 **Status:** Not implemented.
 - After upload, user lands on Files page — no automatic routing to a summary
 - No "tonight's scrim" aggregated view with auto-insights
+
+### Priority 5 — Timeline fight filtering
+**Status:** Not implemented.
+- Fight type (dry/ult-invested/all-in/stagger) is shown in aggregate on `/analysis`, but the Timeline doesn't support filtering by fight type
 
 ---
 

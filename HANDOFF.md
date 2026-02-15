@@ -19,22 +19,23 @@ The owner (Andrew Gleeson, GitHub: MortalWombatOW) wants to:
 - React 19 + Vite 6 + TypeScript 5.7 (strict mode)
 - Jotai (state), Dexie.js (IndexedDB persistence), Tailwind 4 + daisyUI 5 (styling), Recharts (charts), Zod (validation)
 - Clean 3-layer architecture: Data (atoms/repos) → Domain (pure logic) → Hooks (facades) → UI
-- **84 tests, all passing. Zero lint issues. Zero TS errors.**
-- Build: ~174 KB gzip initial load
-- Branch at time of writing: `next` (check `git branch` for current)
+- **113 tests, all passing. Zero lint issues. Zero TS errors.**
+- Build: ~170 KB gzip initial load + ~21KB DetailedAnalysisPage chunk
+- Branch at time of writing: `feature/analysis-ui-benchmarks` (5 commits ahead of `next`)
 
 ### Completed Tasks
 1. **Dexie Persistence** (Task 01) — IndexedDB persistence via Dexie.js, serialization helpers for Map/Set, hydration gate in App.tsx.
 2. **Onboarding + Trust Signals** (Task 02) — First-time experience, privacy messaging.
 3. **Lint Cleanup + Code Splitting** (Task 04) — Zero lint issues, all page routes lazy-loaded via `React.lazy()`, 66% gzip reduction.
 4. **Detailed Analysis Page** — New `/analysis` page with 6 research-backed hypothesis sections + progressive disclosure.
-5. **Analysis Pipeline Migration** (this session) — Migrated 10 Jupyter notebooks into a single runnable Python pipeline. See "Analysis Pipeline" section below.
+5. **Analysis Pipeline Migration** — Migrated 10 Jupyter notebooks into a single runnable Python pipeline. See "Analysis Pipeline" section below.
+6. **Benchmark Infrastructure + Analysis UI Enhancements** (this session) — 4 features in 5 commits. See details below.
 
 ### Features Already Built
 - Log file ingestion + parsing with Zod validation
 - Match/Scrim grouping and metadata extraction
 - Teamfight detection (event clustering, 12s sustain window)
-- Ultimate economy domain logic (charge times, hold times, ult lifecycle) — **domain layer exists but UI not yet wired up**
+- Ultimate economy domain logic (charge times, hold times, ult lifecycle, **now with role distributions and ult differential win rates**)
 - Player impact analysis (first pick rate, first death rate, ult win rate)
 - Per-10-min stat normalization, accuracy rates
 - Pages: Home (with trends), Files, Scrims, Matches (overview/timeline/compare/players), Players, Teams, Metrics Explorer, **Detailed Analysis**
@@ -43,7 +44,41 @@ The owner (Andrew Gleeson, GitHub: MortalWombatOW) wants to:
 - IndexedDB persistence — data survives page refreshes
 - Route-level code splitting — 25 lazy-loaded route chunks
 
-### Analysis Pipeline (NEW — Feb 14, 2026)
+### Analysis UI Enhancements (NEW — Feb 14, 2026)
+
+Implemented 4 features across 5 atomic commits on `feature/analysis-ui-benchmarks`:
+
+**1. Benchmark Infrastructure (Part 3: "How You Compare")**
+- Copied benchmark JSON (38KB, 24 concepts) to `src/data/benchmarks/`
+- Full TypeScript interfaces for the JSON schema
+- `computePercentilePosition()` with linear interpolation between p10/p25/p50/p75/p90 breakpoints
+- `selectDistribution()` helper (role > overall fallback)
+- `useBenchmarks()` hook with per-section typed accessors
+- `BenchmarkComparison` gauge component — horizontal bar showing percentile zones with user's value marker and color-coded rating
+- Wired into all 6 existing analysis sections
+
+**2. Ult Economy Enhancement**
+- Ult differential win rate computation (fight WR by ult advantage -5 to +5)
+- Hero ult effectiveness (fight WR when hero uses ult, min 5 uses)
+- Role-grouped charge/hold time distributions (`computeRoleDistributions()`)
+- 3 new chart rows: ult differential bar chart, hero effectiveness chart, role charge/hold summary cards
+- Extended stat cards row with avg ult differential and dry fight WR benchmark
+
+**3. Composition Analysis (New Section)**
+- Ported `classifyComposition()` from Python (Dive/Brawl/Poke/Mixed via signature matching)
+- `computeCompositionAnalysis()` returns hero pick/win rates + archetype stats
+- `CompositionSection` with archetype win rates (vs community benchmark), hero pick rate chart (top 15, role-colored), hero win rate chart (min 3 matches)
+- 7th section on `/analysis` page
+
+**4. Enriched Trend Views**
+- Extended `TrendDataPoint` with: `tfwr`, `deathsPer10`, `firstPickRate`, `firstDeathRate`, `cumulativeTfwr`, `cumulativeDeathsPer10`, `tfwrRolling5`, `deathsPer10Rolling5`, `totalFights`, `fightsWon`
+- Added benchmark reference line support to `TrendsChart`
+- Replaced static metric list with interactive metric selector chips (6 metrics)
+- Default: Win Rate + TFWR; benchmark lines show conditionally per active metric
+
+**Cross-cutting: Fixed Doomfist role** — moved from `DAMAGE_HEROES` to `TANK_HEROES` in `src/lib/hero.ts`
+
+### Analysis Pipeline
 
 Migrated all 10 analysis Jupyter notebooks (00-09) into a single runnable Python pipeline that generates benchmarks and figures from the Parsertime dataset (~166MB of CSVs, ~4,800 matches).
 
@@ -82,34 +117,17 @@ analysis/
   outputs/                    # Generated figures + benchmarks
 ```
 
-**Key design decisions:**
-- **AnalysisContext dataclass**: Loads all CSVs once, preprocesses once, passes to all modules
-- **Module contract**: Each `analyses/*.py` exposes `run(ctx) -> dict` returning benchmark entries
-- **Percentile distributions**: Every metric produces p10/p25/p50/p75/p90 + n for player and team levels
-- **Memory optimizations**: Column pruning (`usecols`), unified category dtypes, per-match chunked joins, lazy loading for hero event tables
-- **Performance**: 62 seconds total, most time in ult_economy (36s) due to fight-ult joining
+### Detailed Analysis Page
 
-**24 benchmark concepts include:**
-- deaths_per_10, first_pick_win_rate, entry_pick_rate, first_death_rate, time_to_first_blood
-- ult_charge_time, ult_hold_time, ult_efficiency, dry_fight_win_rate, fight_win_rate_by_ult_differential
-- fb_elim_ratio, crit_kill_rate
-- hero_meta, composition_archetypes
-- team_fight_win_rate, team_performance_predictors, first_pick_rate_team
-- map_balance, round_1_momentum
-- mercy_rez, dva_remech, echo_duplicate
-- hypothesis_validation, sample_size_guide
-
-### Detailed Analysis Page (Feb 11, 2026)
-
-A top-level `/analysis` page presenting research-backed hypotheses validated by the user's dataset. Parts 1 and 2 of a 3-part vision:
+A top-level `/analysis` page presenting research-backed hypotheses validated by the user's dataset. All 3 parts of the vision are now complete:
 1. **What matters** (hypotheses from competitive OW research) ✅
 2. **What good looks like** (benchmarks from entire dataset) ✅
-3. **How you compare** (per-team comparison) — NOT YET BUILT
+3. **How you compare** (per-team comparison via benchmark gauges) ✅
 
-**6 Hypothesis Sections:** First Pick, Ult Economy, Survival (D/10), TFWR, Fight Type Distribution, Target Focus (FB/E ratio). Each with progressive disclosure (collapsed by default, hero stat + one-line insight visible).
+**7 Sections:** First Pick, Ult Economy, Survival (D/10), TFWR, Fight Type Distribution, Target Focus (FB/E ratio), **Composition Analysis** (new). Each with progressive disclosure, benchmark comparisons, and multiple chart types.
 
 ### Documentation
-- `docs/information-architecture.md` — IA audit (needs update for /analysis page)
+- `docs/information-architecture.md` — IA audit (needs update for /analysis page changes)
 - `docs/design/training-path.md` — Training path system design (16 concepts across 6 tiers)
 - `docs/tasks/` — 9 task files (01-09) covering roadmap
 - `docs/research/` — Market research, user research, coaching workflows
@@ -130,6 +148,11 @@ A top-level `/analysis` page presenting research-backed hypotheses validated by 
 - `WinConditionCard` pattern (rule-based insights + color-coded progress bars) scaled well
 - Computing section "notability" scores for auto-ranking key findings
 - `fake-indexeddb/auto` in test setup provides IndexedDB seamlessly
+- **Benchmark JSON import at build time** — Vite handles JSON imports natively, TypeScript's `resolveJsonModule` already enabled. 38KB pre-gzip, ~8KB gzipped. No need for fetch/async loading.
+- **Role > overall fallback** for percentile lookup — role-level distributions give more meaningful comparisons than overall, hero-level data only has median+n (not full curves)
+- **Optional benchmark props** on section components — each section works fine without benchmarks, they're progressively enhanced when available
+- **Ult differential from teamfight data** — team1UltsUsed/team2UltsUsed arrays on Teamfight type already contain exactly what's needed; no new data processing required
+- **Composition classification port** was clean — Python's set-based signature matching maps directly to TypeScript Set operations
 
 ### Analysis Pipeline
 - **AnalysisContext pattern**: Loading all data once and passing a shared context to each module avoids duplicate loading and keeps modules independent
@@ -146,8 +169,9 @@ A top-level `/analysis` page presenting research-backed hypotheses validated by 
 ### Web App
 - `playerStatusTimeline` is a `Map`, `PlayerStatusEntry` contains `Set` — not JSON-serializable. Serialization helpers handle conversion.
 - Barrel exports defeat code splitting — import directly from source files for `React.lazy()`
-- `calculateUltMetrics()` in `src/domain/economy.ts` is **dead code** — never called from any hook
 - `StrategyProfile` winner/loser distributions show same percentages (each fight has one type shared by both teams)
+- **Hero-level benchmark data only has `median + n`**, not full percentile curves — use role-level distributions for positioning, hero median as supplementary context only
+- **`firstUltRate` field on `PlayerUltMetrics` is never populated** — left at 0, would need cross-player comparison logic to compute
 
 ### Analysis Pipeline
 - `python` command not found — must use `uv run --project analysis python -m analysis`
@@ -158,43 +182,60 @@ A top-level `/analysis` page presenting research-backed hypotheses validated by 
 
 ## Next Steps (Priority Order)
 
-### Immediate: Wire Benchmarks into the Web App
-The analysis pipeline now produces `training_path_benchmarks.json` with 24 concepts. The web app's Detailed Analysis page needs to consume this data:
-- Import the JSON (or a subset) into the web app's bundle or serve it as a static asset
-- Wire benchmark distributions into the existing analysis sections so they show "Your team: X | Dataset median: Y | Percentile: Z%"
-- This completes Part 3 of the analysis arc ("How You Compare")
+### Immediate: Merge & Visual QA
+- Merge `feature/analysis-ui-benchmarks` into `main` (or wherever the owner wants it)
+- Visual check: load real data in browser → `/analysis` page should show benchmark gauges in each section, ult differential chart, composition section
+- Visual check: `/` home page trends should show metric selector chips and TFWR with benchmark line
+- Run through all 7 analysis sections expanded to verify chart rendering
 
 ### Ready to Start Now (no dependencies)
 - **Task 03: Insight Engine Infrastructure** (`docs/tasks/03-insight-engine.md`) — Reusable insight types, rule runner, `useInsights()` hook
-- **Task 05: Surface Ult Economy & Fight Types** (`docs/tasks/05-ult-economy-fight-types.md`) — Wire up dead-code `calculateUltMetrics()` to UI
-- **Update `docs/information-architecture.md`** — Add `/analysis` page
-- **Commit the analysis pipeline** — All 10 modules are written and tested but not yet committed
-
-### After Task 05
-- **Task 06: Enrich Trend Views** — Add TFWR, first death rate, ult metrics to trends
+- **Unit tests for new domain logic** — `percentileLookup`, `classifyComposition`, ult differential computation (currently only type-checked, no dedicated unit tests)
+- **Update `docs/information-architecture.md`** — Add composition section, benchmark gauges, trend metric selector
+- **Composition Phase 2** — Map-hero heatmap (existing `HeatmapGrid` component), hero synergy matrix, swap analysis from `events.heroSwap`
+- **Trend Phase 2** — Player drill-down (per-player TFWR/D10 trends), rolling average lines as separate metrics
 
 ### After Task 03
 - **Task 07: Insight Rules & Auto-Summaries** — Coaching insight rules + scrim summaries
 
-### After Tasks 05 + 06
-- **Task 08: Enhanced Composition Analysis** — Archetype classification, comp×map analysis
+### After Composition Phase 2
+- **Task 08: Enhanced Composition Analysis** — Archetype classification refinements, comp×map analysis
 
 ### After All Tasks
 - **Task 09: Expert Feedback Round** — 3-5 expert testers
 
 ## Key Files Reference
 
-### Web App
+### Web App — Benchmark Infrastructure (NEW)
+- `src/data/benchmarks/types.ts` — Full TypeScript interfaces for benchmark JSON schema
+- `src/data/benchmarks/percentileLookup.ts` — `computePercentilePosition()`, `selectDistribution()`
+- `src/data/benchmarks/index.ts` — JSON import + re-exports
+- `src/data/benchmarks/training_path_benchmarks.json` — 24 concepts, 38KB
+- `src/hooks/useBenchmarks.ts` — Per-section typed accessors with position helpers
+- `src/components/analysis/BenchmarkComparison.tsx` — Horizontal percentile gauge component
+
+### Web App — Composition (NEW)
+- `src/domain/composition.ts` — `classifyComposition()`, `computeCompositionAnalysis()`
+- `src/hooks/useCompositionAnalysis.ts` — Hook wrapping domain logic
+- `src/components/analysis/CompositionSection.tsx` — Full section with 3 charts
+
+### Web App — Core
 - `src/App.tsx` — Router + lazy imports + Suspense + hydration gate
 - `src/data/repository.ts` — Jotai atoms + Dexie persistence
 - `src/data/serialization.ts` — Map/Set ↔ JSON-safe helpers
 - `src/data/ingestor.ts` — File parsing, event grouping
-- `src/domain/analysis.ts` — 6 analysis computations + insights + summaries
-- `src/domain/economy.ts` — Ult cycle calculation (dead code: `calculateUltMetrics()`)
+- `src/domain/analysis.ts` — 6 analysis computations + ult differential + hero ult effectiveness + insights + summaries
+- `src/domain/economy.ts` — Ult cycle calculation + `computeRoleDistributions()`
 - `src/domain/teamfights.ts` — Fight detection, classification
 - `src/types/domain.ts` — ProcessedMatch, Teamfight, MatchEvents
+- `src/lib/hero.ts` — Hero role mappings (Doomfist now correctly Tank)
 - `src/hooks/useDetailedAnalysis.ts` — Hook for all analysis data
-- `src/components/analysis/` — 8 analysis section components
+- `src/hooks/useUltCycles.ts` — Ult cycles + role distributions
+- `src/hooks/useTrendData.ts` — Extended with TFWR, D/10, first pick/death rates, rolling averages
+- `src/components/analysis/` — 9 analysis section components (7 sections + wrapper + executive summary)
+- `src/components/trends/TrendSection.tsx` — Metric selector chips + benchmark lines
+- `src/components/trends/TrendsChart.tsx` — Generic chart with ReferenceLine support
+- `src/pages/DetailedAnalysisPage.tsx` — Orchestrates all sections + benchmarks + composition
 - `docs/design/training-path.md` — Training path system (16 concepts, 6 tiers)
 
 ### Analysis Pipeline

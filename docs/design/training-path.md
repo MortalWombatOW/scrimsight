@@ -437,7 +437,7 @@ The Plus concepts are the "advanced" analysis that the research says matters mos
 | **Min sample** | 10 matches per archetype |
 | **How to improve** | "If your primary comp has a low win rate, consider: (1) Is this the right comp for the maps you're playing? (2) Are you executing the comp's win condition? (Dive needs synchronized burst; Brawl needs speed and tight pathing; Poke needs sightline control.) (3) Would switching to your secondary comp improve results?" |
 
-**Implementation note:** Requires porting the `classify_composition` function from the Python analysis pipeline to TypeScript. The approach: each hero has a primary archetype tag (Dive/Brawl/Poke), the team's composition is classified by the dominant archetype among its 5 heroes, with "Mixed" as the fallback when no archetype has a clear majority.
+**Implementation note:** Composition classifier has been ported to TypeScript in `src/domain/composition.ts`. Uses signature-based matching (characteristic heroes per archetype) rather than simple majority vote. "Mixed" is the fallback when no archetype scores high enough. Already surfaced in `CompositionSection` on `/analysis`.
 
 ---
 
@@ -483,41 +483,45 @@ The Plus concepts are the "advanced" analysis that the research says matters mos
 
 | Concept | Domain Layer | UI Status | Work Needed |
 |---|---|---|---|
-| Deaths/10 | Computed | Displayed | Cross-scrim aggregation |
-| TFWR | Computed | Partial (per-match) | Cross-scrim aggregation |
-| First Death Rate | Computed | Per-match only | Cross-scrim aggregation, player-level rollup |
-| First Pick Conversion | Computed | WinConditionCard | Cross-scrim aggregation |
-| Resilience | Computed | WinConditionCard | Cross-scrim aggregation |
-| Dry Fight Win Rate | Computed | Partially hidden | Surface in UI, cross-scrim aggregation |
-| FB/Elim Ratio | Computed | Available in STAT_CONFIG | Cross-scrim aggregation |
-| Ult Efficiency | Computed | **Not displayed** | Surface in UI, cross-scrim aggregation |
-| Avg Time to Charge | Computed | **Not displayed** | Surface in UI, cross-scrim aggregation |
-| Ult Win Rate | Computed | Per-match only | Cross-scrim aggregation |
-| Ult Hold Time | Computed | **Not displayed** | Surface in UI, cross-scrim aggregation |
-| Entry Pick Rate | Computed | Per-match only | Cross-scrim aggregation |
-| Fight Type Win Rates | Computed | **Not displayed** | Surface in UI, cross-scrim aggregation |
-| Map Win Rates | Computed | TeamOverview | Cross-scrim aggregation |
-| Comp Classification | Python only | Not in TS | Port classifier to TypeScript |
-| Trend Analysis | Partial | HomePage/Player | Extend to all concepts |
+| Deaths/10 | Computed | Displayed (SurvivalSection + trends + benchmarks) | Cross-scrim aggregation |
+| TFWR | Computed | Displayed (TFWRSection + trends + benchmarks) | Cross-scrim aggregation |
+| First Death Rate | Computed | Displayed (FirstPickSection + trends) | Cross-scrim aggregation, player-level rollup |
+| First Pick Conversion | Computed | Displayed (FirstPickSection + WinConditionCard + benchmarks) | Cross-scrim aggregation |
+| Resilience | Computed | Displayed (FirstPickSection + WinConditionCard) | Cross-scrim aggregation |
+| Dry Fight Win Rate | Computed | Displayed (StrategyProfileSection + benchmarks) | Cross-scrim aggregation |
+| FB/Elim Ratio | Computed | Displayed (TargetFocusSection + benchmarks) | Cross-scrim aggregation |
+| Ult Efficiency | Computed | Displayed (UltEconomySection stat cards) | Cross-scrim aggregation |
+| Avg Time to Charge | Computed | Displayed (UltEconomySection per-player table + role distributions + benchmarks) | Cross-scrim aggregation |
+| Ult Win Rate | Computed | Displayed (UltEconomySection hero effectiveness chart) | Cross-scrim aggregation |
+| Ult Hold Time | Computed | Displayed (UltEconomySection per-player table + role distributions) | Cross-scrim aggregation |
+| Entry Pick Rate | Computed | Displayed (FirstPickSection per-player rates + trends) | Cross-scrim aggregation |
+| Fight Type Win Rates | Computed | Displayed (StrategyProfileSection) | Cross-scrim aggregation |
+| Map Win Rates | Computed | Displayed (TeamOverview) | Cross-scrim aggregation |
+| Comp Classification | Computed (TS port) | Displayed (CompositionSection — archetype win rates, hero pick/win rates) | Cross-scrim aggregation |
+| Trend Analysis | Computed | Displayed (HomePage — 6 metrics with benchmark lines, rolling averages) | Extend to all concepts |
 
-**Common theme:** The biggest implementation task is **cross-scrim aggregation** — computing rolling metrics across the last N scrims rather than per-match. This needs a new aggregation layer, likely in the domain or hooks layer.
+**Common theme:** All metrics are now surfaced in the UI (via the `/analysis` page and enriched trends). The remaining implementation task is **cross-scrim aggregation** — computing rolling metrics across the last N scrims rather than all-time aggregates. This needs a new aggregation layer, likely in the domain or hooks layer, to support the Training Path's windowed evaluation (default: last 3 scrims).
 
 ### Benchmark Data Pipeline
 
-Benchmarks should be derived from the Parsertime dataset using the existing analysis notebooks:
-1. Run notebooks 02 (ult economy), 04 (D/10), and new notebooks for the remaining metrics
-2. Extract percentile distributions by role and hero
-3. Export as a JSON file that ScrimSight loads as benchmark configuration
-4. This allows benchmarks to be updated independently of the app code
+**Status: Implemented.** Benchmarks are derived from the Parsertime dataset (~4,800 matches) via the analysis pipeline:
+1. Run `uv run --project analysis python -m analysis` — 10 modules produce 24 benchmark concepts
+2. Output: `analysis/outputs/benchmarks/training_path_benchmarks.json` (37.2KB, percentile distributions by role and hero)
+3. Copied to `src/data/benchmarks/training_path_benchmarks.json` for build-time import via Vite
+4. TypeScript interfaces in `src/data/benchmarks/types.ts`, percentile lookup in `percentileLookup.ts`
+5. `useBenchmarks()` hook provides per-section typed accessors with `computePercentilePosition()` (linear interpolation between p10/p25/p50/p75/p90)
+6. `BenchmarkComparison` component renders horizontal percentile gauge with color-coded rating
+
+**Key design decision:** Role-level distributions used for percentile positioning (full curves); hero-level data only has median+n (not full percentile curves) and is used as supplementary context.
 
 ### Composition Classifier
 
-Port from Python to TypeScript:
-- Each hero has an archetype affinity: `{ Winston: 'Dive', Reinhardt: 'Brawl', Sigma: 'Poke', ... }`
-- A composition's archetype = the dominant affinity among its 5 heroes
-- If no clear majority (e.g., 2 Dive + 2 Brawl + 1 Poke): classify as "Mixed"
-- Output: `'Pure Dive' | 'Pure Brawl' | 'Pure Poke' | 'Hybrid Dive/Brawl' | 'Hybrid Dive/Poke' | 'Hybrid Brawl/Poke' | 'Mixed'`
-- Input: from `heroSwap` + `heroSpawn` events (existing in MatchEvents) — use the hero with the most playtime per player per round
+**Status: Implemented.** Ported from Python (`analysis/src/preprocessing.py`) to TypeScript:
+- `src/domain/composition.ts` — `classifyComposition(heroes)` and `computeCompositionAnalysis(matches)`
+- Signature-based matching: each archetype (Dive/Brawl/Poke) has a set of characteristic tanks, DPS, and supports
+- Heroes are scored against each signature; the archetype with the highest score wins (minimum 2 matches required, else "Mixed")
+- Output: `'Dive' | 'Brawl' | 'Poke' | 'Mixed'`
+- `CompositionSection` on `/analysis` page renders archetype win rates with community benchmark overlay, hero pick rates (top 15, role-colored), hero win rates (min 3 matches)
 
 ---
 
@@ -525,11 +529,11 @@ Port from Python to TypeScript:
 
 ### Must-Resolve Before Implementation
 
-1. **Hero-specific ult hold time benchmarks.** Notebook 02 has charge times but not hold times. Need a new analysis pass on the Parsertime dataset to compute hold time percentiles by hero.
+1. ~~**Hero-specific ult hold time benchmarks.**~~ **Resolved.** The analysis pipeline (notebook 02) now computes hold time distributions. Role-level distributions are available via `useBenchmarks().ultEconomy`. Hero-level data has median+n only.
 
-2. **FB/Elim ratio benchmarks by role.** The synthesis notebook mentions this metric but doesn't compute role-specific percentiles. Need a targeted analysis.
+2. ~~**FB/Elim ratio benchmarks by role.**~~ **Resolved.** The benchmark JSON includes `fb_elim_ratio` with role-level percentile distributions. Wired into `TargetFocusSection` via `BenchmarkComparison` gauge.
 
-3. **Entry pick rate distribution.** Need to compute what "normal" entry pick rates look like by role from the dataset to set thresholds.
+3. ~~**Entry pick rate distribution.**~~ **Resolved.** The benchmark JSON includes `first_pick_win_rate` with role-level distributions. First pick rates are shown in `FirstPickSection` and as a selectable trend metric on the home page.
 
 4. **Regroup discipline metric.** Every research document calls this top-3 most important. Can we derive it from time gaps between teamfights? This would be a valuable addition to Tier 2 or 3 if feasible.
 
