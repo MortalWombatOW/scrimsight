@@ -13,9 +13,11 @@ import {
 } from 'recharts';
 import { StrategyProfile, getStrategySummary } from '../../domain/analysis';
 import { AnalysisSectionWrapper } from './AnalysisSectionWrapper';
+import { StrategyBenchmarks } from '../../hooks/useBenchmarks';
 
 interface StrategyProfileSectionProps {
   data: StrategyProfile;
+  benchmarks?: StrategyBenchmarks;
   defaultOpen?: boolean;
 }
 
@@ -50,7 +52,7 @@ const ComparisonTooltip = ({ active, payload, label }: TooltipProps<number, stri
   return null;
 };
 
-export const StrategyProfileSection: React.FC<StrategyProfileSectionProps> = ({ data, defaultOpen }) => {
+export const StrategyProfileSection: React.FC<StrategyProfileSectionProps> = ({ data, benchmarks: bm, defaultOpen }) => {
   const summary = getStrategySummary(data);
   const comparisonData = buildComparisonData(data);
 
@@ -62,6 +64,12 @@ export const StrategyProfileSection: React.FC<StrategyProfileSectionProps> = ({ 
       researchContext="How teams resource their fights defines their playstyle. The distribution of dry, ult-invested, all-in, and stagger fights reveals strategic tendencies."
       defaultOpen={defaultOpen}
     >
+      {bm && (
+        <p className="text-sm text-base-content/60 mb-4">
+          Community benchmark: dry fight win rate is <span className="font-semibold">{(bm.dryFightWinRate * 100).toFixed(1)}%</span> — winning without ults is the foundation of ult economy.
+        </p>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {data.overallDistribution.map(d => (
           <div key={d.type} className="card-surface rounded-lg p-4 text-center">

@@ -16,9 +16,12 @@ import {
 } from 'recharts';
 import { TFWRCorrelation, getTFWRSummary } from '../../domain/analysis';
 import { AnalysisSectionWrapper } from './AnalysisSectionWrapper';
+import { BenchmarkComparison } from './BenchmarkComparison';
+import { TFWRBenchmarks } from '../../hooks/useBenchmarks';
 
 interface TFWRSectionProps {
   data: TFWRCorrelation;
+  benchmarks?: TFWRBenchmarks;
   defaultOpen?: boolean;
 }
 
@@ -39,7 +42,7 @@ const ScatterTooltip = ({ active, payload }: TooltipProps<number, string>) => {
   return null;
 };
 
-export const TFWRSection: React.FC<TFWRSectionProps> = ({ data, defaultOpen }) => {
+export const TFWRSection: React.FC<TFWRSectionProps> = ({ data, benchmarks: bm, defaultOpen }) => {
   const summary = getTFWRSummary(data);
 
   const wins = data.dataPoints.filter(d => d.matchWon);
@@ -70,6 +73,21 @@ export const TFWRSection: React.FC<TFWRSectionProps> = ({ data, defaultOpen }) =
           description="Team-match observations"
         />
       </div>
+
+      {bm && data.dataPoints.length > 0 && (() => {
+        const avgTfwr = data.dataPoints.reduce((s, d) => s + d.tfwr, 0) / data.dataPoints.length / 100;
+        return (
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold text-base-content/70 mb-2">How You Compare (Teamfight Win Rate)</h4>
+            <BenchmarkComparison
+              position={bm.getTeamPosition(avgTfwr)}
+              distribution={bm.teamOverall}
+              label="Your average TFWR vs community"
+              formatValue={(v) => `${(v * 100).toFixed(0)}%`}
+            />
+          </div>
+        );
+      })()}
 
       <div>
         <h4 className="text-sm font-semibold text-base-content/70 mb-2">TFWR vs Match Outcome</h4>

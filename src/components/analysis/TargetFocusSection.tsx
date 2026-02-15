@@ -15,9 +15,12 @@ import {
 } from 'recharts';
 import { TargetFocusAnalysis, getTargetFocusSummary } from '../../domain/analysis';
 import { AnalysisSectionWrapper } from './AnalysisSectionWrapper';
+import { BenchmarkComparison } from './BenchmarkComparison';
+import { TargetFocusBenchmarks } from '../../hooks/useBenchmarks';
 
 interface TargetFocusSectionProps {
   data: TargetFocusAnalysis;
+  benchmarks?: TargetFocusBenchmarks;
   defaultOpen?: boolean;
 }
 
@@ -41,7 +44,7 @@ function getRatioColor(ratio: number): string {
   return 'fill-error';
 }
 
-export const TargetFocusSection: React.FC<TargetFocusSectionProps> = ({ data, defaultOpen }) => {
+export const TargetFocusSection: React.FC<TargetFocusSectionProps> = ({ data, benchmarks: bm, defaultOpen }) => {
   const summary = getTargetFocusSummary(data);
   const topTeam = data.perTeam[0];
   const bottomTeam = data.perTeam[data.perTeam.length - 1];
@@ -75,6 +78,18 @@ export const TargetFocusSection: React.FC<TargetFocusSectionProps> = ({ data, de
           />
         )}
       </div>
+
+      {bm && (
+        <div className="mb-6">
+          <h4 className="text-sm font-semibold text-base-content/70 mb-2">How You Compare (FB/E Ratio)</h4>
+          <BenchmarkComparison
+            position={bm.getPlayerPosition(data.datasetAverage)}
+            distribution={bm.playerOverall}
+            label="Your dataset average vs community"
+            formatValue={(v) => v.toFixed(2)}
+          />
+        </div>
+      )}
 
       {data.perTeam.length > 0 && (
         <div>

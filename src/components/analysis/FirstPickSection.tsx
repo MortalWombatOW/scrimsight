@@ -15,9 +15,12 @@ import {
 } from 'recharts';
 import { FirstPickAnalysis, getFirstPickSummary } from '../../domain/analysis';
 import { AnalysisSectionWrapper } from './AnalysisSectionWrapper';
+import { BenchmarkComparison } from './BenchmarkComparison';
+import { FirstPickBenchmarks } from '../../hooks/useBenchmarks';
 
 interface FirstPickSectionProps {
   data: FirstPickAnalysis;
+  benchmarks?: FirstPickBenchmarks;
   defaultOpen?: boolean;
 }
 
@@ -35,7 +38,7 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
   return null;
 };
 
-export const FirstPickSection: React.FC<FirstPickSectionProps> = ({ data, defaultOpen }) => {
+export const FirstPickSection: React.FC<FirstPickSectionProps> = ({ data, benchmarks: bm, defaultOpen }) => {
   const summary = getFirstPickSummary(data);
 
   return (
@@ -63,6 +66,18 @@ export const FirstPickSection: React.FC<FirstPickSectionProps> = ({ data, defaul
           description={`${data.fightsWithFirstPick} had a first pick`}
         />
       </div>
+
+      {bm && (
+        <div className="mb-6">
+          <h4 className="text-sm font-semibold text-base-content/70 mb-2">How You Compare (First Pick Win Rate)</h4>
+          <BenchmarkComparison
+            position={bm.getTeamPosition(data.firstPickWinRate / 100)}
+            distribution={bm.teamOverall}
+            label="Your first pick win rate vs community"
+            formatValue={(v) => `${(v * 100).toFixed(0)}%`}
+          />
+        </div>
+      )}
 
       {data.perTeamRates.length > 0 && (
         <div>

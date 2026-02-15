@@ -18,9 +18,12 @@ import {
 } from 'recharts';
 import { SurvivalAnalysis, getSurvivalSummary } from '../../domain/analysis';
 import { AnalysisSectionWrapper } from './AnalysisSectionWrapper';
+import { BenchmarkComparison } from './BenchmarkComparison';
+import { SurvivalBenchmarks } from '../../hooks/useBenchmarks';
 
 interface SurvivalSectionProps {
   data: SurvivalAnalysis;
+  benchmarks?: SurvivalBenchmarks;
   defaultOpen?: boolean;
 }
 
@@ -65,7 +68,7 @@ const ROLE_COLORS: Record<string, string> = {
   support: 'oklch(0.7 0.15 145)',
 };
 
-export const SurvivalSection: React.FC<SurvivalSectionProps> = ({ data, defaultOpen }) => {
+export const SurvivalSection: React.FC<SurvivalSectionProps> = ({ data, benchmarks: bm, defaultOpen }) => {
   const summary = getSurvivalSummary(data);
 
   const tankPlayers = data.players.filter(p => p.playerRole.toLowerCase() === 'tank');
@@ -97,6 +100,19 @@ export const SurvivalSection: React.FC<SurvivalSectionProps> = ({ data, defaultO
           description="Deaths/10 (needs improvement)"
         />
       </div>
+
+      {bm && (
+        <div className="mb-6">
+          <h4 className="text-sm font-semibold text-base-content/70 mb-2">How You Compare (Team Deaths/10)</h4>
+          <BenchmarkComparison
+            position={bm.getTeamPosition(data.quartiles.q50)}
+            distribution={bm.teamOverall}
+            label="Your team median vs community"
+            lowerIsBetter
+            formatValue={(v) => v.toFixed(1)}
+          />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
