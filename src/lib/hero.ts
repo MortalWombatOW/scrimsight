@@ -5,6 +5,7 @@ export const getHeroImage = (heroName: string, rounded = true): string => `/asse
 // Hero lists by role
 export const TANK_HEROES = [
   'D.Va',
+  'Doomfist',
   'Orisa',
   'Reinhardt',
   'Roadhog',
@@ -23,7 +24,6 @@ export const DAMAGE_HEROES = [
   'Bastion',
   'Cassidy',
   'McCree',
-  'Doomfist',
   'Echo',
   'Genji',
   'Hanzo',
