@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import { RepositoryState, ProcessedMatch } from '../types';
 import { readFileAsync } from '../lib/scrimtime';
-import { ingestFile } from './ingestor';
+import { ingestFileInWorker } from '../workers/ingestWorkerClient';
 import { serializeMatch, deserializeMatch } from './serialization';
 import { putMatches, getAllMatches, clearMatches } from './db';
 
@@ -31,7 +31,7 @@ export const loadFilesAction = atom(
         try {
           const fileContent = await readFileAsync(file);
 
-          const processedMatch = await ingestFile({
+          const processedMatch = await ingestFileInWorker({
             fileContent,
             fileName: file.name,
             fileModified: file.lastModified,

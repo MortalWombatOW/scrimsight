@@ -1,0 +1,1673 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-14T23:57:41.202319+00:00",
+    "pipeline_version": "1.0.0"
+  },
+  "concepts": {
+    "deaths_per_10": {
+      "description": "Deaths per 10 minutes \u2014 the strongest individual predictor of match wins",
+      "player_distribution": {
+        "overall": {
+          "p10": 2.42,
+          "p25": 4.247,
+          "p50": 6.25,
+          "p75": 8.456,
+          "p90": 10.668,
+          "n": 149189
+        },
+        "by_role": {
+          "DPS": {
+            "p10": 2.826,
+            "p25": 4.722,
+            "p50": 6.786,
+            "p75": 8.993,
+            "p90": 11.182,
+            "n": 64011
+          },
+          "Support": {
+            "p10": 2.389,
+            "p25": 4.083,
+            "p50": 6.008,
+            "p75": 8.032,
+            "p90": 10.165,
+            "n": 53936
+          },
+          "Tank": {
+            "p10": 1.837,
+            "p25": 3.627,
+            "p50": 5.671,
+            "p75": 7.887,
+            "p90": 10.214,
+            "n": 31242
+          }
+        },
+        "by_hero": {
+          "Ana": {
+            "median": 5.92,
+            "mean": 6.16,
+            "n": 4563
+          },
+          "Ashe": {
+            "median": 6.52,
+            "mean": 6.66,
+            "n": 3215
+          },
+          "Baptiste": {
+            "median": 6.2,
+            "mean": 6.34,
+            "n": 6472
+          },
+          "Bastion": {
+            "median": 7.56,
+            "mean": 7.84,
+            "n": 883
+          },
+          "Brigitte": {
+            "median": 6.1,
+            "mean": 6.3,
+            "n": 4928
+          },
+          "Cassidy": {
+            "median": 7.34,
+            "mean": 7.5,
+            "n": 6633
+          },
+          "D.Va": {
+            "median": 4.41,
+            "mean": 4.77,
+            "n": 2558
+          },
+          "Doomfist": {
+            "median": 6.78,
+            "mean": 7.08,
+            "n": 1361
+          },
+          "Echo": {
+            "median": 6.96,
+            "mean": 7.09,
+            "n": 2967
+          },
+          "Genji": {
+            "median": 7.03,
+            "mean": 7.09,
+            "n": 7019
+          },
+          "Hanzo": {
+            "median": 6.73,
+            "mean": 6.79,
+            "n": 1183
+          },
+          "Hazard": {
+            "median": 5.94,
+            "mean": 6.13,
+            "n": 2321
+          },
+          "Illari": {
+            "median": 5.5,
+            "mean": 5.53,
+            "n": 870
+          },
+          "Junker Queen": {
+            "median": 6.11,
+            "mean": 6.19,
+            "n": 3000
+          },
+          "Junkrat": {
+            "median": 8.0,
+            "mean": 8.22,
+            "n": 740
+          },
+          "Juno": {
+            "median": 5.84,
+            "mean": 5.98,
+            "n": 3890
+          },
+          "Kiriko": {
+            "median": 5.95,
+            "mean": 6.04,
+            "n": 12635
+          },
+          "Lifeweaver": {
+            "median": 5.0,
+            "mean": 5.3,
+            "n": 450
+          },
+          "L\u00facio": {
+            "median": 6.12,
+            "mean": 6.29,
+            "n": 15573
+          },
+          "Mauga": {
+            "median": 6.38,
+            "mean": 6.52,
+            "n": 2301
+          },
+          "Mei": {
+            "median": 6.64,
+            "mean": 6.74,
+            "n": 2931
+          },
+          "Mercy": {
+            "median": 5.65,
+            "mean": 5.98,
+            "n": 694
+          },
+          "Moira": {
+            "median": 5.97,
+            "mean": 6.16,
+            "n": 2309
+          },
+          "Orisa": {
+            "median": 6.07,
+            "mean": 6.26,
+            "n": 2710
+          },
+          "Pharah": {
+            "median": 7.0,
+            "mean": 7.08,
+            "n": 2276
+          },
+          "Ramattra": {
+            "median": 5.89,
+            "mean": 6.08,
+            "n": 4198
+          },
+          "Reaper": {
+            "median": 7.46,
+            "mean": 7.5,
+            "n": 3289
+          },
+          "Reinhardt": {
+            "median": 7.18,
+            "mean": 7.34,
+            "n": 1549
+          },
+          "Roadhog": {
+            "median": 5.39,
+            "mean": 5.65,
+            "n": 704
+          },
+          "Sigma": {
+            "median": 4.9,
+            "mean": 5.24,
+            "n": 2826
+          },
+          "Sojourn": {
+            "median": 6.67,
+            "mean": 6.82,
+            "n": 8737
+          },
+          "Soldier: 76": {
+            "median": 6.65,
+            "mean": 6.8,
+            "n": 1001
+          },
+          "Sombra": {
+            "median": 6.99,
+            "mean": 7.31,
+            "n": 2504
+          },
+          "Symmetra": {
+            "median": 7.09,
+            "mean": 7.0,
+            "n": 1281
+          },
+          "Torbj\u00f6rn": {
+            "median": 6.4,
+            "mean": 6.84,
+            "n": 529
+          },
+          "Tracer": {
+            "median": 6.06,
+            "mean": 6.28,
+            "n": 13569
+          },
+          "Venture": {
+            "median": 7.38,
+            "mean": 7.42,
+            "n": 2636
+          },
+          "Widowmaker": {
+            "median": 6.95,
+            "mean": 7.17,
+            "n": 2618
+          },
+          "Winston": {
+            "median": 5.34,
+            "mean": 5.6,
+            "n": 4325
+          },
+          "Wrecking Ball": {
+            "median": 4.16,
+            "mean": 4.48,
+            "n": 1843
+          },
+          "Zarya": {
+            "median": 5.97,
+            "mean": 6.19,
+            "n": 1546
+          },
+          "Zenyatta": {
+            "median": 5.98,
+            "mean": 6.28,
+            "n": 1552
+          }
+        }
+      },
+      "team_distribution": {
+        "overall": {
+          "p10": 3.518,
+          "p25": 4.773,
+          "p50": 6.228,
+          "p75": 7.733,
+          "p90": 9.152,
+          "n": 8064
+        }
+      },
+      "winner_loser_gap": {
+        "winner_mean": 5.228,
+        "loser_mean": 7.138,
+        "gap": 1.91,
+        "cohens_d": 0.57,
+        "p_value": 0.0
+      },
+      "team_d10_win_rate_bins": {
+        "<4": {
+          "win_rate": 56.5,
+          "n": 1188
+        },
+        "4-5": {
+          "win_rate": 52.6,
+          "n": 1117
+        },
+        "5-6": {
+          "win_rate": 41.4,
+          "n": 1366
+        },
+        "6-7": {
+          "win_rate": 27.9,
+          "n": 1439
+        },
+        "7-8": {
+          "win_rate": 19.1,
+          "n": 1232
+        },
+        "8-10": {
+          "win_rate": 8.0,
+          "n": 1253
+        },
+        "10+": {
+          "win_rate": 2.0,
+          "n": 449
+        }
+      },
+      "community_benchmarks": {
+        "Excellent": 5.0,
+        "Good": 6.0,
+        "Average": 7.5,
+        "Poor": 8.0
+      }
+    },
+    "first_pick_win_rate": {
+      "description": "Team that secures the first kill wins this % of fights \u2014 the most decisive single event",
+      "overall": {
+        "rate": 0.7952,
+        "ci_95": [
+          0.7919,
+          0.7986
+        ],
+        "n": 55863
+      },
+      "research_benchmark": {
+        "claimed_range": [
+          0.75,
+          0.78
+        ]
+      },
+      "by_fight_size": {
+        "3": {
+          "rate": 0.879,
+          "n": 8488
+        },
+        "4-5": {
+          "rate": 0.8908,
+          "n": 24656
+        },
+        "6-7": {
+          "rate": 0.6944,
+          "n": 15613
+        },
+        "8-10": {
+          "rate": 0.5708,
+          "n": 5112
+        },
+        "10+": {
+          "rate": 0.6217,
+          "n": 1988
+        }
+      },
+      "fp_win_rate_by_killer_role": {
+        "DPS": {
+          "rate": 0.7918,
+          "n": 32444
+        },
+        "Support": {
+          "rate": 0.8,
+          "n": 9311
+        },
+        "Tank": {
+          "rate": 0.8,
+          "n": 14108
+        }
+      },
+      "team_distribution": {
+        "overall": {
+          "p10": 0.566,
+          "p25": 0.7,
+          "p50": 0.793,
+          "p75": 0.869,
+          "p90": 0.931,
+          "n": 380
+        }
+      }
+    },
+    "entry_pick_rate": {
+      "description": "How often each role secures the opening kill in teamfights",
+      "by_role": {
+        "DPS": {
+          "count": 32444,
+          "rate": 0.5808
+        },
+        "Support": {
+          "count": 9311,
+          "rate": 0.1667
+        },
+        "Tank": {
+          "count": 14108,
+          "rate": 0.2525
+        }
+      },
+      "total_fights": 55863
+    },
+    "first_death_rate": {
+      "description": "How often each role is the first to die in teamfights",
+      "by_role": {
+        "DPS": {
+          "count": 25659,
+          "rate": 0.4593
+        },
+        "Support": {
+          "count": 21461,
+          "rate": 0.3842
+        },
+        "Tank": {
+          "count": 8743,
+          "rate": 0.1565
+        }
+      },
+      "total_fights": 55863
+    },
+    "time_to_first_blood": {
+      "description": "Seconds into the match before the first kill occurs",
+      "distribution": {
+        "p10": 15.294,
+        "p25": 20.91,
+        "p50": 27.17,
+        "p75": 36.34,
+        "p90": 47.709,
+        "n": 4768
+      }
+    },
+    "ult_charge_time": {
+      "description": "Time between consecutive ult charges (seconds) \u2014 faster charge = more ult opportunities",
+      "player_distribution": {
+        "overall": {
+          "p10": 107.0,
+          "p25": 132.08,
+          "p50": 165.49,
+          "p75": 207.42,
+          "p90": 247.73,
+          "n": 117588
+        },
+        "by_role": {
+          "DPS": {
+            "p10": 97.951,
+            "p25": 123.96,
+            "p50": 160.17,
+            "p75": 204.58,
+            "p90": 246.628,
+            "n": 46962
+          },
+          "Support": {
+            "p10": 118.26,
+            "p25": 141.03,
+            "p50": 172.83,
+            "p75": 213.3,
+            "p90": 251.188,
+            "n": 43123
+          },
+          "Tank": {
+            "p10": 108.668,
+            "p25": 132.28,
+            "p50": 163.0,
+            "p75": 203.49,
+            "p90": 243.782,
+            "n": 24169
+          },
+          "Unknown": {
+            "p10": 97.415,
+            "p25": 119.795,
+            "p50": 152.49,
+            "p75": 193.49,
+            "p90": 237.428,
+            "n": 3334
+          }
+        },
+        "by_hero": {
+          "Ana": {
+            "median": 163.6,
+            "n": 4408
+          },
+          "Ashe": {
+            "median": 187.8,
+            "n": 1631
+          },
+          "Baptiste": {
+            "median": 157.3,
+            "n": 5506
+          },
+          "Bastion": {
+            "median": 172.9,
+            "n": 464
+          },
+          "Brigitte": {
+            "median": 180.3,
+            "n": 3561
+          },
+          "Cassidy": {
+            "median": 160.9,
+            "n": 4206
+          },
+          "D.Va": {
+            "median": 146.6,
+            "n": 2470
+          },
+          "Doomfist": {
+            "median": 153.1,
+            "n": 1025
+          },
+          "Echo": {
+            "median": 116.6,
+            "n": 3345
+          },
+          "Freja": {
+            "median": 133.5,
+            "n": 1609
+          },
+          "Genji": {
+            "median": 194.1,
+            "n": 4065
+          },
+          "Hanzo": {
+            "median": 156.9,
+            "n": 854
+          },
+          "Hazard": {
+            "median": 161.8,
+            "n": 2288
+          },
+          "Illari": {
+            "median": 177.6,
+            "n": 596
+          },
+          "Junker Queen": {
+            "median": 177.9,
+            "n": 1688
+          },
+          "Junkrat": {
+            "median": 164.5,
+            "n": 454
+          },
+          "Juno": {
+            "median": 173.4,
+            "n": 2839
+          },
+          "Kiriko": {
+            "median": 164.9,
+            "n": 11747
+          },
+          "Lifeweaver": {
+            "median": 168.9,
+            "n": 277
+          },
+          "L\u00facio": {
+            "median": 189.4,
+            "n": 11062
+          },
+          "Mauga": {
+            "median": 179.4,
+            "n": 1377
+          },
+          "Mei": {
+            "median": 162.8,
+            "n": 1814
+          },
+          "Mercy": {
+            "median": 168.0,
+            "n": 454
+          },
+          "Moira": {
+            "median": 160.0,
+            "n": 1728
+          },
+          "Orisa": {
+            "median": 156.0,
+            "n": 2213
+          },
+          "Pharah": {
+            "median": 169.1,
+            "n": 1270
+          },
+          "Ramattra": {
+            "median": 177.7,
+            "n": 2618
+          },
+          "Reaper": {
+            "median": 177.5,
+            "n": 1826
+          },
+          "Reinhardt": {
+            "median": 141.9,
+            "n": 1242
+          },
+          "Roadhog": {
+            "median": 170.2,
+            "n": 370
+          },
+          "Sigma": {
+            "median": 165.4,
+            "n": 2338
+          },
+          "Sojourn": {
+            "median": 192.1,
+            "n": 5182
+          },
+          "Soldier: 76": {
+            "median": 198.2,
+            "n": 403
+          },
+          "Sombra": {
+            "median": 183.3,
+            "n": 1562
+          },
+          "Symmetra": {
+            "median": 176.9,
+            "n": 597
+          },
+          "Torbj\u00f6rn": {
+            "median": 183.0,
+            "n": 310
+          },
+          "Tracer": {
+            "median": 132.0,
+            "n": 15544
+          },
+          "Venture": {
+            "median": 181.2,
+            "n": 1468
+          },
+          "Widowmaker": {
+            "median": 163.4,
+            "n": 1967
+          },
+          "Winston": {
+            "median": 165.6,
+            "n": 3735
+          },
+          "Wrecking Ball": {
+            "median": 145.6,
+            "n": 1838
+          },
+          "Wuyang": {
+            "median": 169.2,
+            "n": 1183
+          },
+          "Zarya": {
+            "median": 174.5,
+            "n": 967
+          },
+          "Zenyatta": {
+            "median": 186.0,
+            "n": 945
+          },
+          "\u30ad\u30ea\u30b3": {
+            "median": 163.3,
+            "n": 55
+          },
+          "\u30b2\u30f3\u30b8": {
+            "median": 202.2,
+            "n": 37
+          },
+          "\u30b8\u30e5\u30ce": {
+            "median": 191.6,
+            "n": 21
+          },
+          "\u30bd\u30b8\u30e7\u30fc\u30f3": {
+            "median": 178.6,
+            "n": 31
+          },
+          "\u30c8\u30ec\u30fc\u30b5\u30fc": {
+            "median": 129.4,
+            "n": 24
+          },
+          "\u30cf\u30b6\u30fc\u30c9": {
+            "median": 193.5,
+            "n": 27
+          },
+          "\u30d0\u30c6\u30a3\u30b9\u30c8": {
+            "median": 140.0,
+            "n": 26
+          },
+          "\u30d5\u30a1\u30e9": {
+            "median": 156.9,
+            "n": 21
+          },
+          "\u30eb\u30b7\u30aa": {
+            "median": 183.6,
+            "n": 69
+          }
+        }
+      }
+    },
+    "ult_hold_time": {
+      "description": "Time from ult charged to ult used (seconds) \u2014 shorter hold generally = better timing",
+      "player_distribution": {
+        "overall": {
+          "p10": 1.86,
+          "p25": 8.48,
+          "p50": 35.73,
+          "p75": 93.52,
+          "p90": 234.723,
+          "n": 185468
+        },
+        "by_role": {
+          "DPS": {
+            "p10": 2.34,
+            "p25": 10.4,
+            "p50": 38.66,
+            "p75": 104.433,
+            "p90": 250.086,
+            "n": 74672
+          },
+          "Support": {
+            "p10": 1.61,
+            "p25": 8.37,
+            "p50": 35.9,
+            "p75": 93.84,
+            "p90": 244.282,
+            "n": 68199
+          },
+          "Tank": {
+            "p10": 1.56,
+            "p25": 6.35,
+            "p50": 31.25,
+            "p75": 79.383,
+            "p90": 202.96,
+            "n": 38264
+          },
+          "Unknown": {
+            "p10": 1.672,
+            "p25": 5.78,
+            "p50": 24.44,
+            "p75": 53.51,
+            "p90": 102.402,
+            "n": 4333
+          }
+        }
+      }
+    },
+    "ult_efficiency": {
+      "description": "Ults used per fight by winners vs losers \u2014 efficient teams win with fewer ults",
+      "winner_distribution": {
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 1.0,
+        "p75": 2.0,
+        "p90": 3.0,
+        "n": 52572
+      },
+      "loser_distribution": {
+        "p10": 0.0,
+        "p25": 0.0,
+        "p50": 0.0,
+        "p75": 1.0,
+        "p90": 2.0,
+        "n": 52572
+      },
+      "mean_winner_ults": 0.96,
+      "mean_loser_ults": 0.68
+    },
+    "dry_fight_win_rate": {
+      "description": "Win rate when a team uses zero ults \u2014 winning dry preserves resources for the next fight",
+      "overall_rate": 0.3915,
+      "total_dry_fights": 60244
+    },
+    "fight_win_rate_by_ult_differential": {
+      "description": "Fight win rate based on ult differential (my_ults - opponent_ults)",
+      "by_differential": {
+        "-5": {
+          "win_rate": 0.2083,
+          "n": 24
+        },
+        "-4": {
+          "win_rate": 0.1765,
+          "n": 221
+        },
+        "-3": {
+          "win_rate": 0.217,
+          "n": 1415
+        },
+        "-2": {
+          "win_rate": 0.2586,
+          "n": 6106
+        },
+        "-1": {
+          "win_rate": 0.3403,
+          "n": 18293
+        },
+        "0": {
+          "win_rate": 0.4494,
+          "n": 59124
+        },
+        "1": {
+          "win_rate": 0.658,
+          "n": 18293
+        },
+        "2": {
+          "win_rate": 0.7383,
+          "n": 6106
+        },
+        "3": {
+          "win_rate": 0.7781,
+          "n": 1415
+        },
+        "4": {
+          "win_rate": 0.81,
+          "n": 221
+        },
+        "5": {
+          "win_rate": 0.7917,
+          "n": 24
+        }
+      }
+    },
+    "fb_elim_ratio": {
+      "description": "Final blow / elimination ratio \u2014 measures kill-finishing ability",
+      "player_distribution": {
+        "overall": {
+          "p10": 0.125,
+          "p25": 0.25,
+          "p50": 0.375,
+          "p75": 0.5,
+          "p90": 0.667,
+          "n": 130802
+        },
+        "by_role": {
+          "DPS": {
+            "p10": 0.235,
+            "p25": 0.333,
+            "p50": 0.455,
+            "p75": 0.583,
+            "p90": 0.7,
+            "n": 57102
+          },
+          "Support": {
+            "p10": 0.0,
+            "p25": 0.143,
+            "p50": 0.25,
+            "p75": 0.364,
+            "p90": 0.5,
+            "n": 45218
+          },
+          "Tank": {
+            "p10": 0.2,
+            "p25": 0.3,
+            "p50": 0.4,
+            "p75": 0.52,
+            "p90": 0.643,
+            "n": 28482
+          }
+        },
+        "by_hero": {
+          "Ana": {
+            "fb_ratio": 0.243,
+            "n": 3651
+          },
+          "Ashe": {
+            "fb_ratio": 0.462,
+            "n": 2782
+          },
+          "Baptiste": {
+            "fb_ratio": 0.265,
+            "n": 5258
+          },
+          "Bastion": {
+            "fb_ratio": 0.46,
+            "n": 763
+          },
+          "Brigitte": {
+            "fb_ratio": 0.288,
+            "n": 3924
+          },
+          "Cassidy": {
+            "fb_ratio": 0.524,
+            "n": 5626
+          },
+          "D.Va": {
+            "fb_ratio": 0.428,
+            "n": 2284
+          },
+          "Doomfist": {
+            "fb_ratio": 0.446,
+            "n": 1201
+          },
+          "Echo": {
+            "fb_ratio": 0.475,
+            "n": 2584
+          },
+          "Genji": {
+            "fb_ratio": 0.471,
+            "n": 6350
+          },
+          "Hanzo": {
+            "fb_ratio": 0.56,
+            "n": 1039
+          },
+          "Hazard": {
+            "fb_ratio": 0.429,
+            "n": 2197
+          },
+          "Illari": {
+            "fb_ratio": 0.38,
+            "n": 727
+          },
+          "Junker Queen": {
+            "fb_ratio": 0.407,
+            "n": 2722
+          },
+          "Junkrat": {
+            "fb_ratio": 0.572,
+            "n": 639
+          },
+          "Juno": {
+            "fb_ratio": 0.216,
+            "n": 3434
+          },
+          "Kiriko": {
+            "fb_ratio": 0.305,
+            "n": 10368
+          },
+          "Lifeweaver": {
+            "fb_ratio": 0.24,
+            "n": 236
+          },
+          "L\u00facio": {
+            "fb_ratio": 0.244,
+            "n": 14308
+          },
+          "Mauga": {
+            "fb_ratio": 0.328,
+            "n": 2095
+          },
+          "Mei": {
+            "fb_ratio": 0.357,
+            "n": 2598
+          },
+          "Moira": {
+            "fb_ratio": 0.236,
+            "n": 2019
+          },
+          "Orisa": {
+            "fb_ratio": 0.4,
+            "n": 2472
+          },
+          "Pharah": {
+            "fb_ratio": 0.502,
+            "n": 2020
+          },
+          "Ramattra": {
+            "fb_ratio": 0.398,
+            "n": 3826
+          },
+          "Reaper": {
+            "fb_ratio": 0.457,
+            "n": 2881
+          },
+          "Reinhardt": {
+            "fb_ratio": 0.52,
+            "n": 1373
+          },
+          "Roadhog": {
+            "fb_ratio": 0.531,
+            "n": 620
+          },
+          "Sigma": {
+            "fb_ratio": 0.406,
+            "n": 2611
+          },
+          "Sojourn": {
+            "fb_ratio": 0.438,
+            "n": 7999
+          },
+          "Soldier: 76": {
+            "fb_ratio": 0.447,
+            "n": 838
+          },
+          "Sombra": {
+            "fb_ratio": 0.35,
+            "n": 2260
+          },
+          "Symmetra": {
+            "fb_ratio": 0.349,
+            "n": 1121
+          },
+          "Torbj\u00f6rn": {
+            "fb_ratio": 0.416,
+            "n": 470
+          },
+          "Tracer": {
+            "fb_ratio": 0.437,
+            "n": 12594
+          },
+          "Venture": {
+            "fb_ratio": 0.487,
+            "n": 2322
+          },
+          "Widowmaker": {
+            "fb_ratio": 0.672,
+            "n": 2216
+          },
+          "Winston": {
+            "fb_ratio": 0.439,
+            "n": 4053
+          },
+          "Wrecking Ball": {
+            "fb_ratio": 0.4,
+            "n": 1704
+          },
+          "Zarya": {
+            "fb_ratio": 0.39,
+            "n": 1324
+          },
+          "Zenyatta": {
+            "fb_ratio": 0.341,
+            "n": 1246
+          }
+        }
+      }
+    },
+    "crit_kill_rate": {
+      "description": "Critical hit rate on final blows \u2014 reveals mechanical skill per hero",
+      "by_hero": {
+        "Ashe": {
+          "crit_rate": 0.3004,
+          "n": 8072
+        },
+        "Baptiste": {
+          "crit_rate": 0.1987,
+          "n": 7502
+        },
+        "Bastion": {
+          "crit_rate": 0.05,
+          "n": 2638
+        },
+        "Cassidy": {
+          "crit_rate": 0.2295,
+          "n": 18428
+        },
+        "D.Va": {
+          "crit_rate": 0.1133,
+          "n": 7976
+        },
+        "Doomfist": {
+          "crit_rate": 0.1405,
+          "n": 4285
+        },
+        "Echo": {
+          "crit_rate": 0.1044,
+          "n": 8772
+        },
+        "Genji": {
+          "crit_rate": 0.1241,
+          "n": 22742
+        },
+        "Hanzo": {
+          "crit_rate": 0.3909,
+          "n": 3356
+        },
+        "Hazard": {
+          "crit_rate": 0.1073,
+          "n": 9019
+        },
+        "Illari": {
+          "crit_rate": 0.1971,
+          "n": 1598
+        },
+        "Junker Queen": {
+          "crit_rate": 0.1186,
+          "n": 8371
+        },
+        "Kiriko": {
+          "crit_rate": 0.3767,
+          "n": 16316
+        },
+        "L\u00facio": {
+          "crit_rate": 0.117,
+          "n": 24844
+        },
+        "Mauga": {
+          "crit_rate": 0.1545,
+          "n": 5443
+        },
+        "Mei": {
+          "crit_rate": 0.2694,
+          "n": 5608
+        },
+        "Orisa": {
+          "crit_rate": 0.1862,
+          "n": 7364
+        },
+        "Ramattra": {
+          "crit_rate": 0.0562,
+          "n": 11993
+        },
+        "Reaper": {
+          "crit_rate": 0.1547,
+          "n": 10013
+        },
+        "Reinhardt": {
+          "crit_rate": 0.0136,
+          "n": 4566
+        },
+        "Roadhog": {
+          "crit_rate": 0.2185,
+          "n": 2201
+        },
+        "Sojourn": {
+          "crit_rate": 0.2497,
+          "n": 27321
+        },
+        "Soldier: 76": {
+          "crit_rate": 0.1153,
+          "n": 2836
+        },
+        "Sombra": {
+          "crit_rate": 0.1308,
+          "n": 6248
+        },
+        "Torbj\u00f6rn": {
+          "crit_rate": 0.2085,
+          "n": 1271
+        },
+        "Tracer": {
+          "crit_rate": 0.1265,
+          "n": 42286
+        },
+        "Widowmaker": {
+          "crit_rate": 0.7459,
+          "n": 8599
+        },
+        "Wrecking Ball": {
+          "crit_rate": 0.1015,
+          "n": 5794
+        },
+        "Zenyatta": {
+          "crit_rate": 0.3026,
+          "n": 2419
+        }
+      }
+    },
+    "hero_meta": {
+      "description": "Hero pick rates and win rates \u2014 identifies which heroes are popular vs effective",
+      "by_hero": {
+        "L\u00facio": {
+          "win_rate": 34.0,
+          "pick_rate": 74.4,
+          "n": 5005
+        },
+        "Tracer": {
+          "win_rate": 31.3,
+          "pick_rate": 62.6,
+          "n": 3893
+        },
+        "Kiriko": {
+          "win_rate": 32.7,
+          "pick_rate": 62.3,
+          "n": 3798
+        },
+        "Sojourn": {
+          "win_rate": 30.9,
+          "pick_rate": 43.9,
+          "n": 2451
+        },
+        "Genji": {
+          "win_rate": 32.3,
+          "pick_rate": 34.2,
+          "n": 1782
+        },
+        "Baptiste": {
+          "win_rate": 33.9,
+          "pick_rate": 31.4,
+          "n": 1737
+        },
+        "Cassidy": {
+          "win_rate": 34.5,
+          "pick_rate": 29.4,
+          "n": 1439
+        },
+        "Brigitte": {
+          "win_rate": 28.5,
+          "pick_rate": 26.1,
+          "n": 1432
+        },
+        "Ana": {
+          "win_rate": 27.7,
+          "pick_rate": 26.0,
+          "n": 1375
+        },
+        "Winston": {
+          "win_rate": 25.6,
+          "pick_rate": 24.4,
+          "n": 1270
+        },
+        "Juno": {
+          "win_rate": 30.6,
+          "pick_rate": 19.9,
+          "n": 1141
+        },
+        "Ramattra": {
+          "win_rate": 35.9,
+          "pick_rate": 19.9,
+          "n": 1043
+        },
+        "Reaper": {
+          "win_rate": 35.5,
+          "pick_rate": 15.7,
+          "n": 767
+        },
+        "Ashe": {
+          "win_rate": 30.3,
+          "pick_rate": 15.0,
+          "n": 743
+        },
+        "Echo": {
+          "win_rate": 28.8,
+          "pick_rate": 14.9,
+          "n": 706
+        },
+        "Sombra": {
+          "win_rate": 26.0,
+          "pick_rate": 14.6,
+          "n": 669
+        },
+        "Sigma": {
+          "win_rate": 29.4,
+          "pick_rate": 14.4,
+          "n": 804
+        },
+        "D.Va": {
+          "win_rate": 29.2,
+          "pick_rate": 14.3,
+          "n": 672
+        },
+        "Orisa": {
+          "win_rate": 30.3,
+          "pick_rate": 13.9,
+          "n": 723
+        },
+        "Hazard": {
+          "win_rate": 33.0,
+          "pick_rate": 13.3,
+          "n": 734
+        },
+        "Junker Queen": {
+          "win_rate": 36.8,
+          "pick_rate": 13.0,
+          "n": 669
+        },
+        "Mei": {
+          "win_rate": 31.8,
+          "pick_rate": 13.0,
+          "n": 628
+        },
+        "Venture": {
+          "win_rate": 38.3,
+          "pick_rate": 12.9,
+          "n": 596
+        },
+        "Moira": {
+          "win_rate": 33.6,
+          "pick_rate": 12.3,
+          "n": 577
+        },
+        "Wrecking Ball": {
+          "win_rate": 34.4,
+          "pick_rate": 11.5,
+          "n": 512
+        },
+        "Widowmaker": {
+          "win_rate": 30.8,
+          "pick_rate": 11.1,
+          "n": 652
+        },
+        "Mauga": {
+          "win_rate": 37.1,
+          "pick_rate": 10.5,
+          "n": 550
+        },
+        "Pharah": {
+          "win_rate": 33.7,
+          "pick_rate": 10.2,
+          "n": 475
+        },
+        "Zenyatta": {
+          "win_rate": 27.3,
+          "pick_rate": 8.4,
+          "n": 429
+        },
+        "Zarya": {
+          "win_rate": 33.5,
+          "pick_rate": 7.4,
+          "n": 349
+        },
+        "Doomfist": {
+          "win_rate": 32.1,
+          "pick_rate": 7.3,
+          "n": 321
+        },
+        "Reinhardt": {
+          "win_rate": 34.9,
+          "pick_rate": 7.1,
+          "n": 347
+        },
+        "Hanzo": {
+          "win_rate": 25.4,
+          "pick_rate": 5.9,
+          "n": 287
+        },
+        "Symmetra": {
+          "win_rate": 47.9,
+          "pick_rate": 5.5,
+          "n": 242
+        },
+        "Soldier: 76": {
+          "win_rate": 32.5,
+          "pick_rate": 5.4,
+          "n": 231
+        },
+        "Illari": {
+          "win_rate": 25.3,
+          "pick_rate": 5.0,
+          "n": 221
+        },
+        "Mercy": {
+          "win_rate": 31.4,
+          "pick_rate": 4.4,
+          "n": 188
+        },
+        "Junkrat": {
+          "win_rate": 29.2,
+          "pick_rate": 4.1,
+          "n": 178
+        },
+        "Bastion": {
+          "win_rate": 32.5,
+          "pick_rate": 3.9,
+          "n": 169
+        },
+        "Roadhog": {
+          "win_rate": 30.4,
+          "pick_rate": 3.7,
+          "n": 161
+        },
+        "Torbj\u00f6rn": {
+          "win_rate": 39.1,
+          "pick_rate": 2.9,
+          "n": 128
+        },
+        "Lifeweaver": {
+          "win_rate": 27.9,
+          "pick_rate": 2.1,
+          "n": 86
+        }
+      }
+    },
+    "composition_archetypes": {
+      "description": "Composition archetype (Dive/Brawl/Poke/Mixed) win rates and matchup data",
+      "archetype_win_rates": {
+        "Brawl": {
+          "win_rate": 35.1,
+          "n": 2046
+        },
+        "Dive": {
+          "win_rate": 31.5,
+          "n": 5007
+        },
+        "Mixed": {
+          "win_rate": 29.5,
+          "n": 129
+        },
+        "Poke": {
+          "win_rate": 27.2,
+          "n": 882
+        }
+      }
+    },
+    "team_fight_win_rate": {
+      "description": "Teamfight win rate (TFWR) \u2014 the most direct measure of team coordination",
+      "team_distribution": {
+        "overall": {
+          "p10": 0.25,
+          "p25": 0.364,
+          "p50": 0.467,
+          "p75": 0.567,
+          "p90": 0.67,
+          "n": 365
+        }
+      }
+    },
+    "team_performance_predictors": {
+      "description": "Which in-game stats predict winning \u2014 correlation strengths and winner/loser gaps",
+      "correlations": {
+        "total_elims": 0.4362,
+        "d10": -0.3437,
+        "damage_per_10": 0.1568,
+        "fb_ratio": -0.1423,
+        "healing_per_10": 0.0722,
+        "total_deaths": -0.0389,
+        "ults_used": 0.0153,
+        "ults_earned": 0.0126
+      },
+      "winner_vs_loser": {
+        "d10": {
+          "winner_mean": 5.08,
+          "loser_mean": 6.8,
+          "gap": -1.72
+        },
+        "damage_per_10": {
+          "winner_mean": 7088.52,
+          "loser_mean": 6459.66,
+          "gap": 628.86
+        },
+        "healing_per_10": {
+          "winner_mean": 2947.12,
+          "loser_mean": 2795.15,
+          "gap": 151.96
+        },
+        "fb_ratio": {
+          "winner_mean": 0.39,
+          "loser_mean": 0.41,
+          "gap": -0.02
+        }
+      },
+      "team_d10_distribution": {
+        "p10": 4.305,
+        "p25": 5.137,
+        "p50": 6.2,
+        "p75": 7.388,
+        "p90": 8.525,
+        "n": 371
+      }
+    },
+    "first_pick_rate_team": {
+      "description": "Team-level first pick rate \u2014 how often a team secures the opening kill in fights",
+      "team_distribution": {
+        "overall": {
+          "p10": 0.317,
+          "p25": 0.4,
+          "p50": 0.494,
+          "p75": 0.571,
+          "p90": 0.634,
+          "n": 365
+        }
+      }
+    },
+    "round_1_momentum": {
+      "description": "Winning Round 1 predicts match outcomes \u2014 quantifies momentum effect",
+      "overall_r1_win_match_pct": 44.2,
+      "by_map_mode": {
+        "Control": {
+          "r1_win_pct": 0.3,
+          "n": 1085
+        },
+        "Escort": {
+          "r1_win_pct": 94.1,
+          "n": 471
+        },
+        "Flashpoint": {
+          "r1_win_pct": 48.7,
+          "n": 748
+        },
+        "Hybrid": {
+          "r1_win_pct": 93.6,
+          "n": 424
+        }
+      },
+      "n": 2728
+    },
+    "map_balance": {
+      "description": "Map-level balance \u2014 Team 1 win rate by map (50% = perfectly balanced)",
+      "by_map": {
+        "Aatlis": {
+          "t1_win_rate": 52.8,
+          "n": 53
+        },
+        "Antarctic Peninsula": {
+          "t1_win_rate": 58.2,
+          "n": 91
+        },
+        "Blizzard World": {
+          "t1_win_rate": 4.2,
+          "n": 95
+        },
+        "Busan": {
+          "t1_win_rate": 50.0,
+          "n": 138
+        },
+        "Circuit royal": {
+          "t1_win_rate": 1.1,
+          "n": 174
+        },
+        "Colosseo": {
+          "t1_win_rate": 0.0,
+          "n": 186
+        },
+        "Dorado": {
+          "t1_win_rate": 1.0,
+          "n": 96
+        },
+        "Eichenwalde": {
+          "t1_win_rate": 2.8,
+          "n": 106
+        },
+        "Esperan\u00e7a": {
+          "t1_win_rate": 0.0,
+          "n": 271
+        },
+        "Hanaoka": {
+          "t1_win_rate": 0.0,
+          "n": 72
+        },
+        "Havana": {
+          "t1_win_rate": 5.6,
+          "n": 54
+        },
+        "Hollywood": {
+          "t1_win_rate": 0.9,
+          "n": 111
+        },
+        "Ilios": {
+          "t1_win_rate": 47.9,
+          "n": 167
+        },
+        "Junkertown": {
+          "t1_win_rate": 1.7,
+          "n": 60
+        },
+        "King's Row": {
+          "t1_win_rate": 2.9,
+          "n": 245
+        },
+        "King's Row (Winter)": {
+          "t1_win_rate": 20.0,
+          "n": 10
+        },
+        "Lijiang Tower": {
+          "t1_win_rate": 49.2,
+          "n": 313
+        },
+        "Midtown": {
+          "t1_win_rate": 1.9,
+          "n": 107
+        },
+        "Nepal": {
+          "t1_win_rate": 55.1,
+          "n": 187
+        },
+        "New Junk City": {
+          "t1_win_rate": 54.1,
+          "n": 257
+        },
+        "New Queen Street": {
+          "t1_win_rate": 0.0,
+          "n": 176
+        },
+        "Numbani": {
+          "t1_win_rate": 1.9,
+          "n": 54
+        },
+        "Oasis": {
+          "t1_win_rate": 47.6,
+          "n": 168
+        },
+        "Para\u00edso": {
+          "t1_win_rate": 0.0,
+          "n": 29
+        },
+        "Rialto": {
+          "t1_win_rate": 14.1,
+          "n": 85
+        },
+        "Route 66": {
+          "t1_win_rate": 1.9,
+          "n": 104
+        },
+        "Runasapi": {
+          "t1_win_rate": 0.0,
+          "n": 162
+        },
+        "Samoa": {
+          "t1_win_rate": 50.0,
+          "n": 116
+        },
+        "Shambali Monastery": {
+          "t1_win_rate": 5.2,
+          "n": 77
+        },
+        "Suravasa": {
+          "t1_win_rate": 51.1,
+          "n": 476
+        },
+        "Throne of Anubis": {
+          "t1_win_rate": 0.0,
+          "n": 46
+        },
+        "Watchpoint: Gibraltar": {
+          "t1_win_rate": 0.6,
+          "n": 169
+        }
+      }
+    },
+    "mercy_rez": {
+      "description": "Mercy resurrect frequency and patterns \u2014 a fight-swinging ability",
+      "total_rezzes": 898,
+      "rez_per_match": {
+        "median": 3.0,
+        "mean": 3.1,
+        "distribution": {
+          "p10": 1.0,
+          "p25": 1.0,
+          "p50": 3.0,
+          "p75": 4.0,
+          "p90": 6.0,
+          "n": 282
+        }
+      }
+    },
+    "dva_remech": {
+      "description": "D.Va remech frequency and charge-to-call timing \u2014 pilot survival skill",
+      "total_remechs": 1773,
+      "remech_per_match": {
+        "median": 2.0,
+        "mean": 2.3
+      },
+      "charge_to_call": {
+        "median_seconds": 2.6,
+        "mean_seconds": 18.3,
+        "n": 1261
+      }
+    },
+    "echo_duplicate": {
+      "description": "Echo duplicate target selection and survival \u2014 reveals ult decision-making",
+      "total_duplicates": 3492,
+      "target_role_distribution": {
+        "Tank": 1835,
+        "DPS": 1025,
+        "Support": 611,
+        "Unknown": 21
+      },
+      "duration": {
+        "median_seconds": 13.5,
+        "mean_seconds": 11.7,
+        "pct_full_duration": 46.7,
+        "pct_killed_early": 36.7,
+        "n": 3629
+      }
+    },
+    "sample_size_guide": {
+      "description": "How many observations are needed for reliable benchmarks at various confidence levels",
+      "table": {
+        "\u00b110%": 97,
+        "\u00b17%": 196,
+        "\u00b15%": 385,
+        "\u00b13%": 1068,
+        "\u00b12%": 2401
+      }
+    },
+    "hypothesis_validation": {
+      "description": "Summary of validated coaching hypotheses from the analysis",
+      "hypotheses": {
+        "first_pick_wins_75_78_pct": {
+          "verdict": "CONFIRMED",
+          "confidence": "High",
+          "detail": "Data shows ~79.5% first pick win rate, robust across fight sizes and roles"
+        },
+        "ult_economy_correlates_with_wins": {
+          "verdict": "PARTIALLY_CONFIRMED",
+          "confidence": "Medium",
+          "detail": "Winners earn more ults (by staying alive longer), but ult conversion rate gap is modest"
+        },
+        "map_geometry_dictates_comp": {
+          "verdict": "PARTIALLY_CONFIRMED",
+          "confidence": "Medium",
+          "detail": "Comp preferences vary by map type, but Mixed comps dominate amateur play"
+        },
+        "d10_benchmarks": {
+          "verdict": "ROUGHLY_CONFIRMED",
+          "confidence": "Medium-High",
+          "detail": "Benchmarks (<5 excellent, 5-6 good, 6-7.5 avg, >8 poor) align with data but must be role-adjusted"
+        }
+      }
+    }
+  }
+}

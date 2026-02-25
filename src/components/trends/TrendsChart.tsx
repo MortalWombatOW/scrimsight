@@ -8,11 +8,18 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ReferenceLine,
   ResponsiveContainer,
   TooltipProps
 } from 'recharts';
 import { format } from 'date-fns';
 import { TrendDataPoint } from '../../hooks/useTrendData';
+
+export interface BenchmarkLine {
+  value: number;
+  label: string;
+  color: string;
+}
 
 interface TrendsChartProps {
   data: TrendDataPoint[];
@@ -21,6 +28,7 @@ interface TrendsChartProps {
     color: string;
     label: string;
   }[];
+  benchmarkLines?: BenchmarkLine[];
 }
 
 const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
@@ -33,11 +41,16 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
         <p className={`text-xs font-semibold ${dataPoint.result === 'WIN' ? 'text-success' : 'text-error'}`}>
           Result: {dataPoint.result}
         </p>
+        {dataPoint.totalFights > 0 && (
+          <p className="text-xs text-base-content/50">
+            {dataPoint.fightsWon}/{dataPoint.totalFights} fights won
+          </p>
+        )}
         <div className="divider my-1"></div>
         {payload.map((entry) => (
           <p key={entry.name} style={{ color: entry.color }}>
             {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
-            {entry.name?.toString().includes('Rate') ? '%' : ''}
+            {entry.name?.toString().includes('Rate') || entry.name?.toString().includes('TFWR') ? '%' : ''}
           </p>
         ))}
       </div>
@@ -46,7 +59,7 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
   return null;
 };
 
-export const TrendsChart: React.FC<TrendsChartProps> = ({ data, metrics }) => {
+export const TrendsChart: React.FC<TrendsChartProps> = ({ data, metrics, benchmarkLines }) => {
   return (
     <div className="w-full h-[300px]">
       <ResponsiveContainer width="100%" height="100%">
@@ -60,18 +73,28 @@ export const TrendsChart: React.FC<TrendsChartProps> = ({ data, metrics }) => {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} />
-          <XAxis 
-            dataKey="timestamp" 
+          <XAxis
+            dataKey="timestamp"
             tickFormatter={(unixTime) => format(new Date(unixTime), 'MMM d')}
             strokeOpacity={0.5}
             style={{ fontSize: 12 }}
           />
-          <YAxis 
+          <YAxis
             strokeOpacity={0.5}
-            style={{ fontSize: 12 }} 
+            style={{ fontSize: 12 }}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend wrapperStyle={{ fontSize: 12 }} />
+          {benchmarkLines?.map((bl) => (
+            <ReferenceLine
+              key={bl.label}
+              y={bl.value}
+              stroke={bl.color}
+              strokeDasharray="6 3"
+              strokeOpacity={0.6}
+              label={{ value: bl.label, position: 'right', fontSize: 10, fill: bl.color }}
+            />
+          ))}
           {metrics.map((metric) => (
             <Line
               key={metric.key}
@@ -82,6 +105,7 @@ export const TrendsChart: React.FC<TrendsChartProps> = ({ data, metrics }) => {
               strokeWidth={2}
               dot={{ r: 4 }}
               activeDot={{ r: 6 }}
+              connectNulls
             />
           ))}
         </LineChart>

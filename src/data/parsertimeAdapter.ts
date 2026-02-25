@@ -24,6 +24,7 @@ import { calculateTeamfights } from '../domain/teamfights';
 import { calculatePlayerStats } from '../domain/stats';
 import { calculateRoundTimes, calculateMapTimes, calculatePlayerStatusTimeline } from '../domain/timeline';
 import { calculateUltimateEvents } from '../domain/ultimateEvents';
+import { calculateUltCycles } from '../domain/economy';
 
 // ============================================================================
 // Constants
@@ -467,7 +468,8 @@ function buildProcessedMatch(
   const roundTimes = calculateRoundTimes(events);
   const mapTimes = calculateMapTimes(events, roundTimes);
   const ultimateEvents = calculateUltimateEvents(events);
-  const teamfights = calculateTeamfights(events, metadata);
+  const ultCycles = calculateUltCycles(events);
+  const teamfights = calculateTeamfights(events, metadata, ultCycles);
   const playerStats = calculatePlayerStats(events, roundTimes);
   const playerStatusTimeline = calculatePlayerStatusTimeline(events, matchId);
 
@@ -480,6 +482,7 @@ function buildProcessedMatch(
     mapTimes,
     playerStatusTimeline,
     ultimateEvents,
+    ultCycles,
   };
 }
 

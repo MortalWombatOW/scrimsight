@@ -5,6 +5,7 @@ import { FaRegFileAlt } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { TbVs } from "react-icons/tb";
 import { IoStatsChartOutline } from "react-icons/io5";
+import { TbReportAnalytics } from "react-icons/tb";
 import { useEffect, useMemo } from "react";
 import { RoleIcon } from "@icons";
 import { CiMap } from "react-icons/ci";
@@ -226,10 +227,14 @@ export const Navigation = ({
           })),
         })}
         {renderMenuItem({
-          // Add Metrics Explorer item
           title: "Metrics Explorer",
           link: "/metrics",
           icon: <IoStatsChartOutline />,
+        })}
+        {renderMenuItem({
+          title: "Detailed Analysis",
+          link: "/analysis",
+          icon: <TbReportAnalytics />,
         })}
         {renderMenuItem({
           title: "Files",

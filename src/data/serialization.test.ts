@@ -66,6 +66,7 @@ function createTestMatch(overrides?: Partial<ProcessedMatch>): ProcessedMatch {
       ['round1', [entry1, entry2]],
     ]),
     ultimateEvents: [],
+    ultCycles: [],
     ...overrides,
   } as ProcessedMatch;
 }

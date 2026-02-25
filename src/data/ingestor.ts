@@ -9,6 +9,7 @@ import { calculateTeamfights } from '../domain/teamfights';
 import { calculatePlayerStats } from '../domain/stats';
 import { calculateRoundTimes, calculateMapTimes, calculatePlayerStatusTimeline } from '../domain/timeline';
 import { calculateUltimateEvents } from '../domain/ultimateEvents';
+import { calculateUltCycles } from '../domain/economy';
 import {
   Ability1UsedLogEventSchema,
   Ability2UsedLogEventSchema,
@@ -33,7 +34,7 @@ import {
   UltimateStartLogEventSchema,
 } from './schemas';
 
-interface IngestFileParams {
+export interface IngestFileParams {
   fileContent: string;
   fileName: string;
   fileModified: number;
@@ -289,7 +290,8 @@ export async function ingestFile(params: IngestFileParams): Promise<ProcessedMat
   const roundTimes = calculateRoundTimes(events);
   const mapTimes = calculateMapTimes(events, roundTimes);
   const ultimateEvents = calculateUltimateEvents(events);
-  const teamfights = calculateTeamfights(events, metadata);
+  const ultCycles = calculateUltCycles(events);
+  const teamfights = calculateTeamfights(events, metadata, ultCycles);
   const playerStats = calculatePlayerStats(events, roundTimes);
   const playerStatusTimeline = calculatePlayerStatusTimeline(events, matchId);
 
@@ -302,6 +304,7 @@ export async function ingestFile(params: IngestFileParams): Promise<ProcessedMat
     mapTimes,
     playerStatusTimeline,
     ultimateEvents,
+    ultCycles,
   };
 
   return processedMatch;

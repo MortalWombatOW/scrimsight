@@ -1,0 +1,15 @@
+[project]
+name = "scrimsight-analysis"
+version = "1.0.0"
+description = "Benchmark extraction pipeline for ScrimSight training path"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.0",
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+    "scipy>=1.11",
+    "scikit-learn>=1.3",
+]
+
+[project.scripts]
+analyze = "analysis.pipeline:run"

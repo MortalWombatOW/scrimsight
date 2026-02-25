@@ -41,6 +41,7 @@ export function serializeMatch(match: ProcessedMatch): StoredMatch {
     mapTimes: match.mapTimes,
     playerStatusTimeline,
     ultimateEvents: match.ultimateEvents,
+    ultCycles: match.ultCycles,
     schemaVersion: 1,
   };
 }
@@ -72,5 +73,6 @@ export function deserializeMatch(stored: StoredMatch): ProcessedMatch {
     mapTimes: stored.mapTimes,
     playerStatusTimeline,
     ultimateEvents: stored.ultimateEvents,
+    ultCycles: stored.ultCycles ?? [],
   };
 }

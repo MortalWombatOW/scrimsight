@@ -1,0 +1,899 @@
+id,scrimId,event_type,match_time,resurrecter_team,resurrecter_player,resurrecter_hero,resurrectee_team,resurrectee_player,resurrectee_hero,MapDataId
+1,69,mercy_rez,641.76,T_a02bf5e9,P_6a169184,Mercy,T_a02bf5e9,P_59dc0a66,Widowmaker,210
+2,69,mercy_rez,773.31,T_a02bf5e9,P_6a169184,Mercy,T_a02bf5e9,P_3ed43f53,Tracer,210
+3,69,mercy_rez,814.87,T_a02bf5e9,P_6a169184,Mercy,T_a02bf5e9,P_c31ad68b,Kiriko,210
+4,75,mercy_rez,681.1,T_a02bf5e9,P_6b153e2e,Mercy,T_a02bf5e9,P_ccb13449,Echo,220
+5,99,mercy_rez,756.21,T_5568bd9d,P_b2482e4c,Mercy,T_5568bd9d,P_3ade6b48,Pharah,325
+7,142,mercy_rez,0,T_a02bf5e9,P_538c6de1,Mercy,T_a02bf5e9,P_d5cf57f8,Bastion,491
+8,146,mercy_rez,348.15,T_5568bd9d,P_29d685c1,Mercy,T_5568bd9d,P_7ad5eb9b,Lúcio,501
+9,146,mercy_rez,407.58,T_5568bd9d,P_29d685c1,Mercy,T_5568bd9d,P_b0cf3b85,Pharah,501
+10,146,mercy_rez,486.14,T_5568bd9d,P_29d685c1,Mercy,T_5568bd9d,P_7ad5eb9b,Lúcio,501
+11,154,mercy_rez,37.3,T_08f936eb,P_ceea55da,Mercy,T_08f936eb,P_6212408c,Sigma,526
+13,156,mercy_rez,28.72,T_b16cd221,P_63576f56,Mercy,T_b16cd221,P_84d34cb8,Junkrat,545
+14,156,mercy_rez,61.68,T_b16cd221,P_63576f56,Mercy,T_b16cd221,P_f1a57263,Echo,545
+15,156,mercy_rez,200.13,T_b16cd221,P_63576f56,Mercy,T_b16cd221,P_99d0c092,Roadhog,545
+16,156,mercy_rez,572.66,T_b16cd221,P_538c6de1,Mercy,T_b16cd221,P_63576f56,Moira,545
+17,156,mercy_rez,612.03,T_b16cd221,P_538c6de1,Mercy,T_b16cd221,P_f1a57263,Widowmaker,545
+18,156,mercy_rez,643.76,T_b16cd221,P_538c6de1,Mercy,T_b16cd221,P_84d34cb8,Pharah,545
+19,156,mercy_rez,742.51,T_b16cd221,P_538c6de1,Mercy,T_b16cd221,P_84d34cb8,Pharah,545
+20,158,mercy_rez,612.4,T_5568bd9d,P_d9cecacf,Mercy,T_5568bd9d,P_c65e98be,Wrecking Ball,560
+21,158,mercy_rez,658.28,T_5568bd9d,P_d9cecacf,Mercy,T_5568bd9d,P_f081f9e5,Echo,560
+22,164,mercy_rez,435.3,T_7f8fc438,P_538c6de1,Mercy,T_7f8fc438,P_10207168,Widowmaker,582
+23,187,mercy_rez,245.26,T_a02bf5e9,P_9489e010,Mercy,T_a02bf5e9,P_11e07e10,Ana,630
+24,187,mercy_rez,293.23,T_a02bf5e9,P_9489e010,Mercy,T_a02bf5e9,P_7b78ebde,Torbjörn,630
+25,208,mercy_rez,543.79,T_7f8fc438,P_e2119203,Mercy,T_7f8fc438,P_99d0c092,Roadhog,705
+26,208,mercy_rez,577.85,T_7f8fc438,P_e2119203,Mercy,T_7f8fc438,P_f1a57263,Soldier: 76,705
+27,208,mercy_rez,708.42,T_7f8fc438,P_e2119203,Mercy,T_7f8fc438,P_63576f56,Illari,705
+31,228,mercy_rez,0,T_5568bd9d,P_5b41a7d4,Mercy,T_5568bd9d,P_01870ab6,Kiriko,747
+32,228,mercy_rez,0,T_a02bf5e9,P_f0819f5d,Mercy,T_a02bf5e9,P_ab7fc22e,Winston,747
+33,228,mercy_rez,0,T_5568bd9d,P_5b41a7d4,Mercy,T_5568bd9d,P_e21f9a0c,Echo,747
+51,248,mercy_rez,430.11,T_5568bd9d,P_8a414cec,Mercy,T_5568bd9d,P_7eb35dc4,Junkrat,806
+52,248,mercy_rez,525.46,T_5568bd9d,P_8a414cec,Mercy,T_5568bd9d,P_7eb35dc4,Widowmaker,806
+53,248,mercy_rez,557.22,T_5568bd9d,P_8a414cec,Mercy,T_5568bd9d,P_9871455a,Echo,806
+54,248,mercy_rez,600.46,T_5568bd9d,P_8a414cec,Mercy,T_5568bd9d,P_1c120d0b,Sigma,806
+55,248,mercy_rez,630.52,T_5568bd9d,P_8a414cec,Mercy,T_5568bd9d,P_9871455a,Echo,806
+76,259,mercy_rez,123.39,T_5568bd9d,P_de5f8654,Mercy,T_5568bd9d,P_7359b808,Sojourn,844
+77,259,mercy_rez,207.98,T_5568bd9d,P_de5f8654,Mercy,T_5568bd9d,P_2e8cb684,Baptiste,844
+78,259,mercy_rez,257.93,T_5568bd9d,P_de5f8654,Mercy,T_5568bd9d,P_f65b6b44,Sigma,844
+79,259,mercy_rez,662.55,T_5568bd9d,P_de5f8654,Mercy,T_5568bd9d,P_4bc579fa,Hanzo,844
+80,259,mercy_rez,744.67,T_5568bd9d,P_de5f8654,Mercy,T_5568bd9d,P_f65b6b44,Sigma,844
+81,276,mercy_rez,79.48,T_a02bf5e9,P_fe90d72b,Mercy,T_a02bf5e9,P_58a02028,Zenyatta,869
+82,276,mercy_rez,133.24,T_a02bf5e9,P_fe90d72b,Mercy,T_a02bf5e9,P_58a02028,Zenyatta,869
+83,276,mercy_rez,184.34,T_a02bf5e9,P_fe90d72b,Mercy,T_a02bf5e9,P_77c3708c,Torbjörn,869
+84,276,mercy_rez,533.63,T_a02bf5e9,P_fe90d72b,Mercy,T_a02bf5e9,P_b18718c1,Wrecking Ball,869
+85,276,mercy_rez,575.54,T_a02bf5e9,P_fe90d72b,Mercy,T_a02bf5e9,P_d90b7af8,Pharah,869
+86,279,mercy_rez,329.24,T_a02bf5e9,P_98eb46a0,Mercy,T_a02bf5e9,P_6e4361fc,Ashe,892
+94,287,mercy_rez,188.42,T_0ff7da8a,P_8bbca41e,Mercy,T_0ff7da8a,P_7359b808,Sojourn,929
+95,291,mercy_rez,200.1,T_5568bd9d,P_449b9969,Mercy,T_5568bd9d,P_0b5958e2,Kiriko,936
+96,293,mercy_rez,279.43,T_a02bf5e9,P_0e62f880,Mercy,T_a02bf5e9,P_84d69c58,Soldier: 76,947
+97,293,mercy_rez,419.91,T_a02bf5e9,P_0e62f880,Mercy,T_a02bf5e9,P_e2b808b0,Illari,947
+98,293,mercy_rez,463.91,T_a02bf5e9,P_0e62f880,Mercy,T_a02bf5e9,P_46543993,Pharah,947
+99,294,mercy_rez,463.81,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_d03fb691,Tracer,949
+100,294,mercy_rez,553.73,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_d03fb691,Tracer,949
+101,294,mercy_rez,651.56,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_d03fb691,Tracer,949
+102,296,mercy_rez,86.51,T_a02bf5e9,P_618850d8,Mercy,T_a02bf5e9,P_932887d7,Echo,955
+103,296,mercy_rez,212.4,T_a02bf5e9,P_618850d8,Mercy,T_a02bf5e9,P_ab363563,Widowmaker,955
+104,296,mercy_rez,398.02,T_a02bf5e9,P_618850d8,Mercy,T_a02bf5e9,P_932887d7,Junkrat,955
+105,296,mercy_rez,483,T_a02bf5e9,P_618850d8,Mercy,T_a02bf5e9,P_ab363563,Widowmaker,955
+107,308,mercy_rez,215.04,T_5568bd9d,P_c88272c9,Mercy,T_5568bd9d,P_36b48d73,Baptiste,1036
+108,308,mercy_rez,80.33,T_5568bd9d,P_9a2e29fa,Mercy,T_5568bd9d,P_423d0d8d,Tracer,1037
+109,308,mercy_rez,375.19,T_5568bd9d,P_9a2e29fa,Mercy,T_5568bd9d,P_7359b808,Echo,1037
+110,308,mercy_rez,69.68,T_5568bd9d,P_9a2e29fa,Mercy,T_5568bd9d,P_423d0d8d,Soldier: 76,1039
+111,308,mercy_rez,144.03,T_5568bd9d,P_9a2e29fa,Mercy,T_5568bd9d,P_36b48d73,Moira,1039
+117,309,mercy_rez,336.44,T_a02bf5e9,P_02cb2f6d,Mercy,T_a02bf5e9,P_06a11623,Tracer,1045
+118,309,mercy_rez,430.01,T_a02bf5e9,P_02cb2f6d,Mercy,T_a02bf5e9,P_06a11623,Tracer,1045
+119,309,mercy_rez,776.03,T_a02bf5e9,P_02cb2f6d,Mercy,T_a02bf5e9,P_06a11623,Hanzo,1045
+120,309,mercy_rez,814.59,T_a02bf5e9,P_02cb2f6d,Mercy,T_a02bf5e9,P_99c9bd6c,Sigma,1045
+121,309,mercy_rez,934.33,T_a02bf5e9,P_02cb2f6d,Mercy,T_a02bf5e9,P_99c9bd6c,Sigma,1045
+127,312,mercy_rez,93.53,T_5568bd9d,P_8a414cec,Mercy,T_5568bd9d,P_5a09da5a,Pharah,1060
+128,312,mercy_rez,603.28,T_5568bd9d,P_8a414cec,Mercy,T_5568bd9d,P_5a09da5a,Venture,1061
+129,312,mercy_rez,689.42,T_5568bd9d,P_8a414cec,Mercy,T_5568bd9d,P_b53ae62e,Genji,1061
+130,312,mercy_rez,819,T_5568bd9d,P_8a414cec,Mercy,T_5568bd9d,P_b53ae62e,Genji,1061
+152,330,mercy_rez,140.05,T_5568bd9d,P_f8ddadb1,Mercy,T_5568bd9d,P_019f32ba,Soldier: 76,1160
+153,330,mercy_rez,203.88,T_5568bd9d,P_f8ddadb1,Mercy,T_5568bd9d,P_019f32ba,Soldier: 76,1160
+154,344,mercy_rez,596.23,T_c8373fd8,P_ce9d2f74,Mercy,T_c8373fd8,P_7b905d37,Baptiste,1204
+155,345,mercy_rez,271.73,T_32495e59,P_10619724,Mercy,T_32495e59,P_dc0ec923,Widowmaker,1212
+156,345,mercy_rez,98,T_32495e59,P_10619724,Mercy,T_32495e59,P_dc0ec923,Bastion,1215
+157,345,mercy_rez,183.7,T_32495e59,P_10619724,Mercy,T_32495e59,P_dc0ec923,Bastion,1215
+158,345,mercy_rez,336.44,T_32495e59,P_10619724,Mercy,T_32495e59,P_5df3593b,Winston,1215
+159,345,mercy_rez,446.1,T_32495e59,P_10619724,Mercy,T_32495e59,P_dc0ec923,Reaper,1215
+160,345,mercy_rez,639.86,T_32495e59,P_10619724,Mercy,T_32495e59,P_dc0ec923,Reaper,1215
+170,351,mercy_rez,71.71,T_a02bf5e9,P_f8ddadb1,Mercy,T_a02bf5e9,P_f1451817,Sigma,1256
+171,351,mercy_rez,130.75,T_a02bf5e9,P_f8ddadb1,Mercy,T_a02bf5e9,P_bd5c9b35,Baptiste,1256
+172,351,mercy_rez,434.72,T_a02bf5e9,P_f8ddadb1,Mercy,T_a02bf5e9,P_019f32ba,Hanzo,1256
+173,351,mercy_rez,588.58,T_a02bf5e9,P_f8ddadb1,Mercy,T_a02bf5e9,P_bd5c9b35,Baptiste,1256
+174,351,mercy_rez,702.35,T_a02bf5e9,P_f8ddadb1,Mercy,T_a02bf5e9,P_8aad7293,Hanzo,1256
+175,351,mercy_rez,110.27,T_a02bf5e9,P_f8ddadb1,Mercy,T_a02bf5e9,P_336e8e68,Sojourn,1258
+176,351,mercy_rez,140.7,T_a02bf5e9,P_f8ddadb1,Mercy,T_a02bf5e9,P_019f32ba,Soldier: 76,1258
+177,351,mercy_rez,254.17,T_a02bf5e9,P_f8ddadb1,Mercy,T_a02bf5e9,P_8aad7293,Kiriko,1258
+183,354,mercy_rez,303.7,T_5568bd9d,P_62ab6c80,Mercy,T_5568bd9d,P_6623cc58,Tracer,1273
+184,354,mercy_rez,111.43,T_a02bf5e9,P_389fccbf,Mercy,T_a02bf5e9,P_b4e90053,Widowmaker,1274
+185,354,mercy_rez,234.95,T_5568bd9d,P_62ab6c80,Mercy,T_5568bd9d,P_6623cc58,Echo,1274
+186,354,mercy_rez,257.92,T_a02bf5e9,P_389fccbf,Mercy,T_a02bf5e9,P_b4e90053,Symmetra,1274
+188,385,mercy_rez,154.47,T_a02bf5e9,P_4230ccc3,Mercy,T_a02bf5e9,P_98456926,Cassidy,1357
+189,385,mercy_rez,443.41,T_a02bf5e9,P_4230ccc3,Mercy,T_a02bf5e9,P_a32c1c60,Ana,1357
+190,385,mercy_rez,517.96,T_a02bf5e9,P_4230ccc3,Mercy,T_a02bf5e9,P_a32c1c60,Ana,1357
+191,402,mercy_rez,166.92,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_5cdbebff,Ana,1415
+192,402,mercy_rez,329.02,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_5cdbebff,Ana,1415
+193,402,mercy_rez,147.49,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_5cdbebff,Tracer,1416
+194,402,mercy_rez,395.24,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_5cdbebff,Tracer,1416
+195,402,mercy_rez,29.26,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_c57c856d,Kiriko,1417
+196,402,mercy_rez,349.67,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_5cdbebff,Tracer,1417
+197,402,mercy_rez,420.75,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_c57c856d,Kiriko,1417
+198,402,mercy_rez,46.45,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_c57c856d,Kiriko,1418
+199,402,mercy_rez,314.9,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_c57c856d,Kiriko,1418
+200,402,mercy_rez,525.77,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_632193b6,Echo,1418
+201,402,mercy_rez,662.03,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_5cdbebff,Sombra,1418
+202,402,mercy_rez,312.5,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_c57c856d,Kiriko,1419
+203,402,mercy_rez,420.02,T_a02bf5e9,P_fa787f36,Mercy,T_a02bf5e9,P_632193b6,Echo,1419
+219,410,mercy_rez,58.01,T_afa0a505,P_62ab6c80,Mercy,T_afa0a505,P_423d0d8d,Widowmaker,1449
+220,410,mercy_rez,180.75,T_afa0a505,P_62ab6c80,Mercy,T_afa0a505,P_243640e8,Ashe,1449
+221,410,mercy_rez,212.52,T_afa0a505,P_62ab6c80,Mercy,T_afa0a505,P_423d0d8d,Widowmaker,1449
+222,410,mercy_rez,364.42,T_afa0a505,P_62ab6c80,Mercy,T_afa0a505,P_423d0d8d,Hanzo,1449
+223,410,mercy_rez,422.01,T_175f0dae,P_2febc802,Mercy,T_175f0dae,P_6c5016ca,Widowmaker,1449
+224,410,mercy_rez,666.4,T_175f0dae,P_2febc802,Mercy,T_175f0dae,P_f65b6b44,Winston,1449
+233,411,mercy_rez,58.01,T_afa0a505,P_62ab6c80,Mercy,T_afa0a505,P_423d0d8d,Widowmaker,1458
+234,411,mercy_rez,180.75,T_afa0a505,P_62ab6c80,Mercy,T_afa0a505,P_243640e8,Ashe,1458
+235,411,mercy_rez,212.52,T_afa0a505,P_62ab6c80,Mercy,T_afa0a505,P_423d0d8d,Widowmaker,1458
+236,411,mercy_rez,364.42,T_afa0a505,P_62ab6c80,Mercy,T_afa0a505,P_423d0d8d,Hanzo,1458
+237,411,mercy_rez,422.01,T_175f0dae,P_2febc802,Mercy,T_175f0dae,P_6c5016ca,Widowmaker,1458
+239,411,mercy_rez,221.86,T_afa0a505,P_62ab6c80,Mercy,T_afa0a505,P_243640e8,Ashe,1460
+238,411,mercy_rez,666.4,T_175f0dae,P_2febc802,Mercy,T_175f0dae,P_f65b6b44,Winston,1458
+240,418,mercy_rez,634.02,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_d03fb691,Tracer,1490
+241,418,mercy_rez,730.05,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_3d2d8d7d,Kiriko,1490
+242,418,mercy_rez,765.52,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_3899b296,Echo,1490
+243,418,mercy_rez,99.72,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_3899b296,Ashe,1491
+244,418,mercy_rez,232.05,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_83eb0814,Ana,1491
+245,418,mercy_rez,328.12,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_83eb0814,Ana,1491
+246,418,mercy_rez,390.53,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_d03fb691,Tracer,1491
+247,418,mercy_rez,573,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_d03fb691,Venture,1491
+248,418,mercy_rez,744.36,T_5568bd9d,P_daabcda0,Mercy,T_5568bd9d,P_d03fb691,Venture,1491
+249,419,mercy_rez,762.71,T_e9654697,P_e590460a,Mercy,T_e9654697,P_9d4c821b,Hanzo,1496
+250,419,mercy_rez,414.01,T_e9654697,P_e590460a,Mercy,T_e9654697,P_1de66280,Ramattra,1498
+251,419,mercy_rez,571.08,T_e9654697,P_e590460a,Mercy,T_e9654697,P_4a147190,Ashe,1498
+252,419,mercy_rez,37.18,T_0ff7da8a,P_2febc802,Mercy,T_0ff7da8a,P_c4b569f2,Ana,1499
+253,419,mercy_rez,350.78,T_0ff7da8a,P_2febc802,Mercy,T_0ff7da8a,P_6c5016ca,Tracer,1499
+254,420,mercy_rez,259.61,T_a02bf5e9,P_44f7aefc,Mercy,T_a02bf5e9,P_01c03a43,Kiriko,1506
+255,420,mercy_rez,259.61,T_a02bf5e9,P_44f7aefc,Mercy,T_a02bf5e9,P_01c03a43,Kiriko,1507
+256,422,mercy_rez,29.74,T_a02bf5e9,P_70f92603,Mercy,T_a02bf5e9,P_e6efd885,Cassidy,1514
+258,426,mercy_rez,71.47,T_8871274e,P_449b9969,Mercy,T_8871274e,P_0b5958e2,Kiriko,1529
+259,426,mercy_rez,112.46,T_107b38a8,P_389fccbf,Mercy,T_107b38a8,P_fef5100b,Ana,1533
+268,426,mercy_rez,112.46,T_107b38a8,P_389fccbf,Mercy,T_107b38a8,P_fef5100b,Ana,1546
+269,429,mercy_rez,488.65,T_a06a679c,P_7f08d517,Mercy,T_a06a679c,P_4c6b6d21,Moira,1547
+270,431,mercy_rez,585.65,T_5568bd9d,P_39f988e8,Mercy,T_5568bd9d,P_399ccb9b,Baptiste,1558
+271,431,mercy_rez,505.71,T_5568bd9d,P_399ccb9b,Mercy,T_5568bd9d,P_fd9e17ee,Echo,1561
+272,431,mercy_rez,540.15,T_5568bd9d,P_399ccb9b,Mercy,T_5568bd9d,P_39f988e8,Kiriko,1561
+273,431,mercy_rez,595.41,T_5568bd9d,P_399ccb9b,Mercy,T_5568bd9d,P_fd9e17ee,Echo,1561
+274,433,mercy_rez,621.18,T_a02bf5e9,P_55b5a12a,Mercy,T_a02bf5e9,P_4a2dc50b,Sojourn,1577
+275,438,mercy_rez,552.89,T_00483cb3,P_fe451765,Mercy,T_00483cb3,P_c8f2d203,Kiriko,1615
+276,438,mercy_rez,632.57,T_00483cb3,P_fe451765,Mercy,T_00483cb3,P_0ff74f7a,Pharah,1615
+277,438,mercy_rez,704.13,T_00483cb3,P_fe451765,Mercy,T_00483cb3,P_c8f2d203,Kiriko,1615
+278,452,mercy_rez,245.08,T_a02bf5e9,P_daabcda0,Mercy,T_a02bf5e9,P_d03fb691,Tracer,1636
+279,452,mercy_rez,302.07,T_a02bf5e9,P_daabcda0,Mercy,T_a02bf5e9,P_d03fb691,Tracer,1636
+280,453,mercy_rez,84.62,T_a02bf5e9,P_44c8e456,Mercy,T_a02bf5e9,P_f50a7766,Sojourn,1640
+281,453,mercy_rez,115.74,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_96d729de,Junkrat,1640
+282,453,mercy_rez,167.18,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_70c9d8c2,Baptiste,1640
+283,453,mercy_rez,192.84,T_a02bf5e9,P_44c8e456,Mercy,T_a02bf5e9,P_f50a7766,Sojourn,1640
+284,453,mercy_rez,476.13,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_96d729de,Junkrat,1640
+285,453,mercy_rez,513.21,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_96d729de,Junkrat,1640
+286,453,mercy_rez,112.28,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_f65b6b44,Ashe,1641
+287,453,mercy_rez,307.6,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_f65b6b44,Ashe,1641
+288,453,mercy_rez,109.9,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_96d729de,Echo,1643
+289,453,mercy_rez,269.4,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_f65b6b44,Ashe,1643
+290,453,mercy_rez,339.75,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_96d729de,Echo,1643
+291,453,mercy_rez,462.82,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_f65b6b44,Ashe,1643
+292,453,mercy_rez,562.6,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_f65b6b44,Ashe,1643
+293,453,mercy_rez,582.06,T_a02bf5e9,P_44c8e456,Mercy,T_a02bf5e9,P_f50a7766,Ashe,1643
+294,453,mercy_rez,626.36,T_a02bf5e9,P_44c8e456,Mercy,T_a02bf5e9,P_57745b4b,Winston,1643
+295,453,mercy_rez,662.58,T_5568bd9d,P_2e8cb684,Mercy,T_5568bd9d,P_96d729de,Echo,1643
+300,470,mercy_rez,688.87,T_5568bd9d,P_1dced6fa,Mercy,T_5568bd9d,P_b0172d29,Kiriko,1709
+303,481,mercy_rez,462.08,T_5568bd9d,P_312677ad,Mercy,T_5568bd9d,P_8db2acd4,Winston,1756
+304,481,mercy_rez,556.95,T_5568bd9d,P_312677ad,Mercy,T_5568bd9d,P_dc7e8681,Ashe,1756
+305,481,mercy_rez,624.35,T_5568bd9d,P_312677ad,Mercy,T_5568bd9d,P_12d1230f,Widowmaker,1756
+306,481,mercy_rez,89.88,T_a02bf5e9,P_735880b1,Mercy,T_a02bf5e9,P_ab7fc22e,Pharah,1759
+307,481,mercy_rez,150.37,T_a02bf5e9,P_735880b1,Mercy,T_a02bf5e9,P_0f66b5ed,Wrecking Ball,1759
+308,481,mercy_rez,191.09,T_a02bf5e9,P_735880b1,Mercy,T_a02bf5e9,P_adab09ec,Lúcio,1759
+309,481,mercy_rez,278.47,T_a02bf5e9,P_735880b1,Mercy,T_a02bf5e9,P_adab09ec,Lúcio,1759
+310,481,mercy_rez,462.08,T_5568bd9d,P_312677ad,Mercy,T_5568bd9d,P_8db2acd4,Winston,1763
+311,481,mercy_rez,556.95,T_5568bd9d,P_312677ad,Mercy,T_5568bd9d,P_dc7e8681,Ashe,1763
+312,481,mercy_rez,624.35,T_5568bd9d,P_312677ad,Mercy,T_5568bd9d,P_12d1230f,Widowmaker,1763
+313,482,mercy_rez,41.52,T_a02bf5e9,P_74aabb67,Mercy,T_a02bf5e9,P_33c3b016,Winston,1771
+314,482,mercy_rez,78.54,T_a02bf5e9,P_74aabb67,Mercy,T_a02bf5e9,P_c91293fd,Tracer,1771
+315,482,mercy_rez,340.7,T_a02bf5e9,P_74aabb67,Mercy,T_a02bf5e9,P_3bd3172d,Kiriko,1771
+316,482,mercy_rez,513.31,T_a02bf5e9,P_74aabb67,Mercy,T_a02bf5e9,P_c91293fd,Echo,1771
+317,482,mercy_rez,631.04,T_a02bf5e9,P_74aabb67,Mercy,T_a02bf5e9,P_c91293fd,Echo,1771
+318,494,mercy_rez,556.29,T_2f7c4a6e,P_eedceebb,Mercy,T_2f7c4a6e,P_c82061ed,Doomfist,1823
+319,494,mercy_rez,443.84,T_967fa57b,P_9ed42487,Mercy,T_967fa57b,P_9c394fa2,Genji,1824
+320,494,mercy_rez,521.94,T_967fa57b,P_9ed42487,Mercy,T_967fa57b,P_424ed0fa,Lifeweaver,1824
+321,494,mercy_rez,561.92,T_2f7c4a6e,P_86f8627b,Mercy,T_2f7c4a6e,P_951a6baa,Bastion,1824
+322,494,mercy_rez,707.34,T_2f7c4a6e,P_86f8627b,Mercy,T_2f7c4a6e,P_c82061ed,Wrecking Ball,1824
+323,494,mercy_rez,814.68,T_2f7c4a6e,P_86f8627b,Mercy,T_2f7c4a6e,P_eedceebb,Kiriko,1824
+324,494,mercy_rez,443.84,T_967fa57b,P_9ed42487,Mercy,T_967fa57b,P_9c394fa2,Genji,1825
+325,494,mercy_rez,521.94,T_967fa57b,P_9ed42487,Mercy,T_967fa57b,P_424ed0fa,Lifeweaver,1825
+326,494,mercy_rez,561.92,T_2f7c4a6e,P_86f8627b,Mercy,T_2f7c4a6e,P_951a6baa,Bastion,1825
+327,494,mercy_rez,707.34,T_2f7c4a6e,P_86f8627b,Mercy,T_2f7c4a6e,P_c82061ed,Wrecking Ball,1825
+328,494,mercy_rez,814.68,T_2f7c4a6e,P_86f8627b,Mercy,T_2f7c4a6e,P_eedceebb,Kiriko,1825
+329,495,mercy_rez,167.45,T_b7e00eb0,P_53c52344,Mercy,T_b7e00eb0,P_5eb18296,Echo,1827
+330,495,mercy_rez,238.87,T_b7e00eb0,P_53c52344,Mercy,T_b7e00eb0,P_8273a365,Ana,1827
+331,495,mercy_rez,341.67,T_b7e00eb0,P_53c52344,Mercy,T_b7e00eb0,P_8273a365,Ana,1827
+332,495,mercy_rez,375.08,T_b7e00eb0,P_53c52344,Mercy,T_b7e00eb0,P_5eb18296,Echo,1827
+347,518,mercy_rez,434.52,T_a02bf5e9,P_c5cc98d5,Mercy,T_a02bf5e9,P_be944440,Pharah,1925
+348,518,mercy_rez,606.84,T_a02bf5e9,P_c5cc98d5,Mercy,T_a02bf5e9,P_87de3258,Bastion,1925
+349,518,mercy_rez,701.85,T_a02bf5e9,P_c5cc98d5,Mercy,T_a02bf5e9,P_366f7853,Ramattra,1925
+354,536,mercy_rez,381.21,T_5568bd9d,P_06b583e4,Mercy,T_5568bd9d,P_b0172d29,Kiriko,1999
+355,536,mercy_rez,468.45,T_5568bd9d,P_06b583e4,Mercy,T_5568bd9d,P_b0172d29,Kiriko,2000
+356,536,mercy_rez,805.36,T_5568bd9d,P_06b583e4,Mercy,T_5568bd9d,P_1c20e30b,Echo,2000
+357,545,mercy_rez,496.45,T_5568bd9d,P_7f119176,Mercy,T_5568bd9d,P_cb34b647,Sojourn,2050
+358,548,mercy_rez,85.66,T_a02bf5e9,P_d347f232,Mercy,T_a02bf5e9,P_2bb80c17,Echo,2059
+359,548,mercy_rez,150.95,T_a02bf5e9,P_d347f232,Mercy,T_a02bf5e9,P_91a65e5f,Winston,2059
+360,548,mercy_rez,349.02,T_a02bf5e9,P_d347f232,Mercy,T_a02bf5e9,P_2bb80c17,Echo,2059
+361,549,mercy_rez,109.4,T_a02bf5e9,P_e40c05ad,Mercy,T_a02bf5e9,P_5dd2da71,Echo,2068
+362,549,mercy_rez,170.47,T_a02bf5e9,P_e40c05ad,Mercy,T_a02bf5e9,P_70cc6088,Genji,2068
+363,549,mercy_rez,349.79,T_a02bf5e9,P_e40c05ad,Mercy,T_a02bf5e9,P_a8567672,Kiriko,2068
+364,549,mercy_rez,444.58,T_a02bf5e9,P_e40c05ad,Mercy,T_a02bf5e9,P_5dd2da71,Echo,2068
+365,549,mercy_rez,584.7,T_a02bf5e9,P_e40c05ad,Mercy,T_a02bf5e9,P_5dd2da71,Echo,2068
+366,549,mercy_rez,631.39,T_a02bf5e9,P_e40c05ad,Mercy,T_a02bf5e9,P_5dd2da71,Echo,2068
+367,549,mercy_rez,672.42,T_a02bf5e9,P_e40c05ad,Mercy,T_a02bf5e9,P_70cc6088,Genji,2068
+368,549,mercy_rez,854.66,T_a02bf5e9,P_e40c05ad,Mercy,T_a02bf5e9,P_143fa100,Winston,2068
+372,554,mercy_rez,275.47,T_a02bf5e9,P_af0db0cf,Mercy,T_a02bf5e9,P_f0e9a1e8,Sombra,2081
+373,554,mercy_rez,559.89,T_a02bf5e9,P_af0db0cf,Mercy,T_a02bf5e9,P_738983ba,Kiriko,2081
+374,554,mercy_rez,635.49,T_a02bf5e9,P_af0db0cf,Mercy,T_a02bf5e9,P_738983ba,Kiriko,2081
+375,554,mercy_rez,880.94,T_a02bf5e9,P_af0db0cf,Mercy,T_a02bf5e9,P_99db5be4,Winston,2081
+376,554,mercy_rez,942.13,T_a02bf5e9,P_af0db0cf,Mercy,T_a02bf5e9,P_7cd74a02,Sojourn,2081
+377,574,mercy_rez,554.65,T_a02bf5e9,P_34006b24,Mercy,T_a02bf5e9,P_2cf3f541,Wrecking Ball,2162
+383,613,mercy_rez,110.7,T_a02bf5e9,P_cee7dd52,Mercy,T_a02bf5e9,P_32dec0b1,Echo,2276
+384,613,mercy_rez,156.95,T_a02bf5e9,P_cee7dd52,Mercy,T_a02bf5e9,P_32dec0b1,Echo,2276
+385,618,mercy_rez,61.47,T_5568bd9d,P_0c6ed586,Mercy,T_5568bd9d,P_33ab5047,Bastion,2301
+386,619,mercy_rez,48.14,T_e5823043,P_56eff175,Mercy,T_e5823043,P_633a3d61,Ashe,2307
+387,619,mercy_rez,171.34,T_e5823043,P_56eff175,Mercy,T_e5823043,P_633a3d61,Ashe,2307
+388,619,mercy_rez,220.73,T_e5823043,P_56eff175,Mercy,T_e5823043,P_f695116a,Mauga,2307
+389,619,mercy_rez,421.91,T_e5823043,P_56eff175,Mercy,T_e5823043,P_b3bcc0c2,Junkrat,2307
+390,641,mercy_rez,37.95,T_b5608b55,P_e590460a,Mercy,T_b5608b55,P_260f12c4,Pharah,2402
+391,641,mercy_rez,116.54,T_b5608b55,P_e590460a,Mercy,T_b5608b55,P_f160649e,Kiriko,2402
+392,641,mercy_rez,37.95,T_b5608b55,P_e590460a,Mercy,T_b5608b55,P_260f12c4,Pharah,2404
+393,641,mercy_rez,116.54,T_b5608b55,P_e590460a,Mercy,T_b5608b55,P_f160649e,Kiriko,2404
+394,641,mercy_rez,37.95,T_b5608b55,P_e590460a,Mercy,T_b5608b55,P_260f12c4,Pharah,2408
+395,641,mercy_rez,116.54,T_b5608b55,P_e590460a,Mercy,T_b5608b55,P_f160649e,Kiriko,2408
+396,641,mercy_rez,37.95,T_b5608b55,P_e590460a,Mercy,T_b5608b55,P_260f12c4,Pharah,2409
+397,641,mercy_rez,116.54,T_b5608b55,P_e590460a,Mercy,T_b5608b55,P_f160649e,Kiriko,2409
+401,655,mercy_rez,27.22,T_8c6b6c44,P_7a09313b,Mercy,T_8c6b6c44,P_9c96388d,Pharah,2466
+402,655,mercy_rez,124.25,T_8c6b6c44,P_7a09313b,Mercy,T_8c6b6c44,P_9c96388d,Pharah,2466
+403,656,mercy_rez,32.78,T_014a95e2,P_a0ae439a,Mercy,T_014a95e2,P_9a9ee5c0,Hanzo,2472
+404,656,mercy_rez,85.16,T_014a95e2,P_a0ae439a,Mercy,T_014a95e2,P_9a9ee5c0,Hanzo,2472
+405,661,mercy_rez,163.37,T_5568bd9d,P_4a957081,Mercy,T_5568bd9d,P_70c9d8c2,Ana,2501
+406,661,mercy_rez,346.87,T_5568bd9d,P_4a957081,Mercy,T_5568bd9d,P_70c9d8c2,Ana,2501
+407,666,mercy_rez,619.51,T_5568bd9d,P_ccd65668,Mercy,T_5568bd9d,P_5e545b2e,Lifeweaver,2532
+421,669,mercy_rez,36.06,T_a02bf5e9,P_ccf0bdea,Mercy,T_a02bf5e9,P_06dddb5f,Sigma,2543
+422,669,mercy_rez,336.34,T_a02bf5e9,P_ccf0bdea,Mercy,T_a02bf5e9,P_5eb18296,Pharah,2543
+423,669,mercy_rez,428.08,T_a02bf5e9,P_ccf0bdea,Mercy,T_a02bf5e9,P_5eb18296,Pharah,2543
+424,672,mercy_rez,552.39,T_a02bf5e9,P_29e6cb5c,Mercy,T_a02bf5e9,P_52118709,Pharah,2577
+425,672,mercy_rez,683.82,T_a02bf5e9,P_29e6cb5c,Mercy,T_a02bf5e9,P_af134ac1,Lifeweaver,2577
+426,672,mercy_rez,184.67,T_a02bf5e9,P_af134ac1,Mercy,T_a02bf5e9,P_bed5752a,Sojourn,2579
+427,690,mercy_rez,101.05,T_a02bf5e9,P_5e3d9c88,Mercy,T_a02bf5e9,P_bd41afef,Bastion,2662
+428,690,mercy_rez,159.99,T_a02bf5e9,P_5e3d9c88,Mercy,T_a02bf5e9,P_bd41afef,Bastion,2662
+429,690,mercy_rez,205.18,T_a02bf5e9,P_5e3d9c88,Mercy,T_a02bf5e9,P_ff497a7e,Lifeweaver,2662
+430,690,mercy_rez,585.18,T_a02bf5e9,P_ff497a7e,Mercy,T_a02bf5e9,P_5e3d9c88,Ana,2662
+431,692,mercy_rez,0,T_a02bf5e9,P_01707696,Mercy,T_a02bf5e9,P_c6789f84,Kiriko,2671
+432,692,mercy_rez,0,T_a02bf5e9,P_01707696,Mercy,T_a02bf5e9,P_4aa2e961,Echo,2671
+433,692,mercy_rez,0,T_a02bf5e9,P_01707696,Mercy,T_a02bf5e9,P_c6789f84,Lúcio,2671
+434,697,mercy_rez,584.57,T_5568bd9d,P_363739a9,Mercy,T_5568bd9d,P_1c20e30b,Sombra,2707
+440,718,mercy_rez,509.48,T_a02bf5e9,P_6b2dbf8c,Mercy,T_a02bf5e9,P_97a99f7a,Kiriko,2784
+441,718,mercy_rez,692.93,T_a02bf5e9,P_6b2dbf8c,Mercy,T_a02bf5e9,P_97a99f7a,Kiriko,2784
+442,718,mercy_rez,744.78,T_a02bf5e9,P_6b2dbf8c,Mercy,T_a02bf5e9,P_f5b5a23c,Venture,2784
+443,718,mercy_rez,797.79,T_a02bf5e9,P_6b2dbf8c,Mercy,T_a02bf5e9,P_f5b5a23c,Torbjörn,2784
+444,718,mercy_rez,841.07,T_a02bf5e9,P_6b2dbf8c,Mercy,T_a02bf5e9,P_97a99f7a,Kiriko,2784
+445,718,mercy_rez,27.31,T_a02bf5e9,P_6b2dbf8c,Mercy,T_a02bf5e9,P_f5b5a23c,Widowmaker,2786
+446,718,mercy_rez,475.19,T_a02bf5e9,P_6b2dbf8c,Mercy,T_a02bf5e9,P_910d68ce,Bastion,2786
+454,719,mercy_rez,96.6,T_a3d7a7d4,P_f7a98796,Mercy,T_a3d7a7d4,P_307e5413,Echo,2794
+455,719,mercy_rez,231.25,T_a3d7a7d4,P_f7a98796,Mercy,T_a3d7a7d4,P_307e5413,Junkrat,2794
+456,719,mercy_rez,279.05,T_a3d7a7d4,P_f7a98796,Mercy,T_a3d7a7d4,P_f65b6b44,Doomfist,2794
+457,720,mercy_rez,108.17,T_8ce1db6a,P_ddfa57db,Mercy,T_8ce1db6a,P_3b9c90d2,Ashe,2796
+458,725,mercy_rez,533.96,T_9152bdb5,P_6a169184,Mercy,T_9152bdb5,P_1b66cc4a,Doomfist,2813
+459,725,mercy_rez,592.87,T_9152bdb5,P_6a169184,Mercy,T_9152bdb5,P_1b66cc4a,Doomfist,2813
+460,725,mercy_rez,730.84,T_9152bdb5,P_6a169184,Mercy,T_9152bdb5,P_da59ee61,Cassidy,2813
+461,725,mercy_rez,611.4,T_9152bdb5,P_6a169184,Mercy,T_9152bdb5,P_d5ae144f,Junkrat,2816
+462,729,mercy_rez,67.1,T_45d24cb5,P_13d65c15,Mercy,T_45d24cb5,P_37f857a2,Pharah,2835
+463,729,mercy_rez,121.67,T_45d24cb5,P_13d65c15,Mercy,T_45d24cb5,P_37f857a2,Pharah,2835
+464,729,mercy_rez,316.05,T_45d24cb5,P_13d65c15,Mercy,T_45d24cb5,P_37f857a2,Pharah,2835
+465,746,mercy_rez,245.77,T_6da1ba9e,P_0e6bf8bf,Mercy,T_6da1ba9e,P_04bb6712,Echo,2892
+466,768,mercy_rez,443.58,T_5568bd9d,P_dec2a43b,Mercy,T_5568bd9d,P_9a2e29fa,Pharah,2982
+467,768,mercy_rez,475.85,T_5568bd9d,P_dec2a43b,Mercy,T_5568bd9d,P_7359b808,Echo,2982
+468,772,mercy_rez,417.89,T_a02bf5e9,P_7359b808,Mercy,T_a02bf5e9,P_f65b6b44,Juno,3010
+469,772,mercy_rez,449.76,T_a02bf5e9,P_7359b808,Mercy,T_a02bf5e9,P_fb6ede0a,Tracer,3010
+470,772,mercy_rez,515.11,T_a02bf5e9,P_7359b808,Mercy,T_a02bf5e9,P_f65b6b44,Juno,3010
+471,772,mercy_rez,271.88,T_a02bf5e9,P_7359b808,Mercy,T_a02bf5e9,P_7c40e33d,Tracer,3012
+472,772,mercy_rez,332.31,T_a02bf5e9,P_7359b808,Mercy,T_a02bf5e9,P_7c40e33d,Tracer,3012
+473,772,mercy_rez,425.11,T_a02bf5e9,P_7359b808,Mercy,T_a02bf5e9,P_4f284715,Illari,3012
+474,772,mercy_rez,470.64,T_a02bf5e9,P_7359b808,Mercy,T_a02bf5e9,P_4f284715,Illari,3012
+476,772,mercy_rez,87.23,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_b4041d27,Junker Queen,3015
+477,772,mercy_rez,123.9,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_206aa4e6,Pharah,3015
+478,772,mercy_rez,171.92,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_206aa4e6,Pharah,3015
+479,772,mercy_rez,236.52,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_4f284715,Junkrat,3015
+480,772,mercy_rez,280.79,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_4f284715,Junkrat,3015
+481,772,mercy_rez,319.2,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_4f284715,Junkrat,3015
+482,772,mercy_rez,360.85,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_b4041d27,Reinhardt,3015
+483,772,mercy_rez,481.4,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_b4041d27,Reinhardt,3015
+484,772,mercy_rez,574.02,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_206aa4e6,Pharah,3015
+485,772,mercy_rez,719.01,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_206aa4e6,Pharah,3015
+486,772,mercy_rez,761.96,T_a02bf5e9,P_9a2e29fa,Mercy,T_a02bf5e9,P_4f284715,Junkrat,3015
+487,775,mercy_rez,531.54,T_5568bd9d,P_f65b6b44,Mercy,T_5568bd9d,P_7359b808,Echo,3017
+492,779,mercy_rez,80.04,T_5568bd9d,P_f65b6b44,Mercy,T_5568bd9d,P_7359b808,Sojourn,3040
+493,779,mercy_rez,121.58,T_a02bf5e9,P_f43cc223,Mercy,T_a02bf5e9,P_299fe9c8,Junkrat,3041
+494,779,mercy_rez,293.41,T_a02bf5e9,P_f43cc223,Mercy,T_a02bf5e9,P_299fe9c8,Junkrat,3041
+495,779,mercy_rez,401.76,T_a02bf5e9,P_f43cc223,Mercy,T_a02bf5e9,P_05475722,Moira,3041
+496,779,mercy_rez,520.89,T_a02bf5e9,P_f43cc223,Mercy,T_a02bf5e9,P_bb043039,Wrecking Ball,3041
+497,779,mercy_rez,583.07,T_a02bf5e9,P_f43cc223,Mercy,T_a02bf5e9,P_299fe9c8,Pharah,3041
+498,783,mercy_rez,55.12,T_a02bf5e9,P_8d24985f,Mercy,T_a02bf5e9,P_63786377,Widowmaker,3059
+499,783,mercy_rez,107.5,T_a02bf5e9,P_8d24985f,Mercy,T_a02bf5e9,P_47c2c4fb,Pharah,3059
+500,783,mercy_rez,203.53,T_a02bf5e9,P_8d24985f,Mercy,T_a02bf5e9,P_6153d9b6,Lifeweaver,3059
+501,783,mercy_rez,543.36,T_5568bd9d,P_f65b6b44,Mercy,T_5568bd9d,P_7359b808,Echo,3059
+502,783,mercy_rez,55.12,T_a02bf5e9,P_8d24985f,Mercy,T_a02bf5e9,P_63786377,Widowmaker,3062
+503,783,mercy_rez,107.5,T_a02bf5e9,P_8d24985f,Mercy,T_a02bf5e9,P_47c2c4fb,Pharah,3062
+504,783,mercy_rez,203.53,T_a02bf5e9,P_8d24985f,Mercy,T_a02bf5e9,P_6153d9b6,Lifeweaver,3062
+505,783,mercy_rez,543.36,T_5568bd9d,P_f65b6b44,Mercy,T_5568bd9d,P_7359b808,Echo,3062
+507,786,mercy_rez,305.19,T_5568bd9d,P_c7aacf0c,Mercy,T_5568bd9d,P_7175ed84,Pharah,3079
+508,787,mercy_rez,81.74,T_a02bf5e9,P_bc50bb4b,Mercy,T_a02bf5e9,P_ba68e42b,Bastion,3082
+509,787,mercy_rez,326.7,T_a02bf5e9,P_9b69e6f6,Mercy,T_a02bf5e9,P_ba68e42b,Bastion,3082
+510,787,mercy_rez,415.02,T_a02bf5e9,P_9b69e6f6,Mercy,T_a02bf5e9,P_ba68e42b,Bastion,3082
+511,789,mercy_rez,155.99,T_5568bd9d,P_f65b6b44,Mercy,T_5568bd9d,P_7359b808,Sojourn,3087
+512,789,mercy_rez,344.51,T_5568bd9d,P_f65b6b44,Mercy,T_5568bd9d,P_307e5413,Sigma,3087
+513,789,mercy_rez,262.14,T_a02bf5e9,P_c8e11033,Mercy,T_a02bf5e9,P_337f3137,Reinhardt,3089
+514,789,mercy_rez,522.22,T_5568bd9d,P_f65b6b44,Mercy,T_5568bd9d,P_307e5413,Zarya,3089
+515,789,mercy_rez,620.56,T_5568bd9d,P_f65b6b44,Mercy,T_5568bd9d,P_70c9d8c2,Baptiste,3089
+516,795,mercy_rez,82.7,T_a02bf5e9,P_ac4c6d7a,Mercy,T_a02bf5e9,P_57e6347f,Kiriko,3120
+517,795,mercy_rez,143.66,T_a02bf5e9,P_ac4c6d7a,Mercy,T_a02bf5e9,P_502cadcb,Echo,3120
+518,795,mercy_rez,277.63,T_a02bf5e9,P_ac4c6d7a,Mercy,T_a02bf5e9,P_502cadcb,Echo,3120
+519,795,mercy_rez,342.45,T_a02bf5e9,P_ac4c6d7a,Mercy,T_a02bf5e9,P_3c1584ed,Tracer,3120
+520,795,mercy_rez,393.23,T_a02bf5e9,P_ac4c6d7a,Mercy,T_a02bf5e9,P_57e6347f,Kiriko,3120
+521,795,mercy_rez,522.7,T_a02bf5e9,P_ac4c6d7a,Mercy,T_a02bf5e9,P_60a4470d,Wrecking Ball,3120
+522,228,mercy_rez,77.05,T_a02bf5e9,P_9489e010,Mercy,T_a02bf5e9,P_1a62d5b7,Reaper,3128
+523,802,mercy_rez,533.07,T_60499986,P_bdb18a8a,Mercy,T_60499986,P_4f5d4454,Widowmaker,3154
+525,811,mercy_rez,341.7,T_a02bf5e9,P_4881bfe4,Mercy,T_a02bf5e9,P_22a8bc30,Widowmaker,3203
+526,811,mercy_rez,449.84,T_a02bf5e9,P_4881bfe4,Mercy,T_a02bf5e9,P_56fadb9e,Ana,3203
+527,811,mercy_rez,686.96,T_a02bf5e9,P_4881bfe4,Mercy,T_a02bf5e9,P_22a8bc30,Widowmaker,3203
+528,811,mercy_rez,830.12,T_a02bf5e9,P_4881bfe4,Mercy,T_a02bf5e9,P_a8741ac0,Ashe,3203
+529,811,mercy_rez,879.88,T_a02bf5e9,P_4881bfe4,Mercy,T_a02bf5e9,P_22a8bc30,Widowmaker,3203
+530,811,mercy_rez,986.32,T_a02bf5e9,P_4881bfe4,Mercy,T_a02bf5e9,P_56fadb9e,Ana,3203
+531,815,mercy_rez,702.52,T_5568bd9d,P_42386309,Mercy,T_5568bd9d,P_70c9d8c2,Baptiste,3216
+532,820,mercy_rez,290.61,T_a02bf5e9,P_f8db1cf0,Mercy,T_a02bf5e9,P_99fb8e8d,Illari,3250
+533,820,mercy_rez,291.35,T_5568bd9d,P_fb6ede0a,Mercy,T_5568bd9d,P_6c5016ca,Pharah,3250
+534,820,mercy_rez,591.74,T_a02bf5e9,P_f8db1cf0,Mercy,T_a02bf5e9,P_9c46fe01,Ashe,3250
+535,824,mercy_rez,267.52,T_ce85a3e2,P_e3fd3f40,Mercy,T_ce85a3e2,P_1e4cf4b3,Echo,3269
+536,824,mercy_rez,402.5,T_ce85a3e2,P_e3fd3f40,Mercy,T_ce85a3e2,P_423d0d8d,Sojourn,3269
+537,824,mercy_rez,49.1,T_0870238b,P_44c8e456,Mercy,T_0870238b,P_beb1291e,Echo,3270
+538,824,mercy_rez,172.25,T_ce85a3e2,P_e3fd3f40,Mercy,T_ce85a3e2,P_423d0d8d,Ashe,3270
+539,824,mercy_rez,190.45,T_0870238b,P_44c8e456,Mercy,T_0870238b,P_f50a7766,Widowmaker,3270
+540,824,mercy_rez,212.94,T_ce85a3e2,P_e3fd3f40,Mercy,T_ce85a3e2,P_1e4cf4b3,Bastion,3270
+541,824,mercy_rez,255.93,T_0870238b,P_44c8e456,Mercy,T_0870238b,P_10b231be,Ana,3270
+542,824,mercy_rez,259.26,T_ce85a3e2,P_e3fd3f40,Mercy,T_ce85a3e2,P_423d0d8d,Ashe,3270
+543,825,mercy_rez,179.36,T_5568bd9d,P_f20a3f11,Mercy,T_5568bd9d,P_ea44b200,Echo,3275
+544,825,mercy_rez,426.62,T_5568bd9d,P_f20a3f11,Mercy,T_5568bd9d,P_616212b4,Echo,3275
+545,825,mercy_rez,582.25,T_5568bd9d,P_f20a3f11,Mercy,T_5568bd9d,P_ea44b200,Cassidy,3275
+546,825,mercy_rez,142.97,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_ea44b200,Ashe,3276
+547,825,mercy_rez,247.35,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_15a388a6,Ana,3276
+548,825,mercy_rez,448.58,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_e393dfb8,D.Va,3276
+549,825,mercy_rez,569.68,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_616212b4,Tracer,3276
+550,825,mercy_rez,80.56,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_15a388a6,Ana,3278
+551,825,mercy_rez,305.09,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_15a388a6,Ana,3278
+552,825,mercy_rez,336.31,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_15a388a6,Kiriko,3278
+553,825,mercy_rez,531,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_e393dfb8,Winston,3278
+554,825,mercy_rez,566.64,T_3eeab546,P_3249400e,Mercy,T_3eeab546,P_eb7cb5b6,Hanzo,3278
+555,825,mercy_rez,608.95,T_3eeab546,P_3249400e,Mercy,T_3eeab546,P_eb7cb5b6,Hanzo,3278
+556,825,mercy_rez,661.9,T_3eeab546,P_3249400e,Mercy,T_3eeab546,P_7b7d7d06,Ashe,3278
+557,825,mercy_rez,666.78,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_656529d8,Tracer,3278
+558,825,mercy_rez,744.56,T_5a16ee7f,P_f20a3f11,Mercy,T_5a16ee7f,P_ea44b200,Ashe,3278
+559,825,mercy_rez,761.46,T_3eeab546,P_3249400e,Mercy,T_3eeab546,P_eb7cb5b6,Hanzo,3278
+560,827,mercy_rez,231.19,T_a02bf5e9,P_9ed42487,Mercy,T_a02bf5e9,P_8cab5d09,Junkrat,3292
+561,827,mercy_rez,59.15,T_5568bd9d,P_7359b808,Mercy,T_5568bd9d,P_9871455a,Zarya,3295
+562,828,mercy_rez,231.19,T_a02bf5e9,P_9ed42487,Mercy,T_a02bf5e9,P_8cab5d09,Junkrat,3298
+565,832,mercy_rez,259.63,T_a02bf5e9,P_7359b808,Mercy,T_a02bf5e9,P_9358f7d7,Echo,3322
+566,832,mercy_rez,326.39,T_a02bf5e9,P_7359b808,Mercy,T_a02bf5e9,P_9358f7d7,Echo,3322
+567,833,mercy_rez,36.35,T_a02bf5e9,P_21dc5648,Mercy,T_a02bf5e9,P_3a75d874,Sojourn,3332
+568,833,mercy_rez,36.35,T_a02bf5e9,P_21dc5648,Mercy,T_a02bf5e9,P_3a75d874,Sojourn,3333
+569,834,mercy_rez,611.81,T_a02bf5e9,P_2febc802,Mercy,T_a02bf5e9,P_a4706574,Kiriko,3335
+570,834,mercy_rez,10.08,T_a02bf5e9,P_2febc802,Mercy,T_a02bf5e9,P_880b852c,Ashe,3339
+571,834,mercy_rez,58.83,T_a02bf5e9,P_2febc802,Mercy,T_a02bf5e9,P_a0a60ebf,D.Va,3339
+572,834,mercy_rez,163.01,T_a02bf5e9,P_2febc802,Mercy,T_a02bf5e9,P_880b852c,Ashe,3339
+573,834,mercy_rez,283.74,T_a02bf5e9,P_2febc802,Mercy,T_a02bf5e9,P_880b852c,Ashe,3339
+574,834,mercy_rez,357.64,T_a02bf5e9,P_2febc802,Mercy,T_a02bf5e9,P_880b852c,Ashe,3339
+575,834,mercy_rez,657.37,T_a02bf5e9,P_2febc802,Mercy,T_a02bf5e9,P_4c0d216a,Baptiste,3339
+576,834,mercy_rez,910.06,T_a02bf5e9,P_2febc802,Mercy,T_a02bf5e9,P_4c0d216a,Baptiste,3339
+580,846,mercy_rez,30.98,T_5568bd9d,P_9489e010,Mercy,T_5568bd9d,P_e76c154c,Winston,3394
+581,846,mercy_rez,210.65,T_5568bd9d,P_9489e010,Mercy,T_5568bd9d,P_9c9d7594,Hanzo,3394
+582,846,mercy_rez,322.34,T_a02bf5e9,P_9489e010,Mercy,T_a02bf5e9,P_82ad6d64,Lúcio,3394
+583,851,mercy_rez,379.45,T_5568bd9d,P_9a2e29fa,Mercy,T_5568bd9d,P_70c9d8c2,Kiriko,3422
+584,851,mercy_rez,430.37,T_5568bd9d,P_9a2e29fa,Mercy,T_5568bd9d,P_70c9d8c2,Kiriko,3422
+585,851,mercy_rez,717.71,T_5568bd9d,P_9a2e29fa,Mercy,T_5568bd9d,P_70c9d8c2,Ana,3426
+586,851,mercy_rez,801,T_5568bd9d,P_9a2e29fa,Mercy,T_5568bd9d,P_7359b808,Sojourn,3426
+587,851,mercy_rez,899.25,T_5568bd9d,P_9a2e29fa,Mercy,T_5568bd9d,P_7359b808,Sojourn,3426
+588,860,mercy_rez,89.37,T_a02bf5e9,P_0af36cc1,Mercy,T_a02bf5e9,P_8edf436c,Doomfist,3473
+595,860,mercy_rez,43.3,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_52837dc5,Widowmaker,3477
+596,860,mercy_rez,163.67,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_3ec23153,Doomfist,3477
+597,860,mercy_rez,202.84,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_effd81a4,Kiriko,3477
+598,860,mercy_rez,350.68,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_52837dc5,Sojourn,3477
+599,860,mercy_rez,642.01,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_6169664a,Widowmaker,3477
+600,860,mercy_rez,675.85,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_effd81a4,Kiriko,3477
+601,872,mercy_rez,337.74,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_52837dc5,Cassidy,3519
+602,872,mercy_rez,390.99,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_52837dc5,Cassidy,3519
+603,920,mercy_rez,51.98,T_2649596f,P_74bd0f32,Mercy,T_2649596f,P_03920c74,Pharah,3644
+604,920,mercy_rez,105.61,T_2649596f,P_74bd0f32,Mercy,T_2649596f,P_31103f64,Genji,3644
+605,920,mercy_rez,187.91,T_2649596f,P_74bd0f32,Mercy,T_2649596f,P_03920c74,Pharah,3644
+606,920,mercy_rez,359.11,T_9a31ae66,P_fbfc0345,Mercy,T_9a31ae66,P_8b3b709d,Sombra,3648
+607,920,mercy_rez,442.85,T_9a31ae66,P_fbfc0345,Mercy,T_9a31ae66,P_5dde5e89,Junkrat,3648
+608,920,mercy_rez,489.92,T_9a31ae66,P_fbfc0345,Mercy,T_9a31ae66,P_5dde5e89,Junkrat,3648
+609,920,mercy_rez,607.4,T_9a31ae66,P_fbfc0345,Mercy,T_9a31ae66,P_c13f9089,Reinhardt,3648
+610,920,mercy_rez,822.27,T_9a31ae66,P_fbfc0345,Mercy,T_9a31ae66,P_5dde5e89,Junkrat,3648
+611,920,mercy_rez,872.89,T_9a31ae66,P_fbfc0345,Mercy,T_9a31ae66,P_19b4cbd1,Kiriko,3648
+612,920,mercy_rez,198.29,T_a02bf5e9,P_fbfc0345,Mercy,T_a02bf5e9,P_5dde5e89,Mauga,3650
+613,920,mercy_rez,256.65,T_a02bf5e9,P_fbfc0345,Mercy,T_a02bf5e9,P_19b4cbd1,Reaper,3650
+614,920,mercy_rez,537.04,T_a02bf5e9,P_fbfc0345,Mercy,T_a02bf5e9,P_5dde5e89,Orisa,3650
+615,920,mercy_rez,198.29,T_a02bf5e9,P_fbfc0345,Mercy,T_a02bf5e9,P_5dde5e89,Mauga,3651
+616,920,mercy_rez,256.65,T_a02bf5e9,P_fbfc0345,Mercy,T_a02bf5e9,P_19b4cbd1,Reaper,3651
+617,920,mercy_rez,537.04,T_a02bf5e9,P_fbfc0345,Mercy,T_a02bf5e9,P_5dde5e89,Orisa,3651
+618,933,mercy_rez,27.58,T_a02bf5e9,P_9489e010,Mercy,T_a02bf5e9,P_00a56eea,Zenyatta ,3659
+619,934,mercy_rez,198.29,T_a02bf5e9,P_fbfc0345,Mercy,T_a02bf5e9,P_5dde5e89,Mauga,3661
+620,934,mercy_rez,256.65,T_a02bf5e9,P_fbfc0345,Mercy,T_a02bf5e9,P_19b4cbd1,Reaper,3661
+621,934,mercy_rez,537.04,T_a02bf5e9,P_fbfc0345,Mercy,T_a02bf5e9,P_5dde5e89,Orisa,3661
+622,938,mercy_rez,51.98,T_2649596f,P_74bd0f32,Mercy,T_2649596f,P_03920c74,Pharah,3676
+623,938,mercy_rez,105.61,T_2649596f,P_74bd0f32,Mercy,T_2649596f,P_31103f64,Genji,3676
+624,938,mercy_rez,187.91,T_2649596f,P_74bd0f32,Mercy,T_2649596f,P_03920c74,Pharah,3676
+625,940,mercy_rez,41.65,T_09108de9,P_76fc472d,Mercy,T_09108de9,P_ebeb5417,Echo,3680
+626,940,mercy_rez,153.64,T_09108de9,P_76fc472d,Mercy,T_09108de9,P_ebeb5417,Echo,3680
+627,940,mercy_rez,987.87,T_09108de9,P_76fc472d,Mercy,T_09108de9,P_852f199f,Ashe,3680
+628,940,mercy_rez,1020.91,T_09108de9,P_76fc472d,Mercy,T_09108de9,P_ebeb5417,Echo,3680
+629,940,mercy_rez,25.28,T_09108de9,P_c48d7e84,Mercy,T_09108de9,P_7d2f2d22,Widowmaker,3682
+630,940,mercy_rez,104.25,T_09108de9,P_c48d7e84,Mercy,T_09108de9,P_883650b3,Lifeweaver,3682
+631,940,mercy_rez,411.79,T_09108de9,P_c48d7e84,Mercy,T_09108de9,P_ebeb5417,Echo,3682
+632,943,mercy_rez,658.37,T_5a16ee7f,P_050eb5d5,Mercy,T_5a16ee7f,P_656529d8,Genji,3692
+633,950,mercy_rez,271.54,T_a02bf5e9,P_17886493,Mercy,T_a02bf5e9,P_0d15a38e,Sojourn,3702
+634,950,mercy_rez,316.43,T_a02bf5e9,P_17886493,Mercy,T_a02bf5e9,P_d4af568d,Ana,3702
+635,950,mercy_rez,380.1,T_a02bf5e9,P_17886493,Mercy,T_a02bf5e9,P_2b28b697,Torbjörn,3702
+644,960,mercy_rez,686.73,T_a02bf5e9,P_5a9e5a58,Mercy,T_a02bf5e9,P_7e3e6a39,Moira,3746
+645,960,mercy_rez,707.56,T_5568bd9d,P_5f9da2f2,Mercy,T_5568bd9d,P_d9cecacf,Juno,3746
+646,960,mercy_rez,723.11,T_a02bf5e9,P_5a9e5a58,Mercy,T_a02bf5e9,P_d3213688,Widowmaker,3746
+647,966,mercy_rez,52.14,T_4d01c8f1,P_8d16b54e,Ange,T_4d01c8f1,P_8bfa8e23,Winston,3771
+648,966,mercy_rez,377.72,T_4d01c8f1,P_8d16b54e,Ange,T_4d01c8f1,P_1f9a71a1,Pharah,3771
+649,966,mercy_rez,492.48,T_4d01c8f1,P_8d16b54e,Ange,T_4d01c8f1,P_1f9a71a1,Pharah,3771
+650,966,mercy_rez,558.28,T_4d01c8f1,P_8d16b54e,Ange,T_4d01c8f1,P_304d9106,Soldat : 76,3771
+640,958,mercy_rez,269.17,T_5568bd9d,P_a9481eba,Mercy,T_5568bd9d,P_7515745a,Ana ,
+641,958,mercy_rez,411.74,T_5568bd9d,P_a9481eba,Mercy,T_5568bd9d,P_d6fa73dc,Ashe ,
+642,958,mercy_rez,458.04,T_5568bd9d,P_a9481eba,Mercy,T_5568bd9d,P_7515745a,Ana ,
+643,958,mercy_rez,490.89,T_5568bd9d,P_a9481eba,Mercy,T_5568bd9d,P_7515745a,Ana ,
+651,968,mercy_rez,52.14,T_4d01c8f1,P_8d16b54e,Ange,T_4d01c8f1,P_8bfa8e23,Winston,3773
+652,968,mercy_rez,377.72,T_4d01c8f1,P_8d16b54e,Ange,T_4d01c8f1,P_1f9a71a1,Pharah,3773
+653,968,mercy_rez,492.48,T_4d01c8f1,P_8d16b54e,Ange,T_4d01c8f1,P_1f9a71a1,Pharah,3773
+654,968,mercy_rez,558.28,T_4d01c8f1,P_8d16b54e,Ange,T_4d01c8f1,P_304d9106,Soldat : 76,3773
+656,982,mercy_rez,74.72,T_04b64bac,P_d7463aba,Mercy,T_04b64bac,P_26c16dfc,Illari,3833
+657,982,mercy_rez,185.46,T_04b64bac,P_d7463aba,Mercy,T_04b64bac,P_26c16dfc,Illari,3833
+658,982,mercy_rez,297.88,T_04b64bac,P_d7463aba,Mercy,T_04b64bac,P_26c16dfc,Illari,3833
+664,996,mercy_rez,51.49,T_a02bf5e9,P_9d644d1a,Mercy,T_a02bf5e9,P_33cfe9c3,Genji,3895
+665,996,mercy_rez,111.11,T_a02bf5e9,P_9d644d1a,Mercy,T_a02bf5e9,P_d6282155,Sigma,3895
+666,997,mercy_rez,55.53,T_a02bf5e9,P_9d644d1a,Mercy,T_a02bf5e9,P_1c750007,Bastion,3896
+667,997,mercy_rez,87.6,T_a02bf5e9,P_9d644d1a,Mercy,T_a02bf5e9,P_33cfe9c3,Reaper,3896
+668,997,mercy_rez,122.54,T_a02bf5e9,P_9d644d1a,Mercy,T_a02bf5e9,P_33cfe9c3,Reaper,3896
+675,1014,mercy_rez,703.1,T_05e2eced,P_5d86acee,Mercy,T_05e2eced,P_806ab9c9,Lúcio,3965
+676,1014,mercy_rez,743.09,T_05e2eced,P_5d86acee,Mercy,T_05e2eced,P_717eee02,Reaper,3965
+677,1021,mercy_rez,560.31,T_5568bd9d,P_8be140ea,Mercy,T_5568bd9d,P_acc4dc9c,Roadhog,3967
+678,1021,mercy_rez,643.13,T_5568bd9d,P_8be140ea,Mercy,T_5568bd9d,P_e07982cf,Lúcio,3967
+679,1021,mercy_rez,818.36,T_a02bf5e9,P_9d644d1a,Mercy,T_a02bf5e9,P_717eee02,Junkrat,3967
+682,1025,mercy_rez,202.07,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_e77b3a6d,Baptiste,3989
+683,1025,mercy_rez,256.08,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_07cc4a1a,Sigma,3989
+684,1028,mercy_rez,528.39,T_3238eb96,P_f0578453,Mercy,T_3238eb96,P_e77b3a6d,Doomfist,4006
+685,1028,mercy_rez,600.35,T_3238eb96,P_f0578453,Mercy,T_3238eb96,P_51cfbd96,Ana,4006
+686,1028,mercy_rez,652.62,T_3238eb96,P_f0578453,Mercy,T_3238eb96,P_07cc4a1a,Cassidy,4006
+687,1028,mercy_rez,712.79,T_3238eb96,P_f0578453,Mercy,T_3238eb96,P_aa4cc3b4,Ashe,4006
+688,1028,mercy_rez,770.34,T_3238eb96,P_f0578453,Mercy,T_3238eb96,P_07cc4a1a,Echo,4006
+689,1031,mercy_rez,108.15,T_a02bf5e9,P_bbfc1baa,Mercy,T_a02bf5e9,P_738983ba,Baptiste,4022
+690,1031,mercy_rez,231.6,T_a02bf5e9,P_bbfc1baa,Mercy,T_a02bf5e9,P_5fbb6bff,Venture,4022
+691,1031,mercy_rez,333.25,T_a02bf5e9,P_bbfc1baa,Mercy,T_a02bf5e9,P_93c5bef5,Pharah,4022
+692,1031,mercy_rez,392.58,T_a02bf5e9,P_bbfc1baa,Mercy,T_a02bf5e9,P_738983ba,Baptiste,4022
+693,1031,mercy_rez,595.23,T_a02bf5e9,P_bbfc1baa,Mercy,T_a02bf5e9,P_5fbb6bff,Tracer,4022
+694,1031,mercy_rez,704.36,T_a02bf5e9,P_bbfc1baa,Mercy,T_a02bf5e9,P_738983ba,Ana,4022
+701,1056,mercy_rez,406.56,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_51cfbd96,Echo,4082
+702,1056,mercy_rez,451.64,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_51cfbd96,Echo,4082
+703,1059,mercy_rez,266.27,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_51cfbd96,Cassidy,4106
+704,1059,mercy_rez,402.12,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_38de0158,Reaper,4106
+705,1059,mercy_rez,605.21,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_51cfbd96,Echo,4106
+706,1059,mercy_rez,716.7,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_38de0158,Widowmaker,4106
+712,1077,mercy_rez,21.49,T_3f7bae38,P_4bbc0963,Mercy,T_3f7bae38,P_6c7ab7c6,Sojourn,4172
+713,1077,mercy_rez,177.09,T_3f7bae38,P_4bbc0963,Mercy,T_3f7bae38,P_7d67bd02,Hazard,4172
+714,1087,mercy_rez,29.09,T_a3876e46,P_92679415,Mercy,T_a3876e46,P_47a9f17f,Mauga,4225
+715,1101,mercy_rez,33.66,T_a34bd8eb,P_f0b8d7ba,Mercy,T_a34bd8eb,P_d1fc911c,Echo,4305
+716,1101,mercy_rez,70.38,T_a34bd8eb,P_f0b8d7ba,Mercy,T_a34bd8eb,P_d1fc911c,Echo,4305
+717,1102,mercy_rez,571.32,T_ef2c9796,P_61857bd6,Mercy,T_ef2c9796,P_56051b72,Sojourn,4312
+718,1102,mercy_rez,621.72,T_ef2c9796,P_61857bd6,Mercy,T_ef2c9796,P_56051b72,Sojourn,4312
+719,1115,mercy_rez,334.2,T_a02bf5e9,P_0044f6a5,Mercy,T_a02bf5e9,P_3de32daf,Ana,4374
+721,1115,mercy_rez,334.2,T_a02bf5e9,P_0044f6a5,Mercy,T_a02bf5e9,P_3de32daf,Ana,4378
+722,1129,mercy_rez,57.76,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_c73c2173,Ana,4451
+723,1129,mercy_rez,119.4,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_c73c2173,Ana,4451
+724,1129,mercy_rez,384.49,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_c73c2173,Ana,4451
+725,1129,mercy_rez,453.28,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_c73c2173,Ana,4451
+726,1129,mercy_rez,496.46,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_f5beb119,Widowmaker,4451
+727,1129,mercy_rez,544.88,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_f5beb119,Widowmaker,4451
+728,1129,mercy_rez,576.73,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_c73c2173,Ana,4451
+729,1129,mercy_rez,614.69,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_c73c2173,Ana,4451
+730,1129,mercy_rez,774.92,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_f5beb119,Echo,4451
+659,982,mercy_rez,568.6,T_04b64bac,P_d7463aba,Mercy,T_04b64bac,P_9c913e54,Cassidy,
+669,997,mercy_rez,166.73,T_68c6a1f8,P_9d644d1a,Mercy,T_68c6a1f8,P_1c750007,Bastion,
+670,997,mercy_rez,226.07,T_68c6a1f8,P_9d644d1a,Mercy,T_68c6a1f8,P_9065d039,Baptiste,
+671,997,mercy_rez,348.43,T_68c6a1f8,P_9d644d1a,Mercy,T_68c6a1f8,P_9065d039,Baptiste,
+672,1014,mercy_rez,560.31,T_5568bd9d,P_8be140ea,Mercy,T_5568bd9d,P_acc4dc9c,Roadhog,
+673,1014,mercy_rez,643.13,T_5568bd9d,P_8be140ea,Mercy,T_5568bd9d,P_e07982cf,Lúcio,
+674,1014,mercy_rez,818.36,T_a02bf5e9,P_9d644d1a,Mercy,T_a02bf5e9,P_717eee02,Junkrat,
+680,1025,mercy_rez,202.07,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_e77b3a6d,Baptiste,
+681,1025,mercy_rez,256.08,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_07cc4a1a,Sigma,
+707,1068,mercy_rez,25.15,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_38de0158,Widowmaker,
+708,1068,mercy_rez,123.71,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_e77b3a6d,Ana,
+709,1068,mercy_rez,211.24,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_e77b3a6d,Ana,
+710,1068,mercy_rez,288.91,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_51cfbd96,Ashe,
+731,1129,mercy_rez,123.83,T_a02bf5e9,P_e4d53ac7,Mercy,T_a02bf5e9,P_f5beb119,Sojourn,4453
+736,1243,mercy_rez,195.65,T_eb73c192,P_9065d039,Mercy,T_eb73c192,P_19b4cbd1,Ashe,4693
+737,1243,mercy_rez,258.41,T_eb73c192,P_9065d039,Mercy,T_eb73c192,P_19b4cbd1,Ashe,4693
+738,1243,mercy_rez,377.91,T_eb73c192,P_db860535,Mercy,T_eb73c192,P_8b3b709d,Reaper,4694
+739,1243,mercy_rez,112.35,T_eb73c192,P_db860535,Mercy,T_eb73c192,P_fbfc0345,Juno,4696
+740,1244,mercy_rez,95.36,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Ashe,4700
+741,1244,mercy_rez,127.87,T_eb73c192,P_9065d039,Mercy,T_eb73c192,P_19b4cbd1,Ana,4700
+742,1244,mercy_rez,367.17,T_eb73c192,P_9065d039,Mercy,T_eb73c192,P_19b4cbd1,Ana,4700
+743,1244,mercy_rez,552.28,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Cassidy,4700
+744,1244,mercy_rez,42.27,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Cassidy,4701
+745,1244,mercy_rez,285.16,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_1b3f5144,Reaper,4701
+746,1244,mercy_rez,69.82,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Bastion,4702
+747,1244,mercy_rez,137.53,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_c08b3372,Ana,4702
+748,1244,mercy_rez,280.26,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_1b3f5144,Genji,4702
+749,1244,mercy_rez,438.92,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Bastion,4702
+750,1244,mercy_rez,503.32,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Bastion,4702
+751,1244,mercy_rez,561.72,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Bastion,4702
+752,1244,mercy_rez,600.61,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Bastion,4702
+636,958,mercy_rez,315.16,T_5568bd9d,P_a9481eba,Mercy,T_5568bd9d,P_d6fa73dc,Ashe ,
+637,958,mercy_rez,457.99,T_5568bd9d,P_a9481eba,Mercy,T_5568bd9d,P_04e33c2e,Echo ,
+638,958,mercy_rez,603.16,T_5568bd9d,P_a9481eba,Mercy,T_5568bd9d,P_d6fa73dc,Tracer ,
+639,958,mercy_rez,783.86,T_5568bd9d,P_a9481eba,Mercy,T_5568bd9d,P_d6fa73dc,Tracer ,
+760,1253,mercy_rez,37.49,T_5568bd9d,P_9489e010,Mercy,T_5568bd9d,P_c1cbfe7e,Symmetra ,4739
+761,1253,mercy_rez,493.98,T_5568bd9d,P_9489e010,Mercy,T_5568bd9d,P_ad8fdc9f,Moira ,4739
+766,1261,mercy_rez,248.87,T_6775d51a,P_fc577068,Mercy,T_6775d51a,P_1db1a59d,Bastion ,4762
+767,1261,mercy_rez,361.01,T_2bfdcb8b,P_9ad82fab,Mercy,T_2bfdcb8b,P_d5116d7d,Echo ,4762
+768,1261,mercy_rez,449.87,T_2bfdcb8b,P_9ad82fab,Mercy,T_2bfdcb8b,P_d5116d7d,Echo ,4762
+769,1261,mercy_rez,484.44,T_2bfdcb8b,P_9ad82fab,Mercy,T_2bfdcb8b,P_d5116d7d,Echo ,4762
+770,1270,mercy_rez,24.93,T_005a5450,P_e80a7c68,Mercy,T_005a5450,P_4ce82e80,Pharah ,4792
+771,1270,mercy_rez,207.71,T_005a5450,P_e80a7c68,Mercy,T_005a5450,P_df994a74,Kiriko ,4792
+772,1270,mercy_rez,497.09,T_005a5450,P_e80a7c68,Mercy,T_005a5450,P_df994a74,Kiriko ,4792
+773,1272,mercy_rez,106.76,T_064f58d1,P_d483479d,Mercy,T_064f58d1,P_912e4d05,Widowmaker,4795
+774,1272,mercy_rez,162.98,T_064f58d1,P_d483479d,Mercy,T_064f58d1,P_912e4d05,Widowmaker,4795
+775,1272,mercy_rez,402.74,T_064f58d1,P_d483479d,Mercy,T_064f58d1,P_8e71031a,Baptiste,4795
+776,1272,mercy_rez,505.93,T_064f58d1,P_d483479d,Mercy,T_064f58d1,P_912e4d05,Sojourn,4795
+777,1274,mercy_rez,78.48,T_5568bd9d,P_9489e010,Mercy,T_5568bd9d,P_9c9d7594,Hanzo ,4804
+778,1274,mercy_rez,78.48,T_5568bd9d,P_9489e010,Mercy,T_5568bd9d,P_9c9d7594,Hanzo ,4805
+779,1279,mercy_rez,46.75,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_2caf192a,Sigma ,4815
+780,1279,mercy_rez,87.02,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_4d854672,Illari ,4815
+781,1279,mercy_rez,210.97,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_4d854672,Illari ,4815
+782,1282,mercy_rez,0,T_5568bd9d,P_5b41a7d4,Mercy,T_5568bd9d,P_01870ab6,Kiriko,4829
+783,1282,mercy_rez,0,T_a02bf5e9,P_f0819f5d,Mercy,T_a02bf5e9,P_ab7fc22e,Winston,4829
+784,1282,mercy_rez,0,T_5568bd9d,P_5b41a7d4,Mercy,T_5568bd9d,P_e21f9a0c,Echo,4829
+785,1284,mercy_rez,21.38,T_a02bf5e9,P_e7ff9217,Mercy,T_a02bf5e9,P_dd7f0d50,Mauga ,4837
+786,1285,mercy_rez,106.2,T_5568bd9d,P_a042fb4d,Mercy,T_5568bd9d,P_b55637a7,Bastion ,4838
+787,1285,mercy_rez,60.05,T_5568bd9d,P_a042fb4d,Mercy,T_5568bd9d,P_b55637a7,Hanzo ,4838
+788,1285,mercy_rez,124.06,T_5568bd9d,P_a042fb4d,Mercy,T_5568bd9d,P_b55637a7,Hanzo ,4838
+789,1285,mercy_rez,156.69,T_5568bd9d,P_a042fb4d,Mercy,T_5568bd9d,P_b55637a7,Hanzo ,4838
+790,1285,mercy_rez,601.38,T_5568bd9d,P_a042fb4d,Mercy,T_5568bd9d,P_b55637a7,Orisa ,4838
+793,1286,mercy_rez,80.91,T_ac878fbe,P_0e21b6cc,Mercy,T_ac878fbe,P_9c7e66a0,Tracer ,4841
+794,1286,mercy_rez,260.24,T_ac878fbe,P_0e21b6cc,Mercy,T_ac878fbe,P_79411983,Zenyatta ,4841
+797,1287,mercy_rez,15.63,T_a9df0f72,P_e7ff9217,Mercy,T_a9df0f72,P_8e56bf81,Ana ,4844
+798,1287,mercy_rez,100.56,T_a9df0f72,P_e7ff9217,Mercy,T_a9df0f72,P_dd7f0d50,Mauga ,4844
+799,1287,mercy_rez,184.51,T_a9df0f72,P_e7ff9217,Mercy,T_a9df0f72,P_b9c27106,Soldier: 76 ,4844
+800,1288,mercy_rez,39.04,T_a02bf5e9,P_2bedbdb5,Mercy,T_a02bf5e9,P_0b8f752e,Junker Queen ,4845
+801,1288,mercy_rez,102.97,T_a02bf5e9,P_2bedbdb5,Mercy,T_a02bf5e9,P_0b8f752e,Ramattra ,4845
+802,1288,mercy_rez,252.86,T_a02bf5e9,P_2bedbdb5,Mercy,T_a02bf5e9,P_a357dd97,Ashe ,4845
+803,1289,mercy_rez,250.86,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_1db1a59d,Bastion ,4848
+804,1289,mercy_rez,440.54,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_a683a544,Baptiste ,4848
+805,1289,mercy_rez,539.6,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_a683a544,Baptiste ,4848
+806,1289,mercy_rez,638.11,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_a683a544,Baptiste ,4848
+807,1289,mercy_rez,840.78,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_2caf192a,Orisa ,4848
+808,1289,mercy_rez,899.77,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_a683a544,Baptiste ,4848
+809,1289,mercy_rez,146.96,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_1db1a59d,Bastion ,4849
+810,1289,mercy_rez,438.74,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_1db1a59d,Bastion ,4849
+811,1289,mercy_rez,470.8,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_4d854672,Juno ,4849
+812,1291,mercy_rez,147.97,T_a02bf5e9,P_c13f9089,Mercy,T_a02bf5e9,P_db860535,Junker Queen,4857
+813,1291,mercy_rez,192.29,T_a02bf5e9,P_c13f9089,Mercy,T_a02bf5e9,P_717eee02,Cassidy,4857
+814,1291,mercy_rez,251.48,T_a02bf5e9,P_c13f9089,Mercy,T_a02bf5e9,P_db860535,Junker Queen,4857
+815,1291,mercy_rez,398.37,T_a02bf5e9,P_c13f9089,Mercy,T_a02bf5e9,P_db860535,Junker Queen,4857
+816,1291,mercy_rez,443.85,T_a02bf5e9,P_c13f9089,Mercy,T_a02bf5e9,P_717eee02,Widowmaker,4857
+817,1291,mercy_rez,642.94,T_a02bf5e9,P_c13f9089,Mercy,T_a02bf5e9,P_db860535,Junker Queen,4857
+818,1291,mercy_rez,701.05,T_a02bf5e9,P_c13f9089,Mercy,T_a02bf5e9,P_db860535,Junker Queen,4857
+819,1291,mercy_rez,34.35,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Ashe,4858
+820,1291,mercy_rez,309.31,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_1b3f5144,Juno,4858
+821,1291,mercy_rez,376.55,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_1b3f5144,Juno,4858
+822,1291,mercy_rez,525.62,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_fbfc0345,Bastion,4858
+823,1291,mercy_rez,100.54,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_717eee02,Bastion,4859
+824,1291,mercy_rez,151.81,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_db860535,Junker Queen,4859
+825,1291,mercy_rez,193.09,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_db860535,Junker Queen,4859
+826,1291,mercy_rez,284.72,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_db860535,Junker Queen,4859
+827,1291,mercy_rez,525.52,T_5b9402a1,P_c13f9089,Mercy,T_5b9402a1,P_db860535,Junker Queen,4859
+828,1292,mercy_rez,127.96,T_5b9402a1,P_1b3f5144,Mercy,T_5b9402a1,P_9d644d1a,Roadhog,4862
+829,1303,mercy_rez,109.29,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_efb8d178,Soldier: 76 ,4915
+830,1303,mercy_rez,174.36,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_1db1a59d,Bastion ,4915
+831,1303,mercy_rez,251.96,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_efb8d178,Soldier: 76 ,4915
+832,1303,mercy_rez,368.24,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_efb8d178,Soldier: 76 ,4915
+833,1303,mercy_rez,557.25,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_1db1a59d,Bastion ,4915
+834,1303,mercy_rez,119.71,T_a02bf5e9,P_215991f1,Mercy,T_a02bf5e9,P_5f6ce001,Illari ,4916
+835,1303,mercy_rez,372.59,T_a02bf5e9,P_215991f1,Mercy,T_a02bf5e9,P_1d1486d8,Sojourn ,4916
+836,1303,mercy_rez,410.4,T_a02bf5e9,P_215991f1,Mercy,T_a02bf5e9,P_66f64092,Soldier: 76 ,4916
+837,1303,mercy_rez,470.13,T_a02bf5e9,P_215991f1,Mercy,T_a02bf5e9,P_5f6ce001,Illari ,4916
+838,1307,mercy_rez,123.35,T_e46ac485,P_66833ca4,Mercy,T_e46ac485,P_b00688f4,Sojourn,4924
+864,1316,mercy_rez,330.27,T_eb73c192,P_5f669396,Mercy,T_eb73c192,P_9065d039,Reaper,4943
+866,1319,mercy_rez,508.67,T_47cdef68,P_af063525,Mercy,T_47cdef68,P_aecc853f,Torbjörn ,4966
+873,1323,mercy_rez,21.74,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_1db1a59d,Bastion ,4976
+874,1323,mercy_rez,65.31,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_4d854672,Zenyatta ,4976
+875,1323,mercy_rez,223.92,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_4d854672,Zenyatta ,4976
+876,1323,mercy_rez,646.64,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_4d854672,Zenyatta ,4976
+877,1323,mercy_rez,755.26,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_1db1a59d,Bastion ,4976
+878,1323,mercy_rez,819.44,T_5568bd9d,P_fc577068,Mercy,T_5568bd9d,P_4d854672,Zenyatta ,4976
+655,976,mercy_rez,176.03,T_5568bd9d,P_c0be11da,Mercy,T_5568bd9d,P_d9cecacf,Juno,
+890,1331,mercy_rez,505.83,T_5568bd9d,P_22b8385f,Mercy,T_5568bd9d,P_072e41fb,Ana,4988
+660,982,mercy_rez,624.18,T_04b64bac,P_d7463aba,Mercy,T_04b64bac,P_9c913e54,Cassidy,
+661,982,mercy_rez,769.48,T_04b64bac,P_d7463aba,Mercy,T_04b64bac,P_26c16dfc,Moira,
+662,982,mercy_rez,883.32,T_04b64bac,P_d7463aba,Mercy,T_04b64bac,P_9c913e54,Widowmaker,
+663,982,mercy_rez,919.19,T_04b64bac,P_d7463aba,Mercy,T_04b64bac,P_26c16dfc,Moira,
+891,1353,mercy_rez,527.08,T_969420ad,P_c54fb3f4,Mercy,T_969420ad,P_94963639,Echo,5046
+892,1353,mercy_rez,567.53,T_969420ad,P_c54fb3f4,Mercy,T_969420ad,P_94963639,Echo,5046
+893,1354,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5049
+894,1354,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5049
+895,1354,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5049
+896,1354,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5049
+897,1354,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5051
+898,1354,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5051
+899,1354,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5051
+900,1354,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5051
+901,1354,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5052
+902,1354,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5052
+903,1354,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5052
+904,1354,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5052
+905,1354,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5053
+906,1354,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5053
+907,1354,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5053
+908,1354,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5053
+909,1354,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5054
+910,1354,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5054
+911,1354,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5054
+912,1354,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5054
+913,1354,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5055
+914,1354,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5055
+915,1354,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5055
+916,1354,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5055
+917,1355,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5056
+918,1355,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5056
+919,1355,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5056
+920,1355,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5056
+921,1356,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5057
+922,1356,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5057
+923,1356,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5057
+924,1356,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5057
+925,1354,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5058
+926,1354,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5058
+927,1354,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5058
+928,1354,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5058
+929,1354,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5060
+930,1354,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5060
+931,1354,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5060
+932,1354,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5060
+933,1354,mercy_rez,127.27,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5061
+934,1354,mercy_rez,213.92,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_44de3aba,Torbjörn,5061
+935,1354,mercy_rez,250.59,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5061
+936,1354,mercy_rez,360.51,T_1607e776,P_26f7b8e1,Mercy,T_1607e776,P_af9d5238,Reinhardt,5061
+937,1360,mercy_rez,222.22,T_62530b65,P_8b696be7,Mercy,T_62530b65,P_ac0c3bac,Genji,5073
+938,1360,mercy_rez,513.58,T_62530b65,P_8b696be7,Mercy,T_62530b65,P_8cf842a6,Pharah,5073
+939,1360,mercy_rez,653.89,T_62530b65,P_8b696be7,Mercy,T_62530b65,P_330026f2,Kiriko,5073
+940,1360,mercy_rez,703.2,T_62530b65,P_8b696be7,Mercy,T_62530b65,P_8cf842a6,Pharah,5073
+941,1360,mercy_rez,749.64,T_62530b65,P_8b696be7,Mercy,T_62530b65,P_c652c266,Wrecking Ball,5073
+942,1362,mercy_rez,20.08,T_13ab2299,P_20d589cc,Mercy,T_13ab2299,P_4cf49365,Genji,5079
+943,1362,mercy_rez,105.13,T_13ab2299,P_20d589cc,Mercy,T_13ab2299,P_4cf49365,Genji,5079
+944,1362,mercy_rez,233.67,T_13ab2299,P_20d589cc,Mercy,T_13ab2299,P_4cf49365,Genji,5079
+945,1362,mercy_rez,302.66,T_13ab2299,P_20d589cc,Mercy,T_13ab2299,P_d2ee76da,Ana,5079
+946,1362,mercy_rez,346.22,T_13ab2299,P_20d589cc,Mercy,T_13ab2299,P_4cf49365,Genji,5079
+947,1362,mercy_rez,384.29,T_13ab2299,P_20d589cc,Mercy,T_13ab2299,P_4cf49365,Genji,5079
+948,1362,mercy_rez,531.57,T_13ab2299,P_20d589cc,Mercy,T_13ab2299,P_1126cf84,Junkrat,5079
+949,1362,mercy_rez,569.95,T_13ab2299,P_20d589cc,Mercy,T_13ab2299,P_4cf49365,Genji,5079
+950,1377,mercy_rez,80.72,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_b955153f,Junkrat,5130
+951,1377,mercy_rez,178.65,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_3d2492b2,Bastion,5130
+952,1377,mercy_rez,213.8,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5130
+953,1377,mercy_rez,416.77,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Kiriko,5130
+954,1377,mercy_rez,631.58,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5130
+955,1377,mercy_rez,787.74,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_b955153f,Junkrat,5130
+956,1377,mercy_rez,868.22,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_77400cd9,Winston,5130
+957,1377,mercy_rez,911.69,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5130
+958,1377,mercy_rez,1024.53,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5130
+959,1377,mercy_rez,82.01,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_b955153f,Cassidy,5131
+960,1377,mercy_rez,124.57,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_b955153f,Cassidy,5131
+961,1377,mercy_rez,581.24,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5131
+962,1377,mercy_rez,720.36,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_b955153f,Cassidy,5131
+963,1377,mercy_rez,752.09,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5131
+964,1377,mercy_rez,80.72,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_b955153f,Junkrat,5132
+965,1377,mercy_rez,178.65,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_3d2492b2,Bastion,5132
+966,1377,mercy_rez,213.8,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5132
+967,1377,mercy_rez,416.77,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Kiriko,5132
+968,1377,mercy_rez,631.58,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5132
+969,1377,mercy_rez,787.74,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_b955153f,Junkrat,5132
+970,1377,mercy_rez,868.22,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_77400cd9,Winston,5132
+971,1377,mercy_rez,911.69,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5132
+972,1377,mercy_rez,1024.53,T_a02bf5e9,P_1f112e3a,Mercy,T_a02bf5e9,P_4d144ade,Ana,5132
+973,1379,mercy_rez,216.4,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_51cfbd96,Torbjörn,5135
+974,1379,mercy_rez,618.13,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_51cfbd96,Tracer,5135
+977,1389,mercy_rez,206.15,T_a02bf5e9,P_76fc472d,Mercy,T_a02bf5e9,P_2d1e3727,Reaper,5155
+978,1394,mercy_rez,80.24,T_a02bf5e9,P_6e744ca0,Mercy,T_a02bf5e9,P_db1d80c3,Cassidy,5178
+979,1394,mercy_rez,151.63,T_a02bf5e9,P_6e744ca0,Mercy,T_a02bf5e9,P_db1d80c3,Cassidy,5178
+980,1394,mercy_rez,206.98,T_a02bf5e9,P_6e744ca0,Mercy,T_a02bf5e9,P_db1d80c3,Cassidy,5178
+981,1394,mercy_rez,263.45,T_a02bf5e9,P_6e744ca0,Mercy,T_a02bf5e9,P_30293991,D.Va,5178
+982,1394,mercy_rez,351.7,T_a02bf5e9,P_6e744ca0,Mercy,T_a02bf5e9,P_6c584b4b,Mei,5178
+983,1394,mercy_rez,366.06,T_5568bd9d,P_40cc9f3f,Mercy,T_5568bd9d,P_7375e571,Pharah,5178
+984,1394,mercy_rez,457.02,T_a02bf5e9,P_6e744ca0,Mercy,T_a02bf5e9,P_db1d80c3,Cassidy,5178
+985,1394,mercy_rez,459.45,T_5568bd9d,P_40cc9f3f,Mercy,T_5568bd9d,P_7375e571,Pharah,5178
+992,1396,mercy_rez,361.46,T_a02bf5e9,P_d80eacc9,Mercy,T_a02bf5e9,P_c302e083,Pharah,5181
+993,1396,mercy_rez,579.32,T_a02bf5e9,P_d80eacc9,Mercy,T_a02bf5e9,P_d0cf4b9d,Genji,5181
+994,1396,mercy_rez,638.23,T_a02bf5e9,P_d80eacc9,Mercy,T_a02bf5e9,P_726d9e52,Lifeweaver,5181
+1003,1458,mercy_rez,113.31,T_a02bf5e9,P_098fa7ba,Mercy,T_a02bf5e9,P_31a7d127,Winston,5426
+1004,1458,mercy_rez,146.14,T_a02bf5e9,P_098fa7ba,Mercy,T_a02bf5e9,P_015ad75d,Venture,5426
+1005,1458,mercy_rez,293.45,T_a02bf5e9,P_098fa7ba,Mercy,T_a02bf5e9,P_88755bdc,Soldier: 76,5426
+1006,1458,mercy_rez,446.26,T_a02bf5e9,P_098fa7ba,Mercy,T_a02bf5e9,P_015ad75d,Venture,5426
+1012,1464,mercy_rez,70.57,T_d6f0c499,P_cb70b554,Mercy,T_d6f0c499,P_b08d9241,Ana,5449
+1013,1464,mercy_rez,152.18,T_d6f0c499,P_cb70b554,Mercy,T_d6f0c499,P_5372c98e,Sojourn,5449
+1014,1464,mercy_rez,192.82,T_d6f0c499,P_cb70b554,Mercy,T_d6f0c499,P_b08d9241,Ana,5449
+1015,1464,mercy_rez,487.8,T_f8574642,P_a3744374,Mercy,T_f8574642,P_0563ee0c,Ashe,5449
+1016,1464,mercy_rez,531.83,T_f8574642,P_a3744374,Mercy,T_f8574642,P_8f26baa3,Symmetra,5449
+1017,1464,mercy_rez,218.85,T_7611e5d7,P_a3744374,Mercy,T_7611e5d7,P_8f26baa3,Ashe,5450
+1018,1464,mercy_rez,449.23,T_b55b70a5,P_cb70b554,Mercy,T_b55b70a5,P_0e92ec9a,Venture,5450
+1019,1464,mercy_rez,570.71,T_b55b70a5,P_cb70b554,Mercy,T_b55b70a5,P_5372c98e,Pharah,5450
+1020,1464,mercy_rez,51.53,T_7611e5d7,P_01b65ea2,Mercy,T_7611e5d7,P_a3744374,Lifeweaver,5452
+1021,1464,mercy_rez,348.03,T_7611e5d7,P_01b65ea2,Mercy,T_7611e5d7,P_0563ee0c,Cassidy,5452
+1022,1464,mercy_rez,511.65,T_7611e5d7,P_01b65ea2,Mercy,T_7611e5d7,P_0563ee0c,Cassidy,5452
+1023,1464,mercy_rez,565.49,T_7611e5d7,P_01b65ea2,Mercy,T_7611e5d7,P_0563ee0c,Cassidy,5452
+1024,1464,mercy_rez,673.4,T_7611e5d7,P_01b65ea2,Mercy,T_7611e5d7,P_0563ee0c,Cassidy,5452
+1025,1464,mercy_rez,805.73,T_7611e5d7,P_01b65ea2,Mercy,T_7611e5d7,P_0563ee0c,Cassidy,5452
+1026,1503,mercy_rez,346.87,T_915af013,P_cb70b554,Mercy,T_915af013,P_0e92ec9a,Venture,5587
+1027,1503,mercy_rez,454.18,T_915af013,P_cb70b554,Mercy,T_915af013,P_b1a0d1b1,Cassidy,5587
+1028,1503,mercy_rez,760.6,T_915af013,P_cb70b554,Mercy,T_915af013,P_b1a0d1b1,Pharah,5587
+1029,1503,mercy_rez,800.45,T_915af013,P_cb70b554,Mercy,T_915af013,P_b1a0d1b1,Pharah,5587
+1030,1503,mercy_rez,309.39,T_915af013,P_cb70b554,Mercy,T_915af013,P_0e30fbd9,Kiriko,5591
+1031,1503,mercy_rez,363.33,T_915af013,P_cb70b554,Mercy,T_915af013,P_b1a0d1b1,Cassidy,5591
+1032,1503,mercy_rez,309.39,T_915af013,P_cb70b554,Mercy,T_915af013,P_0e30fbd9,Kiriko,5592
+1033,1503,mercy_rez,363.33,T_915af013,P_cb70b554,Mercy,T_915af013,P_b1a0d1b1,Cassidy,5592
+1034,1504,mercy_rez,139.87,T_a02bf5e9,P_acc3c122,Mercy,T_a02bf5e9,P_658e2a4b,Roadhog,5597
+1035,1504,mercy_rez,284.64,T_a02bf5e9,P_acc3c122,Mercy,T_a02bf5e9,P_658e2a4b,Roadhog,5597
+1038,1506,mercy_rez,616.22,T_a02bf5e9,P_7bdeb692,Mercy,T_a02bf5e9,P_e2aef5d8,D.Va,5614
+1043,1507,mercy_rez,97.42,T_1966ca27,P_75bf194a,Mercy,T_1966ca27,P_49d68671,Freja,5624
+1044,1507,mercy_rez,142.35,T_1966ca27,P_75bf194a,Mercy,T_1966ca27,P_49d68671,Freja,5624
+1045,1507,mercy_rez,207.85,T_1966ca27,P_75bf194a,Mercy,T_1966ca27,P_2a546a02,Juno,5624
+1046,1507,mercy_rez,271.74,T_1966ca27,P_75bf194a,Mercy,T_1966ca27,P_49d68671,Freja,5624
+1047,1508,mercy_rez,229.46,T_5568bd9d,P_9489e010,Mercy,T_5568bd9d,P_7dc5f150,Tracer,5627
+1048,1508,mercy_rez,353.15,T_5568bd9d,P_9489e010,Mercy,T_5568bd9d,P_ff488046,Genji,5627
+1049,1508,mercy_rez,494.62,T_5568bd9d,P_9489e010,Mercy,T_5568bd9d,P_115f8d79,Junkrat,5627
+1050,1514,mercy_rez,722.86,T_a02bf5e9,P_aa076987,Mercy,T_a02bf5e9,P_2d7ce92b,Ana,5662
+1061,1522,mercy_rez,148.1,T_70a2ca39,P_7e8a1fd1,Mercy,T_70a2ca39,P_6f368e18,Widowmaker,5694
+1062,1522,mercy_rez,493.05,T_70a2ca39,P_7e8a1fd1,Mercy,T_70a2ca39,P_ebd092c8,Baptiste,5694
+1063,1522,mercy_rez,736.65,T_70a2ca39,P_7e8a1fd1,Mercy,T_70a2ca39,P_6f368e18,Widowmaker,5694
+1064,1522,mercy_rez,931.19,T_70a2ca39,P_7e8a1fd1,Mercy,T_70a2ca39,P_6f368e18,Ashe,5694
+1065,1523,mercy_rez,305.02,T_5568bd9d,P_75bf194a,Mercy,T_5568bd9d,P_2a546a02,Juno ,5701
+1066,1529,mercy_rez,542.42,T_5568bd9d,P_75bf194a,Mercy,T_5568bd9d,P_49d68671,Freja,5732
+1067,1540,mercy_rez,28.35,T_5568bd9d,P_99303142,Mercy,T_5568bd9d,P_206ee56a,Cassidy,5770
+1068,1540,mercy_rez,47.23,T_a02bf5e9,P_9c2fe163,Mercy,T_a02bf5e9,P_4d25b49a,Ramattra,5770
+1069,1540,mercy_rez,88.51,T_a02bf5e9,P_9c2fe163,Mercy,T_a02bf5e9,P_76f69257,Sojourn,5770
+1070,1540,mercy_rez,290.31,T_5568bd9d,P_99303142,Mercy,T_5568bd9d,P_5dfa165a,Ana,5770
+1071,1540,mercy_rez,398.69,T_5568bd9d,P_99303142,Mercy,T_5568bd9d,P_5dfa165a,Ana,5770
+1072,1540,mercy_rez,636.88,T_5568bd9d,P_99303142,Mercy,T_5568bd9d,P_0dec2868,Ramattra,5770
+1073,1563,mercy_rez,424.53,T_5568bd9d,P_297d2047,Mercy,T_5568bd9d,P_b824c245,Pharah,5840
+1074,1591,mercy_rez,667.18,T_a02bf5e9,P_0af36cc1,Mercy,T_a02bf5e9,P_be195379,Venture,5973
+1075,1591,mercy_rez,162.49,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_be195379,Venture,5976
+1076,1591,mercy_rez,418.25,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_ba376e74,Doomfist,5976
+1077,1591,mercy_rez,34.06,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_32b8964d,Kiriko,5977
+1078,1591,mercy_rez,182.62,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_74381dbd,Tracer,5977
+1079,1591,mercy_rez,282.44,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_c8ef88ef,Cassidy,5977
+1080,1591,mercy_rez,517.3,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_3ec23153,Doomfist,5977
+1081,1591,mercy_rez,760.84,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_84d0f0d0,Echo,5978
+1082,1591,mercy_rez,1009.91,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_32b8964d,Kiriko,5978
+1083,1604,mercy_rez,106.04,T_5568bd9d,P_867a15fb,Mercy,T_5568bd9d,P_15e8a65b,Freja,6042
+1084,1604,mercy_rez,161.16,T_5568bd9d,P_867a15fb,Mercy,T_5568bd9d,P_15e8a65b,Freja,6042
+1085,1604,mercy_rez,194.2,T_5568bd9d,P_867a15fb,Mercy,T_5568bd9d,P_dd4ae6c2,Baptiste,6042
+1086,1604,mercy_rez,231.51,T_5568bd9d,P_867a15fb,Mercy,T_5568bd9d,P_aee61731,Roadhog,6042
+1087,1606,mercy_rez,73.65,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_2baa73bb,Kiriko,6044
+1088,1606,mercy_rez,176.59,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_2baa73bb,Kiriko,6044
+1089,1606,mercy_rez,452.89,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_51cfbd96,Genji,6044
+1090,1606,mercy_rez,548.33,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_38de0158,Pharah,6044
+1091,1606,mercy_rez,687.07,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_38de0158,Pharah,6044
+1092,1624,mercy_rez,77.31,T_a02bf5e9,P_8babd6d7,Mercy,T_a02bf5e9,P_844ca6bd,Widowmaker,6072
+1093,1624,mercy_rez,131.45,T_a02bf5e9,P_8babd6d7,Mercy,T_a02bf5e9,P_9229ec79,Pharah,6072
+1096,1640,mercy_rez,26.37,T_e8fb19ca,P_9489e010,Mercy,T_e8fb19ca,P_5ecba685,Doomfist,6153
+1097,1640,mercy_rez,120.94,T_e8fb19ca,P_9489e010,Mercy,T_e8fb19ca,P_497663b1,Kiriko,6153
+1098,1640,mercy_rez,242.74,T_e8fb19ca,P_9489e010,Mercy,T_e8fb19ca,P_5ecba685,Doomfist,6153
+1099,1640,mercy_rez,21.7,T_8e2038c6,P_9489e010,Mercy,T_8e2038c6,P_3c2bb18e,Zarya,6154
+1100,1640,mercy_rez,21.7,T_8e2038c6,P_9489e010,Mercy,T_8e2038c6,P_3c2bb18e,Zarya,6155
+1103,1644,mercy_rez,63.82,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_ba197dfc,Freja,6173
+1104,1644,mercy_rez,104.08,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_ba197dfc,Freja,6173
+1105,1644,mercy_rez,216.05,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_ba197dfc,Freja,6173
+1106,1644,mercy_rez,251.04,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_ba197dfc,Freja,6173
+1107,1644,mercy_rez,303.37,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_33f7b41f,Widowmaker,6173
+1108,1644,mercy_rez,362.72,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_33f7b41f,Widowmaker,6173
+1109,1644,mercy_rez,420.09,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_33f7b41f,Sojourn,6173
+1110,1644,mercy_rez,454.26,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_4263b472,Hazard,6173
+1111,1644,mercy_rez,497.63,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_33f7b41f,Sojourn,6173
+1112,1652,mercy_rez,51.09,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_33f7b41f,Sombra,6191
+1113,1652,mercy_rez,100.43,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_ba197dfc,Reaper,6191
+1114,1652,mercy_rez,247.95,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_ba197dfc,Reaper,6191
+1115,1647,mercy_rez,51.09,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_33f7b41f,Sombra,6195
+1116,1647,mercy_rez,100.43,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_ba197dfc,Reaper,6195
+1117,1647,mercy_rez,247.95,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_ba197dfc,Reaper,6195
+1118,1663,mercy_rez,664.09,T_a02bf5e9,P_bea49965,Mercy,T_a02bf5e9,P_99185874,Ana,6222
+1120,1663,mercy_rez,37.57,T_a02bf5e9,P_bea49965,Mercy,T_a02bf5e9,P_4d4bacd8,Genji,6226
+1121,1663,mercy_rez,295.74,T_a02bf5e9,P_bea49965,Mercy,T_a02bf5e9,P_5d25f754,Baptiste,6226
+1122,1665,mercy_rez,504.05,T_5568bd9d,P_cb6701b7,Mercy,T_5568bd9d,P_b0454011,Hazard,6243
+1123,1665,mercy_rez,539.22,T_5568bd9d,P_cb6701b7,Mercy,T_5568bd9d,P_69544996,Lifeweaver,6243
+1124,1665,mercy_rez,799,T_5568bd9d,P_cb6701b7,Mercy,T_5568bd9d,P_69544996,Lifeweaver,6243
+1125,1671,mercy_rez,40.93,T_5568bd9d,P_b3f2ded8,Mercy,T_5568bd9d,P_ba197dfc,Tracer,6309
+1126,1685,mercy_rez,177.2,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_de967ee8,Freja,6334
+1127,1685,mercy_rez,303.32,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_60dbec5c,Baptiste,6334
+1128,1685,mercy_rez,418.93,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_2aafac1d,Reinhardt,6334
+1129,1685,mercy_rez,547.75,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_de967ee8,Freja,6334
+1130,1685,mercy_rez,631.8,T_5568bd9d,P_64409590,Mercy,T_5568bd9d,P_d9cecacf,Baptiste,6334
+1131,1685,mercy_rez,714.09,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_2aafac1d,Reinhardt,6334
+1132,1685,mercy_rez,751.31,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_60dbec5c,Baptiste,6334
+1133,1685,mercy_rez,796.43,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_60dbec5c,Baptiste,6334
+1134,1685,mercy_rez,861.84,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_de967ee8,Freja,6334
+1135,1685,mercy_rez,862.24,T_5568bd9d,P_64409590,Mercy,T_5568bd9d,P_d9cecacf,Baptiste,6334
+1136,1685,mercy_rez,893.58,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_2aafac1d,Reinhardt,6334
+1137,1685,mercy_rez,896.23,T_5568bd9d,P_64409590,Mercy,T_5568bd9d,P_d9cecacf,Baptiste,6334
+1138,1685,mercy_rez,926.71,T_a02bf5e9,P_e5ddd9e8,Mercy,T_a02bf5e9,P_de967ee8,Freja,6334
+1139,1688,mercy_rez,382.88,T_5568bd9d,P_d9cecacf,Mercy,T_5568bd9d,P_f081f9e5,Widowmaker,6342
+1140,1688,mercy_rez,526.8,T_5568bd9d,P_d9cecacf,Mercy,T_5568bd9d,P_f081f9e5,Freja,6342
+1141,1689,mercy_rez,205.03,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_52837dc5,Sojourn,6345
+1142,1689,mercy_rez,403.34,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_52837dc5,Sojourn,6345
+1143,1689,mercy_rez,101.77,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_ed85f838,Freja,6348
+1144,1689,mercy_rez,168.06,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_051bbc3b,Zenyatta,6348
+1145,1689,mercy_rez,230.63,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_ed85f838,Freja,6348
+1146,1689,mercy_rez,528.13,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_59feff10,Tracer,6348
+1147,1689,mercy_rez,565.37,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_051bbc3b,Zenyatta,6348
+1148,1689,mercy_rez,669.01,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_ed85f838,Freja,6348
+1149,1689,mercy_rez,828.19,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_051bbc3b,Zenyatta,6348
+1150,1689,mercy_rez,885.37,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_59feff10,Tracer,6348
+1151,1705,mercy_rez,48.19,T_ed2937da,P_0af36cc1,Mercy,T_ed2937da,P_051bbc3b,Baptiste,6437
+1152,1705,mercy_rez,258.01,T_ed2937da,P_0af36cc1,Mercy,T_ed2937da,P_051bbc3b,Baptiste,6437
+1153,1705,mercy_rez,474.61,T_ed2937da,P_0af36cc1,Mercy,T_ed2937da,P_69ead3fa,Sojourn,6437
+1154,1705,mercy_rez,617.41,T_ed2937da,P_0af36cc1,Mercy,T_ed2937da,P_59feff10,Wrecking Ball,6437
+1155,1705,mercy_rez,720.98,T_ed2937da,P_0af36cc1,Mercy,T_ed2937da,P_69ead3fa,Hanzo,6437
+1156,1705,mercy_rez,894.98,T_ed2937da,P_0af36cc1,Mercy,T_ed2937da,P_69ead3fa,Hanzo,6437
+1157,1706,mercy_rez,492.09,T_5568bd9d,P_64409590,Mercy,T_5568bd9d,P_f08a06b6,Genji,6439
+1158,1706,mercy_rez,665.26,T_5568bd9d,P_64409590,Mercy,T_5568bd9d,P_d9cecacf,Kiriko,6439
+1159,1708,mercy_rez,324.26,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_38de0158,Pharah,6453
+1165,1708,mercy_rez,324.26,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_38de0158,Pharah,6459
+1166,1724,mercy_rez,302.15,T_a02bf5e9,P_9b00fda6,Mercy,T_a02bf5e9,P_4e8d2d65,Sojourn,6497
+1167,1724,mercy_rez,641.04,T_a02bf5e9,P_9b00fda6,Mercy,T_a02bf5e9,P_4e8d2d65,Sojourn,6497
+1168,1728,mercy_rez,154.63,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_e01396b3,Genji,6515
+1169,1728,mercy_rez,255.95,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_89d1c0c4,Wrecking Ball,6515
+1170,1728,mercy_rez,347.56,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_f2c0989d,Lifeweaver,6515
+1171,1728,mercy_rez,416.55,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_e01396b3,Genji,6515
+1172,1728,mercy_rez,628.06,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_e01396b3,Genji,6515
+1173,1728,mercy_rez,659.81,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_e01396b3,Genji,6515
+1174,1728,mercy_rez,773.47,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_89d1c0c4,Wrecking Ball,6515
+1175,1728,mercy_rez,899.48,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_2fae28fe,Sojourn,6515
+1176,1728,mercy_rez,58.09,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_f2c0989d,Lifeweaver,6516
+1177,1728,mercy_rez,347.45,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_f2c0989d,Lifeweaver,6516
+1178,1728,mercy_rez,385.99,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_f2c0989d,Lifeweaver,6516
+1179,1728,mercy_rez,539.89,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_89d1c0c4,Doomfist,6516
+1180,1728,mercy_rez,770.93,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_89d1c0c4,Doomfist,6516
+1181,1728,mercy_rez,879.91,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_f2c0989d,Lifeweaver,6516
+1182,1728,mercy_rez,111.66,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_e01396b3,Tracer,6517
+1183,1728,mercy_rez,165.35,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_e01396b3,Tracer,6517
+1184,1728,mercy_rez,368.3,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_5c11d3fa,Ana,6517
+1185,1728,mercy_rez,528.6,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_2fae28fe,Sojourn,6517
+1186,1728,mercy_rez,681.93,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_89d1c0c4,Doomfist,6517
+1187,1728,mercy_rez,782.59,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_5c11d3fa,Ana,6517
+1188,1728,mercy_rez,834.18,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_5c11d3fa,Ana,6517
+1189,1728,mercy_rez,165.14,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_2fae28fe,Bastion,6519
+1190,1728,mercy_rez,165.16,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_ed85f838,Freja,6519
+1191,1728,mercy_rez,261.89,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_ed85f838,Freja,6519
+1192,1728,mercy_rez,327.05,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_5c11d3fa,Ana,6519
+1193,1728,mercy_rez,384.09,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_5c11d3fa,Ana,6519
+1194,1728,mercy_rez,457.89,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_e01396b3,Genji,6519
+1195,1728,mercy_rez,458.42,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_ed85f838,Cassidy,6519
+1196,1728,mercy_rez,552.61,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_c7087c78,Ana,6519
+1197,1728,mercy_rez,598.71,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_e01396b3,Genji,6519
+1198,1728,mercy_rez,642.37,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_5c11d3fa,Ana,6519
+1199,1728,mercy_rez,696.67,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_89d1c0c4,Doomfist,6519
+1200,1728,mercy_rez,716.41,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_c7087c78,Ana,6519
+1201,1728,mercy_rez,756.98,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_89d1c0c4,Doomfist,6519
+1202,1728,mercy_rez,760.35,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_ed85f838,Cassidy,6519
+1203,1728,mercy_rez,205.5,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_2fae28fe,Sojourn,6520
+1204,1728,mercy_rez,355.76,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_f2c0989d,Lifeweaver,6520
+1205,1728,mercy_rez,518.56,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_f2c0989d,Lifeweaver,6520
+1206,1728,mercy_rez,570.04,T_5568bd9d,P_0af36cc1,Mercy,T_5568bd9d,P_59feff10,Tracer,6520
+1207,1728,mercy_rez,746.32,T_a02bf5e9,P_30734897,Mercy,T_a02bf5e9,P_e01396b3,Genji,6520
+1208,1733,mercy_rez,116.65,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_38de0158,Pharah,6556
+1209,1733,mercy_rez,329.83,T_3238eb96,P_aa4cc3b4,Mercy,T_3238eb96,P_38de0158,Cassidy,6556
+1210,1733,mercy_rez,484.43,T_f9bed691,P_538d0a87,Mercy,T_f9bed691,P_a80dce2b,Baptiste,6556
+1211,1733,mercy_rez,527.1,T_f9bed691,P_538d0a87,Mercy,T_f9bed691,P_b33e3388,Pharah,6556
+1212,1733,mercy_rez,571.38,T_f9bed691,P_538d0a87,Mercy,T_f9bed691,P_514eebe5,Cassidy,6556
+1221,1737,mercy_rez,63.95,T_5568bd9d,P_998d7719,Mercy,T_5568bd9d,P_52e1067a,Doomfist,6588
+1222,1739,mercy_rez,24.4,T_a02bf5e9,P_261f3c3f,Mercy,T_a02bf5e9,P_31feb1aa,Ana,6592
+1223,1739,mercy_rez,275.85,T_a02bf5e9,P_261f3c3f,Mercy,T_a02bf5e9,P_31feb1aa,Ana,6592
+1224,1739,mercy_rez,425.04,T_a02bf5e9,P_261f3c3f,Mercy,T_a02bf5e9,P_a5e5b7e3,Sojourn,6592
+1225,1739,mercy_rez,592.45,T_a02bf5e9,P_261f3c3f,Mercy,T_a02bf5e9,P_31feb1aa,Ana,6592
+1226,1739,mercy_rez,763.84,T_a02bf5e9,P_261f3c3f,Mercy,T_a02bf5e9,P_31feb1aa,Ana,6592
+1227,1761,mercy_rez,100.78,T_dfe6a94e,P_4a3cccce,Mercy,T_dfe6a94e,P_0ed736be,Genji,6700
+1228,1764,mercy_rez,410.38,T_a02bf5e9,P_afa00671,Mercy,T_a02bf5e9,P_d75dea07,Pharah,6720
+1229,1764,mercy_rez,456.28,T_a02bf5e9,P_afa00671,Mercy,T_a02bf5e9,P_2d4053db,Widowmaker,6720

@@ -65,9 +65,9 @@ export const formatPercentage = (value: number | undefined, decimals = 1): strin
 
 export const formatStat = (key: PlayerStatKey, value: number | undefined): string => {
   if (value === undefined) return 'N/A';
-  
+
   const format = getStatFormat(key);
-  
+
   switch (format) {
     case 'percent':
       return formatPercentage(value);
@@ -78,3 +78,45 @@ export const formatStat = (key: PlayerStatKey, value: number | undefined): strin
       return prettyFormat(value);
   }
 };
+
+// --- V2 metric formatting for analysis metrics ---
+
+import { MetricFormat } from './metricConfig';
+
+/** Format a numeric value according to its MetricFormat. */
+export function formatMetricValue(value: number, fmt: MetricFormat, decimals = 1): string {
+  switch (fmt) {
+    case 'percent':
+      return `${value.toFixed(decimals)}%`;
+    case 'per10':
+      return value.toFixed(decimals);
+    case 'time':
+      return formatTime(value);
+    case 'ratio':
+      return value.toFixed(decimals + 1);
+    case 'decimal':
+    default:
+      return prettyFormat(value, decimals);
+  }
+}
+
+/** Format a confidence interval as "[lo, hi]". */
+export function formatCI(lo: number, hi: number, fmt: MetricFormat, decimals = 1): string {
+  const fmtVal = (v: number) => formatMetricValue(v, fmt, decimals);
+  return `[${fmtVal(lo)}, ${fmtVal(hi)}]`;
+}
+
+/** Format a delta value with sign prefix, e.g. "+2.1pp" or "−0.3". */
+export function formatDelta(delta: number, fmt: MetricFormat, decimals = 1): string {
+  const sign = delta >= 0 ? '+' : '\u2212';
+  const abs = Math.abs(delta);
+  if (fmt === 'percent') {
+    return `${sign}${abs.toFixed(decimals)}pp`;
+  }
+  return `${sign}${formatMetricValue(abs, fmt, decimals)}`;
+}
+
+/** Format a percentile as "p62". */
+export function formatPercentile(p: number): string {
+  return `p${Math.round(p)}`;
+}

@@ -5,8 +5,14 @@ import { Suspense, lazy } from "react";
 import { useHydration } from "@hooks/useHydration";
 import { Layout } from "@components";
 
-// Page-level lazy imports (each becomes its own chunk)
-const HomePage = lazy(() => import("./pages/HomePage"));
+// Journey pages
+const PulsePage = lazy(() => import("./pages/PulsePage"));
+const DebriefPage = lazy(() => import("./pages/DebriefPage"));
+const TrainPage = lazy(() => import("./pages/TrainPage"));
+const ProgressPage = lazy(() => import("./pages/ProgressPage"));
+const ExplorePage = lazy(() => import("./pages/ExplorePage"));
+
+// Entity pages (existing)
 const AddFilesPage = lazy(() => import("./pages/AddFilesPage"));
 const ScrimsPage = lazy(() => import("./pages/ScrimsPage"));
 const ScrimPage = lazy(() => import("./pages/ScrimPage"));
@@ -16,6 +22,7 @@ const PlayerPage = lazy(() => import("./pages/PlayerPage"));
 const TeamPage = lazy(() => import("./pages/TeamPage"));
 const MatchPage = lazy(() => import("./pages/MatchPage"));
 const MetricsExplorerPage = lazy(() => import("./pages/MetricsExplorerPage"));
+const DetailedAnalysisPage = lazy(() => import("./pages/DetailedAnalysisPage"));
 const MatchOverviewPage = lazy(() => import("./pages/MatchOverviewPage"));
 const MatchPlayersPage = lazy(() => import("./pages/MatchPlayersPage"));
 const MatchStatComparisonPage = lazy(() => import("./pages/MatchStatComparisonPage"));
@@ -48,7 +55,14 @@ const HydratedRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" index element={<HomePage />} />
+      {/* Journey routes */}
+      <Route path="/" index element={<PulsePage />} />
+      <Route path="/debrief" element={<DebriefPage />} />
+      <Route path="/train" element={<TrainPage />} />
+      <Route path="/progress" element={<ProgressPage />} />
+      <Route path="/explore" element={<ExplorePage />} />
+
+      {/* Entity routes (deep-linkable, not in nav) */}
       <Route path="/scrims" element={<ScrimsPage />} />
       <Route path="/scrims/:scrimId" element={<ScrimPage />} />
       <Route path="/matches/:matchId" element={<MatchPage />}>
@@ -76,6 +90,7 @@ const HydratedRoutes = () => {
       </Route>
       <Route path="/files" element={<AddFilesPage />} />
       <Route path="/metrics" element={<MetricsExplorerPage />} />
+      <Route path="/analysis" element={<DetailedAnalysisPage />} />
     </Routes>
   );
 };

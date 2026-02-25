@@ -21,6 +21,10 @@ export default defineConfig(({ mode }) => {
       }) as Plugin,
     ],
     
+    worker: {
+      plugins: () => [tsconfigPaths()],
+    },
+
     resolve: {
       alias: {
         stream: 'stream-browserify',

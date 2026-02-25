@@ -1,10 +1,11 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useMemo } from "react";
 import { useStatsWithDerived } from "../../hooks/useStats";
 import {
   usePlayerSummary,
   usePlayerPerformanceTrends,
   usePlayerHeroStats,
 } from "../../hooks/usePlayerMetrics";
+import { useUltCycles } from "../../hooks/useUltCycles";
 import { PlayerCard } from "./PlayerCard";
 import { StatCard } from "../ui/StatCard";
 import {
@@ -21,6 +22,13 @@ import {
 import { getRoleFromHero, formatStat } from "@library";
 import { useParams } from "react-router-dom";
 
+function formatUltTime(seconds: number): string {
+  if (seconds < 60) return `${seconds.toFixed(0)}s`;
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}m ${secs}s`;
+}
+
 export const PlayerOverview = (): ReactNode => {
   const { playerName } = useParams<{ playerName: string }>();
 
@@ -33,6 +41,25 @@ export const PlayerOverview = (): ReactNode => {
 
   // Detailed stats for the performance breakdown
   const detailedOverallStats = useStatsWithDerived({ playerName: playerName || undefined });
+
+  // Ult economy metrics for this player
+  const ultCycles = useUltCycles();
+  const playerUltMetrics = useMemo(
+    () => ultCycles.playerMetrics.filter(m => m.playerName === playerName),
+    [ultCycles.playerMetrics, playerName],
+  );
+  const aggregateUltMetrics = useMemo(() => {
+    if (playerUltMetrics.length === 0) return null;
+    const totalEarned = playerUltMetrics.reduce((s, m) => s + m.totalUltsEarned, 0);
+    const totalUsed = playerUltMetrics.reduce((s, m) => s + m.totalUltsUsed, 0);
+    const weightedCharge = playerUltMetrics.reduce((s, m) => s + m.avgTimeToCharge * m.totalUltsEarned, 0);
+    const weightedHold = playerUltMetrics.reduce((s, m) => s + m.avgTimeHeld * m.totalUltsEarned, 0);
+    return {
+      avgChargeTime: totalEarned > 0 ? weightedCharge / totalEarned : 0,
+      avgHoldTime: totalEarned > 0 ? weightedHold / totalEarned : 0,
+      usageRate: totalEarned > 0 ? (totalUsed / totalEarned) * 100 : 0,
+    };
+  }, [playerUltMetrics]);
 
   if (!playerName) {
     return <div>Player name not found in URL.</div>;
@@ -277,6 +304,25 @@ export const PlayerOverview = (): ReactNode => {
             title="Critical Hit Rate"
             value={`${(criticalHitRate * 100).toFixed(1)}%`}
           />
+          {aggregateUltMetrics && (
+            <>
+              <StatCard
+                title="Avg Ult Charge"
+                value={formatUltTime(aggregateUltMetrics.avgChargeTime)}
+                description="Time to build ultimate"
+              />
+              <StatCard
+                title="Avg Ult Hold"
+                value={formatUltTime(aggregateUltMetrics.avgHoldTime)}
+                description="Time held before use"
+              />
+              <StatCard
+                title="Ult Usage Rate"
+                value={`${aggregateUltMetrics.usageRate.toFixed(0)}%`}
+                description="Earned ults that were used"
+              />
+            </>
+          )}
         </div>
       </div>
 
