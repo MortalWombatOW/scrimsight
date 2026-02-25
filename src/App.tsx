@@ -5,8 +5,14 @@ import { Suspense, lazy } from "react";
 import { useHydration } from "@hooks/useHydration";
 import { Layout } from "@components";
 
-// Page-level lazy imports (each becomes its own chunk)
-const HomePage = lazy(() => import("./pages/HomePage"));
+// Journey pages
+const PulsePage = lazy(() => import("./pages/PulsePage"));
+const DebriefPage = lazy(() => import("./pages/DebriefPage"));
+const TrainPage = lazy(() => import("./pages/TrainPage"));
+const ProgressPage = lazy(() => import("./pages/ProgressPage"));
+const ExplorePage = lazy(() => import("./pages/ExplorePage"));
+
+// Entity pages (existing)
 const AddFilesPage = lazy(() => import("./pages/AddFilesPage"));
 const ScrimsPage = lazy(() => import("./pages/ScrimsPage"));
 const ScrimPage = lazy(() => import("./pages/ScrimPage"));
@@ -49,7 +55,14 @@ const HydratedRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" index element={<HomePage />} />
+      {/* Journey routes */}
+      <Route path="/" index element={<PulsePage />} />
+      <Route path="/debrief" element={<DebriefPage />} />
+      <Route path="/train" element={<TrainPage />} />
+      <Route path="/progress" element={<ProgressPage />} />
+      <Route path="/explore" element={<ExplorePage />} />
+
+      {/* Entity routes (deep-linkable, not in nav) */}
       <Route path="/scrims" element={<ScrimsPage />} />
       <Route path="/scrims/:scrimId" element={<ScrimPage />} />
       <Route path="/matches/:matchId" element={<MatchPage />}>
