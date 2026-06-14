@@ -69,6 +69,7 @@ def detect_fights(
     agg["first_kill_victim_team"] = first_kills["victim_team"]
     agg["first_kill_hero"] = first_kills["attacker_hero"]
     agg["first_kill_victim_hero"] = first_kills["victim_hero"]
+    agg["first_kill_time"] = first_kills["match_time"]
     agg["first_kill_ability"] = first_kills["event_ability"] if "event_ability" in first_kills.columns else "Unknown"
 
     # Winner = team with the most kills in the fight
